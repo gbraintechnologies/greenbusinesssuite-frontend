@@ -12,7 +12,6 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   // Redirect to login if not authenticated
-
   return (
     <div>
       <AdminProvider>{children}</AdminProvider>
