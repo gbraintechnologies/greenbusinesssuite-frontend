@@ -1,7 +1,15 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
+
+import { redirect } from "next/navigation";
 
 function Intro() {
-  return <div>Intro</div>;
+  useEffect(() => {
+    redirect("/auth/login");
+  }, []);
+
+  return <div></div>;
 }
 
 export default Intro;
