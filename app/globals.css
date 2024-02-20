@@ -1,3 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.bgImgCenter {
+
+    background-repeat: no-repeat;
+    background-position: top;
+    position: relative;
+    background-color: #16a34a;
+    background-size: 100% 100%;
+    width: 100%;
+}
+
+.loginFrame {
+    width: 30em;
+}
+
+.circle {
+    background-image: url('/svg/mesh_backgroundcircle.svg');
+    background-repeat: no-repeat;
+    background-position: right top;
+    background-size: 85%;
+    gap: 2;
+}
+
+.login_icon {
+    width: 1140%;
+    height: 600px;
+    left:-81px;
+    border-radius: 18px;
+    border: 1px;
+}
