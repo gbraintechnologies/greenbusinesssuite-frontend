@@ -73,7 +73,7 @@ function LogIn() {
               </div>
             </div>
             <p className="text-green-500 font-bold text-sm underline">
-              <Link href="/auth/forgot-password"> Forgot Password? </Link>
+              <Link href="/forgot-password"> Forgot Password? </Link>
             </p>
             <Button type="submit">Login</Button>
             {/*
@@ -88,7 +88,9 @@ function LogIn() {
         <div className="hidden md:flex flex-[2] relative z-20  pb-6 flex-col justify-between pt-[14px] w-full h-full bgImgCenter circle">
           <div className="">
             <div className={"mt-10 pl-[81px]"}>
-              <Logo src={"/svg/login_logo.svg"} width={150} />
+              <Link href="/">
+                <Logo src={"/svg/login_logo.svg"} width={150} />
+              </Link>
             </div>
             <div className={"mt-10 pl-[81px]"}>
               <p className="text-white mb-10">Mesh Business Suite</p>

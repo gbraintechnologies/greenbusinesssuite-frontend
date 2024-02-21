@@ -1,5 +1,5 @@
 import React from "react";
-import Logo from "../../login/components/Logo";
+import Logo from "../../(login)/components/Logo";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import MailIcon from "@mui/icons-material/Mail";
