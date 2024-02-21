@@ -4,14 +4,14 @@ import React, { createContext, useEffect, useState } from "react";
 export const AdminContext = createContext();
 
 // @ts-ignore
-const UserFromLS = JSON.parse(window.localStorage.getItem("admin") || null);
+const UserFromLS = JSON.parse(localStorage.getItem("admin") || null);
 
 export const AdminProvider = ({ children }: any) => {
   const [admin, setAdmin] = useState(UserFromLS);
 
   useEffect(() => {
     //
-    window.localStorage.setItem("admin", JSON.stringify(admin));
+    localStorage.setItem("admin", JSON.stringify(admin));
   }, [admin]);
 
   const addAdminData = (data: any) => {
