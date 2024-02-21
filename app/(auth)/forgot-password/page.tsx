@@ -41,7 +41,7 @@ function ForgotPassword() {
               />
             </div>
 
-            <Link className=" text-[#16A34A] text-sm" href="/auth/login">
+            <Link className=" text-[#16A34A] text-sm" href="/">
               Wait, I remember my password
             </Link>
             <button

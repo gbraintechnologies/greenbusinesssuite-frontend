@@ -87,11 +87,11 @@ function LogIn() {
 
         <div className="hidden md:flex flex-[2] relative z-20  pb-6 flex-col justify-between pt-[14px] w-full h-full bgImgCenter circle">
           <div className="">
-            <div className={"mt-10 pl-[81px]"}>
-              <Link href="/">
+            <Link href="/">
+              <div className={"mt-10 pl-[81px]"}>
                 <Logo src={"/svg/login_logo.svg"} width={150} />
-              </Link>
-            </div>
+              </div>
+            </Link>
             <div className={"mt-10 pl-[81px]"}>
               <p className="text-white mb-10">Mesh Business Suite</p>
               <p className="text-white font-medium text-2xl">
