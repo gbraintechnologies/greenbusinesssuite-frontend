@@ -1,7 +1,7 @@
 import React from "react";
 
 function CompanySetup() {
-  return <div>Company Setup</div>;
+  return <div></div>;
 }
 
 export default CompanySetup;

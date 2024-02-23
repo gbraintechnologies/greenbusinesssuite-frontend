@@ -3,7 +3,6 @@ import React from "react";
 
 // icons
 import { HiOutlineUser } from "react-icons/hi2";
-import { RxCountdownTimer } from "react-icons/rx";
 import { GoShieldLock } from "react-icons/go";
 
 import { usePathname } from "next/navigation";
@@ -24,7 +23,8 @@ function SettingsSideNav() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-[20rem] sticky  px-5 p-2 h-[80vh]">
+    <aside className="w-[20rem] sticky   px-5 p-2">
+      {/* USER INFORMATION & PICTURE */}
       <div className="flex gap-3 items-center mb-5">
         <div className="flex items-center rounded-full justify-center w-14 h-14 bg-gray-100">
           AK
@@ -34,6 +34,8 @@ function SettingsSideNav() {
           <p className="text-sm font-light">Your personal account</p>
         </div>
       </div>
+
+      {/* SIDE NAVIGATION: SETTINGS */}
       <ul>
         {navigation.map((item) => {
           return (
