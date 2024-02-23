@@ -45,7 +45,6 @@ function SideNav() {
         className="w-full shadow-sm border outline-none focus:outline-none font-light border-gray-200 p-2 mt-4 rounded-lg mb-5"
         placeholder="Search"
       />
-
       <ul>
         {navigation.map((item) => {
           return (
