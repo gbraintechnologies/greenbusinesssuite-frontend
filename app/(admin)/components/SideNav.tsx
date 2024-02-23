@@ -38,10 +38,10 @@ function SideNav() {
 
   return (
     <aside className="w-[20rem] sticky top-[6vh] border-gray-300 border-r bg-[#E2E8F0] px-5 p-2 h-[94vh]">
-      {/* <input
+     <input
         className="w-full shadow-sm border outline-none focus:outline-none font-light border-gray-200 p-2 mt-4 rounded-lg mb-5"
         placeholder="Search"
-      /> */}
+      /> 
 
       <ul>
         {navigation.map((item) => {
