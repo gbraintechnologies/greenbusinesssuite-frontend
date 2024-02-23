@@ -10,13 +10,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
 import Logo from "./components/Logo";
-import { relative } from "path";
+import { login } from "../../../services/features/authService";
 
 const schema = yup.object({
-  username: yup
-    .string()
-    // .email("Please enter a valid email address")
-    .required("Email/Username is required"),
+  username: yup.string().required("Email/Username is required"),
   password: yup
     .string()
     .min(6, "Password must be at least 8 characters")
@@ -25,13 +22,14 @@ const schema = yup.object({
 
 function LogIn() {
   const router = useRouter();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   type typeOfSchema = yup.InferType<typeof schema>;
 
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting, errors, isValid },
   } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
@@ -42,14 +40,24 @@ function LogIn() {
   });
 
   const onSubmit = async (data: typeOfSchema) => {
-    await data;
+    try {
+      const token = await login(data.username, data.password);
+      console.log("Login successful. Token:", token);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setLoginError("Incorrect email address and password");
+    }
   };
 
   return (
     <div>
       <div className="max-h-screen h-screen flex overflow-hidden">
         <div className="loginFrame flex px-4 md:flex flex-[2] items-center justify-center bg-white p-6 rounded-[20px] shadow-2xl py-12">
-          <form className="flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-12 bg-white p-6 rounded-[20px] ">
+          <form
+            className="flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-12 bg-white p-6 rounded-[20px]"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <h6 className="font-bold text-xl">Sign in</h6>
             <div>
               <TextInput
@@ -57,6 +65,9 @@ function LogIn() {
                 type="text"
                 placeholder="Enter your work email address"
                 autoComplete="off"
+                {...register("username")}
+                error={errors.username?.message}
+                extraClasses={errors.username ? "border-red-500" : ""}
               />
             </div>
             <div className="mb-4">
@@ -64,34 +75,32 @@ function LogIn() {
                 label="Password"
                 placeholder="Enter your password"
                 autoComplete="off"
+                {...register("password")}
+                error={errors.password?.message}
+                extraClasses={errors.password ? "border-red-500" : ""}
               />
-              <div className="flex items-center justify-start py-2">
-                <FiAlertCircle fontSize={"small"} color={"red"} />
-                <p className="ml-2 text-sm text-red-600 font-normal">
-                  Incorrect email address and password
-                </p>
-              </div>
+              {loginError && (
+                <div className="flex items-center justify-start py-2">
+                  <FiAlertCircle fontSize={"small"} color={"red"} />
+                  <p className="ml-2 text-sm text-red-600 font-normal">
+                    {loginError}
+                  </p>
+                </div>
+              )}
             </div>
             <p className="text-green-500 font-bold text-sm underline">
               <Link href="/forgot-password"> Forgot Password? </Link>
             </p>
-            <Button type="submit">Login</Button>
-            {/*
-           <div className="inline-block"> 
-            <p className="font-light text-sm inline-block">Don't have an account &nbsp;</p>
-            <Link href={'#'} className="text-inline text-bold text-sm text-green-500"><span className="font-bold">Sign Up?</span></Link>
-          </div>
-          */}
+            <Button type="submit" isValid={isValid} disabled={isSubmitting}>
+              Sign in
+            </Button>
           </form>
         </div>
-
         <div className="hidden md:flex flex-[2] relative z-20  pb-6 flex-col justify-between pt-[14px] w-full h-full bgImgCenter circle">
           <div className="">
-            <Link href="/">
-              <div className={"mt-10 pl-[81px]"}>
-                <Logo src={"/svg/login_logo.svg"} width={150} />
-              </div>
-            </Link>
+            <div className={"mt-10 pl-[81px]"}>
+              <Logo src={"/svg/login_logo.svg"} width={150} />
+            </div>
             <div className={"mt-10 pl-[81px]"}>
               <p className="text-white mb-10">Mesh Business Suite</p>
               <p className="text-white font-medium text-2xl">
