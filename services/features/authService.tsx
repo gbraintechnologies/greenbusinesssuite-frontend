@@ -9,6 +9,13 @@ export const login = (username: any, password: any) => {
   return noAuthApi.post("/users/login_for_token", formData);
 };
 
+export const currentlogged = (token: any) => {
+  var formData = new FormData();
+  formData.append("token", token);
+
+  return noAuthApi.post("/users/current_logged_in", formData);
+};
+
 export const setPassword = ({
   user_id,
   current_password,

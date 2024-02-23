@@ -9,17 +9,19 @@ interface IButton extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loadingText?: string
   type?: "button" | "submit" | "reset"
   className?: string
+  isValid?: boolean
 }
 
 const Button: React.FC<IButton> = ({
   children,
   isLoading,
   variant = "filled",
-  color ="primary",
+  color = "primary",
   size = "normal",
   loadingText = "Loading...",
   type = "button",
   className,
+  isValid,
   ...rest
 }) => (
   <button
@@ -28,7 +30,7 @@ const Button: React.FC<IButton> = ({
     className={clsx(
       "disabled:bg-teal-600/50 whitespace-nowrap rounded-md disabled:cursor-not-allowed flex items-center justify-center",
       color === "primary" && {
-        "bg-zinc-300 text-white": variant === "filled",
+        "bg-green-500 text-white": variant === "filled",
         "text-white":
           variant === "outlined",
       },
@@ -48,6 +50,7 @@ const Button: React.FC<IButton> = ({
           variant === "outlined",
       },
       size === "normal" ? "p-4 h-[42px]" : "px-4 h-[40px]",
+      isValid ? "bg-green-500" : "bg-zinc-300",
       className
     )}
   >
