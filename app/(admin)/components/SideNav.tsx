@@ -49,7 +49,7 @@ function SideNav() {
             <Link key={item.name} href={item.link}>
               <li
                 className={`${
-                  pathname === item.link
+                  pathname.includes(item.link)
                     ? "bg-gray-300 text-[#1E293B] font-semibold"
                     : "text-gray-600 "
                 } flex items-center gap-3 w-full mb-1 py-2 px-3 rounded-xl font-medium `}
