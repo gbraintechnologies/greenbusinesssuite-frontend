@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const api = axios.create({
+const noAuthApi = axios.create({
   baseURL: "https://api-mesh-suite-staging.meshapps.io/userapps/v1.0",
 });
 
 // REQUEST INTERCEPTOR
-api.interceptors.request.use(
+noAuthApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
     return {
@@ -15,4 +15,4 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export default api;
+export default noAuthApi;

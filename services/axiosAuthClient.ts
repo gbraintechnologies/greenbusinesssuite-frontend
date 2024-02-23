@@ -2,12 +2,12 @@ import axios from "axios";
 
 import { getToken, getRefreshToken } from "./localService";
 
-const api = axios.create({
+const authApi = axios.create({
   baseURL: "https://api-mesh-suite-staging.meshapps.io/userapps/v1.0",
 });
 
 // REQUEST INTERCEPTOR
-api.interceptors.request.use(
+authApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
     return {
@@ -21,7 +21,7 @@ api.interceptors.request.use(
 );
 
 // RESPONSE INTERCEPTOR: listen for a 401 or 403 then refresh token
-api.interceptors.response.use(
+authApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -42,4 +42,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default authApi;

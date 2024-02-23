@@ -1,11 +1,12 @@
-import api from "../axiosNoAuthClient";
+import noAuthApi from "../axiosNoAuthClient";
+import authApi from "../axiosAuthClient";
 
 export const login = (username: any, password: any) => {
   var formData = new FormData();
   formData.append("username", username);
   formData.append("password", password);
 
-  return api.post("/users/login_for_token", formData);
+  return noAuthApi.post("/users/login_for_token", formData);
 };
 
 export const setPassword = ({
@@ -13,7 +14,7 @@ export const setPassword = ({
   current_password,
   new_password,
 }: any) => {
-  return api.post("/users/set_password", {
+  return authApi.post("/users/set_password", {
     user_id,
     current_password,
     new_password,
@@ -21,7 +22,7 @@ export const setPassword = ({
 };
 
 export const attemptPasswordReset = (email: any) => {
-  return api.post("/users/noauth/attempt_password_reset/", {
+  return noAuthApi.post("/users/noauth/attempt_password_reset/", {
     user_email: email,
   });
 };
