@@ -3,6 +3,9 @@ import React from "react";
 
 // icons
 import { HiOutlineUser } from "react-icons/hi2";
+import { RxCountdownTimer } from "react-icons/rx";
+import { PiBuildingsBold } from "react-icons/pi";
+import { BiTargetLock } from "react-icons/bi";
 
 import { usePathname } from "next/navigation";
 
@@ -15,7 +18,7 @@ function SideNav() {
     },
     {
       name: "Forms",
-      icon: <HiOutlineUser size={20} />,
+      icon: <RxCountdownTimer size={20} />,
       link: "/forms",
     },
     {
@@ -25,19 +28,19 @@ function SideNav() {
     },
     {
       name: "Company setup",
-      icon: <HiOutlineUser size={20} />,
+      icon: <PiBuildingsBold size={20} />,
       link: "/company-setup",
     },
     {
       name: "Jurisdiction setup",
-      icon: <HiOutlineUser size={20} />,
+      icon: <BiTargetLock size={20} />,
       link: "/jurisdiction-setup",
     },
   ];
   const pathname = usePathname();
 
   return (
-    <aside className="w-[20rem] sticky top-[6vh] border-gray-300 border-r bg-[#E2E8F0] px-5 p-2 h-[94vh]">
+    <aside className="w-[20rem] sticky top-[7vh] border-gray-300 border-r bg-[#E2E8F0] px-5 p-2 h-[93vh]">
       <input
         className="w-full shadow-sm border outline-none focus:outline-none font-light border-gray-200 p-2 mt-4 rounded-lg mb-5"
         placeholder="Search"

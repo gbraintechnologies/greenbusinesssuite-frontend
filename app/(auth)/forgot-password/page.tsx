@@ -16,6 +16,7 @@ function ForgotPassword() {
   const runAttempt = () => {
     //
     setLoading(true);
+
     services
       .attemptPasswordReset(email)
       .then((res) => {
