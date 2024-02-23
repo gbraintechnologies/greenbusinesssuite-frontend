@@ -1,7 +1,7 @@
 import React from "react";
 
 function JurisdictionSetup() {
-  return <div>Jurisdiction Setup</div>;
+  return <div></div>;
 }
 
 export default JurisdictionSetup;
