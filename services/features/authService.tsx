@@ -22,7 +22,7 @@ export const setPassword = ({
 };
 
 export const attemptPasswordReset = (email: any) => {
-  return noAuthApi.post("/users/noauth/attempt_password_reset/", {
+  return noAuthApi.post("/users/noauth/attempt_password_reset", {
     user_email: email,
   });
 };
