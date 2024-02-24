@@ -1,3 +1,4 @@
+'use client'
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
@@ -6,13 +7,14 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Mesh Suite",
-  description: "Mesh Suite",
-};
+// export const metadata: Metadata = {
+//   title: "Mesh Suite",
+//   description: "Mesh Suite",
+// };
 
 // Toast Notifications
 import { Toaster } from "react-hot-toast";
+import { AdminProvider } from "@/contexts/AdminContext";
 
 // RTK
 import ReactQueryProvider from "@/lib/ReactQueryProvider/ReactQueryProvider";
@@ -50,10 +52,12 @@ export default function RootLayout({
       <meta name="msapplication-TileColor" content="#da532c" />
       <meta name="theme-color" content="#ffffff"></meta>
       <body className={inter.className}>
-        <ReactQueryProvider>
-          {children}
-          <Toaster />
-        </ReactQueryProvider>
+        <AdminProvider>
+          <ReactQueryProvider>
+            {children}
+            <Toaster />
+          </ReactQueryProvider>
+        </AdminProvider>
       </body>
     </html>
   );

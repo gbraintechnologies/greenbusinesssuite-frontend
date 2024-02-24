@@ -1,8 +1,8 @@
-"use client";
-import React, { useState } from "react";
-import TextInput from "./components/TextInput";
-import PasswordInput from "./components/PasswordInput";
-import Button from "./components/Button";
+'use client'
+import React, { useEffect, useState } from "react";
+import TextInput from './components/TextInput';
+import PasswordInput from './components/PasswordInput';
+import Button from './components/Button';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
@@ -10,10 +10,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
 import Logo from "./components/Logo";
-import { login } from "../../../services/features/authService";
+import { login, currentLoggedIn } from '../../../services/features/authService';
+import useAdmin from "@/hooks/useAdmin";
 
 const schema = yup.object({
-  username: yup.string().required("Email/Username is required"),
+  username: yup
+    .string()
+    .required("Email/Username is required"),
   password: yup
     .string()
     .min(6, "Password must be at least 8 characters")
@@ -22,9 +25,11 @@ const schema = yup.object({
 
 function LogIn() {
   const router = useRouter();
+  const { addAdminData } = useAdmin();
   const [loginError, setLoginError] = useState<string | null>(null);
 
   type typeOfSchema = yup.InferType<typeof schema>;
+
 
   const {
     register,
@@ -39,13 +44,32 @@ function LogIn() {
     },
   });
 
+  const fetchCurrentUser = async (token: string) => {
+    try {
+      return await currentLoggedIn(token);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const token = await login(data.username, data.password);
-      console.log("Login successful. Token:", token);
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Error logging in:", error);
+      if (token?.status === 200) {
+       // console.log(token.data?.access_token)
+        addAdminData(token?.data);
+        const user = await fetchCurrentUser(token.data?.access_token);
+       // alert(JSON.stringify(user))
+        if (user?.data.user_status === 'NEWLY_CREATED') {
+          router.push(`/create-password`);
+        }
+        else {
+          router.push('/dashboard');
+        }
+      }
+    }
+    catch (error) {
+      console.error('Error logging in:', error);
       setLoginError("Incorrect email address and password");
     }
   };
@@ -54,10 +78,7 @@ function LogIn() {
     <div>
       <div className="max-h-screen h-screen flex overflow-hidden">
         <div className="loginFrame flex px-4 md:flex flex-[2] items-center justify-center bg-white p-6 rounded-[20px] shadow-2xl py-12">
-          <form
-            className="flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-12 bg-white p-6 rounded-[20px]"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form className="flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-12 bg-white p-6 rounded-[20px]" onSubmit={handleSubmit(onSubmit)}>
             <h6 className="font-bold text-xl">Sign in</h6>
             <div>
               <TextInput
@@ -81,34 +102,34 @@ function LogIn() {
               />
               {loginError && (
                 <div className="flex items-center justify-start py-2">
-                  <FiAlertCircle fontSize={"small"} color={"red"} />
-                  <p className="ml-2 text-sm text-red-600 font-normal">
-                    {loginError}
-                  </p>
+                  <FiAlertCircle fontSize={'small'} color={'red'} />
+                  <p className="ml-2 text-sm text-red-600 font-normal">{loginError}</p>
                 </div>
               )}
             </div>
             <p className="text-green-500 font-bold text-sm underline">
-              <Link href="/forgot-password"> Forgot Password? </Link>
+              <Link href={'#'}> Forgot Password? </Link>
             </p>
-            <Button type="submit" isValid={isValid} disabled={isSubmitting}>
+            <Button
+              type="submit"
+              isValid={isValid}
+              disabled={isSubmitting}
+            >
               Sign in
             </Button>
           </form>
         </div>
         <div className="hidden md:flex flex-[2] relative z-20  pb-6 flex-col justify-between pt-[14px] w-full h-full bgImgCenter circle">
           <div className="">
-            <div className={"mt-10 pl-[81px]"}>
-              <Logo src={"/svg/login_logo.svg"} width={150} />
+            <div className={'mt-10 pl-[81px]'}>
+              <Logo src={'/svg/login_logo.svg'} width={150} />
             </div>
-            <div className={"mt-10 pl-[81px]"}>
+            <div className={'mt-10 pl-[81px]'}>
               <p className="text-white mb-10">Mesh Business Suite</p>
-              <p className="text-white font-medium text-2xl">
-                Build Collabrative forms quickly and easily
-              </p>
+              <p className="text-white font-medium text-2xl">Build Collabrative forms quickly and easily</p>
             </div>
-            <div className="mt-10">
-              <img src={"/svg/login_icon.svg"} className="login_icon" />
+            <div className="mt-10" >
+              <img src={'/svg/login_icon.svg'} className="login_icon" />
             </div>
           </div>
           <div className="flex flex-col  pl-[81px]">

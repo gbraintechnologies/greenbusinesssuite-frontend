@@ -28,7 +28,7 @@ const Button: React.FC<IButton> = ({
     type={type}
     {...rest}
     className={clsx(
-      "disabled:bg-teal-600/50 whitespace-nowrap rounded-md disabled:cursor-not-allowed flex items-center justify-center",
+      "disabled:bg-green-500 whitespace-nowrap rounded-md disabled:cursor-not-allowed flex items-center justify-center",
       color === "primary" && {
         "bg-green-500 text-white": variant === "filled",
         "text-white":
