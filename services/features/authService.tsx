@@ -31,6 +31,14 @@ export const setPassword = ({
   });
 };
 
+export const changePassword = (user_id: number, current_password: string, new_password: string) => {
+  return authApi.post("/users/change_password", {
+    user_id: user_id,
+    current_password: current_password,
+    new_password: new_password,
+  });
+};
+
 export const attemptPasswordReset = (email: any) => {
   return noAuthApi.post("/users/noauth/attempt_password_reset/", {
     user_email: email,
