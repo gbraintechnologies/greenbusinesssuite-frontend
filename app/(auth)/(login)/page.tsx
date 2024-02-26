@@ -34,7 +34,6 @@ function LogIn() {
 
   useEffect(() => {
     if (admin !== null || admin?.access_token?.length > 10) {
-      toast.success("Already logged in");
       router.push("/dashboard");
     }
   }, [admin]);

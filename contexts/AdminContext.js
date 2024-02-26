@@ -29,6 +29,7 @@ export const AdminProvider = ({ children }) => {
     <AdminContext.Provider
       value={{
         admin,
+        setAdmin,
         addAdminData,
         removeAdmin,
       }}
