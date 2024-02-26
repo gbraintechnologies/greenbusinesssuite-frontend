@@ -1,8 +1,8 @@
 export const getToken = () => {
   // @ts-ignore
-  let user = JSON.parse(localStorage.getItem("user"));
+  let user = JSON.parse(localStorage.getItem("admin"));
   if (user !== null) {
-    return user.accessToken;
+    return user?.access_token;
   } else {
     return 0;
   }
@@ -10,9 +10,9 @@ export const getToken = () => {
 
 export const getRefreshToken = () => {
   // @ts-ignore
-  let user = JSON.parse(localStorage.getItem("user"));
+  let user = JSON.parse(localStorage.getItem("admin"));
   if (user !== null) {
-    return user.accessToken;
+    return user?.refresh_token;
   } else {
     return 0;
   }
