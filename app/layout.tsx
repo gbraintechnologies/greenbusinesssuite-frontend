@@ -17,6 +17,9 @@ import { Toaster } from "react-hot-toast";
 // RTK
 import ReactQueryProvider from "@/lib/ReactQueryProvider/ReactQueryProvider";
 
+// context provider
+import AdminContextProvider from "@/lib/AdminContextProvider/AdminContextProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -51,8 +54,10 @@ export default function RootLayout({
       <meta name="theme-color" content="#ffffff"></meta>
       <body className={inter.className}>
         <ReactQueryProvider>
-          {children}
-          <Toaster />
+          <AdminContextProvider>
+            {children}
+            <Toaster position="top-right" reverseOrder={true} />
+          </AdminContextProvider>
         </ReactQueryProvider>
       </body>
     </html>

@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { getToken, getRefreshToken } from "./localService";
+import services from ".";
 
 const authApi = axios.create({
   baseURL: "https://api-mesh-suite-staging.meshapps.io/userapps/v1.0",
@@ -13,7 +14,8 @@ authApi.interceptors.request.use(
     return {
       ...config,
       headers: {
-        token: getToken(),
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
       },
     };
   },
@@ -36,6 +38,16 @@ authApi.interceptors.response.use(
       originalRequest._retry = true;
 
       //  GET REFRESH TOKEN AND RETRY REQUEST
+
+      console.log("token expired, refresh it", getRefreshToken());
+      // services
+      //   .getNewToken(getRefreshToken())
+      //   .then((res) => {
+      //     console.log("trying to get new token", res?.data);
+      //   })
+      //   .catch((e) => {
+      //     console.log("e", e?.response?.data?.detail);
+      //   });
     }
 
     return Promise.reject(error);

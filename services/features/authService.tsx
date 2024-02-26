@@ -9,11 +9,14 @@ export const login = (username: any, password: any) => {
   return noAuthApi.post("/users/login_for_token", formData);
 };
 
-export const currentlogged = (token: any) => {
-  var formData = new FormData();
-  formData.append("token", token);
+export const getNewToken = (token: any) => {
+  return authApi.post(`/users/refresh_token/?token={token}`, {
+    token,
+  });
+};
 
-  return noAuthApi.post("/users/current_logged_in", formData);
+export const currentLoggedIn = (token: any) => {
+  return noAuthApi.post(`/users/current_logged_in/?token=${token}`);
 };
 
 export const setPassword = ({
@@ -28,8 +31,16 @@ export const setPassword = ({
   });
 };
 
+export const changePassword = (user_id: number, current_password: string, new_password: string) => {
+  return authApi.post("/users/change_password", {
+    user_id: user_id,
+    current_password: current_password,
+    new_password: new_password,
+  });
+};
+
 export const attemptPasswordReset = (email: any) => {
-  return noAuthApi.post("/users/noauth/attempt_password_reset", {
+  return noAuthApi.post("/users/noauth/attempt_password_reset/", {
     user_email: email,
   });
 };

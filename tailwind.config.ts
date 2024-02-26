@@ -13,7 +13,8 @@ const config: Config = {
         // authBg: "url('/public/images/authbg.png')",
       },
       colors: {
-        primary: "#ffffff",
+        "primary-green": "#16A34A",
+        "primary-dark": "#0F172A",
       },
     },
   },

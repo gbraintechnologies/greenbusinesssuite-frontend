@@ -4,10 +4,17 @@ import React from "react";
 // icons
 import { HiOutlineUser } from "react-icons/hi2";
 import { GoShieldLock } from "react-icons/go";
+import { AiOutlineLogout } from "react-icons/ai";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import useAdmin from "@/hooks/useAdmin";
+import toast from "react-hot-toast";
 
 function SettingsSideNav() {
+  const { admin, setAdmin } = useAdmin();
+
+  const router = useRouter();
+
   const navigation = [
     {
       name: "Account",
@@ -27,10 +34,13 @@ function SettingsSideNav() {
       {/* USER INFORMATION & PICTURE */}
       <div className="flex gap-3 items-center mb-5">
         <div className="flex items-center rounded-full justify-center w-14 h-14 bg-gray-100">
-          AK
+          {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
+          {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
         </div>
         <div>
-          <h4 className="font-bold text-lg">Akwesi Konadu</h4>
+          <h4 className="font-bold text-lg">
+            {admin?.first_name} {admin?.last_name}
+          </h4>
           <p className="text-sm font-light">Your personal account</p>
         </div>
       </div>
@@ -53,6 +63,17 @@ function SettingsSideNav() {
           );
         })}
       </ul>
+
+      <button
+        onClick={() => {
+          setAdmin(null);
+          toast.success("Logged out");
+          router.push("/");
+        }}
+        className="text-[#EF4444] flex items-center gap-3 w-full mb-1 py-2 px-3 rounded-xl font-medium "
+      >
+        <AiOutlineLogout size={20} /> Log out
+      </button>
     </aside>
   );
 }

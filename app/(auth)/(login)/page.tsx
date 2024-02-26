@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextInput from "./components/TextInput";
 import PasswordInput from "./components/PasswordInput";
 import Button from "./components/Button";
@@ -10,7 +10,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
 import Logo from "./components/Logo";
-import { login } from "../../../services/features/authService";
+import { login, currentLoggedIn } from "../../../services/features/authService";
+
+// icons
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
+// hooks
+import useAdmin from "@/hooks/useAdmin";
+import toast from "react-hot-toast";
 
 const schema = yup.object({
   username: yup.string().required("Email/Username is required"),
@@ -22,6 +29,15 @@ const schema = yup.object({
 
 function LogIn() {
   const router = useRouter();
+
+  const { addAdminData, admin } = useAdmin();
+
+  useEffect(() => {
+    if (admin !== null || admin?.access_token?.length > 10) {
+      router.push("/dashboard");
+    }
+  }, [admin]);
+
   const [loginError, setLoginError] = useState<string | null>(null);
 
   type typeOfSchema = yup.InferType<typeof schema>;
@@ -39,11 +55,28 @@ function LogIn() {
     },
   });
 
+  const fetchCurrentUser = async (token: string) => {
+    try {
+      return await currentLoggedIn(token);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const token = await login(data.username, data.password);
-      console.log("Login successful. Token:", token);
-      router.push("/dashboard");
+      if (token?.status === 200) {
+        addAdminData(token?.data);
+        const user = await fetchCurrentUser(token.data?.access_token);
+        // alert(JSON.stringify(user))
+        addAdminData(user?.data);
+        if (user?.data.user_status === "NEWLY_CREATED") {
+          router.push(`/create-password`);
+        } else {
+          router.push("/dashboard");
+        }
+      }
     } catch (error) {
       console.error("Error logging in:", error);
       setLoginError("Incorrect email address and password");
@@ -61,7 +94,7 @@ function LogIn() {
             <h6 className="font-bold text-xl">Sign in</h6>
             <div>
               <TextInput
-                label="Email address or phone number"
+                label="Email address or Username"
                 type="text"
                 placeholder="Enter your work email address"
                 autoComplete="off"
@@ -92,7 +125,18 @@ function LogIn() {
               <Link href="/forgot-password"> Forgot Password? </Link>
             </p>
             <Button type="submit" isValid={isValid} disabled={isSubmitting}>
-              Sign in
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  {" "}
+                  <AiOutlineLoading3Quarters
+                    size={16}
+                    className="animate-spin"
+                  />{" "}
+                  Signing in
+                </span>
+              ) : (
+                "Sign in"
+              )}
             </Button>
           </form>
         </div>
