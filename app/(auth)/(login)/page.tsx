@@ -56,10 +56,10 @@ function LogIn() {
     try {
       const token = await login(data.username, data.password);
       if (token?.status === 200) {
-       // console.log(token.data?.access_token)
+        // console.log(token.data?.access_token)
         addAdminData(token?.data);
         const user = await fetchCurrentUser(token.data?.access_token);
-       // alert(JSON.stringify(user))
+        //alert(JSON.stringify(user))
         if (user?.data.user_status === 'NEWLY_CREATED') {
           router.push(`/create-password`);
         }
