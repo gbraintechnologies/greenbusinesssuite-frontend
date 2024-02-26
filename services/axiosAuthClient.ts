@@ -40,14 +40,14 @@ authApi.interceptors.response.use(
       //  GET REFRESH TOKEN AND RETRY REQUEST
 
       console.log("token expired, refresh it", getRefreshToken());
-      services
-        .getNewToken(getRefreshToken())
-        .then((res) => {
-          console.log("trying to get new token", res);
-        })
-        .catch((e) => {
-          console.log("e", e);
-        });
+      // services
+      //   .getNewToken(getRefreshToken())
+      //   .then((res) => {
+      //     console.log("trying to get new token", res?.data);
+      //   })
+      //   .catch((e) => {
+      //     console.log("e", e?.response?.data?.detail);
+      //   });
     }
 
     return Promise.reject(error);

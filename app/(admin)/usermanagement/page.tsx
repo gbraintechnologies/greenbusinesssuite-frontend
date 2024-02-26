@@ -26,14 +26,14 @@ function UserManagement() {
     queryFn: services.allUsers(),
   });
 
-  console.log("data", data);
+  console.log("All Users: ", data);
 
   return (
     <div className="w-full ">
       <Nav />
 
-      {/* Sear5ch and filters */}
-      <div className="flex justify-between my-4">
+      {/* Search and filters */}
+      <div className="flex items-center justify-between my-4">
         <div className="bg-gray-100 text-sm p-1 rounded-lg">
           {filters.map((filter: any) => {
             return (
@@ -82,27 +82,26 @@ function UserManagement() {
         </div>
       ) : (
         <div>
-          {data &&
-            data.map((user: any) => {
-              return (
-                <div className="py-3   w-full flex justify-between px-5 items-center">
-                  <p className="w-6/12 flex gap-3">
-                    <div className="bg-gray-200 w-10 h-10 rounded-full"></div>
-                    <div>
-                      <p className="font-medium">
-                        {user.first_name} {user.last_name}
-                      </p>
-                      <p className="opacity-80 text-sm">{user.email}</p>
-                    </div>
-                  </p>
-                  <p className="w-2/12">N/A</p>
-                  <p className="w-2/12"> N/A</p>
-                  <p className="w-2/12">
-                    <BsThreeDots size={20} />
-                  </p>
-                </div>
-              );
-            })}
+          {data?.map((user: any) => {
+            return (
+              <div className="py-3   w-full flex justify-between px-5 items-center">
+                <p className="w-6/12 flex gap-3">
+                  <div className="bg-gray-200 w-10 h-10 rounded-full"></div>
+                  <div>
+                    <p className="font-medium">
+                      {user.first_name} {user.last_name}
+                    </p>
+                    <p className="opacity-80 text-sm">{user.email}</p>
+                  </div>
+                </p>
+                <p className="w-2/12">N/A</p>
+                <p className="w-2/12"> N/A</p>
+                <p className="w-2/12">
+                  <BsThreeDots size={20} />
+                </p>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

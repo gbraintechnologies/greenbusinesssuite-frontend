@@ -9,8 +9,8 @@ export const login = (username: any, password: any) => {
   return noAuthApi.post("/users/login_for_token", formData);
 };
 
-export const getNewToken = ({ token }: any) => {
-  return authApi.post("/users/refresh_token", {
+export const getNewToken = (token: any) => {
+  return authApi.post(`/users/refresh_token/?token={token}`, {
     token,
   });
 };
