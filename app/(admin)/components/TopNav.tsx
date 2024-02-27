@@ -11,7 +11,7 @@ function TopNav() {
   return (
     <nav className="h-[7vh] bg-[#1E293B] w-full flex justify-between items-center px-5">
       <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
-        <Link href="/dashboard">
+        <Link href="/">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="19"
