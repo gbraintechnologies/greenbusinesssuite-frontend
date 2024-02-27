@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const noAuthApi = axios.create({
-  baseURL: "https://api-mesh-suite-staging.meshapps.io/userapps/v1.0",
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
 });
 
 // REQUEST INTERCEPTOR
