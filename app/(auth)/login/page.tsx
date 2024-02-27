@@ -32,12 +32,6 @@ function LogIn() {
 
   const { addAdminData, admin } = useAdmin();
 
-  useEffect(() => {
-    if (admin !== null || admin?.access_token?.length > 10) {
-      router.push("/dashboard");
-    }
-  }, [admin]);
-
   const [loginError, setLoginError] = useState<string | null>(null);
 
   type typeOfSchema = yup.InferType<typeof schema>;
@@ -74,7 +68,7 @@ function LogIn() {
         if (user?.data.user_status === "NEWLY_CREATED") {
           router.push(`/create-password`);
         } else {
-          router.push("/dashboard");
+          router.push("/");
         }
       }
     } catch (error) {

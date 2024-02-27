@@ -31,7 +31,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (admin === null || admin?.access_token?.length < 10) {
-      router.push("/");
+      router.push("/login");
     } else {
       setLoading(false);
     }

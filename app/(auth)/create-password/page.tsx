@@ -2,7 +2,7 @@ import React from "react";
 import Button from "./components/Button";
 import PasswordInput from "./components/PasswordInput";
 import { FiAlertCircle } from "react-icons/fi";
-import Logo from "../(login)/components/Logo";
+import Logo from "../login/components/Logo";
 import Link from "next/link";
 
 function CreatePassword() {
