@@ -31,29 +31,33 @@ import "./index.css";
 function NewUser() {
   const [loading, setLoading] = useState(false);
 
-  const createNewUser = (values: any) => {
+  const createNewUser = (values: any, resetForm: any) => {
     let data = {
       id: Math.floor(Math.random() * 100000000) + 1,
       email: values.email,
       username: values.firstname,
       first_name: values.firstname,
-      last_name: values.lastName,
-      phone_number: "string",
-      mobile_phone_number: "string",
-      user_status: "string",
+      last_name: values.lastname,
+      phone_number: "233555198100",
+      mobile_phone_number: "233555198100",
+      user_status: "ACTIVE",
     };
 
-    console.log("data", data);
+    let loading = toast.loading("Creating user...");
 
     setLoading(true);
     services
       .createUser(data)
       .then((res) => {
         setLoading(false);
+        resetForm();
+        toast.dismiss(loading);
+        toast.success("Created user successfully");
         console.log("create user", res);
       })
       .catch((e) => {
         setLoading(false);
+        toast.dismiss(loading);
         e?.response?.data?.detail?.map((error: any) => {
           toast.error(error.msg);
         });
@@ -94,8 +98,8 @@ function NewUser() {
       {/* Form */}
       <Formik
         initialValues={initialValues}
-        onSubmit={(values) => {
-          createNewUser(values);
+        onSubmit={(values, { resetForm }) => {
+          createNewUser(values, resetForm);
         }}
         validationSchema={UserSchema}
       >
@@ -147,7 +151,7 @@ function NewUser() {
                 </div>
 
                 <div className="input-holder">
-                  <label>Last Name</label>
+                  <label>Last name</label>
                   <Field
                     style={getStyles(errors, "lastname")}
                     name="lastname"
@@ -163,7 +167,7 @@ function NewUser() {
                 <Field
                   style={getStyles(errors, "lastname")}
                   name="email"
-                  placeholder=""
+                  placeholder="Email"
                 />
                 <ShowError name="email" />
 

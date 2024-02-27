@@ -56,7 +56,7 @@ export default function RootLayout({
         <ReactQueryProvider>
           <AdminContextProvider>
             {children}
-            <Toaster position="top-right" reverseOrder={true} />
+            <Toaster position="bottom-center" reverseOrder={true} />
           </AdminContextProvider>
         </ReactQueryProvider>
       </body>
