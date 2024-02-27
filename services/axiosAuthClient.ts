@@ -4,7 +4,7 @@ import { getToken, getRefreshToken } from "./localService";
 import services from ".";
 
 const authApi = axios.create({
-  baseURL: "https://api-mesh-suite-staging.meshapps.io/userapps/v1.0",
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
 });
 
 // REQUEST INTERCEPTOR
