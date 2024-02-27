@@ -38,7 +38,7 @@ function Nav() {
               <Link href="/usermanagement/new-user">
                 {" "}
                 <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
-                  New User
+                  New user
                 </button>
               </Link>
             </Menu.Item>

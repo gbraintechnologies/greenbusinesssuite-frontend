@@ -5,5 +5,6 @@ export const allUsers = () => {
 };
 
 export const createUser = (data: any) => {
+  console.log("creating with", data);
   return authApi.post("/users/create", data);
 };
