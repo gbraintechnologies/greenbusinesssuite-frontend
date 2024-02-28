@@ -1,7 +1,12 @@
 import axios from "axios";
 
 const noAuthApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL + "/userapps/v1.0",
+  baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}/userapps/v1.0`,
+
+
+
+
+
 });
 
 // REQUEST INTERCEPTOR
