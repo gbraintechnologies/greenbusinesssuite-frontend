@@ -49,7 +49,7 @@ export default function AdminLayout({
           <div className="flex flex-row">
             {!pathname.includes("settings") && <SideNav />}
 
-            <div className="mt-4  w-full px-5 p-2">{children}</div>
+            <div className=" w-full mt-4 px-5 p-2">{children}</div>
           </div>
         </div>
       )}

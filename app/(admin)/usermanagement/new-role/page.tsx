@@ -77,6 +77,7 @@ const RoleSchema = Yup.object().shape({
   roleDescription: Yup.string(),
   permissions: Yup.object().shape(permissionsSchema),
 });
+
 function NewRole() {
   // states
   const [loading, setLoading] = useState(false);
