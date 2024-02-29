@@ -19,6 +19,22 @@ export const currentLoggedIn = (token: any) => {
   return noAuthApi.post(`/users/current_logged_in/?token=${token}`);
 };
 
+export const changePassword = ({
+  user_id,
+  current_password,
+  new_password,
+}: any) => {
+  return authApi.post("/users/change_password/", {
+    user_id,
+    current_password,
+    new_password,
+  });
+};
+
+export const updateUser = (user_id: any, userData: any) => {
+  return authApi.put(`/users/update/${user_id}`, userData);
+};
+
 export const setPassword = ({
   user_id,
   current_password,
@@ -28,14 +44,6 @@ export const setPassword = ({
     user_id,
     current_password,
     new_password,
-  });
-};
-
-export const changePassword = (user_id: number, current_password: string, new_password: string) => {
-  return authApi.post("/users/change_password", {
-    user_id: user_id,
-    current_password: current_password,
-    new_password: new_password,
   });
 };
 
