@@ -66,8 +66,10 @@ function LogIn() {
         // alert(JSON.stringify(user))
         addAdminData(user?.data);
         if (user?.data.user_status === "NEWLY_CREATED") {
+          toast("Create your password");
           router.push(`/create-password`);
         } else {
+          toast.success("Logged in");
           router.push("/");
         }
       }
