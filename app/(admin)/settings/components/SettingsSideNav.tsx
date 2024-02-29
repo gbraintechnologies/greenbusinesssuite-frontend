@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 // icons
 import { HiOutlineUser } from "react-icons/hi2";
@@ -9,6 +9,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 import { usePathname, useRouter } from "next/navigation";
 import useAdmin from "@/hooks/useAdmin";
 import toast from "react-hot-toast";
+import Modal from "@/components/Modal/Modal";
 
 function SettingsSideNav() {
   const { admin, setAdmin } = useAdmin();
@@ -28,6 +29,8 @@ function SettingsSideNav() {
     },
   ];
   const pathname = usePathname();
+
+  const [showLogOutModal, setShowLogOutModal] = useState(false);
 
   return (
     <aside className="w-[20rem] sticky   px-5 p-2">
@@ -66,14 +69,44 @@ function SettingsSideNav() {
 
       <button
         onClick={() => {
-          setAdmin(null);
-          toast.success("Logged out");
-          router.push("/");
+          setShowLogOutModal(true);
         }}
         className="text-[#EF4444] flex items-center gap-3 w-full mb-1 py-2 px-3 rounded-xl font-medium "
       >
         <AiOutlineLogout size={20} /> Log out
       </button>
+
+      <Modal
+        isOpen={showLogOutModal}
+        setIsOpen={setShowLogOutModal}
+        title="Log out of your account"
+      >
+        <div>
+          <p className="px-5 mt-5 text-[#334155]">
+            This action would log you out of this account and require you to log
+            in again to gain access to your account
+          </p>
+
+          <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              onClick={() => setShowLogOutModal(false)}
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              onClick={() => {
+                setAdmin(null);
+                toast.success("Logged out");
+                router.push("/");
+              }}
+            >
+              Yes, log out
+            </button>
+          </div>
+        </div>
+      </Modal>
     </aside>
   );
 }

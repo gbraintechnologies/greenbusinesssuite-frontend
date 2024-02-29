@@ -5,10 +5,19 @@ import { Field, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import React, { useState } from "react";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+
+//
+//
+import { useRouter } from "next/navigation";
+
+// utils
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { CustomCheckbox } from "../components/Customcheckbox";
 import toCamelCase from "@/utils/CamelCase/CamelCase";
+
+// components
+import Modal from "@/components/Modal/Modal";
 
 interface Permission {
   id: number;
@@ -82,6 +91,9 @@ function NewRole() {
   // states
   const [loading, setLoading] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+
+  //
+  const router = useRouter();
 
   //initial values
   const initialValues: FormValues = {
@@ -199,6 +211,37 @@ function NewRole() {
           );
         }}
       </Formik>
+
+      {/* CANCEL MODAL: DISCARD ALL CHANGES */}
+      <Modal
+        isOpen={showCancelModal}
+        setIsOpen={setShowCancelModal}
+        title="Are you sure you want to discard all changes?"
+      >
+        <div>
+          <p className="px-5 mt-5 text-[#334155]">
+            Discard changes would delete all the changes you have made. <br />{" "}
+            Nothing would be saved.
+          </p>
+
+          <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              onClick={() => setShowCancelModal(false)}
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              onClick={() => {
+                router.back();
+              }}
+            >
+              Yes, discard changes
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
