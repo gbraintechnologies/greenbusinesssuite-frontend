@@ -97,9 +97,10 @@ function SettingsSideNav() {
             <button
               className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               onClick={() => {
+                setShowLogOutModal(false);
+                router.push("/");
                 setAdmin(null);
                 toast.success("Logged out");
-                router.push("/");
               }}
             >
               Yes, log out
