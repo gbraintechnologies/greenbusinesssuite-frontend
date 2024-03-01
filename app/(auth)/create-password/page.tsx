@@ -59,14 +59,14 @@ function CreatePassword() {
         new_password: data.new_password
       };
 
-      await setPassword(payload);
+       await setPassword(payload);
 
       toast.success("Password changed Successfully", {
         position: "top-center",
         duration: 3000,
       });
 
-      await updateUserStatus();
+       await updateUserStatus();
       setStatus("success");
 
     } catch (error) {
@@ -98,78 +98,80 @@ function CreatePassword() {
   return (
     <div>
       <div className="flex px-4 md:flex flex-[2] items-center justify-center py-12 mt-20">
-        {status === "main" && (
-          <div className="mb-10">
-            <div className="flex items-left justify-left mb-10">
-              <Link href="/">
-                <Logo src={"/svg/mesh_logo.svg"} width={100} />
-              </Link>
-            </div>
-            <form className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]" onSubmit={handleSubmit(onSubmit)}>
-              <h6 className="font-bold text-xl">Create a new password</h6>
-              <p>Create a new password for your account to secure your account</p>
-              <div>
-                <PasswordInput
-                  label="New password"
-                  placeholder="Enter your password"
-                  autoComplete="off"
-                  {...register("new_password")}
-                  error={errors.new_password?.message}
-                />
-                <p>Password should at least 8 characters long</p>
-              </div>
-              <div className="mb-2">
-                <PasswordInput
-                  label="Confirm Password"
-                  placeholder="Enter your password"
-                  autoComplete="off"
-                  {...register("confirm_password")}
-                  error={errors.confirm_password?.message}
-                />
-                {loginError && (
-                  <div className="flex items-center justify-start py-2">
-                    <FiAlertCircle fontSize={"small"} color={"red"} />
-                    <p className="ml-2 text-sm text-red-600 font-normal">
-                      {loginError}
-                    </p>
-                  </div>
-                )}
-              </div>
-              <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    {" "}
-                    <AiOutlineLoading3Quarters
-                      size={16}
-                      className="animate-spin"
-                    />{" "}
-                    Creating Password
-                  </span>
-                ) : (
-                  "Create Password"
-                )}
-              </Button>
-            </form>
-          </div>
-        )}
-        {status === "success" && (
-          <div className="bg-white rounded-lg max-w-md p-10 mt-20 shadow-md">
-            <h1 className="font-semibold text-2xl">
-              Password creation Successful
-            </h1>
-            <p className="opacity-50 font-light text-sm mt-2 mb-5">
-              Create new password for your Mesh account to secure your account</p>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Button className="" type="submit" onClick={() => {
-                setAdmin(null);
-                router.push("/");
-              }}>
-                Go to Login
-              </Button>
-            </div>
-          </div>
 
-        )}
+        <div className="mb-10">
+          <div className="flex items-left justify-left mb-10">
+            <Link href="/">
+              <Logo src={"/svg/mesh_logo.svg"} width={100} />
+            </Link>
+          </div>
+          {status === "main" && (
+            <div>
+              <form className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]" onSubmit={handleSubmit(onSubmit)}>
+                <h6 className="font-bold text-xl">Create a new password</h6>
+                <p>Create a new password for your account to secure your account</p>
+                <div>
+                  <PasswordInput
+                    label="New password"
+                    placeholder="Enter your password"
+                    autoComplete="off"
+                    {...register("new_password")}
+                    error={errors.new_password?.message}
+                  />
+                  <p>Password should at least 8 characters long</p>
+                </div>
+                <div className="mb-2">
+                  <PasswordInput
+                    label="Confirm Password"
+                    placeholder="Enter your password"
+                    autoComplete="off"
+                    {...register("confirm_password")}
+                    error={errors.confirm_password?.message}
+                  />
+                  {loginError && (
+                    <div className="flex items-center justify-start py-2">
+                      <FiAlertCircle fontSize={"small"} color={"red"} />
+                      <p className="ml-2 text-sm text-red-600 font-normal">
+                        {loginError}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      {" "}
+                      <AiOutlineLoading3Quarters
+                        size={16}
+                        className="animate-spin"
+                      />{" "}
+                      Creating Password
+                    </span>
+                  ) : (
+                    "Create Password"
+                  )}
+                </Button>
+              </form>
+            </div>
+          )}
+          {status === "success" && (
+            <div className="loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]">
+              <h1 className="font-semibold text-2xl">
+                Password creation Successful
+              </h1>
+              <p className="opacity-50 font-light text-sm mt-2 mb-5">
+                Create new password for your Mesh account to secure your account</p>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Button className="" type="submit" onClick={() => {
+                  setAdmin(null);
+                  router.push("/");
+                }}>
+                  Go to Login
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex flex-col mt-20 items-center ">
         <div className="flex items-center gap-x-4 text-xs text-opacity-30 text-black font-medium">
