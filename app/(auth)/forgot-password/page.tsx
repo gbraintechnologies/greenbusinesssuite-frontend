@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import EmailIcon from "@/public/icons/EmailIcon";
 import services from "@/services";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -22,6 +23,7 @@ function ForgotPassword() {
       .then((res) => {
         setLoading(false);
         setStatus("sent");
+        console.log("res", res);
       })
       .catch((e) => {
         setLoading(false);
@@ -77,9 +79,10 @@ function ForgotPassword() {
       )}
 
       {status === "sent" && (
-        <div className="bg-white rounded-lg max-w-md p-10 -mt-[40vh] shadow-md">
-          <h1 className="font-semibold text-lg">
-            Magic link sent to your {email}
+        <div className="bg-white rounded-lg max-w-md p-10 -mt-[30vh] shadow-md">
+          <EmailIcon />
+          <h1 className="font-semibold mt-5 text-lg">
+            Magic link sent to {email}
           </h1>
           <p className="opacity-50 font-light text-sm mt-2 mb-5">
             Thank you. If an account exist with your email address, you should
