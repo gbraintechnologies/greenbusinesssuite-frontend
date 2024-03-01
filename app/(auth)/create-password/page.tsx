@@ -1,47 +1,175 @@
-import React from "react";
+'use client'
+import React, { useEffect, useState } from "react";
 import Button from "./components/Button";
 import PasswordInput from "./components/PasswordInput";
 import { FiAlertCircle } from "react-icons/fi";
 import Logo from "../login/components/Logo";
 import Link from "next/link";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import useAdmin from "@/hooks/useAdmin";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { setPassword, updateUser } from "@/services/features/authService";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
+
+const schema = yup.object({
+  user_id: yup
+    .number(),
+  current_password: yup
+    .string(),
+  new_password: yup
+    .string()
+    .min(6, "Password must be at least 8 characters"),
+  confirm_password: yup
+    .string()
+    .min(6, "Password must be at least 8 characters")
+});
+
 
 function CreatePassword() {
+  const { admin, setAdmin } = useAdmin();
+  const router = useRouter();
+  type typeOfSchema = yup.InferType<typeof schema>;
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [status, setStatus] = useState("main");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors, },
+  } = useForm<typeOfSchema>({
+    resolver: yupResolver(schema),
+    mode: "onChange",
+    defaultValues: {
+      user_id: admin?.id,
+      current_password: "",
+      new_password: ""
+    },
+  });
+
+
+  const onSubmit = async (data: typeOfSchema) => {
+    try {
+      const payload = {
+        user_id: data.user_id,
+        current_password: data.current_password,
+        new_password: data.new_password
+      };
+
+      await setPassword(payload);
+
+      toast.success("Password changed Successfully", {
+        position: "top-center",
+        duration: 3000,
+      });
+
+      await updateUserStatus();
+      setStatus("success");
+
+    } catch (error) {
+      console.error("Error changing password:", error);
+      setLoginError("This should be the same as the password inputed above");
+    }
+  };
+
+  const updateUserStatus = async () => {
+    try {
+      const payload = {
+        id: admin.id,
+        email: admin.email,
+        username: admin.username,
+        first_name: admin.first_name,
+        last_name: admin.last_name,
+        phone_number: admin.phone_number,
+        mobile_phone_number: admin.mobile_phone_number,
+        user_status: 'ACTIVE'
+      };
+
+      await updateUser(payload.id, payload);
+    } catch (error) {
+      console.error("Error updating user status:", error);
+    }
+  };
+
+
   return (
     <div>
       <div className="flex px-4 md:flex flex-[2] items-center justify-center py-12 mt-20">
-        <div className="mb-10">
-          <div className="flex items-left justify-left mb-10">
-            <Link href="/">
-              <Logo src={"/svg/mesh_logo.svg"} width={100} />
-            </Link>
-          </div>
-          <form className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px] ">
-            <h6 className="font-bold text-xl">Create a new password</h6>
-            <p>Create a new password for your account to secure your account</p>
-            <div>
-              <PasswordInput
-                label="New password"
-                placeholder="Enter your password"
-                autoComplete="off"
-              />
-              <p>Password should at least 8 characters long</p>
+        {status === "main" && (
+          <div className="mb-10">
+            <div className="flex items-left justify-left mb-10">
+              <Link href="/">
+                <Logo src={"/svg/mesh_logo.svg"} width={100} />
+              </Link>
             </div>
-            <div className="mb-2">
-              <PasswordInput
-                label="Confirm Password"
-                placeholder="Enter your password"
-                autoComplete="off"
-              />
-              <div className="flex items-center justify-start py-2">
-                <FiAlertCircle fontSize={"small"} color={"red"} />
-                <p className="ml-2 text-sm text-red-600 font-normal">
-                  This should be the same as the password inputed above
-                </p>
+            <form className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]" onSubmit={handleSubmit(onSubmit)}>
+              <h6 className="font-bold text-xl">Create a new password</h6>
+              <p>Create a new password for your account to secure your account</p>
+              <div>
+                <PasswordInput
+                  label="New password"
+                  placeholder="Enter your password"
+                  autoComplete="off"
+                  {...register("new_password")}
+                  error={errors.new_password?.message}
+                />
+                <p>Password should at least 8 characters long</p>
               </div>
+              <div className="mb-2">
+                <PasswordInput
+                  label="Confirm Password"
+                  placeholder="Enter your password"
+                  autoComplete="off"
+                  {...register("confirm_password")}
+                  error={errors.confirm_password?.message}
+                />
+                {loginError && (
+                  <div className="flex items-center justify-start py-2">
+                    <FiAlertCircle fontSize={"small"} color={"red"} />
+                    <p className="ml-2 text-sm text-red-600 font-normal">
+                      {loginError}
+                    </p>
+                  </div>
+                )}
+              </div>
+              <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    {" "}
+                    <AiOutlineLoading3Quarters
+                      size={16}
+                      className="animate-spin"
+                    />{" "}
+                    Creating Password
+                  </span>
+                ) : (
+                  "Create Password"
+                )}
+              </Button>
+            </form>
+          </div>
+        )}
+        {status === "success" && (
+          <div className="bg-white rounded-lg max-w-md p-10 mt-20 shadow-md">
+            <h1 className="font-semibold text-2xl">
+              Password creation Successful
+            </h1>
+            <p className="opacity-50 font-light text-sm mt-2 mb-5">
+              Create new password for your Mesh account to secure your account</p>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button className="" type="submit" onClick={() => {
+                setAdmin(null);
+                router.push("/");
+              }}>
+                Go to Login
+              </Button>
             </div>
-            <Button type="submit">Create New Password</Button>
-          </form>
-        </div>
+          </div>
+
+        )}
       </div>
       <div className="flex flex-col mt-20 items-center ">
         <div className="flex items-center gap-x-4 text-xs text-opacity-30 text-black font-medium">
