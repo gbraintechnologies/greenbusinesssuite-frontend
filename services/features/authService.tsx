@@ -10,7 +10,7 @@ export const login = (username: any, password: any) => {
 };
 
 export const getNewToken = (token: any) => {
-  return authApi.post(`/users/refresh_token/?token={token}`, {
+  return authApi.post(`/users/refresh_token/?token=${token}`, {
     token,
   });
 };

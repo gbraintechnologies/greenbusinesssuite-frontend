@@ -3,7 +3,12 @@
 import React, { useState } from "react";
 
 //
+import { MdOutlineEdit } from "react-icons/md";
+
+//
 import services from "@/services";
+
+import Image from "next/image";
 
 // icons
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
@@ -27,15 +32,20 @@ import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 
 // css
 import "./index.css";
+import BigUserIcon from "@/public/icons/BigUserIcon";
+
+// hooks
+import useFileUpload from "@/hooks/useFileUpload";
 
 function NewUser() {
   const [loading, setLoading] = useState(false);
 
-  const createNewUser = (values: any, resetForm: any) => {
+  const { handleFileUpload, loadingFile } = useFileUpload();
+
+  const createNewUser = async (values: any, resetForm: any) => {
     let data = {
-      id: Math.floor(Math.random() * 100000000) + 1,
       email: values.email,
-      username: values.firstname,
+      username: values.firstname.toLowerCase() + values.lastname.toLowerCase(),
       first_name: values.firstname,
       last_name: values.lastname,
       phone_number: "233555198100",
@@ -45,12 +55,24 @@ function NewUser() {
 
     let loading = toast.loading("Creating user...");
 
+    // upload image first, then use image url when creating user
+    const profilePicURL =
+      profileImage && (await handleFileUpload(profileImage as File));
+
+    const custom_profiles = [
+      {
+        custom_profile_item_id: 1,
+        value: profilePicURL?.file_url || "",
+      },
+    ];
+
     setLoading(true);
     services
-      .createUser(data)
+      .createUserWithCustomProfiles(data, custom_profiles)
       .then((res) => {
         setLoading(false);
         resetForm();
+        setProfileImage(null);
         toast.dismiss(loading);
         toast.success("Created user successfully");
         console.log("create user", res);
@@ -73,6 +95,8 @@ function NewUser() {
   const router = useRouter();
 
   const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const [profileImage, setProfileImage] = useState<File | null>(null);
 
   // status:  ACTIVE, INACTIVE
 
@@ -98,6 +122,8 @@ function NewUser() {
       .required("Email address is required"),
   });
 
+  const inputFileRef = React.useRef();
+
   return (
     <div>
       {/* Form */}
@@ -116,6 +142,7 @@ function NewUser() {
 
               <div className="flex gap-3">
                 <button
+                  type="button"
                   onClick={() => setShowCancelModal(true)}
                   className="bg-gray-50 border border-gray-200 shadow-sm py-2 flex text-primary-dark text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
                 >
@@ -139,6 +166,48 @@ function NewUser() {
                   )}
                 </button>
               </div>
+            </div>
+
+            {/* profile picture */}
+            <div className="relative w-[140px] h-[140px] rounded-full">
+              {profileImage ? (
+                <div className="rounded-full overflow-hidden w-[140px] h-[140px]">
+                  <Image
+                    src={URL.createObjectURL(profileImage)}
+                    alt="profile"
+                    width={140}
+                    height={140}
+                    className="rounded-full h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="rounded-full  flex items-center justify-center w-[140px] h-[140px] bg-slate-50">
+                  <BigUserIcon />
+                </div>
+              )}
+
+              <input
+                type="file"
+                // @ts-ignore
+                ref={inputFileRef}
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  setProfileImage(e.target.files && e.target.files[0]);
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={() => {
+                  // @ts-ignore
+                  inputFileRef?.current?.click();
+                }}
+                className="absolute flex items-center gap-1 border hover:bg-gray-100 border-gray-300 text-sm bg-white rounded-lg px-3 py-1 bottom-4 -right-8"
+              >
+                <MdOutlineEdit />
+                Edit
+              </button>
             </div>
 
             {/* FORM */}

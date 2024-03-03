@@ -1,7 +1,9 @@
 import axios from "axios";
 
 import { getToken, getRefreshToken } from "./localService";
+
 import services from ".";
+import toast from "react-hot-toast";
 
 const authApi = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/userapps/v1.0`,
@@ -39,15 +41,36 @@ authApi.interceptors.response.use(
 
       //  GET REFRESH TOKEN AND RETRY REQUEST
 
-      console.log("token expired, refresh it", getRefreshToken());
-      // services
-      //   .getNewToken(getRefreshToken())
-      //   .then((res) => {
-      //     console.log("trying to get new token", res?.data);
-      //   })
-      //   .catch((e) => {
-      //     console.log("e", e?.response?.data?.detail);
-      //   });
+      services
+        .getNewToken(getRefreshToken())
+        .then((res) => {
+          // @ts-ignore
+          const admin = JSON.parse(localStorage.getItem("admin"));
+          console.log("get new token and set");
+          localStorage.setItem(
+            "admin",
+            JSON.stringify({
+              access_token: res?.data?.access_token,
+              ...admin,
+            })
+          );
+
+          // return
+          return axios({
+            ...originalRequest,
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          });
+        })
+        .catch((e) => {
+          console.log("Unable to refresh token", e);
+          // @ts-ignore
+          localStorage.setItem("admin", null);
+          window.location.replace("/login");
+          window.location.reload();
+          toast.error("Please login to continue");
+        });
     }
 
     return Promise.reject(error);
