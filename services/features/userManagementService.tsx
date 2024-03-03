@@ -9,6 +9,10 @@ export const searchUsers = (filter_word: any) => {
     authApi.get(`/users/search_users/${filter_word}`).then((res) => res.data);
 };
 
+export const allUsersByRole = (role_id: any, role_name: any) => {
+  return authApi.get(`/users/byrole/${role_id}?role_name=${role_name}`);
+};
+
 export const createUser = (data: any) => {
   return authApi.post("/users/create", data);
 };

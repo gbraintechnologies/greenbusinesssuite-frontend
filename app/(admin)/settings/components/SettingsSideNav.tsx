@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import useAdmin from "@/hooks/useAdmin";
 import toast from "react-hot-toast";
 import Modal from "@/components/Modal/Modal";
+import Image from "next/image";
 
 function SettingsSideNav() {
   const { admin, setAdmin } = useAdmin();
@@ -36,9 +37,28 @@ function SettingsSideNav() {
     <aside className="w-[20rem] sticky   px-5 p-2">
       {/* USER INFORMATION & PICTURE */}
       <div className="flex gap-3 items-center mb-5">
-        <div className="flex items-center rounded-full justify-center w-14 h-14 bg-gray-100">
-          {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
-          {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
+        <div className="flex items-center">
+          {admin?.custom_profile_values &&
+          admin?.custom_profile_values.find(
+            (item: any) => item.custom_profile_item_id === 1
+          )?.value?.length > 1 ? (
+            <Image
+              alt="profile"
+              src={
+                admin?.custom_profile_values.find(
+                  (item: any) => item.custom_profile_item_id === 1
+                ).value
+              }
+              width={80}
+              height={80}
+              className="rounded-full w-16 h-16 object-cover"
+            />
+          ) : (
+            <button className="w-10 h-10 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
+              {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
+              {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
+            </button>
+          )}
         </div>
         <div>
           <h4 className="font-bold text-lg">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //
 import { MdOutlineEdit } from "react-icons/md";
@@ -40,6 +40,7 @@ import useFileUpload from "@/hooks/useFileUpload";
 //
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 import Dropdown from "@/components/Dropdown/Dropdown";
+import { useQuery } from "@tanstack/react-query";
 
 function NewUser() {
   const [loading, setLoading] = useState(false);
@@ -47,10 +48,35 @@ function NewUser() {
   const [phone, setPhone] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
 
-  const roles = [
-    { id: 1, value: "first role", label: "first role" },
-    { id: 2, value: "first role", label: "second role" },
-  ];
+  // Get ALL MESH BUSINESS SUITE ROLES
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["mesh roles"],
+    enabled: false,
+    // ID OF MESH APP IS 1 IN DB
+    queryFn: services.getMeshBusinessSuiteRoles(1),
+  });
+
+  // FETCH ROLES ON MOUNT
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    if (data) {
+      let temp = [];
+      for (let i = 0; i < data.length; i++) {
+        temp.push({
+          id: data[i].id,
+          value: data[i].id,
+          label: data[i].role_name,
+        });
+      }
+      // @ts-ignore
+      setRoles(temp);
+    }
+  }, [data, isLoading]);
 
   const { handleFileUpload, loadingFile } = useFileUpload();
 
@@ -65,7 +91,7 @@ function NewUser() {
       user_status: "ACTIVE",
     };
 
-    let loading = toast.loading("Creating user...");
+    let loading = toast.loading("Creating user. Please wait...");
 
     // upload image first, then use image url when creating user
     const profilePicURL =
@@ -83,16 +109,34 @@ function NewUser() {
       .createUserWithCustomProfiles(data, custom_profiles)
       .then((res: any) => {
         setLoading(false);
-        resetForm();
-        setProfileImage(null);
-        setPhone("");
-        setSelectedRole(null);
-        toast.dismiss(loading);
-        toast.success("Created user successfully");
 
+        toast.dismiss(loading);
+
+        // ASSIGN ROLE TO CREATED USER
+        services
+          //@ts-ignore
+          .assignRoleToUser(res.data.id, selectedRole?.value)
+          .then((res) => {
+            toast.success(
+              // @ts-ignore
+              `Assigned ${selectedRole?.label} role to ${data.first_name}`
+            );
+          })
+          .catch((e: any) => {
+            //
+            console.log("error asinging", e);
+          });
+
+        // NOTIFY USER OF TEMP CREDENTIALS
         services
           .notifyUserTempCred(res?.data?.id, "EMAIL")
           .then((res) => {
+            resetForm();
+            setProfileImage(null);
+            setPhone("");
+            setSelectedRole(null);
+            toast.success(`Temporary password sent to ${data.email}`);
+            toast.success("Created user successfully");
             console.log("notify user", res);
           })
           .catch((e) => {
@@ -147,7 +191,7 @@ function NewUser() {
   const inputFileRef = React.useRef();
 
   return (
-    <div>
+    <div className="pb-40 px-5">
       {/* Form */}
       <Formik
         initialValues={initialValues}
