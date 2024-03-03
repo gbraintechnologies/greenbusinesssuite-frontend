@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import Button from "./components/Button";
 import PasswordInput from "./components/PasswordInput";
@@ -14,20 +14,14 @@ import toast from "react-hot-toast";
 import { setPassword, updateUser } from "@/services/features/authService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-
 const schema = yup.object({
-  user_id: yup
-    .number(),
-  current_password: yup
-    .string(),
-  new_password: yup
-    .string()
-    .min(6, "Password must be at least 8 characters"),
+  user_id: yup.number(),
+  current_password: yup.string(),
+  new_password: yup.string().min(6, "Password must be at least 8 characters"),
   confirm_password: yup
     .string()
-    .min(6, "Password must be at least 8 characters")
+    .min(6, "Password must be at least 8 characters"),
 });
-
 
 function CreatePassword() {
   const { admin, setAdmin } = useAdmin();
@@ -39,36 +33,34 @@ function CreatePassword() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors, },
+    formState: { isSubmitting, errors },
   } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
       user_id: admin?.id,
       current_password: "",
-      new_password: ""
+      new_password: "",
     },
   });
-
 
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const payload = {
         user_id: data.user_id,
         current_password: data.current_password,
-        new_password: data.new_password
+        new_password: data.new_password,
       };
 
-       await setPassword(payload);
+      await setPassword(payload);
 
       toast.success("Password changed Successfully", {
         position: "top-center",
         duration: 3000,
       });
 
-       await updateUserStatus();
+      await updateUserStatus();
       setStatus("success");
-
     } catch (error) {
       console.error("Error changing password:", error);
       setLoginError("This should be the same as the password inputed above");
@@ -85,7 +77,7 @@ function CreatePassword() {
         last_name: admin.last_name,
         phone_number: admin.phone_number,
         mobile_phone_number: admin.mobile_phone_number,
-        user_status: 'ACTIVE'
+        user_status: "ACTIVE",
       };
 
       await updateUser(payload.id, payload);
@@ -94,11 +86,9 @@ function CreatePassword() {
     }
   };
 
-
   return (
     <div>
       <div className="flex px-4 md:flex flex-[2] items-center justify-center py-12 mt-20">
-
         <div className="mb-10">
           <div className="flex items-left justify-left mb-10">
             <Link href="/">
@@ -107,9 +97,14 @@ function CreatePassword() {
           </div>
           {status === "main" && (
             <div>
-              <form className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]" onSubmit={handleSubmit(onSubmit)}>
+              <form
+                className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]"
+                onSubmit={handleSubmit(onSubmit)}
+              >
                 <h6 className="font-bold text-xl">Create a new password</h6>
-                <p>Create a new password for your account to secure your account</p>
+                <p>
+                  Create a new password for your account to secure your account
+                </p>
                 <div>
                   <PasswordInput
                     label="New password"
@@ -137,7 +132,11 @@ function CreatePassword() {
                     </div>
                   )}
                 </div>
-                <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">
                       {" "}
@@ -160,12 +159,23 @@ function CreatePassword() {
                 Password creation Successful
               </h1>
               <p className="opacity-50 font-light text-sm mt-2 mb-5">
-                Create new password for your Mesh account to secure your account</p>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Button className="" type="submit" onClick={() => {
-                  setAdmin(null);
-                  router.push("/");
-                }}>
+                Create new password for your Mesh account to secure your account
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  className=""
+                  type="submit"
+                  onClick={() => {
+                    setAdmin(null);
+                    router.push("/");
+                  }}
+                >
                   Go to Login
                 </Button>
               </div>

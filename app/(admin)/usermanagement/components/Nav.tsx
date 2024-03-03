@@ -10,7 +10,7 @@ import Link from "next/link";
 
 function Nav() {
   return (
-    <div className="w-full text-[#0F172A]  flex justify-between">
+    <div className="w-full text-[#0F172A] px-5  flex justify-between">
       <div>
         <h3 className="font-semibold text-xl">User Management</h3>
         <p className="font-light">Manage all users</p>

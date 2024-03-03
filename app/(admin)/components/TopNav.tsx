@@ -3,6 +3,7 @@ import React from "react";
 
 // hooks
 import useAdmin from "@/hooks/useAdmin";
+import Image from "next/image";
 
 function TopNav() {
   //
@@ -32,10 +33,27 @@ function TopNav() {
       <div className="flex items-center gap-3">
         <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20"></div>
         <Link href="/settings">
-          <button className="w-8 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
-            {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
-            {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
-          </button>
+          {admin?.custom_profile_values &&
+          admin?.custom_profile_values.find(
+            (item: any) => item.custom_profile_item_id === 1
+          )?.value?.length > 1 ? (
+            <Image
+              alt="profile"
+              src={
+                admin?.custom_profile_values.find(
+                  (item: any) => item?.custom_profile_item_id === 1
+                ).value
+              }
+              width={32}
+              height={32}
+              className="rounded-full w-8 h-8 object-cover"
+            />
+          ) : (
+            <button className="w-8 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
+              {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
+              {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
+            </button>
+          )}
         </Link>
       </div>
     </nav>

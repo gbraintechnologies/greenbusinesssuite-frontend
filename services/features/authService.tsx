@@ -9,12 +9,6 @@ export const login = (username: any, password: any) => {
   return noAuthApi.post("/users/login_for_token", formData);
 };
 
-export const getNewToken = (token: any) => {
-  return authApi.post(`/users/refresh_token/?token={token}`, {
-    token,
-  });
-};
-
 export const currentLoggedIn = (token: any) => {
   return noAuthApi.post(`/users/current_logged_in/?token=${token}`);
 };
@@ -50,5 +44,12 @@ export const setPassword = ({
 export const attemptPasswordReset = (email: any) => {
   return noAuthApi.post("/users/noauth/attempt_password_reset/", {
     user_email: email,
+  });
+};
+
+export const notifyUserTempCred = (id: any, channel: string) => {
+  return noAuthApi.post("/users/noauth/notify_user_temp_cred/", {
+    user_id: id,
+    channel: channel,
   });
 };

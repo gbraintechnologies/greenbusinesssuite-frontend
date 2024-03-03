@@ -115,7 +115,7 @@ function NewRole() {
   };
 
   return (
-    <div>
+    <div className="px-5 pb-20">
       <Formik
         initialValues={initialValues}
         validationSchema={RoleSchema}

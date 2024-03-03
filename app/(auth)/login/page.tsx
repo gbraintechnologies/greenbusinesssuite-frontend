@@ -65,7 +65,11 @@ function LogIn() {
         const user = await fetchCurrentUser(token.data?.access_token);
         // alert(JSON.stringify(user))
         addAdminData(user?.data);
-        if (user?.data.user_status === "NEWLY_CREATED") {
+        if (
+          user?.data.user_status === "NEWLY_CREATED"
+          // ||
+          // user?.data.user_status === "TEMP_CREDENTIALS"
+        ) {
           toast("Create your password");
           router.push(`/create-password`);
         } else {
@@ -90,9 +94,9 @@ function LogIn() {
             <h6 className="font-bold text-xl">Sign in</h6>
             <div>
               <TextInput
-                label="Email address or Username"
+                label="Username"
                 type="text"
-                placeholder="Enter your work email address"
+                placeholder="Enter your username"
                 autoComplete="off"
                 {...register("username")}
                 error={errors.username?.message}

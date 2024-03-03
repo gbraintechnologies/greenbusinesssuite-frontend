@@ -1,0 +1,20 @@
+import React from "react";
+
+import Select from "react-select";
+
+//
+import "./index.css";
+
+function Dropdown({ options, selected, setSelected }: any) {
+  return (
+    <Select
+      className="border-0 flex-1"
+      isSearchable={true}
+      options={options}
+      value={selected}
+      onChange={(selected: any) => setSelected(selected)}
+    />
+  );
+}
+
+export default Dropdown;

@@ -2,8 +2,12 @@
 
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import EmailIcon from "@/public/icons/EmailIcon";
+
+//
 import services from "@/services";
 import Link from "next/link";
+
+//
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -72,7 +76,7 @@ function ForgotPassword() {
               className="w-full disabled:cursor-not-allowed disabled:opacity-80 px-4 py-3 hover:bg-opacity-80 rounded-lg bg-[#16A34A] text-white"
               type="submit"
             >
-              {loading ? <LoadingIcon /> : " Send reset instructions"}
+              {loading ? <LoadingIcon /> : "Send reset instructions"}
             </button>
           </form>
         </div>
