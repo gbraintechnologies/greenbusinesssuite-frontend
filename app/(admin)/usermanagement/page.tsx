@@ -9,6 +9,7 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 // icons
 import { BsThreeDots } from "react-icons/bs";
 import SearchIcon from "@/public/icons/SearchIcon";
+import Image from "next/image";
 
 function UserManagement() {
   const [filters, setFilters] = useState([
@@ -121,7 +122,24 @@ function UserManagement() {
               return (
                 <div className="py-3   w-full flex justify-between px-5 items-center">
                   <p className="w-6/12 flex gap-3">
-                    <div className="bg-gray-200 w-10 h-10 rounded-full"></div>
+                    {user.custom_profile_values &&
+                    user.custom_profile_values.find(
+                      (item: any) => item.custom_profile_item_id === 1
+                    ) ? (
+                      <Image
+                        alt="profile"
+                        src={
+                          user.custom_profile_values.find(
+                            (item: any) => item.custom_profile_item_id === 1
+                          ).value
+                        }
+                        width={10}
+                        height={10}
+                        className="rounded-full w-10 h-10 object-cover"
+                      />
+                    ) : (
+                      <div className="bg-gray-200 w-10 h-10 rounded-full"></div>
+                    )}
                     <div>
                       <p className="font-medium">
                         {user.first_name} {user.last_name}
