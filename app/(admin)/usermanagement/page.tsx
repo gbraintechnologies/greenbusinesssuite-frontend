@@ -10,6 +10,7 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { BsThreeDots } from "react-icons/bs";
 import SearchIcon from "@/public/icons/SearchIcon";
 import Image from "next/image";
+import UserIcon from "@/public/icons/UserIcon";
 
 function UserManagement() {
   const [filters, setFilters] = useState([
@@ -125,7 +126,7 @@ function UserManagement() {
                     {user.custom_profile_values &&
                     user.custom_profile_values.find(
                       (item: any) => item.custom_profile_item_id === 1
-                    ) ? (
+                    )?.value?.length > 1 ? (
                       <Image
                         alt="profile"
                         src={
@@ -133,12 +134,14 @@ function UserManagement() {
                             (item: any) => item.custom_profile_item_id === 1
                           ).value
                         }
-                        width={10}
-                        height={10}
+                        width={100}
+                        height={100}
                         className="rounded-full w-10 h-10 object-cover"
                       />
                     ) : (
-                      <div className="bg-gray-200 w-10 h-10 rounded-full"></div>
+                      <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
+                        <UserIcon />
+                      </div>
                     )}
                     <div>
                       <p className="font-medium">

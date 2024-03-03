@@ -37,8 +37,20 @@ import BigUserIcon from "@/public/icons/BigUserIcon";
 // hooks
 import useFileUpload from "@/hooks/useFileUpload";
 
+//
+import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
+import Dropdown from "@/components/Dropdown/Dropdown";
+
 function NewUser() {
   const [loading, setLoading] = useState(false);
+
+  const [phone, setPhone] = useState("");
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  const roles = [
+    { id: 1, value: "first role", label: "first role" },
+    { id: 2, value: "first role", label: "second role" },
+  ];
 
   const { handleFileUpload, loadingFile } = useFileUpload();
 
@@ -48,8 +60,8 @@ function NewUser() {
       username: values.firstname.toLowerCase() + values.lastname.toLowerCase(),
       first_name: values.firstname,
       last_name: values.lastname,
-      phone_number: "233555198100",
-      mobile_phone_number: "233555198100",
+      phone_number: phone,
+      mobile_phone_number: phone,
       user_status: "ACTIVE",
     };
 
@@ -69,13 +81,23 @@ function NewUser() {
     setLoading(true);
     services
       .createUserWithCustomProfiles(data, custom_profiles)
-      .then((res) => {
+      .then((res: any) => {
         setLoading(false);
         resetForm();
         setProfileImage(null);
+        setPhone("");
+        setSelectedRole(null);
         toast.dismiss(loading);
         toast.success("Created user successfully");
-        console.log("create user", res);
+
+        services
+          .notifyUserTempCred(res?.data?.id, "EMAIL")
+          .then((res) => {
+            console.log("notify user", res);
+          })
+          .catch((e) => {
+            console.log("error notifying", e);
+          });
       })
       .catch((e) => {
         setLoading(false);
@@ -251,19 +273,21 @@ function NewUser() {
               </div>
 
               {/* Phone */}
-              {/* <div className="input-holder">
-                <label>Phone Number</label>
-                <PhoneSelector phone={phone} setPhone={setPhone} />
-              </div> */}
+              <div className="input-holder">
+                <label>Phone number</label>
+                <div className="w-[50%]">
+                  <PhoneSelector phone={phone} setPhone={setPhone} />
+                </div>
+              </div>
 
-              {/* <div className="input-holder">
+              <div className="input-holder">
                 <label>Roles</label>
-
-                <RoleSelector
-                setSelected={setSelectedRole}
-                selected={selectedRole}
-              />
-              </div> */}
+                <Dropdown
+                  selected={selectedRole}
+                  setSelected={setSelectedRole}
+                  options={roles}
+                />
+              </div>
             </div>
           </Form>
         )}

@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Modal from "../../../../components/Modal/Modal";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const schema = yup.object({
   id: yup.number(),
@@ -20,7 +21,7 @@ const schema = yup.object({
   lastName: yup.string(),
   email: yup.string(),
   mobile_phone: yup.string(),
-  username: yup.string()
+  username: yup.string(),
 });
 
 function Account() {
@@ -28,7 +29,6 @@ function Account() {
   type typeOfSchema = yup.InferType<typeof schema>;
   const router = useRouter();
   const [showCancelModal, setShowCancelModal] = useState(false);
-
 
   const {
     register,
@@ -45,7 +45,7 @@ function Account() {
       status: admin?.user_status,
       email: admin?.email,
       username: admin?.username,
-      mobile_phone: admin?.mobile_phone_number
+      mobile_phone: admin?.mobile_phone_number,
     },
   });
 
@@ -58,10 +58,10 @@ function Account() {
       last_name: data.lastName,
       phone_number: data.phone,
       mobile_phone_number: data.mobile_phone,
-      user_status: data.status
-    }
+      user_status: data.status,
+    };
 
-    await updateUser(payload.id, payload)
+    await updateUser(payload.id, payload);
     toast.success("Changes saved Successfully", {
       position: "top-center",
       duration: 3000,
@@ -69,8 +69,7 @@ function Account() {
     setAdmin(null);
     toast.success("Logged out");
     router.push("/");
-  }
-
+  };
 
   return (
     <>
@@ -82,35 +81,27 @@ function Account() {
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div style={{ flex: 1 }} className="mt-10">
             <div style={{ textAlign: "center" }} className="mb-7">
-              <div
-                style={{ position: "relative", width: "150px", height: "150px" }}
-              >
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="JK"
-                  style={{
-                    borderRadius: "50%",
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
+              {admin?.custom_profile_values &&
+              admin?.custom_profile_values.find(
+                (item: any) => item.custom_profile_item_id === 1
+              )?.value?.length > 1 ? (
+                <Image
+                  alt="profile"
+                  src={
+                    admin?.custom_profile_values.find(
+                      (item: any) => item.custom_profile_item_id === 1
+                    ).value
+                  }
+                  width={150}
+                  height={150}
+                  className="rounded-full w-32 h-32 object-cover"
                 />
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    textAlign: "center",
-                    color: "white",
-                    fontSize: "60px",
-                    fontWeight: "bold",
-                  }}
-                >
+              ) : (
+                <button className="w-20 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
                   {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
                   {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
-                </div>
-              </div>
+                </button>
+              )}
             </div>
             <div style={{ display: "flex", justifyContent: "center" }}>
               <form
@@ -195,7 +186,8 @@ function Account() {
         >
           <div>
             <p className="px-5 mt-5 text-[#334155]">
-              This action will log out of this account and require you to log in again to gain access to your account
+              This action will log out of this account and require you to log in
+              again to gain access to your account
             </p>
 
             <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">

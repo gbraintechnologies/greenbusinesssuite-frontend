@@ -2,7 +2,6 @@ import axios from "axios";
 
 import { getToken, getRefreshToken } from "./localService";
 
-import services from ".";
 import toast from "react-hot-toast";
 
 const authApi = axios.create({
@@ -41,8 +40,8 @@ authApi.interceptors.response.use(
 
       //  GET REFRESH TOKEN AND RETRY REQUEST
 
-      services
-        .getNewToken(getRefreshToken())
+      axios
+        .post(`/users/refresh_token/?token=${getRefreshToken()}`)
         .then((res) => {
           // @ts-ignore
           const admin = JSON.parse(localStorage.getItem("admin"));
