@@ -63,12 +63,10 @@ function LogIn() {
       if (token?.status === 200) {
         addAdminData(token?.data);
         const user = await fetchCurrentUser(token.data?.access_token);
-        // alert(JSON.stringify(user))
+         console.log(JSON.stringify(user))
         addAdminData(user?.data);
         if (
-          user?.data.user_status === "NEWLY_CREATED"
-          // ||
-          // user?.data.user_status === "TEMP_CREDENTIALS"
+          user?.data.user_status === "TEMP_CREDENTIALS"
         ) {
           toast("Create your password");
           router.push(`/create-password`);
