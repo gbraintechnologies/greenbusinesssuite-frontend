@@ -115,7 +115,7 @@ function NewRole() {
  
     const {roleName, roleDescription} = values;
 
-    let loading = toast.loading("Creating user. Please wait...");
+    let loading = toast.loading("Creating role. Please wait...");
 
     try {
       const response = await services.createRole({name: roleName, description: roleDescription});
