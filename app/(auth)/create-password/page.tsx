@@ -11,9 +11,11 @@ import { useForm } from "react-hook-form";
 import useAdmin from "@/hooks/useAdmin";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { setPassword, updateUser } from "@/services/features/authService";
+import { changePassword, setPassword, updateUser } from "@/services/features/authService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SuccessIcon from "@/public/icons/SuccessIcon";
+import { useSearchParams } from 'next/navigation'
+import { Console } from "console";
 
 
 const schema = yup.object({
@@ -22,6 +24,8 @@ const schema = yup.object({
   new_password: yup
     .string()
     .min(6, "Password must be at least 8 characters"),
+  current_password: yup
+    .string(),
   confirm_password: yup
     .string()
     .min(6, "Password must be at least 8 characters")
@@ -34,7 +38,12 @@ function CreatePassword() {
   type typeOfSchema = yup.InferType<typeof schema>;
   const [loginError, setLoginError] = useState<string | null>(null);
   const [status, setStatus] = useState("main");
+  const searchParams = useSearchParams();
+  const password = searchParams.get('temp')
 
+  useEffect(() => {
+    console.log((password))
+  }, [])
 
   const {
     register,
@@ -45,6 +54,7 @@ function CreatePassword() {
     mode: "onChange",
     defaultValues: {
       user_id: admin?.id,
+      current_password: password!,
       new_password: ""
     },
   });
@@ -54,9 +64,10 @@ function CreatePassword() {
     try {
       const passwordPayload = {
         user_id: data.user_id,
+        current_password: data.current_password,
         new_password: data.new_password
       };
-     // await setPassword(passwordPayload);
+      await changePassword(passwordPayload);
 
       const userStatusPayload = {
         id: admin.id,
