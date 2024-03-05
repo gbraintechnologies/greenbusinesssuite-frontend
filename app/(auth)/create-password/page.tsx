@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import Button from "./components/Button";
 import PasswordInput from "./components/PasswordInput";
@@ -11,26 +11,23 @@ import { useForm } from "react-hook-form";
 import useAdmin from "@/hooks/useAdmin";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { changePassword, setPassword, updateUser } from "@/services/features/authService";
+import {
+  changePassword,
+  setPassword,
+  updateUser,
+} from "@/services/features/authService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SuccessIcon from "@/public/icons/SuccessIcon";
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams } from "next/navigation";
 import { Console } from "console";
 
-
 const schema = yup.object({
-  user_id: yup
-    .number(),
-  new_password: yup
-    .string()
-    .min(6, "Password must be at least 8 characters"),
-  current_password: yup
-    .string(),
+  user_id: yup.number(),
+  new_password: yup.string().min(6, "Password must be at least 8 characters"),
   confirm_password: yup
     .string()
-    .min(6, "Password must be at least 8 characters")
+    .min(6, "Password must be at least 8 characters"),
 });
-
 
 function CreatePassword() {
   const { admin, setAdmin } = useAdmin();
@@ -39,35 +36,28 @@ function CreatePassword() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [status, setStatus] = useState("main");
   const searchParams = useSearchParams();
-  const password = searchParams.get('temp')
-
-  useEffect(() => {
-    console.log((password))
-  }, [])
+  const password = searchParams.get("temp");
 
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors, },
+    formState: { isSubmitting, errors },
   } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
       user_id: admin?.id,
-      current_password: password!,
-      new_password: ""
+      new_password: "",
     },
   });
-
 
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const passwordPayload = {
         user_id: data.user_id,
-        current_password: data.current_password,
-        new_password: data.new_password
+        new_password: data.new_password,
       };
-      await changePassword(passwordPayload);
+      // await setPassword(passwordPayload);
 
       const userStatusPayload = {
         id: admin.id,
@@ -77,12 +67,12 @@ function CreatePassword() {
         last_name: admin.last_name,
         phone_number: admin.phone_number,
         mobile_phone_number: admin.mobile_phone_number,
-        user_status: 'ACTIVE'
+        user_status: "ACTIVE",
       };
 
-      updateUser(userStatusPayload.id, userStatusPayload)
-        .catch(error => alert(error.message));
-
+      updateUser(userStatusPayload.id, userStatusPayload).catch((error) =>
+        alert(error.message)
+      );
 
       toast.success("Password changed Successfully", {
         position: "top-center",
@@ -90,18 +80,15 @@ function CreatePassword() {
       });
 
       setStatus("success");
-
     } catch (error) {
       console.error("Error changing password or updating user status:", error);
       setLoginError("This should be the same as the password inputed above");
     }
   };
 
-
   return (
     <div>
       <div className="flex px-4 md:flex flex-[2] items-center justify-center py-12 mt-20">
-
         <div className="mb-10">
           <div className="flex items-left justify-left mb-10">
             <Link href="/">
@@ -110,9 +97,14 @@ function CreatePassword() {
           </div>
           {status === "main" && (
             <div>
-              <form className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]" onSubmit={handleSubmit(onSubmit)}>
+              <form
+                className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]"
+                onSubmit={handleSubmit(onSubmit)}
+              >
                 <h6 className="font-bold text-xl">Create a new password</h6>
-                <p>Create a new password for your account to secure your account</p>
+                <p>
+                  Create a new password for your account to secure your account
+                </p>
                 <div>
                   <PasswordInput
                     label="New password"
@@ -140,7 +132,11 @@ function CreatePassword() {
                     </div>
                   )}
                 </div>
-                <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">
                       {" "}
@@ -164,12 +160,23 @@ function CreatePassword() {
                 Password creation Successful
               </h1>
               <p className="opacity-50 font-light text-sm mt-2 mb-5">
-                Create new password for your Mesh account to secure your account</p>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Button className="" type="submit" onClick={() => {
-                  setAdmin(null);
-                  router.push("/");
-                }}>
+                Create new password for your Mesh account to secure your account
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  className=""
+                  type="submit"
+                  onClick={() => {
+                    setAdmin(null);
+                    router.push("/");
+                  }}
+                >
                   Go to Login
                 </Button>
               </div>
