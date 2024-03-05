@@ -31,6 +31,13 @@ export const createUserWithCustomProfiles = (
   });
 };
 
+export const editUserWithCustomProfiles = (data: any, custom_profiles: any) => {
+  return authApi.put("/users/edit_with_custom_fields/", {
+    user_data: data,
+    custom_profiles,
+  });
+};
+
 // CUSTOM FIELDS
 
 export const createCustomField = (name: any) => {

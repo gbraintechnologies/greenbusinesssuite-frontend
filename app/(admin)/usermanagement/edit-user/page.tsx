@@ -91,41 +91,25 @@ function page() {
 
     setLoading(true);
     services
-      .createUserWithCustomProfiles(data, custom_profiles)
+      .editUserWithCustomProfiles(data, custom_profiles)
       .then((res: any) => {
         setLoading(false);
-
-        toast.dismiss(loading);
 
         // ASSIGN ROLE TO CREATED USER
         services
           //@ts-ignore
           .assignRoleToUser(res.data.id, selectedRole?.value)
           .then((res) => {
-            toast.success(
-              // @ts-ignore
-              `Assigned ${selectedRole?.label} role to ${data.first_name}`
-            );
-          })
-          .catch((e: any) => {
-            //
-            console.log("error asinging", e);
-          });
-
-        // NOTIFY USER OF TEMP CREDENTIALS
-        services
-          .notifyUserTempCred(res?.data?.id, "EMAIL")
-          .then((res) => {
+            toast.dismiss(loading);
             resetForm();
             setProfileImage(null);
             setPhone("");
             setSelectedRole(null);
-            toast.success(`Temporary password sent to ${data.email}`);
-            toast.success("Created user successfully");
-            console.log("notify user", res);
+            toast.success("Edited user successfully");
           })
-          .catch((e) => {
-            console.log("error notifying", e);
+          .catch((e: any) => {
+            toast.error("Error occured");
+            console.log("error asinging", e);
           });
       })
       .catch((e) => {
