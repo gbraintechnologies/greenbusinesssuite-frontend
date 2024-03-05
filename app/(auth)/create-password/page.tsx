@@ -11,18 +11,14 @@ import { useForm } from "react-hook-form";
 import useAdmin from "@/hooks/useAdmin";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import {
-  changePassword,
-  setPassword,
-  updateUser,
-} from "@/services/features/authService";
+import { changePassword, updateUser } from "@/services/features/authService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import SuccessIcon from "@/public/icons/SuccessIcon";
+
 import { useSearchParams } from "next/navigation";
-import { Console } from "console";
 
 const schema = yup.object({
   user_id: yup.number(),
+  current_password: yup.string(),
   new_password: yup.string().min(6, "Password must be at least 8 characters"),
   confirm_password: yup
     .string()
@@ -35,6 +31,7 @@ function CreatePassword() {
   type typeOfSchema = yup.InferType<typeof schema>;
   const [loginError, setLoginError] = useState<string | null>(null);
   const [status, setStatus] = useState("main");
+
   const searchParams = useSearchParams();
   const password = searchParams.get("temp");
 
@@ -47,19 +44,37 @@ function CreatePassword() {
     mode: "onChange",
     defaultValues: {
       user_id: admin?.id,
+      current_password: password!,
       new_password: "",
     },
   });
 
   const onSubmit = async (data: typeOfSchema) => {
     try {
-      const passwordPayload = {
+      const payload = {
         user_id: data.user_id,
+        current_password: data.current_password,
         new_password: data.new_password,
       };
-      // await setPassword(passwordPayload);
 
-      const userStatusPayload = {
+      await changePassword(payload);
+
+      toast.success("Password changed Successfully", {
+        position: "top-center",
+        duration: 3000,
+      });
+
+      await updateUserStatus();
+      setStatus("success");
+    } catch (error) {
+      console.error("Error changing password:", error);
+      setLoginError("This should be the same as the password inputed above");
+    }
+  };
+
+  const updateUserStatus = async () => {
+    try {
+      const payload = {
         id: admin.id,
         email: admin.email,
         username: admin.username,
@@ -70,19 +85,9 @@ function CreatePassword() {
         user_status: "ACTIVE",
       };
 
-      updateUser(userStatusPayload.id, userStatusPayload).catch((error) =>
-        alert(error.message)
-      );
-
-      toast.success("Password changed Successfully", {
-        position: "top-center",
-        duration: 3000,
-      });
-
-      setStatus("success");
+      await updateUser(payload.id, payload);
     } catch (error) {
-      console.error("Error changing password or updating user status:", error);
-      setLoginError("This should be the same as the password inputed above");
+      console.error("Error updating user status:", error);
     }
   };
 
@@ -155,7 +160,6 @@ function CreatePassword() {
           )}
           {status === "success" && (
             <div className="loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]">
-              <SuccessIcon />
               <h1 className="font-semibold text-2xl">
                 Password creation Successful
               </h1>
