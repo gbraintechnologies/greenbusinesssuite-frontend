@@ -24,7 +24,7 @@ function UserManagement() {
     { id: 1, name: "All", value: "all" },
     { id: 2, name: "Active", value: "active" },
     { id: 3, name: "Inactive", value: "inactive" },
-    { id: 7, name: "Newly Created", value: "newly_created" },
+    // { id: 7, name: "Newly Created", value: "newly_created" },
     { id: 4, name: "Limited access", value: "limited_access" },
     { id: 5, name: "Suspended", value: "suspended" },
     { id: 6, name: "Deleted", value: "deleted" },

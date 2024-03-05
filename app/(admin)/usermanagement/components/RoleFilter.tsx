@@ -22,7 +22,7 @@ export default function RoleFilter({ selected, setSelected, roles }: any) {
 
   return (
     <>
-      <Menu as="div" className="relative inline-block text-left">
+      <Menu as="div" className="z-10 relative inline-block text-left">
         <Menu.Button className="flex items-center gap-2 text-sm text-gray-500 border border-gray-200 rounded-xl px-3 py-2 ">
           <LuFilter size={16} /> Filter
         </Menu.Button>
