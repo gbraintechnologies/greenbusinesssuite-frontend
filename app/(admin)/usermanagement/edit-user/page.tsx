@@ -49,10 +49,6 @@ function page() {
     queryFn: services.userByID(id),
   });
 
-  console.log("data", data);
-
-  console.log("id", id);
-
   const UserSchema = Yup.object().shape({
     firstname: Yup.string()
       .min(2, "Too Short!")
@@ -147,151 +143,148 @@ function page() {
       });
   };
 
-  // formik
-  let initialValues = {
-    email: data?.email,
-    username: data?.username,
-    firstname: data?.first_name,
-    lastname: data?.last_name,
-    status: data?.user_status,
-  };
+  if (isLoading) {
+    return (
+      <div>
+        <LoadingIcon />
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    initialValues = {
+  if (data) {
+    // formik
+    let initialValues = {
       email: data?.email,
       username: data?.username,
       firstname: data?.first_name,
       lastname: data?.last_name,
       status: data?.user_status,
     };
-  }, [data, isLoading]);
 
-  console.log("initial values", initialValues);
+    return (
+      <div className="pb-40 px-5">
+        {/* Form */}
+        <Formik
+          initialValues={initialValues}
+          onSubmit={(values, { resetForm }) => {
+            editUser(values, resetForm);
+          }}
+          validationSchema={UserSchema}
+        >
+          {({ errors }) => (
+            <Form>
+              {/* HEADER */}
+              <div className="w-full text-primary-dark  flex justify-between">
+                <h3 className="font-semibold text-xl">Edit user account</h3>
 
-  return (
-    <div className="pb-40 px-5">
-      {/* Form */}
-      <Formik
-        initialValues={initialValues}
-        onSubmit={(values, { resetForm }) => {
-          editUser(values, resetForm);
-        }}
-        validationSchema={UserSchema}
-      >
-        {({ errors }) => (
-          <Form>
-            {/* HEADER */}
-            <div className="w-full text-primary-dark  flex justify-between">
-              <h3 className="font-semibold text-xl">Edit user account</h3>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => router.back()}
+                    className="bg-gray-50 border border-gray-200 shadow-sm py-2 flex text-primary-dark text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                  >
+                    Discard
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                  >
+                    {loading ? (
+                      <>
+                        <LoadingIcon />
+                        Saving
+                      </>
+                    ) : (
+                      <>
+                        {" "}
+                        <HiOutlineInboxArrowDown /> Apply Edits
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
 
-              <div className="flex gap-3">
+              {/* profile picture */}
+              <div className="relative w-[140px] h-[140px] rounded-full">
+                {profileImage ? (
+                  <div className="rounded-full overflow-hidden w-[140px] h-[140px]">
+                    <Image
+                      src={URL.createObjectURL(profileImage)}
+                      alt="profile"
+                      width={140}
+                      height={140}
+                      className="rounded-full h-full w-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="rounded-full  flex items-center justify-center w-[140px] h-[140px] bg-slate-50">
+                    <BigUserIcon />
+                  </div>
+                )}
+
+                <input
+                  type="file"
+                  // @ts-ignore
+                  ref={inputFileRef}
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    setProfileImage(e.target.files && e.target.files[0]);
+                  }}
+                />
+
                 <button
                   type="button"
-                  onClick={() => router.back()}
-                  className="bg-gray-50 border border-gray-200 shadow-sm py-2 flex text-primary-dark text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                  onClick={() => {
+                    // @ts-ignore
+                    inputFileRef?.current?.click();
+                  }}
+                  className="absolute flex items-center gap-1 border hover:bg-gray-100 border-gray-300 text-sm bg-white rounded-lg px-3 py-1 bottom-4 -right-8"
                 >
-                  Discard
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-                >
-                  {loading ? (
-                    <>
-                      <LoadingIcon />
-                      Saving
-                    </>
-                  ) : (
-                    <>
-                      {" "}
-                      <HiOutlineInboxArrowDown /> Apply Edits
-                    </>
-                  )}
+                  <MdOutlineEdit />
+                  Edit
                 </button>
               </div>
-            </div>
 
-            {/* profile picture */}
-            <div className="relative w-[140px] h-[140px] rounded-full">
-              {profileImage ? (
-                <div className="rounded-full overflow-hidden w-[140px] h-[140px]">
-                  <Image
-                    src={URL.createObjectURL(profileImage)}
-                    alt="profile"
-                    width={140}
-                    height={140}
-                    className="rounded-full h-full w-full object-cover"
-                  />
+              {/* FORM */}
+              <div className="max-w-2xl rounded-lg py-5 pb-10">
+                {/* NAME */}
+                <div className="flex gap-10">
+                  <div className="input-holder">
+                    <label>First name</label>
+                    <Field
+                      style={getStyles(errors, "firstname")}
+                      name="firstname"
+                      placeholder="First name"
+                    />{" "}
+                    <ShowError name="firstname" />
+                  </div>
+
+                  <div className="input-holder">
+                    <label>Last name</label>
+                    <Field
+                      style={getStyles(errors, "lastname")}
+                      name="lastname"
+                      placeholder="Last name"
+                    />
+                    <ShowError name="lastname" />
+                  </div>
                 </div>
-              ) : (
-                <div className="rounded-full  flex items-center justify-center w-[140px] h-[140px] bg-slate-50">
-                  <BigUserIcon />
-                </div>
-              )}
 
-              <input
-                type="file"
-                // @ts-ignore
-                ref={inputFileRef}
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  setProfileImage(e.target.files && e.target.files[0]);
-                }}
-              />
-
-              <button
-                type="button"
-                onClick={() => {
-                  // @ts-ignore
-                  inputFileRef?.current?.click();
-                }}
-                className="absolute flex items-center gap-1 border hover:bg-gray-100 border-gray-300 text-sm bg-white rounded-lg px-3 py-1 bottom-4 -right-8"
-              >
-                <MdOutlineEdit />
-                Edit
-              </button>
-            </div>
-
-            {/* FORM */}
-            <div className="max-w-2xl rounded-lg py-5 pb-10">
-              {/* NAME */}
-              <div className="flex gap-10">
+                {/* Email */}
                 <div className="input-holder">
-                  <label>First name</label>
-                  <Field
-                    style={getStyles(errors, "firstname")}
-                    name="firstname"
-                    placeholder="First name"
-                  />{" "}
-                  <ShowError name="firstname" />
-                </div>
-
-                <div className="input-holder">
-                  <label>Last name</label>
+                  <label>Email</label>
                   <Field
                     style={getStyles(errors, "lastname")}
-                    name="lastname"
-                    placeholder="Last name"
+                    name="email"
+                    placeholder="Email"
                   />
-                  <ShowError name="lastname" />
+                  <ShowError name="email" />
                 </div>
-              </div>
 
-              {/* Email */}
-              <div className="input-holder">
-                <label>Email</label>
-                <Field
-                  style={getStyles(errors, "lastname")}
-                  name="email"
-                  placeholder="Email"
-                />
-                <ShowError name="email" />
-              </div>
-
-              {/* Phone */}
-              {/* <div className="input-holder">
+                {/* Phone */}
+                {/* <div className="input-holder">
                 <label>Phone number</label>
                 <div className="w-[50%]">
                   <PhoneSelector phone={phone} setPhone={setPhone} />
@@ -306,12 +299,13 @@ function page() {
                   options={roles}
                 />
               </div> */}
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </div>
-  );
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    );
+  }
 }
 
 export default page;
