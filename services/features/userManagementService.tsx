@@ -4,6 +4,10 @@ export const allUsers = () => {
   return () => authApi.get("/users/all_users/").then((res) => res.data);
 };
 
+export const userByID = (id: any) => {
+  return () => authApi.get(`/users/user_by_id/${id}`).then((res) => res.data);
+};
+
 export const searchUsers = (filter_word: any) => {
   return () =>
     authApi.get(`/users/search_users/${filter_word}`).then((res) => res.data);
@@ -21,7 +25,6 @@ export const createUserWithCustomProfiles = (
   data: any,
   custom_profiles: any
 ) => {
-  console.log("creating user with", { user_data: data, custom_profiles });
   return authApi.post("/users/create_with_custom_fields/", {
     user_data: data,
     custom_profiles,

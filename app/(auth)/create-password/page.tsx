@@ -11,8 +11,10 @@ import { useForm } from "react-hook-form";
 import useAdmin from "@/hooks/useAdmin";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { setPassword, updateUser } from "@/services/features/authService";
+import { changePassword, updateUser } from "@/services/features/authService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
+import { useSearchParams } from "next/navigation";
 
 const schema = yup.object({
   user_id: yup.number(),
@@ -30,6 +32,9 @@ function CreatePassword() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [status, setStatus] = useState("main");
 
+  const searchParams = useSearchParams();
+  const password = searchParams.get("temp");
+
   const {
     register,
     handleSubmit,
@@ -39,7 +44,7 @@ function CreatePassword() {
     mode: "onChange",
     defaultValues: {
       user_id: admin?.id,
-      current_password: "",
+      current_password: password!,
       new_password: "",
     },
   });
@@ -52,7 +57,7 @@ function CreatePassword() {
         new_password: data.new_password,
       };
 
-      await setPassword(payload);
+      await changePassword(payload);
 
       toast.success("Password changed Successfully", {
         position: "top-center",
