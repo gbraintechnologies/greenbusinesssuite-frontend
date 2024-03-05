@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import React, { useEffect, useState } from "react";
 import Button from "./components/Button";
 import PasswordInput from "./components/PasswordInput";
@@ -13,17 +13,23 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { changePassword, updateUser } from "@/services/features/authService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import SuccessIcon from "@/public/icons/SuccessIcon";
+import { useSearchParams } from 'next/navigation'
 
-import { useSearchParams } from "next/navigation";
 
 const schema = yup.object({
-  user_id: yup.number(),
-  current_password: yup.string(),
-  new_password: yup.string().min(6, "Password must be at least 8 characters"),
-  confirm_password: yup
+  user_id: yup
+    .number(),
+  new_password: yup
     .string()
     .min(6, "Password must be at least 8 characters"),
+  current_password: yup
+    .string(),
+  confirm_password: yup
+    .string()
+    .min(6, "Password must be at least 8 characters")
 });
+
 
 function CreatePassword() {
   const { admin, setAdmin } = useAdmin();
@@ -31,50 +37,35 @@ function CreatePassword() {
   type typeOfSchema = yup.InferType<typeof schema>;
   const [loginError, setLoginError] = useState<string | null>(null);
   const [status, setStatus] = useState("main");
-
   const searchParams = useSearchParams();
-  const password = searchParams.get("temp");
+  const password = searchParams.get('temp')
+
 
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting, errors, },
   } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
       user_id: admin?.id,
       current_password: password!,
-      new_password: "",
+      new_password: ""
     },
   });
 
+
   const onSubmit = async (data: typeOfSchema) => {
     try {
-      const payload = {
+      const passwordPayload = {
         user_id: data.user_id,
         current_password: data.current_password,
-        new_password: data.new_password,
+        new_password: data.new_password
       };
+      await changePassword(passwordPayload);
 
-      await changePassword(payload);
-
-      toast.success("Password changed Successfully", {
-        position: "top-center",
-        duration: 3000,
-      });
-
-      await updateUserStatus();
-      setStatus("success");
-    } catch (error) {
-      console.error("Error changing password:", error);
-      setLoginError("This should be the same as the password inputed above");
-    }
-  };
-
-  const updateUserStatus = async () => {
-    try {
-      const payload = {
+      const userStatusPayload = {
         id: admin.id,
         email: admin.email,
         username: admin.username,
@@ -82,18 +73,31 @@ function CreatePassword() {
         last_name: admin.last_name,
         phone_number: admin.phone_number,
         mobile_phone_number: admin.mobile_phone_number,
-        user_status: "ACTIVE",
+        user_status: 'ACTIVE'
       };
 
-      await updateUser(payload.id, payload);
+      updateUser(userStatusPayload.id, userStatusPayload)
+        .catch(error => alert(error.message));
+
+
+      toast.success("Password changed Successfully", {
+        position: "top-center",
+        duration: 3000,
+      });
+
+      setStatus("success");
+
     } catch (error) {
-      console.error("Error updating user status:", error);
+      console.error("Error changing password or updating user status:", error);
+      setLoginError("This should be the same as the password inputed above");
     }
   };
+
 
   return (
     <div>
       <div className="flex px-4 md:flex flex-[2] items-center justify-center py-12 mt-20">
+
         <div className="mb-10">
           <div className="flex items-left justify-left mb-10">
             <Link href="/">
@@ -102,14 +106,9 @@ function CreatePassword() {
           </div>
           {status === "main" && (
             <div>
-              <form
-                className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]"
-                onSubmit={handleSubmit(onSubmit)}
-              >
+              <form className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]" onSubmit={handleSubmit(onSubmit)}>
                 <h6 className="font-bold text-xl">Create a new password</h6>
-                <p>
-                  Create a new password for your account to secure your account
-                </p>
+                <p>Create a new password for your account to secure your account</p>
                 <div>
                   <PasswordInput
                     label="New password"
@@ -137,11 +136,7 @@ function CreatePassword() {
                     </div>
                   )}
                 </div>
-                <Button
-                  type="submit"
-                  onClick={handleSubmit(onSubmit)}
-                  disabled={isSubmitting}
-                >
+                <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">
                       {" "}
@@ -160,27 +155,17 @@ function CreatePassword() {
           )}
           {status === "success" && (
             <div className="loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]">
+              <SuccessIcon />
               <h1 className="font-semibold text-2xl">
                 Password creation Successful
               </h1>
               <p className="opacity-50 font-light text-sm mt-2 mb-5">
-                Create new password for your Mesh account to secure your account
-              </p>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Button
-                  className=""
-                  type="submit"
-                  onClick={() => {
-                    setAdmin(null);
-                    router.push("/");
-                  }}
-                >
+                Create new password for your Mesh account to secure your account</p>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Button className="" type="submit" onClick={() => {
+                  setAdmin(null);
+                  router.push("/");
+                }}>
                   Go to Login
                 </Button>
               </div>
