@@ -5,10 +5,10 @@ import Select from "react-select";
 //
 import "./index.css";
 
-function Dropdown({ options, selected, setSelected }: any) {
+function Dropdown({ options, selected, setSelected, bgColor }: any) {
   return (
     <Select
-      className="border-0 flex-1"
+      className= {`border-0 flex-1 ${bgColor}`}
       isSearchable={true}
       options={options}
       value={selected}
