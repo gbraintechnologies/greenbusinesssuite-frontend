@@ -154,7 +154,7 @@ const CreateCompany = () => {
                           </p>
                         </div>
                         <div className="flex items-center justify-center">
-                          <div className="w-20 h-8 border-1 border-[#E2E8F0] bg-white flex items-center justify-center rounded-lg shadow-[0px_2px_2px_0px_rgba(0,0,0,0.04)]">
+                          <div className="w-20 h-8 border-1 border-[#E2E8F0] text-sm bg-white flex items-center justify-center rounded-lg shadow-[0px_2px_2px_0px_rgba(0,0,0,0.04)]">
                             Browse
                           </div>
                         </div>

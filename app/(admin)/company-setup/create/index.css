@@ -16,6 +16,10 @@
     @apply text-sm mb-1 font-normal text-slate-700;
   }
 
+  .css-13cymwt-control {
+    background-color: #F8FAFC !important;
+  }
+
   .react-international-phone-input-container .react-international-phone-country-selector-button , .react-international-phone-input-container .react-international-phone-input{
     background-color: #F8FAFC !important;
     height: 42px !important;

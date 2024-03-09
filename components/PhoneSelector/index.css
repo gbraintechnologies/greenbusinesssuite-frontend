@@ -17,7 +17,7 @@
 
   --tw-border-opacity: 1;
   border-color: #e2e8f0 !important;
-  background-color: #fcfdff !important;
+  background-color: #fcfdff ;
   border-top-left-radius: 0.5rem !important;
   border-bottom-left-radius: 0.5rem !important;
 }
@@ -42,7 +42,7 @@
   border-bottom-right-radius: 0.5rem !important;
   --tw-border-opacity: 1;
   border-color: #e2e8f0 !important;
-  background-color: #fcfdff !important;
+  background-color: #fcfdff ;
 }
 
 /* size of emoji */
