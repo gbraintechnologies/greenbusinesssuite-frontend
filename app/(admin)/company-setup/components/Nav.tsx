@@ -13,7 +13,7 @@ function Nav() {
     <div className="w-full text-[#0F172A] px-5  flex justify-between">
       <div>
         <h3 className="font-semibold text-xl">Companies</h3>
-        <p className="font-light">Form Description</p>
+        <p className="text-[rgba(71, 85, 105, 1)] font-normal text-base">Form Description</p>
       </div>
 
       <Link href={"/company-setup/profile"}>
