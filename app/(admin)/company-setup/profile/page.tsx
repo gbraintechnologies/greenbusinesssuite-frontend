@@ -2,7 +2,7 @@
 
 import "./index.css";
 import UpdateInfo from "@/public/svg/updateInfo.svg";
-import Logo from "@/public/svg/companylogo.png";
+// import Logo from "@/public/svg/companylogo.png";
 import Image from "next/image";
 import { IoIosArrowDown } from "react-icons/io";
 
@@ -42,11 +42,11 @@ const Page = () => {
       {/* COMPANY NAME AND STATUS */}
       <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
         <div className="flex gap-5 items-center justify-center">
-          <Image
+          {/* <Image
             src={Logo}
             className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
             alt="Company Logo"
-          />
+          /> */}
           <div className="flex flex-col gap-3">
             <div className="label">Company Name</div>
             <div className="header">{companyInfo.name}</div>
