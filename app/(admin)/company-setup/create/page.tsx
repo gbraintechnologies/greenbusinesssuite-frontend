@@ -3,7 +3,14 @@ import "./index.css";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Modal from "@/components/Modal/Modal";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
-import { Field, Form, Formik, FormikBag, FormikHelpers, FormikState } from "formik";
+import {
+  Field,
+  Form,
+  Formik,
+  FormikBag,
+  FormikHelpers,
+  FormikState,
+} from "formik";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
@@ -13,46 +20,45 @@ import UploadIcon from "@/public/svg/upload.svg";
 import Image from "next/image";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 import useFileUpload from "@/hooks/useFileUpload";
+import { ICompany } from "@/types";
+import toast from "react-hot-toast";
 
-interface FormValues {
-  companyName: string;
-  companyDescription: string;
+interface CompanyInfo {
+  company_name: string;
+  primary_contact_name: string;
+  primary_contact_email: string;
+  primary_contact_phone_number: string;
+  company_logo: string;
   industry: string;
-  jurisdiction: string;
-  companyLogo: string;
-  adminFirstName: string;
-  adminLastName: string;
-  adminEmail: string;
-  contactFirstName: string;
-  contactLastName: string;
-  contactEmail: string;
-  contactPhone: string;
+  company_admin_id: number;
 }
 
 const companySchema = Yup.object().shape({
-  companyName: Yup.string().required('Company name is required'),
-  companyDescription: Yup.string().required('Company description is required'),
-  companyLogo: Yup.mixed().required('A company logo file is required'), 
-  adminFirstName: Yup.string().required('First name is required'),
-  adminLastName: Yup.string().required('Last name is required'),
-  adminEmail: Yup.string().email('Invalid email').required('Email is required'),
-  contactFirstName: Yup.string().required('First name is required'),
-  contactLastName: Yup.string().required('Last name is required'),
-  contactEmail: Yup.string().email('Invalid email').required('Email is required'),
+  companyName: Yup.string().required("Company name is required"),
+  companyDescription: Yup.string().required("Company description is required"),
+  adminFirstName: Yup.string().required("First name is required"),
+  adminLastName: Yup.string().required("Last name is required"),
+  adminEmail: Yup.string().email("Invalid email").required("Email is required"),
+  contactFirstName: Yup.string().required("First name is required"),
+  contactLastName: Yup.string().required("Last name is required"),
+  contactEmail: Yup.string()
+    .email("Invalid email")
+    .required("Email is required"),
 });
 
 const CreateCompany = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
 
-  const [selectedIndustry, setSelectedIndustry] = useState(null);
+  const [selectedIndustry, setSelectedIndustry] = useState<{
+    label: string;
+    value: string;
+  }>();
 
   const [phone, setPhone] = useState("");
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
 
-
   const inputFileRef = useRef();
-
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -61,10 +67,9 @@ const CreateCompany = () => {
 
   const router = useRouter();
 
-  const initialValues: Partial<FormValues> = {
+  const initialValues: Partial<ICompany> = {
     companyName: "",
     companyDescription: "",
-    companyLogo: "",
     adminFirstName: "",
     adminLastName: "",
     adminEmail: "",
@@ -75,11 +80,26 @@ const CreateCompany = () => {
 
   const { handleFileUpload } = useFileUpload();
 
-  const createCompany = (values: Partial<FormValues>, resetForm: FormikHelpers<Partial<FormValues>> ) => {
-    const {} = values;
-    
-
-  }
+  const createCompany = (
+    values: Partial<ICompany>,
+    { resetForm, setSubmitting }: FormikHelpers<Partial<ICompany>>
+  ) => {
+    if (!(phone.length > 4)) {
+      toast.error("Phone number is required");
+      setSubmitting(false);
+      return;
+    }
+    const dataToSubmit: CompanyInfo = {
+      company_name: values.companyName as string,
+      primary_contact_name: `${values.contactFirstName} ${values.contactLastName}`,
+      primary_contact_email: values.contactEmail as string,
+      primary_contact_phone_number: phone,
+      company_logo: "",
+      industry: selectedIndustry?.value as string,
+      company_admin_id: 1,
+    };
+    setSubmitting(false);
+  };
 
   return (
     <div className="px-5 pb-20">
@@ -87,11 +107,10 @@ const CreateCompany = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={companySchema}
-          onSubmit={(values, resetForm) => {
-            createCompany(values, resetForm)
-          }}
+          onSubmit={createCompany}
         >
           {({ errors, isSubmitting }) => {
+            console.log("errors ", errors);
             return (
               <Form>
                 {/* HEADER */}
@@ -162,7 +181,7 @@ const CreateCompany = () => {
                   <div className="input-holder half">
                     <label>Industry</label>
                     <Dropdown
-                      options={[]}
+                      options={[{ label: "Finance", value: "finance" }]}
                       selected={selectedIndustry}
                       setSelected={setSelectedIndustry}
                       bgColor="bg-slate-50"

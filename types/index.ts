@@ -21,3 +21,18 @@ export interface User {
   user_kycs: any[];
   custom_profile_values: CustomProfileValue[];
 }
+
+export interface ICompany {
+  companyName: string;
+  companyDescription: string;
+  industry: string;
+  jurisdiction: string;
+  companyLogo: string;
+  adminFirstName: string;
+  adminLastName: string;
+  adminEmail: string;
+  contactFirstName: string;
+  contactLastName: string;
+  contactEmail: string;
+  contactPhone: string;
+}
