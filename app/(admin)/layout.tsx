@@ -14,6 +14,7 @@ import useAdmin from "@/hooks/useAdmin";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import BuilderNav from "./forms/builder/components/BuilderNav";
 
 export default function AdminLayout({
   children,
@@ -44,14 +45,27 @@ export default function AdminLayout({
           <AiOutlineLoading3Quarters size={24} className="animate-spin" />
         </div>
       ) : (
-        <div className="w-full min-h-[100vh]">
-          <TopNav />
-          <div className="flex flex-row">
-            {!pathname.includes("settings") && <SideNav />}
+        // TWO LAYOUTS: NORMAL VIEW AND BUILDER VIEW
+        <>
+          {/* BUILDER VIEW */}
+          {pathname.includes("/forms/builder") ? (
+            <div className="w-full min-h-[100vh] bg-grid">
+              <BuilderNav />
 
-            <div className=" w-full mt-4 py-2">{children}</div>
-          </div>
-        </div>
+              {children}
+            </div>
+          ) : (
+            // NORMAL VIEW
+            <div className="w-full min-h-[100vh]">
+              <TopNav />
+              <div className="flex flex-row">
+                {!pathname.includes("settings") && <SideNav />}
+
+                <div className=" w-full mt-4 py-2">{children}</div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

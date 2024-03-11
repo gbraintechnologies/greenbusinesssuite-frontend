@@ -9,8 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
-        // hero: "url('/images/authbg.png')",
-        // authBg: "url('/public/images/authbg.png')",
+        grid: "url('/patterns/gridpattern.svg')",
       },
       colors: {
         "primary-green": "#16A34A",
