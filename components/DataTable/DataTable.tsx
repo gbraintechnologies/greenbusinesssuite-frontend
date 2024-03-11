@@ -140,6 +140,7 @@ function DataTable({
             sx={{
               "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
                 outline: "none !important",
+                fontFamily: "Inter, sans-serif",
               },
             }}
             rows={localRows}

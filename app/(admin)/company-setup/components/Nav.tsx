@@ -16,7 +16,7 @@ function Nav() {
         <p className="text-[rgba(71, 85, 105, 1)] font-normal text-base">Form Description</p>
       </div>
 
-      <Link href={"/company-setup/profile"}>
+      <Link href={"/company-setup/create"}>
         <button className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
           <LuPlusCircle /> Add New{" "}
           <div className="border-r-[0.3px] border-opacity-50 border-white h-10"></div>{" "}

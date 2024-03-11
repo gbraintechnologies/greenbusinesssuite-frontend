@@ -3,28 +3,42 @@ import "./index.css";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Modal from "@/components/Modal/Modal";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, FormikBag, FormikHelpers, FormikState } from "formik";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import * as Yup from "yup";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import UploadIcon from "@/public/svg/upload.svg";
 import Image from "next/image";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
+import useFileUpload from "@/hooks/useFileUpload";
 
 interface FormValues {
   companyName: string;
   companyDescription: string;
   industry: string;
+  jurisdiction: string;
   companyLogo: string;
+  adminFirstName: string;
+  adminLastName: string;
+  adminEmail: string;
+  contactFirstName: string;
+  contactLastName: string;
+  contactEmail: string;
+  contactPhone: string;
 }
 
 const companySchema = Yup.object().shape({
-  companyName: Yup.string().required("Company name is required"),
-  companyDescription: Yup.string().required("Company description is required"),
-  industry: Yup.string().required("Industry is required"),
-  companyLogo: Yup.string().required("Company logo is required"),
+  companyName: Yup.string().required('Company name is required'),
+  companyDescription: Yup.string().required('Company description is required'),
+  companyLogo: Yup.mixed().required('A company logo file is required'), 
+  adminFirstName: Yup.string().required('First name is required'),
+  adminLastName: Yup.string().required('Last name is required'),
+  adminEmail: Yup.string().email('Invalid email').required('Email is required'),
+  contactFirstName: Yup.string().required('First name is required'),
+  contactLastName: Yup.string().required('Last name is required'),
+  contactEmail: Yup.string().email('Invalid email').required('Email is required'),
 });
 
 const CreateCompany = () => {
@@ -34,6 +48,12 @@ const CreateCompany = () => {
 
   const [phone, setPhone] = useState("");
 
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+
+
+  const inputFileRef = useRef();
+
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     // Handle the file upload here
@@ -41,12 +61,25 @@ const CreateCompany = () => {
 
   const router = useRouter();
 
-  const initialValues: FormValues = {
+  const initialValues: Partial<FormValues> = {
     companyName: "",
     companyDescription: "",
-    industry: "",
     companyLogo: "",
+    adminFirstName: "",
+    adminLastName: "",
+    adminEmail: "",
+    contactFirstName: "",
+    contactLastName: "",
+    contactEmail: "",
   };
+
+  const { handleFileUpload } = useFileUpload();
+
+  const createCompany = (values: Partial<FormValues>, resetForm: FormikHelpers<Partial<FormValues>> ) => {
+    const {} = values;
+    
+
+  }
 
   return (
     <div className="px-5 pb-20">
@@ -54,8 +87,8 @@ const CreateCompany = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={companySchema}
-          onSubmit={() => {
-            console.log("submitting");
+          onSubmit={(values, resetForm) => {
+            createCompany(values, resetForm)
           }}
         >
           {({ errors, isSubmitting }) => {
@@ -136,6 +169,17 @@ const CreateCompany = () => {
                     />
                     <ShowError name="industry" />
                   </div>
+                  {/* JURISDICTION */}
+                  <div className="input-holder half">
+                    <label>Company jurisdiction</label>
+                    <Dropdown
+                      options={[]}
+                      selected={selectedIndustry}
+                      setSelected={setSelectedIndustry}
+                      bgColor="bg-slate-50"
+                    />
+                    <ShowError name="industry" />
+                  </div>
                   {/* COMPANY LOGO */}
                   <div className="flex justify-center items-center w-full">
                     <label className="flex justify-center items-center bg-slate-50 rounded-lg border-2 border-dashed w-full h-64 group text-center">
@@ -162,7 +206,9 @@ const CreateCompany = () => {
                       <input
                         type="file"
                         className="hidden"
-                        onChange={handleFileChange}
+                        onChange={(e) => {
+                          setProfileImage(e.target.files && e.target.files[0]);
+                        }}
                         accept=".jpg, .png"
                       />
                     </label>
@@ -193,11 +239,11 @@ const CreateCompany = () => {
                     <div className="input-holder">
                       <label>Last Name</label>
                       <Field
-                        style={getStyles(errors, "lastName")}
-                        name="lastName"
+                        style={getStyles(errors, "adminLastName")}
+                        name="adminLastName"
                         placeholder=""
                       />
-                      <ShowError name="lastName" />
+                      <ShowError name="adminLastName" />
                     </div>
                   </div>
 
