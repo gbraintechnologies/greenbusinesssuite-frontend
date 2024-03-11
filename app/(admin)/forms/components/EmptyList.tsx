@@ -42,6 +42,10 @@ function EmptyList() {
         {" "}
         Primary action
       </button>
+
+      <button className="mt-1 w-40 bg-white px-3 text-sm py-3  text-primary-green">
+        Learn More
+      </button>
     </div>
   );
 }

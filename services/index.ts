@@ -8,6 +8,8 @@ import * as rolesService from "./features/rolesService";
 
 import * as appService from "./features/appService";
 
+import * as formsService from "./features/formsService";
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   ...localService,
@@ -15,4 +17,5 @@ export default {
   ...userManagementService,
   ...rolesService,
   ...appService,
+  ...formsService,
 };
