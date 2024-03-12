@@ -77,7 +77,6 @@ function JurisdictionSetup() {
         </div>,
       ],
     },
-    { field: "companies", headerName: "companies", flex: 1 },
     {
       field: "actions",
       headerName: "Actions",
@@ -111,7 +110,7 @@ function JurisdictionSetup() {
         // APP ID ===1 == MESH SUITE APP
         // @ts-ignore
         // @ts-ignore
-        temp.push({ id: user?.id, data: user, companies: 3 });
+        temp.push({ id: user?.id, data: user });
       }
       setRows(temp);
     }
