@@ -3,6 +3,9 @@
 import AddFormIcon from "@/public/icons/AddFormIcon";
 import React, { useState } from "react";
 
+//
+import { useQueryClient } from "@tanstack/react-query";
+
 // icons
 import EmptyList from "./components/EmptyList";
 import ImportFormIcon from "@/public/icons/ImportFormIcon";
@@ -16,6 +19,8 @@ import FormCard from "./components/FormCard";
 
 function Forms() {
   const router = useRouter();
+
+  const queryClient = useQueryClient();
 
   const [loading, setLoading] = useState(false);
 
@@ -165,8 +170,11 @@ function Forms() {
             setLoading(false);
             toast.dismiss();
             console.log("created form", res?.data);
+            queryClient.invalidateQueries({
+              queryKey: ["all forms"],
+            });
             //
-            // router.push("/forms/builder");
+            // router.push("/forms/builder/${res.data.id}");
           })
           .catch((e: Error) => {
             console.log("error creating form", e);
@@ -187,7 +195,7 @@ function Forms() {
   const recentForms = [];
 
   // fetch all users
-  const { data, isLoading } = useQuery({
+  const { data: forms, isLoading } = useQuery({
     queryKey: ["all forms"],
     queryFn: services.allForms(),
   });
@@ -228,15 +236,16 @@ function Forms() {
       ) : (
         // ALL FORMS
         <>
-          {data?.length === 0 ? (
+          {forms?.length === 0 ? (
             <div className="">
               <EmptyList />
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
-              {data.map((form: any) => {
-                return <FormCard key={form.id} form={form} />;
-              })}
+              {forms &&
+                forms?.map((form: any) => {
+                  return <FormCard key={form.id} form={form} />;
+                })}
             </div>
           )}
         </>
