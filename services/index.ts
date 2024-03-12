@@ -6,6 +6,8 @@ import * as userManagementService from "./features/userManagementService";
 
 import * as rolesService from "./features/rolesService";
 
+import * as jurisdictionsService from "./features/jurisdictionsService";
+
 import * as appService from "./features/appService";
 
 import * as formsService from "./features/formsService";
@@ -18,4 +20,5 @@ export default {
   ...rolesService,
   ...appService,
   ...formsService,
+  ...jurisdictionsService,
 };

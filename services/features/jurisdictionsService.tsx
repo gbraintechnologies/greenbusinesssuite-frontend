@@ -1,0 +1,19 @@
+import authApi from "../axiosAuthClient";
+
+
+export const allJurisdictions = () => {
+    return () => authApi.get("/jurisdictions/").then((res) => res.data);
+};
+
+export const SearchJurisdictions = (filter_word: any) => {
+    return () =>
+        authApi.get(`/jurisdictions-by-filter/${filter_word}`).then((res) => res.data);
+};
+
+export const JurisdictionsID = (id: any) => {
+    return () => authApi.get(`/jurisdictions/${id}`).then((res) => res.data);
+};
+
+export const createJurisdictions = (data: any) => {
+    return authApi.post("/jurisdictions/", data);
+};
