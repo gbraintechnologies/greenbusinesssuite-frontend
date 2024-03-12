@@ -1,0 +1,45 @@
+.styled-checkbox {
+    /* Hide the default checkbox */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* Use a custom checkbox size */
+    width: 1.2em;
+    height: 1.2em;
+    /* Use a custom checkbox background color */
+    background-color: #ffffff;
+    /* Add a border */
+    border: 1px solid #cbd5e0;
+    /* Add some padding for better alignment */
+    padding: 0.2em;
+    /* Add some margin for spacing */
+    margin-right: 0.5em;
+    /* Position the checkbox relative to its container */
+    position: relative;
+    /* Allow custom indicators to be positioned */
+    cursor: pointer;
+}
+
+/* Style the checkbox when it's checked */
+.styled-checkbox:checked {
+    /* Change the background color when checked */
+    background-color: #18191a; /* Change to a different color to indicate checked state */
+    /* You can also add other styles to indicate the checked state */
+}
+
+/* Add custom checkmark indicator */
+.styled-checkbox:checked::before {
+    content: '\2713'; /* Unicode character for checkmark */
+    font-size: 1em; /* Adjust the size of the checkmark */
+    color: #ffffff; /* Color of the checkmark */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Style the label text */
+label {
+    /* Add some margin for spacing */
+    margin-bottom: 0.5em;
+}
