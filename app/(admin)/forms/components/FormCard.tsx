@@ -5,9 +5,14 @@ import React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 // icons
 import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
+import services from "@/services";
+import Error from "next/error";
+import toast from "react-hot-toast";
 
 function FormCard({ form }: any) {
   let {
@@ -22,6 +27,7 @@ function FormCard({ form }: any) {
   } = form;
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const options = [
     {
@@ -52,6 +58,22 @@ function FormCard({ form }: any) {
       title: "Delete",
       func: () => {
         //
+        toast.loading("Deleting..");
+        services
+          .deleteForm(id)
+          .then((res) => {
+            toast.dismiss();
+            console.log("deleting", res);
+            toast.success("Form deleted");
+            queryClient.invalidateQueries({
+              queryKey: ["all forms"],
+            });
+          })
+          .catch((e: Error) => {
+            toast.dismiss();
+            toast.error("Error occured");
+            console.log("errror deleting", e);
+          });
       },
     },
   ];
@@ -82,12 +104,22 @@ function FormCard({ form }: any) {
                 {options.map((option: any, idx: any) => {
                   return (
                     <Menu.Item>
-                      <button
-                        className="py-3 tex-gray-500 px-4 font-light hover:bg-gray-100 text-left"
-                        onClick={() => option.func()}
-                      >
-                        {option.title}
-                      </button>
+                      <div>
+                        <button
+                          className={`${
+                            option.title.toLowerCase() === "delete"
+                              ? "text-red-600"
+                              : " text-gray-500"
+                          } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
+                          onClick={() => option.func()}
+                        >
+                          {option.title}
+                        </button>
+
+                        {idx % 2 === 0 && (
+                          <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
+                        )}
+                      </div>
                     </Menu.Item>
                   );
                 })}

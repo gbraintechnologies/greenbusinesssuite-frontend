@@ -7,3 +7,7 @@ export const allForms = () => {
 export const createNewForm = (data: any) => {
   return authApi.post("/forms/create", data);
 };
+
+export const deleteForm = (id: any) => {
+  return authApi.delete(`/forms/delete/${id}`);
+};
