@@ -11,12 +11,12 @@ const UserFromLS =
 
 export const FormProvider = ({ children }) => {
   const [form, setForm] = useState(UserFromLS);
+  const [view, setView] = useState("builder");
+  const [formLayout, setFormLayout] = useState("classic");
 
   const selectForm = (data) => {
     setForm(data);
   };
-
-  const [view, setView] = useState("builder");
 
   const removeForm = () => {
     setForm(null);
@@ -35,6 +35,8 @@ export const FormProvider = ({ children }) => {
         setView,
         selectForm,
         removeForm,
+        formLayout,
+        setFormLayout,
       }}
     >
       {children}

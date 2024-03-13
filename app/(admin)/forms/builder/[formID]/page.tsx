@@ -9,6 +9,7 @@ import useForm from "@/hooks/useForm";
 import Builder from "./views/Builder";
 import Connect from "./views/Connect";
 import { useEffect } from "react";
+import GeneralFormSettings from "./components/GeneralFormSettings";
 
 function FormEditing({ params }: any) {
   const { view, selectForm } = useForm();
@@ -30,16 +31,13 @@ function FormEditing({ params }: any) {
 
   return (
     <div className="w-full min-h-[100vh] flex  justify-between">
-      <div className="w-[80%] min-h-screen">
+      <div className="w-[76%] min-h-screen">
         {view === "builder" && <Builder />}
-
         {view === "connect" && <Connect />}
       </div>
 
-      <div className="w-[20%]">
-        <div className="bg-white min-h-[100vh] border-l-2 border-gray-200 p-3">
-          General form settings
-        </div>
+      <div className="w-[24%] fixed right-0">
+        <GeneralFormSettings />
       </div>
     </div>
   );
