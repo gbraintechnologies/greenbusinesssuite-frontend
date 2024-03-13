@@ -13,7 +13,7 @@ function Connect() {
   let key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NT";
 
   return (
-    <div className="flex  flex-col gap-10 items-center justify-center">
+    <div className="flex bg-[#F1F5F9] min-h-screen  flex-col gap-10 items-center">
       {/* TITLE */}
       <div className="boxshadow w-[46rem] mt-10">
         <div className="p-5">
@@ -51,7 +51,7 @@ function Connect() {
 
         <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
           <button className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl">
-            Geenrate new key
+            Generate new key
           </button>
           <button
             className="bg-primary-green py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
