@@ -3,11 +3,16 @@ import React from "react";
 
 // hooks
 import useAdmin from "@/hooks/useAdmin";
+import useForm from "@/hooks/useForm";
+
+//
 import Image from "next/image";
 
-function BuilderNav() {
+function FormTopNav() {
   //
   const { admin } = useAdmin();
+
+  const { setView, view } = useForm();
 
   return (
     <nav className="h-[7vh] z-[100] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
@@ -30,11 +35,23 @@ function BuilderNav() {
         </Link>
       </div>
 
-      <div className="bg-gray-100 font-medium flex items-center gap-2 rounded-xl p-1 bg-opacity-10">
-        <button className="bg-white p-1 py-2 rounded-lg px-4">
+      <div className="bg-[#334155]  flex items-center gap-2 rounded-xl my-1 p-1 bg-opacity-50">
+        <button
+          onClick={() => setView("builder")}
+          className={`${
+            view === "builder" ? "bg-white font-medium" : "text-[#64748B] "
+          } p-1 rounded-lg px-10`}
+        >
           Form builder
         </button>
-        <button className="px-4 py-2">Connect</button>
+        <button
+          onClick={() => setView("connect")}
+          className={`${
+            view === "connect" ? "bg-white font-medium" : " text-[#64748B]"
+          } p-1 rounded-lg px-10`}
+        >
+          Connect
+        </button>
       </div>
 
       <div className="flex items-center gap-3">
@@ -72,4 +89,4 @@ function BuilderNav() {
   );
 }
 
-export default BuilderNav;
+export default FormTopNav;

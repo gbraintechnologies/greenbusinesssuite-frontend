@@ -62,3 +62,7 @@ body {
 .tab-scroll-none::-webkit-scrollbar {
   display: none;
 }
+
+.boxshadow {
+  @apply shadow-lg rounded-lg border border-gray-100 bg-white;
+}

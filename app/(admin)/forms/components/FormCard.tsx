@@ -121,7 +121,7 @@ function FormCard({ form }: any) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute  w-40 rounded-lg shadow-md flex flex-col bg-white text-left">
+                <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
                   {options.map((option: any, idx: any) => {
                     return (
                       <Menu.Item>
@@ -155,7 +155,7 @@ function FormCard({ form }: any) {
       <Modal
         isOpen={showDeleteModal}
         setIsOpen={setShowDeleteModal}
-        title="Are you sure you want to delete this form?"
+        title={`Are you sure you want to delete "${name} form" ? `}
       >
         <DeleteForm id={id} setShow={setShowDeleteModal} />
       </Modal>
