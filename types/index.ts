@@ -22,17 +22,24 @@ export interface User {
   custom_profile_values: CustomProfileValue[];
 }
 
-export interface ICompany {
-  companyName: string;
-  companyDescription: string;
+export interface CompanyInfo {
+  company_name: string;
+  primary_contact_name: string;
+  primary_contact_email: string;
+  primary_contact_phone_number: string;
+  company_logo: string;
   industry: string;
-  jurisdiction: string;
-  companyLogo: string;
-  adminFirstName: string;
-  adminLastName: string;
-  adminEmail: string;
-  contactFirstName: string;
-  contactLastName: string;
-  contactEmail: string;
-  contactPhone: string;
+  company_admin_id?: number;
+  primary_currency: string;
+  id?: number
+}
+
+export interface CustomField {
+  custom_profile_item_id: number;
+  value: string;
+}
+
+export interface CompanyObject {
+  company_data: CompanyInfo;
+  custom_fields: CustomField[];
 }

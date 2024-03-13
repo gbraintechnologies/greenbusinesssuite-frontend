@@ -13,6 +13,7 @@ import { BsThreeDots } from "react-icons/bs";
 import DataTable from "@/components/DataTable/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
+import { CompanyInfo } from "@/types";
 
 export interface IFilter {
   id: number;
@@ -32,7 +33,7 @@ interface IRowData {
 }
 interface IRow {
   id: string;
-  data: IRowData
+  data: IRowData;
 }
 function CompanySetup() {
   const [filters, setFilters] = useState<IFilter[]>([
@@ -54,39 +55,55 @@ function CompanySetup() {
 
   const [aggregatedCompanies, setAggregatedCompanies] = useState([]);
 
-  const [rows, setRows] =useState([]);
+  const [rows, setRows] = useState<
+    {
+      id: number | undefined;
+      data: Partial<CompanyInfo>;
+    }[]
+  >([]);
 
-  const {data: companies, isLoading} = useQuery({
+  const { data: companies, isLoading } = useQuery({
     queryKey: ["all companies"],
     queryFn: services.getAllCompanies(),
-  })
+  });
+
+
+
+  //Status Filter
+  useEffect(() => {
+    if (activeFilter.value === "all") {
+      setAggregatedCompanies(companies);
+    } else {
+      const filteredCompanies = companies.filter(
+        (company: any) => company.status === activeFilter.value
+      );
+      setAggregatedCompanies(filteredCompanies);
+    }
+  }, [activeFilter, companies]);
 
   useEffect(() => {
-
-      console.log('data.... ', companies)
-  }, [companies])
+    console.log("rows", rows);
+  }, [rows]);
 
   useEffect(() => {
-    let temp: any = [];
+    if (aggregatedCompanies?.length > 0) {
+      setRows(aggregatedCompanies);
+    }
+  }, [aggregatedCompanies]);
 
-    if (aggregatedCompanies) {
-      for (let i = 0; i < aggregatedCompanies.length; i++) {
-        let user = aggregatedCompanies[i];
-        let userRole = "Unassigned";
-        // APP ID ===1 == MESH SUITE APP
-        // @ts-ignore
-        const meshRole = user?.profiles.find((item: any) => item.app_id === 1);
-        if (meshRole) {
-          for (let i = 0; i < roles?.length; i++) {
-            if (roles[i].id === meshRole?.role_id) {
-              userRole = roles[i].role_name;
-            }
-          }
+  useEffect(() => {
+    console.log("aggregated companies ", aggregatedCompanies);
+
+    if (aggregatedCompanies?.length > 0) {
+      const preparedRows = aggregatedCompanies.map(
+        (company: Partial<CompanyInfo>) => {
+          return {
+            id: company.id,
+            data: company,
+          };
         }
-        // @ts-ignore
-        temp.push({ id: user?.id, data: user, role: userRole });
-      }
-      setRows(temp);
+      );
+      setRows(preparedRows);
     }
   }, [aggregatedCompanies]);
 
@@ -101,19 +118,12 @@ function CompanySetup() {
       getActions: (params: any) => [
         <div
           className="flex py-3 gap-4 my-3 items-center"
-          key={params.row.data.id}
+          key={params.row.data?.id}
         >
-          {params.row.data.custom_profile_values &&
-          params.row.data.custom_profile_values.find(
-            (item: any) => item.custom_profile_item_id === 1
-          )?.value?.length > 1 ? (
+          {params.row.data?.company_logo.length > 1 ? (
             <Image
               alt="profile"
-              src={
-                params.row.data.custom_profile_values.find(
-                  (item: any) => item.custom_profile_item_id === 1
-                ).value
-              }
+              src={params.row.data?.company_logo}
               width={100}
               height={100}
               className="w-10 h-10 object-cover"
@@ -124,7 +134,9 @@ function CompanySetup() {
             </div>
           )}
           <div>
-            <p className="font-medium text-sm">{params.row.data.companyName}</p>
+            <p className="font-medium text-sm">
+              {params.row.data?.company_name}
+            </p>
           </div>
         </div>,
       ],
@@ -137,10 +149,11 @@ function CompanySetup() {
       getActions: (params: any) => [
         <div key={params.row.id} className="flex flex-col gap-2">
           <p className="font-medium text-sm">
-            {params.row.data?.contact_person.firstName}{" "}
-            {params.row.data?.contact_person.lastName}
+            {params.row.data?.primary_contact_name}
           </p>
-          <p className="text-[#475569] text-sm font-normal">{params.row.data?.contact_person.email}</p>
+          <p className="text-[#475569] text-sm font-normal">
+            {params.row.data?.primary_contact_email}
+          </p>
         </div>,
       ],
     },
@@ -151,7 +164,7 @@ function CompanySetup() {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="w-2/12">
-          <StatusPill status={params.row.data?.user_status} />
+          <StatusPill status={params.row.data?.status ?? ""} />
         </div>,
       ],
     },
@@ -188,11 +201,7 @@ function CompanySetup() {
           />
         </div>
       </div>
-      <DataTable
-        isLoading={false}
-        rows={rows}
-        columns={columns}
-      />
+      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
     </div>
   );
 }

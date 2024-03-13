@@ -12,7 +12,7 @@ import {
   FormikState,
 } from "formik";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import * as Yup from "yup";
 import Dropdown from "@/components/Dropdown/Dropdown";
@@ -20,17 +20,26 @@ import UploadIcon from "@/public/svg/upload.svg";
 import Image from "next/image";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 import useFileUpload from "@/hooks/useFileUpload";
-import { ICompany } from "@/types";
 import toast from "react-hot-toast";
+import {
+  createCompanyWithCustomFields,  getCustomFields
+} from "@/services/features/companyService";
+import { CompanyInfo, CompanyObject } from "@/types";
+import { createCustomField } from "@/services/features/userManagementService";
 
-interface CompanyInfo {
-  company_name: string;
-  primary_contact_name: string;
-  primary_contact_email: string;
-  primary_contact_phone_number: string;
-  company_logo: string;
+interface ICompany {
+  companyName: string;
+  companyDescription: string;
   industry: string;
-  company_admin_id: number;
+  jurisdiction: string;
+  companyLogo: string;
+  adminFirstName: string;
+  adminLastName: string;
+  adminEmail: string;
+  contactFirstName: string;
+  contactLastName: string;
+  contactEmail: string;
+  contactPhone: string;
 }
 
 const companySchema = Yup.object().shape({
@@ -54,9 +63,16 @@ const CreateCompany = () => {
     value: string;
   }>();
 
+  const [selectedJurisdiction, setSelectedJurisdiction] = useState<{
+    label: string;
+    value: string;
+  }>();
+
   const [phone, setPhone] = useState("");
 
-  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [companyLogo, setCompanyLogo] = useState<File | null>(null);
+
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
 
   const inputFileRef = useRef();
 
@@ -78,9 +94,19 @@ const CreateCompany = () => {
     contactEmail: "",
   };
 
+  useEffect(() => {
+    if (companyLogo) {
+      const url = URL.createObjectURL(companyLogo);
+      setBackgroundImageUrl(url);
+
+      // Clean up the object URL when the component unmounts or logo changes
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [companyLogo]);
+
   const { handleFileUpload } = useFileUpload();
 
-  const createCompany = (
+  const createCompany = async (
     values: Partial<ICompany>,
     { resetForm, setSubmitting }: FormikHelpers<Partial<ICompany>>
   ) => {
@@ -89,16 +115,54 @@ const CreateCompany = () => {
       setSubmitting(false);
       return;
     }
-    const dataToSubmit: CompanyInfo = {
-      company_name: values.companyName as string,
-      primary_contact_name: `${values.contactFirstName} ${values.contactLastName}`,
-      primary_contact_email: values.contactEmail as string,
-      primary_contact_phone_number: phone,
-      company_logo: "",
-      industry: selectedIndustry?.value as string,
-      company_admin_id: 1,
+
+    if (!selectedIndustry?.value) {
+      toast.error("Industry is required");
+      setSubmitting(false);
+      return;
+    }
+
+    const companyLogoURL =
+      companyLogo && (await handleFileUpload(companyLogo as File));
+
+    const data: CompanyInfo = {
+        company_name: values.companyName as string,
+        primary_contact_name: `${values.contactFirstName} ${values.contactLastName}`,
+        primary_contact_email: values.contactEmail as string,
+        primary_contact_phone_number: phone,
+        company_logo: companyLogoURL?.file_url || "",
+        industry: selectedIndustry?.value as string,
+        primary_currency: "GHS",
     };
-    setSubmitting(false);
+
+    const custom_fields = [
+      {
+        //Company Description
+        custom_profile_item_id: 1,
+        value: values.companyDescription as string,
+      },
+      {
+        //Admin Name
+        custom_profile_item_id: 2,
+        value: `${values.adminFirstName} ${values.adminLastName}`,
+      },
+      {
+        //Admin Email
+        custom_profile_item_id: 3,
+        value: values.adminEmail as string,
+      }
+    ]
+
+    try {
+      const response = await createCompanyWithCustomFields(data, custom_fields);
+      toast.success("Company created successfully");
+      resetForm();
+    } catch (error) {
+      toast.error("An error occurred");
+      console.log("error ", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -110,7 +174,6 @@ const CreateCompany = () => {
           onSubmit={createCompany}
         >
           {({ errors, isSubmitting }) => {
-            console.log("errors ", errors);
             return (
               <Form>
                 {/* HEADER */}
@@ -181,7 +244,10 @@ const CreateCompany = () => {
                   <div className="input-holder half">
                     <label>Industry</label>
                     <Dropdown
-                      options={[{ label: "Finance", value: "finance" }]}
+                      options={[
+                        { label: "Finance", value: "finance" },
+                        { label: "Technology", value: "Technology" },
+                      ]}
                       selected={selectedIndustry}
                       setSelected={setSelectedIndustry}
                       bgColor="bg-slate-50"
@@ -193,26 +259,49 @@ const CreateCompany = () => {
                     <label>Company jurisdiction</label>
                     <Dropdown
                       options={[]}
-                      selected={selectedIndustry}
-                      setSelected={setSelectedIndustry}
+                      selected={selectedJurisdiction}
+                      setSelected={setSelectedJurisdiction}
                       bgColor="bg-slate-50"
                     />
                     <ShowError name="industry" />
                   </div>
                   {/* COMPANY LOGO */}
-                  <div className="flex justify-center items-center w-full">
-                    <label className="flex justify-center items-center bg-slate-50 rounded-lg border-2 border-dashed w-full h-64 group text-center">
-                      <div className="flex flex-col gap-3">
+                  <div className="flex justify-center items-center w-full relative">
+                    <label
+                      className="flex justify-center items-center bg-slate-50 rounded-lg border-2 border-dashed w-full h-64 group text-center"
+                      style={{
+                        backgroundImage: companyLogo
+                          ? `url(${backgroundImageUrl})`
+                          : "",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                    >
+                      {companyLogo && (
+                        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+                      )}
+
+                      <div className="flex flex-col gap-3 z-10 relative">
                         <div className="flex w-full items-center justify-center">
                           <div className="flex  items-center justify-center rounded-full w-12 h-12 bg-[#F1F5F9]">
                             <Image src={UploadIcon} alt="upload icon" />
                           </div>
                         </div>
                         <div className="flex flex-col gap-2">
-                          <p className="font-medium text-base ">
+                          <p
+                            className={
+                              "font-medium text-base " +
+                              (companyLogo ? " text-white " : "")
+                            }
+                          >
                             Upload company logo file here
                           </p>
-                          <p className="text-[#64748B] text-xs">
+                          <p
+                            className={
+                              " text-xs" +
+                              (companyLogo ? " text-white " : " text-[#64748B]")
+                            }
+                          >
                             Supported formats: JPG, PNG (2MB max file size)
                           </p>
                         </div>
@@ -226,7 +315,7 @@ const CreateCompany = () => {
                         type="file"
                         className="hidden"
                         onChange={(e) => {
-                          setProfileImage(e.target.files && e.target.files[0]);
+                          setCompanyLogo(e.target.files && e.target.files[0]);
                         }}
                         accept=".jpg, .png"
                       />
