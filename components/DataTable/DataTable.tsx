@@ -104,6 +104,7 @@ function DataTable({
   checkboxes = false,
   setSelectedRows,
   rowsPerView,
+  onRowClick,
   setRowsPerView,
   isLoading,
 }: any) {
@@ -113,6 +114,8 @@ function DataTable({
   const [page, setPage] = useState(1);
 
   const [localRowsView, setLocalRowsView] = useState(rowsPerView);
+
+  const [rowSelectionModel, setRowSelectionModel] = useState();
 
   // sync localRowsView and rowsPerView
   useEffect(() => {
@@ -143,18 +146,21 @@ function DataTable({
               },
             }}
             rows={localRows}
-            onRowSelectionModelChange={(ids: any) => {
-              const selectedIDs = new Set(ids);
-              const selectedRowData = localRows.filter((row: any) =>
-                selectedIDs.has(row.id.toString())
-              );
-              setSelectedRows(selectedRowData);
+            // onRowSelectionModelChange={(ids: any) => {
+            //   const selectedIDs = new Set(ids);
+            //   const selectedRowData = localRows.filter((row: any) =>
+            //     selectedIDs.has(row.id.toString())
+            //   );
+            //   console.log(selectedRowData, "selectedRowData");
+            //   // setSelectedRows(selectedRowData);
+            // }}
+            onRowSelectionModelChange={(newRowSelectionModel: any) => {
+              console.log(newRowSelectionModel, "newRowSelectionModel");
+              setRowSelectionModel(newRowSelectionModel);
             }}
+            rowSelectionModel={rowSelectionModel}
             columns={columns}
             loading={isLoading}
-            disableColumnMenu
-            disableColumnFilter
-            disableColumnSelector
             initialState={{
               pagination: {
                 paginationModel: {
@@ -181,7 +187,6 @@ function DataTable({
                 />
               ),
             }}
-            // disableRowSelectionOnClick
           />
 
           {/* CUSTOM PAGINATION */}

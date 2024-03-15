@@ -31,7 +31,9 @@ export interface CompanyInfo {
   industry: string;
   company_admin_id?: number;
   primary_currency: string;
-  id?: number
+  id?: number;
+  status?: string;
+  custom_fields?: CustomField[];
 }
 
 export interface CustomField {

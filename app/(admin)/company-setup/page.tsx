@@ -14,6 +14,7 @@ import DataTable from "@/components/DataTable/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { CompanyInfo } from "@/types";
+import Link from "next/link";
 
 export interface IFilter {
   id: number;
@@ -53,6 +54,8 @@ function CompanySetup() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [selectedRow, setSelectedRow] = useState();
+
   const [aggregatedCompanies, setAggregatedCompanies] = useState([]);
 
   const [rows, setRows] = useState<
@@ -67,7 +70,11 @@ function CompanySetup() {
     queryFn: services.getAllCompanies(),
   });
 
-
+  const { data: searchData, isLoading: searchLoading } = useQuery({
+    queryKey: ["all users", searchTerm],
+    queryFn: services.searchCompany(searchTerm),
+    enabled: Boolean(searchTerm),
+  });
 
   //Status Filter
   useEffect(() => {
@@ -75,15 +82,24 @@ function CompanySetup() {
       setAggregatedCompanies(companies);
     } else {
       const filteredCompanies = companies.filter(
-        (company: any) => company.status === activeFilter.value
+        (company: any) =>
+          company.status.toLowerCase() === activeFilter.value.toLowerCase()
       );
       setAggregatedCompanies(filteredCompanies);
     }
   }, [activeFilter, companies]);
 
+  //Search Filter
   useEffect(() => {
-    console.log("rows", rows);
-  }, [rows]);
+    if (searchTerm.length > 1 && searchData) {
+      setAggregatedCompanies(searchData);
+    }
+
+    if (companies && searchTerm.length < 1) {
+      setActiveRoleFilter([]);
+      setAggregatedCompanies(companies);
+    }
+  }, [searchTerm, companies, searchData]);
 
   useEffect(() => {
     if (aggregatedCompanies?.length > 0) {
@@ -104,8 +120,14 @@ function CompanySetup() {
         }
       );
       setRows(preparedRows);
+    } else {
+      setRows([]);
     }
   }, [aggregatedCompanies]);
+
+  useEffect(() => {
+    console.log("selected row ", selectedRow);
+  }, [selectedRow]);
 
   const columns = [
     {
@@ -134,9 +156,11 @@ function CompanySetup() {
             </div>
           )}
           <div>
+            <Link href={`/company-setup/profile?id=${params.row.data?.id}`}>
             <p className="font-medium text-sm">
               {params.row.data?.company_name}
             </p>
+            </Link>
           </div>
         </div>,
       ],
@@ -181,6 +205,10 @@ function CompanySetup() {
     },
   ];
 
+  const onSelectRow = (params: any) => {
+    console.log('selected rowwwww... ', params.row.data.id)
+  }
+
   const roles: any = [];
   return (
     <div className="w-full pb-20 ">
@@ -194,14 +222,14 @@ function CompanySetup() {
         />
         <div className="flex items-center gap-3">
           <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <RoleFilter
-            roles={roles}
-            selected={activeRoleFilter}
-            setSelected={setActiveRoleFilter}
-          />
         </div>
       </div>
-      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
+      <DataTable
+        isLoading={isLoading || searchLoading}
+        rows={rows}
+        columns={columns}
+        onRowClick={onSelectRow}
+      />
     </div>
   );
 }
