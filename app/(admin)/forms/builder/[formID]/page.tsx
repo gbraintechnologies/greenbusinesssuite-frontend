@@ -1,14 +1,20 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 //
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
+
+// hooks
 import useForm from "@/hooks/useForm";
+
+// views
 import Builder from "./views/Builder";
 import Connect from "./views/Connect";
-import { useEffect } from "react";
+
+//
 import GeneralFormSettings from "./components/GeneralFormSettings";
 
 function FormEditing({ params }: any) {
