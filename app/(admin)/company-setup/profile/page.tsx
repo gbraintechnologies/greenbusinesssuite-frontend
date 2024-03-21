@@ -9,12 +9,14 @@ import { useSearchParams } from "next/navigation";
 import { IoIosArrowDown } from "react-icons/io";
 import services from "@/services";
 import { CompanyInfo } from "@/types";
+import { Menu, Transition } from "@headlessui/react";
+import Link from "next/link";
+import { Fragment } from "react";
 
 const Page = () => {
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
-
 
   console.log("search params ", id);
 
@@ -23,30 +25,30 @@ const Page = () => {
     queryFn: services.getAllCompanies(),
   });
 
-  const companyData: CompanyInfo = companies?.find((company: CompanyInfo) => company.id === Number(id));
+  const companyData: CompanyInfo = companies?.find(
+    (company: CompanyInfo) => company.id === Number(id)
+  );
 
-  console.log('comopany data ', companyData)
+  console.log("company data ", companyData);
 
-  const companyDescription = companyData?.custom_fields?.find((field) => field.custom_profile_item_id == 1)?.value ?? "";
+  const companyDescription =
+    companyData?.company_custom_values?.find(
+      (field) => field.custom_profile_item_id == 1
+    )?.value ?? "";
 
-  const companyAdminName = companyData?.custom_fields?.find((field) => field.custom_profile_item_id == 2)?.value ?? "";
+  const companyAdminName =
+    companyData?.company_custom_values?.find(
+      (field) => field.custom_profile_item_id == 2
+    )?.value ?? "";
 
-  const companyAdminEmail = companyData?.custom_fields?.find((field) => field.custom_profile_item_id == 3)?.value ?? "";
-  const companyInfo = {
-    name: "Onica Rackspace Technology Company",
-    status: "Active",
-    companyDescription:
-      "Discover the latest advancements in 5G technology and how it's set to transform telecommunications a",
-    industry: "Technology",
-    contactFirstName: "David",
-    contactLastName: "Bannerman",
-    phone: "+233 23 123 4567",
-    contactEmail: "Johnydee@acme.com",
-    adminFirstName: "Adwoa",
-    adminLastName: "Yankee",
-    adminEmail: "Ayankee@acme.com",
-  };
+  const companyAdminEmail =
+    companyData?.company_custom_values?.find(
+      (field) => field.custom_profile_item_id == 3
+    )?.value ?? "";
 
+    const editCompanyStatus = () => {
+      
+    }
   return (
     <div className="px-5 pb-10">
       {/* HEADER */}
@@ -54,13 +56,13 @@ const Page = () => {
         <h3 className="font-semibold text-xl">Company Profile</h3>
 
         <div className="flex gap-3">
-          <button
-            type="submit"
+          <Link
+            href={`/company-setup/profile/edit?id=${id}`}
             className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
           >
             <Image src={UpdateInfo} alt="Update Info" />
             Update Information
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -74,54 +76,96 @@ const Page = () => {
             className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
             alt="Company Logo"
           />
+          {companyData?.company_name && (
+            <div className="flex flex-col gap-3">
+              <div className="label">Company Name</div>
+              <div className="header">{companyData?.company_name}</div>
+            </div>
+          )}
+        </div>
+        {companyData?.status && (
           <div className="flex flex-col gap-3">
-            <div className="label">Company Name</div>
-            <div className="header">{companyData?.company_name}</div>
+            <div className="label">Status</div>
+            <Menu as={"div"} className={"z-20 relative inline-block"}>
+
+            <Menu.Button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
+              {companyData?.status}
+              <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
+              <IoIosArrowDown />
+            </Menu.Button>
+
+            <Transition
+          as={Fragment}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
+        >
+          <Menu.Items className="z-50 absolute right-0 mt-2 px-1 py-1 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+            <Menu.Item>
+                <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2" onClick={editCompanyStatus}>
+                  ACTIVE
+                </button>
+            </Menu.Item>
+          </Menu.Items>
+        </Transition>
+            </Menu>
           </div>
-        </div>
-        <div className="flex flex-col gap-3">
-          <div className="label">Status</div>
-          <button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
-            {companyData?.status}
-            <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
-            <IoIosArrowDown />
-          </button>
-        </div>
+        )}
       </div>
 
       {/* COMPANY BODY */}
       <div className="max-w-2xl py-5 pb-3">
-        <div className="group">
-          <div className="label">Company description</div>
-          <div className="value">{companyDescription}</div>
-        </div>
-        <div className="group">
-          <div className="label">Industry</div>
-          <div className="value">{companyData?.industry}</div>
-        </div>
-        <div className="group">
-          <div className="label">Contact person</div>
-          <div className="value">{companyData?.primary_contact_name}</div>
+        {companyDescription && (
+          <div className="group">
+            <div className="label">Company description</div>
+            <div className="value">{companyDescription}</div>
+          </div>
+        )}
+        {companyData?.industry && (
+          <div className="group">
+            <div className="label">Industry</div>
+            <div className="value">{companyData?.industry}</div>
+          </div>
+        )}
+        {companyData?.primary_contact_name && (
+          <div className="group">
+            <div className="label">Contact person</div>
+            <div className="value">{companyData?.primary_contact_name}</div>
+          </div>
+        )}
+
+        <div className="flex justify-between">
+          {companyData?.primary_contact_phone_number && (
+            <div className="group">
+              <div className="label">Phone Number</div>
+              <div className="value">
+                {companyData?.primary_contact_phone_number}
+              </div>
+            </div>
+          )}
+          {companyData?.primary_contact_email && (
+            <div className="group">
+              <div className="label">Email</div>
+              <div className="value">{companyData?.primary_contact_email}</div>
+            </div>
+          )}
         </div>
         <div className="flex justify-between">
-          <div className="group">
-            <div className="label">Phone Number</div>
-            <div className="value">{companyData?.primary_contact_phone_number}</div>
-          </div>
-          <div className="group">
-            <div className="label">Email</div>
-            <div className="value">{companyData?.primary_contact_email}</div>
-          </div>
-        </div>
-        <div className="flex justify-between">
-          <div className="group">
-            <div className="label">Admin Name</div>
-            <div className="value">{companyAdminName}</div>
-          </div>
-          <div className="group">
-            <div className="label">Email</div>
-            <div className="value">{companyAdminEmail}</div>
-          </div>
+          {companyAdminName && (
+            <div className="group">
+              <div className="label">Admin Name</div>
+              <div className="value">{companyAdminName}</div>
+            </div>
+          )}
+          {companyAdminEmail && (
+            <div className="group">
+              <div className="label">Email</div>
+              <div className="value">{companyAdminEmail}</div>
+            </div>
+          )}
         </div>
       </div>
     </div>

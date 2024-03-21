@@ -33,7 +33,7 @@ export interface CompanyInfo {
   primary_currency: string;
   id?: number;
   status?: string;
-  custom_fields?: CustomField[];
+  company_custom_values?: CustomField[];
 }
 
 export interface CustomField {

@@ -17,12 +17,22 @@ export const createCompanyWithCustomFields = async (
     .then((res) => res.data);
 };
 
+export const editCompanyWithCustomFields = async (
+  companyId: number | undefined,
+  data: CompanyInfo,
+  custom_fields: CustomField[]
+) => {
+  return await authApi.post(`/companies/edit_with_custom_fields/${companyId}`, {
+    company_data: data,
+    custom_fields,
+  });
+};
+
 export const getCustomFields = () => {
   return authApi.get("/companies/get_custom_fields").then((res) => res.data);
 };
 
 export const searchCompany = (searchTerm: string) => {
-  return () => authApi
-    .get(`/companies-by-filter/${searchTerm}`)
-    .then((res) => res.data);
+  return () =>
+    authApi.get(`/companies-by-filter/${searchTerm}`).then((res) => res.data);
 };
