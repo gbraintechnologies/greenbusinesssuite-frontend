@@ -71,6 +71,7 @@ function UserManagement() {
     refetch();
   }, []);
 
+  
   const columns = [
     {
       field: "name",
@@ -164,6 +165,10 @@ function UserManagement() {
       setAggregatedUsers(temp);
     }
   }, [activeFilter]);
+
+  useEffect(() => {
+    console.log(" rows ", rows)
+  }, [rows]);
 
   // ROLE FILTERS
   useEffect(() => {

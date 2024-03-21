@@ -12,12 +12,15 @@ import * as appService from "./features/appService";
 
 import * as formsService from "./features/formsService";
 
+import * as companyService from "./features/companyService";
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   ...localService,
   ...authService,
   ...userManagementService,
   ...rolesService,
+  ...companyService,
   ...appService,
   ...formsService,
   ...jurisdictionsService,
