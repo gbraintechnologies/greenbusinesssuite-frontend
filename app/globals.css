@@ -62,3 +62,11 @@ body {
 .tab-scroll-none::-webkit-scrollbar {
   display: none;
 }
+
+.boxshadow {
+  @apply shadow-lg rounded-lg border border-gray-100 bg-white;
+}
+
+.btn-outline {
+  @apply bg-white border hover:bg-primary-dark hover:text-white flex items-center justify-center gap-2 border-gray-300 shadow-sm text-primary-dark text-sm py-2 px-3 rounded-lg;
+}
