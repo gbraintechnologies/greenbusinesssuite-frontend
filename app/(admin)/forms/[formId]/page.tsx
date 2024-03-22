@@ -147,7 +147,7 @@ function FormDetail({ params }: any) {
         <Modal
           isOpen={showAssignModal}
           setIsOpen={setShowAssignModal}
-          title={`Unpublish this form `}
+          title={`Assign company to form `}
         >
           <AssignForm id={formID} setShow={setShowAssignModal} />
         </Modal>

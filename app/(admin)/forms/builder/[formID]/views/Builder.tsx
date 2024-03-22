@@ -85,12 +85,13 @@ function Builder({ data }: any) {
           </button>
         </div>
         <div className="w-4/6">
+          {/* HEADER: TITLE, DESCRIPTION & LAST UPDATED */}
           <div className="boxshadow w-full mb-10">
             <div className="p-5">
               <h5 className="font-semibold text-lg mb-1">
                 <input
                   value={formName}
-                  className="outline-none focus:outline-none"
+                  className="outline-none focus:outline-none w-full"
                   onBlur={rename}
                   onChange={(e) => setFormName(e.target.value)}
                 />
