@@ -123,7 +123,6 @@ function CompanySetup() {
     }
   }, [aggregatedCompanies]);
 
-
   const columns = [
     {
       field: "name",
@@ -138,23 +137,27 @@ function CompanySetup() {
           key={params.row.data?.id}
         >
           {params.row.data?.company_logo?.length > 1 ? (
-            <Image
-              alt="profile"
-              src={params.row.data?.company_logo}
-              width={100}
-              height={100}
-              className="w-10 h-10 object-cover"
-            />
+            <Link href={`/company-setup/profile?id=${params.row.data?.id}`}>
+              <Image
+                alt="profile"
+                src={params.row.data?.company_logo}
+                width={100}
+                height={100}
+                className="w-10 h-10 object-cover"
+              />
+            </Link>
           ) : (
-            <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
-              <UserIcon />
-            </div>
+            <Link href={`/company-setup/profile?id=${params.row.data?.id}`}>
+              <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
+                <UserIcon />
+              </div>
+            </Link>
           )}
           <div>
             <Link href={`/company-setup/profile?id=${params.row.data?.id}`}>
-            <p className="font-medium text-sm">
-              {params.row.data?.company_name}
-            </p>
+              <p className="font-medium text-sm">
+                {params.row.data?.company_name}
+              </p>
             </Link>
           </div>
         </div>,
@@ -164,6 +167,8 @@ function CompanySetup() {
       field: "contactPerson",
       headerName: "Contact Person",
       flex: 1,
+      headerAlign: "left",
+      align: "middle",
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="flex flex-col gap-2">
@@ -199,7 +204,6 @@ function CompanySetup() {
       ],
     },
   ];
-
 
   const roles: any = [];
   return (

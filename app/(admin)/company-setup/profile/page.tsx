@@ -140,13 +140,13 @@ const Page = () => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="z-50 absolute right-3 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                <Menu.Items className="z-50 absolute right-0 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] ring-1 ring-black/5 focus:outline-none">
                   {statuses
                     .filter((status) => status.id !== activeStatus?.id)
                     .map((status) => (
                       <Menu.Item key={status.id}>
                         <button
-                          className="flex hover:text-primary-dark hover:bg-gray-50 border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] px-3 py-2"
+                          className="flex hover:text-primary-dark w-24 hover:bg-gray-50 border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg px-3 py-2"
                           onClick={() => editCompanyStatus(status)}
                         >
                           {status.name}

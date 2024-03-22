@@ -18,10 +18,14 @@ const Page = () => {
 
   const id = searchParams.get("id");
 
-  const { data: companies, isLoading , refetch} = useQuery({
+  const {
+    data: companies,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["all companies"],
-    queryFn: services.getAllCompanies()
-    });
+    queryFn: services.getAllCompanies(),
+  });
 
   const companyData: CompanyInfo = companies?.find(
     (company: CompanyInfo) => company.id === Number(id)
@@ -131,6 +135,10 @@ const Page = () => {
     values: Partial<ICompany>,
     { resetForm, setSubmitting }: FormikHelpers<Partial<ICompany>>
   ) => {
+    if (!hasAnyValueChanged(initialValues, values)) {
+      toast.error("No changes made");
+      return;
+    }
     if (!(phone?.length > 4)) {
       toast.error("Phone number is required");
       setSubmitting(false);
@@ -142,7 +150,6 @@ const Page = () => {
       setSubmitting(false);
       return;
     }
-
 
     const companyLogoURL =
       companyLogo && (await handleFileUpload(companyLogo as File));
@@ -195,11 +202,11 @@ const Page = () => {
 
   useEffect(() => {
     refetch();
-  },[])
+  }, []);
 
   useEffect(() => {
     if (companyData) {
-      const phoneNumber = companyData?.primary_contact_phone_number
+      const phoneNumber = companyData?.primary_contact_phone_number;
       setPhone(phoneNumber);
       setSelectedIndustry({
         label: companyData?.industry,
