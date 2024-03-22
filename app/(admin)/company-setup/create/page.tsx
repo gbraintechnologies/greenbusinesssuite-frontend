@@ -149,7 +149,6 @@ const CreateCompany = () => {
       resetForm();
     } catch (error) {
       toast.error("An error occurred");
-      console.log("error ", error);
     } finally {
       setSubmitting(false);
     }

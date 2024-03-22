@@ -108,8 +108,6 @@ function CompanySetup() {
   }, [aggregatedCompanies]);
 
   useEffect(() => {
-    console.log("aggregated companies ", aggregatedCompanies);
-
     if (aggregatedCompanies?.length > 0) {
       const preparedRows = aggregatedCompanies.map(
         (company: Partial<CompanyInfo>) => {
@@ -125,9 +123,6 @@ function CompanySetup() {
     }
   }, [aggregatedCompanies]);
 
-  useEffect(() => {
-    console.log("selected row ", selectedRow);
-  }, [selectedRow]);
 
   const columns = [
     {
@@ -142,7 +137,7 @@ function CompanySetup() {
           className="flex py-3 gap-4 my-3 items-center"
           key={params.row.data?.id}
         >
-          {params.row.data?.company_logo.length > 1 ? (
+          {params.row.data?.company_logo?.length > 1 ? (
             <Image
               alt="profile"
               src={params.row.data?.company_logo}
@@ -205,9 +200,6 @@ function CompanySetup() {
     },
   ];
 
-  const onSelectRow = (params: any) => {
-    console.log('selected rowwwww... ', params.row.data.id)
-  }
 
   const roles: any = [];
   return (
@@ -228,7 +220,6 @@ function CompanySetup() {
         isLoading={isLoading || searchLoading}
         rows={rows}
         columns={columns}
-        onRowClick={onSelectRow}
       />
     </div>
   );
