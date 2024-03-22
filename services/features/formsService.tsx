@@ -1,19 +1,33 @@
 import authApi from "../meshAuthClient";
 
 export const allForms = () => {
-  return () => authApi.get("/forms/all").then((res) => res.data);
+  return () =>
+    authApi.get("/forms/builder/all?page=0&size=20").then((res) => res.data);
+};
+
+export const allFormTemplates = () => {
+  return () =>
+    authApi.get("/forms/builder/list-templates").then((res) => res.data);
 };
 
 export const getFormById = (id: any) => {
-  return () => authApi.get(`/forms/${id}`).then((res) => res.data);
+  return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
 
 export const updateForm = (id: any, data: any) => {
-  return authApi.put(`/forms/update/${id}`, data);
+  return authApi.put(`/forms/builder/update/${id}`, data);
+};
+
+export const renameForm = (id: any, name: string) => {
+  return authApi.put(`/forms/builder/rename/${id}?newName=${name}`);
 };
 
 export const createNewForm = (data: any) => {
-  return authApi.post("/forms/create", data);
+  return authApi.post("/forms/builder/create", data);
+};
+
+export const duplicateForm = (id: any) => {
+  return authApi.post(`/forms/builder/${id}/duplicateForm`);
 };
 
 export const publishForm = (data: any) => {
@@ -138,9 +152,20 @@ export const publishForm = (data: any) => {
 };
 
 export const unpublishForm = (id: any) => {
-  return authApi.put(`/forms/unpublish/${id}`);
+  return authApi.put(`/forms/builder/unpublish/${id}`);
 };
 
 export const deleteForm = (id: any) => {
-  return authApi.delete(`/forms/soft-delete/${id}`);
+  return authApi.delete(`/forms/builder/soft-delete/${id}`);
 };
+
+// API KEYS
+export const regenerateAPIKey = (id: any) => {
+  return authApi.put(`/forms/builder/generate/apikey/${id}`);
+};
+
+export const assignCompanyToForm = (company: any, id: any) => {
+  return authApi.post(`/forms/builder/${company}/duplicateForm`);
+};
+
+// BUILDER ENDPOINTS

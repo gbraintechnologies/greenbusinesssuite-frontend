@@ -1,10 +1,46 @@
 import React, { useState } from "react";
 
 //
+import { useQueryClient } from "@tanstack/react-query";
+
+//
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
+import toast from "react-hot-toast";
+
+//
+import services from "@/services";
 
 function RenameForm({ setShow, form }: any) {
+  const queryClient = useQueryClient();
+
   const [name, setName] = useState(form?.name);
+  const [loading, setLoading] = useState(false);
+
+  //
+
+  const rename = () => {
+    setLoading(true);
+
+    services
+      .renameForm(form.id, name)
+      .then((res) => {
+        setLoading(false);
+        console.log("renaming form", res);
+        toast.dismiss();
+        toast.success("Form renamed!");
+        queryClient.invalidateQueries({
+          queryKey: ["all forms"],
+        });
+        setShow(false);
+      })
+      .catch((e) => {
+        setLoading(false);
+        toast.dismiss();
+        toast.error("Error renaming form. Please try again");
+        console.log("error ", e);
+      });
+  };
+
   return (
     <div>
       <div className="flex mx-40 my-5 bg-gradient-to-r from-indigo-200 to-pink-400 items-center justify-center  h-[12rem] rounded-lg">
@@ -29,10 +65,11 @@ function RenameForm({ setShow, form }: any) {
           Cancel
         </button>
         <button
-          className="bg-primary-green py-3 shadow-md flex text-white text-sm px-6 hover:opacity-95 items-center gap-2 rounded-xl"
-          onClick={() => setShow(false)}
+          disabled={loading}
+          className="bg-primary-green disabled:bg-gray-500 disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-6 hover:opacity-95 items-center gap-2 rounded-xl"
+          onClick={rename}
         >
-          Confirm
+          {loading ? "Please wait.." : "Confirm"}
         </button>
       </div>
     </div>

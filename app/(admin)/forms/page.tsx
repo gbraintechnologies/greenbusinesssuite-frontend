@@ -1,7 +1,7 @@
 "use client";
 
 import AddFormIcon from "@/public/icons/AddFormIcon";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,14 +15,23 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import toast from "react-hot-toast";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+
+//
 import FormCard from "./components/FormCard";
+import useForm from "@/hooks/useForm";
+import Modal from "@/components/Modal/Modal";
+import UsingTemplate from "./components/UsingTemplate";
 
 function Forms() {
   const router = useRouter();
 
   const queryClient = useQueryClient();
 
+  const { selectForm } = useForm();
+
   const [loading, setLoading] = useState(false);
+
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
 
   let sampleFormData = {
     id: 0,
@@ -154,51 +163,52 @@ function Forms() {
         services
           .createNewForm({
             name: "Untitled",
-            url: "string",
-            description: "untitled",
-            formInstruction: "untitled",
+            url: "",
+            description: "",
+            formInstruction: "",
             formSections: [],
             userMandatory: false,
-            deadline: "2024-03-11T15:32:02.915Z",
             publishStatus: "DRAFT",
             isDeleted: false,
-            createdOn: "2024-03-11T15:32:02.915Z",
-            updatedOn: "2024-03-11T15:32:02.915Z",
-            deletedOn: "2024-03-11T15:32:02.915Z",
+            createdOn: new Date(),
+            updatedOn: new Date(),
           })
           .then((res) => {
             setLoading(false);
             toast.dismiss();
-            console.log("created form", res?.data);
             queryClient.invalidateQueries({
               queryKey: ["all forms"],
             });
             //
-            // router.push("/forms/builder/${res.data.id}");
+            router.push(`/forms/builder/${res.data}`);
           })
           .catch((e: Error) => {
-            console.log("error creating form", e);
+            toast.dismiss();
+            toast.error("Error occured");
           });
       },
     },
     {
       icon: <ImportFormIcon />,
       title: "Use existing template",
-      desc: "Create a form based of another form",
+      desc: "Create a form using a template",
 
       func: () => {
-        //
+        setShowTemplateModal(true);
       },
     },
   ];
 
-  const recentForms = [];
-
-  // fetch all users
+  // fetch all forms
   const { data: forms, isLoading } = useQuery({
     queryKey: ["all forms"],
     queryFn: services.allForms(),
   });
+
+  // unselecting any previous form
+  useEffect(() => {
+    selectForm({});
+  }, []);
 
   return (
     <div className="px-5 pb-10">
@@ -243,13 +253,25 @@ function Forms() {
           ) : (
             <div className="grid grid-cols-4 gap-5">
               {forms &&
-                forms?.map((form: any) => {
-                  return <FormCard key={form.id} form={form} />;
-                })}
+                forms
+                  .filter((form: any) => form.isTemplate !== true)
+                  ?.map((form: any) => {
+                    return <FormCard key={form.id} form={form} />;
+                  })}
             </div>
           )}
         </>
       )}
+
+      {/*  */}
+      <Modal
+        size="big"
+        isOpen={showTemplateModal}
+        setIsOpen={setShowTemplateModal}
+        title="Select an existing template to build from"
+      >
+        <UsingTemplate />
+      </Modal>
     </div>
   );
 }

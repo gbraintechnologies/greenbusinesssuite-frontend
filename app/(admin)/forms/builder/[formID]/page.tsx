@@ -38,7 +38,7 @@ function FormEditing({ params }: any) {
   return (
     <div className="w-full min-h-[100vh] flex  justify-between">
       <div className="w-[76%] min-h-screen">
-        {view === "builder" && <Builder />}
+        {view === "builder" && <Builder data={data} />}
         {view === "connect" && <Connect />}
       </div>
 

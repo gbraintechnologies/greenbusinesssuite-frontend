@@ -9,6 +9,9 @@ import { Fragment, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 
+//
+import { useQueryClient } from "@tanstack/react-query";
+
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 
 // utils
@@ -19,6 +22,7 @@ import Modal from "@/components/Modal/Modal";
 import DeleteForm from "../actions/DeleteForm";
 import toast from "react-hot-toast";
 import RenameForm from "../actions/RenameForm";
+import services from "@/services";
 
 function FormCard({ form }: any) {
   let {
@@ -33,6 +37,7 @@ function FormCard({ form }: any) {
   } = form;
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   // modal controls for delete and rename
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -62,7 +67,23 @@ function FormCard({ form }: any) {
     {
       title: "Duplicate",
       func: () => {
-        //
+        toast.loading("Duplicating form");
+        services
+          .duplicateForm(id)
+          .then((res) => {
+            toast.dismiss();
+            queryClient.invalidateQueries({
+              queryKey: ["all forms"],
+            });
+            console.log("duplicated", res);
+            // Push to builder after duplicating
+            //  router.push(`/forms/builder/${res}`);
+          })
+          .catch((e) => {
+            toast.dismiss();
+            console.log("e dyupl", e);
+            toast.error("Error duplicating form");
+          });
       },
     },
     {
@@ -93,17 +114,27 @@ function FormCard({ form }: any) {
   return (
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
-        <div
+        <button
+          onClick={() => {
+            router.push(`/forms/${id}`);
+          }}
           style={{
             backgroundColor: color?.a,
             background: `linear-gradient(45deg, ${color?.a} 0%, ${color?.b} 100%)`,
           }}
-          className={`flex items-center justify-center  h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          className={`flex items-center justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >
           <FormPreviewIcon />
-        </div>
+        </button>
         <div className="p-3">
-          <h4 className="text-lg font-medium">{name}</h4>
+          <button
+            onClick={() => {
+              router.push(`/forms/${id}`);
+            }}
+            className="text-lg w-full text-left hover:font-semibold font-medium"
+          >
+            {name}
+          </button>
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs font-light pr-4">
               Edited {FormatDate(updatedOn)}
