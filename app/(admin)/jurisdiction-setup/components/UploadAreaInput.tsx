@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import React, { useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import UploadIcon from "@/public/icons/uploadIcon";
+import UploadIcon from "@/public/icons/UploadIcon";
 
 interface UploadAreaInputProps {
   className?: string;

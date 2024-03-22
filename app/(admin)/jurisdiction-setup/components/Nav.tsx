@@ -12,6 +12,8 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 function Nav() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [IDImage, setIDImage] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+
   const handleDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     const acceptedExtensions = [".csv", ".xls", ".xlsx"];
@@ -29,7 +31,24 @@ function Nav() {
   };
 
   const handleImportData = () => {
+    // Simulate data import with setTimeout
+    const simulateImport = () => {
+      for (let i = 0; i <= 100; i += 10) {
+        setTimeout(() => {
+          setUploadProgress(i);
+        }, i * 50);
+      }
+    };
 
+    // Start the import process
+    simulateImport();
+
+    // After import, reset states and close modal
+    setTimeout(() => {
+      setIDImage(null);
+      setUploadProgress(0);
+      setShowCancelModal(false);
+    }, 5000);
   };
 
   return (
@@ -81,8 +100,6 @@ function Nav() {
         title="Import via CSV"
       >
         <div className="p-5 flex flex-col items-center">
-
-
           <div className="w-full h-[304px]">
             {IDImage ? (
               <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
@@ -108,18 +125,26 @@ function Nav() {
                 label="Drag and drop or choose a file to upload"
               />
             )}
-            <div className="px-5 py-5 pb-5 mt-1 border border-dashed border-grey-500 max-w-[540px] min-h-[70px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4 bg-gray-100">
-              <div className=" flex flex-row justify-between">
-                <h3>Customer
-                  <p className="text-sm">15MB</p>
-                  <p className="text-sm">Loader</p>
-                </h3>
-                <IoCloseCircleOutline
-                  size={25}
-                  className="cursor-pointer z-[9999]"
-                />
+            {uploadProgress > 0 && (
+              <div className="px-5 py-5 pb-5 mt-1 border border-dashed border-grey-500 max-w-[540px] min-h-[70px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4 bg-gray-100">
+                <div className="relative">
+                  <div className="flex flex-row justify-between items-center">
+                    <div>Customer</div>
+                  </div>
+                  <div className="w-auto h-3 bg-white rounded-full relative">
+                    <div className="h-full bg-green-500 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                  </div>
+                  <div className="absolute top-0 right-0 mb-20">
+                    <button
+                      className="rounded-full"
+                      onClick={() => setIDImage(null)}
+                    >
+                      <IoCloseCircleOutline className="h-5 w-10" />
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
           <div className="flex justify-between w-full">
             <div className="flex justify-between w-full mt-10">
@@ -139,7 +164,6 @@ function Nav() {
               </div>
             </div>
           </div>
-
         </div>
       </Modal>
     </div>
