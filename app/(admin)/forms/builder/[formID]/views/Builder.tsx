@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 
 // icons
 import { GoArrowLeft } from "react-icons/go";
+import { CiCirclePlus } from "react-icons/ci";
 
 // hooks
 import useForm from "@/hooks/useForm";
@@ -12,9 +13,6 @@ import React, { useEffect, useState } from "react";
 //
 import FormatDate from "@/utils/FormatDate/FormatDate";
 import FormSection from "../components/FormSection";
-
-//
-import { CiCirclePlus } from "react-icons/ci";
 
 //
 import { useQueryClient } from "@tanstack/react-query";
@@ -30,19 +28,21 @@ function Builder({ data }: any) {
   const queryClient = useQueryClient();
 
   const { form, selectForm } = useForm();
-  const [formName, setFormName] = useState("");
-  const [formDesc, setFormDesc] = useState("");
+  const [formName, setFormName] = useState(form?.name);
+  const [formDesc, setFormDesc] = useState(
+    form?.description ? form?.description : "No description set"
+  );
 
   useEffect(() => {
-    if (isObjEmpty(form)) {
+    if (isObjEmpty(form) && data) {
       selectForm(data);
-      setFormDesc(data.description ? data.description : "No description set");
-      setFormName(data.name);
+      setFormDesc(data?.description ? data?.description : "No description set");
+      setFormName(data?.name);
     }
-  }, [form]);
+  }, [form, data]);
 
   if (!isObjEmpty(form)) {
-    const { name, updatedOn, createdOn, formSections, id, description } = form;
+    const { updatedOn, createdOn, formSections, id } = form;
 
     const rename = () => {
       toast.dismiss();
@@ -63,6 +63,13 @@ function Builder({ data }: any) {
           console.log("error ", e);
         });
     };
+
+    // TODO: SORT SECTIONS BY ORDER
+    // let sortByOrder = (data: any) => {
+    //   return data.sort(function (a: any, b: any) {
+    //     return a.ordering - b.ordering;
+    //   });
+    // };
 
     return (
       <div className="pt-10 pb-20 flex px-10">

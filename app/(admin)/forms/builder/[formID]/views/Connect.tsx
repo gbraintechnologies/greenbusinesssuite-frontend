@@ -3,13 +3,14 @@ import React from "react";
 // hooks
 import useForm from "@/hooks/useForm";
 import FormatDate from "@/utils/FormatDate/FormatDate";
-import toast from "react-hot-toast";
+
+//
 import ConnectForm from "../../../[formId]/components/ConnectForm";
 
 function Connect() {
   const { form } = useForm();
 
-  const { updatedOn, name } = form;
+  const { updatedOn, name, description } = form;
 
   return (
     <div className="flex bg-[#F1F5F9] min-h-screen  flex-col gap-10 items-center">
@@ -18,7 +19,9 @@ function Connect() {
         <div className="p-5">
           <h5 className="font-semibold text-lg mb-1"> {name} form</h5>
           <div className="flex justify-between items-center">
-            <p className="font-light text-sm">Form description</p>
+            <p className="font-light text-sm">
+              {description ? description : "No description set"}
+            </p>
 
             <p className="text-primary-green text-sm flex gap-2 items-center">
               <span className="relative flex h-2 w-2">
