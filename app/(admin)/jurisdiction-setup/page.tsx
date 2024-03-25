@@ -40,14 +40,13 @@ function JurisdictionSetup() {
     queryFn: services.allJurisdictions(),
   });
 
-
   const { data: searchsData, isLoading: searchLoading } = useQuery({
     queryKey: ["all jurisdictions", searchTerm],
     queryFn: services.SearchJurisdictions(searchTerm),
     enabled: Boolean(searchTerm),
   });
 
-  const [aggregatedUsers, setAggregatedUsers] = useState([]);
+  const [jurisdictionUser, setJurisdictionUser] = useState([]);
 
   const columns = [
     {
@@ -58,7 +57,10 @@ function JurisdictionSetup() {
       headerAlign: "left",
       flex: 3,
       getActions: (params: any) => [
-        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.data.id}>
+        <div
+          className="flex py-3 gap-4 my-3 items-center"
+          key={params.row.data.id}
+        >
           <label>
             <input
               type="checkbox"
@@ -66,13 +68,16 @@ function JurisdictionSetup() {
             />
           </label>
           <div className="w-10 h-10 flex items-center justify-center">
-          <span className=""><img src={Countrie(params.row.data.jurisdiction_symbol)?.flags.png} alt={Countrie(params.row.data.jurisdiction_symbol)?.name.common} style={{ height: "auto",width:"30px" }} /></span>
-
+            <span className="">
+              <img
+                src={Countrie(params.row.data.jurisdiction_symbol)?.flags.png}
+                alt={Countrie(params.row.data.jurisdiction_symbol)?.name.common}
+                style={{ height: "auto", width: "30px" }}
+              />
+            </span>
           </div>
           <div>
-            <p className="font-medium">
-              {params.row.data.jurisdiction_name}
-            </p>
+            <p className="font-medium">{params.row.data.jurisdiction_name}</p>
           </div>
         </div>,
       ],
@@ -92,21 +97,22 @@ function JurisdictionSetup() {
 
   useEffect(() => {
     if (searchTerm.length > 1 && searchsData) {
-      setAggregatedUsers(searchsData);
+      setJurisdictionUser(searchsData);
     }
 
     if (data && searchTerm.length < 1) {
       setActiveRoleFilter([]);
-      setAggregatedUsers(data);
+
+      setJurisdictionUser(data);
     }
   }, [searchsData, data, searchTerm]);
 
   useEffect(() => {
     let temp: any = [];
 
-    if (aggregatedUsers) {
-      for (let i = 0; i < aggregatedUsers.length; i++) {
-        let user = aggregatedUsers[i];
+    if (jurisdictionUser) {
+      for (let i = 0; i < jurisdictionUser.length; i++) {
+        let user = jurisdictionUser[i];
         // APP ID ===1 == MESH SUITE APP
         // @ts-ignore
         // @ts-ignore
@@ -114,8 +120,7 @@ function JurisdictionSetup() {
       }
       setRows(temp);
     }
-  }, [aggregatedUsers]);
-
+  }, [jurisdictionUser]);
 
   const [rows, setRows] = useState([]);
 
@@ -130,10 +135,11 @@ function JurisdictionSetup() {
             return (
               <button
                 onClick={() => setActiveFilter(filter)}
-                className={`${activeFilter.id === filter.id
-                  ? "bg-white rounded-lg text-black"
-                  : "text-gray-500 font-light"
-                  } px-5 py-1`}
+                className={`${
+                  activeFilter.id === filter.id
+                    ? "bg-white rounded-lg text-black"
+                    : "text-gray-500 font-light"
+                } px-5 py-1`}
               >
                 {filter.name}
               </button>
