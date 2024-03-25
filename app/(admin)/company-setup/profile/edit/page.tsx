@@ -121,7 +121,7 @@ const Page = () => {
       return true;
     }
 
-    // Check for phone, as it might be formatted differently
+    // Check for phone
     if (hasValueChanged(companyData?.primary_contact_phone_number, phone)) {
       return true;
     }

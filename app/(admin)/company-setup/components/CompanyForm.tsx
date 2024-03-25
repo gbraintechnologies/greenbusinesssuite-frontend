@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import * as Yup from "yup";
 import UploadIcon from "@/public/svg/upload.svg";
+import toast from "react-hot-toast";
 
 export interface ICompany {
   companyName: string;
