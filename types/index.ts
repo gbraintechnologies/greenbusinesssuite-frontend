@@ -21,3 +21,27 @@ export interface User {
   user_kycs: any[];
   custom_profile_values: CustomProfileValue[];
 }
+
+export interface CompanyInfo {
+  company_name: string;
+  primary_contact_name: string;
+  primary_contact_email: string;
+  primary_contact_phone_number: string;
+  company_logo: string;
+  industry: string;
+  company_admin_id?: number;
+  primary_currency: string;
+  id?: number;
+  status?: string;
+  company_custom_values?: CustomField[];
+}
+
+export interface CustomField {
+  custom_profile_item_id: number;
+  value: string;
+}
+
+export interface CompanyObject {
+  company_data: CompanyInfo;
+  custom_fields: CustomField[];
+}

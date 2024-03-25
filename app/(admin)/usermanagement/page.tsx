@@ -45,6 +45,7 @@ function UserManagement() {
     queryFn: services.allUsers(),
   });
 
+
   const { data: searchData, isLoading: searchLoading } = useQuery({
     queryKey: ["all users", searchTerm],
     queryFn: services.searchUsers(searchTerm),
@@ -70,6 +71,7 @@ function UserManagement() {
     refetch();
   }, []);
 
+  
   const columns = [
     {
       field: "name",
@@ -81,9 +83,9 @@ function UserManagement() {
       getActions: (params: any) => [
         <div className="flex py-3 gap-4 my-3" key={params.row.data.id}>
           {params.row.data.custom_profile_values &&
-          params.row.data.custom_profile_values.find(
-            (item: any) => item.custom_profile_item_id === 1
-          )?.value?.length > 1 ? (
+            params.row.data.custom_profile_values.find(
+              (item: any) => item.custom_profile_item_id === 1
+            )?.value?.length > 1 ? (
             <Image
               alt="profile"
               src={
@@ -163,6 +165,10 @@ function UserManagement() {
       setAggregatedUsers(temp);
     }
   }, [activeFilter]);
+
+  useEffect(() => {
+    console.log(" rows ", rows)
+  }, [rows]);
 
   // ROLE FILTERS
   useEffect(() => {
@@ -268,11 +274,10 @@ function UserManagement() {
             return (
               <button
                 onClick={() => setActiveFilter(filter)}
-                className={`${
-                  activeFilter.id === filter.id
+                className={`${activeFilter.id === filter.id
                     ? "bg-white rounded-lg text-black"
                     : "text-gray-500 font-light"
-                } px-5 py-1`}
+                  } px-5 py-1`}
               >
                 {filter.name}
               </button>

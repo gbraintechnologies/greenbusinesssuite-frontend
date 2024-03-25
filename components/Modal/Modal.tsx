@@ -10,6 +10,7 @@ export default function Modal({
   children,
   showTitle = true,
   hideClose = false,
+  size = "small",
 }: any) {
   function closeModal() {
     setIsOpen(false);
@@ -31,7 +32,7 @@ export default function Modal({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-30" />
+          <div className="fixed inset-0 bg-black bg-opacity-40" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -45,7 +46,11 @@ export default function Modal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full border dark:border-accent-dark max-w-xl transform overflow-hidden rounded-md bg-white  text-primary-dark pt-5  text-left align-bottom md:align-middle shadow-xl transition-all">
+              <Dialog.Panel
+                className={`${
+                  size === "big" ? "max-w-3xl" : "max-w-xl"
+                } w-full border dark:border-accent-dark  transform overflow-hidden rounded-md bg-white  text-primary-dark pt-5  text-left align-bottom md:align-middle shadow-xl transition-all`}
+              >
                 <div className=" flex flex-row justify-between px-5 py-2 pb-4">
                   <Dialog.Title
                     as="h2"
