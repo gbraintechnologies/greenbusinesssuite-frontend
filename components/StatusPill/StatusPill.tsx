@@ -2,6 +2,17 @@ import React from "react";
 
 function StatusPill({ status }: any) {
   if (
+    status.toLowerCase().includes("inactive") ||
+    status.toLowerCase().includes("temp")
+  ) {
+    return (
+      <span className="text-[#D97706] bg-[#FFFBEB] capitalize text-xs px-5 rounded-full py-1">
+        {status.toLowerCase().replaceAll("_", " ")}
+      </span>
+    );
+  }
+  
+  if (
     status.toLowerCase().includes("success") ||
     status.toLowerCase().includes("active")
   ) {
@@ -12,16 +23,6 @@ function StatusPill({ status }: any) {
     );
   }
 
-  if (
-    status.toLowerCase().includes("inactive") ||
-    status.toLowerCase().includes("temp")
-  ) {
-    return (
-      <span className="text-[#D97706] bg-[#FFFBEB] capitalize text-xs px-5 rounded-full py-1">
-        {status.toLowerCase().replaceAll("_", " ")}
-      </span>
-    );
-  }
 
   // DEFAULT FILTER
   return (

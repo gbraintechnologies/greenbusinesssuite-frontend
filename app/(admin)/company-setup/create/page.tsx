@@ -146,10 +146,14 @@ const CreateCompany = () => {
     try {
       const response = await createCompanyWithCustomFields(data, custom_fields);
       toast.success("Company created successfully");
+      setPhone("");
+      setSelectedIndustry(undefined)
+      setSelectedJurisdiction(undefined)
+      setCompanyLogo(null)
+      setBackgroundImageUrl("")
       resetForm();
     } catch (error) {
       toast.error("An error occurred");
-      console.log("error ", error);
     } finally {
       setSubmitting(false);
     }
