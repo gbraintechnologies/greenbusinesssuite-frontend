@@ -103,7 +103,6 @@ const CompanyForm: React.FC<Props> = ({
       const url = URL.createObjectURL(companyLogo);
       setBackgroundImageUrl(url);
 
-      // Clean up the object URL when the component unmounts or logo changes
       return () => URL.revokeObjectURL(url);
     }
   }, [companyLogo]);
