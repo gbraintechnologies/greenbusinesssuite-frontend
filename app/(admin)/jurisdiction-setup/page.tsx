@@ -13,7 +13,6 @@ import SearchIcon from "@/public/icons/SearchIcon";
 
 // shared components
 import DataTable from "@/components/DataTable/DataTable";
-import RoleFilter from "./components/RoleFilter";
 import "./new-individual/index.css";
 import { Countrie } from "./components/Countries";
 
@@ -40,6 +39,7 @@ function JurisdictionSetup() {
     queryFn: services.allJurisdictions(),
   });
 
+
   const { data: searchsData, isLoading: searchLoading } = useQuery({
     queryKey: ["all jurisdictions", searchTerm],
     queryFn: services.SearchJurisdictions(searchTerm),
@@ -57,10 +57,7 @@ function JurisdictionSetup() {
       headerAlign: "left",
       flex: 3,
       getActions: (params: any) => [
-        <div
-          className="flex py-3 gap-4 my-3 items-center"
-          key={params.row.data.id}
-        >
+        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.data.id}>
           <label>
             <input
               type="checkbox"
@@ -68,16 +65,13 @@ function JurisdictionSetup() {
             />
           </label>
           <div className="w-10 h-10 flex items-center justify-center">
-            <span className="">
-              <img
-                src={Countrie(params.row.data.jurisdiction_symbol)?.flags.png}
-                alt={Countrie(params.row.data.jurisdiction_symbol)?.name.common}
-                style={{ height: "auto", width: "30px" }}
-              />
-            </span>
+          <span className=""><img src={Countrie(params.row.data.jurisdiction_symbol)?.flags.png} alt={Countrie(params.row.data.jurisdiction_symbol)?.name.common} style={{ height: "auto",width:"30px" }} /></span>
+
           </div>
           <div>
-            <p className="font-medium">{params.row.data.jurisdiction_name}</p>
+            <p className="font-medium">
+              {params.row.data.jurisdiction_name}
+            </p>
           </div>
         </div>,
       ],
@@ -95,6 +89,7 @@ function JurisdictionSetup() {
     },
   ];
 
+
   useEffect(() => {
     if (searchTerm.length > 1 && searchsData) {
       setJurisdictionUser(searchsData);
@@ -102,7 +97,6 @@ function JurisdictionSetup() {
 
     if (data && searchTerm.length < 1) {
       setActiveRoleFilter([]);
-
       setJurisdictionUser(data);
     }
   }, [searchsData, data, searchTerm]);
@@ -122,6 +116,7 @@ function JurisdictionSetup() {
     }
   }, [jurisdictionUser]);
 
+
   const [rows, setRows] = useState([]);
 
   return (
@@ -135,11 +130,10 @@ function JurisdictionSetup() {
             return (
               <button
                 onClick={() => setActiveFilter(filter)}
-                className={`${
-                  activeFilter.id === filter.id
-                    ? "bg-white rounded-lg text-black"
-                    : "text-gray-500 font-light"
-                } px-5 py-1`}
+                className={`${activeFilter.id === filter.id
+                  ? "bg-white rounded-lg text-black"
+                  : "text-gray-500 font-light"
+                  } px-5 py-1`}
               >
                 {filter.name}
               </button>
@@ -157,11 +151,6 @@ function JurisdictionSetup() {
               placeholder="Search"
             />
           </div>
-          <RoleFilter
-          // roles={roles}
-          // selected={activeRoleFilter}
-          //setSelected={setActiveRoleFilter}
-          />
         </div>
       </div>
 
