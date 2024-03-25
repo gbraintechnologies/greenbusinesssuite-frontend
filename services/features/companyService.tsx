@@ -20,9 +20,9 @@ export const createCompanyWithCustomFields = async (
 export const editCompanyWithCustomFields = async (
   companyId: number | undefined,
   data: CompanyInfo,
-  custom_fields: CustomField[]
+  custom_fields?: CustomField[]
 ) => {
-  return await authApi.post(`/companies/edit_with_custom_fields/${companyId}`, {
+  return await authApi.put(`/companies/edit_with_custom_fields/${companyId}`, {
     company_data: data,
     custom_fields,
   });

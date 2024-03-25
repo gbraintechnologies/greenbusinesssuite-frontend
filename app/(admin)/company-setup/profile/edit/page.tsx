@@ -18,7 +18,11 @@ const Page = () => {
 
   const id = searchParams.get("id");
 
-  const { data: companies, isLoading } = useQuery({
+  const {
+    data: companies,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["all companies"],
     queryFn: services.getAllCompanies(),
   });
@@ -41,9 +45,7 @@ const Page = () => {
     companyData?.company_custom_values?.find(
       (field) => field.custom_profile_item_id == 3
     )?.value ?? "";
-  console.log("search params ", id);
 
-  console.log("company  ", companyData);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const [selectedIndustry, setSelectedIndustry] = useState<
@@ -62,7 +64,7 @@ const Page = () => {
     | undefined
   >();
 
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(companyData?.primary_contact_phone_number);
 
   const [companyLogo, setCompanyLogo] = useState<File | null>(null);
 
@@ -83,12 +85,60 @@ const Page = () => {
     contactEmail: companyData?.primary_contact_email,
   };
 
+  const hasValueChanged = (initialValue: any, newValue: any) =>
+    initialValue !== newValue;
+
+  const hasAnyValueChanged = (initialValues: any, values: any) => {
+    // Check for simple fields
+    const simpleFields = [
+      "companyName",
+      "companyDescription",
+      "adminEmail",
+      "contactEmail",
+    ];
+    for (let field of simpleFields) {
+      if (hasValueChanged(initialValues[field], values[field])) {
+        return true;
+      }
+    }
+
+    // Check for combined fields (e.g., names that might be split)
+    if (
+      hasValueChanged(
+        `${initialValues.adminFirstName} ${initialValues.adminLastName}`,
+        `${values.adminFirstName} ${values.adminLastName}`
+      )
+    ) {
+      return true;
+    }
+
+    if (
+      hasValueChanged(
+        `${initialValues.contactFirstName} ${initialValues.contactLastName}`,
+        `${values.contactFirstName} ${values.contactLastName}`
+      )
+    ) {
+      return true;
+    }
+
+    // Check for phone
+    if (hasValueChanged(companyData?.primary_contact_phone_number, phone)) {
+      return true;
+    }
+
+    return false;
+  };
+
   const { handleFileUpload } = useFileUpload();
 
   const editCompany = async (
     values: Partial<ICompany>,
     { resetForm, setSubmitting }: FormikHelpers<Partial<ICompany>>
   ) => {
+    if (!hasAnyValueChanged(initialValues, values)) {
+      toast.error("No changes made");
+      return;
+    }
     if (!(phone?.length > 4)) {
       toast.error("Phone number is required");
       setSubmitting(false);
@@ -101,16 +151,18 @@ const Page = () => {
       return;
     }
 
-    const companyLogoURL = companyLogo
-      ? await handleFileUpload(companyLogo as File)
-      : companyData?.company_logo;
+    const companyLogoURL =
+      companyLogo && (await handleFileUpload(companyLogo as File));
 
     const data: CompanyInfo = {
       company_name: values.companyName as string,
+      status: companyData?.status,
       primary_contact_name: `${values.contactFirstName} ${values.contactLastName}`,
       primary_contact_email: values.contactEmail as string,
       primary_contact_phone_number: phone,
-      company_logo: companyLogoURL?.file_url || "",
+      company_logo: companyLogo
+        ? companyLogoURL?.file_url
+        : companyData?.company_logo,
       industry: selectedIndustry?.value as string,
       primary_currency: "GHS",
     };
@@ -139,25 +191,22 @@ const Page = () => {
         data,
         custom_fields
       );
-      toast.success("Company created successfully");
-      resetForm();
+      toast.success("Company edited successfully");
+      router.back();
     } catch (error) {
       toast.error("An error occurred");
-      console.log("error ", error);
     } finally {
       setSubmitting(false);
     }
   };
 
   useEffect(() => {
-    if (companyData) {
-      console.log("there is company data...");
-      const phoneNumber = companyData?.primary_contact_phone_number.replace(
-        "+",
-        ""
-      );
+    refetch();
+  }, []);
 
-      console.log("new phone number ", phoneNumber);
+  useEffect(() => {
+    if (companyData) {
+      const phoneNumber = companyData?.primary_contact_phone_number;
       setPhone(phoneNumber);
       setSelectedIndustry({
         label: companyData?.industry,
@@ -166,6 +215,7 @@ const Page = () => {
       setBackgroundImageUrl(companyData?.company_logo);
     }
   }, [companyData]);
+
   return (
     <div className="px-5 pb-20">
       <div>
@@ -176,7 +226,7 @@ const Page = () => {
         ) : (
           <CompanyForm
             headerText={`Edit ${companyData?.company_name}`}
-            logoPresentOnLoad={true}
+            logoPresentOnLoad={companyData?.company_logo ? true : false}
             submitFn={editCompany}
             initialValues={initialValues}
             setShowCancelModal={setShowCancelModal}
