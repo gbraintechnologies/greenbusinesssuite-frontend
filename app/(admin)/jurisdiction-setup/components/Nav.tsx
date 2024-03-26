@@ -7,22 +7,34 @@ import Link from "next/link";
 import { AiOutlineDelete } from "react-icons/ai";
 import Image from "next/image";
 import UploadAreaInput from "./UploadAreaInput";
-import { IoCloseCircleOutline } from "react-icons/io5";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import FormatByte from "./FormatByte";
+import ExcelIcon from "@/public/icons/ExcelIcon";
 
 function Nav() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [fileName, setFileName] = useState<any>({ 'name': '', 'size': '' })
 
   const handleDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     const acceptedExtensions = [".csv", ".xls", ".xlsx"];
-    const fileExtension = file.name
-      .substring(file.name.lastIndexOf("."))
-      .toLowerCase();
+    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+    setFileName({ name: file.name, size: file.size })
 
     if (acceptedExtensions.includes(fileExtension)) {
-      setIDImage(file);
+      const simulateImport = () => {
+        for (let i = 0; i <= 100; i += 10) {
+          setTimeout(() => {
+            setUploadProgress(i);
+          }, i * 50);
+        }
+      };
+      simulateImport();
+
+      // setIDImage(IDImage);
     } else {
       alert("Please upload a CSV or XLS file.");
     }
@@ -33,24 +45,11 @@ function Nav() {
   };
 
   const handleImportData = () => {
-    // Simulate data import with setTimeout
-    const simulateImport = () => {
-      for (let i = 0; i <= 100; i += 10) {
-        setTimeout(() => {
-          setUploadProgress(i);
-        }, i * 50);
-      }
-    };
-
-    // Start the import process
-    simulateImport();
-
-    // After import, reset states and close modal
     setTimeout(() => {
       setIDImage(null);
       setUploadProgress(0);
-      setShowCancelModal(false);
     }, 5000);
+
   };
 
   return (
@@ -130,21 +129,22 @@ function Nav() {
             {uploadProgress > 0 && (
               <div className="px-5 py-5 pb-5 mt-1 border border-dashed border-grey-500 max-w-[540px] min-h-[70px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4 bg-gray-100">
                 <div className="relative">
-                  <div className="flex flex-row justify-between items-center">
-                    <div>Customer</div>
+                  <div className="flex flex-row mb-2">
+                    <ExcelIcon />
+                    <div>
+                      <div className="font-semibold">&nbsp;&nbsp;{fileName?.name}</div>
+                      <div>{FormatByte(fileName?.size)}</div>
+                    </div>
                   </div>
                   <div className="w-auto h-3 bg-white rounded-full relative">
-                    <div
-                      className="h-full bg-green-500 rounded-full"
-                      style={{ width: `${uploadProgress}%` }}
-                    ></div>
+                    <div className="h-full bg-green-500 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
                   </div>
                   <div className="absolute top-0 right-0 mb-20">
                     <button
                       className="rounded-full"
-                      onClick={() => setIDImage(null)}
+                      onClick={() => setUploadProgress(0)}
                     >
-                      <IoCloseCircleOutline className="h-5 w-10" />
+                      <RiDeleteBin5Line color="red" className="h-5 w-10" />
                     </button>
                   </div>
                 </div>
