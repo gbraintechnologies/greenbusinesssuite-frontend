@@ -1,0 +1,32 @@
+/* Style the custom radio input */
+.custom-radio-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 18px; /* Adjust width as needed */
+    height: 18px; /* Adjust height as needed */
+    border-radius: 50%;
+    border: 2px solid black; /* Set initial border color to blue */
+    outline: none;
+    margin-right: 8px; /* Adjust margin as needed */
+    cursor: pointer;
+  }
+  
+  /* Style the custom radio input when checked */
+  .custom-radio-input:checked {
+    border-color: green; /* Change border color to green when checked */
+  }
+  
+  /* Style the custom radio input circle when checked */
+  .custom-radio-input:checked::after {
+    content: '';
+    display: block;
+    width: 10px; /* Adjust circle size as needed */
+    height: 10px; /* Adjust circle size as needed */
+    background-color: green; /* Change circle color to green when checked */
+    border-radius: 50%;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
