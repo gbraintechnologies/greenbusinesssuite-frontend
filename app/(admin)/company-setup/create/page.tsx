@@ -74,10 +74,7 @@ const CreateCompany = () => {
 
   const [companyLogo, setCompanyLogo] = useState<File | null>(null);
 
-
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
-
-
 
   const router = useRouter();
 
@@ -91,8 +88,6 @@ const CreateCompany = () => {
     contactLastName: "",
     contactEmail: "",
   };
-
-
 
   const { handleFileUpload } = useFileUpload();
 
@@ -147,10 +142,10 @@ const CreateCompany = () => {
       const response = await createCompanyWithCustomFields(data, custom_fields);
       toast.success("Company created successfully");
       setPhone("");
-      setSelectedIndustry(undefined)
-      setSelectedJurisdiction(undefined)
-      setCompanyLogo(null)
-      setBackgroundImageUrl("")
+      setSelectedIndustry(undefined);
+      setSelectedJurisdiction(undefined);
+      setCompanyLogo(null);
+      setBackgroundImageUrl("");
       resetForm();
     } catch (error) {
       toast.error("An error occurred");
@@ -163,7 +158,7 @@ const CreateCompany = () => {
     <div className="px-5 pb-20">
       <div>
         <CompanyForm
-        headerText="Create A New Company"
+          headerText="Create A New Company"
           submitFn={createCompany}
           initialValues={initialValues}
           setShowCancelModal={setShowCancelModal}
