@@ -34,7 +34,7 @@ export default function AdminLayout({
   // Redirect to login if not authenticated
 
   useEffect(() => {
-    if (admin === null || admin?.access_token?.length < 10) {
+    if (admin === null || Boolean(admin?.access_token)) {
       router.push("/login");
     } else {
       setLoading(false);

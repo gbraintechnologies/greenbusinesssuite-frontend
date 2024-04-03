@@ -13,7 +13,8 @@ function Dashboard() {
   const { admin } = useAdmin();
 
   useEffect(() => {
-    if (admin === null || admin?.access_token?.length < 10) {
+    if (admin === null || !Boolean(admin?.access_token)) {
+      toast.dismiss();
       toast("Please login to continue");
       router.push("/login");
     }
