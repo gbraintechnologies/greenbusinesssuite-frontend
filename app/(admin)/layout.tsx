@@ -58,13 +58,12 @@ export default function AdminLayout({
         setLoading(false);
         router.push("/company");
         return;
-      } else {
-        removeAdmin();
-        router.push("/login");
-        toast.error("Access not granted. Check with your administrator");
       }
 
-      setLoading(true);
+      // else
+      removeAdmin();
+      router.push("/login");
+      toast.error("Access not granted. Check with your administrator");
     }
   }, [admin]);
 
