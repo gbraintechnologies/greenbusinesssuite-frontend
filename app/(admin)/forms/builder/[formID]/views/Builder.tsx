@@ -7,11 +7,14 @@ import { CiCirclePlus } from "react-icons/ci";
 // hooks
 import useForm from "@/hooks/useForm";
 
+// uids
+import { v4 as uuidv4 } from "uuid";
+
 //
 import React, { useEffect, useState } from "react";
 
 //
-import FormatDate from "@/utils/FormatDate/FormatDate";
+import { FormatDateTime } from "@/utils/FormatDate/FormatDate";
 import FormSection from "../components/FormSection";
 
 //
@@ -23,11 +26,25 @@ function isObjEmpty(obj: any) {
   return Object.keys(obj).length === 0;
 }
 
-function Builder({ data }: any) {
+function Builder({ data, refetch }: any) {
+  // scroll to top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  //
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { form, selectForm } = useForm();
+  const {
+    form,
+    selectForm,
+    addFormSection,
+    triggerRemoteUpdate,
+    updateNameAndDescription,
+  } = useForm();
+
+  // local variables
   const [formName, setFormName] = useState(form?.name);
   const [formDesc, setFormDesc] = useState(
     form?.description ? form?.description : "No description set"
@@ -41,6 +58,29 @@ function Builder({ data }: any) {
     }
   }, [form, data]);
 
+  // USE EFFECT FOR UPDATING FORM REMOTELY
+  useEffect(() => {
+    if (!isObjEmpty(form)) {
+      services
+        .updateForm({ ...form, updatedOn: new Date() })
+        .then((res) => {
+          // REFETCH AND SYNC FROM REMOTE SERVER
+          refetch();
+          // queryClient.invalidateQueries({
+          //   queryKey: ["form", form?.id],
+          // });
+          toast.dismiss();
+          toast.success("Form updated");
+        })
+        .catch((e) => {
+          toast.dismiss();
+          toast.error("Error updating form");
+          console.log("error", e);
+        });
+    }
+  }, [triggerRemoteUpdate]);
+
+  // RENDERING FORM BUILDER
   if (!isObjEmpty(form)) {
     const { updatedOn, createdOn, formSections, id } = form;
 
@@ -49,7 +89,7 @@ function Builder({ data }: any) {
       services
         .renameForm(id, formName)
         .then((res) => {
-          console.log("renaming form", res);
+          updateNameAndDescription({ name: formName, description: formDesc });
           queryClient.invalidateQueries({
             queryKey: ["all forms"],
           });
@@ -62,6 +102,10 @@ function Builder({ data }: any) {
           toast.error("Error renaming form");
           console.log("error ", e);
         });
+    };
+
+    const updateDesc = () => {
+      updateNameAndDescription({ name: formName, description: formDesc });
     };
 
     // TODO: SORT SECTIONS BY ORDER
@@ -102,7 +146,7 @@ function Builder({ data }: any) {
                   <input
                     value={formDesc}
                     className="outline-none focus:outline-none w-full"
-                    // onBlur={}
+                    onBlur={updateDesc}
                     onChange={(e) => setFormDesc(e.target.value)}
                   />
                 </p>
@@ -115,7 +159,7 @@ function Builder({ data }: any) {
                   <span>
                     {" "}
                     Changes saved{" "}
-                    {FormatDate(updatedOn ? updatedOn : createdOn)}
+                    {FormatDateTime(updatedOn ? updatedOn : createdOn)}
                   </span>
                 </p>
               </div>
@@ -129,7 +173,24 @@ function Builder({ data }: any) {
 
           {/* Add New Section */}
           <div className="flex justify-end items-end w-full">
-            <button className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 px-3 py-2 rounded-lg flex items-center justify-center gap-2">
+            <button
+              onClick={() => {
+                let template = {
+                  // id: uuidv4(),
+                  name: "",
+                  description: "",
+                  instruction: "",
+                  formFields: [],
+                  isDeleted: false,
+                  createdOn: new Date(),
+                  updatedOn: new Date(),
+                  deletedOn: null,
+                };
+
+                addFormSection(template);
+              }}
+              className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 px-3 py-2 rounded-lg flex items-center justify-center gap-2"
+            >
               <CiCirclePlus size={18} /> Add section
             </button>
           </div>
@@ -140,3 +201,38 @@ function Builder({ data }: any) {
 }
 
 export default Builder;
+
+//SECTION:
+// {
+//   id: 1,
+//   name: "Personal Information",
+//   description: "Enter your personal details.",
+//   instruction: "Please provide accurate information.",
+//   formFields: [
+
+//   ],
+//   isDeleted: false,
+//   createdOn: "2024-03-22T09:07:40.598049",
+//   updatedOn: "2024-03-22T09:07:40.598078",
+//   deletedOn: null,
+// },
+
+// FIELD
+//  {
+//       id: 3,
+//       name: "full_name",
+//       description: "Your full name",
+//       label: "Full Name",
+//       placeHolder: "Enter your full name",
+//       instruction: "Enter your full name as per official records",
+//       ordering: 1,
+//       isDeleted: false,
+//       fieldDataType: "string",
+//       choiceValues: [],
+//       isMandatory: true,
+//       horizontalAlign: false,
+//       validPattern: null,
+//       createdOn: "2024-03-22T09:07:40.646085",
+//       updatedOn: "2024-03-22T09:07:40.646112",
+//       deletedOn: null,
+//     },

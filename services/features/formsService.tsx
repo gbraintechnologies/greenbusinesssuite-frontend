@@ -2,7 +2,7 @@ import authApi from "../meshAuthClient";
 
 export const allForms = () => {
   return () =>
-    authApi.get("/forms/builder/all?page=0&size=20").then((res) => res.data);
+    authApi.get("/forms/builder/all?page=0&size=90").then((res) => res.data);
 };
 
 export const allFormTemplates = () => {
@@ -14,12 +14,12 @@ export const getFormById = (id: any) => {
   return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
 
-export const updateForm = (id: any, data: any) => {
-  return authApi.put(`/forms/builder/update/${id}`, data);
+export const updateForm = (data: any) => {
+  return authApi.put(`/forms/builder/update`, data);
 };
 
 export const renameForm = (id: any, name: string) => {
-  return authApi.put(`/forms/builder/rename/${id}?newName=${name}`);
+  return authApi.put(`/forms/builder/rename/${id}`, name);
 };
 
 export const createNewForm = (data: any) => {

@@ -1,7 +1,7 @@
 import React from "react";
 
-function FormField({ field }: any) {
-  console.log("field", field);
+function FormField({ field, section }: any) {
+  // console.log("field", field);
 
   const {
     fieldDataType,

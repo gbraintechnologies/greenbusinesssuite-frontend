@@ -23,7 +23,7 @@ function FormEditing({ params }: any) {
   const { formID } = params;
 
   // Get form Details
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, fetchStatus, refetch } = useQuery({
     queryKey: ["form", formID],
     queryFn: services.getFormById(formID),
     enabled: Boolean(formID),
@@ -33,12 +33,12 @@ function FormEditing({ params }: any) {
     if (data) {
       selectForm(data);
     }
-  }, [data, isLoading]);
+  }, [data, isLoading, fetchStatus]);
 
   return (
     <div className="w-full min-h-[100vh] flex  justify-between">
       <div className="w-[76%] min-h-screen">
-        {view === "builder" && <Builder data={data} />}
+        {view === "builder" && <Builder refetch={refetch} data={data} />}
         {view === "connect" && <Connect />}
       </div>
 

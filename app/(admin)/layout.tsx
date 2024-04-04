@@ -50,7 +50,7 @@ export default function AdminLayout({
       // LOGICIEL ADMIN ROLE ID: 1
       if (role == 1) {
         setLoading(false);
-        router.push("/");
+        // router.push("/");
         return;
       }
       // COMPANY ADMIN ROLE ID: 6

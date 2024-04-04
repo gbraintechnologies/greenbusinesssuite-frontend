@@ -5,16 +5,16 @@ import React, { useEffect } from "react";
 
 // icons
 import { IoIosArrowRoundForward } from "react-icons/io";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 //
 import { useRouter } from "next/navigation";
-import toast, { LoaderIcon } from "react-hot-toast";
+import toast from "react-hot-toast";
 import Link from "next/link";
+
+//
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-
-// icons
-import { AiOutlineCiCircle } from "react-icons/ai";
 
 function Dashboard() {
   const router = useRouter();
@@ -52,7 +52,7 @@ function Dashboard() {
               {companies ? (
                 companies.length
               ) : (
-                <AiOutlineCiCircle className="animate-spin" />
+                <AiOutlineLoading3Quarters size={20} className="animate-spin" />
               )}
             </h4>
             <Link href="/company-setup">
@@ -67,7 +67,7 @@ function Dashboard() {
               {users ? (
                 users.length
               ) : (
-                <AiOutlineCiCircle className="animate-spin" />
+                <AiOutlineLoading3Quarters size={20} className="animate-spin" />
               )}
             </h4>
             <Link href="/usermanagement">
