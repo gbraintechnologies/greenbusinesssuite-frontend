@@ -51,13 +51,20 @@ function Builder({ data, refetch }: any) {
     form?.description ? form?.description : "No description set"
   );
 
+  // set data to form if empty
   useEffect(() => {
     if (isObjEmpty(form) && data) {
       selectForm(data);
+    }
+  }, [data]);
+
+  // update name and description
+  useEffect(() => {
+    if (!isObjEmpty(form)) {
       setFormDesc(form?.description ? data?.description : "No description set");
       setFormName(form?.name);
     }
-  }, [form, data]);
+  }, [form]);
 
   const [updatingRemote, setUpdatingRemote] = useState(false);
   const updateRemote = () => {
