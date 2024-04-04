@@ -3,6 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+// icons
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 //
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
@@ -34,6 +37,17 @@ function FormEditing({ params }: any) {
       selectForm(data);
     }
   }, [data, isLoading, fetchStatus]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-[100vh] flex  items-center justify-center">
+        <div className="flex flex-col items-center justify-center mx-auto text-center -mt-32 gap-4">
+          <AiOutlineLoading3Quarters size={20} className="animate-spin" />{" "}
+          Loading builder
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-[100vh] flex  justify-between">

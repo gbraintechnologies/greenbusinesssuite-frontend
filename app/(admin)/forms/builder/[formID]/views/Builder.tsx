@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 // icons
 import { GoArrowLeft } from "react-icons/go";
 import { CiCirclePlus } from "react-icons/ci";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 // hooks
 import useForm from "@/hooks/useForm";
@@ -53,17 +54,19 @@ function Builder({ data, refetch }: any) {
   useEffect(() => {
     if (isObjEmpty(form) && data) {
       selectForm(data);
-      setFormDesc(data?.description ? data?.description : "No description set");
-      setFormName(data?.name);
+      setFormDesc(form?.description ? data?.description : "No description set");
+      setFormName(form?.name);
     }
   }, [form, data]);
 
-  // USE EFFECT FOR UPDATING FORM REMOTELY
-  useEffect(() => {
+  const [updatingRemote, setUpdatingRemote] = useState(false);
+  const updateRemote = () => {
     if (!isObjEmpty(form)) {
+      setUpdatingRemote(true);
       services
         .updateForm({ ...form, updatedOn: new Date() })
         .then((res) => {
+          setUpdatingRemote(false);
           // REFETCH AND SYNC FROM REMOTE SERVER
           refetch();
           // queryClient.invalidateQueries({
@@ -78,7 +81,29 @@ function Builder({ data, refetch }: any) {
           console.log("error", e);
         });
     }
-  }, [triggerRemoteUpdate]);
+  };
+
+  // USE EFFECT FOR UPDATING FORM REMOTELY
+  // useEffect(() => {
+  //   if (!isObjEmpty(form)) {
+  //     services
+  //       .updateForm({ ...form, updatedOn: new Date() })
+  //       .then((res) => {
+  //         // REFETCH AND SYNC FROM REMOTE SERVER
+  //         refetch();
+  //         // queryClient.invalidateQueries({
+  //         //   queryKey: ["form", form?.id],
+  //         // });
+  //         toast.dismiss();
+  //         toast.success("Form updated");
+  //       })
+  //       .catch((e) => {
+  //         toast.dismiss();
+  //         toast.error("Error updating form");
+  //         console.log("error", e);
+  //       });
+  //   }
+  // }, [triggerRemoteUpdate]);
 
   // RENDERING FORM BUILDER
   if (!isObjEmpty(form)) {
@@ -116,8 +141,17 @@ function Builder({ data, refetch }: any) {
     // };
 
     return (
-      <div className="pt-10 pb-20 flex px-10">
-        <div className="w-2/6">
+      <div className="pt-10 pb-[20rem] relative flex px-10">
+        {/* UPDATING REMOTE SCREEN */}
+        {updatingRemote && (
+          <div className="bg-white bg-opacity-20  flex items-center justify-center cursor-not-allowed z-[199]  absolute top-0 left-0 h-[100vh] w-full">
+            <div className="flex flex-col items-center justify-center mx-auto text-center -mt-32 gap-4">
+              <AiOutlineLoading3Quarters size={20} className="animate-spin" />{" "}
+              Updating Form...
+            </div>
+          </div>
+        )}
+        <div className={`${updatingRemote && "blur"} w-2/6`}>
           <button
             className="px-4 py-2 flex items-center gap-2 text-sm rounded-lg bg-white border border-gray-200"
             onClick={() => {
@@ -128,18 +162,28 @@ function Builder({ data, refetch }: any) {
             Exit form builder
           </button>
         </div>
-        <div className="w-4/6">
+        <div className={`${updatingRemote && "blur"} w-4/6`}>
           {/* HEADER: TITLE, DESCRIPTION & LAST UPDATED */}
           <div className="boxshadow w-full mb-10">
             <div className="p-5">
-              <h5 className="font-semibold text-lg mb-1">
-                <input
-                  value={formName}
-                  className="outline-none focus:outline-none w-full"
-                  onBlur={rename}
-                  onChange={(e) => setFormName(e.target.value)}
-                />
-              </h5>
+              <div className="flex gap-5 justify-between items-center mb-3">
+                <h5 className="font-semibold text-lg mb-1">
+                  <input
+                    value={formName}
+                    className="outline-none focus:outline-none w-full"
+                    onBlur={rename}
+                    onChange={(e) => setFormName(e.target.value)}
+                  />
+                </h5>
+                <button
+                  onClick={updateRemote}
+                  disabled={updatingRemote}
+                  className="text-sm border c border-gray-200 p-1 px-3 hover:text-white hover:bg-primary-green rounded-lg"
+                >
+                  Update
+                </button>
+              </div>
+
               <div className="flex gap-5 justify-between items-center">
                 <p className="font-light text-sm flex-1">
                   {" "}
@@ -216,23 +260,3 @@ export default Builder;
 //   updatedOn: "2024-03-22T09:07:40.598078",
 //   deletedOn: null,
 // },
-
-// FIELD
-//  {
-//       id: 3,
-//       name: "full_name",
-//       description: "Your full name",
-//       label: "Full Name",
-//       placeHolder: "Enter your full name",
-//       instruction: "Enter your full name as per official records",
-//       ordering: 1,
-//       isDeleted: false,
-//       fieldDataType: "string",
-//       choiceValues: [],
-//       isMandatory: true,
-//       horizontalAlign: false,
-//       validPattern: null,
-//       createdOn: "2024-03-22T09:07:40.646085",
-//       updatedOn: "2024-03-22T09:07:40.646112",
-//       deletedOn: null,
-//     },

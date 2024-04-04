@@ -17,7 +17,7 @@ function GeneralFormSettings() {
             formLayout === "classic"
               ? "border-2 border-primary-green bg-primary-green bg-opacity-10 font-semibold "
               : " "
-          } flex flex-col items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
+          } flex flex-col h-[10rem] items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
         >
           <FormPreviewIcon />
           <FormPreviewIcon />
@@ -30,10 +30,10 @@ function GeneralFormSettings() {
             formLayout === "card"
               ? "border-2 border-primary-green bg-primary-green bg-opacity-10 font-semibold"
               : " "
-          } flex flex-col items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
+          } flex flex-col h-[10rem] items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
         >
           <FormPreviewIcon />
-          <FormPreviewIcon />
+
           <p className="">Card layout</p>
         </button>
       </div>

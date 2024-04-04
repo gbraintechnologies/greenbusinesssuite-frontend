@@ -3,19 +3,19 @@ import React from "react";
 
 // hooks
 import useAdmin from "@/hooks/useAdmin";
-import useForm from "@/hooks/useForm";
 
 //
 import Image from "next/image";
+import useForm from "@/hooks/useForm";
 
 function FormTopNav() {
   //
   const { admin } = useAdmin();
 
-  const { setView, view } = useForm();
+  const { setView, view, form } = useForm();
 
   return (
-    <nav className="h-[7vh] z-[100] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
+    <nav className="h-[7vh] z-[200] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
       <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
         <Link href="/">
           <svg
@@ -81,9 +81,15 @@ function FormTopNav() {
         </Link>
 
         <button className="bg-white py-2 text-sm px-3 rounded-lg">Share</button>
-        <button className="bg-primary-green text-white text-sm py-2 px-3 rounded-lg">
-          Publish
-        </button>
+        {form?.publishStatus?.toLowerCase() === "published" ? (
+          <button className="bg-primary-red text-white text-sm py-2 px-3 rounded-lg">
+            Unpublish
+          </button>
+        ) : (
+          <button className="bg-primary-green text-white text-sm py-2 px-3 rounded-lg">
+            Publish
+          </button>
+        )}
       </div>
     </nav>
   );

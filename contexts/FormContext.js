@@ -86,6 +86,35 @@ export const FormProvider = ({ children }) => {
   };
 
   // fields
+  const addFormField = (section, data) => {
+    let sections = form?.formSections;
+    //
+    let tempSections = [];
+    for (let i = 0; i < sections.length; i++) {
+      //
+      if (sections[i]?.id === section.id) {
+        // add new element to sections
+        tempSections.push({
+          ...section,
+          formFields: [
+            ...section?.formFields,
+            { ...data, ordering: section?.formFields?.length },
+          ],
+        });
+      } else {
+        tempSections.push(sections[i]);
+      }
+    }
+
+    // update form
+    setForm((prev) => ({
+      ...prev,
+      formSections: tempSections,
+    }));
+
+    // update remote
+    setTriggerRemoteUpdate(!triggerRemoteUpdate);
+  };
 
   useEffect(() => {
     //
@@ -105,6 +134,7 @@ export const FormProvider = ({ children }) => {
         addFormSection,
         triggerRemoteUpdate,
         removeForm,
+        addFormField,
         formLayout,
         setFormLayout,
       }}

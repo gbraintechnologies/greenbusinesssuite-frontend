@@ -1,6 +1,6 @@
 "use state";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // components
 import FormField from "./FormField";
@@ -8,9 +8,15 @@ import FormField from "./FormField";
 //
 import toast from "react-hot-toast";
 import useForm from "@/hooks/useForm";
+import FormElementSelector from "./FormElementSelector";
 
 function FormSection({ section }: any) {
   let [localSection, setLocalSection] = useState(section);
+
+  // update local copy if changes are made
+  useEffect(() => {
+    setLocalSection(section);
+  }, [section]);
 
   const runUpdates = () => {
     // dont update if the name or description is blank
@@ -80,11 +86,19 @@ function FormSection({ section }: any) {
           localSection.formFields.length === 0
             ? "bg-[#F8FAFC] p-3 my-4 min-h-48  rounded-2xl "
             : " text-center mx-auto mt-5 w-full"
-        } flex items-center justify-center`}
+        } flex flex-col items-center justify-center`}
       >
-        <button className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 px-3 py-2 rounded-lg flex items-center justify-center gap-2">
-          Add form element
-        </button>
+        {localSection.formFields.length == 0 && (
+          <div className="mb-10 mx-auto text-center">
+            <h4 className="font-bold mb-1">
+              Click the button to add new elements
+            </h4>
+            <p className="text-sm">
+              Optimize each section by including only closely related items.
+            </p>
+          </div>
+        )}
+        <FormElementSelector section={section} />
       </div>
 
       {/* DELETE ICON */}
@@ -138,3 +152,23 @@ function FormSection({ section }: any) {
 }
 
 export default FormSection;
+
+// FIELD
+//  {
+//       id: 3,
+//       name: "full_name",
+//       description: "Your full name",
+//       label: "Full Name",
+//       placeHolder: "Enter your full name",
+//       instruction: "Enter your full name as per official records",
+//       ordering: 1,
+//       isDeleted: false,
+//       fieldDataType: "string",
+//       choiceValues: [],
+//       isMandatory: true,
+//       horizontalAlign: false,
+//       validPattern: null,
+//       createdOn: "2024-03-22T09:07:40.646085",
+//       updatedOn: "2024-03-22T09:07:40.646112",
+//       deletedOn: null,
+//     },

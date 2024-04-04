@@ -6,7 +6,7 @@ const FormatDate = (date: any) => {
 };
 
 export const FormatDateTime = (date: any) => {
-  if (Boolean(date)) return format(new Date(date), " do MMM, yyyy");
+  if (Boolean(date)) return format(new Date(date), "HH:mm, do MMM, yyyy");
 };
 
 export default FormatDate;
