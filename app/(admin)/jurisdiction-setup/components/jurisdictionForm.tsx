@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { IoIosAddCircleOutline } from "react-icons/io";
 import EditIcon from "@/public/icons/EditIcon";
 import "../new-individual/index.css";
@@ -16,13 +16,40 @@ import FormatByte from "./FormatByte";
 import RadioInput from './RadioInput';
 import ExcelIcon from "@/public/icons/ExcelIcon";
 import Link from 'next/link';
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { createJurisdictions, createAddressScheme, createAddressLevel } from "@/services/features/jurisdictionsService";
+
+
+const schema = yup.object({
+    jurisdictions_id: yup
+        .number(),
+    jurisdiction_name: yup
+        .string(),
+    jurisdiction_symbol: yup
+        .string(),
+    name_of_currency: yup
+        .string(),
+    currency_code: yup
+        .string()
+});
+
+
+interface Level {
+    label: string;
+    code: string;
+    level_order: number;
+    value_type: string;
+    address_scheme_id: number;
+    options_values: string[];
+}
 
 function JurisdictionSetupForm({ setPage }: any) {
 
+    type typeOfSchema = yup.InferType<typeof schema>;
     const [loading, setLoading] = useState(false);
-    const [nationality, setNationality] = useState("");
     const [showTextInput, setShowTextInput] = useState(false);
-    const [textshow, setTextshow] = useState(false);
     const [showregionModal, setShowRegionModal] = useState(false);
     const [showtownModal, setShowTownModal] = useState(false);
     const [showcityModal, setShowCityModal] = useState(false);
@@ -30,6 +57,27 @@ function JurisdictionSetupForm({ setPage }: any) {
     const [IDImage, setIDImage] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const [fileName, setFileName] = useState<any>({ 'name': '', 'size': '' })
+    const [levels, setLevels] = useState<Level[]>([]);
+    const [level, setLevel] = useState({
+        "label": "",
+        "code": "",
+        "level_order": 0,
+        "value_type": "",
+        "address_scheme_id": 0,
+        "options_values": []
+    });
+    const [showText, setShowText] = useState<boolean>(false);
+    const { register, handleSubmit, formState: { errors }, getValues } = useForm<typeOfSchema>({
+        resolver: yupResolver(schema),
+        mode: "onChange",
+        defaultValues: {
+            jurisdictions_id: 0,
+            jurisdiction_name: "",
+            jurisdiction_symbol: "",
+            name_of_currency: "",
+            currency_code: ""
+        },
+    });
 
     const handleDrop = (acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -57,10 +105,46 @@ function JurisdictionSetupForm({ setPage }: any) {
         setShowTextInput((prevState) => status);
     };
 
-    const ShowInput = () => {
-        setTextshow((prevState) => !prevState);
+    const handleAddLevel = () => {
+        setLevels([...levels, level]);
+        setLevel({
+            label: "",
+            code: "",
+            level_order: 0,
+            value_type: "",
+            address_scheme_id: 0,
+            options_values: []
+        });
+        setShowText(false);
     };
 
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setLevel(prevState => ({ ...prevState, [name]: value }));
+    };
+
+
+    const onSubmit = async (data: typeOfSchema) => {
+        try {
+            const createJurisdictionPayload = {
+                jurisdiction_name: data.jurisdiction_name,
+                jurisdiction_symbol: data.jurisdiction_symbol,
+                name_of_currency: data.name_of_currency,
+                currency_code: data.currency_code,
+            };
+            await createJurisdictions(createJurisdictionPayload);
+
+            const addressSchemepayload = {
+                jurisdiction_id: "",
+            };
+
+            createAddressScheme(addressSchemepayload)
+                .catch(error => alert(error.message));
+
+        } catch (error) {
+            console.error('Error occurred:', error);
+        }
+    };
 
     return (
         <div>
@@ -95,13 +179,14 @@ function JurisdictionSetupForm({ setPage }: any) {
                             <SelectInput
                                 listdata={Countries()}
                                 label="Country"
-                                onChange={(e) => setNationality(e.target.value)}
                                 autoComplete="off"
+                                {...register("jurisdiction_name")}
+                                error={errors.jurisdiction_name?.message}
                                 PrependIcon={
                                     <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
                                         <img
-                                            src={Countrie(nationality)?.flags.png}
-                                            alt={Countrie(nationality)?.name.common}
+                                            src={Countrie(getValues("jurisdiction_name") ?? '')?.flags.png}
+                                            alt={Countrie(getValues("jurisdiction_name") ?? '')?.name.common}
                                             style={{ height: "auto", width: "30px" }}
                                         />
                                     </span>
@@ -112,105 +197,58 @@ function JurisdictionSetupForm({ setPage }: any) {
                     </div>
                     <div>
                         <h4 className="font-bold text-black-400">Addressing Scheme</h4>
-                        <p className="text-black-400 text-sm">Setup administrator of this company</p>
+                        <p className="text-black-400 text-sm">Setup all Parent and Child sub-levels for the Country</p>
                     </div>
                     <div>
                         <label className="block mb-2 text-xs font-bold text-black-400" htmlFor="input">
-                            Sub-levels
+                            Parent Sub-levels
                         </label>
-                        <div className="flex flex-col gap-1">
-                            <div className="flex items-center">
+                        {levels.map((level, index) => (
+                            <div className="flex items-center mb-4" key={index}>
                                 <input
                                     type="checkbox"
-                                    id="regions"
-                                    name="sub-level"
-                                    value="Regions"
+                                    id={`sub-level-${index}`}
+                                    name="parent sub-level"
+                                    value={level.label}
                                     className="mr-2 styled-checkbox"
                                 />
-                                <label htmlFor="regions" className="border-b mb-1 pb-1" style={{ width: "30%" }}>
-                                    Regions
+                                <label htmlFor={`sub-level-${index}`} className="border-b mb-1 pb-1" style={{ width: "30%" }}>
+                                    {level.label}
                                 </label>
-                                <button
-                                    onClick={() => setShowRegionModal(true)}
-                                    className="rounded-full"
-                                >
+                                <button className="rounded-full">
                                     <EditIcon />
                                 </button>
                             </div>
-                            <div className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id="cities"
-                                    name="sub-level"
-                                    value="Cities"
-                                    className="mr-2 styled-checkbox"
-                                />
-                                <label htmlFor="cities" className="border-b mb-1 pb-1" style={{ width: "30%" }}>
-                                    Cities
-                                </label>
-                                <button
-                                    onClick={() => setShowCityModal(true)}
-                                    className="rounded-full"
-                                >
-                                    <EditIcon />
-                                </button>
-                            </div>
-                            <div className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id="towns"
-                                    name="sub-level"
-                                    value="Towns"
-                                    className="mr-2 styled-checkbox"
-                                />
-                                <label htmlFor="towns" className="border-b mb-1 pb-1" style={{ width: "30%" }}>
-                                    Towns
-                                </label>
-                                <button
-                                    onClick={() => setShowTownModal(true)}
-                                    className="rounded-full"
-                                >
-                                    <EditIcon />
-                                </button>
-                            </div>
-                            <div className="flex items-center mb-4">
-                                <input
-                                    type="checkbox"
-                                    id="streets"
-                                    name="sub-level"
-                                    value="Streets"
-                                    className="mr-2 styled-checkbox"
-                                />
-                                <label htmlFor="streets" className="border-b mb-1 pb-1" style={{ width: "30%" }}>
-                                    Streets
-                                </label>
-                                <button
-                                    onClick={() => setShowStreetModal(true)}
-                                    className="rounded-full"
-                                >
-                                    <EditIcon />
-                                </button>
-                            </div>
-                        </div>
-                        {textshow && (
-                            <div className="mb-3 relative">
+                        ))}
+                        {showText && (
+                            <div className="combined-input-container flex items-center mb-3" style={{ width: "30%" }}>
                                 <TextInput
+                                    name="label"
                                     type="text"
-                                    placeholder=""
                                     autoComplete="off"
                                     className="rounded xl"
-                                    style={{ width: "33%" }}
+                                    style={{ width: "93%" }}
+                                    value={level.label}
+                                    onChange={handleChange}
                                 />
+                                &nbsp;&nbsp;
+                                <button
+                                    type="button"
+                                    onClick={handleAddLevel}
+                                    className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
+                                >
+                                    Add
+                                </button>
                             </div>
                         )}
                         <button
                             type="button"
-                            onClick={ShowInput}
+                            onClick={() => setShowText(true)}
                             className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
                             style={{ width: "33%" }}
                         >
                             <IoIosAddCircleOutline />
-                            Add Sub-level
+                            Add Parent Sub-level
                         </button>
                     </div>
                 </form>
