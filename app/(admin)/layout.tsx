@@ -22,6 +22,9 @@ import { RxCountdownTimer } from "react-icons/rx";
 import { PiBuildingsBold } from "react-icons/pi";
 import { BiTargetLock } from "react-icons/bi";
 import UserIcon from "@/public/icons/UserIcon";
+import { AiOutlineMoneyCollect } from "react-icons/ai";
+import { RiFlag2Fill } from "react-icons/ri";
+import { FaLandMineOn } from "react-icons/fa6";
 
 // toast
 import toast from "react-hot-toast";
@@ -93,6 +96,23 @@ export default function AdminLayout({
       name: "Jurisdiction setup",
       icon: <BiTargetLock size={20} />,
       link: "/jurisdiction-setup",
+      subNavigation: [
+        {
+          name: "Country setup",
+          icon: <RiFlag2Fill size={20} />,
+          link: "/country-setup",
+        },
+        {
+          name: "Currency setup",
+          icon: <AiOutlineMoneyCollect size={20} />,
+          link: "/currency-setup",
+        },
+        {
+          name: "Sector setup",
+          icon: <FaLandMineOn size={20} />,
+          link: "/sector-setup",
+        },
+      ],
     },
   ];
 
