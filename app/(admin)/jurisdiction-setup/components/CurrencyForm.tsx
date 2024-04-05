@@ -1,11 +1,54 @@
 'use client'
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import TextInput from './TextInput';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import SelectInputs from './SelectInputs';
+import { RiDeleteBin5Line } from 'react-icons/ri';
+import { FiEdit2 } from 'react-icons/fi';
 
+
+interface Denomination {
+    currency_id: string,
+    denomination_amount: string,
+    currency: string
+}
 function CurrencySetupForm({ setPage }: any) {
     const [loading, setLoading] = useState(false);
+    const [denominations, setDenominations] = useState<Denomination[]>([]);
+    const [denomination, setDenomination] = useState({ "currency_id": "", "denomination_amount": "", 'currency': "Note" });
+
+
+    const handleAddLevel = () => {
+        setDenominations([...denominations, denomination]);
+        setDenomination({
+            currency_id: "", denomination_amount: "", currency: ""
+        });
+    };
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setDenomination(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setDenomination(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const handleEdit = (currency_id: string) => {
+        const selectedDenomination = denominations.find(d => d.currency_id === currency_id);
+        if (selectedDenomination) {
+            setDenomination(selectedDenomination);
+            handleDelete(currency_id);
+        }
+    };
+
+    const handleDelete = (currency_id: string) => {
+        const updatedDenominations = denominations.filter(d => d.currency_id !== currency_id);
+        setDenominations(updatedDenominations);
+    };
+
+
 
     return (
         <div>
@@ -67,22 +110,43 @@ function CurrencySetupForm({ setPage }: any) {
                             autoComplete="off"
                             className="rounded-xl"
                             style={{ width: "100%" }}
+                            value={denomination.denomination_amount}
+                            onChange={handleChange}
+                            name="denomination_amount"
                         />
                         &nbsp;&nbsp;
                         <SelectInputs
                             placeholder=""
                             autoComplete="off"
                             style={{ width: "70%" }}
+                            value={denomination.currency}
+                            onChange={handleSelectChange}
+                            name="currency"
                         >
-                            <option value="option1">Note</option>
-                            <option value="option2">Coin</option>
+                            <option value="Note">Note</option>
+                            <option value="Coin">Coin</option>
                         </SelectInputs>
                         <button
                             type="button"
+                            onClick={handleAddLevel}
                             className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
                         >
                             Add
                         </button>
+                    </div>
+                    <div>
+                        <h2 className='bg-gray-100 mb-5' style={{ width: "30%" }}>Denominations</h2>
+                        <div style={{ width: "30%" }}>
+                            {denominations.map((denomination) => (
+                                <div key={denomination.currency_id} className="combined-input-container flex items-center justify-between border-b mb-1 pb-1" style={{ width: "100%" }}>
+                                    <span>{denomination.denomination_amount} &nbsp;{denomination.currency}</span>
+                                    <div style={{ display: "inline-flex", width: "30%", justifyContent: "flex-end" }}>
+                                        <FiEdit2 size={20} onClick={() => handleEdit(denomination.currency_id)}/>
+                                        <RiDeleteBin5Line size={20} onClick={() => handleDelete(denomination.currency_id)} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </form>
             </div>
