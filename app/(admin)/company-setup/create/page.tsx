@@ -161,32 +161,27 @@ const CreateCompany = () => {
       const custom_profiles = [
         {
           custom_profile_item_id: 2,
-          value: createCompanyResponse?.data?.id,
+          value: await createCompanyResponse?.id,
         },
       ];
       const createUserResponse = await services.createUserWithCustomProfiles(
         adminData,
         custom_profiles
-      );
-      
-      
+        );
+        toast.success("Admin created successfully successfully");
+
       const assignRoleResponse = await services.assignRoleToUser(
         createUserResponse.data.id,
         6
-        );
-        
-        const notifyUserResponse = await services.notifyUserTempCred(
-          createUserResponse?.data?.id,
-          "EMAIL"
-          );
-          
-          toast.success(`Temporary password sent to ${adminData.email}`);
-      console.log("notify user res ", notifyUserResponse);
-      console.log("assign role res ", assignRoleResponse);
-      console.log("create user res ", createUserResponse);
-      console.log("res ", createCompanyResponse)
+      );
 
-      toast.success("Company created successfully");
+      const notifyUserResponse = await services.notifyUserTempCred(
+        createUserResponse?.data?.id,
+        "EMAIL"
+      );
+
+      toast.success(`Temporary password sent to ${adminData.email}`);
+
       setPhone("");
       setSelectedIndustry(undefined);
       setSelectedJurisdiction(undefined);
