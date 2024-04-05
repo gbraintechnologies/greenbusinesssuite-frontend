@@ -129,6 +129,21 @@ const Page = () => {
     return false;
   };
 
+  const hasAdminInfoChanged = (initialValues: any, values: any) => {
+    if (
+      hasValueChanged(
+        `${initialValues.adminFirstName} ${initialValues.adminLastName}`,
+        `${values.adminFirstName} ${values.adminLastName}`
+      )
+    ) {
+      return true;
+    }
+
+    if (hasValueChanged(initialValues["adminEmail"], values["adminEmail"])) {
+      return true;
+    }
+  }
+
   const { handleFileUpload } = useFileUpload();
 
   const editCompany = async (
@@ -191,6 +206,7 @@ const Page = () => {
         data,
         custom_fields
       );
+      
       toast.success("Company edited successfully");
       router.back();
     } catch (error) {
