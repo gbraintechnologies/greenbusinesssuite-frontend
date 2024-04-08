@@ -3,15 +3,19 @@ import { useRouter } from "next/navigation";
 // icons
 import { GoArrowLeft } from "react-icons/go";
 import { CiCirclePlus } from "react-icons/ci";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 // hooks
 import useForm from "@/hooks/useForm";
+
+// uids
+import { v4 as uuidv4 } from "uuid";
 
 //
 import React, { useEffect, useState } from "react";
 
 //
-import FormatDate from "@/utils/FormatDate/FormatDate";
+import { FormatDateTime } from "@/utils/FormatDate/FormatDate";
 import FormSection from "../components/FormSection";
 
 //
@@ -23,24 +27,92 @@ function isObjEmpty(obj: any) {
   return Object.keys(obj).length === 0;
 }
 
-function Builder({ data }: any) {
+function Builder({ data, refetch }: any) {
+  // scroll to top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  //
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { form, selectForm } = useForm();
+  const {
+    form,
+    selectForm,
+    addFormSection,
+    triggerRemoteUpdate,
+    updateNameAndDescription,
+  } = useForm();
+
+  // local variables
   const [formName, setFormName] = useState(form?.name);
   const [formDesc, setFormDesc] = useState(
     form?.description ? form?.description : "No description set"
   );
 
+  // set data to form if empty
   useEffect(() => {
     if (isObjEmpty(form) && data) {
       selectForm(data);
-      setFormDesc(data?.description ? data?.description : "No description set");
-      setFormName(data?.name);
     }
-  }, [form, data]);
+  }, [data]);
 
+  // update name and description
+  useEffect(() => {
+    if (!isObjEmpty(form)) {
+      setFormDesc(form?.description ? data?.description : "No description set");
+      setFormName(form?.name);
+    }
+  }, [form]);
+
+  const [updatingRemote, setUpdatingRemote] = useState(false);
+  const updateRemote = () => {
+    if (!isObjEmpty(form)) {
+      setUpdatingRemote(true);
+      services
+        .updateForm({ ...form, updatedOn: new Date() })
+        .then((res) => {
+          setUpdatingRemote(false);
+          // REFETCH AND SYNC FROM REMOTE SERVER
+          refetch();
+          // queryClient.invalidateQueries({
+          //   queryKey: ["form", form?.id],
+          // });
+          toast.dismiss();
+          toast.success("Form updated");
+        })
+        .catch((e) => {
+          toast.dismiss();
+          toast.error("Error updating form");
+          console.log("error", e);
+        });
+    }
+  };
+
+  // USE EFFECT FOR UPDATING FORM REMOTELY
+  // useEffect(() => {
+  //   if (!isObjEmpty(form)) {
+  //     services
+  //       .updateForm({ ...form, updatedOn: new Date() })
+  //       .then((res) => {
+  //         // REFETCH AND SYNC FROM REMOTE SERVER
+  //         refetch();
+  //         // queryClient.invalidateQueries({
+  //         //   queryKey: ["form", form?.id],
+  //         // });
+  //         toast.dismiss();
+  //         toast.success("Form updated");
+  //       })
+  //       .catch((e) => {
+  //         toast.dismiss();
+  //         toast.error("Error updating form");
+  //         console.log("error", e);
+  //       });
+  //   }
+  // }, [triggerRemoteUpdate]);
+
+  // RENDERING FORM BUILDER
   if (!isObjEmpty(form)) {
     const { updatedOn, createdOn, formSections, id } = form;
 
@@ -49,7 +121,7 @@ function Builder({ data }: any) {
       services
         .renameForm(id, formName)
         .then((res) => {
-          console.log("renaming form", res);
+          updateNameAndDescription({ name: formName, description: formDesc });
           queryClient.invalidateQueries({
             queryKey: ["all forms"],
           });
@@ -64,6 +136,10 @@ function Builder({ data }: any) {
         });
     };
 
+    const updateDesc = () => {
+      updateNameAndDescription({ name: formName, description: formDesc });
+    };
+
     // TODO: SORT SECTIONS BY ORDER
     // let sortByOrder = (data: any) => {
     //   return data.sort(function (a: any, b: any) {
@@ -72,8 +148,17 @@ function Builder({ data }: any) {
     // };
 
     return (
-      <div className="pt-10 pb-20 flex px-10">
-        <div className="w-2/6">
+      <div className="pt-10 pb-[20rem] relative flex px-10">
+        {/* UPDATING REMOTE SCREEN */}
+        {updatingRemote && (
+          <div className="bg-white bg-opacity-20  flex items-center justify-center cursor-not-allowed z-[199]  absolute top-0 left-0 h-[100vh] w-full">
+            <div className="flex flex-col items-center justify-center mx-auto text-center -mt-32 gap-4">
+              <AiOutlineLoading3Quarters size={20} className="animate-spin" />{" "}
+              Updating Form...
+            </div>
+          </div>
+        )}
+        <div className={`${updatingRemote && "blur"} w-2/6`}>
           <button
             className="px-4 py-2 flex items-center gap-2 text-sm rounded-lg bg-white border border-gray-200"
             onClick={() => {
@@ -84,25 +169,35 @@ function Builder({ data }: any) {
             Exit form builder
           </button>
         </div>
-        <div className="w-4/6">
+        <div className={`${updatingRemote && "blur"} w-4/6`}>
           {/* HEADER: TITLE, DESCRIPTION & LAST UPDATED */}
           <div className="boxshadow w-full mb-10">
             <div className="p-5">
-              <h5 className="font-semibold text-lg mb-1">
-                <input
-                  value={formName}
-                  className="outline-none focus:outline-none w-full"
-                  onBlur={rename}
-                  onChange={(e) => setFormName(e.target.value)}
-                />
-              </h5>
+              <div className="flex gap-5 justify-between items-center mb-3">
+                <h5 className="font-semibold text-lg mb-1">
+                  <input
+                    value={formName}
+                    className="outline-none focus:outline-none w-full"
+                    onBlur={rename}
+                    onChange={(e) => setFormName(e.target.value)}
+                  />
+                </h5>
+                <button
+                  onClick={updateRemote}
+                  disabled={updatingRemote}
+                  className="text-sm border c border-gray-200 p-1 px-3 hover:text-white hover:bg-primary-green rounded-lg"
+                >
+                  Update
+                </button>
+              </div>
+
               <div className="flex gap-5 justify-between items-center">
                 <p className="font-light text-sm flex-1">
                   {" "}
                   <input
                     value={formDesc}
                     className="outline-none focus:outline-none w-full"
-                    // onBlur={}
+                    onBlur={updateDesc}
                     onChange={(e) => setFormDesc(e.target.value)}
                   />
                 </p>
@@ -115,7 +210,7 @@ function Builder({ data }: any) {
                   <span>
                     {" "}
                     Changes saved{" "}
-                    {FormatDate(updatedOn ? updatedOn : createdOn)}
+                    {FormatDateTime(updatedOn ? updatedOn : createdOn)}
                   </span>
                 </p>
               </div>
@@ -129,7 +224,24 @@ function Builder({ data }: any) {
 
           {/* Add New Section */}
           <div className="flex justify-end items-end w-full">
-            <button className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 px-3 py-2 rounded-lg flex items-center justify-center gap-2">
+            <button
+              onClick={() => {
+                let template = {
+                  // id: uuidv4(),
+                  name: "",
+                  description: "",
+                  instruction: "",
+                  formFields: [],
+                  isDeleted: false,
+                  createdOn: new Date(),
+                  updatedOn: new Date(),
+                  deletedOn: null,
+                };
+
+                addFormSection(template);
+              }}
+              className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 px-3 py-2 rounded-lg flex items-center justify-center gap-2"
+            >
               <CiCirclePlus size={18} /> Add section
             </button>
           </div>
@@ -140,3 +252,18 @@ function Builder({ data }: any) {
 }
 
 export default Builder;
+
+//SECTION:
+// {
+//   id: 1,
+//   name: "Personal Information",
+//   description: "Enter your personal details.",
+//   instruction: "Please provide accurate information.",
+//   formFields: [
+
+//   ],
+//   isDeleted: false,
+//   createdOn: "2024-03-22T09:07:40.598049",
+//   updatedOn: "2024-03-22T09:07:40.598078",
+//   deletedOn: null,
+// },

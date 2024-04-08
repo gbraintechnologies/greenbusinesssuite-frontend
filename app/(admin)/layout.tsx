@@ -22,6 +22,9 @@ import { RxCountdownTimer } from "react-icons/rx";
 import { PiBuildingsBold } from "react-icons/pi";
 import { BiTargetLock } from "react-icons/bi";
 import UserIcon from "@/public/icons/UserIcon";
+import { AiOutlineMoneyCollect } from "react-icons/ai";
+import { RiFlag2Fill } from "react-icons/ri";
+import { FaLandMineOn } from "react-icons/fa6";
 
 // toast
 import toast from "react-hot-toast";
@@ -50,7 +53,7 @@ export default function AdminLayout({
       // LOGICIEL ADMIN ROLE ID: 1
       if (role == 1) {
         setLoading(false);
-        router.push("/");
+        // router.push("/");
         return;
       }
       // COMPANY ADMIN ROLE ID: 6
@@ -58,13 +61,12 @@ export default function AdminLayout({
         setLoading(false);
         router.push("/company");
         return;
-      } else {
-        removeAdmin();
-        router.push("/login");
-        toast.error("Access not granted. Check with your administrator");
       }
 
-      setLoading(true);
+      // else
+      removeAdmin();
+      router.push("/login");
+      toast.error("Access not granted. Check with your administrator");
     }
   }, [admin]);
 
@@ -94,6 +96,23 @@ export default function AdminLayout({
       name: "Jurisdiction setup",
       icon: <BiTargetLock size={20} />,
       link: "/jurisdiction-setup",
+      subNavigation: [
+        {
+          name: "Country setup",
+          icon: <RiFlag2Fill size={20} />,
+          link: "/country-setup",
+        },
+        {
+          name: "Currency setup",
+          icon: <AiOutlineMoneyCollect size={20} />,
+          link: "/currency-setup",
+        },
+        {
+          name: "Sector setup",
+          icon: <FaLandMineOn size={20} />,
+          link: "/sector-setup",
+        },
+      ],
     },
   ];
 
