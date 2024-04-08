@@ -78,7 +78,7 @@ export const FormProvider = ({ children }) => {
     setForm((prev) => ({
       ...prev,
       formSections: [
-        ...form.formSections.filter((item) => item.id !== data.id),
+        ...form.formSections.filter((item) => item.ordering !== data.ordering),
       ],
     }));
     // update remote

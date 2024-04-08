@@ -14,6 +14,8 @@ import { v4 as uuidv4 } from "uuid";
 //
 import React, { useEffect, useState } from "react";
 
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 //
 import { FormatDateTime } from "@/utils/FormatDate/FormatDate";
 import FormSection from "../components/FormSection";
@@ -36,6 +38,9 @@ function Builder({ data, refetch }: any) {
   //
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  // animation
+  const [parent] = useAutoAnimate();
 
   const {
     form,
@@ -75,10 +80,11 @@ function Builder({ data, refetch }: any) {
         .then((res) => {
           setUpdatingRemote(false);
           // REFETCH AND SYNC FROM REMOTE SERVER
-          refetch();
-          // queryClient.invalidateQueries({
-          //   queryKey: ["form", form?.id],
-          // });
+          // refetch();
+          selectForm(res.data);
+          queryClient.invalidateQueries({
+            queryKey: ["form", form?.id],
+          });
           toast.dismiss();
           toast.success("Form updated");
         })
@@ -176,7 +182,7 @@ function Builder({ data, refetch }: any) {
               <div className="flex gap-5 justify-between items-center mb-3">
                 <h5 className="font-semibold text-lg mb-1">
                   <input
-                    value={formName}
+                    value={formName?.replace(/"/g, " ")}
                     className="outline-none focus:outline-none w-full"
                     onBlur={rename}
                     onChange={(e) => setFormName(e.target.value)}
@@ -218,9 +224,11 @@ function Builder({ data, refetch }: any) {
           </div>
 
           {/* FORM SECTIONS */}
-          {formSections?.map((section: any, idx: any) => {
-            return <FormSection key={idx} section={section} />;
-          })}
+          <div ref={parent} className="mt-5">
+            {formSections?.map((section: any, idx: any) => {
+              return <FormSection key={idx} section={section} />;
+            })}
+          </div>
 
           {/* Add New Section */}
           <div className="flex justify-end items-end w-full">

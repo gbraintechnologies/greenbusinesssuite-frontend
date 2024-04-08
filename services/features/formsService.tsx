@@ -2,7 +2,7 @@ import authApi from "../meshAuthClient";
 
 export const allForms = () => {
   return () =>
-    authApi.get("/forms/builder/all?page=0&size=90").then((res) => res.data);
+    authApi.get("/forms/builder/all?page=1&size=90").then((res) => res.data);
 };
 
 export const allFormTemplates = () => {
