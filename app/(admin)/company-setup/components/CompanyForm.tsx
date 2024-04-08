@@ -306,9 +306,10 @@ const CompanyForm: React.FC<Props> = ({
                 <div className="input-holder">
                   <label>Company admin email address</label>
                   <Field
-                    style={getStyles(errors, "adminEmail")}
+                    style={logoPresentOnLoad ? {...getStyles(errors, "adminEmail"),  backgroundColor: "rgba(248 250 252,0.5)", color: "#666", cursor: "not-allowed"}: getStyles(errors,"adminEmail")}
                     name="adminEmail"
                     placeholder=""
+                    disabled={logoPresentOnLoad}
                   />
                   <ShowError name="adminEmail" />
                 </div>
