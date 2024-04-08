@@ -28,6 +28,7 @@ import {
 import { CompanyInfo, CompanyObject } from "@/types";
 import { createCustomField } from "@/services/features/userManagementService";
 import CompanyForm from "../components/CompanyForm";
+import services from "@/services";
 
 interface ICompany {
   companyName: string;
@@ -138,9 +139,49 @@ const CreateCompany = () => {
       },
     ];
 
+    const adminData = {
+      email: values.adminEmail as string,
+      username: ((values.adminFirstName?.toLowerCase() as string) +
+        values.adminLastName?.toLowerCase()) as string,
+      first_name: values.adminFirstName as string,
+      last_name: values.adminLastName as string,
+      phone_number: "+233",
+      mobile_phone_number: "+233",
+      user_status: "ACTIVE",
+    };
+
     try {
-      const response = await createCompanyWithCustomFields(data, custom_fields);
+      const createCompanyResponse = await createCompanyWithCustomFields(
+        data,
+        custom_fields
+      );
+
       toast.success("Company created successfully");
+
+      const custom_profiles = [
+        {
+          custom_profile_item_id: 2,
+          value: await createCompanyResponse?.id,
+        },
+      ];
+      const createUserResponse = await services.createUserWithCustomProfiles(
+        adminData,
+        custom_profiles
+        );
+        toast.success("Admin created successfully successfully");
+
+      const assignRoleResponse = await services.assignRoleToUser(
+        createUserResponse.data.id,
+        6
+      );
+
+      const notifyUserResponse = await services.notifyUserTempCred(
+        createUserResponse?.data?.id,
+        "EMAIL"
+      );
+
+      toast.success(`Temporary password sent to ${adminData.email}`);
+
       setPhone("");
       setSelectedIndustry(undefined);
       setSelectedJurisdiction(undefined);

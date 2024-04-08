@@ -1,3 +1,4 @@
+import { CustomField } from "@/types";
 import authApi from "../axiosAuthClient";
 
 export const allUsers = () => {
@@ -12,6 +13,10 @@ export const searchUsers = (filter_word: any) => {
   return () =>
     authApi.get(`/users/search_users/${filter_word}`).then((res) => res.data);
 };
+
+export const searchUsersByEmail = (email: string) => {
+  return authApi.get(`/users/search_users_by_email/${email}`);
+}
 
 export const allUsersByRole = (role_id: any, role_name: any) => {
   return authApi.get(`/users/byrole/${role_id}?role_name=${role_name}`);
@@ -37,6 +42,13 @@ export const editUserWithCustomProfiles = (data: any, custom_profiles: any) => {
     custom_profiles,
   });
 };
+
+export const editUserWithCustomFields = (data: any, custom_fields: CustomField[], userId: string) => {
+  return authApi.put(`users/edit_with_custom_fields/${userId}`, {
+    user_data: data,
+    custom_profiles: custom_fields
+  } )
+}
 
 // CUSTOM FIELDS
 
