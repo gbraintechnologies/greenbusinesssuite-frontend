@@ -1,5 +1,6 @@
+"use client"
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // hooks
 import useAdmin from "@/hooks/useAdmin";
@@ -8,6 +9,15 @@ import Image from "next/image";
 function TopNav() {
   //
   const { admin } = useAdmin();
+
+  const [isClient, setIsClient] = useState(false);
+
+
+  useEffect(()=> {
+    setIsClient(true);
+
+  }, [])
+
 
   return (
     <nav className="h-[7vh] z-[100] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
@@ -37,19 +47,19 @@ function TopNav() {
           admin?.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1
           )?.value?.length > 1 ? (
-            <Image
+            isClient && <Image
               alt="profile"
               src={
                 admin?.custom_profile_values.find(
                   (item: any) => item?.custom_profile_item_id === 1
-                ).value
+                ).value ?? ""
               }
               width={32}
               height={32}
               className="rounded-full w-8 h-8 object-cover"
             />
           ) : (
-            <button className="w-8 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
+            isClient && <button className="w-8 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
               {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
               {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
             </button>
