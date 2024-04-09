@@ -14,6 +14,10 @@ export const getFormById = (id: any) => {
   return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
 
+export const getFormsByCompanyName = (companyName: string) => {
+  return () => authApi.get(`/forms/builder/company/${companyName}`);
+}
+
 export const updateForm = (data: any) => {
   return authApi.put(`/forms/builder/update`, data);
 };
