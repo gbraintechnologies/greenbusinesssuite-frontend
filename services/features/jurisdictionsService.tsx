@@ -25,3 +25,11 @@ export const createAddressScheme = (data: any) => {
 export const createAddressLevel = (data: any) => {
     return authApi.post("/addresses/create_address_level/", data);
 };
+
+export const allCurrencies = () => {
+    return () => authApi.get("/currencies/").then((res) => res.data);
+};
+
+export const createCurrency = (data: any) => {
+    return authApi.post("/currencies/", data);
+};

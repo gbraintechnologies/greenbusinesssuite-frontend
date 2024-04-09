@@ -2,22 +2,23 @@
 import React, { ChangeEvent, useState } from 'react'
 import { IoIosAddCircleOutline } from "react-icons/io";
 import EditIcon from "@/public/icons/EditIcon";
-import "../new-individual/index.css";
-import Countries, { Countrie } from "./Countries";
-import SelectInput from "./SelectInput";
-import TextInput from "./TextInput";
-import { GrFormNextLink } from "react-icons/gr";
-import UploadAreaInput from './UploadAreaInput';
-import Modal from './Modal';
+import "../index.css"
+import Countries, { Countrie } from "../components/Countries";
+import SelectInput from "../components/SelectInput";
+import TextInput from "../components/TextInput";
+import UploadAreaInput from '../components/UploadAreaInput';
+import Modal from '../components/Modal';
 import Image from "next/image";
 import { AiOutlineDelete } from 'react-icons/ai';
 import { IoCloseCircleOutline } from "react-icons/io5";
-import FormatByte from "./FormatByte";
-import RadioInput from './RadioInput';
+import FormatByte from "../components/FormatByte";
+import RadioInput from '../components/RadioInput';
 import ExcelIcon from "@/public/icons/ExcelIcon";
 import Link from 'next/link';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { GoDotFill } from "react-icons/go";
+import { FaArrowsToDot } from "react-icons/fa6";
 import { useForm } from "react-hook-form";
 import { createJurisdictions, createAddressScheme, createAddressLevel } from "@/services/features/jurisdictionsService";
 
@@ -45,7 +46,7 @@ interface Level {
     options_values: string[];
 }
 
-function JurisdictionSetupForm({ setPage }: any) {
+function NewIndividual() {
 
     type typeOfSchema = yup.InferType<typeof schema>;
     const [loading, setLoading] = useState(false);
@@ -57,8 +58,8 @@ function JurisdictionSetupForm({ setPage }: any) {
     const [IDImage, setIDImage] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const [fileName, setFileName] = useState<any>({ 'name': '', 'size': '' })
-    const [levels, setLevels] = useState<Level[]>([]);
-    const [level, setLevel] = useState({
+    const [parentlevels, setParentLevels] = useState<Level[]>([]);
+    const [parentlevel, setParentLevel] = useState({
         "label": "",
         "code": "",
         "level_order": 0,
@@ -66,8 +67,18 @@ function JurisdictionSetupForm({ setPage }: any) {
         "address_scheme_id": 0,
         "options_values": []
     });
-    const [showText, setShowText] = useState<boolean>(false);
-    const { register, handleSubmit, formState: { errors }, getValues } = useForm<typeOfSchema>({
+    const [childlevels, setChildLevels] = useState<Level[]>([]);
+    const [childlevel, setChildLevel] = useState({
+        "label": "",
+        "code": "",
+        "level_order": 0,
+        "value_type": "",
+        "address_scheme_id": 0,
+        "options_values": []
+    });
+    const [showParentInput, setShowParentInput] = useState<boolean>(false);
+    const [showChildInput, setShowChildInput] = useState<boolean>(false);
+    const { register, handleSubmit, formState: { isSubmitting, errors, dirtyFields }, getValues } = useForm<typeOfSchema>({
         resolver: yupResolver(schema),
         mode: "onChange",
         defaultValues: {
@@ -102,12 +113,13 @@ function JurisdictionSetupForm({ setPage }: any) {
     };
 
     const toggleTextInput = (status: boolean) => {
-        setShowTextInput((prevState) => status);
+        setShowParentInput((prevState) => status);
     };
 
-    const handleAddLevel = () => {
-        setLevels([...levels, level]);
-        setLevel({
+    const handleAddParentLevel = () => {
+        setParentLevels(prevLevels => [...prevLevels, { ...parentlevel }]);
+
+        setParentLevel({
             label: "",
             code: "",
             level_order: 0,
@@ -115,48 +127,81 @@ function JurisdictionSetupForm({ setPage }: any) {
             address_scheme_id: 0,
             options_values: []
         });
-        setShowText(false);
+
+        setShowParentInput(false);
+    };
+
+    const handleAddChildLevel = () => {
+        setChildLevels(prevLevels => [...prevLevels, { ...childlevel }]);
+
+        setChildLevel({
+            label: "",
+            code: "",
+            level_order: 0,
+            value_type: "",
+            address_scheme_id: 0,
+            options_values: []
+        });
+
+        setShowChildInput(false);
     };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setLevel(prevState => ({ ...prevState, [name]: value }));
+        setParentLevel(prevState => ({ ...prevState, [name]: value }));
     };
 
+    const handleChanges = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setChildLevel(prevState => ({ ...prevState, [name]: value }));
+    };
 
     const onSubmit = async (data: typeOfSchema) => {
         try {
-            const createJurisdictionPayload = {
+            // Create jurisdiction
+            const jurisdictionResponse = await createJurisdictions({
                 jurisdiction_name: data.jurisdiction_name,
                 jurisdiction_symbol: data.jurisdiction_symbol,
                 name_of_currency: data.name_of_currency,
                 currency_code: data.currency_code,
+            });
+            //  alert(JSON.stringify(jurisdictionResponse))
+            const jurisdictionId = jurisdictionResponse.data.id;
+
+            // Create address scheme
+            const addressSchemePayload = {
+                jurisdiction_id: jurisdictionId,
             };
-            await createJurisdictions(createJurisdictionPayload);
+            const addressSchemeResponse = await createAddressScheme(addressSchemePayload);
+            // alert(JSON.stringify(addressSchemeResponse))
+            const addressSchemeId = addressSchemeResponse.data.jurisdiction_id;
 
-            const addressSchemepayload = {
-                jurisdiction_id: "",
-            };
+            // Use the created address scheme's id in the addressLevelPayload
+            parentlevels.map(async (level) => {
+                level.address_scheme_id = addressSchemeId;
 
-            createAddressScheme(addressSchemepayload)
-                .catch(error => alert(error.message));
+                await createAddressLevel(level);
 
-        } catch (error) {
+            });
+
+
+        } catch (error: any) {
             console.error('Error occurred:', error);
+            alert(error.message);
         }
     };
 
     return (
-        <div>
-            <div className="mt-10 w-full">
-                <form className="flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+        <div className='w-full p-5'>
+            <div className="w-full">
+                <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
                     <div className="w-full text-primary-dark flex justify-between">
                         <div>
                             <h3 className="font-semibold text-xl">Country / Jurisdiction Setup</h3>
                             <p className="text-black-400 text-sm">configure all jurisdiction for the company</p>
                         </div>
                         <div className="flex gap-3 items-center">
-                            <Link href="/jurisdiction-setup/">
+                            <Link href="/country-setup">
                                 <button
                                     type="button"
                                     className="button bg-gray-50 border border-gray-200 shadow-sm py-3 px-4 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
@@ -166,11 +211,12 @@ function JurisdictionSetupForm({ setPage }: any) {
                             </Link>
 
                             <button
-                                type="button"
-                                onClick={() => setPage("currency")}
-                                className="button bg-primary-green disabled:bg-gray-400 py-3 px-4 flex text-white text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+                                type="submit"
+                                disabled={isSubmitting || !dirtyFields.jurisdiction_name}
+                                onClick={handleSubmit(onSubmit)}
+                                className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
                             >
-                                Next<GrFormNextLink size={24} />
+                                <IoIosAddCircleOutline size={20} />Save
                             </button>
                         </div>
                     </div>
@@ -200,27 +246,27 @@ function JurisdictionSetupForm({ setPage }: any) {
                         <p className="text-black-400 text-sm">Setup all Parent and Child sub-levels for the Country</p>
                     </div>
                     <div>
-                        <label className="block mb-2 text-xs font-bold text-black-400" htmlFor="input">
-                            Parent Sub-levels
+                        <label className="inline-block mr-2 text-xs font-bold text-black-200" htmlFor="input">
+                            <FaArrowsToDot className="inline-block " /> Parent Sub-levels
                         </label>
-                        {levels.map((level, index) => (
+                        {parentlevels.map((parentlevel, index) => (
                             <div className="flex items-center mb-4" key={index}>
                                 <input
                                     type="checkbox"
                                     id={`sub-level-${index}`}
                                     name="parent sub-level"
-                                    value={level.label}
+                                    value={parentlevel.label}
                                     className="mr-2 styled-checkbox"
                                 />
                                 <label htmlFor={`sub-level-${index}`} className="border-b mb-1 pb-1" style={{ width: "30%" }}>
-                                    {level.label}
+                                    {parentlevel.label}
                                 </label>
                                 <button className="rounded-full">
                                     <EditIcon />
                                 </button>
                             </div>
                         ))}
-                        {showText && (
+                        {showParentInput && (
                             <div className="combined-input-container flex items-center mb-3" style={{ width: "30%" }}>
                                 <TextInput
                                     name="label"
@@ -228,13 +274,13 @@ function JurisdictionSetupForm({ setPage }: any) {
                                     autoComplete="off"
                                     className="rounded xl"
                                     style={{ width: "93%" }}
-                                    value={level.label}
+                                    value={parentlevel.label}
                                     onChange={handleChange}
                                 />
                                 &nbsp;&nbsp;
                                 <button
                                     type="button"
-                                    onClick={handleAddLevel}
+                                    onClick={handleAddParentLevel}
                                     className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
                                 >
                                     Add
@@ -243,7 +289,7 @@ function JurisdictionSetupForm({ setPage }: any) {
                         )}
                         <button
                             type="button"
-                            onClick={() => setShowText(true)}
+                            onClick={() => setShowParentInput(true)}
                             className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
                             style={{ width: "33%" }}
                         >
@@ -251,6 +297,61 @@ function JurisdictionSetupForm({ setPage }: any) {
                             Add Parent Sub-level
                         </button>
                     </div>
+
+
+                    <div>
+                        <label className="inline-block mr-2 text-xs font-bold text-black-400" htmlFor="input">
+                            <GoDotFill className="inline-block " /> Child Sub-levels
+                        </label>
+                        {childlevels.map((childlevel, index) => (
+                            <div className="flex items-center mb-4" key={index}>
+                                <input
+                                    type="checkbox"
+                                    id={`sub-level-${index}`}
+                                    name="child sub-level"
+                                    value={childlevel.label}
+                                    className="mr-2 styled-checkbox"
+                                />
+                                <label htmlFor={`sub-level-${index}`} className="border-b mb-1 pb-1" style={{ width: "30%" }}>
+                                    {childlevel.label}
+                                </label>
+                                <button className="rounded-full">
+                                    <EditIcon />
+                                </button>
+                            </div>
+                        ))}
+                        {showChildInput && (
+                            <div className="combined-input-container flex items-center mb-3" style={{ width: "30%" }}>
+                                <TextInput
+                                    name="label"
+                                    type="text"
+                                    autoComplete="off"
+                                    className="rounded xl"
+                                    style={{ width: "93%" }}
+                                    value={childlevel.label}
+                                    onChange={handleChanges}
+                                />
+                                &nbsp;&nbsp;
+                                <button
+                                    type="button"
+                                    onClick={handleAddChildLevel}
+                                    className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        )}
+                        <button
+                            type="button"
+                            onClick={() => setShowChildInput(true)}
+                            className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
+                            style={{ width: "33%" }}
+                        >
+                            <IoIosAddCircleOutline />
+                            Add Child Sub-level
+                        </button>
+                    </div>
+
                 </form>
             </div>
 
@@ -520,4 +621,4 @@ function JurisdictionSetupForm({ setPage }: any) {
     )
 }
 
-export default JurisdictionSetupForm;
+export default NewIndividual;
