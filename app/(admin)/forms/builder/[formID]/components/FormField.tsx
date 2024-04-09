@@ -1,3 +1,4 @@
+import useForm from "@/hooks/useForm";
 import React from "react";
 
 function FormField({ field, section }: any) {
@@ -12,6 +13,8 @@ function FormField({ field, section }: any) {
     label,
   } = field;
 
+  const { activeField, setActiveField } = useForm();
+
   // Rend
 
   // types
@@ -24,12 +27,24 @@ function FormField({ field, section }: any) {
   switch (fieldDataType) {
     case "long-text":
       return (
-        <div className={`${horizontalAlign ? "" : "col-span-2"}`}>
+        <div
+          onClick={() => setActiveField({ field, section })}
+          className={`
+           ${
+             field?.id === activeField?.field?.id &&
+             "border-[0.2px] rounded-lg p-2 border-primary-green"
+           }
+          ${horizontalAlign ? "col-span-1" : "col-span-2"}
+        
+          
+          `}
+        >
           <label className="font-sm text-gray-400">
             {label ? label : "No label"}
           </label>
           <textarea
             rows={5}
+            disabled
             placeholder={placeHolder ? placeHolder : "No placeholder specified"}
             className="border w-full focus:outline-primary-green text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg"
           />
@@ -43,9 +58,18 @@ function FormField({ field, section }: any) {
 
     case "number":
       return (
-        <div>
+        <div
+          onClick={() => setActiveField({ field, section })}
+          className={`
+          ${horizontalAlign ? "" : "col-span-2"}
+          ${
+            field?.id === activeField?.field?.id &&
+            "border-[0.2px] rounded-lg p-2 border-primary-green"
+          }
+          `}
+        >
           <label className="font-sm text-gray-400">
-            {label ? label : "No label provided"}
+            {label ? label : "No label"}
           </label>
           <p className="border text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg">
             {placeHolder ? placeHolder : "No placeholder specified"}{" "}
@@ -59,8 +83,21 @@ function FormField({ field, section }: any) {
 
     case "short-text":
       return (
-        <div>
-          <label className="font-sm text-gray-400">{label}</label>
+        <div
+          onClick={() => setActiveField({ field, section })}
+          className={`
+          ${horizontalAlign ? "" : "col-span-2"}
+         ${
+           field?.id === activeField?.field?.id &&
+           "border-[0.2px] rounded-lg p-2 border-primary-green"
+         }
+          
+          `}
+        >
+          <label className="font-sm text-gray-400">
+            {" "}
+            {label ? label : "No label"}
+          </label>
           <p className="border text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg">
             {placeHolder ? placeHolder : "No placeholder specified"}{" "}
             <span className="text-xs font-light text-green-400">
@@ -73,12 +110,24 @@ function FormField({ field, section }: any) {
 
     case "email":
       return (
-        <div>
+        <div
+          onClick={() => setActiveField({ field, section })}
+          className={`
+           ${
+             field?.id === activeField?.field?.id &&
+             "border-[0.2px] rounded-lg p-2 border-primary-green"
+           }
+
+          ${horizontalAlign ? "col-span-1" : "col-span-2"}
+       
+          
+          `}
+        >
           <label className="font-sm text-gray-400">
-            {label ? label : "No Label provided"}
+            {label ? label : "No label"}
           </label>
           <p className="border text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg">
-            Email place holder
+            {placeHolder ? placeHolder : "No placeholder specified"}
             <span className="text-xs font-light text-green-400">
               {" "}
               / {fieldDataType}
@@ -89,12 +138,22 @@ function FormField({ field, section }: any) {
 
     case "phone":
       return (
-        <div>
+        <div
+          onClick={() => setActiveField({ field, section })}
+          className={`
+          ${horizontalAlign ? "" : "col-span-2"}
+          ${
+            field?.id === activeField?.field?.id &&
+            "border-[0.2px] rounded-lg p-2 border-primary-green"
+          }
+          
+          `}
+        >
           <label className="font-sm text-gray-400">
-            {label ? label : "No Label provided"}
+            {label ? label : "No label"}
           </label>
           <p className="border text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg">
-            Phone
+            {placeHolder ? placeHolder : "No placeholder specified"}
             <span className="text-xs font-light text-green-400">
               {" "}
               / {fieldDataType}

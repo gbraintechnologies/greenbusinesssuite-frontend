@@ -1,11 +1,16 @@
 import useForm from "@/hooks/useForm";
 import React from "react";
 
-//
+// components
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
+import FieldOptions from "./FieldOptions";
 
 function GeneralFormSettings() {
-  const { formLayout, setFormLayout } = useForm();
+  const { formLayout, setFormLayout, activeField } = useForm();
+
+  if (activeField) {
+    return <FieldOptions />;
+  }
   return (
     <div className="bg-white min-h-[100vh]  border-l-2 border-gray-200 p-3">
       <h4 className="font-semibold text-lg mt-4">General form settings</h4>

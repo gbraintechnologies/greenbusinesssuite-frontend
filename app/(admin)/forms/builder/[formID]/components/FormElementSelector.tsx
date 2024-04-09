@@ -8,10 +8,11 @@ import { MdOutlinePhone } from "react-icons/md";
 import { TiDocumentText } from "react-icons/ti";
 import { BsCardText } from "react-icons/bs";
 import { AiOutlineNumber } from "react-icons/ai";
+import Loader from "@/components/BeatLoader/Loader";
 
 export default function FormElementSelector({ section }: any) {
   //
-  const { addFormField } = useForm();
+  const { addFormField, loadingField } = useForm();
   // types
   // text
   // integer
@@ -76,8 +77,11 @@ export default function FormElementSelector({ section }: any) {
     <div className="w-60 z-[100] mx-auto text-center">
       <Menu as="div" className="relative inline-block text-center">
         <div>
-          <Menu.Button className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 px-3 py-2 rounded-lg flex items-center justify-center gap-2">
-            Add form element
+          <Menu.Button
+            disabled={loadingField}
+            className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 w-40 px-3 py-2 rounded-lg flex items-center justify-center gap-2"
+          >
+            {loadingField ? <Loader color="#1d1d1d" /> : "Add form element"}
           </Menu.Button>
         </div>
         <Transition
