@@ -33,7 +33,7 @@ function CompanyForms() {
   });
 
   return (
-    <div className="px-5 pb-20">
+    <div className="px-5 pb-20 mt-4 py-2">
       <Nav
         headerLeftTitle="Assigned Forms"
         headerRight={
@@ -59,7 +59,7 @@ function CompanyForms() {
               <EmptyList />
             </div>
           ) : (
-            <div className="grid grid-cols-4 gap-5">
+            <div className="grid grid-cols-4 gap-5 mt-5">
               {forms &&
                 forms?.data
                   ?.filter((form: any) => form.isTemplate !== true)
