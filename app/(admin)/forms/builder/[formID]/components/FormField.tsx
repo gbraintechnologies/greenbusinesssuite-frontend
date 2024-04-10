@@ -25,7 +25,7 @@ function FormField({ field, section }: any) {
   // phone
 
   let activeFieldStyle =
-    "border-[0.2px] rounded-lg border-[#BBF7D0] bg-[#F0FDF4] bg-opacity-30";
+    "border-[0.4px] rounded-lg border-[#BBF7D0] bg-[#F0FDF4] bg-opacity-30";
 
   switch (fieldDataType) {
     case "long-text":
@@ -47,10 +47,10 @@ function FormField({ field, section }: any) {
             className="border w-full focus:outline-primary-green text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg"
           />
 
-          <span className="text-xs font-light text-green-400">
+          {/* <span className="text-xs font-light text-green-400">
             {" "}
             / {fieldDataType}
-          </span>
+          </span> */}
         </div>
       );
 
@@ -68,10 +68,10 @@ function FormField({ field, section }: any) {
           </label>
           <p className="border text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg">
             {placeHolder ? placeHolder : "No placeholder specified"}{" "}
-            <span className="text-xs font-light text-green-400">
+            {/* <span className="text-xs font-light text-green-400">
               {" "}
               / {fieldDataType}
-            </span>
+            </span> */}
           </p>
         </div>
       );
@@ -91,10 +91,10 @@ function FormField({ field, section }: any) {
           </label>
           <p className="border text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg">
             {placeHolder ? placeHolder : "No placeholder specified"}{" "}
-            <span className="text-xs font-light text-green-400">
+            {/* <span className="text-xs font-light text-green-400">
               {" "}
               / {fieldDataType}
-            </span>
+            </span> */}
           </p>
         </div>
       );
@@ -113,10 +113,10 @@ function FormField({ field, section }: any) {
           </label>
           <p className="border text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg">
             {placeHolder ? placeHolder : "No placeholder specified"}
-            <span className="text-xs font-light text-green-400">
+            {/* <span className="text-xs font-light text-green-400">
               {" "}
               / {fieldDataType}
-            </span>
+            </span> */}
           </p>
         </div>
       );
@@ -135,10 +135,10 @@ function FormField({ field, section }: any) {
           </label>
           <p className="border text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg">
             {placeHolder ? placeHolder : "No placeholder specified"}
-            <span className="text-xs font-light text-green-400">
+            {/* <span className="text-xs font-light text-green-400">
               {" "}
               / {fieldDataType}
-            </span>
+            </span> */}
           </p>
         </div>
       );

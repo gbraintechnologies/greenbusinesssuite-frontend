@@ -42,12 +42,17 @@ function FieldOptions() {
           <p className="font-medium text-base">Required field</p>{" "}
           <Switch
             checked={isMandatory}
-            onChange={() =>
+            onChange={() => {
               setLocalField((prev: any) => ({
                 ...prev,
                 isMandatory: !prev.isMandatory,
-              }))
-            }
+              }));
+
+              updateActiveField(activeField.section, {
+                ...localField,
+                isMandatory: !localField.isMandatory,
+              });
+            }}
             className={`${isMandatory ? "bg-primary-green" : "bg-gray-500"}
           relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
           >
@@ -65,7 +70,7 @@ function FieldOptions() {
             <label className={labelStyle}>Field Label</label>
             <input
               value={label}
-              placeholder="Type a question"
+              placeholder="Edit field label"
               className={inputStyle}
               onChange={(e) =>
                 setLocalField((prev: any) => ({
@@ -95,7 +100,7 @@ function FieldOptions() {
           <div className="flex flex-col gap-3">
             <label className={labelStyle}>Hint</label>
             <input
-              value={localField?.name}
+              value={name}
               placeholder="Add your hint text heree"
               className={inputStyle}
               onChange={(e) =>
@@ -114,12 +119,16 @@ function FieldOptions() {
           <p className="font-medium text-base">Horizontal alignment</p>{" "}
           <Switch
             checked={horizontalAlign}
-            onChange={() =>
+            onChange={() => {
               setLocalField((prev: any) => ({
                 ...prev,
                 horizontalAlign: !prev.horizontalAlign,
-              }))
-            }
+              }));
+              updateActiveField(activeField.section, {
+                ...localField,
+                horizontalAlign: !localField.horizontalAlign,
+              });
+            }}
             className={`${horizontalAlign ? "bg-primary-green" : "bg-gray-500"}
           relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
           >

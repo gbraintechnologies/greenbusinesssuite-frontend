@@ -41,35 +41,70 @@ export default function FormElementSelector({ section }: any) {
       icon: <MdOutlineMailOutline size={18} />,
       name: "Email",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "email" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "email",
+          name: "Email Address",
+          description: "Email Address",
+          label: "Email Address",
+          placeHolder: "Enter your email address here",
+        });
       },
     },
     {
       icon: <MdOutlinePhone size={18} />,
       name: "Phone Number",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "phone" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "phone",
+          name: "Phone Number",
+          description: "Phone Number",
+          label: "Phone Number",
+          placeHolder: "Enter your phone number",
+        });
       },
     },
     {
       icon: <BsCardText size={18} />,
       name: "Short text",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "short-text" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "short-text",
+          name: "Short text",
+          description: "Short text",
+          label: "Short text",
+          placeHolder: "Enter your short text here",
+        });
       },
     },
     {
       icon: <TiDocumentText size={18} />,
       name: "Long text",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "long-text" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "long-text",
+          name: "Long text",
+          description: "Long text",
+          label: "Long text",
+          placeHolder: "Enter your long text here",
+        });
       },
     },
     {
       icon: <AiOutlineNumber size={18} />,
       name: "Number",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "number" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "number",
+          name: "Number",
+          description: "Number",
+          label: "Number",
+          placeHolder: "Enter your number",
+        });
       },
     },
   ];
