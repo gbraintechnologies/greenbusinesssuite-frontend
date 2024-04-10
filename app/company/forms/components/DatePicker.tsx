@@ -1,14 +1,15 @@
 import React from "react";
-import { BsArrowDown } from "react-icons/bs";
+import { BsChevronDown } from "react-icons/bs";
 
 const DatePicker = () => {
   return (
-    <div className="flex shadow-lg bg-white border border-[#E2E8F0] w-fit">
-      <button className="flex justify-between">
+    <div className="flex shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] bg-white border border-[#E2E8F0] w-fit rounded-lg">
+      <button className="flex justify-between items-center px-3 py-2 border-r border-[#E2E8F0] gap-2">
         <div>Today</div>
-        <BsArrowDown color="#94A3B8" />
+        <BsChevronDown color="#94A3B8" />
+
       </button>
-      <button className="flex gap-2 justify-evenly">
+      <button className="flex gap-3 items-center px-3 py-2">
         <div>
           <svg
             width="24"
@@ -43,7 +44,7 @@ const DatePicker = () => {
           </svg>
         </div>
         <div>All Time</div>
-        <BsArrowDown color="#94A3B8" />
+        <BsChevronDown color="#94A3B8" />
       </button>
     </div>
   );

@@ -121,7 +121,9 @@ const Page = () => {
         activeFilter={activeFilter}
         setActiveFilter={setActiveFilter}
       />
-      <DatePicker />
+      <div className="mt-4">
+        <DatePicker />
+      </div>
     </div>
   );
 };
