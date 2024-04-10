@@ -157,9 +157,11 @@ function Builder({ data, refetch }: any) {
 
           {/* FORM SECTIONS */}
           <div ref={parent} className="mt-5">
-            {formSections?.map((section: any, idx: any) => {
-              return <FormSection key={idx} section={section} />;
-            })}
+            {formSections
+              ?.filter((item: any) => !item.isDeleted)
+              ?.map((section: any, idx: any) => {
+                return <FormSection key={idx} section={section} />;
+              })}
           </div>
 
           {/* Add New Section */}

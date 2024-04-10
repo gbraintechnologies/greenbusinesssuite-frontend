@@ -141,18 +141,23 @@ export const FormProvider = ({ children }) => {
 
   const removeSection = (data) => {
     setLoadingSection(true);
+
+    let tempFormSections = form?.formSections;
+
+    let indexSection = tempFormSections?.indexOf(data);
+
+    if (indexSection !== -1) {
+      tempFormSections[indexSection] = {
+        ...data,
+        isDeleted: true,
+        deletedOn: new Date(),
+      };
+    }
+
     updateRemoteForm({
       ...form,
-      formSections: [
-        ...form.formSections.filter((item) => item.id !== data.id),
-      ],
+      formSections: [...tempFormSections],
     });
-    // setForm((prev) => ({
-    //   ...prev,
-    //   formSections: [
-    //     ...form.formSections.filter((item) => item.ordering !== data.ordering),
-    //   ],
-    // }));
   };
 
   // fields
