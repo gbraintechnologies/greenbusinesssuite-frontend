@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import Tabs from "@/components/Tabs/Tabs";
 import DatePicker from "../components/DatePicker";
+import StatsBlock from "../components/StatsBlock";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -123,6 +124,9 @@ const Page = () => {
       />
       <div className="mt-4">
         <DatePicker />
+      </div>
+      <div className="mt-4">
+        <StatsBlock stats={[{label: "Total number of entries", value: "5,468"}, {label: "Completed submissions", value: "23"}, {label: "Uncompleted submissions", value: "145"}]}/>
       </div>
     </div>
   );
