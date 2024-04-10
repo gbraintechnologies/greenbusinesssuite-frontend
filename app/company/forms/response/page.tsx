@@ -7,17 +7,9 @@ import services from "@/services";
 import Tabs from "@/components/Tabs/Tabs";
 import DatePicker from "../components/DatePicker";
 import StatsBlock from "../components/StatsBlock";
+import DownloadIcon from "@/public/icons/DownloadIcon";
 
 const Page = () => {
-  const searchParams = useSearchParams();
-
-  const id = searchParams.get("id");
-
-  const { data: form, isLoading: isFormsLoading } = useQuery({
-    queryKey: ["get form by id"],
-    queryFn: services.getFormById(Number(id)),
-  });
-
   const [filters, setFilters] = useState([
     { id: 1, name: "Insights", value: "insights" },
     { id: 2, name: "Responses", value: "responses" },
@@ -28,6 +20,28 @@ const Page = () => {
     name: "Insights",
     value: "insights",
   });
+
+  const searchParams = useSearchParams();
+
+  const id = searchParams.get("id");
+
+  const { data: form, isLoading: isFormsLoading } = useQuery({
+    queryKey: ["get form by id"],
+    queryFn: services.getFormById(Number(id)),
+  });
+
+  const {data: formResponseData} = useQuery({
+    queryKey: ["get form response by id"],
+    queryFn: services.getFormResponseById(Number(id)),
+    enabled: activeFilter.value === "Responses"
+  })
+
+  const {data: formStatusCount} = useQuery({
+    queryKey: ["Get forms status count"],
+    queryFn: services.getFormStatusCountById(Number(id))
+  })
+
+
 
   return (
     <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 h-full">
@@ -116,17 +130,35 @@ const Page = () => {
           </div>
         }
       />
-      <div className="mb-5 text-[#475569]">Form Description</div>
+      {activeFilter.id == 1 && <div className="mb-5 text-[#475569]">{form?.description}</div>}
+      <div className={" mt-5 " + (activeFilter.id === 1 ? 'flex flex-col gap-5': 'flex justify-between items-center')}>
+
       <Tabs
         filters={filters}
         activeFilter={activeFilter}
         setActiveFilter={setActiveFilter}
-      />
-      <div className="mt-4">
+        />
+        {activeFilter.id == 2 ? <div className="flex gap-3 items-center"><button className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg">
+            <DownloadIcon />
+            <div className="text-sm">Download </div>
+          </button>
         <DatePicker />
-      </div>
+          </div> : <DatePicker />}
+        </div>
       <div className="mt-4">
-        <StatsBlock stats={[{label: "Total number of entries", value: "5,468"}, {label: "Completed submissions", value: "23"}, {label: "Uncompleted submissions", value: "145"}]}/>
+        <StatsBlock stats={[{label: "Total number of entries", value: formStatusCount?.totalCount}, {label: "Completed submissions", value: formStatusCount?.completedCount}, {label: "Uncompleted submissions", value: formStatusCount?.notCompletedCount}]}/>
+      </div>
+      <div className="mt-4 border border-[#E2E8F0] bg-white  rounded-lg  py-3">
+        <div className="flex justify-between items-center border-b px-5 border-[#E2E8F0] pb-4">
+          <div className="font-semibold ">Response Analytics</div>
+          <button className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg">
+            <DownloadIcon />
+            <div className="text-sm">Download responses</div>
+          </button>
+        </div>
+        <div className="px-5">
+          {JSON.stringify(formStatusCount)}
+        </div>
       </div>
     </div>
   );

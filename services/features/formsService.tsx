@@ -18,6 +18,13 @@ export const getFormsByCompanyName = (companyName: string) => {
   return () => authApi.get(`/forms/builder/company/${companyName}`);
 }
 
+export const getFormResponseById = (id: number) => {
+  return () => authApi.get(`/forms/response/${id}`).then((res) => res.data)
+}
+
+export const getFormStatusCountById = (id: number) => {
+  return () => authApi.get(`/forms/response/forms-status/count/${id}`).then((res) => res.data)
+}
 export const updateForm = (data: any) => {
   return authApi.put(`/forms/builder/update`, data);
 };

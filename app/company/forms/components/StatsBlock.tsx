@@ -9,9 +9,9 @@ type Props = {
 };
 const StatsBlock: React.FC<Props> = ({ stats }) => {
   return (
-    <div className="bg-white flex justify-between py-3 px-4 rounded-lg">
+    <div className="bg-white flex justify-between py-3 rounded-lg border border-[#E2E8F0]">
       {stats.map((stat, index) => (
-        <div className={`flex flex-col gap-4 flex-1 pl-2 ${index !== 0 && " border-l border-[#E2E8F0]"}`} key={index}>
+        <div className={`flex flex-col gap-4 flex-1 pl-4 ${index !== 0 && " border-l border-[#E2E8F0]"}`} key={index}>
           <div className="text-[#475569] text-sm">{stat.label}</div>
           <div className="text-[#0F172A] font-semibold text-[22px]">
             {stat.value}

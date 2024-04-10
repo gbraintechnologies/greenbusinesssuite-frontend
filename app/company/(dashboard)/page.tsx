@@ -8,7 +8,7 @@ function CompanyDashboard() {
     { header: "Number Of Active Users", value: "7.2k" },
   ];
   return (
-    <div className="px-5 pb-20">
+    <div className="px-5 pb-20 mt-5">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
       <div className="flex gap-5 flex-wrap">
         {data.map((item: any) => (
