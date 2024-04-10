@@ -30,7 +30,7 @@ const Page = () => {
   });
 
   return (
-    <div className="px-5 pb-20 bg-[#E2E8F0] pt-4 h-full">
+    <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 h-full">
       <Nav
         headerLeft={
           <div className=" text-[#94A3B8] text-xl">
