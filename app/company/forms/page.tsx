@@ -68,7 +68,7 @@ function CompanyForms() {
                       <FormCard
                         key={form.id}
                         form={form}
-                        onClick={() => router.push(`/response/${form.id}`)}
+                        onClick={() => router.push(`/company/forms/response?id=${form.id}`)}
                       />
                     );
                   })}
