@@ -24,19 +24,17 @@ function FormField({ field, section }: any) {
   // email
   // phone
 
+  let activeFieldStyle =
+    "border-[0.2px] rounded-lg border-[#BBF7D0] bg-[#F0FDF4] bg-opacity-30";
+
   switch (fieldDataType) {
     case "long-text":
       return (
         <div
           onClick={() => setActiveField({ field, section })}
           className={`
-           ${
-             field?.id === activeField?.field?.id &&
-             "border-[0.2px] rounded-lg p-2 border-primary-green"
-           }
-          ${horizontalAlign ? "col-span-1" : "col-span-2"}
-        
-          
+           ${field?.id === activeField?.field?.id && activeFieldStyle}
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
           `}
         >
           <label className="font-sm text-gray-400">
@@ -61,11 +59,8 @@ function FormField({ field, section }: any) {
         <div
           onClick={() => setActiveField({ field, section })}
           className={`
-          ${horizontalAlign ? "" : "col-span-2"}
-          ${
-            field?.id === activeField?.field?.id &&
-            "border-[0.2px] rounded-lg p-2 border-primary-green"
-          }
+           ${field?.id === activeField?.field?.id && activeFieldStyle}
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
           `}
         >
           <label className="font-sm text-gray-400">
@@ -86,12 +81,8 @@ function FormField({ field, section }: any) {
         <div
           onClick={() => setActiveField({ field, section })}
           className={`
-          ${horizontalAlign ? "" : "col-span-2"}
-         ${
-           field?.id === activeField?.field?.id &&
-           "border-[0.2px] rounded-lg p-2 border-primary-green"
-         }
-          
+           ${field?.id === activeField?.field?.id && activeFieldStyle}
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
           `}
         >
           <label className="font-sm text-gray-400">
@@ -113,14 +104,8 @@ function FormField({ field, section }: any) {
         <div
           onClick={() => setActiveField({ field, section })}
           className={`
-           ${
-             field?.id === activeField?.field?.id &&
-             "border-[0.2px] rounded-lg p-2 border-primary-green"
-           }
-
-          ${horizontalAlign ? "col-span-1" : "col-span-2"}
-       
-          
+           ${field?.id === activeField?.field?.id && activeFieldStyle}
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
           `}
         >
           <label className="font-sm text-gray-400">
@@ -141,12 +126,8 @@ function FormField({ field, section }: any) {
         <div
           onClick={() => setActiveField({ field, section })}
           className={`
-          ${horizontalAlign ? "" : "col-span-2"}
-          ${
-            field?.id === activeField?.field?.id &&
-            "border-[0.2px] rounded-lg p-2 border-primary-green"
-          }
-          
+           ${field?.id === activeField?.field?.id && activeFieldStyle}
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
           `}
         >
           <label className="font-sm text-gray-400">
