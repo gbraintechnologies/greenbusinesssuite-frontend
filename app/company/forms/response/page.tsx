@@ -11,6 +11,7 @@ import DownloadIcon from "@/public/icons/DownloadIcon";
 import UserShareIcon from "@/public/icons/UserShareIcon";
 import PublishIcon from "@/public/icons/PublishIcon";
 import ResponseDataTable from "../components/ResponseDataTable";
+import AnalyticsGrid from "../components/AnalyticsGrid";
 
 const Page = () => {
   const [filters, setFilters] = useState([
@@ -125,7 +126,7 @@ const Page = () => {
               <div className="text-sm">Download responses</div>
             </button>
           </div>
-          <div className="px-5">{JSON.stringify(formStatusCount)}</div>
+          <AnalyticsGrid />
         </div>
       )}
       {activeFilter.id == 2 && (

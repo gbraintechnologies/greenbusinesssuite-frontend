@@ -19,7 +19,7 @@ export const getFormsByCompanyName = (companyName: string) => {
 }
 
 export const getFormResponseById = (id: number) => {
-  return () => authApi.get(`/forms/response/${id}`).then((res) => res.data)
+  return () => authApi.get(`/forms/response/data/${id}`).then((res) => res.data)
 }
 
 export const getFormStatusCountById = (id: number) => {

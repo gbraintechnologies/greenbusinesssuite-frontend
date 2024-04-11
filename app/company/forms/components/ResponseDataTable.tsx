@@ -1,12 +1,11 @@
 "use client";
 import DataTable from "@/components/DataTable/DataTable";
+import DownloadIcon from "@/public/icons/DownloadIcon";
+import EyeIcon from "@/public/icons/EyeIcon";
 import ListIcon from "@/public/icons/ListIcon";
 import UserIcon from "@/public/icons/UserIcon";
-import { GridColDef, GridColumnHeaderParams } from "@mui/x-data-grid";
-import Image from "next/image";
-import Link from "next/link";
+import { GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { BsThreeDots } from "react-icons/bs";
 
 export interface IResponse {
   email: string;
@@ -49,7 +48,7 @@ const ResponseDataTable: React.FC<Props> = ({
   const columns: GridColDef[] = [
     {
       field: "name",
-      renderHeader: (params: GridColumnHeaderParams) => (
+      renderHeader: () => (
         <div className="flex justify-between items-center gap-9">
           <div className="flex items-center gap-3">
             <input type="checkbox" className="form-check-input" checked={false} />
@@ -68,12 +67,12 @@ const ResponseDataTable: React.FC<Props> = ({
           key={params.row.data?.id}
         >
           <input
-            id={params.row.id}
+            id={params.row.data?.id}
             type="checkbox"
             className="form-check-input"
             checked={false}
           />
-          <div>{params.row.id}</div>
+          <div>{params.row.data?.id}</div>
         </div>,
       ],
     },
@@ -90,9 +89,9 @@ const ResponseDataTable: React.FC<Props> = ({
             <UserIcon />
           </div>
           <div key={params.row.id} className="flex flex-col gap-2">
-            <p className="font-medium text-sm">{params.row.data?.full_name}</p>
+            <p className="font-medium text-sm">{params.row.data?.inputData?.full_name}</p>
             <p className="text-[#475569] text-sm font-normal">
-              {params.row.data?.email}
+              {params.row.data?.inputData?.email}
             </p>
           </div>
         </div>,
@@ -113,8 +112,9 @@ const ResponseDataTable: React.FC<Props> = ({
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id}>
-          <BsThreeDots size={20} />
+        <div key={params.row.data.id} className="flex items-center gap-4">
+          <DownloadIcon />
+          <EyeIcon />
         </div>,
       ],
     },
