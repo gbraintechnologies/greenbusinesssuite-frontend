@@ -108,6 +108,7 @@ export default function FormElementSelector({ section }: any) {
       },
     },
   ];
+
   return (
     <div className="w-60 z-[100] mx-auto text-center">
       <Menu as="div" className="relative inline-block text-center">

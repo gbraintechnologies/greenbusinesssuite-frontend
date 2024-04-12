@@ -38,7 +38,7 @@ function FormSection({ section }: any) {
     <div
       onMouseEnter={() => setShowDelete(true)}
       onMouseLeave={() => setShowDelete(false)}
-      className="bg-white min-h-72 relative shadow p-5 rounded-xl mb-10"
+      className="form-section"
     >
       <h5 className="font-bold text-lg">
         {" "}
