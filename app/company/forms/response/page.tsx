@@ -10,8 +10,8 @@ import StatsBlock from "../components/StatsBlock";
 import DownloadIcon from "@/public/icons/DownloadIcon";
 import UserShareIcon from "@/public/icons/UserShareIcon";
 import PublishIcon from "@/public/icons/PublishIcon";
-import ResponseDataTable from "../components/ResponseDataTable";
-import AnalyticsGrid from "../components/AnalyticsGrid";
+import ResponseDataTable from "../components/ResponseTable/ResponseDataTable";
+import AnalyticsGrid from "../components/Analytics/AnalyticsGrid";
 import WriteIcon from "@/public/icons/WriteIcon";
 
 const Page = () => {
