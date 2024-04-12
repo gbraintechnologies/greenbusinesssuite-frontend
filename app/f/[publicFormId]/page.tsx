@@ -8,6 +8,7 @@ import services from "@/services";
 
 //
 import logo from "@/public/svg/mesh_logo.svg";
+import grid from "@/public/patterns/gridpattern.svg";
 
 //
 import Loader from "@/components/BeatLoader/Loader";
@@ -25,17 +26,22 @@ function PublicForm({ params }: any) {
     enabled: Boolean(formID),
   });
 
-  console.log("data", data, isLoading);
-
   return (
-    <div className="bg-grid min-h-[100vh] p-20 bg-no-repeat bg-cover">
+    <div
+      style={{
+        backgroundImage: `url(${grid.src})`,
+        backgroundRepeat: "none",
+        backgroundSize: "cover",
+      }}
+      className="min-h-[100vh] p-20"
+    >
       <div className="w-[50%]  mt-20 mx-auto min-h-[40rem]">
         <div className="flex items-center justify-center">
           <Image src={logo} alt="logo" width={150} height={200} />
         </div>
 
         {isLoading && (
-          <div className="flex items-center justify-center">
+          <div className="flex h-[20rem] items-center justify-center">
             <Loader />
           </div>
         )}
