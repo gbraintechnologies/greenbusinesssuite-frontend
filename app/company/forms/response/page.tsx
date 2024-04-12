@@ -12,6 +12,7 @@ import UserShareIcon from "@/public/icons/UserShareIcon";
 import PublishIcon from "@/public/icons/PublishIcon";
 import ResponseDataTable from "../components/ResponseDataTable";
 import AnalyticsGrid from "../components/AnalyticsGrid";
+import WriteIcon from "@/public/icons/WriteIcon";
 
 const Page = () => {
   const [filters, setFilters] = useState([
@@ -59,8 +60,17 @@ const Page = () => {
         headerRight={
           <div className="flex items-center gap-3">
             <button className="flex gap-2 shadow-[0px_2px_2px_0px_rgba(0, 0, 0, 0.04)] bg-white border border-[#E2E8F0] px-4 py-2 items-center rounded-lg">
-              <UserShareIcon />
-              <div className="text-sm">Share</div>
+              {activeFilter.id === 1 ? (
+                <>
+                  <UserShareIcon />
+                  <div className="text-sm">Share</div>
+                </>
+              ) : (
+                <>
+                  <WriteIcon />
+                  <div className="text-sm">Edit</div>
+                </>
+              )}
             </button>
             <button className="flex gap-2 shadow-[0px_1px_4px_0px_rgba(30, 41, 59, 0.09)] bg-[#16A34A] px-4 py-2 items-center rounded-lg text-white">
               <PublishIcon />
@@ -131,9 +141,12 @@ const Page = () => {
       )}
       {activeFilter.id == 2 && (
         <div className="mt-4">
-          <ResponseDataTable responseData={formResponseData} isResponseLoading={isResponseLoading} />
+          <ResponseDataTable
+            responseData={formResponseData}
+            isResponseLoading={isResponseLoading}
+          />
         </div>
-        )}
+      )}
     </div>
   );
 };
