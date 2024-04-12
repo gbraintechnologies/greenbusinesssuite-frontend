@@ -22,6 +22,7 @@ function FieldOptions() {
   if (localField) {
     const { isMandatory, label, name, placeHolder, horizontalAlign } =
       localField;
+
     return (
       <div className="bg-white h-[100vh]  border-l-2 border-gray-200 p-3">
         {/* TABS */}

@@ -65,26 +65,54 @@ export const FormProvider = ({ children }) => {
   };
 
   const updateActiveField = (section, data) => {
-    let allSections = form?.formSections;
-    let selectedSection = section;
-    let allFields = selectedSection?.formFields;
-    let selectedField = data;
-    let indexSection = allSections?.indexOf(selectedSection);
-    let indexField = allFields?.indexOf(
-      allFields.find((element) => element.id == data.id)
-    );
+    // let allSections = form?.formSections;
+    // let selectedSection = section;
+    // let allFields = selectedSection?.formFields;
+    // let selectedField = data;
+    // let indexSection = allSections?.indexOf(selectedSection);
+    // let indexField = allFields?.indexOf(
+    //   allFields.find((element) => element.id == data.id)
+    // );
 
-    // update selected field
-    if (indexField !== -1) {
-      allFields[indexField] = selectedField;
-    }
+    // // update selected field
+    // if (indexField !== -1) {
+    //   allFields[indexField] = selectedField;
+    // }
 
-    // update section with fields
-    if (indexSection !== -1) {
-      allSections[indexSection] = { ...section, formFields: allFields };
-    }
+    // // update section with fields
+    // if (indexSection !== -1) {
+    //   allSections[indexSection] = { ...section, formFields: allFields };
+    // }
 
-    updateRemoteForm({ ...form, formSections: allSections });
+    services
+      .updateFormField({ ...data, updatedOn: new Date() })
+      .then((res) => {
+        // setForm(res.data);
+        setLoadingField(false);
+        setLoadingSection(false);
+        services
+          .getFormByIdRaw(form.id)
+          .then((res) => {
+            setForm(res.data);
+            queryClient.invalidateQueries({
+              queryKey: ["form", form?.id],
+            });
+          })
+          .catch((e) => {
+            console.log("error getting updated form");
+          });
+
+        toast.dismiss();
+        // TODO: REMOVE AFTER TESTS
+        toast.success("updated field");
+      })
+      .catch((e) => {
+        toast.dismiss();
+        toast.error("Error occured");
+        console.log("error updating remote form:", e);
+      });
+
+    // updateRemoteForm({ ...form, formSections: allSections });
   };
 
   const updateNameAndDescription = (data) => {
