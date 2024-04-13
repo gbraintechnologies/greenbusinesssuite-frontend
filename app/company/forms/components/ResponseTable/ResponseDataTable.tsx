@@ -18,11 +18,13 @@ export interface IResponse {
 type Props = {
   responseData: IResponse[];
   isResponseLoading: boolean;
+  exportToExcel: (responses: any) => void;
 };
 
 const ResponseDataTable: React.FC<Props> = ({
   responseData,
   isResponseLoading,
+  exportToExcel,
 }) => {
   const [aggregatedResponses, setAggregatedResponses] = useState([]);
 
@@ -85,9 +87,10 @@ const ResponseDataTable: React.FC<Props> = ({
       type: "actions",
       getActions: (params: any) => [
         <div className="flex gap-2 items-center">
-          <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
-            <UserIcon />
-          </div>
+          <div className="w-8 h-8 text-sm rounded-full flex items-center justify-center bg-gray-100 text-black">
+              {params.row.data?.inputData?.full_name.split(' ')[0][0]?.toUpperCase()}
+              {params.row.data?.inputData?.full_name.split(' ')[1][0]?.toUpperCase()}
+            </div>
           <div key={params.row.id} className="flex flex-col gap-2">
             <p className="font-medium text-sm">{params.row.data?.inputData?.full_name}</p>
             <p className="text-[#475569] text-sm font-normal">
@@ -103,7 +106,7 @@ const ResponseDataTable: React.FC<Props> = ({
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id}>{new Date().toLocaleDateString()}</div>,
+        <div key={params.row.id}>{params.row.data?.isCompleted === "true" ? new Date(params.row.data?.dateCompleted).toLocaleDateString() : "Not completed"}</div>,
       ],
     },
     {
@@ -113,7 +116,9 @@ const ResponseDataTable: React.FC<Props> = ({
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.data.id} className="flex items-center gap-4">
-          <DownloadIcon />
+          <button onClick={() => exportToExcel([{id: params.row.data.id, ...params.row.data.inputData}])}>
+            <DownloadIcon />
+            </button>
           <EyeIcon />
         </div>,
       ],

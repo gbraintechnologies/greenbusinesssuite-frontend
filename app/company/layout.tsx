@@ -80,7 +80,7 @@ export default function CompanyLayout({
     {
       name: "Form Reports",
       icon: <FaWpforms size={20} />,
-      link: "/company/forms",
+      link: ["/company/forms", "/company/forms/response"],
     },
     {
       name: "User management",

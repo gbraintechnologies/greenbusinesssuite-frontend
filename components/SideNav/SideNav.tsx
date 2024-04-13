@@ -46,12 +46,12 @@ function SideNav({ navigation }: any) {
             );
           } else {
             return (
-              <Link key={item.name} href={item.link}>
+              <Link key={item.name} href={Array.isArray(item.link) ? item.link[0]: item.link}>
                 <li
                   className={`${
-                    pathname == item.link
+                    (Array.isArray(item.link) && item.link.includes(pathname)) || (typeof item.link == 'string' && item.link == pathname)
                       ? "bg-[#E2E8F0] text-[#1E293B] font-semibold"
-                      : "text-gray-600 "
+                      : " text-gray-600"
                   } flex items-center gap-3 w-full mb-1 py-2 px-3 rounded-xl font-medium `}
                 >
                   {item.icon} <p>{item.name}</p>

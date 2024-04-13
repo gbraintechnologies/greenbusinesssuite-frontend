@@ -13,6 +13,8 @@ import PublishIcon from "@/public/icons/PublishIcon";
 import ResponseDataTable from "../components/ResponseTable/ResponseDataTable";
 import AnalyticsGrid from "../components/Analytics/AnalyticsGrid";
 import WriteIcon from "@/public/icons/WriteIcon";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Page = () => {
   const [filters, setFilters] = useState([
@@ -38,13 +40,30 @@ const Page = () => {
   const { data: formResponseData, isLoading: isResponseLoading } = useQuery({
     queryKey: ["get form response by id"],
     queryFn: services.getFormResponseById(Number(id)),
-    enabled: activeFilter.id == 2,
   });
 
   const { data: formStatusCount } = useQuery({
     queryKey: ["Get forms status count"],
     queryFn: services.getFormStatusCountById(Number(id)),
   });
+
+  const exportToExcel = (responses: any) => {
+    const worksheet = XLSX.utils.json_to_sheet(responses);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    // Buffer to store the generated Excel file
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const blob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
+
+    saveAs(blob, "responses.xlsx");
+  };
+
 
   return (
     <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 h-full">
@@ -97,7 +116,14 @@ const Page = () => {
         />
         {activeFilter.id == 2 ? (
           <div className="flex gap-3 items-center">
-            <button className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg">
+            <button
+              className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg"
+              onClick={() =>
+                exportToExcel(
+                  formResponseData?.flatMap((entry: any) => entry.inputData)
+                )
+              }
+            >
               <DownloadIcon />
               <div className="text-sm">Download </div>
             </button>
@@ -131,7 +157,14 @@ const Page = () => {
         <div className="mt-4 border border-[#E2E8F0] bg-white  rounded-lg  py-3">
           <div className="flex justify-between items-center border-b px-5 border-[#E2E8F0] pb-4">
             <div className="font-semibold ">Response Analytics</div>
-            <button className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg">
+            <button
+              className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg"
+              onClick={() =>
+                exportToExcel(
+                  formResponseData?.flatMap((entry: any) => entry.inputData)
+                )
+              }
+            >
               <DownloadIcon />
               <div className="text-sm">Download responses</div>
             </button>
@@ -144,6 +177,7 @@ const Page = () => {
           <ResponseDataTable
             responseData={formResponseData}
             isResponseLoading={isResponseLoading}
+            exportToExcel={exportToExcel}
           />
         </div>
       )}
