@@ -45,3 +45,9 @@ export interface CompanyObject {
   company_data: CompanyInfo;
   custom_fields: CustomField[];
 }
+
+export interface IFilter {
+  id: number;
+  name: string;
+  value: string;
+}

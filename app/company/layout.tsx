@@ -80,7 +80,7 @@ export default function CompanyLayout({
     {
       name: "Form Reports",
       icon: <FaWpforms size={20} />,
-      link: "/company/forms",
+      link: ["/company/forms", "/company/forms/response"],
     },
     {
       name: "User management",
@@ -111,7 +111,7 @@ export default function CompanyLayout({
               <SideNav navigation={navigation} />
             )}
 
-            <div className=" w-full mt-4 py-2">{children}</div>
+            <div className=" w-full">{children}</div>
           </div>
         </div>
       )}

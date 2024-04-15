@@ -5,6 +5,10 @@ export const getAllCompanies = () => {
   return () => authApi.get("/companies/all_companies").then((res) => res.data);
 };
 
+export const getCompanyById = (id: number) => {
+  return () => authApi.get(`/companies-by-id/${id}`).then((res) => res.data);
+};
+
 export const createCompanyWithCustomFields = async (
   data: CompanyInfo,
   custom_fields: CustomField[]

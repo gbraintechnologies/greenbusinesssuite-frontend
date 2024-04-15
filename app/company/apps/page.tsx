@@ -49,7 +49,7 @@ function Apps() {
     },
   ];
   return (
-    <div className="px-5 pb-20">
+    <div className="px-5 pb-20 my-4 py-2">
       <div className="text-slate-900 font-semibold text-xl mb-5">
         Applications
       </div>

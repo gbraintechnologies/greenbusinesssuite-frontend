@@ -24,7 +24,11 @@ import toast from "react-hot-toast";
 import RenameForm from "../actions/RenameForm";
 import services from "@/services";
 
-function FormCard({ form }: any) {
+type Props = {
+  form: any;
+  onClick?: () => void
+}
+function FormCard({ form, onClick }: Props) {
   let {
     id,
     name,
@@ -115,7 +119,7 @@ function FormCard({ form }: any) {
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
         <button
-          onClick={() => {
+          onClick={onClick ? () => onClick() : () => {
             router.push(`/forms/${id}`);
           }}
           style={
