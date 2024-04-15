@@ -77,7 +77,7 @@ function Nav() {
         >
           <Menu.Items className="z-50 absolute right-0 mt-2 px-1 py-1 w-60 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
             <Menu.Item>
-              <Link href="/jurisdiction-setup/new-individual">
+              <Link href="/country-setup/new-individual">
                 <div className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2 mb-1">
                   Add Individual
                 </div>
