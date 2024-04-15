@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import "./index.css";
 import UpdateInfo from "@/public/svg/updateInfo.svg";
-// import Logo from "@/public/svg/companylogo.png";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { IoIosArrowDown } from "react-icons/io";
