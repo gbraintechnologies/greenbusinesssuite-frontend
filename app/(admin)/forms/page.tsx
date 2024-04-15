@@ -210,6 +210,8 @@ function Forms() {
     selectForm({});
   }, []);
 
+  // console.log("forms", forms);
+
   return (
     <div className="px-5 pb-10">
       <h3 className="font-semibold mb-8 text-xl">Forms</h3>
@@ -246,15 +248,15 @@ function Forms() {
       ) : (
         // ALL FORMS
         <>
-          {forms?.length === 0 ? (
+          {forms?.totalElements === 0 ? (
             <div className="">
               <EmptyList />
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
               {forms &&
-                forms
-                  .filter((form: any) => form.isTemplate !== true)
+                forms?.content
+                  ?.filter((form: any) => form.isTemplate !== true)
                   ?.map((form: any) => {
                     return <FormCard key={form.id} form={form} />;
                   })}

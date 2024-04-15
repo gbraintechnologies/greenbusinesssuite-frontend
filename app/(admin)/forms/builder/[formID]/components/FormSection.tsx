@@ -5,8 +5,6 @@ import React, { useEffect, useState } from "react";
 // components
 import FormField from "./FormField";
 
-//
-import toast from "react-hot-toast";
 import useForm from "@/hooks/useForm";
 import FormElementSelector from "./FormElementSelector";
 
@@ -33,7 +31,6 @@ function FormSection({ section }: any) {
   const [showDelete, setShowDelete] = useState(false);
 
   const handleDelete = () => {
-    toast.success("Deleted section");
     removeSection(section);
   };
 
@@ -41,7 +38,7 @@ function FormSection({ section }: any) {
     <div
       onMouseEnter={() => setShowDelete(true)}
       onMouseLeave={() => setShowDelete(false)}
-      className="bg-white min-h-72 relative shadow p-5 rounded-xl mb-10"
+      className="form-section"
     >
       <h5 className="font-bold text-lg">
         {" "}

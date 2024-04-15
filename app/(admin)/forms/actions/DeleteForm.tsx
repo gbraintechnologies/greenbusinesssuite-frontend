@@ -26,7 +26,8 @@ function DeleteForm({ setShow, id }: any) {
       .catch((e: Error) => {
         toast.dismiss();
         setShow(false);
-        toast.error("Error occured");
+        // @ts-ignore
+        toast.error(e?.response?.data);
         console.log("errror deleting", e);
       });
   };

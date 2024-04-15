@@ -7,12 +7,89 @@ import useAdmin from "@/hooks/useAdmin";
 //
 import Image from "next/image";
 import useForm from "@/hooks/useForm";
+import toast from "react-hot-toast";
+
+//
+import services from "@/services";
+import { useQueryClient } from "@tanstack/react-query";
 
 function FormTopNav() {
   //
   const { admin } = useAdmin();
 
-  const { setView, view, form } = useForm();
+  const queryClient = useQueryClient();
+
+  const { setView, view, form, selectForm } = useForm();
+
+  const publishForm = () => {
+    toast.loading(`Publishing ${form.name}`);
+
+    let url = `${window.location.origin}/f/${form?.id}`;
+
+    // update form with url then publish
+    services
+      .updateForm({
+        ...form,
+        updatedOn: new Date(),
+        url: url,
+        publishStatus: "PUBLISHED",
+      })
+      .then((res) => {
+        selectForm(res.data);
+        queryClient.invalidateQueries({
+          queryKey: ["form", form?.id],
+        });
+
+        // PUBLISH FORM
+        services
+          .publishForm(form?.id)
+          .then((res) => {
+            console.log("res", res.data);
+            selectForm(res.data);
+            toast.dismiss();
+            toast.success("Form published!");
+          })
+          .catch((e) => {
+            toast.dismiss();
+            console.log("error", e);
+            toast.error("Error publishing form");
+          });
+      })
+      .catch((e) => {
+        toast.dismiss();
+        toast.error("Error occured");
+      });
+  };
+
+  const unpublishForm = () => {
+    //
+    toast.loading(`Unpublishing ${form.name}`);
+    services
+      .unpublishForm(form?.id)
+      .then((res) => {
+        toast.dismiss();
+
+        // get updated form
+        services
+          .getFormByIdRaw(form.id)
+          .then((res) => {
+            selectForm(res.data);
+            queryClient.invalidateQueries({
+              queryKey: ["form", form?.id],
+            });
+          })
+          .catch((e) => {
+            console.log("error getting updated form");
+          });
+        console.log("res", res);
+        toast.success("Form unpublished!");
+      })
+      .catch((e) => {
+        toast.dismiss();
+
+        toast.error("Error publishing form");
+      });
+  };
 
   return (
     <nav className="h-[7vh] z-[200] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
@@ -82,11 +159,17 @@ function FormTopNav() {
 
         <button className="bg-white py-2 text-sm px-3 rounded-lg">Share</button>
         {form?.publishStatus?.toLowerCase() === "published" ? (
-          <button className="bg-primary-red text-white text-sm py-2 px-3 rounded-lg">
+          <button
+            onClick={unpublishForm}
+            className="bg-primary-red text-white text-sm py-2 px-3 rounded-lg"
+          >
             Unpublish
           </button>
         ) : (
-          <button className="bg-primary-green text-white text-sm py-2 px-3 rounded-lg">
+          <button
+            onClick={publishForm}
+            className="bg-primary-green text-white text-sm py-2 px-3 rounded-lg"
+          >
             Publish
           </button>
         )}

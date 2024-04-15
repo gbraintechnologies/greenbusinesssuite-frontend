@@ -43,7 +43,7 @@ function UsingTemplate() {
             <div className="grid grid-cols-3 gap-5 mt-5">
               {forms &&
                 forms
-                  .filter((form: any) => form.isTemplate === true)
+                  .filter((form: any) => form?.isTemplate === true)
                   ?.map((form: any) => {
                     const { id, name } = form;
                     return (

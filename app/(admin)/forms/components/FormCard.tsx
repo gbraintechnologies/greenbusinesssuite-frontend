@@ -122,11 +122,13 @@ function FormCard({ form, onClick }: Props) {
           onClick={onClick ? () => onClick() : () => {
             router.push(`/forms/${id}`);
           }}
-          style={{
-            backgroundColor: color?.a,
-            background: `linear-gradient(45deg, ${color?.a} 0%, ${color?.b} 100%)`,
-          }}
-          className={`flex items-center justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          style={
+            {
+              // backgroundColor: color?.a,
+              // background: `linear-gradient(45deg, ${color?.a} 0%, ${color?.b} 100%)`,
+            }
+          }
+          className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >
           <FormPreviewIcon />
         </button>
@@ -135,9 +137,9 @@ function FormCard({ form, onClick }: Props) {
             onClick={() => {
               router.push(`/forms/${id}`);
             }}
-            className="text-lg w-full text-left hover:font-semibold font-medium"
+            className="text-lg w-full text-left font-medium"
           >
-            {name}
+            {name.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs font-light pr-4">

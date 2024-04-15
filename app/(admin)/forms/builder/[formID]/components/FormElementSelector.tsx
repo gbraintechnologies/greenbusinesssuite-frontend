@@ -8,10 +8,11 @@ import { MdOutlinePhone } from "react-icons/md";
 import { TiDocumentText } from "react-icons/ti";
 import { BsCardText } from "react-icons/bs";
 import { AiOutlineNumber } from "react-icons/ai";
+import Loader from "@/components/BeatLoader/Loader";
 
 export default function FormElementSelector({ section }: any) {
   //
-  const { addFormField } = useForm();
+  const { addFormField, loadingField } = useForm();
   // types
   // text
   // integer
@@ -40,44 +41,83 @@ export default function FormElementSelector({ section }: any) {
       icon: <MdOutlineMailOutline size={18} />,
       name: "Email",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "email" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "email",
+          name: "Email Address",
+          description: "Email Address",
+          label: "Email Address",
+          placeHolder: "Enter your email address here",
+        });
       },
     },
     {
       icon: <MdOutlinePhone size={18} />,
       name: "Phone Number",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "phone" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "phone",
+          name: "Phone Number",
+          description: "Phone Number",
+          label: "Phone Number",
+          placeHolder: "Enter your phone number",
+        });
       },
     },
     {
       icon: <BsCardText size={18} />,
       name: "Short text",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "short-text" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "short-text",
+          name: "Short text",
+          description: "Short text",
+          label: "Short text",
+          placeHolder: "Enter your short text here",
+        });
       },
     },
     {
       icon: <TiDocumentText size={18} />,
       name: "Long text",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "long-text" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "long-text",
+          name: "Long text",
+          description: "Long text",
+          label: "Long text",
+          placeHolder: "Enter your long text here",
+        });
       },
     },
     {
       icon: <AiOutlineNumber size={18} />,
       name: "Number",
       func: () => {
-        addFormField(section, { ...template, fieldDataType: "number" });
+        addFormField(section, {
+          ...template,
+          fieldDataType: "number",
+          name: "Number",
+          description: "Number",
+          label: "Number",
+          placeHolder: "Enter your number",
+        });
       },
     },
   ];
+
   return (
     <div className="w-60 z-[100] mx-auto text-center">
       <Menu as="div" className="relative inline-block text-center">
         <div>
-          <Menu.Button className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 px-3 py-2 rounded-lg flex items-center justify-center gap-2">
-            Add form element
+          <Menu.Button
+            disabled={loadingField}
+            className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 w-40 px-3 py-2 rounded-lg flex items-center justify-center gap-2"
+          >
+            {loadingField ? <Loader color="#1d1d1d" /> : "Add form element"}
           </Menu.Button>
         </div>
         <Transition
