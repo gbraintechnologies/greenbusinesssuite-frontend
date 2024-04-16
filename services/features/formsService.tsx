@@ -27,6 +27,10 @@ export const getFormResponseById = (id: number) => {
   return () => authApi.get(`/forms/response/data/${id}`).then((res) => res.data)
 }
 
+export const getFormResponsesById = (id: number) => {
+  return authApi.get(`/forms/response/data/${id}`);
+}
+
 export const getFormStatusCountById = (id: number) => {
   return () => authApi.get(`/forms/response/forms-status/count/${id}`).then((res) => res.data)
 }
