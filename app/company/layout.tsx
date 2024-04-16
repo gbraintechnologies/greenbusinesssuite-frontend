@@ -1,7 +1,7 @@
 "use client";
 
 // Next & React imports
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 
 import { usePathname, useRouter } from "next/navigation";
 
@@ -96,7 +96,7 @@ export default function CompanyLayout({
   ];
 
   return (
-    <div>
+    <Suspense>
       {loading ? (
         <div className="w-full h-screen flex items-center justify-center">
           <AiOutlineLoading3Quarters size={24} className="animate-spin" />
@@ -115,6 +115,6 @@ export default function CompanyLayout({
           </div>
         </div>
       )}
-    </div>
+    </Suspense>
   );
 }
