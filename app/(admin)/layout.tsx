@@ -6,8 +6,9 @@ import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 // components
-import SideNav from "./components/SideNav";
-import TopNav from "./components/TopNav";
+import SideNav from "@/components/SideNav/SideNav";
+import TopNav from "@/components/TopNav/TopNav";
+import BuilderNav from "./forms/builder/FormTopNav";
 
 // hooks
 import useAdmin from "@/hooks/useAdmin";
@@ -17,7 +18,16 @@ import { FormProvider } from "../../contexts/FormContext";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import BuilderNav from "./forms/builder/FormTopNav";
+import { RxCountdownTimer } from "react-icons/rx";
+import { PiBuildingsBold } from "react-icons/pi";
+import { BiTargetLock } from "react-icons/bi";
+import UserIcon from "@/public/icons/UserIcon";
+import { AiOutlineMoneyCollect } from "react-icons/ai";
+import { RiFlag2Fill } from "react-icons/ri";
+import { FaLandMineOn } from "react-icons/fa6";
+
+// toast
+import toast from "react-hot-toast";
 
 export default function AdminLayout({
   children,
@@ -27,19 +37,84 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  const { admin } = useAdmin();
+  const { admin, removeAdmin } = useAdmin();
 
   const [loading, setLoading] = useState(true);
 
   // Redirect to login if not authenticated
 
   useEffect(() => {
-    if (admin === null || admin?.access_token?.length < 10) {
+    if (admin === null || !Boolean(admin?.access_token)) {
       router.push("/login");
     } else {
-      setLoading(false);
+      let role = admin?.profiles[0]?.role_id;
+
+      // CHECK ROLES AND ROUTE TO RIGHT DESTINATIONS
+      // LOGICIEL ADMIN ROLE ID: 1
+      if (role == 1) {
+        setLoading(false);
+        // router.push("/");
+        return;
+      }
+      // COMPANY ADMIN ROLE ID: 6
+      if (role == 6) {
+        setLoading(false);
+        router.push("/company");
+        return;
+      }
+
+      // else
+      removeAdmin();
+      router.push("/login");
+      toast.error("Access not granted. Check with your administrator");
     }
   }, [admin]);
+
+  // ADMIN NAVIGATION
+  const navigation = [
+    {
+      name: "Dashboard",
+      icon: <UserIcon />,
+      link: "/",
+    },
+    {
+      name: "Forms",
+      icon: <RxCountdownTimer size={20} />,
+      link: "/forms",
+    },
+    {
+      name: "User management",
+      icon: <UserIcon />,
+      link: "/usermanagement",
+    },
+    {
+      name: "Company setup",
+      icon: <PiBuildingsBold size={20} />,
+      link: "/company-setup",
+    },
+    {
+      name: "Jurisdiction setup",
+      icon: <BiTargetLock size={20} />,
+      link: "/jurisdiction-setup",
+      subNavigation: [
+        {
+          name: "Country setup",
+          icon: <RiFlag2Fill size={20} />,
+          link: "/country-setup",
+        },
+        {
+          name: "Currency setup",
+          icon: <AiOutlineMoneyCollect size={20} />,
+          link: "/currency-setup",
+        },
+        {
+          name: "Sector setup",
+          icon: <FaLandMineOn size={20} />,
+          link: "/sector-setup",
+        },
+      ],
+    },
+  ];
 
   return (
     <div>
@@ -55,7 +130,6 @@ export default function AdminLayout({
             {pathname.includes("/forms/builder") ? (
               <div className="w-full min-h-[100vh] bg-grid">
                 <BuilderNav />
-
                 {children}
               </div>
             ) : (
@@ -63,7 +137,9 @@ export default function AdminLayout({
               <div className="w-full min-h-[100vh]">
                 <TopNav />
                 <div className="flex flex-row">
-                  {!pathname.includes("settings") && <SideNav />}
+                  {!pathname.includes("settings") && (
+                    <SideNav navigation={navigation} />
+                  )}
 
                   <div className=" w-full mt-4 py-2">{children}</div>
                 </div>

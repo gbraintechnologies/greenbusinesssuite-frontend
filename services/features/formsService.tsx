@@ -1,8 +1,9 @@
 import authApi from "../meshAuthClient";
+import noAuthApi from "../axiosNoAuthClient";
 
 export const allForms = () => {
   return () =>
-    authApi.get("/forms/builder/all?page=0&size=20").then((res) => res.data);
+    authApi.get("/forms/builder/all?page=0&size=2").then((res) => res.data);
 };
 
 export const allFormTemplates = () => {
@@ -14,12 +15,30 @@ export const getFormById = (id: any) => {
   return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
 
-export const updateForm = (id: any, data: any) => {
-  return authApi.put(`/forms/builder/update/${id}`, data);
+export const getFormByIdRaw = (id: any) => {
+  return authApi.get(`/forms/builder/${id}`);
 };
 
+export const getFormsByCompanyName = (companyName: string) => {
+  return () => authApi.get(`/forms/builder/company/${companyName}`);
+}
+
+export const getFormResponseById = (id: number) => {
+  return () => authApi.get(`/forms/response/data/${id}`).then((res) => res.data)
+}
+
+export const getFormStatusCountById = (id: number) => {
+  return () => authApi.get(`/forms/response/forms-status/count/${id}`).then((res) => res.data)
+}
+export const updateForm = (data: any) => {
+  return authApi.put(`/forms/builder/update`, data);
+};
+
+export const updateFormField = (data: any) => {
+  return authApi.put(`/forms/builder/field-update`, data);
+};
 export const renameForm = (id: any, name: string) => {
-  return authApi.put(`/forms/builder/rename/${id}?newName=${name}`);
+  return authApi.put(`/forms/builder/rename/${id}`, name);
 };
 
 export const createNewForm = (data: any) => {
@@ -30,129 +49,12 @@ export const duplicateForm = (id: any) => {
   return authApi.post(`/forms/builder/${id}/duplicateForm`);
 };
 
-export const publishForm = (data: any) => {
-  let sampleData = {
-    id: 0,
-    name: "string",
-    url: "string",
-    description: "string",
-    formInstruction: "string",
-    formSections: [
-      {
-        id: 0,
-        name: "string",
-        description: "string",
-        instruction: "string",
-        form: {
-          id: 0,
-          name: "string",
-          url: "string",
-          description: "string",
-          formInstruction: "string",
-          formSections: [
-            {
-              id: 0,
-              name: "string",
-              description: "string",
-              instruction: "string",
-              form: "string",
-              formFields: [
-                {
-                  id: 0,
-                  name: "string",
-                  description: "string",
-                  formSection: "string",
-                  instruction: "string",
-                  ordering: 0,
-                  isDeleted: true,
-                  fieldDataType: "string",
-                  choiceValues: ["string"],
-                  isMandatory: true,
-                  createdOn: "2024-03-13T14:30:34.351Z",
-                  updatedOn: "2024-03-13T14:30:34.351Z",
-                  deletedOn: "2024-03-13T14:30:34.351Z",
-                },
-              ],
-              ordering: 0,
-              isDeleted: true,
-              createdOn: "2024-03-13T14:30:34.351Z",
-              updatedOn: "2024-03-13T14:30:34.351Z",
-              deletedOn: "2024-03-13T14:30:34.351Z",
-            },
-          ],
-          userMandatory: true,
-          deadline: "2024-03-13T14:30:34.351Z",
-          publishStatus: "DRAFT",
-          isDeleted: true,
-          createdOn: "2024-03-13T14:30:34.351Z",
-          updatedOn: "2024-03-13T14:30:34.351Z",
-          deletedOn: "2024-03-13T14:30:34.351Z",
-        },
-        formFields: [
-          {
-            id: 0,
-            name: "string",
-            description: "string",
-            formSection: {
-              id: 0,
-              name: "string",
-              description: "string",
-              instruction: "string",
-              form: "string",
-              formFields: [
-                {
-                  id: 0,
-                  name: "string",
-                  description: "string",
-                  formSection: "string",
-                  instruction: "string",
-                  ordering: 0,
-                  isDeleted: true,
-                  fieldDataType: "string",
-                  choiceValues: ["string"],
-                  isMandatory: true,
-                  createdOn: "2024-03-13T14:30:34.351Z",
-                  updatedOn: "2024-03-13T14:30:34.351Z",
-                  deletedOn: "2024-03-13T14:30:34.351Z",
-                },
-              ],
-              ordering: 0,
-              isDeleted: true,
-              createdOn: "2024-03-13T14:30:34.351Z",
-              updatedOn: "2024-03-13T14:30:34.351Z",
-              deletedOn: "2024-03-13T14:30:34.351Z",
-            },
-            instruction: "string",
-            ordering: 0,
-            isDeleted: true,
-            fieldDataType: "string",
-            choiceValues: ["string"],
-            isMandatory: true,
-            createdOn: "2024-03-13T14:30:34.351Z",
-            updatedOn: "2024-03-13T14:30:34.351Z",
-            deletedOn: "2024-03-13T14:30:34.351Z",
-          },
-        ],
-        ordering: 0,
-        isDeleted: true,
-        createdOn: "2024-03-13T14:30:34.351Z",
-        updatedOn: "2024-03-13T14:30:34.351Z",
-        deletedOn: "2024-03-13T14:30:34.351Z",
-      },
-    ],
-    userMandatory: true,
-    deadline: "2024-03-13T14:30:34.351Z",
-    publishStatus: "DRAFT",
-    isDeleted: true,
-    createdOn: "2024-03-13T14:30:34.351Z",
-    updatedOn: "2024-03-13T14:30:34.351Z",
-    deletedOn: "2024-03-13T14:30:34.351Z",
-  };
-  return authApi.post("/forms/publish", data);
+export const publishForm = (id: any) => {
+  return authApi.get(`/forms/builder/publish/${id}`);
 };
 
 export const unpublishForm = (id: any) => {
-  return authApi.put(`/forms/builder/unpublish/${id}`);
+  return authApi.put(`/forms/builder/unpublish/by-id/${id}`);
 };
 
 export const deleteForm = (id: any) => {
@@ -168,4 +70,10 @@ export const assignCompanyToForm = (company: any, id: any) => {
   return authApi.post(`/forms/builder/${company}/duplicateForm`);
 };
 
-// BUILDER ENDPOINTS
+// PUBLIC FORM ENDPOINTS
+export const accessPublicPublishedForm = (id: any) => {
+  return () =>
+    authApi
+      .get(`forms/builder/access-published-form/${id}`)
+      .then((res) => res.data);
+};

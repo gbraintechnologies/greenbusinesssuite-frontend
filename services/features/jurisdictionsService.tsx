@@ -17,3 +17,19 @@ export const JurisdictionsID = (id: any) => {
 export const createJurisdictions = (data: any) => {
     return authApi.post("/jurisdictions/", data);
 };
+
+export const createAddressScheme = (data: any) => {
+    return authApi.post("/addresses/create_addressing_scheme/", data);
+};
+
+export const createAddressLevel = (data: any) => {
+    return authApi.post("/addresses/create_address_level/", data);
+};
+
+export const allCurrencies = () => {
+    return () => authApi.get("/currencies/").then((res) => res.data);
+};
+
+export const createCurrency = (data: any) => {
+    return authApi.post("/currencies/", data);
+};

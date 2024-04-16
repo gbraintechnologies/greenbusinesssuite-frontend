@@ -68,6 +68,7 @@ authApi.interceptors.response.use(
           localStorage.setItem("admin", null);
           window.location.replace("/login");
           window.location.reload();
+          toast.dismiss();
           toast.error("Please login to continue");
         });
     }

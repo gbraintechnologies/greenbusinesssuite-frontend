@@ -12,6 +12,8 @@ import { FormikHelpers } from "formik";
 import toast from "react-hot-toast";
 import useFileUpload from "@/hooks/useFileUpload";
 import { editCompanyWithCustomFields } from "@/services/features/companyService";
+import { searchUsersByEmail } from "@/services/features/userManagementService";
+import { profile } from "console";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -129,6 +131,21 @@ const Page = () => {
     return false;
   };
 
+  const hasAdminInfoChanged = (initialValues: any, values: any) => {
+    if (
+      hasValueChanged(
+        `${initialValues.adminFirstName} ${initialValues.adminLastName}`,
+        `${values.adminFirstName} ${values.adminLastName}`
+      )
+    ) {
+      return true;
+    }
+
+    if (hasValueChanged(initialValues["adminEmail"], values["adminEmail"])) {
+      return true;
+    }
+  }
+
   const { handleFileUpload } = useFileUpload();
 
   const editCompany = async (
@@ -186,14 +203,44 @@ const Page = () => {
     ];
 
     try {
-      const response = await editCompanyWithCustomFields(
+      await editCompanyWithCustomFields(
         companyData?.id,
         data,
         custom_fields
       );
+
+      if(hasAdminInfoChanged(initialValues, values)) {
+        const userResponse = await searchUsersByEmail(values.adminEmail as string);   
+        const userData = userResponse?.data[0];        
+
+        const editedUserData = {
+          first_name: values.adminFirstName as string,
+          last_name: values.adminLastName as string,
+          email: userData?.email,
+          username: userData?.username,
+          phone_number: userData?.phone_number,
+          mobile_phone_number: userData?.mobile_phone_number,
+          user_status: userData?.user_status,
+        }
+
+        const custom_profiles = [
+          {
+            custom_profile_item_id: 1,
+            value: userData?.custom_profile_values?.find((profile: any) => profile.custom_profile_item_id === 1)?.value ?? ""
+          },
+          {
+            custom_profile_item_id: 2,
+            value: userData?.custom_profile_values?.find((profile: any) => profile.custom_profile_item_id === 2)?.value,
+          }
+        ]
+         
+        await services.editUserWithCustomFields(editedUserData, custom_profiles, userData?.id);
+      }
+      
       toast.success("Company edited successfully");
       router.back();
     } catch (error) {
+      console.log("error", error);
       toast.error("An error occurred");
     } finally {
       setSubmitting(false);

@@ -1,11 +1,16 @@
 import useForm from "@/hooks/useForm";
 import React from "react";
 
-//
+// components
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
+import FieldOptions from "./FieldOptions";
 
 function GeneralFormSettings() {
-  const { formLayout, setFormLayout } = useForm();
+  const { formLayout, setFormLayout, activeField } = useForm();
+
+  if (activeField) {
+    return <FieldOptions />;
+  }
   return (
     <div className="bg-white min-h-[100vh]  border-l-2 border-gray-200 p-3">
       <h4 className="font-semibold text-lg mt-4">General form settings</h4>
@@ -17,7 +22,7 @@ function GeneralFormSettings() {
             formLayout === "classic"
               ? "border-2 border-primary-green bg-primary-green bg-opacity-10 font-semibold "
               : " "
-          } flex flex-col items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
+          } flex flex-col h-[10rem] items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
         >
           <FormPreviewIcon />
           <FormPreviewIcon />
@@ -30,10 +35,10 @@ function GeneralFormSettings() {
             formLayout === "card"
               ? "border-2 border-primary-green bg-primary-green bg-opacity-10 font-semibold"
               : " "
-          } flex flex-col items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
+          } flex flex-col h-[10rem] items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
         >
           <FormPreviewIcon />
-          <FormPreviewIcon />
+
           <p className="">Card layout</p>
         </button>
       </div>

@@ -9,9 +9,10 @@ export function getStyles(errors: any, fieldName: any) {
     return {
       border: "1px solid #FF2828",
     };
-  } else {
+  } 
+  else {
     return {
-      border: "1px solid #E1E3E4",
+      border: "1px solid #E1E3E4"
     };
   }
 }

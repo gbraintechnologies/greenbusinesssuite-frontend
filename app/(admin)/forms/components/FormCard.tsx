@@ -24,7 +24,11 @@ import toast from "react-hot-toast";
 import RenameForm from "../actions/RenameForm";
 import services from "@/services";
 
-function FormCard({ form }: any) {
+type Props = {
+  form: any;
+  onClick?: () => void
+}
+function FormCard({ form, onClick }: Props) {
   let {
     id,
     name,
@@ -115,14 +119,16 @@ function FormCard({ form }: any) {
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
         <button
-          onClick={() => {
+          onClick={onClick ? () => onClick() : () => {
             router.push(`/forms/${id}`);
           }}
-          style={{
-            backgroundColor: color?.a,
-            background: `linear-gradient(45deg, ${color?.a} 0%, ${color?.b} 100%)`,
-          }}
-          className={`flex items-center justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          style={
+            {
+              // backgroundColor: color?.a,
+              // background: `linear-gradient(45deg, ${color?.a} 0%, ${color?.b} 100%)`,
+            }
+          }
+          className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >
           <FormPreviewIcon />
         </button>
@@ -131,9 +137,9 @@ function FormCard({ form }: any) {
             onClick={() => {
               router.push(`/forms/${id}`);
             }}
-            className="text-lg w-full text-left hover:font-semibold font-medium"
+            className="text-lg w-full text-left font-medium"
           >
-            {name}
+            {name.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs font-light pr-4">

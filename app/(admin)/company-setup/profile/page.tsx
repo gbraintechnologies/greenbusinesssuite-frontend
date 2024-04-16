@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import "./index.css";
 import UpdateInfo from "@/public/svg/updateInfo.svg";
-// import Logo from "@/public/svg/companylogo.png";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { IoIosArrowDown } from "react-icons/io";
@@ -27,28 +26,28 @@ const Page = () => {
 
   const id = searchParams.get("id");
 
-  const { data: companies, isLoading } = useQuery({
-    queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(),
+  const { data: companyData, isLoading } = useQuery({
+    queryKey: ["get company"],
+    queryFn: services.getCompanyById(Number(id)),
   });
 
-  const companyData: CompanyInfo = companies?.find(
-    (company: CompanyInfo) => company.id === Number(id)
-  );
+  // const companyData: CompanyInfo = companies?.find(
+  //   (company: CompanyInfo) => company.id === Number(id)
+  // );
 
   const companyDescription =
     companyData?.company_custom_values?.find(
-      (field) => field.custom_profile_item_id == 1
+      (field: any) => field.custom_profile_item_id == 1
     )?.value ?? "";
 
   const companyAdminName =
     companyData?.company_custom_values?.find(
-      (field) => field.custom_profile_item_id == 2
+      (field: any) => field.custom_profile_item_id == 2
     )?.value ?? "";
 
   const companyAdminEmail =
     companyData?.company_custom_values?.find(
-      (field) => field.custom_profile_item_id == 3
+      (field: any) => field.custom_profile_item_id == 3
     )?.value ?? "";
 
   useEffect(() => {
