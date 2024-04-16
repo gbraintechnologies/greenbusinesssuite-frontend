@@ -53,7 +53,7 @@ const ResponseDataTable: React.FC<Props> = ({
       renderHeader: () => (
         <div className="flex justify-between items-center gap-9">
           <div className="flex items-center gap-3">
-            <input type="checkbox" className="form-check-input" checked={false} />
+            <input type="checkbox" className="form-check-input" defaultChecked={false} />
           <div className="font-semibold">Response Id</div>
             </div>
           <ListIcon />
@@ -72,7 +72,7 @@ const ResponseDataTable: React.FC<Props> = ({
             id={params.row.data?.id}
             type="checkbox"
             className="form-check-input"
-            checked={false}
+            defaultChecked={false}
           />
           <div>{params.row.data?.id}</div>
         </div>,

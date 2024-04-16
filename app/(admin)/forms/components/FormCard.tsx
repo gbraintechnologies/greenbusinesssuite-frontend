@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
@@ -26,9 +26,10 @@ import services from "@/services";
 
 type Props = {
   form: any;
-  onClick?: () => void
-}
-function FormCard({ form, onClick }: Props) {
+  addFormResponses?: boolean;
+  onClick?: () => void;
+};
+function FormCard({ form, onClick, addFormResponses=false }: Props) {
   let {
     id,
     name,
@@ -46,6 +47,8 @@ function FormCard({ form, onClick }: Props) {
   // modal controls for delete and rename
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
+
+  const [formResponsesCount, setFormResponsesCount] = useState(0);
 
   const options = [
     {
@@ -115,13 +118,27 @@ function FormCard({ form, onClick }: Props) {
 
   let color = colors[getRandomInt(0, 4)];
 
+  const getFormResponses = async () => {
+    const responses  = await services.getFormResponsesById(id)
+    setFormResponsesCount(responses.data?.length);
+  }
+
+  useEffect(() => {
+    if (addFormResponses) {
+      getFormResponses()
+    }
+  }, []);
   return (
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
         <button
-          onClick={onClick ? () => onClick() : () => {
-            router.push(`/forms/${id}`);
-          }}
+          onClick={
+            onClick
+              ? () => onClick()
+              : () => {
+                  router.push(`/forms/${id}`);
+                }
+          }
           style={
             {
               // backgroundColor: color?.a,
@@ -142,9 +159,13 @@ function FormCard({ form, onClick }: Props) {
             {name.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">
-            <p className="text-xs font-light pr-4">
-              Edited {FormatDate(updatedOn)}
-            </p>{" "}
+            {addFormResponses ? (
+              <p className="text-xs pr-4"><span className="font-bold ">{formResponsesCount}</span> responses</p>
+            ) : (
+              <p className="text-xs font-light pr-4">
+                Edited {FormatDate(updatedOn)}
+              </p>
+            )}
             <Menu as="div" className="relative">
               <div className="relative">
                 <Menu.Button className="relative">
