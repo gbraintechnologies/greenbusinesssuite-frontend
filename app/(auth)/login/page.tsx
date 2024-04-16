@@ -70,9 +70,12 @@ function LogIn() {
         ) {
           toast("Create your password");
           router.push(`/create-password?temp=${data.password}`);
-        } else {
+        } else if(user?.data.profiles[0].role_id === 1){
           toast.success("Logged in");
           router.push("/");
+        } else {
+          toast.success("Logged in");
+          router.push("/company");
         }
       }
     } catch (error) {

@@ -16,6 +16,7 @@ import WriteIcon from "@/public/icons/WriteIcon";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import toast from "react-hot-toast";
 
 const Page = () => {
   const [filters, setFilters] = useState([
@@ -85,7 +86,10 @@ const Page = () => {
           }
           headerRight={
             <div className="flex items-center gap-3">
-              <button className="flex gap-2 shadow-[0px_2px_2px_0px_rgba(0, 0, 0, 0.04)] bg-white border border-[#E2E8F0] px-4 py-2 items-center rounded-lg">
+              <button className="flex gap-2 shadow-[0px_2px_2px_0px_rgba(0, 0, 0, 0.04)] bg-white border border-[#E2E8F0] px-4 py-2 items-center rounded-lg" onClick={() => {
+                navigator.clipboard.writeText(form?.url ?? '');
+                toast.success('Link copied to clipboard');
+              }}>
                 <UserShareIcon />
                 <div className="text-sm">Share</div>
               </button>
