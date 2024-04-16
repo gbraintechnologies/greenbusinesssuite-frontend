@@ -52,9 +52,9 @@ function FormCard({ form, onClick, addFormResponses=false }: Props) {
 
   const options = [
     {
-      title: "Open",
+      title: addFormResponses ? 'Preview Forms': "Open",
       func: () => {
-        router.push(`/forms/builder/${id}`);
+        addFormResponses ? router.push('/company/forms') : router.push(`/forms/builder/${id}`);
       },
     },
     {
