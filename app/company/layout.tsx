@@ -1,9 +1,9 @@
 "use client";
 
 // Next & React imports
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 
 // components
 import SideNav from "@/components/SideNav/SideNav";
@@ -37,6 +37,7 @@ export default function CompanyLayout({
 
   // Redirect to login if not authenticated
 
+
   useEffect(() => {
     if (admin === null || !Boolean(admin?.access_token)) {
       router.push("/login");
@@ -47,23 +48,22 @@ export default function CompanyLayout({
       // LOGICIEL ADMIN ROLE ID: 1
       if (role == 1) {
         setLoading(false);
-        router.push("/");
-        return;
+        redirect("/");
       }
       // COMPANY ADMIN ROLE ID: 6
       if (role == 6) {
         setLoading(false);
-        router.push("/company");
-        return;
-      } else {
+        if((pathname.includes('company') || pathname.includes("/settings")) && (pathname !== "/company-setup")){
+          return ;
+        }
+        redirect("/company");
+      } 
+
         removeAdmin();
         router.push("/login");
         toast.error("Access not granted. Check with your administrator");
-      }
-
-      setLoading(true);
     }
-  }, [admin]);
+  }, [admin, pathname]);
 
   // COMPANY ADMIN NAVIGATION
   const navigation = [
@@ -96,7 +96,7 @@ export default function CompanyLayout({
   ];
 
   return (
-    <div>
+    <Suspense>
       {loading ? (
         <div className="w-full h-screen flex items-center justify-center">
           <AiOutlineLoading3Quarters size={24} className="animate-spin" />
@@ -115,6 +115,6 @@ export default function CompanyLayout({
           </div>
         </div>
       )}
-    </div>
+    </Suspense>
   );
 }
