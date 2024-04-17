@@ -15,7 +15,6 @@ function TopNav() {
 
   useEffect(()=> {
     setIsClient(true);
-
   }, [])
 
 
@@ -54,6 +53,7 @@ function TopNav() {
                   (item: any) => item?.custom_profile_item_id === 1
                 ).value ?? ""
               }
+              priority
               width={32}
               height={32}
               className="rounded-full w-8 h-8 object-cover"

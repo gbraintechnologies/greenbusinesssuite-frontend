@@ -3,7 +3,7 @@
 // Next & React imports
 import React, { useEffect, useState } from "react";
 
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 
 // components
 import SideNav from "@/components/SideNav/SideNav";
@@ -41,6 +41,16 @@ export default function AdminLayout({
 
   const [loading, setLoading] = useState(true);
 
+  const companyAdminRoutes = [
+    "/company",
+    "/company/apps",
+    "/company/forms",
+    "/company/forms/response",
+    "/company/usermanagement",
+    "/company/audit-trail",
+    "/settings",
+  ];
+
   // Redirect to login if not authenticated
 
   useEffect(() => {
@@ -53,14 +63,15 @@ export default function AdminLayout({
       // LOGICIEL ADMIN ROLE ID: 1
       if (role == 1) {
         setLoading(false);
-        // router.push("/");
         return;
       }
       // COMPANY ADMIN ROLE ID: 6
       if (role == 6) {
         setLoading(false);
-        router.push("/company");
-        return;
+        if (pathname.includes("/settings")) {
+          return;
+        }
+        redirect("/company");
       }
 
       // else
@@ -68,7 +79,7 @@ export default function AdminLayout({
       router.push("/login");
       toast.error("Access not granted. Check with your administrator");
     }
-  }, [admin]);
+  }, [admin, pathname]);
 
   // ADMIN NAVIGATION
   const navigation = [
