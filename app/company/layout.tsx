@@ -75,7 +75,7 @@ export default function CompanyLayout({
     {
       name: "Apps",
       icon: <FaBoxesStacked size={20} />,
-      link: "/company/apps",
+      link: ["/company/apps", "/company/apps/mesh-forms", "/company/apps/mesh-forms/response"],
     },
     {
       name: "Form Reports",
