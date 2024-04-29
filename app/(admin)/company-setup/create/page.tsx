@@ -1,32 +1,19 @@
 "use client";
 import "./index.css";
-import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Modal from "@/components/Modal/Modal";
-import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import {
-  Field,
-  Form,
-  Formik,
-  FormikBag,
+
   FormikHelpers,
-  FormikState,
 } from "formik";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { HiOutlineInboxArrowDown } from "react-icons/hi2";
+import {  useState } from "react";
 import * as Yup from "yup";
-import Dropdown from "@/components/Dropdown/Dropdown";
-import UploadIcon from "@/public/svg/upload.svg";
-import Image from "next/image";
-import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 import useFileUpload from "@/hooks/useFileUpload";
 import toast from "react-hot-toast";
 import {
   createCompanyWithCustomFields,
-  getCustomFields,
 } from "@/services/features/companyService";
-import { CompanyInfo, CompanyObject } from "@/types";
-import { createCustomField } from "@/services/features/userManagementService";
+import { CompanyInfo} from "@/types";
 import CompanyForm from "../components/CompanyForm";
 import services from "@/services";
 
@@ -170,6 +157,7 @@ const CreateCompany = () => {
         );
         toast.success("Admin created successfully successfully");
 
+        // ROLE ID: 6 for company admin
       const assignRoleResponse = await services.assignRoleToUser(
         createUserResponse.data.id,
         6
