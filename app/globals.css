@@ -86,7 +86,7 @@ body {
 
 /* FORM INPUT STYLES */
 .input-holder {
-  @apply flex flex-col w-full mb-5;
+  @apply flex flex-col w-full mb-3;
 }
 
 .input-holder input,

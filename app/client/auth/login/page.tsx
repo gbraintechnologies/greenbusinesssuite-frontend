@@ -1,6 +1,7 @@
 "use client";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { Field, Form, Formik } from "formik";
+import Link from "next/link";
 import React from "react";
 import * as yup from "yup";
 
@@ -66,7 +67,7 @@ function Page() {
           );
         }}
       </Formik>
-      <p className="mt-5 text-sm text-center w-96">Don't have an account? <span className="font-medium text-[#15803D]">Create an account</span></p>
+      <p className="mt-5 text-sm text-center w-96">Don't have an account? <Link href={'/client/auth/signup'} className="font-medium text-[#15803D]">Create an account</Link></p>
     </div>
   );
 }
