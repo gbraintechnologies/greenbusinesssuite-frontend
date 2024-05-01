@@ -2,7 +2,7 @@ import React from "react";
 
 interface IStat {
   label: string;
-  value: string;
+  value: string | number;
 }
 type Props = {
   stats: IStat[];
