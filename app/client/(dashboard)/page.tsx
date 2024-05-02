@@ -90,7 +90,6 @@ const Page = () => {
                       <FormCard
                         key={form.id}
                         form={form}
-                        onClick={() => router.push(`/company/apps/mesh-forms/response?id=${form.id}`)}
                       />
                     );
                   })}
