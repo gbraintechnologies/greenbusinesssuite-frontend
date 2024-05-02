@@ -35,7 +35,7 @@ const Page = () => {
     queryFn: services.getFormsByCompanyName("amazon"),
   });
 
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <div className="px-5 pb-20 mt-5 bg-[#F8FAFC]">
@@ -66,37 +66,32 @@ const Page = () => {
           />
         </div>
         <div className="mt-4">
-        {isFormsLoading ? (
-        <div className="h-[20rem] flex items-center justify-center">
-          <div>
-            <LoadingIcon />
-            <p className="mt-2 text-xs text-gray-500">Fetching all forms</p>
-          </div>
-        </div>
-      ) : (
-        // ALL FORMS
-        <>
-          {forms?.data?.length === 0 ? (
-            <div className="">
-              <EmptyList />
+          {isFormsLoading ? (
+            <div className="h-[20rem] flex items-center justify-center">
+              <div>
+                <LoadingIcon />
+                <p className="mt-2 text-xs text-gray-500">Fetching all forms</p>
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-4 gap-5 mt-5">
-              {forms &&
-                forms?.data
-                  ?.filter((form: any) => form.isTemplate !== true)
-                  ?.map((form: any) => {
-                    return (
-                      <FormCard
-                        key={form.id}
-                        form={form}
-                      />
-                    );
-                  })}
-            </div>
+            // ALL FORMS
+            <>
+              {forms?.data?.length === 0 ? (
+                <div className="">
+                  <EmptyList />
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 gap-5 mt-5">
+                  {forms &&
+                    forms?.data
+                      ?.filter((form: any) => form.isTemplate !== true)
+                      ?.map((form: any) => {
+                        return <FormCard key={form.id} form={form} />;
+                      })}
+                </div>
+              )}
+            </>
           )}
-        </>
-      )}
         </div>
       </div>
     </div>

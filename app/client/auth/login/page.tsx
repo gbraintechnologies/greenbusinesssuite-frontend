@@ -23,12 +23,16 @@ function Page() {
   });
 
   const handleSubmit = () => {
-    router.push('/client')
+    router.push("/client");
   };
 
   return (
     <div className="flex flex-col justify-center h-screen">
-      <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={schema}>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        validationSchema={schema}
+      >
         {({ errors }) => {
           return (
             <Form>
@@ -37,7 +41,9 @@ function Page() {
                   Sign In
                 </h1>
                 <div className="input-holder px-5">
-                  <label htmlFor="email" className="text-xs">Email Address</label>
+                  <label htmlFor="email" className="text-xs">
+                    Email Address
+                  </label>
                   <Field
                     style={{
                       ...getStyles(errors, "email"),
@@ -61,17 +67,34 @@ function Page() {
                   />
                   <ShowError name="password" />
                 </div>
-                <Link href={'/forgot-password'} className=" text-[#16A34A] font-medium text-sm px-5">Forgot Password?</Link>
+                <Link
+                  href={"/forgot-password"}
+                  className=" text-[#16A34A] font-medium text-sm px-5"
+                >
+                  Forgot Password?
+                </Link>
                 <div className="py-3 px-5 mt-2 border-t-2 border-[#F1F5F9] bg-[#F8FAFC] rounded-b-lg">
-
-                <button className=" w-full bg-[#16A34A] text-white rounded-lg py-2 text-sm" type="submit">Sign In</button>
+                  <button
+                    className=" w-full bg-[#16A34A] text-white rounded-lg py-2 text-sm"
+                    type="submit"
+                  >
+                    Sign In
+                  </button>
                 </div>
               </div>
             </Form>
           );
         }}
       </Formik>
-      <p className="mt-5 text-sm text-center w-96">Don't have an account? <Link href={'/client/auth/signup'} className="font-medium text-[#15803D]">Create an account</Link></p>
+      <p className="mt-5 text-sm text-center w-96">
+        Don't have an account?{" "}
+        <Link
+          href={"/client/auth/signup"}
+          className="font-medium text-[#15803D]"
+        >
+          Create an account
+        </Link>
+      </p>
     </div>
   );
 }
