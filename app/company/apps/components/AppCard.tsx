@@ -2,19 +2,21 @@
 import React from "react";
 import Link from "@/public/svg/link.svg";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type Props = {
   fill: string;
   appTitle: string;
   appDescription: string;
-  launchFn: () => void;
+  slug: string;
 };
 const AppCard: React.FC<Props> = ({
   fill,
   appTitle,
   appDescription,
-  launchFn,
+  slug
 }) => {
+  const router = useRouter()
   return (
     <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-4 flex flex-col w-56">
       <svg
@@ -49,7 +51,7 @@ const AppCard: React.FC<Props> = ({
       </div>
       <div
         className="border mt-2 border-[#E2E8F0] bg-white cursor-pointer gap-2 py-2 px-4 rounded-lg flex justify-center items-center shadow-[0px_2px_2px_0px_rgba(0,0,0,0.04)]"
-        onClick={() => launchFn()}
+        onClick={() => router.push(`/company/apps/${slug}`)}
       >
         <Image src={Link} alt="Launch" />
         <div>Launch</div>

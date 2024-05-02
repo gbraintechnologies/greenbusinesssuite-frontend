@@ -1,32 +1,35 @@
+"use client";
 import React from "react";
 import AppCard from "./components/AppCard";
+import { useRouter } from "next/navigation";
 
 function Apps() {
-  const lauchApp = async () => {
-    "use server";
+  const router = useRouter();
+  const lauchApp = (appSlug: string) => {
     console.log("Launching App...");
+    router.push(`/company/apps/${appSlug}`);
   };
   const data = [
     {
       name: "Core Apps",
       apps: [
         {
-          name: "Mesh Form Builder",
+          name: "Mesh Forms",
           description: "Create, tailor and assign forms to companies ",
           fill: "#16A34A",
-          launchFn: lauchApp,
+          slug: "mesh-forms",
         },
         {
           name: "Account Pro",
           description: "Create, tailor and assign forms to companies ",
           fill: "#2563EB",
-          launchFn: lauchApp,
+          slug: "account-pro",
         },
         {
           name: "Account Pro",
           description: "Create, tailor and assign forms to companies ",
           fill: "#F59E0B",
-          launchFn: lauchApp,
+          slug: "account-pro",
         },
       ],
     },
@@ -37,13 +40,13 @@ function Apps() {
           name: "Account Pro",
           description: "Create, tailor and assign forms to companies ",
           fill: "#F59E0B",
-          launchFn: lauchApp,
+          slug: "account-pro",
         },
         {
-          name: "Mesh Form Builder",
+          name: "Mesh Forms",
           description: "Create, tailor and assign forms to companies ",
           fill: "#16A34A",
-          launchFn: lauchApp,
+          slug: "mesh-forms",
         },
       ],
     },
@@ -58,12 +61,13 @@ function Apps() {
         Core Apps
       </div>
       <div className="flex gap-5 flex-wrap mb-10">
-        {data[0].apps.map((item: any) => (
+        {data[0].apps.map((item: any, index: number) => (
           <AppCard
+            key={index}
             appTitle={item.name}
             appDescription={item.description}
             fill={item.fill}
-            launchFn={item.launchFn}
+            slug={item.slug}
           />
         ))}
       </div>
@@ -71,12 +75,13 @@ function Apps() {
         Third-Party Apps
       </div>
       <div className="flex gap-5 flex-wrap mb-10">
-        {data[1].apps.map((item: any) => (
+        {data[1].apps.map((item: any, index: number) => (
           <AppCard
+            key={index}
             appTitle={item.name}
             appDescription={item.description}
             fill={item.fill}
-            launchFn={item.launchFn}
+            slug={item.slug}
           />
         ))}
       </div>
