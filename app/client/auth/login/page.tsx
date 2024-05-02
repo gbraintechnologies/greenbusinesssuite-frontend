@@ -8,14 +8,14 @@ import * as yup from "yup";
 
 function Page() {
   const router = useRouter();
-  
+
   const initialValues = {
     email: "",
     password: "",
   };
 
   const schema = yup.object({
-    email: yup.string().required("Email/Username is required"),
+    email: yup.string().email().required("Email is required"),
     password: yup
       .string()
       .min(6, "Password must be at least 8 characters")
