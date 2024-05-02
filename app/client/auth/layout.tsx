@@ -20,11 +20,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   ];
   return (
     <div className="flex h-screen bg-[#F1F5F9]">
-      <div className="flex-1  w-full bg-[#F8FAFC] flex flex-col align-center relative">
+      <div className="flex-1  w-full bg-[#F8FAFC] md:flex flex-col align-center relative hidden">
         <div className="pt-16 pl-[30%]">
             <MeshSuiteLogo />
         </div>
-        <div className="flex flex-col gap-4 pl-[30%] pr-[15%] pt-10">
+        <div className="hidden md:flex flex-col gap-4 pl-[30%] pr-[15%] pt-10 ">
             {landingInfo.map((info, index) => (
               <div key={index} className="flex flex-col gap-2">
                 <div className="text-[#0F172A] font-bold text-lg">{info.title}</div>
@@ -38,7 +38,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <p>&bull;&nbsp;Privacy policy</p>    </div>
       </div>
       <div className="flex-1 w-full">
-        <div className="pl-[15%]">
+        <div className="md:pl-[15%]">
 
         {children}
         </div>

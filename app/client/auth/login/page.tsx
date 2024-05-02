@@ -2,10 +2,13 @@
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { Field, Form, Formik } from "formik";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 import * as yup from "yup";
 
 function Page() {
+  const router = useRouter();
+  
   const initialValues = {
     email: "",
     password: "",
@@ -20,8 +23,9 @@ function Page() {
   });
 
   const handleSubmit = () => {
-    console.log("submit");
+    router.push('/client')
   };
+
   return (
     <div className="flex flex-col justify-center h-screen">
       <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={schema}>
@@ -57,10 +61,10 @@ function Page() {
                   />
                   <ShowError name="password" />
                 </div>
-                <p className=" text-[#16A34A] font-medium text-sm px-5">Forgot Password?</p>
+                <Link href={'/forgot-password'} className=" text-[#16A34A] font-medium text-sm px-5">Forgot Password?</Link>
                 <div className="py-3 px-5 mt-2 border-t-2 border-[#F1F5F9] bg-[#F8FAFC] rounded-b-lg">
 
-                <button className=" w-full bg-[#16A34A] text-white rounded-lg py-2 text-sm">Sign In</button>
+                <button className=" w-full bg-[#16A34A] text-white rounded-lg py-2 text-sm" type="submit">Sign In</button>
                 </div>
               </div>
             </Form>

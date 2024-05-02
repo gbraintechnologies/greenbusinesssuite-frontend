@@ -1,19 +1,38 @@
 "use client";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
-import React from "react";
+import React, { ReactNode, useState } from "react";
 import * as yup from "yup";
 import "./index.css";
+import Dropdown from "@/components/Dropdown/Dropdown";
+import GhanaFlag from "@/public/icons/GhanaFlag";
+import NigeriaFlag from "@/public/icons/NigeriaFlag";
+import toast from "react-hot-toast";
+import services from "@/services";
 
 function Page() {
+  const [selectedResidence, setSelectedResidence] = useState<{
+    label: string | ReactNode;
+    value: string;
+  }>({
+    label: (
+      <p className="flex gap-4 items-center">
+        <GhanaFlag /> Ghana
+      </p>
+    ),
+    value: "ghana",
+  });
+
   const initialValues = {
     email: "",
     password: "",
+    firstName: "",
+    lastName: ""
   };
 
   const schema = yup.object({
-    email: yup.string().required("Email is required"),
+    email: yup.string().email().required("Email is required"),
     firstName: yup.string().required("First name is required"),
     lastName: yup.string().required("Last name is required"),
     password: yup
@@ -22,8 +41,38 @@ function Page() {
       .required("Password is required"),
   });
 
-  const handleSubmit = () => {
-    console.log("submit");
+  const handleSubmit = async (
+    values: {email: string, firstName: string, lastName: string, password: string},
+    { resetForm, setSubmitting }: FormikHelpers<any>
+  ) => {
+    const userData = {
+      email: values.email as string,
+      username: ((values.firstName?.toLowerCase() as string) +
+        values.lastName?.toLowerCase()) as string,
+      first_name: values.firstName as string,
+      last_name: values.lastName as string,
+      phone_number: "233",
+      mobile_phone_number: "233",
+      user_status: "ACTIVE",
+    };
+
+    // const createUserResponse = await services.createUser(
+    //   userData,
+    //   );
+    //   toast.success("Sign up success");
+
+    //   // ROLE ID: 7 for client
+    // const assignRoleResponse = await services.assignRoleToUser(
+    //   createUserResponse.data.id,
+    //   7
+    // );
+
+    // const notifyUserResponse = await services.notifyUserTempCred(
+    //   createUserResponse?.data?.id,
+    //   "EMAIL"
+    // );
+
+    toast.success(`Temporary password sent to ${userData.email}`);
   };
   return (
     <div className="flex flex-col justify-center h-screen">
@@ -32,7 +81,7 @@ function Page() {
         onSubmit={handleSubmit}
         validationSchema={schema}
       >
-        {({ errors }) => {
+        {({ errors, isSubmitting }) => {
           return (
             <Form>
               <div className=" rounded-lg  shadow-sm h-auto w-96 text-slate-900 bg-white ">
@@ -41,14 +90,30 @@ function Page() {
                 </h1>
                 <div className="input-holder px-5">
                   <label>Country of residence</label>
-                  <select>
-                    <option>
-                      <div className="flex gap-3">
-                        <p>Flag</p>
-                        <p>Ghana</p>
-                      </div>
-                    </option>
-                  </select>
+                  <Dropdown
+                    options={[
+                      {
+                        label: (
+                          <p className="flex gap-4 items-center">
+                            <GhanaFlag /> Ghana
+                          </p>
+                        ),
+                        value: "ghana",
+                      },
+                      {
+                        label: (
+                          <p className="flex gap-4 items-center">
+                            <NigeriaFlag /> Nigeria
+                          </p>
+                        ),
+                        value: "nigeria",
+                      },
+                    ]}
+                    selected={selectedResidence}
+                    setSelected={setSelectedResidence}
+                    bgColor="bg-slate-50"
+                  />
+                  <ShowError name="industry" />
                 </div>
                 <div className="input-holder px-5">
                   <label htmlFor="email" className="text-xs">
@@ -121,7 +186,11 @@ function Page() {
                 </div>
 
                 <div className="py-3 px-5 mt-2  rounded-b-lg">
-                  <button className=" w-full bg-[#16A34A] text-white rounded-lg py-2 text-sm">
+                  <button
+                    className=" w-full bg-[#16A34A] text-white rounded-lg py-2 text-sm"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
                     Create an account
                   </button>
                 </div>
