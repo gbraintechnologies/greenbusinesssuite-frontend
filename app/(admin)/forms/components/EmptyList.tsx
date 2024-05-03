@@ -34,18 +34,17 @@ function EmptyList() {
 
       <h2 className="font-semibold mt-4 text-xl">Your list is empty</h2>
       <p className="font-light text-sm  text-center">
-        This should detail the actions you can take on <br /> this screen, as
-        well as why it's valuable.
+        You currently do not have any items
       </p>
 
-      <button className="mt-5 w-40 bg-primary-green px-3 text-sm py-3 rounded-lg text-white">
+      {/* <button className="mt-5 w-40 bg-primary-green px-3 text-sm py-3 rounded-lg text-white">
         {" "}
         Primary action
       </button>
 
       <button className="mt-1 w-40 bg-white px-3 text-sm py-3  text-primary-green">
         Learn More
-      </button>
+      </button> */}
     </div>
   );
 }

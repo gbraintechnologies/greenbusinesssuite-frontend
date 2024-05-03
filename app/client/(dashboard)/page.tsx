@@ -38,7 +38,7 @@ const Page = () => {
   const router = useRouter();
 
   return (
-    <div className="px-5 pb-20 mt-5 bg-[#F8FAFC]">
+    <div className="px-5 pb-20 mt-5 h-full bg-[#F8FAFC]">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
       <div className="mt-4">
         <UncompletedCard />
