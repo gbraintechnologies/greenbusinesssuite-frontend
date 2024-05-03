@@ -2,6 +2,7 @@
 import React from "react";
 import AppCard from "./components/AppCard";
 import { useRouter } from "next/navigation";
+import useAdmin from "@/hooks/useAdmin";
 
 function Apps() {
   const router = useRouter();
@@ -9,6 +10,7 @@ function Apps() {
     console.log("Launching App...");
     router.push(`/company/apps/${appSlug}`);
   };
+
   const data = [
     {
       name: "Core Apps",

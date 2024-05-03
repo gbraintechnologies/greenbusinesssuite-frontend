@@ -17,20 +17,22 @@ function CompanyForms() {
   const router = useRouter();
   const { admin } = useAdmin();
 
+
   const { data: companyData } = useQuery({
     queryKey: ["get company"],
-    // queryFn: services.getCompanyById(Number(
-    //   admin?.custom_profile_values.find(
-    //     (item: any) => item.custom_profile_item_id === 2
-    //   )?.value)),
-    queryFn: services.getCompanyById(2),
+    queryFn: services.getCompanyById(Number(
+      admin?.custom_profile_values.find(
+        (item: any) => item.custom_profile_item_id === 2
+      )?.value)),
   });
+
 
   const { data: forms, isLoading: isFormsLoading } = useQuery({
     queryKey: ["get company forms"],
     queryFn: services.getFormsByCompanyName(companyData?.company_name),
     enabled: !!companyData?.company_name,
   });
+
 
   return (
     <div className="px-5 pb-20 mt-4 py-2">
