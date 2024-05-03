@@ -10,6 +10,7 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import EmptyList from "@/app/(admin)/forms/components/EmptyList";
 import FormCard from "@/app/(admin)/forms/components/FormCard";
 import { useRouter } from "next/navigation";
+import StatsBlock from "@/components/StatsBlock/StatsBlock";
 
 function CompanyForms() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,50 +34,46 @@ function CompanyForms() {
   });
 
   return (
-    <div className="px-5 pb-20 mt-4 py-2">
+    <div className="px-5 pb-20 mt-4 py-2 bg-[#F8FAFC]">
       <Nav
-        headerLeftTitle="Assigned Forms"
-        headerRight={
-          <SearchBox
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            placeholder="Search"
-          />
-        }
+        headerLeftTitle="Form Reports"
       />
-      {isFormsLoading ? (
-        <div className="h-[20rem] flex items-center justify-center">
-          <div>
-            <LoadingIcon />
-            <p className="mt-2 text-xs text-gray-500">Fetching all forms</p>
+      <div className="mt-4">
+            <StatsBlock
+              stats={[
+                {
+                  label: "No. of Links Opened",
+                  value: "5,468",
+                },
+                {
+                  label: "Ignored Links",
+                  value: "23",
+                },
+                {
+                  label: "New Customers",
+                  value: "145",
+                },
+              ]}
+            />
           </div>
-        </div>
-      ) : (
-        // ALL FORMS
-        <>
-          {forms?.data?.length === 0 ? (
-            <div className="">
-              <EmptyList />
-            </div>
-          ) : (
-            <div className="grid grid-cols-4 gap-5 mt-5">
-              {forms &&
-                forms?.data
-                  ?.filter((form: any) => form.isTemplate !== true)
-                  ?.map((form: any) => {
-                    return (
-                      <FormCard
-                        key={form.id}
-                        form={form}
-                        addFormResponses={true}
-                        onClick={() => router.push(`/company/forms/response?id=${form.id}`)}
-                      />
-                    );
-                  })}
-            </div>
-          )}
-        </>
-      )}
+          <div className="mt-4">
+            <StatsBlock
+              stats={[
+                {
+                  label: "Total Number Of Entries",
+                  value: "5,468",
+                },
+                {
+                  label: "Completed Submissions",
+                  value: "23",
+                },
+                {
+                  label: "Uncompleted Submissions",
+                  value: "145",
+                },
+              ]}
+            />
+          </div>
     </div>
   );
 }

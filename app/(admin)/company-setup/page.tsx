@@ -59,10 +59,7 @@ function CompanySetup() {
   const [aggregatedCompanies, setAggregatedCompanies] = useState([]);
 
   const [rows, setRows] = useState<
-    {
-      id: number | undefined;
-      data: Partial<CompanyInfo>;
-    }[]
+    { id: number | undefined; data: Partial<CompanyInfo> }[]
   >([]);
 
   const { data: companies, isLoading } = useQuery({

@@ -50,7 +50,7 @@ export const FormProvider = ({ children }) => {
         });
         toast.dismiss();
         // TODO: REMOVE AFTER TESTS
-        toast.success("updated remote");
+        // toast.success("updated remote");
       })
       .catch((e) => {
         toast.dismiss();
