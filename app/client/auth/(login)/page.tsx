@@ -1,13 +1,30 @@
 "use client";
+
+//
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { Field, Form, Formik } from "formik";
+
+//
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
+
+//
+import { login, currentLoggedIn } from "@/services/features/authService";
+
+// icons
+import { FiAlertCircle } from "react-icons/fi";
+
+//
 import * as yup from "yup";
+import useUser from "@/hooks/useUser";
 
 function Page() {
   const router = useRouter();
+
+  const { addUserData } = useUser();
+
+  const [loading, setLoading] = useState(false);
 
   const initialValues = {
     email: "",
@@ -15,15 +32,41 @@ function Page() {
   };
 
   const schema = yup.object({
-    email: yup.string().email().required("Email is required"),
+    // email: yup.string().email().required("Email is required"),
+    email: yup.string().required("Email/Username is required"),
     password: yup
       .string()
-      .min(6, "Password must be at least 8 characters")
+      .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
   });
 
-  const handleSubmit = () => {
-    router.push("/client");
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  const fetchCurrentUser = async (token: string) => {
+    try {
+      return await currentLoggedIn(token);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleSubmit = async (data: any) => {
+    setLoading(true);
+
+    try {
+      const token = await login(data.email, data.password);
+      if (token?.status === 200) {
+        addUserData(token?.data);
+        const user = await fetchCurrentUser(token.data?.access_token);
+        addUserData(user?.data);
+        setLoading(false);
+        router.push("/client");
+      }
+    } catch (error) {
+      // @ts-ignore
+      setLoginError(error?.response?.data?.detail);
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,7 +85,7 @@ function Page() {
                 </h1>
                 <div className="input-holder px-5">
                   <label htmlFor="email" className="text-xs">
-                    Email Address
+                    Email Address / Username
                   </label>
                   <Field
                     style={{
@@ -66,6 +109,15 @@ function Page() {
                     placeholder=""
                   />
                   <ShowError name="password" />
+
+                  {loginError && (
+                    <div className="flex items-center justify-start pt-4 pb-2">
+                      <FiAlertCircle fontSize={"small"} color={"red"} />
+                      <p className="ml-2 text-sm text-red-600 font-normal">
+                        {loginError}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <Link
                   href={"/forgot-password"}
@@ -75,10 +127,11 @@ function Page() {
                 </Link>
                 <div className="py-3 px-5 mt-2 border-t-2 border-[#F1F5F9] bg-[#F8FAFC] rounded-b-lg">
                   <button
-                    className=" w-full bg-[#16A34A] text-white rounded-lg py-2 text-sm"
+                    disabled={loading}
+                    className=" w-full bg-[#16A34A] disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg py-2 text-sm"
                     type="submit"
                   >
-                    Sign In
+                    {loading ? "Please wait.." : "Sign in"}
                   </button>
                 </div>
               </div>

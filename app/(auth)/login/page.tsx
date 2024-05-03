@@ -59,18 +59,19 @@ function LogIn() {
 
   const onSubmit = async (data: typeOfSchema) => {
     try {
-      const token = await login(data.username, data.password);
+      const token: any = await login(data.username, data.password);
       if (token?.status === 200) {
         addAdminData(token?.data);
         const user = await fetchCurrentUser(token.data?.access_token);
         //alert(JSON.stringify(user))
         addAdminData(user?.data);
         if (
-          user?.data.user_status === 'NEWLY_CREATED' || user?.data.user_status === 'TEMP_CREDENTIALS'
+          user?.data.user_status === "NEWLY_CREATED" ||
+          user?.data.user_status === "TEMP_CREDENTIALS"
         ) {
           toast("Create your password");
           router.push(`/create-password?temp=${data.password}`);
-        } else if(user?.data.profiles[0].role_id === 1){
+        } else if (user?.data.profiles[0].role_id === 1) {
           toast.success("Logged in");
           router.push("/");
         } else {

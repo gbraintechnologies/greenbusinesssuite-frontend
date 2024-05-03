@@ -7,13 +7,18 @@ import { GoShieldLock } from "react-icons/go";
 import { AiOutlineLogout } from "react-icons/ai";
 
 import { usePathname, useRouter } from "next/navigation";
-import useAdmin from "@/hooks/useAdmin";
+
 import toast from "react-hot-toast";
 import Modal from "@/components/Modal/Modal";
 import Image from "next/image";
 
+// hooks
+import useUser from "@/hooks/useUser";
+import useAdmin from "@/hooks/useAdmin";
+
 function SettingsSideNav() {
   const { admin, setAdmin } = useAdmin();
+  const { user, setUser } = useUser();
 
   const router = useRouter();
 
@@ -118,8 +123,9 @@ function SettingsSideNav() {
               className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               onClick={() => {
                 setShowLogOutModal(false);
-                router.push("/");
+                router.push("/client/auth");
                 setAdmin(null);
+                setUser(null);
                 toast.success("Logged out");
               }}
             >

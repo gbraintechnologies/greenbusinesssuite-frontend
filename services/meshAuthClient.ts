@@ -63,13 +63,13 @@ authApi.interceptors.response.use(
           });
         })
         .catch((e) => {
-          console.log("Unable to refresh token", e);
-          // @ts-ignore
-          localStorage.setItem("admin", null);
-          window.location.replace("/login");
-          window.location.reload();
-          toast.dismiss();
-          toast.error("Please login to continue");
+          // console.log("Unable to refresh token", e);
+          // // @ts-ignore
+          // localStorage.setItem("admin", null);
+          // window.location.replace("/login");
+          // window.location.reload();
+          // toast.dismiss();
+          // toast.error("Please login to continue");
         });
     }
 
