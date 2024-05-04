@@ -1,3 +1,4 @@
+//
 import React, { createContext, useEffect, useState } from "react";
 
 // @ts-ignore
@@ -21,11 +22,7 @@ export const UserProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    //
     localStorage.setItem("user", JSON.stringify(user));
-
-    //TODO: temporary hack to solve admin and user separation
-    localStorage.setItem("admin", JSON.stringify(user));
   }, [user]);
 
   return (

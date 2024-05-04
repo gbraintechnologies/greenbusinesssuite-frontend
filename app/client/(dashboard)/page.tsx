@@ -1,14 +1,16 @@
 "use client";
 import React, { useState } from "react";
+
+//
+import Tabs from "@/components/Tabs/Tabs";
+
+import { useRouter } from "next/navigation";
+
+//
+import CompletedForms from "./components/CompletedForms";
+import UnCompletedForms from "./components/UncompletedForms";
 import UncompletedCard from "./components/UncompletedCard";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
-import Tabs from "@/components/Tabs/Tabs";
-import FormCard from "@/app/(admin)/forms/components/FormCard";
-import EmptyList from "@/app/(admin)/forms/components/EmptyList";
-import { useQuery } from "@tanstack/react-query";
-import services from "@/services";
-import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [filters, setFilters] = useState([
@@ -30,27 +32,20 @@ const Page = () => {
     value: "completed",
   });
 
-  const { data: forms, isLoading: isFormsLoading } = useQuery({
-    queryKey: ["get company forms"],
-    queryFn: services.getFormsByCompanyName("amazon"),
-  });
-
   const router = useRouter();
 
   return (
     <div className="px-5 pb-20 mt-5 h-full bg-[#F8FAFC]">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
-      <div className="mt-4">
-        <UncompletedCard />
-      </div>
+      <div className="mt-4">{/* <UncompletedCard /> */}</div>
       <div className="mt-6">
         <StatsBlock
           stats={[
             {
               label: "Number of submitted forms",
-              value: 23,
+              value: 0,
             },
-            { label: "Number of uncompleted forms", value: 143 },
+            { label: "Number of uncompleted forms", value: 0 },
           ]}
         />
       </div>
@@ -68,32 +63,8 @@ const Page = () => {
           />
         </div>
         <div className="mt-4">
-          {isFormsLoading ? (
-            <div className="h-[20rem] flex items-center justify-center">
-              <div>
-                <LoadingIcon />
-                <p className="mt-2 text-xs text-gray-500">Fetching all forms</p>
-              </div>
-            </div>
-          ) : (
-            // ALL FORMS
-            <>
-              {forms?.data?.length === 0 ? (
-                <div className="">
-                  <EmptyList />
-                </div>
-              ) : (
-                <div className="grid grid-cols-4 gap-5 mt-5">
-                  {forms &&
-                    forms?.data
-                      ?.filter((form: any) => form.isTemplate !== true)
-                      ?.map((form: any) => {
-                        return <FormCard key={form.id} form={form} />;
-                      })}
-                </div>
-              )}
-            </>
-          )}
+          {activeFilter.id === 1 && <CompletedForms />}
+          {activeFilter.id === 2 && <UnCompletedForms />}
         </div>
       </div>
     </div>

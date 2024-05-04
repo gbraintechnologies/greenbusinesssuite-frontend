@@ -43,14 +43,12 @@ authApi.interceptors.response.use(
       axios
         .post(`/users/refresh_token/?token=${getRefreshToken()}`)
         .then((res) => {
-          // @ts-ignore
-          const admin = JSON.parse(localStorage.getItem("admin"));
           console.log("get new token and set");
           localStorage.setItem(
-            "admin",
+            "auth",
             JSON.stringify({
               access_token: res?.data?.access_token,
-              ...admin,
+              refresh_token: res?.data?.refresh_token,
             })
           );
 
@@ -63,13 +61,17 @@ authApi.interceptors.response.use(
           });
         })
         .catch((e) => {
-          // console.log("Unable to refresh token", e);
-          // // @ts-ignore
-          // localStorage.setItem("admin", null);
-          // window.location.replace("/login");
-          // window.location.reload();
-          // toast.dismiss();
-          // toast.error("Please login to continue");
+          console.log("Unable to refresh token", e);
+          // @ts-ignore
+          localStorage.setItem("admin", null);
+          // @ts-ignore
+          localStorage.setItem("user", null);
+          // @ts-ignore
+          localStorage.setItem("auth", null);
+          window.location.replace("/login");
+          window.location.reload();
+          toast.dismiss();
+          toast.error("Please login to continue");
         });
     }
 

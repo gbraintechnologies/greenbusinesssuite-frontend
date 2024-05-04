@@ -18,11 +18,13 @@ import { FiAlertCircle } from "react-icons/fi";
 //
 import * as yup from "yup";
 import useUser from "@/hooks/useUser";
+import useAuth from "@/hooks/useAuth";
 
 function Page() {
   const router = useRouter();
 
   const { addUserData } = useUser();
+  const { addAuthData } = useAuth();
 
   const [loading, setLoading] = useState(false);
 
@@ -55,12 +57,16 @@ function Page() {
 
     try {
       const token = await login(data.email, data.password);
+
       if (token?.status === 200) {
-        addUserData(token?.data);
+        // add auth data
+        addAuthData(token?.data);
+
         const user = await fetchCurrentUser(token.data?.access_token);
+
         addUserData(user?.data);
         setLoading(false);
-        router.push("/client");
+        router.back();
       }
     } catch (error) {
       // @ts-ignore
@@ -120,7 +126,7 @@ function Page() {
                   )}
                 </div>
                 <Link
-                  href={"/forgot-password"}
+                  href={"/client/auth/forgot-password"}
                   className=" text-[#16A34A] font-medium text-sm px-5"
                 >
                   Forgot Password?
@@ -139,15 +145,15 @@ function Page() {
           );
         }}
       </Formik>
-      <p className="mt-5 text-sm text-center w-96">
+      <button
+        onClick={() => {
+          router.replace("/client/auth/signup");
+        }}
+        className="mt-5 text-sm text-center w-96"
+      >
         Don't have an account?{" "}
-        <Link
-          href={"/client/auth/signup"}
-          className="font-medium text-[#15803D]"
-        >
-          Create an account
-        </Link>
-      </p>
+        <p className="font-medium text-[#15803D]">Create an account</p>
+      </button>
     </div>
   );
 }

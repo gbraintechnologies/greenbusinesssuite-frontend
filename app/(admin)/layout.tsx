@@ -28,6 +28,7 @@ import { FaLandMineOn } from "react-icons/fa6";
 
 // toast
 import toast from "react-hot-toast";
+import useAuth from "@/hooks/useAuth";
 
 export default function AdminLayout({
   children,
@@ -38,6 +39,7 @@ export default function AdminLayout({
   const router = useRouter();
 
   const { admin, removeAdmin } = useAdmin();
+  const { auth, removeAuth } = useAuth();
 
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +56,7 @@ export default function AdminLayout({
   // Redirect to login if not authenticated
 
   useEffect(() => {
-    if (admin === null || !Boolean(admin?.access_token)) {
+    if (admin === null || !Boolean(auth?.access_token)) {
       router.push("/login");
     } else {
       let role = admin?.profiles[0]?.role_id;
@@ -76,6 +78,8 @@ export default function AdminLayout({
 
       // else
       removeAdmin();
+      removeAuth();
+      //
       router.push("/login");
       toast.error("Access not granted. Check with your administrator");
     }
