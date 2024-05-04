@@ -57,6 +57,8 @@ export default function ClientLayout({
     },
   ];
 
+  console.log("pathname", pathname);
+
   return (
     <Suspense>
       <div className="w-full min-h-[100vh]">
@@ -76,11 +78,12 @@ export default function ClientLayout({
                 {" "}
                 <TopNav />
                 <div className="flex flex-row">
-                  {!pathname.includes("settings") && (
-                    <div className="hidden md:block">
-                      <SideNav navigation={navigation} />
-                    </div>
-                  )}
+                  {!pathname.includes("settings") &&
+                    pathname !== "/client/form" && (
+                      <div className="hidden md:block">
+                        <SideNav navigation={navigation} />
+                      </div>
+                    )}
 
                   <div className="w-full">{children}</div>
                 </div>

@@ -21,19 +21,23 @@ export const getFormByIdRaw = (id: any) => {
 
 export const getFormsByCompanyName = (companyName: string) => {
   return () => authApi.get(`/forms/builder/company/${companyName}`);
-}
+};
 
 export const getFormResponseById = (id: number) => {
-  return () => authApi.get(`/forms/response/data/${id}`).then((res) => res.data)
-}
+  return () =>
+    authApi.get(`/forms/response/data/${id}`).then((res) => res.data);
+};
 
 export const getFormResponsesById = (id: number) => {
   return authApi.get(`/forms/response/data/${id}`);
-}
+};
 
 export const getFormStatusCountById = (id: number) => {
-  return () => authApi.get(`/forms/response/forms-status/count/${id}`).then((res) => res.data)
-}
+  return () =>
+    authApi
+      .get(`/forms/response/forms-status/count/${id}`)
+      .then((res) => res.data);
+};
 export const updateForm = (data: any) => {
   return authApi.put(`/forms/builder/update`, data);
 };
@@ -65,6 +69,8 @@ export const deleteForm = (id: any) => {
   return authApi.delete(`/forms/builder/soft-delete/${id}`);
 };
 
+// PUBLISH FORM
+
 // API KEYS
 export const regenerateAPIKey = (id: any) => {
   return authApi.put(`/forms/builder/generate/apikey/${id}`);
@@ -80,4 +86,14 @@ export const accessPublicPublishedForm = (id: any) => {
     authApi
       .get(`forms/builder/access-published-form/${id}`)
       .then((res) => res.data);
+};
+
+export const acceptInvite = (formId: any, userId: any, companyName: any) => {
+  return authApi.post(`forms/response/save`, {
+    formId: formId,
+    isCompleted: false,
+    inputData: {},
+    companyName: companyName,
+    userId: userId,
+  });
 };

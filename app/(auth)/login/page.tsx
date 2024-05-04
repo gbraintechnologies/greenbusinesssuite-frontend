@@ -31,8 +31,8 @@ const schema = yup.object({
 function LogIn() {
   const router = useRouter();
 
-  const { addAdminData } = useAdmin();
-  const { addAuthData } = useAuth();
+  const { admin, addAdminData } = useAdmin();
+  const { auth, addAuthData } = useAuth();
 
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -73,6 +73,8 @@ function LogIn() {
         ) {
           toast("Create your password");
           router.push(`/create-password?temp=${data.password}`);
+
+          // route to admin / company dashboard
         } else if (user?.data.profiles[0].role_id === 1) {
           toast.success("Logged in");
           router.push("/");
@@ -85,6 +87,21 @@ function LogIn() {
       setLoginError("Incorrect email address and password");
     }
   };
+
+  // if admin is already authenticated, re route
+  useEffect(() => {
+    if (Boolean(admin) && Boolean(auth)) {
+      if (admin?.profiles[0].role_id === 1) {
+        // main admin
+        toast.success("Logged in");
+        router.push("/");
+      } else {
+        // company admin
+        toast.success("Logged in");
+        router.push("/company");
+      }
+    }
+  }, [admin, auth]);
 
   return (
     <div>

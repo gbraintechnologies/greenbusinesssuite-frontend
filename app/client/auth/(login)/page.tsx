@@ -66,7 +66,7 @@ function Page() {
 
         addUserData(user?.data);
         setLoading(false);
-        router.push("/client");
+        router.back();
       }
     } catch (error) {
       // @ts-ignore
@@ -145,15 +145,15 @@ function Page() {
           );
         }}
       </Formik>
-      <p className="mt-5 text-sm text-center w-96">
+      <button
+        onClick={() => {
+          router.replace("/client/auth/signup");
+        }}
+        className="mt-5 text-sm text-center w-96"
+      >
         Don't have an account?{" "}
-        <Link
-          href={"/client/auth/signup"}
-          className="font-medium text-[#15803D]"
-        >
-          Create an account
-        </Link>
-      </p>
+        <p className="font-medium text-[#15803D]">Create an account</p>
+      </button>
     </div>
   );
 }

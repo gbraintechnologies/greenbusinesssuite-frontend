@@ -15,10 +15,12 @@ import Image from "next/image";
 // hooks
 import useUser from "@/hooks/useUser";
 import useAdmin from "@/hooks/useAdmin";
+import useAuth from "@/hooks/useAuth";
 
 function SettingsSideNav() {
   const { admin, setAdmin } = useAdmin();
   const { user, setUser } = useUser();
+  const { removeAuth } = useAuth();
 
   const router = useRouter();
 
@@ -125,6 +127,7 @@ function SettingsSideNav() {
                 setShowLogOutModal(false);
                 router.push("/client/auth");
                 setAdmin(null);
+                removeAuth();
                 setUser(null);
                 toast.success("Logged out");
               }}
