@@ -18,11 +18,13 @@ import { FiAlertCircle } from "react-icons/fi";
 //
 import * as yup from "yup";
 import useUser from "@/hooks/useUser";
+import useAuth from "@/hooks/useAuth";
 
 function Page() {
   const router = useRouter();
 
   const { addUserData } = useUser();
+  const { addAuthData } = useAuth();
 
   const [loading, setLoading] = useState(false);
 
@@ -55,9 +57,13 @@ function Page() {
 
     try {
       const token = await login(data.email, data.password);
+
       if (token?.status === 200) {
-        addUserData(token?.data);
+        // add auth data
+        addAuthData(token?.data);
+
         const user = await fetchCurrentUser(token.data?.access_token);
+
         addUserData(user?.data);
         setLoading(false);
         router.push("/client");
@@ -120,7 +126,7 @@ function Page() {
                   )}
                 </div>
                 <Link
-                  href={"/forgot-password"}
+                  href={"/client/auth/forgot-password"}
                   className=" text-[#16A34A] font-medium text-sm px-5"
                 >
                   Forgot Password?

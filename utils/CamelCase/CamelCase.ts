@@ -1,4 +1,4 @@
-export default function toCamelCase(str: string) {
+export default function toCamelCase(str: string): string {
   return str
     .split(" ")
     .map((word, index) =>
