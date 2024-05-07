@@ -18,7 +18,7 @@ const TabItem: React.FC<Props> = ({
         activeFilter.id === filter.id
           ? "bg-white rounded-lg text-black"
           : "text-slate-500 font-normal"
-      } px-12 py-1`}
+      } w-36 h-10 flex justify-center items-center`}
     >
       {filter.name}
     </button>

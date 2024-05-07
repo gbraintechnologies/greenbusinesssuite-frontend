@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import UncompletedCard from "./components/UncompletedCard";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import Tabs from "@/components/Tabs/Tabs";
-import FormCard from "@/app/(admin)/forms/components/FormCard";
-import EmptyList from "@/app/(admin)/forms/components/EmptyList";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { useRouter } from "next/navigation";
+import EmptyList from "./components/EmptyList";
+import FormCard from "./components/FormCard";
 
 const Page = () => {
   const [filters, setFilters] = useState([

@@ -88,12 +88,10 @@ export default function ClientLayout({
           {!pathname.includes("auth") ? (
             <>
 
-              <TopNav />
+              <TopNav settingsLink="/client/settings"/>
               <div className="flex flex-row">
                 {!pathname.includes("settings") && (
-                  <div className="hidden md:block">
                   <SideNav navigation={navigation} />
-                  </div>
                 )}
 
                 <div className=" w-full">{children}</div>

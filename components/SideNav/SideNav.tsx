@@ -7,7 +7,7 @@ function SideNav({ navigation }: any) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-[22rem] sticky top-[7vh] border-[#E2E8F0] border-r bg-[#F8FAFC] px-5 p-2 h-[93vh]">
+    <aside className="w-[22rem] hidden md:block sticky top-[7vh] border-[#E2E8F0] border-r bg-[#F8FAFC] px-5 p-2 h-[93vh]">
       <ul className="mt-4">
         {navigation.map((item: any) => {
           if (item.subNavigation) {

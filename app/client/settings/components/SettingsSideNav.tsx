@@ -1,5 +1,6 @@
+"use client"
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // icons
 import { HiOutlineUser } from "react-icons/hi2";
@@ -21,23 +22,29 @@ function SettingsSideNav() {
     {
       name: "Account",
       icon: <HiOutlineUser size={20} />,
-      link: "/settings",
+      link: "/client/settings",
     },
     {
       name: "Security",
       icon: <GoShieldLock size={20} />,
-      link: "/settings/security",
+      link: "/client/settings/security",
     },
   ];
   const pathname = usePathname();
 
   const [showLogOutModal, setShowLogOutModal] = useState(false);
 
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   return (
     <aside className="w-[20rem] sticky   px-5 p-2">
       {/* USER INFORMATION & PICTURE */}
       <div className="flex gap-3 items-center mb-5">
-        <div className="flex items-center">
+        {isClient && <div className="flex items-center">
           {admin?.custom_profile_values &&
           admin?.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1
@@ -59,11 +66,11 @@ function SettingsSideNav() {
               {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
             </button>
           )}
-        </div>
+        </div>}
         <div>
-          <h4 className="font-bold text-lg">
+          {isClient && <h4 className="font-bold text-lg">
             {admin?.first_name} {admin?.last_name}
-          </h4>
+          </h4>}
           <p className="text-sm font-light">Your personal account</p>
         </div>
       </div>
