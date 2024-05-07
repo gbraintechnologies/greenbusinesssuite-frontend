@@ -10,6 +10,7 @@ import GhanaFlag from "@/public/icons/GhanaFlag";
 import NigeriaFlag from "@/public/icons/NigeriaFlag";
 import toast from "react-hot-toast";
 import services from "@/services";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 function Page() {
   const [selectedResidence, setSelectedResidence] = useState<{
@@ -23,6 +24,8 @@ function Page() {
     ),
     value: "ghana",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const initialValues = {
     email: "",
@@ -164,7 +167,7 @@ function Page() {
                     <ShowError name="lastName" />
                   </div>
                 </div>
-                <div className=" input-holder px-5">
+                <div className=" input-holder px-5 relative">
                   <label htmlFor="password">Password</label>
                   <Field
                     style={{
@@ -172,9 +175,20 @@ function Page() {
                       backgroundColor: "rgba(248, 250, 252, 1)",
                     }}
                     name="password"
-                    type="password"
+                    type={showPassword ? "text":"password"}
                     placeholder="Enter your password"
                   />
+                  <button
+                    className="absolute right-10 bottom-4"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <AiOutlineEyeInvisible size={18} />
+                    ) : (
+                      <AiOutlineEye size={18} />
+                    )}
+                  </button>
                   <ShowError name="password" />
                 </div>
                 <div className="flex gap-2 justify-start px-5">
