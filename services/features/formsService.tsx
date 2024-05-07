@@ -23,6 +23,11 @@ export const getFormsByCompanyName = (companyName: string) => {
   return () => authApi.get(`/forms/builder/company/${companyName}`);
 };
 
+export const getFormsByUserId = (userId: string) => {
+  // return () => authApi.get(`/forms/builder/user/${userId}`);
+};
+
+
 export const getFormResponseById = (id: number) => {
   return () =>
     authApi.get(`/forms/response/data/${id}`).then((res) => res.data);
