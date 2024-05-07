@@ -28,7 +28,7 @@ function Page() {
     email: "",
     password: "",
     firstName: "",
-    lastName: ""
+    lastName: "",
   };
 
   const schema = yup.object({
@@ -42,7 +42,12 @@ function Page() {
   });
 
   const handleSubmit = async (
-    values: {email: string, firstName: string, lastName: string, password: string},
+    values: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      password: string;
+    },
     { resetForm, setSubmitting }: FormikHelpers<any>
   ) => {
     const userData = {
@@ -201,10 +206,7 @@ function Page() {
       </Formik>
       <p className="mt-5 text-sm text-center w-96">
         Already have an account?{" "}
-        <Link
-          href={"/client/auth/login"}
-          className="font-medium text-[#15803D]"
-        >
+        <Link href={"/client/auth"} className="font-medium text-[#15803D]">
           Sign in
         </Link>
       </p>

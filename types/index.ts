@@ -51,3 +51,13 @@ export interface IFilter {
   name: string;
   value: string;
 }
+
+export interface IModal {
+  isOpen: boolean;
+  setIsOpen: any;
+  title?: string;
+  children: any;
+  showTitle?: boolean;
+  hideClose?: boolean;
+  size?: "small" | "big";
+}

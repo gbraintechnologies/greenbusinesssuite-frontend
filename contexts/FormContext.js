@@ -104,7 +104,7 @@ export const FormProvider = ({ children }) => {
 
         toast.dismiss();
         // TODO: REMOVE AFTER TESTS
-        toast.success("updated field");
+        // toast.success("updated field");
       })
       .catch((e) => {
         toast.dismiss();

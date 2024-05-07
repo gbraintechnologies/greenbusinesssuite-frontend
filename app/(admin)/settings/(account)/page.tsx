@@ -83,7 +83,7 @@ function Account() {
             <h4 className="font-bold text-lg">
               Settings and Profile Management
             </h4>
-            <p className="text-sm font-light">From description</p>
+            {/* <p className="text-sm font-light">From description</p> */}
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <div style={{ flex: 1 }} className="mt-10">

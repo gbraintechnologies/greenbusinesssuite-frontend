@@ -1,26 +1,21 @@
+//
 import Link from "next/link";
 import React from "react";
 
 // hooks
-import useAdmin from "@/hooks/useAdmin";
+import useUser from "@/hooks/useUser";
 
 //
 import Image from "next/image";
-import useForm from "@/hooks/useForm";
 
-// components
-import PublishFormButton from "./PublishFormButton";
-
-function FormTopNav() {
+function TopNav() {
   //
-  const { admin } = useAdmin();
-
-  const { setView, view, form } = useForm();
+  const { user } = useUser();
 
   return (
-    <nav className="h-[7vh] z-[200] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
+    <nav className="h-[7vh] z-[100] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
       <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
-        <Link href="/">
+        <Link href="/client">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="19"
@@ -38,56 +33,35 @@ function FormTopNav() {
         </Link>
       </div>
 
-      <div className="bg-[#334155]  flex items-center gap-2 rounded-xl my-1 p-1 bg-opacity-50">
-        <button
-          onClick={() => setView("builder")}
-          className={`${
-            view === "builder" ? "bg-white font-medium" : "text-[#64748B] "
-          } p-1 rounded-lg px-10`}
-        >
-          Form builder
-        </button>
-        <button
-          onClick={() => setView("connect")}
-          className={`${
-            view === "connect" ? "bg-white font-medium" : " text-[#64748B]"
-          } p-1 rounded-lg px-10`}
-        >
-          Connect
-        </button>
-      </div>
-
       <div className="flex items-center gap-3">
         <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20"></div>
-        <Link href="/settings">
-          {admin?.custom_profile_values &&
-          admin?.custom_profile_values.find(
+        <Link href="/client/settings">
+          {user?.custom_profile_values &&
+          user?.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1
           )?.value?.length > 1 ? (
             <Image
               alt="profile"
               src={
-                admin?.custom_profile_values.find(
+                user?.custom_profile_values.find(
                   (item: any) => item?.custom_profile_item_id === 1
-                ).value
+                ).value ?? ""
               }
+              priority
               width={32}
               height={32}
               className="rounded-full w-8 h-8 object-cover"
             />
           ) : (
             <button className="w-8 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
-              {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
-              {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
+              {user?.first_name && user?.first_name[0]?.toUpperCase()}
+              {user?.last_name && user?.last_name[0]?.toUpperCase()}
             </button>
           )}
         </Link>
-
-        <button className="bg-white py-2 text-sm px-3 rounded-lg">Share</button>
-        <PublishFormButton form={form} />
       </div>
     </nav>
   );
 }
 
-export default FormTopNav;
+export default TopNav;

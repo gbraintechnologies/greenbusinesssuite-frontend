@@ -3,6 +3,9 @@ import { Fragment } from "react";
 
 import { IoCloseCircleOutline } from "react-icons/io5";
 
+// types
+import { IModal } from "@/types";
+
 export default function Modal({
   isOpen,
   setIsOpen,
@@ -11,7 +14,9 @@ export default function Modal({
   showTitle = true,
   hideClose = false,
   size = "small",
-}: any) {
+}: IModal) {
+  //
+  //
   function closeModal() {
     setIsOpen(false);
   }

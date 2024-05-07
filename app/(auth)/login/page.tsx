@@ -18,6 +18,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 // hooks
 import useAdmin from "@/hooks/useAdmin";
 import toast from "react-hot-toast";
+import useAuth from "@/hooks/useAuth";
 
 const schema = yup.object({
   username: yup.string().required("Email/Username is required"),
@@ -30,7 +31,8 @@ const schema = yup.object({
 function LogIn() {
   const router = useRouter();
 
-  const { addAdminData, admin } = useAdmin();
+  const { admin, addAdminData } = useAdmin();
+  const { auth, addAuthData } = useAuth();
 
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -59,18 +61,21 @@ function LogIn() {
 
   const onSubmit = async (data: typeOfSchema) => {
     try {
-      const token = await login(data.username, data.password);
+      const token: any = await login(data.username, data.password);
       if (token?.status === 200) {
-        addAdminData(token?.data);
+        addAuthData(token?.data);
+
         const user = await fetchCurrentUser(token.data?.access_token);
-        //alert(JSON.stringify(user))
         addAdminData(user?.data);
         if (
-          user?.data.user_status === 'NEWLY_CREATED' || user?.data.user_status === 'TEMP_CREDENTIALS'
+          user?.data.user_status === "NEWLY_CREATED" ||
+          user?.data.user_status === "TEMP_CREDENTIALS"
         ) {
           toast("Create your password");
           router.push(`/create-password?temp=${data.password}`);
-        } else if(user?.data.profiles[0].role_id === 1){
+
+          // route to admin / company dashboard
+        } else if (user?.data.profiles[0].role_id === 1) {
           toast.success("Logged in");
           router.push("/");
         } else {
@@ -79,10 +84,24 @@ function LogIn() {
         }
       }
     } catch (error) {
-      console.error("Error logging in:", error);
       setLoginError("Incorrect email address and password");
     }
   };
+
+  // if admin is already authenticated, re route
+  useEffect(() => {
+    if (Boolean(admin) && Boolean(auth)) {
+      if (admin?.profiles[0].role_id === 1) {
+        // main admin
+        toast.success("Logged in");
+        router.push("/");
+      } else {
+        // company admin
+        toast.success("Logged in");
+        router.push("/company");
+      }
+    }
+  }, [admin, auth]);
 
   return (
     <div>

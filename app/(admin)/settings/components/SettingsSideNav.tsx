@@ -7,13 +7,18 @@ import { GoShieldLock } from "react-icons/go";
 import { AiOutlineLogout } from "react-icons/ai";
 
 import { usePathname, useRouter } from "next/navigation";
-import useAdmin from "@/hooks/useAdmin";
+
 import toast from "react-hot-toast";
 import Modal from "@/components/Modal/Modal";
 import Image from "next/image";
 
+// hooks
+import useAuth from "@/hooks/useAuth";
+import useAdmin from "@/hooks/useAdmin";
+
 function SettingsSideNav() {
   const { admin, setAdmin } = useAdmin();
+  const { removeAuth } = useAuth();
 
   const router = useRouter();
 
@@ -120,6 +125,7 @@ function SettingsSideNav() {
                 setShowLogOutModal(false);
                 router.push("/");
                 setAdmin(null);
+                removeAuth();
                 toast.success("Logged out");
               }}
             >

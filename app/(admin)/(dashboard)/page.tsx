@@ -15,19 +15,22 @@ import Link from "next/link";
 //
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
+import useAuth from "@/hooks/useAuth";
 
 function Dashboard() {
   const router = useRouter();
 
   const { admin } = useAdmin();
+  const { auth } = useAuth();
 
-  useEffect(() => {
-    if (admin === null || !Boolean(admin?.access_token)) {
-      toast.dismiss();
-      toast("Please login to continue");
-      router.push("/login");
-    }
-  }, [admin]);
+  // TODO: redudant check removed
+  // useEffect(() => {
+  //   if (admin === null || !Boolean(auth?.access_token)) {
+  //     toast.dismiss();
+  //     toast("Please login to continue");
+  //     router.push("/login");
+  //   }
+  // }, [admin]);
 
   // Data
   const { data: companies } = useQuery({

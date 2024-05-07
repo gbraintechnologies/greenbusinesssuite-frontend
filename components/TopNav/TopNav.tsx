@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -12,11 +12,9 @@ function TopNav({settingsLink}: {settingsLink?: string}) {
 
   const [isClient, setIsClient] = useState(false);
 
-
-  useEffect(()=> {
+  useEffect(() => {
     setIsClient(true);
-  }, [])
-
+  }, []);
 
   return (
     <nav className="h-[7vh] z-[100] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
@@ -45,25 +43,27 @@ function TopNav({settingsLink}: {settingsLink?: string}) {
           {admin?.custom_profile_values &&
           admin?.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1
-          )?.value?.length > 1 ? (
-            isClient && <Image
-              alt="profile"
-              src={
-                admin?.custom_profile_values.find(
-                  (item: any) => item?.custom_profile_item_id === 1
-                ).value ?? ""
-              }
-              priority
-              width={32}
-              height={32}
-              className="rounded-full w-8 h-8 object-cover"
-            />
-          ) : (
-            isClient && <button className="w-8 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
-              {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
-              {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
-            </button>
-          )}
+          )?.value?.length > 1
+            ? isClient && (
+                <Image
+                  alt="profile"
+                  src={
+                    admin?.custom_profile_values.find(
+                      (item: any) => item?.custom_profile_item_id === 1
+                    ).value ?? ""
+                  }
+                  priority
+                  width={32}
+                  height={32}
+                  className="rounded-full w-8 h-8 object-cover"
+                />
+              )
+            : isClient && (
+                <button className="w-8 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
+                  {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
+                  {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
+                </button>
+              )}
         </Link>
       </div>
     </nav>

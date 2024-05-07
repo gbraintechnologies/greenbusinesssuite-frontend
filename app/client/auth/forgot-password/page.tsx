@@ -34,7 +34,7 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="bg-[#F1F5F9] h-[100vh] w-full flex items-center justify-center">
+    <div className="flex flex-col justify-center h-screen">
       {status === "forgot" && (
         <div className="bg-white rounded-lg max-w-md p-10 -mt-[40vh] shadow-md">
           <h1 className="font-semibold text-lg">Forgot password</h1>
@@ -66,7 +66,7 @@ function ForgotPassword() {
               />
             </div>
 
-            <Link className=" text-[#16A34A] text-sm" href="/">
+            <Link className=" text-[#16A34A] text-sm" href="/client/auth">
               Wait, I remember my password
             </Link>
             <button
