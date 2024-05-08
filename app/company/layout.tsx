@@ -22,6 +22,8 @@ import { IoMdPaper } from "react-icons/io";
 
 // toast
 import toast from "react-hot-toast";
+import useUser from "@/hooks/useUser";
+import useAuth from "@/hooks/useAuth";
 
 export default function CompanyLayout({
   children,
@@ -33,35 +35,24 @@ export default function CompanyLayout({
 
   const { admin, removeAdmin } = useAdmin();
 
+  const { auth, removeAuth } = useAuth();
+
   const [loading, setLoading] = useState(false);
 
   // Redirect to login if not authenticated
-
-
   useEffect(() => {
-    if (admin === null || !Boolean(admin?.access_token)) {
+    if (admin === null || !Boolean(auth)) {
+      console.log("Please login to continue");
       router.push("/login");
     } else {
+      // CHECK COMPANY ADMIN ROLE: 6
       let role = admin?.profiles[0]?.role_id;
 
-      // CHECK ROLES AND ROUTE TO RIGHT DESTINATIONS
-      // LOGICIEL ADMIN ROLE ID: 1
-      if (role == 1) {
-        setLoading(false);
-        redirect("/");
-      }
       // COMPANY ADMIN ROLE ID: 6
-      if (role == 6) {
-        setLoading(false);
-        if((pathname.includes('company') || pathname.includes("/settings")) && (pathname !== "/company-setup")){
-          return ;
-        }
-        redirect("/company");
-      } 
-
-        removeAdmin();
+      if (role !== 6) {
         router.push("/login");
         toast.error("Access not granted. Check with your administrator");
+      }
     }
   }, [admin, pathname]);
 
@@ -75,7 +66,11 @@ export default function CompanyLayout({
     {
       name: "Apps",
       icon: <FaBoxesStacked size={20} />,
-      link: ["/company/apps", "/company/apps/mesh-forms", "/company/apps/mesh-forms/response"],
+      link: [
+        "/company/apps",
+        "/company/apps/mesh-forms",
+        "/company/apps/mesh-forms/response",
+      ],
     },
     {
       name: "Form Reports",
