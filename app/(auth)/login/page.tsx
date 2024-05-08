@@ -95,10 +95,13 @@ function LogIn() {
         // main admin
         toast.success("Logged in");
         router.push("/");
-      } else {
-        // company admin
+        return;
+      }
+      // company admin
+      if (admin?.profiles[0].role_id === 6) {
         toast.success("Logged in");
         router.push("/company");
+        return;
       }
     }
   }, [admin, auth]);
