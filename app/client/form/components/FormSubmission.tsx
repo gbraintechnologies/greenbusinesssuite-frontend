@@ -79,8 +79,8 @@ function FormSubmission() {
       </Modal>
 
       <Modal
-        isOpen={showConfirmationModal}
-        setIsOpen={setShowConfirmationModal}
+        isOpen={showSuccessModal}
+        setIsOpen={setShowSuccessModal}
         title=""
         hideClose={true}
       >

@@ -1,7 +1,7 @@
 import React from "react";
 
 function AuditTrail() {
-  return <div>Audit Trail of Company</div>;
+  return <div></div>;
 }
 
 export default AuditTrail;
