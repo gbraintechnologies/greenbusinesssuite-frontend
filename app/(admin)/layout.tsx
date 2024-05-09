@@ -106,7 +106,7 @@ export default function AdminLayout({
     {
       name: "Company setup",
       icon: <PiBuildingsBold size={20} />,
-      link: "/company-setup",
+      link: ["/company-setup", "/company-setup/create", "/company-setup/profile", "/company-setup/profile/edit"],
     },
     {
       name: "Jurisdiction setup",

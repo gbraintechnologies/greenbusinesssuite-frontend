@@ -19,6 +19,7 @@ import { FiAlertCircle } from "react-icons/fi";
 import * as yup from "yup";
 import useUser from "@/hooks/useUser";
 import useAuth from "@/hooks/useAuth";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 function Page() {
   const router = useRouter();
@@ -34,6 +35,7 @@ function Page() {
   console.log("redirect", redirectTo);
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const initialValues = {
     email: "",
@@ -117,7 +119,7 @@ function Page() {
                   />
                   <ShowError name="email" />
                 </div>
-                <div className=" input-holder px-5">
+                <div className=" input-holder px-5 relative">
                   <label htmlFor="email">Password</label>
                   <Field
                     style={{
@@ -125,9 +127,20 @@ function Page() {
                       backgroundColor: "rgba(248, 250, 252, 1)",
                     }}
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder=""
-                  />
+                  ></Field>
+                  <button
+                    className="absolute right-10 bottom-4"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <AiOutlineEyeInvisible size={18} />
+                    ) : (
+                      <AiOutlineEye size={18} />
+                    )}
+                  </button>
                   <ShowError name="password" />
 
                   {loginError && (

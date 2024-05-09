@@ -1,7 +1,7 @@
 "use client";
 
 // Next & React imports
-import React from "react";
+import React, { Suspense } from "react";
 
 import SettingsSideNav from "./components/SettingsSideNav";
 
@@ -12,11 +12,13 @@ export default function SettingsLayout({
 }) {
   // Redirect to login if not authenticated
   return (
-    <div className="w-full h-full">
-      <div className="flex flex-row">
-        <SettingsSideNav />
-        <div className="mt-4 p-2">{children}</div>
+    <Suspense>
+      <div className="w-full h-full">
+        <div className="flex flex-row">
+          <SettingsSideNav />
+          <div className="mt-4 p-2">{children}</div>
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 }
