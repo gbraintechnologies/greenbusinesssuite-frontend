@@ -1,17 +1,41 @@
 "use client";
+
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { Field, Form, Formik, FormikHelpers } from "formik";
-import Link from "next/link";
+
+//
 import React, { ReactNode, useState } from "react";
 import * as yup from "yup";
-import "./index.css";
+
+//
+import { useRouter, useSearchParams } from "next/navigation";
+
+// components
+import toast from "react-hot-toast";
 import Dropdown from "@/components/Dropdown/Dropdown";
+
+// services
+import services from "@/services";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
+// icons
 import GhanaFlag from "@/public/icons/GhanaFlag";
 import NigeriaFlag from "@/public/icons/NigeriaFlag";
-import toast from "react-hot-toast";
-import services from "@/services";
+
+// css
+import "./index.css";
 
 function Page() {
+  const router = useRouter();
+  const search = useSearchParams();
+
+  // saerch params
+
+  const redirectTo = search.get("redirect");
+  const formId = search.get("f");
+  const companyName = search.get("c");
+
+  //
   const [selectedResidence, setSelectedResidence] = useState<{
     label: string | ReactNode;
     value: string;
@@ -23,6 +47,8 @@ function Page() {
     ),
     value: "ghana",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const initialValues = {
     email: "",
@@ -164,7 +190,7 @@ function Page() {
                     <ShowError name="lastName" />
                   </div>
                 </div>
-                <div className=" input-holder px-5">
+                <div className=" input-holder px-5 relative">
                   <label htmlFor="password">Password</label>
                   <Field
                     style={{
@@ -172,9 +198,20 @@ function Page() {
                       backgroundColor: "rgba(248, 250, 252, 1)",
                     }}
                     name="password"
-                    type="password"
+                    type={showPassword ? "text":"password"}
                     placeholder="Enter your password"
                   />
+                  <button
+                    className="absolute right-10 bottom-4"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <AiOutlineEyeInvisible size={18} />
+                    ) : (
+                      <AiOutlineEye size={18} />
+                    )}
+                  </button>
                   <ShowError name="password" />
                 </div>
                 <div className="flex gap-2 justify-start px-5">
@@ -204,12 +241,22 @@ function Page() {
           );
         }}
       </Formik>
-      <p className="mt-5 text-sm text-center w-96">
+      <button
+        onClick={() => {
+          // add search params if redirectTo exists
+          if (Boolean(redirectTo)) {
+            router.push(
+              `/client/auth?redirect=${redirectTo}&f=${formId}&c=${companyName}`
+            );
+            return;
+          }
+          router.push("/client/auth");
+        }}
+        className="mt-5 text-sm text-center w-96"
+      >
         Already have an account?{" "}
-        <Link href={"/client/auth"} className="font-medium text-[#15803D]">
-          Sign in
-        </Link>
-      </p>
+        <span className="font-medium text-[#15803D]">Sign in</span>
+      </button>
     </div>
   );
 }

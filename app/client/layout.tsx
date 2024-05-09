@@ -57,8 +57,6 @@ export default function ClientLayout({
     },
   ];
 
-  console.log("pathname", pathname);
-
   return (
     <Suspense>
       <div className="w-full min-h-[100vh]">
@@ -85,7 +83,12 @@ export default function ClientLayout({
                       </div>
                     )}
 
-                  <div className="w-full">{children}</div>
+                  <div className="hidden md:block w-full">{children}</div>
+                  <div className="flex items-center p-20 text-center mx-auto justify-center h-[70vh] md:hidden">
+                    <p>
+                      Please visit this page on your laptop to access Mesh Suite
+                    </p>
+                  </div>
                 </div>
               </>
             )}

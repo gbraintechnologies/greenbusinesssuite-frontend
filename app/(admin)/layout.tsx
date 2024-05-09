@@ -25,6 +25,7 @@ import UserIcon from "@/public/icons/UserIcon";
 import { AiOutlineMoneyCollect } from "react-icons/ai";
 import { RiFlag2Fill } from "react-icons/ri";
 import { FaLandMineOn } from "react-icons/fa6";
+import { PiNewspaperLight } from "react-icons/pi";
 
 // toast
 import toast from "react-hot-toast";
@@ -94,7 +95,7 @@ export default function AdminLayout({
     },
     {
       name: "Forms",
-      icon: <RxCountdownTimer size={20} />,
+      icon: <PiNewspaperLight size={22} />,
       link: "/forms",
     },
     {
@@ -105,7 +106,7 @@ export default function AdminLayout({
     {
       name: "Company setup",
       icon: <PiBuildingsBold size={20} />,
-      link: "/company-setup",
+      link: ["/company-setup", "/company-setup/create", "/company-setup/profile", "/company-setup/profile/edit"],
     },
     {
       name: "Jurisdiction setup",

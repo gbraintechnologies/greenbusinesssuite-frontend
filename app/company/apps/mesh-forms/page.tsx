@@ -6,10 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import useAdmin from "@/hooks/useAdmin";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import EmptyList from "@/app/(admin)/forms/components/EmptyList";
-import FormCard from "@/app/(admin)/forms/components/FormCard";
 import { useRouter } from "next/navigation";
 import Nav from "../components/Nav";
+import EmptyList from "@/components/Form/EmptyList";
+import FormCard from "@/components/Form/FormCard";
 
 function CompanyForms() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,7 +57,7 @@ function CompanyForms() {
         // ALL FORMS
         <>
           {forms?.data?.length === 0 ? (
-            <div className="">
+            <div className="h-full">
               <EmptyList />
             </div>
           ) : (

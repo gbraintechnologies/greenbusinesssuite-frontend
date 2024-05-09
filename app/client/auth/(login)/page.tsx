@@ -6,7 +6,7 @@ import { Field, Form, Formik } from "formik";
 
 //
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
 //
@@ -19,14 +19,23 @@ import { FiAlertCircle } from "react-icons/fi";
 import * as yup from "yup";
 import useUser from "@/hooks/useUser";
 import useAuth from "@/hooks/useAuth";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 function Page() {
   const router = useRouter();
+  const search = useSearchParams();
 
   const { addUserData } = useUser();
   const { addAuthData } = useAuth();
 
+  const redirectTo = search.get("redirect");
+  const formId = search.get("f");
+  const companyName = search.get("c");
+
+  console.log("redirect", redirectTo);
+
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const initialValues = {
     email: "",
@@ -66,7 +75,14 @@ function Page() {
 
         addUserData(user?.data);
         setLoading(false);
-        router.back();
+
+        // Generally route to dashboard
+        // if redirectTo is available, route to invitation
+        if (Boolean(redirectTo)) {
+          router.push(`/invite?f=${formId}&c=${companyName}`);
+          return;
+        }
+        router.push("/client");
       }
     } catch (error) {
       // @ts-ignore
@@ -103,7 +119,7 @@ function Page() {
                   />
                   <ShowError name="email" />
                 </div>
-                <div className=" input-holder px-5">
+                <div className=" input-holder px-5 relative">
                   <label htmlFor="email">Password</label>
                   <Field
                     style={{
@@ -111,9 +127,20 @@ function Page() {
                       backgroundColor: "rgba(248, 250, 252, 1)",
                     }}
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder=""
-                  />
+                  ></Field>
+                  <button
+                    className="absolute right-10 bottom-4"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <AiOutlineEyeInvisible size={18} />
+                    ) : (
+                      <AiOutlineEye size={18} />
+                    )}
+                  </button>
                   <ShowError name="password" />
 
                   {loginError && (
@@ -147,7 +174,15 @@ function Page() {
       </Formik>
       <button
         onClick={() => {
-          router.replace("/client/auth/signup");
+          // add search params if redirectTo exists
+          if (Boolean(redirectTo)) {
+            router.push(
+              `/client/auth/signup?redirect=${redirectTo}&f=${formId}&c=${companyName}`
+            );
+            return;
+          }
+
+          router.push("/client/auth/signup");
         }}
         className="mt-5 text-sm text-center w-96"
       >

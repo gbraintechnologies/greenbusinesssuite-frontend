@@ -55,7 +55,11 @@ function ProcessInvite() {
           </p>
 
           <button
-            onClick={() => router.push("/client/auth")}
+            onClick={() =>
+              router.push(
+                `/client/auth?redirect=invitiation&f=${formId}&c=${companyName}`
+              )
+            }
             className="bg-[#16A34A] mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
             type="submit"
           >

@@ -23,6 +23,11 @@ export const getFormsByCompanyName = (companyName: string) => {
   return () => authApi.get(`/forms/builder/company/${companyName}`);
 };
 
+export const getFormsByUserId = (userId: string) => {
+  // return () => authApi.get(`/forms/builder/user/${userId}`);
+};
+
+
 export const getFormResponseById = (id: number) => {
   return () =>
     authApi.get(`/forms/response/data/${id}`).then((res) => res.data);
@@ -38,6 +43,7 @@ export const getFormStatusCountById = (id: number) => {
       .get(`/forms/response/forms-status/count/${id}`)
       .then((res) => res.data);
 };
+
 export const updateForm = (data: any) => {
   return authApi.put(`/forms/builder/update`, data);
 };
@@ -45,6 +51,7 @@ export const updateForm = (data: any) => {
 export const updateFormField = (data: any) => {
   return authApi.put(`/forms/builder/field-update`, data);
 };
+
 export const renameForm = (id: any, name: string) => {
   return authApi.put(`/forms/builder/rename/${id}`, name);
 };
