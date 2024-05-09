@@ -43,6 +43,7 @@ export const getFormStatusCountById = (id: number) => {
       .get(`/forms/response/forms-status/count/${id}`)
       .then((res) => res.data);
 };
+
 export const updateForm = (data: any) => {
   return authApi.put(`/forms/builder/update`, data);
 };
@@ -50,6 +51,7 @@ export const updateForm = (data: any) => {
 export const updateFormField = (data: any) => {
   return authApi.put(`/forms/builder/field-update`, data);
 };
+
 export const renameForm = (id: any, name: string) => {
   return authApi.put(`/forms/builder/rename/${id}`, name);
 };
