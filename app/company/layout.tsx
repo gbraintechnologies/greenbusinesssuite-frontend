@@ -22,7 +22,8 @@ import { IoMdPaper } from "react-icons/io";
 
 // toast
 import toast from "react-hot-toast";
-import useUser from "@/hooks/useUser";
+
+// hooks
 import useAuth from "@/hooks/useAuth";
 
 export default function CompanyLayout({
@@ -33,9 +34,9 @@ export default function CompanyLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  const { admin, removeAdmin } = useAdmin();
+  const { admin } = useAdmin();
 
-  const { auth, removeAuth } = useAuth();
+  const { auth } = useAuth();
 
   const [loading, setLoading] = useState(false);
 

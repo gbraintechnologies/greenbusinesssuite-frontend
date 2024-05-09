@@ -1,17 +1,40 @@
 "use client";
+
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { Field, Form, Formik, FormikHelpers } from "formik";
-import Link from "next/link";
+
+//
 import React, { ReactNode, useState } from "react";
 import * as yup from "yup";
-import "./index.css";
-import Dropdown from "@/components/Dropdown/Dropdown";
-import GhanaFlag from "@/public/icons/GhanaFlag";
-import NigeriaFlag from "@/public/icons/NigeriaFlag";
+
+//
+import { useRouter, useSearchParams } from "next/navigation";
+
+// components
 import toast from "react-hot-toast";
+import Dropdown from "@/components/Dropdown/Dropdown";
+
+// services
 import services from "@/services";
 
+// icons
+import GhanaFlag from "@/public/icons/GhanaFlag";
+import NigeriaFlag from "@/public/icons/NigeriaFlag";
+
+// css
+import "./index.css";
+
 function Page() {
+  const router = useRouter();
+  const search = useSearchParams();
+
+  // saerch params
+
+  const redirectTo = search.get("redirect");
+  const formId = search.get("f");
+  const companyName = search.get("c");
+
+  //
   const [selectedResidence, setSelectedResidence] = useState<{
     label: string | ReactNode;
     value: string;
@@ -204,12 +227,22 @@ function Page() {
           );
         }}
       </Formik>
-      <p className="mt-5 text-sm text-center w-96">
+      <button
+        onClick={() => {
+          // add search params if redirectTo exists
+          if (Boolean(redirectTo)) {
+            router.push(
+              `/client/auth?redirect=${redirectTo}&f=${formId}&c=${companyName}`
+            );
+            return;
+          }
+          router.push("/client/auth");
+        }}
+        className="mt-5 text-sm text-center w-96"
+      >
         Already have an account?{" "}
-        <Link href={"/client/auth"} className="font-medium text-[#15803D]">
-          Sign in
-        </Link>
-      </p>
+        <span className="font-medium text-[#15803D]">Sign in</span>
+      </button>
     </div>
   );
 }

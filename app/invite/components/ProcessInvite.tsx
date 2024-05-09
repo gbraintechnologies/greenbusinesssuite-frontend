@@ -33,10 +33,12 @@ function ProcessInvite() {
 
   // SAVE FORM ID AND COMPANY NAME IN SESSION STORAGE
   useEffect(() => {
-    sessionStorage.setItem(
-      "form-to-assign",
-      JSON.stringify({ formId: formId, companyName: companyName })
-    );
+    if (Boolean(formId) && Boolean(companyName)) {
+      sessionStorage.setItem(
+        "form-to-assign",
+        JSON.stringify({ formId: formId, companyName: companyName })
+      );
+    }
   }, [formId, companyName]);
 
   // PROMPT TO LOGIN / CREATE ACCOUNT TO FILL FORM IF NOT AUTHENTICATED
@@ -55,7 +57,11 @@ function ProcessInvite() {
           </p>
 
           <button
-            onClick={() => router.push("/client/auth")}
+            onClick={() =>
+              router.push(
+                `/client/auth?redirect=invitiation&f=${formId}&c=${companyName}`
+              )
+            }
             className="bg-[#16A34A] mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
             type="submit"
           >

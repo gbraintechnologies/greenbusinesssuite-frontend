@@ -6,7 +6,7 @@ import { Field, Form, Formik } from "formik";
 
 //
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
 //
@@ -22,9 +22,16 @@ import useAuth from "@/hooks/useAuth";
 
 function Page() {
   const router = useRouter();
+  const search = useSearchParams();
 
   const { addUserData } = useUser();
   const { addAuthData } = useAuth();
+
+  const redirectTo = search.get("redirect");
+  const formId = search.get("f");
+  const companyName = search.get("c");
+
+  console.log("redirect", redirectTo);
 
   const [loading, setLoading] = useState(false);
 
@@ -66,7 +73,14 @@ function Page() {
 
         addUserData(user?.data);
         setLoading(false);
-        router.back();
+
+        // Generally route to dashboard
+        // if redirectTo is available, route to invitation
+        if (Boolean(redirectTo)) {
+          router.push(`/invite?f=${formId}&c=${companyName}`);
+          return;
+        }
+        router.push("/client");
       }
     } catch (error) {
       // @ts-ignore
@@ -147,7 +161,15 @@ function Page() {
       </Formik>
       <button
         onClick={() => {
-          router.replace("/client/auth/signup");
+          // add search params if redirectTo exists
+          if (Boolean(redirectTo)) {
+            router.push(
+              `/client/auth/signup?redirect=${redirectTo}&f=${formId}&c=${companyName}`
+            );
+            return;
+          }
+
+          router.push("/client/auth/signup");
         }}
         className="mt-5 text-sm text-center w-96"
       >
