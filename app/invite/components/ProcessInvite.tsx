@@ -33,12 +33,10 @@ function ProcessInvite() {
 
   // SAVE FORM ID AND COMPANY NAME IN SESSION STORAGE
   useEffect(() => {
-    if (Boolean(formId) && Boolean(companyName)) {
-      sessionStorage.setItem(
-        "form-to-assign",
-        JSON.stringify({ formId: formId, companyName: companyName })
-      );
-    }
+    sessionStorage.setItem(
+      "form-to-assign",
+      JSON.stringify({ formId: formId, companyName: companyName })
+    );
   }, [formId, companyName]);
 
   // PROMPT TO LOGIN / CREATE ACCOUNT TO FILL FORM IF NOT AUTHENTICATED
