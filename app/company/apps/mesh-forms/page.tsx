@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import Nav from "../components/Nav";
 import EmptyList from "@/components/Form/EmptyList";
 import FormCard from "@/components/Form/FormCard";
+import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 
 function CompanyForms() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,7 +30,7 @@ function CompanyForms() {
 
   const { data: forms, isLoading: isFormsLoading } = useQuery({
     queryKey: ["get company forms"],
-    queryFn: services.getFormsByCompanyName(companyData?.company_name),
+    queryFn: services.getFormsByCompanyName(lowerCaseNoSpace(companyData?.company_name)),
     enabled: !!companyData?.company_name,
   });
 
