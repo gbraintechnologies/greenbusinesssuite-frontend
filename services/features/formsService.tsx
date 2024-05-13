@@ -27,7 +27,6 @@ export const getFormsByUserId = (userId: string) => {
   // return () => authApi.get(`/forms/builder/user/${userId}`);
 };
 
-
 export const getFormResponseById = (id: number) => {
   return () =>
     authApi.get(`/forms/response/data/${id}`).then((res) => res.data);
@@ -100,6 +99,22 @@ export const acceptInvite = (formId: any, userId: any, companyName: any) => {
     formId: formId,
     isCompleted: false,
     inputData: {},
+    companyName: companyName,
+    userId: userId,
+  });
+};
+
+export const saveResponse = ({
+  formId,
+  userId,
+  companyName,
+  inputData,
+  isCompleted,
+}: any) => {
+  return authApi.post(`forms/response/save`, {
+    formId: formId,
+    isCompleted: isCompleted,
+    inputData: inputData,
     companyName: companyName,
     userId: userId,
   });

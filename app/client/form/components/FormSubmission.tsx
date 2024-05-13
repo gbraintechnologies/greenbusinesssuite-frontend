@@ -9,6 +9,7 @@ import formSubmitted from "@/public/icons/FormSubmitted.svg";
 //
 import toast from "react-hot-toast";
 import Image from "next/image";
+import useClientForm from "@/hooks/useClientForm";
 
 function FormSubmission() {
   //
@@ -19,6 +20,29 @@ function FormSubmission() {
 
   //
   const router = useRouter();
+
+  //
+
+  const { submitAndCompleteForm, savingResponses, setSavingResponses } =
+    useClientForm();
+
+  const finish = () => {
+    submitAndCompleteForm()
+      .then((res: any) => {
+        toast.dismiss();
+        setSavingResponses(false);
+
+        // TODO:  invalidate form queries to reload cached data
+        toast.dismiss();
+        setShowConfirmationModal(false);
+        setShowSuccessModal(true);
+      })
+      .catch((e: any) => {
+        toast.dismiss();
+        setSavingResponses(false);
+        toast.error("Error submitting form. Please try again");
+      });
+  };
   return (
     <div>
       <div className="w-full flex items-center justify-between">
@@ -61,18 +85,15 @@ function FormSubmission() {
               Cancel
             </button>
             <button
-              className="bg-primary-green py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              disabled={savingResponses}
+              className="bg-primary-green disabled:bg-gray-700 disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               onClick={() => {
                 toast.loading("Submitting form. Please wait...");
 
-                setTimeout(() => {
-                  toast.dismiss();
-                  setShowConfirmationModal(false);
-                  setShowSuccessModal(true);
-                }, 3000);
+                finish();
               }}
             >
-              Yes, submit form
+              {savingResponses ? "Please wait..." : "Yes, submit form"}
             </button>
           </div>
         </div>

@@ -4,7 +4,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
-import FormCard from "../../../(admin)/(dashboard)/components/UserFormCard";
+import FormCard from "./UserFormCard";
 
 // components
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";

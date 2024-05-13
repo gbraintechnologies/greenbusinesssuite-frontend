@@ -2,8 +2,6 @@ import React from "react";
 import FormFieldValue from "./FormFieldValue";
 
 function FormSection({ section }: any) {
-  // console.log("SECTION", section);
-
   const { id, name, formFields, description, instruction } = section;
   return (
     <div className="p-3">

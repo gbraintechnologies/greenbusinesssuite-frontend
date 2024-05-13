@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //
 import Tabs from "@/components/Tabs/Tabs";
@@ -15,7 +15,8 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import EmptyList from "./components/EmptyList";
-import FormCard from "./components/FormCard";
+import FormCard from "../../(admin)/(dashboard)/components/FormCard";
+import useClientForm from "@/hooks/useClientForm";
 
 const Page = () => {
   const [filters, setFilters] = useState([
@@ -38,6 +39,12 @@ const Page = () => {
   });
 
   const router = useRouter();
+
+  // Clear client form
+  const { removeClientForm } = useClientForm();
+  useEffect(() => {
+    removeClientForm();
+  }, []);
 
   return (
     <div className="px-5 pb-20 mt-5 h-full bg-[#F8FAFC]">

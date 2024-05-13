@@ -19,6 +19,7 @@ import { TbCurrentLocation } from "react-icons/tb";
 
 // hooks
 import useUser from "@/hooks/useUser";
+import { ClientFormProvider } from "@/contexts/ClientFormContext";
 
 export default function ClientLayout({
   children,
@@ -59,44 +60,47 @@ export default function ClientLayout({
 
   return (
     <Suspense>
-      <div className="w-full min-h-[100vh]">
-        {!pathname.includes("auth") ? (
-          <>
-            {loading ? (
-              <>
-                <div className="w-full h-screen flex items-center justify-center">
-                  <AiOutlineLoading3Quarters
-                    size={24}
-                    className="animate-spin"
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                {" "}
-                <TopNav />
-                <div className="flex flex-row">
-                  {!pathname.includes("settings") &&
-                    pathname !== "/client/form" && (
-                      <div className="hidden md:block">
-                        <SideNav navigation={navigation} />
-                      </div>
-                    )}
-
-                  <div className="hidden md:block w-full">{children}</div>
-                  <div className="flex items-center p-20 text-center mx-auto justify-center h-[70vh] md:hidden">
-                    <p>
-                      Please visit this page on your laptop to access Mesh Suite
-                    </p>
+      <ClientFormProvider>
+        <div className="w-full min-h-[100vh]">
+          {!pathname.includes("auth") ? (
+            <>
+              {loading ? (
+                <>
+                  <div className="w-full h-screen flex items-center justify-center">
+                    <AiOutlineLoading3Quarters
+                      size={24}
+                      className="animate-spin"
+                    />
                   </div>
-                </div>
-              </>
-            )}
-          </>
-        ) : (
-          <>{children}</>
-        )}
-      </div>
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <TopNav />
+                  <div className="flex flex-row">
+                    {!pathname.includes("settings") &&
+                      pathname !== "/client/form" && (
+                        <div className="hidden md:block">
+                          <SideNav navigation={navigation} />
+                        </div>
+                      )}
+
+                    <div className="hidden md:block w-full">{children}</div>
+                    <div className="flex items-center p-20 text-center mx-auto justify-center h-[70vh] md:hidden">
+                      <p>
+                        Please visit this page on your laptop to access Mesh
+                        Suite
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <>{children}</>
+          )}
+        </div>
+      </ClientFormProvider>
     </Suspense>
   );
 }

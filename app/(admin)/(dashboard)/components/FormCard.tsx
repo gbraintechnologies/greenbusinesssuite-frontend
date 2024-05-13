@@ -17,8 +17,11 @@ import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 // utils
 import FormatDate from "@/utils/FormatDate/FormatDate";
 
+// components
+import Modal from "@/components/Modal/Modal";
+import DeleteForm from "../../../client/(dashboard)/actions/DeleteForm";
 import toast from "react-hot-toast";
-
+import RenameForm from "../../../client/(dashboard)/actions/RenameForm";
 import services from "@/services";
 
 type Props = {
@@ -49,21 +52,53 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
 
   const options = [
     {
-      title: "Continue editing",
+      title: addFormResponses ? "Preview Forms" : "Open",
       func: () => {
-        router.push(`/client/form?id=${form?.id}`);
+        addFormResponses
+          ? router.push("/company/forms")
+          : router.push(`/forms/builder/${id}`);
       },
     },
     {
-      title: "View",
+      title: "Copy link",
       func: () => {
-        router.push(`/client/form?id=${form?.id}`);
+        navigator.clipboard.writeText(url ?? "").then(() => {
+          toast.success("Link copied!");
+        });
       },
     },
     {
-      title: "Download",
+      title: "Rename",
       func: () => {
-        //
+        setShowRenameModal(true);
+      },
+    },
+    {
+      title: "Duplicate",
+      func: () => {
+        toast.loading("Duplicating form");
+        services
+          .duplicateForm(id)
+          .then((res) => {
+            toast.dismiss();
+            queryClient.invalidateQueries({
+              queryKey: ["all forms"],
+            });
+            console.log("duplicated", res);
+            // Push to builder after duplicating
+            //  router.push(`/forms/builder/${res}`);
+          })
+          .catch((e) => {
+            toast.dismiss();
+            console.log("e dyupl", e);
+            toast.error("Error duplicating form");
+          });
+      },
+    },
+    {
+      title: "Delete",
+      func: () => {
+        setShowDeleteModal(true);
       },
     },
   ];
@@ -126,7 +161,16 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
             {name.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">
-            <p className="text-xs font-light pr-4">{FormatDate(updatedOn)}</p>
+            {addFormResponses ? (
+              <p className="text-xs pr-4">
+                <span className="font-bold ">{formResponsesCount}</span>{" "}
+                responses
+              </p>
+            ) : (
+              <p className="text-xs font-light pr-4">
+                Edited {FormatDate(updatedOn)}
+              </p>
+            )}
             <Menu as="div" className="relative">
               <div className="relative">
                 <Menu.Button className="relative">
@@ -171,6 +215,24 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
           </div>
         </div>
       </div>
+
+      {/* DELETE FORM MODAL */}
+      <Modal
+        isOpen={showDeleteModal}
+        setIsOpen={setShowDeleteModal}
+        title={`Are you sure you want to delete "${name} form" ? `}
+      >
+        <DeleteForm id={id} setShow={setShowDeleteModal} />
+      </Modal>
+
+      {/* Rename Modal */}
+      <Modal
+        isOpen={showRenameModal}
+        setIsOpen={setShowRenameModal}
+        title={`Rename "${name} form"`}
+      >
+        <RenameForm form={form} setShow={setShowRenameModal} />
+      </Modal>
     </>
   );
 }
