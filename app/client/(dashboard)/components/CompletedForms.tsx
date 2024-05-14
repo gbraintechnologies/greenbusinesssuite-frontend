@@ -12,12 +12,12 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 // icons
 import EmptyListIcon from "@/public/icons/EmptyListIcon";
 
-function CompletedForms() {
-  const { data: forms, isLoading: isFormsLoading } = useQuery({
-    queryKey: ["get completed forms by user"],
-    // TODO: UPDATE AFTER INTEGRATION
-    queryFn: services.getCompletedFormsByUserId("1"),
-  });
+function CompletedForms({forms, isFormsLoading}: {forms: any, isFormsLoading: boolean}) {
+  // const { data: forms, isLoading: isFormsLoading } = useQuery({
+  //   queryKey: ["get completed forms by user"],
+  //   // TODO: UPDATE AFTER INTEGRATION
+  //   queryFn: services.getCompletedFormsByUserId("1"),
+  // });
 
   console.log("forms", forms);
 

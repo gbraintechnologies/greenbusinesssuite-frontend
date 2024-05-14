@@ -12,11 +12,11 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 // icons
 import EmptyListIcon from "@/public/icons/EmptyListIcon";
 
-function UnCompletedForms() {
-  const { data: forms, isLoading: isFormsLoading } = useQuery({
-    queryKey: ["get company forms"],
-    queryFn: services.getUncompletedFormsByUserId("1"),
-  });
+function UnCompletedForms({forms, isFormsLoading}: {forms: any, isFormsLoading: boolean}) {
+  // const { data: forms, isLoading: isFormsLoading } = useQuery({
+  //   queryKey: ["get company forms"],
+  //   queryFn: services.getUncompletedFormsByUserId("1"),
+  // });
 
   return (
     <div>
