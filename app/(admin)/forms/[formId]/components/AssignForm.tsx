@@ -8,15 +8,20 @@ import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Image from "next/image";
+import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 
-function AssignForm({ setShow, form }: any) {
-  const [selected, setSelected] = useState(null);
+function AssignForm({ setShow, id: formId }: any) {
+  const [selected, setSelected] = useState<any>();
   const [query, setQuery] = useState("");
 
   const { data: companies } = useQuery({
     queryKey: ["all companies"],
     queryFn: services.getAllCompanies(),
   });
+
+  const assignFormToCompany = async () => {
+    await services.assignFormToCompany(formId, lowerCaseNoSpace(selected?.company_name.toString()));
+  }
 
   if (companies) {
     const filteredCompanies =
@@ -105,7 +110,7 @@ function AssignForm({ setShow, form }: any) {
           </button>
           <button
             className="bg-primary-green disabled:cursor-not-allowed disabled:bg-opacity-70 py-3 shadow-md flex text-white text-sm px-6 hover:opacity-95 items-center gap-2 rounded-xl"
-            onClick={() => setShow(false)}
+            onClick={assignFormToCompany}
           >
             Assign to new organization
           </button>

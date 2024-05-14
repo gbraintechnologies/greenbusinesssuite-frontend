@@ -38,28 +38,46 @@ const Page = () => {
     value: "completed",
   });
 
+  const { data: formsStats, isLoading: areStatsLoading } = useQuery({
+    queryKey: ["get forms statistics for user"],
+    queryFn: services.getFormStatisticsForUser("1"),
+  });
+
+  const { data: uncompletedForms, isLoading: areUncompletedFormsLoading } =
+    useQuery({
+      queryKey: ["get company forms"],
+      queryFn: services.getUncompletedFormsByUserId("1"),
+    });
+
+  const { data: completedForms, isLoading: areCompletedFormsLoading } =
+    useQuery({
+      queryKey: ["get completed forms by user"],
+      // TODO: UPDATE AFTER INTEGRATION
+      queryFn: services.getCompletedFormsByUserId("1"),
+    });
   const router = useRouter();
 
-  // Clear client form
-  const { removeClientForm } = useClientForm();
-  useEffect(() => {
-    removeClientForm();
-  }, []);
-
-  return (
+  return areStatsLoading ? (
+    <div className="flex justify-center items-center h-screen w-screen">
+      <LoadingIcon />
+    </div>
+  ) : (
     <div className="px-5 pb-20 mt-5 h-full bg-[#F8FAFC]">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <UncompletedCard />
-      </div>
+      </div> */}
       <div className="mt-6">
         <StatsBlock
           stats={[
             {
               label: "Number of submitted forms",
-              value: 0,
+              value: completedForms?.data?.length,
             },
-            { label: "Number of uncompleted forms", value: 0 },
+            {
+              label: "Number of uncompleted forms",
+              value: uncompletedForms?.data?.length,
+            },
           ]}
         />
       </div>
@@ -77,8 +95,18 @@ const Page = () => {
           />
         </div>
         <div className="mt-4">
-          {activeFilter.id === 1 && <CompletedForms />}
-          {activeFilter.id === 2 && <UnCompletedForms />}
+          {activeFilter.id === 1 && (
+            <CompletedForms
+              forms={completedForms}
+              isFormsLoading={areCompletedFormsLoading}
+            />
+          )}
+          {activeFilter.id === 2 && (
+            <UnCompletedForms
+              forms={uncompletedForms}
+              isFormsLoading={areUncompletedFormsLoading}
+            />
+          )}
         </div>
       </div>
     </div>
