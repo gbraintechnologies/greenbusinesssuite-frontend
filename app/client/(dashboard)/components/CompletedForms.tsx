@@ -13,12 +13,10 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import EmptyListIcon from "@/public/icons/EmptyListIcon";
 
 function CompletedForms() {
-  // TODO: UPDATE AFTER INTEGRATION
-  let formID = 37;
   const { data: forms, isLoading: isFormsLoading } = useQuery({
-    queryKey: ["form", formID],
-    queryFn: services.getFormById(formID),
-    enabled: Boolean(formID),
+    queryKey: ["get completed forms by user"],
+    // TODO: UPDATE AFTER INTEGRATION
+    queryFn: services.getCompletedFormsByUserId("1"),
   });
 
   console.log("forms", forms);
@@ -42,12 +40,11 @@ function CompletedForms() {
                 <p>No Completed Forms</p>
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-5 mt-5">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-5">
                 {forms &&
                   // forms?.data
                   // TODO: UPDATE AFTER INTEGRATION
                   [forms]
-                    ?.filter((form: any) => form.isTemplate !== true)
                     ?.map((form: any) => {
                       return <FormCard key={form.id} form={form} />;
                     })}

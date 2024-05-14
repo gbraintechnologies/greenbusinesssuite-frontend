@@ -15,7 +15,7 @@ import EmptyListIcon from "@/public/icons/EmptyListIcon";
 function UnCompletedForms() {
   const { data: forms, isLoading: isFormsLoading } = useQuery({
     queryKey: ["get company forms"],
-    queryFn: services.getFormsByCompanyName("amazon"),
+    queryFn: services.getUncompletedFormsByUserId("1"),
   });
 
   return (
@@ -40,7 +40,6 @@ function UnCompletedForms() {
               <div className="grid grid-cols-4 gap-5 mt-5">
                 {forms &&
                   forms?.data
-                    ?.filter((form: any) => form.isTemplate !== true)
                     ?.map((form: any) => {
                       return <FormCard key={form.id} form={form} />;
                     })}

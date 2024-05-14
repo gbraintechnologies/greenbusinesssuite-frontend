@@ -14,8 +14,6 @@ import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import EmptyList from "./components/EmptyList";
-import FormCard from "./components/FormCard";
 
 const Page = () => {
   const [filters, setFilters] = useState([
@@ -37,9 +35,17 @@ const Page = () => {
     value: "completed",
   });
 
+  const { data: formsStats, isLoading: areStatsLoading } = useQuery({
+    queryKey: ["get forms statistics for user"],
+    queryFn: services.getFormStatisticsForUser("1"),
+  });
   const router = useRouter();
 
-  return (
+  return areStatsLoading ? (
+    <div className="flex justify-center items-center h-screen w-screen">
+      <LoadingIcon />
+    </div>
+  ) : (
     <div className="px-5 pb-20 mt-5 h-full bg-[#F8FAFC]">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
       <div className="mt-4">
@@ -50,9 +56,12 @@ const Page = () => {
           stats={[
             {
               label: "Number of submitted forms",
-              value: 0,
+              value: formsStats?.data.completedForms,
             },
-            { label: "Number of uncompleted forms", value: 0 },
+            {
+              label: "Number of uncompleted forms",
+              value: formsStats?.data.uncompletedForms,
+            },
           ]}
         />
       </div>
