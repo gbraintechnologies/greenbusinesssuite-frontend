@@ -9,15 +9,10 @@ import { Fragment, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 
-//
-import { useQueryClient } from "@tanstack/react-query";
-
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 
 // utils
 import FormatDate from "@/utils/FormatDate/FormatDate";
-
-import toast from "react-hot-toast";
 
 import services from "@/services";
 
@@ -27,23 +22,9 @@ type Props = {
   onClick?: () => void;
 };
 function FormCard({ form, onClick, addFormResponses = false }: Props) {
-  let {
-    id,
-    name,
-    updatedOn,
-    url,
-    publishStatus,
-    description,
-    deadline,
-    createdOn,
-  } = form;
+  let { id, name, updatedOn } = form;
 
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  // modal controls for delete and rename
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showRenameModal, setShowRenameModal] = useState(false);
 
   const [formResponsesCount, setFormResponsesCount] = useState(0);
 
@@ -123,7 +104,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
             }}
             className="text-lg w-full text-left font-medium"
           >
-            {name.replace(/"/g, " ")}
+            {name?.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs font-light pr-4">{FormatDate(updatedOn)}</p>

@@ -12,15 +12,13 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 // icons
 import EmptyListIcon from "@/public/icons/EmptyListIcon";
 
-function CompletedForms({forms, isFormsLoading}: {forms: any, isFormsLoading: boolean}) {
-  // const { data: forms, isLoading: isFormsLoading } = useQuery({
-  //   queryKey: ["get completed forms by user"],
-  //   // TODO: UPDATE AFTER INTEGRATION
-  //   queryFn: services.getCompletedFormsByUserId("1"),
-  // });
-
-  console.log("forms", forms);
-
+function CompletedForms({
+  forms,
+  isFormsLoading,
+}: {
+  forms: any;
+  isFormsLoading: boolean;
+}) {
   return (
     <div>
       <div className="mt-4">
@@ -41,13 +39,9 @@ function CompletedForms({forms, isFormsLoading}: {forms: any, isFormsLoading: bo
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-5">
-                {forms &&
-                  // forms?.data
-                  // TODO: UPDATE AFTER INTEGRATION
-                  [forms]
-                    ?.map((form: any) => {
-                      return <FormCard key={form.id} form={form} />;
-                    })}
+                {forms.map((form: any) => {
+                  return <FormCard key={form.id} form={form} />;
+                })}
               </div>
             )}
           </>

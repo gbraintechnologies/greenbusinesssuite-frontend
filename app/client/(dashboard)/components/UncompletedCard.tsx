@@ -1,7 +1,14 @@
-import ErrorIcon from "@/public/icons/ErrorIcon";
+"use client";
+
+//
+import { useRouter } from "next/navigation";
 import React from "react";
 
-const UncompletedCard = () => {
+// icons
+import ErrorIcon from "@/public/icons/ErrorIcon";
+
+const UncompletedCard = ({ form }: any) => {
+  const router = useRouter();
   return (
     <div className="flex justify-between items-center p-5 shadow-sm rounded-md bg-white">
       <div className="flex  gap-4 items-center">
@@ -10,16 +17,20 @@ const UncompletedCard = () => {
         </div>
         <div className="flex flex-col gap-1">
           <p className="text-[#0E121B] text-sm md:text-lg font-semibold">
-            You have one uncompleted form
+            {form?.name}
           </p>
           <p className="text-[#525866] text-xs md:text-sm ">
-            Insert your status modal description here. It would look better as
-            two lines of text.
+            You have an uncompleted form
           </p>
         </div>
       </div>
-      <button className="bg-primary-green flex text-white text-xs md:text-sm px-4 py-2 hover:opacity-95 items-center gap-2 rounded-lg">
-        Continue application
+      <button
+        onClick={() => {
+          router.push(`/client/form?id=${form?.id}&company=Amazon`);
+        }}
+        className="bg-primary-green flex text-white text-xs md:text-sm px-4 py-2 hover:opacity-95 items-center gap-2 rounded-lg"
+      >
+        Continue filling form
       </button>
     </div>
   );

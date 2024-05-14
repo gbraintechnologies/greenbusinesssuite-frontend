@@ -1,9 +1,5 @@
 import React from "react";
 
-// service
-import { useQuery } from "@tanstack/react-query";
-import services from "@/services";
-
 import FormCard from "./UserFormCard";
 
 // components
@@ -12,12 +8,13 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 // icons
 import EmptyListIcon from "@/public/icons/EmptyListIcon";
 
-function UnCompletedForms({forms, isFormsLoading}: {forms: any, isFormsLoading: boolean}) {
-  // const { data: forms, isLoading: isFormsLoading } = useQuery({
-  //   queryKey: ["get company forms"],
-  //   queryFn: services.getUncompletedFormsByUserId("1"),
-  // });
-
+function UnCompletedForms({
+  forms,
+  isFormsLoading,
+}: {
+  forms: any;
+  isFormsLoading: boolean;
+}) {
   return (
     <div>
       <div className="mt-4">
@@ -38,11 +35,9 @@ function UnCompletedForms({forms, isFormsLoading}: {forms: any, isFormsLoading: 
               </div>
             ) : (
               <div className="grid grid-cols-4 gap-5 mt-5">
-                {forms &&
-                  forms?.data
-                    ?.map((form: any) => {
-                      return <FormCard key={form.id} form={form} />;
-                    })}
+                {forms?.map((form: any) => {
+                  return <FormCard key={form.id} form={form} />;
+                })}
               </div>
             )}
           </>

@@ -11,9 +11,12 @@ export const allFormTemplates = () => {
     authApi.get("/forms/builder/list-templates").then((res) => res.data);
 };
 
-export const assignFormToCompany = (formId: number | string, companyName: string) => {
+export const assignFormToCompany = (
+  formId: number | string,
+  companyName: string
+) => {
   return authApi.put(`/forms/builder/company/${formId}/${companyName}`);
-}
+};
 export const getFormById = (id: any) => {
   return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
@@ -27,15 +30,24 @@ export const getFormsByCompanyName = (companyName: string) => {
 };
 
 export const getFormStatisticsForUser = (userId: string) => {
-  return () => authApi.get(`/forms/builder/user/form-statistics/${userId}`);
-}
+  return () =>
+    authApi
+      .get(`/forms/builder/user/form-statistics/${userId}`)
+      .then((res) => res.data);
+};
 
 export const getCompletedFormsByUserId = (userId: string) => {
-  return () => authApi.get(`/forms/builder/user/completed-forms/${userId}`);
+  return () =>
+    authApi
+      .get(`/forms/builder/user/completed-forms/${userId}`)
+      .then((res) => res.data);
 };
 
 export const getUncompletedFormsByUserId = (userId: string) => {
-  return () => authApi.get(`/forms/builder/user/uncompleted-forms/${userId}`);
+  return () =>
+    authApi
+      .get(`/forms/builder/user/uncompleted-forms/${userId}`)
+      .then((res) => res.data);
 };
 
 export const getFormResponseById = (id: number) => {
