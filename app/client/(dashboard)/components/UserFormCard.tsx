@@ -15,26 +15,27 @@ import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 import FormatDate from "@/utils/FormatDate/FormatDate";
 
 import services from "@/services";
+import toast from "react-hot-toast";
 
 type Props = {
   form: any;
   addFormResponses?: boolean;
   onClick?: () => void;
+  type: string;
 };
-function FormCard({ form, onClick, addFormResponses = false }: Props) {
+function FormCard({
+  form,
+  onClick,
+  type = "uncompleted",
+  addFormResponses = false,
+}: Props) {
   let { id, name, updatedOn } = form;
 
   const router = useRouter();
 
   const [formResponsesCount, setFormResponsesCount] = useState(0);
 
-  const options = [
-    {
-      title: "Continue editing",
-      func: () => {
-        router.push(`/client/form?id=${form?.id}&company=Amazon`);
-      },
-    },
+  const completedOptions = [
     {
       title: "View",
       func: () => {
@@ -45,6 +46,17 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
       title: "Download",
       func: () => {
         //
+
+        toast.success("File would be downloaded");
+      },
+    },
+  ];
+
+  const uncompletedOptions = [
+    {
+      title: "Continue editing",
+      func: () => {
+        router.push(`/client/form?id=${form?.id}&company=Amazon`);
       },
     },
   ];
@@ -74,6 +86,20 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
   useEffect(() => {
     if (addFormResponses) {
       getFormResponses();
+    }
+  }, []);
+
+  //
+
+  const [options, setOptions] = useState(null);
+
+  useEffect(() => {
+    if (type === "completed") {
+      // @ts-ignore
+      setOptions(completedOptions);
+    } else {
+      // @ts-ignore
+      setOptions(uncompletedOptions);
     }
   }, []);
   return (
@@ -124,28 +150,30 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
-                  {options.map((option: any, idx: any) => {
-                    return (
-                      <Menu.Item>
-                        <div>
-                          <button
-                            className={`${
-                              option.title.toLowerCase() === "delete"
-                                ? "text-red-600"
-                                : " text-gray-500"
-                            } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
-                            onClick={() => option.func()}
-                          >
-                            {option.title}
-                          </button>
+                  {options &&
+                    // @ts-ignore
+                    options?.map((option: any, idx: any) => {
+                      return (
+                        <Menu.Item>
+                          <div>
+                            <button
+                              className={`${
+                                option.title.toLowerCase() === "delete"
+                                  ? "text-red-600"
+                                  : " text-gray-500"
+                              } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
+                              onClick={() => option.func()}
+                            >
+                              {option.title}
+                            </button>
 
-                          {idx % 2 === 0 && (
-                            <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
-                          )}
-                        </div>
-                      </Menu.Item>
-                    );
-                  })}
+                            {idx % 2 === 0 && (
+                              <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
+                            )}
+                          </div>
+                        </Menu.Item>
+                      );
+                    })}
                 </Menu.Items>
               </Transition>
             </Menu>

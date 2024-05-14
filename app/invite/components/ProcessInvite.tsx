@@ -98,11 +98,12 @@ function ProcessInvite() {
         return;
       }
 
+      // input data should contain all the form sections for reconstruction
+      let inputData = { ...data };
       // ASSIGN TO USER UPON LOGIN THEN CLEAR SESSION STORAGE
       services
-        .acceptInvite(formId, user?.id, companyName)
+        .acceptInvite(formId, user?.id, companyName, inputData)
         .then((res) => {
-          console.log("res", res);
           setLoading(false);
           setMessage(
             "Successfully accepted invitation. Please proceed to your dashboard to fill the form"

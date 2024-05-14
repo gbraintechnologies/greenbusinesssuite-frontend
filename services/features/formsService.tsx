@@ -117,14 +117,26 @@ export const accessPublicPublishedForm = (id: any) => {
       .then((res) => res.data);
 };
 
-export const acceptInvite = (formId: any, userId: any, companyName: any) => {
+export const acceptInvite = (
+  formId: any,
+  userId: any,
+  companyName: any,
+  inputData: any
+) => {
   return authApi.post(`forms/response/save`, {
     formId: formId,
     isCompleted: false,
-    inputData: {},
+    inputData: { data: inputData },
     companyName: companyName,
     userId: userId,
   });
+};
+
+export const retrieveFormUserResponses = (userId: number, formId: any) => {
+  return () =>
+    authApi
+      .get(`forms/response/data/user-form/${userId}/${formId}`)
+      .then((res) => res.data);
 };
 
 export const saveResponse = ({

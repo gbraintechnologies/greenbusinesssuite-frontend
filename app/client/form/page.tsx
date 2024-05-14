@@ -16,35 +16,61 @@ import FormSection from "./formElements/FormSection";
 import toast from "react-hot-toast";
 import FormSubmission from "./components/FormSubmission";
 import useClientForm from "@/hooks/useClientForm";
+import useUser from "@/hooks/useUser";
 
 function FillFormHere() {
+  const { user } = useUser();
   const search = useSearchParams();
   const router = useRouter();
 
-  let formID = search.get("id");
+  // TODO: RESTORE AFTER BACKEND FIXES
+  // let formId = search.get("id");
+
+  let formId = 38;
   let companyName = search.get("company");
 
-  const { data: form, isLoading } = useQuery({
-    queryKey: ["form", 43],
-    queryFn: services.getFormById(43),
-    enabled: Boolean(formID),
+  // TODO: REFACTOR WHEN BACKEND FIXES IT get form response using userId and FormId
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["form", user?.id, formId],
+    queryFn: services.retrieveFormUserResponses(user?.id, formId),
+    enabled: Boolean(formId && user?.id),
   });
 
-  // store form in LS
-  const { selectClientForm, saveResponsesRemote, savingResponses } =
-    useClientForm();
+  let [form, setForm] = useState({});
 
   useEffect(() => {
-    if (Boolean(form)) {
+    if (Boolean(data)) {
+      setForm(data[3]?.inputData?.data);
+
+      //
       selectClientForm({
-        formSections: form?.formSections.filter((item: any) => !item.isDeleted),
-        id: form?.id,
-        layout: form?.layout,
+        formSections: data[3]?.inputData?.data?.formSections.filter(
+          (item: any) => !item.isDeleted
+        ),
+        id: data[3]?.id,
+        layout: data[3]?.layout,
         companyName: companyName,
         isCompleted: false,
       });
     }
-  }, [form]);
+  }, [data]);
+
+  // store form in LS
+  const { selectClientForm, saveResponsesRemote, savingResponses } =
+    useClientForm();
+  // TODO: RESTORE AFTER BACKEND FIX
+  // useEffect(() => {
+  //   if (Boolean(data)) {
+  //     selectClientForm({
+  //       formSections: form?.formSections.filter((item: any) => !item.isDeleted),
+  //       id: form?.id,
+  //       layout: form?.layout,
+  //       companyName: companyName,
+  //       isCompleted: false,
+  //     });
+  //   }
+  // }, [form]);
 
   const [activeSection, setActiveSection] = useState(null);
 
@@ -107,6 +133,7 @@ function FillFormHere() {
           </button>
           {/* FORM SECTIONS FOR FILLING */}
           <div className="mx-auto w-[60%] mt-10 ">
+            {/* @ts-ignore */}
             {form?.formSections
               ?.filter((item: any) => !item.isDeleted)
               .map((section: any) => {

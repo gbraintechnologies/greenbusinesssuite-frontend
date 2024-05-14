@@ -1,9 +1,5 @@
 import React from "react";
 
-// service
-import { useQuery } from "@tanstack/react-query";
-import services from "@/services";
-
 import FormCard from "./UserFormCard";
 
 // components
@@ -40,7 +36,9 @@ function CompletedForms({
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-5">
                 {forms.map((form: any) => {
-                  return <FormCard key={form.id} form={form} />;
+                  return (
+                    <FormCard type="completed" key={form.id} form={form} />
+                  );
                 })}
               </div>
             )}

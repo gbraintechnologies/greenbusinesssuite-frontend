@@ -106,12 +106,17 @@ export default function AdminLayout({
     {
       name: "Company setup",
       icon: <PiBuildingsBold size={20} />,
-      link: ["/company-setup", "/company-setup/create", "/company-setup/profile", "/company-setup/profile/edit"],
+      link: [
+        "/company-setup",
+        "/company-setup/create",
+        "/company-setup/profile",
+        "/company-setup/profile/edit",
+      ],
     },
     {
       name: "Jurisdiction setup",
       icon: <BiTargetLock size={20} />,
-      link: "/jurisdiction-setup",
+      link: "/country-setup",
       subNavigation: [
         {
           name: "Country setup",
