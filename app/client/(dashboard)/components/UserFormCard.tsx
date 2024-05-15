@@ -21,7 +21,7 @@ type Props = {
   form: any;
   addFormResponses?: boolean;
   onClick?: () => void;
-  type: string;
+  type?: string;
 };
 function FormCard({
   form,

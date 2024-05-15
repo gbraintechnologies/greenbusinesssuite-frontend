@@ -9,18 +9,23 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Image from "next/image";
 import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
+import toast from "react-hot-toast";
 
-function AssignForm({ setShow, id: formId }: any) {
+function AssignForm({ setShow, id: formId, companies }: any) {
   const [selected, setSelected] = useState<any>();
   const [query, setQuery] = useState("");
 
-  const { data: companies } = useQuery({
-    queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(),
-  });
+
 
   const assignFormToCompany = async () => {
-    await services.assignFormToCompany(formId, lowerCaseNoSpace(selected?.company_name.toString()));
+    try {
+      await services.assignFormToCompany(formId, lowerCaseNoSpace(selected?.company_name.toString()));
+      toast.success("Company assigned successfully")
+      setShow(false)
+    }
+    catch(error){
+      toast.error("An error occurred. Try again later")
+    }
   }
 
   if (companies) {

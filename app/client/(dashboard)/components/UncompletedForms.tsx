@@ -36,7 +36,7 @@ function UnCompletedForms({
             ) : (
               <div className="grid grid-cols-4 gap-5 mt-5">
                 {forms?.map((form: any) => {
-                  return <FormCard key={form.id} form={form} />;
+                  return <FormCard key={form.id} form={form} type="uncompleted" />;
                 })}
               </div>
             )}
