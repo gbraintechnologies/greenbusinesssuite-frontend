@@ -16,7 +16,6 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
 // COMPONENTS
-import UnpublishForm from "./components/UnpublishForm";
 import AssignForm from "./components/AssignForm";
 import { useRouter } from "next/navigation";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
@@ -36,8 +35,8 @@ function FormDetail({ params }: any) {
 
   let formID = params.formId;
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["form", formID],
+  const { data: form, isLoading } = useQuery({
+    queryKey: ["form", parseInt(formID)],
     queryFn: services.getFormById(formID),
     enabled: Boolean(formID),
   });
@@ -58,34 +57,33 @@ function FormDetail({ params }: any) {
     );
   }
 
-  if (data) {
-    const {
-      name,
-      publishStatus,
-      deadline,
-      createdOn,
-      description,
-      id,
-      url,
-      companyName,
-    } = data;
+  // use props in data directly to avoid lags in changes in react query cache
+  if (form) {
     return (
       <div>
         {/* HEADER */}
         <div className="flex items-center justify-between px-5">
           <div>
             <h3 className="text-xl font-semibold">
-              <span className="font-light text-gray-500">Forms /</span> {name}{" "}
+              <span className="font-light text-gray-500">Forms /</span>{" "}
+              {form?.name}{" "}
             </h3>
           </div>
 
           <div className="flex gap-2 items-center">
-            {Boolean(url) && (
+            {Boolean(form?.url) && (
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText(url).then(() => {
-                    toast.success("Form link copied!");
-                  });
+                  console.log("form publish stats", form?.publishStatus);
+                  if (form?.publishStatus.toLowerCase() === "published") {
+                    navigator.clipboard.writeText(form?.url).then(() => {
+                      toast.dismiss();
+                      toast.success("Form link copied!");
+                    });
+                    return;
+                  }
+                  toast.dismiss();
+                  toast.error("Publish form first to access a shareable link");
                 }}
                 className="btn-outline"
               >
@@ -93,7 +91,7 @@ function FormDetail({ params }: any) {
               </button>
             )}
 
-            {!Boolean(companyName) && (
+            {!Boolean(form?.companyName) && (
               <button
                 onClick={() => setShowAssignModal(true)}
                 className="btn-outline"
@@ -132,7 +130,7 @@ function FormDetail({ params }: any) {
               showUnpublishModal={showUnpublishModal}
               setShowUnpublishModal={setShowUnpublishModal}
               companies={companies}
-              formID={id}
+              formID={form?.id}
             />
           </div>
         </div>
@@ -165,7 +163,7 @@ function FormDetail({ params }: any) {
 
         {/* RENDER VIEWS */}
         {view === "company" && (
-          <Company companies={companies} companyName={companyName} />
+          <Company companies={companies} companyName={form?.companyName} />
         )}
         {view === "connect" && (
           <div className="px-5 mt-5">

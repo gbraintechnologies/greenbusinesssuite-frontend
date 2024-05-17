@@ -25,8 +25,8 @@ function PublishFormButton({
 
   const { selectForm } = useForm();
 
-  const { data: form, refetch } = useQuery({
-    queryKey: ["form", formID],
+  const { data: form } = useQuery({
+    queryKey: ["form", parseInt(formID)],
     queryFn: services.getFormById(formID),
     enabled: Boolean(formID),
   });
