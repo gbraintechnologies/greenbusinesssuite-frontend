@@ -10,6 +10,7 @@ import formSubmitted from "@/public/icons/FormSubmitted.svg";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import useClientForm from "@/hooks/useClientForm";
+import useUser from "@/hooks/useUser";
 
 function FormSubmission() {
   //
@@ -21,13 +22,16 @@ function FormSubmission() {
   //
   const router = useRouter();
 
+  const { user } = useUser();
+
   //
 
   const { submitAndCompleteForm, savingResponses, setSavingResponses } =
     useClientForm();
 
   const finish = () => {
-    submitAndCompleteForm()
+    // TODO: CHECK THAT EVERY FIELD HAS A RESPONSE FOR REQUIRED FIELDS BEFORE ALLOWING USER TO FINISH
+    submitAndCompleteForm(user?.id)
       .then((res: any) => {
         toast.dismiss();
         setSavingResponses(false);

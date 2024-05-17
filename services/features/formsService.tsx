@@ -148,8 +148,10 @@ export const saveResponse = ({
   companyName,
   inputData,
   isCompleted,
+  responseId,
 }: any) => {
   return authApi.put(`forms/response/update`, {
+    id: responseId,
     formId: formId,
     isCompleted: isCompleted,
     inputData: inputData,

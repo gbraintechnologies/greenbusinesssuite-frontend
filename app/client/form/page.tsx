@@ -17,60 +17,75 @@ import toast from "react-hot-toast";
 import FormSubmission from "./components/FormSubmission";
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
+import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 
 function FillFormHere() {
   const { user } = useUser();
+
+  //
   const search = useSearchParams();
   const router = useRouter();
 
-  // TODO: RESTORE AFTER BACKEND FIXES
-  // let formId = search.get("id");
+  let formId = search.get("id");
 
-  let formId = 38;
   let companyName = search.get("company");
 
-  // TODO: REFACTOR WHEN BACKEND FIXES IT get form response using userId and FormId
+  const [fullCompanyName, setFullCompanyName] = useState("");
 
-  const { data, isLoading } = useQuery({
+  const { data: formData, isLoading } = useQuery({
     queryKey: ["form", user?.id, formId],
     queryFn: services.retrieveFormUserResponses(user?.id, formId),
     enabled: Boolean(formId && user?.id),
   });
 
-  let [form, setForm] = useState({});
+  const { data: companies } = useQuery({
+    queryKey: ["all companies"],
+    queryFn: services.getAllCompanies(),
+  });
 
-  useEffect(() => {
-    if (Boolean(data)) {
-      setForm(data[3]?.inputData?.data);
-
-      //
-      selectClientForm({
-        formSections: data[3]?.inputData?.data?.formSections.filter(
-          (item: any) => !item.isDeleted
-        ),
-        id: data[3]?.id,
-        layout: data[3]?.layout,
-        companyName: companyName,
-        isCompleted: false,
-      });
-    }
-  }, [data]);
+  //
+  const [form, setForm] = useState(null);
 
   // store form in LS
   const { selectClientForm, saveResponsesRemote, savingResponses } =
     useClientForm();
-  // TODO: RESTORE AFTER BACKEND FIX
-  // useEffect(() => {
-  //   if (Boolean(data)) {
-  //     selectClientForm({
-  //       formSections: form?.formSections.filter((item: any) => !item.isDeleted),
-  //       id: form?.id,
-  //       layout: form?.layout,
-  //       companyName: companyName,
-  //       isCompleted: false,
-  //     });
-  //   }
-  // }, [form]);
+
+  useEffect(() => {
+    if (companies) {
+      setFullCompanyName(
+        companies?.find(
+          (company: any) =>
+            lowerCaseNoSpace(company?.company_name) == companyName
+        )?.company_name
+      );
+    }
+  }, [companies]);
+
+  useEffect(() => {
+    if (Boolean(formData) && fullCompanyName) {
+      // FORM IS AN ARRAY WITH THE FIRST ELEMENT
+      // INPUT DATA -> DATA HOLDS ACTUAL FORM DETAILS
+      let form = formData[0]?.inputData?.data;
+
+      console.log("form", formData);
+      setForm({
+        responseId: formData[0]?.id,
+        ...formData[0]?.inputData?.data,
+        companyName: fullCompanyName,
+      });
+
+      selectClientForm({
+        responseId: formData[0]?.id,
+        formSections: form?.formSections?.filter(
+          (item: any) => !item.isDeleted
+        ),
+        id: form?.id,
+        layout: form?.layout,
+        companyName: fullCompanyName,
+        isCompleted: false,
+      });
+    }
+  }, [formData, fullCompanyName]);
 
   const [activeSection, setActiveSection] = useState(null);
 
@@ -126,7 +141,7 @@ function FillFormHere() {
             onClick={() => {
               toast.loading("Saving, please wait...");
 
-              saveResponsesRemote();
+              saveResponsesRemote(user?.id);
             }}
           >
             Save and continue later

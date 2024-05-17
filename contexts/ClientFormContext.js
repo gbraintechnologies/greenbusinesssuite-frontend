@@ -25,24 +25,29 @@ export const ClientFormProvider = ({ children }) => {
 
   const router = useRouter();
 
-  const saveResponsesRemote = () => {
+  const saveResponsesRemote = (userId) => {
     setSavingResponses(true);
+
     services
       .saveResponse({
         formId: clientForm?.id,
+        responseId: clientForm?.responseId,
         isCompleted: false,
-        inputData: { data: clientForm?.formSections },
+        inputData: {
+          data: {
+            formSections: clientForm?.formSections,
+            layout: clientForm?.layout,
+          },
+        },
         companyName: clientForm?.companyName,
-        // TODO: REPLACE USER ID
-        userId: 36,
+        userId: userId,
       })
       .then((res) => {
         toast.dismiss();
         setSavingResponses(false);
 
-        // TODO:  invalidate form queries to reload cached data
         toast.dismiss();
-        toast.success("Saved reponses!");
+        toast.success("Saved responses!");
         router.push("/client");
       })
       .catch((e) => {
@@ -52,15 +57,20 @@ export const ClientFormProvider = ({ children }) => {
       });
   };
 
-  const submitAndCompleteForm = () => {
+  const submitAndCompleteForm = (userId) => {
     setSavingResponses(true);
     return services.saveResponse({
       formId: clientForm?.id,
-      isCompleted: true,
-      inputData: { data: clientForm?.formSections },
+      responseId: clientForm?.responseId,
+      isCompleted: false,
+      inputData: {
+        data: {
+          formSections: clientForm?.formSections,
+          layout: clientForm?.layout,
+        },
+      },
       companyName: clientForm?.companyName,
-      // TODO: REPLACE USER ID
-      userId: 36,
+      userId: userId,
     });
   };
 

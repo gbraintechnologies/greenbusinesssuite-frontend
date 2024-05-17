@@ -74,7 +74,6 @@ function FormDetail({ params }: any) {
             {Boolean(form?.url) && (
               <button
                 onClick={() => {
-                  console.log("form publish stats", form?.publishStatus);
                   if (form?.publishStatus.toLowerCase() === "published") {
                     navigator.clipboard.writeText(form?.url).then(() => {
                       toast.dismiss();

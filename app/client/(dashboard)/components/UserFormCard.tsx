@@ -63,7 +63,7 @@ function FormCard({
     {
       title: "Continue editing",
       func: () => {
-        router.push(`/client/form?id=${form?.id}&company=Amazon`);
+        router.push(`/client/form?id=${form?.id}&company=${form.companyName}`);
       },
     },
   ];
@@ -111,24 +111,24 @@ function FormCard({
   }, []);
 
   // TODO: HARD DELETE
-  // const hardDelete = (id: any) => {
-  //   toast.loading("Deleting");
-  //   let formId = id;
-  //   let userId = user?.id;
-  //   services
-  //     .hardDeleteUserForm(userId, formId)
-  //     .then((res) => {
-  //       toast.dismiss();
-  //       console.log("res", res.data);
-  //       toast.success(res.data);
-  //       queryClient.invalidateQueries();
-  //     })
-  //     .catch((e) => {
-  //       toast.dismiss();
-  //       // toast.error(e?.response?.data);
-  //       console.log("delete error", e?.response?.data);
-  //     });
-  // };
+  const hardDelete = (id: any) => {
+    toast.loading("Deleting");
+    let formId = id;
+    let userId = user?.id;
+    services
+      .hardDeleteUserForm(userId, formId)
+      .then((res) => {
+        toast.dismiss();
+        console.log("res", res.data);
+        toast.success(res.data);
+        queryClient.invalidateQueries();
+      })
+      .catch((e) => {
+        toast.dismiss();
+        // toast.error(e?.response?.data);
+        console.log("delete error", e?.response?.data);
+      });
+  };
 
   return (
     <>
@@ -165,7 +165,7 @@ function FormCard({
             className="text-lg w-full text-left font-medium"
           >
             {/* @ts-ignore */}
-            {name?.replace(/"/g, " ")}
+            {form?.name?.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs font-light pr-4">{FormatDate(updatedOn)}</p>
