@@ -20,8 +20,11 @@ function AssignForm({ setShow, id: formId }: any) {
   });
 
   const assignFormToCompany = async () => {
-    await services.assignFormToCompany(formId, lowerCaseNoSpace(selected?.company_name.toString()));
-  }
+    await services.assignFormToCompany(
+      formId,
+      lowerCaseNoSpace(selected?.company_name.toString())
+    );
+  };
 
   if (companies) {
     const filteredCompanies =

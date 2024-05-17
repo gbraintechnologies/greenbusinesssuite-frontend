@@ -205,6 +205,8 @@ function Forms() {
     queryFn: services.allForms(),
   });
 
+  console.log("forms", forms);
+
   // unselecting any previous form
   useEffect(() => {
     selectForm({});
