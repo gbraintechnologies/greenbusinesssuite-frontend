@@ -68,14 +68,14 @@ function LogIn() {
         const user = await fetchCurrentUser(token.data?.access_token);
         addAdminData(user?.data);
         if (
-          user?.data.user_status === "NEWLY_CREATED" ||
-          user?.data.user_status === "TEMP_CREDENTIALS"
+          user?.data?.user_status === "NEWLY_CREATED" ||
+          user?.data?.user_status === "TEMP_CREDENTIALS"
         ) {
           toast("Create your password");
           router.push(`/create-password?temp=${data.password}`);
 
           // route to admin / company dashboard
-        } else if (user?.data.profiles[0].role_id === 1) {
+        } else if (user?.data?.profiles[0]?.role_id === 1) {
           toast.success("Logged in");
           router.push("/");
         } else {
