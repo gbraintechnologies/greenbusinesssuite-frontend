@@ -40,6 +40,11 @@ function FormDetail({ params }: any) {
     enabled: Boolean(formID),
   });
 
+  const { data: companies } = useQuery({
+    queryKey: ["all companies"],
+    queryFn: services.getAllCompanies(),
+  });
+
   if (isLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
@@ -52,7 +57,7 @@ function FormDetail({ params }: any) {
   }
 
   if (data) {
-    const { name, publishStatus, deadline, createdOn, description, id, url } =
+    const { name, publishStatus, deadline, createdOn, description, id, url, companyNames } =
       data;
     return (
       <div>
@@ -68,9 +73,10 @@ function FormDetail({ params }: any) {
             <button
               onClick={() => setShowAssignModal(true)}
               className="btn-outline"
+              disabled={companyNames?.length > 1}
             >
               <VscLink />
-              Assign form
+              {companyNames?.length > 1 ? "Assigned" : "Assign form"}
             </button>
             <button
               onClick={() => {
@@ -127,7 +133,7 @@ function FormDetail({ params }: any) {
         </div>
 
         {/* RENDER VIEWS */}
-        {view === "company" && <Company />}
+        {view === "company" && <Company companies={companies} companyNames={companyNames}/>}
         {view === "connect" && (
           <div className="px-5 mt-5">
             <ConnectForm style="raw" />
@@ -149,7 +155,7 @@ function FormDetail({ params }: any) {
           setIsOpen={setShowAssignModal}
           title={`Assign company to form `}
         >
-          <AssignForm id={formID} setShow={setShowAssignModal} />
+          <AssignForm id={formID} setShow={setShowAssignModal} companies={companies}/>
         </Modal>
       </div>
     );
