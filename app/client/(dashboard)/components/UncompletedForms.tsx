@@ -28,15 +28,17 @@ function UnCompletedForms({
         ) : (
           // ALL FORMS
           <>
-            {forms?.data?.length === 0 ? (
-              <div className="flex flex-col gap-5 items-center justify-center">
+            {forms?.length === 0 ? (
+              <div className="flex h-[40vh]  flex-col gap-5 items-center justify-center">
                 <EmptyListIcon />
                 <p>No Uncompleted Forms</p>
               </div>
             ) : (
               <div className="grid grid-cols-4 gap-5 mt-5">
                 {forms?.map((form: any) => {
-                  return <FormCard key={form.id} form={form} />;
+                  return (
+                    <FormCard type="uncompleted" key={form.id} form={form} />
+                  );
                 })}
               </div>
             )}

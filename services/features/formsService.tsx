@@ -17,6 +17,7 @@ export const assignFormToCompany = (
 ) => {
   return authApi.put(`/forms/builder/company/${formId}/${companyName}`);
 };
+
 export const getFormById = (id: any) => {
   return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };

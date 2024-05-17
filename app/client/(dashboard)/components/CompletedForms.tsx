@@ -28,8 +28,8 @@ function CompletedForms({
         ) : (
           // ALL FORMS
           <>
-            {forms?.data?.length === 0 ? (
-              <div className="flex flex-col gap-5 items-center justify-center">
+            {forms?.length === 0 ? (
+              <div className="flex h-[40vh] flex-col gap-5 items-center justify-center">
                 <EmptyListIcon />
                 <p>No Completed Forms</p>
               </div>

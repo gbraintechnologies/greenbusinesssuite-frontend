@@ -16,12 +16,14 @@ import FormatDate from "@/utils/FormatDate/FormatDate";
 
 import services from "@/services";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import useUser from "@/hooks/useUser";
 
 type Props = {
   form: any;
   addFormResponses?: boolean;
   onClick?: () => void;
-  type: string;
+  type: "completed" | "uncompleted";
 };
 function FormCard({
   form,
@@ -29,7 +31,12 @@ function FormCard({
   type = "uncompleted",
   addFormResponses = false,
 }: Props) {
-  let { id, name, updatedOn } = form;
+  //
+  let { id, updatedOn } = form;
+
+  const { user } = useUser();
+
+  const queryClient = useQueryClient();
 
   const router = useRouter();
 
@@ -102,9 +109,36 @@ function FormCard({
       setOptions(uncompletedOptions);
     }
   }, []);
+
+  // TODO: HARD DELETE
+  // const hardDelete = (id: any) => {
+  //   toast.loading("Deleting");
+  //   let formId = id;
+  //   let userId = user?.id;
+  //   services
+  //     .hardDeleteUserForm(userId, formId)
+  //     .then((res) => {
+  //       toast.dismiss();
+  //       console.log("res", res.data);
+  //       toast.success(res.data);
+  //       queryClient.invalidateQueries();
+  //     })
+  //     .catch((e) => {
+  //       toast.dismiss();
+  //       // toast.error(e?.response?.data);
+  //       console.log("delete error", e?.response?.data);
+  //     });
+  // };
+
   return (
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+        {/* <button
+          onClick={() => hardDelete(id)}
+          className="bg-red-700 px-5 py-5 m-5 text-white"
+        >
+          Delete
+        </button> */}
         <button
           onClick={
             onClick
@@ -130,6 +164,7 @@ function FormCard({
             }}
             className="text-lg w-full text-left font-medium"
           >
+            {/* @ts-ignore */}
             {name?.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">

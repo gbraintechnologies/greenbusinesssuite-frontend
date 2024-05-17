@@ -74,8 +74,11 @@ export default function AdminLayout({
         if (pathname.includes("/settings")) {
           return;
         }
+        setLoading(true);
         redirect("/company");
       }
+
+      setLoading(true);
 
       // else
       removeAdmin();
