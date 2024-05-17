@@ -10,7 +10,7 @@ const Nav: React.FC<Props> = ({ headerLeft, headerRight, headerLeftTitle }) => {
   return (
     <div className="flex justify-between items-center">
       {headerLeft ? headerLeft : <div className="text-xl font-semibold">{headerLeftTitle}</div>}
-        {headerRight ? headerRight : <div>header right</div>}
+        {headerRight ? headerRight : <div></div>}
     </div>
   );
 };

@@ -11,6 +11,13 @@ export const allFormTemplates = () => {
     authApi.get("/forms/builder/list-templates").then((res) => res.data);
 };
 
+export const assignFormToCompany = (
+  formId: number | string,
+  companyName: string
+) => {
+  return authApi.put(`/forms/builder/company/${formId}/${companyName}`);
+};
+
 export const getFormById = (id: any) => {
   return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
@@ -23,10 +30,26 @@ export const getFormsByCompanyName = (companyName: string) => {
   return () => authApi.get(`/forms/builder/company/${companyName}`);
 };
 
-export const getFormsByUserId = (userId: string) => {
-  // return () => authApi.get(`/forms/builder/user/${userId}`);
+export const getFormStatisticsForUser = (userId: string) => {
+  return () =>
+    authApi
+      .get(`/forms/builder/user/form-statistics/${userId}`)
+      .then((res) => res.data);
 };
 
+export const getCompletedFormsByUserId = (userId: string) => {
+  return () =>
+    authApi
+      .get(`/forms/builder/user/completed-forms/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getUncompletedFormsByUserId = (userId: string) => {
+  return () =>
+    authApi
+      .get(`/forms/builder/user/uncompleted-forms/${userId}`)
+      .then((res) => res.data);
+};
 
 export const getFormResponseById = (id: number) => {
   return () =>
@@ -87,6 +110,15 @@ export const assignCompanyToForm = (company: any, id: any) => {
   return authApi.post(`/forms/builder/${company}/duplicateForm`);
 };
 
+// TODO: TEMP ENDPOINTS FOR DELETION
+export const hardDeleteForm = (id: any) => {
+  return authApi.delete(`/forms/builder/delete/${id}`);
+};
+
+export const hardDeleteUserForm = (userId: any, formId: any) => {
+  return authApi.delete(`/forms/response/delete/${userId}/${formId}`);
+};
+
 // PUBLIC FORM ENDPOINTS
 export const accessPublicPublishedForm = (id: any) => {
   return () =>
@@ -95,12 +127,42 @@ export const accessPublicPublishedForm = (id: any) => {
       .then((res) => res.data);
 };
 
-export const acceptInvite = (formId: any, userId: any, companyName: any) => {
-  return authApi.post(`forms/response/save`, {
+export const acceptInvite = (
+  formId: any,
+  userId: any,
+  companyName: any,
+  inputData: any
+) => {
+  return authApi.post(`forms/response/create`, {
     formId: formId,
     isCompleted: false,
-    inputData: {},
+    inputData: { data: inputData },
     companyName: companyName,
     userId: userId,
   });
+};
+
+export const saveResponse = ({
+  formId,
+  userId,
+  companyName,
+  inputData,
+  isCompleted,
+  responseId,
+}: any) => {
+  return authApi.put(`forms/response/update`, {
+    id: responseId,
+    formId: formId,
+    isCompleted: isCompleted,
+    inputData: inputData,
+    companyName: companyName,
+    userId: userId,
+  });
+};
+
+export const retrieveFormUserResponses = (userId: number, formId: any) => {
+  return () =>
+    authApi
+      .get(`forms/response/data/user-form/${userId}/${formId}`)
+      .then((res) => res.data);
 };

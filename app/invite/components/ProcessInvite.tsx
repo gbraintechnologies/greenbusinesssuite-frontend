@@ -17,6 +17,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 // navigation
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 
 function ProcessInvite() {
   // hooks
@@ -27,7 +28,7 @@ function ProcessInvite() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const formId = searchParams.get("f");
-  const companyName = searchParams.get("c");
+  let companyName = searchParams.get("c");
 
   const [loading, setLoading] = useState(true);
 
@@ -72,13 +73,28 @@ function ProcessInvite() {
 
   // GET AND FORM IF AUTHENTICATED
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["form", formId],
     queryFn: services.getFormById(formId),
     enabled: Boolean(formId) && Boolean(auth),
   });
 
+  // GET RIGHT COMPANY NAME FROM COMPANIES ENDPOINT
+
   const [message, setMessage] = useState("");
+
+  const { data: companies } = useQuery({
+    queryKey: ["all companies"],
+    queryFn: services.getAllCompanies(),
+  });
+
+  useEffect(() => {
+    companyName =
+      companies &&
+      companies?.find(
+        (company: any) => lowerCaseNoSpace(company?.company_name) == companyName
+      )?.company_name;
+  }, [companies]);
 
   useEffect(() => {
     //
@@ -98,17 +114,22 @@ function ProcessInvite() {
         return;
       }
 
+      // input data should contain all the form sections for reconstruction
+      let inputData = { ...data };
       // ASSIGN TO USER UPON LOGIN THEN CLEAR SESSION STORAGE
       services
-        .acceptInvite(formId, user?.id, companyName)
+        .acceptInvite(formId, user?.id, companyName, inputData)
         .then((res) => {
-          console.log("res", res);
           setLoading(false);
           setMessage(
             "Successfully accepted invitation. Please proceed to your dashboard to fill the form"
           );
         })
         .catch((e: any) => {
+          setLoading(false);
+          setMessage(
+            "There was an error processing your invite to this form. Kindly contact your company administrator. The form is either unaccessible or you have already accepted this form."
+          );
           console.log("error accepting form", e);
         });
     }

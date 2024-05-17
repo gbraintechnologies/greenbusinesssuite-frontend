@@ -1,24 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //
 import Tabs from "@/components/Tabs/Tabs";
-
-import { useRouter } from "next/navigation";
 
 //
 import CompletedForms from "./components/CompletedForms";
 import UnCompletedForms from "./components/UncompletedForms";
 import UncompletedCard from "./components/UncompletedCard";
+
+//
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
+
+//
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import EmptyList from "./components/EmptyList";
-import FormCard from "./components/FormCard";
+import useClientForm from "@/hooks/useClientForm";
+import useUser from "@/hooks/useUser";
 
 const Page = () => {
-  const [filters, setFilters] = useState([
+  const [filters] = useState([
     {
       id: 1,
       name: "Completed",
@@ -31,28 +33,68 @@ const Page = () => {
     },
   ]);
 
+  //
+  const { removeClientForm } = useClientForm();
+
+  // current client
+  const { user } = useUser();
+
   const [activeFilter, setActiveFilter] = useState({
     id: 1,
     name: "Completed",
     value: "completed",
   });
 
-  const router = useRouter();
+  const { data: formsStats, isLoading: areStatsLoading } = useQuery({
+    queryKey: ["get forms statistics for user", user?.id],
+    queryFn: services.getFormStatisticsForUser(user?.id),
+    enabled: Boolean(user?.id),
+  });
 
-  return (
+  const { data: uncompletedForms, isLoading: areUncompletedFormsLoading } =
+    useQuery({
+      queryKey: ["get company forms", user?.id],
+      queryFn: services.getUncompletedFormsByUserId(user?.id),
+      enabled: Boolean(user?.id),
+    });
+
+  const { data: completedForms, isLoading: areCompletedFormsLoading } =
+    useQuery({
+      queryKey: ["get completed forms by user", user?.id],
+      queryFn: services.getCompletedFormsByUserId(user?.id),
+      enabled: Boolean(user?.id),
+    });
+
+  console.log("uncompleted forms", uncompletedForms);
+
+  useEffect(() => {
+    // Deselect any active form
+    removeClientForm();
+  }, []);
+
+  return areStatsLoading ? (
+    <div className="flex justify-center items-center h-screen w-screen">
+      <LoadingIcon />
+    </div>
+  ) : (
     <div className="px-5 pb-20 mt-5 h-full bg-[#F8FAFC]">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
-      <div className="mt-4">
-        <UncompletedCard />
+      <div className="mt-4 grid grid-col-1 gap-3">
+        {uncompletedForms?.map((form: any) => {
+          return <UncompletedCard key={form?.id} form={form} />;
+        })}
       </div>
       <div className="mt-6">
         <StatsBlock
           stats={[
             {
               label: "Number of submitted forms",
-              value: 0,
+              value: formsStats?.completedForms,
             },
-            { label: "Number of uncompleted forms", value: 0 },
+            {
+              label: "Number of uncompleted forms",
+              value: formsStats?.uncompletedForms,
+            },
           ]}
         />
       </div>
@@ -70,8 +112,18 @@ const Page = () => {
           />
         </div>
         <div className="mt-4">
-          {activeFilter.id === 1 && <CompletedForms />}
-          {activeFilter.id === 2 && <UnCompletedForms />}
+          {activeFilter.id === 1 && (
+            <CompletedForms
+              forms={completedForms}
+              isFormsLoading={areCompletedFormsLoading}
+            />
+          )}
+          {activeFilter.id === 2 && (
+            <UnCompletedForms
+              forms={uncompletedForms}
+              isFormsLoading={areUncompletedFormsLoading}
+            />
+          )}
         </div>
       </div>
     </div>

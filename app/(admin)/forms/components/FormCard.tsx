@@ -52,7 +52,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
 
   const options = [
     {
-      title: addFormResponses ? "Preview Forms" : "Open",
+      title: addFormResponses ? "Preview Forms" : "Open Builder",
       func: () => {
         addFormResponses
           ? router.push("/company/forms")
@@ -130,9 +130,36 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
       getFormResponses();
     }
   }, []);
+
+  // TODO: HARD DELETE
+  // const hardDelete = (id: any) => {
+  //   toast.loading("Deleting");
+  //   services
+  //     .hardDeleteForm(id)
+  //     .then((res) => {
+  //       toast.dismiss();
+  //       console.log("res", res.data);
+  //       toast.success(res.data);
+  //       queryClient.invalidateQueries({
+  //         queryKey: ["all forms"],
+  //       });
+  //     })
+  //     .catch((e) => {
+  //       toast.dismiss();
+  //       // toast.error(e?.response?.data);
+  //       console.log("delete error", e?.response?.data);
+  //     });
+  // };
+
   return (
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+        {/* <button
+          onClick={() => hardDelete(id)}
+          className="bg-red-700 px-5 py-5 m-5 text-white"
+        >
+          Delete
+        </button> */}
         <button
           onClick={
             onClick

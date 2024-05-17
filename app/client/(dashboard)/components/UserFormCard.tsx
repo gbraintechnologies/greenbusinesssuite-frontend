@@ -9,51 +9,40 @@ import { Fragment, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 
-//
-import { useQueryClient } from "@tanstack/react-query";
-
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 
 // utils
 import FormatDate from "@/utils/FormatDate/FormatDate";
 
-import toast from "react-hot-toast";
-
 import services from "@/services";
+import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import useUser from "@/hooks/useUser";
 
 type Props = {
   form: any;
   addFormResponses?: boolean;
   onClick?: () => void;
+  type: "completed" | "uncompleted";
 };
-function FormCard({ form, onClick, addFormResponses = false }: Props) {
-  let {
-    id,
-    name,
-    updatedOn,
-    url,
-    publishStatus,
-    description,
-    deadline,
-    createdOn,
-  } = form;
+function FormCard({
+  form,
+  onClick,
+  type = "uncompleted",
+  addFormResponses = false,
+}: Props) {
+  //
+  let { id, updatedOn } = form;
 
-  const router = useRouter();
+  const { user } = useUser();
+
   const queryClient = useQueryClient();
 
-  // modal controls for delete and rename
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showRenameModal, setShowRenameModal] = useState(false);
+  const router = useRouter();
 
   const [formResponsesCount, setFormResponsesCount] = useState(0);
 
-  const options = [
-    {
-      title: "Continue editing",
-      func: () => {
-        router.push(`/client/form?id=${form?.id}`);
-      },
-    },
+  const completedOptions = [
     {
       title: "View",
       func: () => {
@@ -64,6 +53,17 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
       title: "Download",
       func: () => {
         //
+
+        toast.success("File would be downloaded");
+      },
+    },
+  ];
+
+  const uncompletedOptions = [
+    {
+      title: "Continue editing",
+      func: () => {
+        router.push(`/client/form?id=${form?.id}&company=${form.companyName}`);
       },
     },
   ];
@@ -95,9 +95,50 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
       getFormResponses();
     }
   }, []);
+
+  //
+
+  const [options, setOptions] = useState(null);
+
+  useEffect(() => {
+    if (type === "completed") {
+      // @ts-ignore
+      setOptions(completedOptions);
+    } else {
+      // @ts-ignore
+      setOptions(uncompletedOptions);
+    }
+  }, []);
+
+  // TODO: HARD DELETE
+  const hardDelete = (id: any) => {
+    toast.loading("Deleting");
+    let formId = id;
+    let userId = user?.id;
+    services
+      .hardDeleteUserForm(userId, formId)
+      .then((res) => {
+        toast.dismiss();
+        console.log("res", res.data);
+        toast.success(res.data);
+        queryClient.invalidateQueries();
+      })
+      .catch((e) => {
+        toast.dismiss();
+        // toast.error(e?.response?.data);
+        console.log("delete error", e?.response?.data);
+      });
+  };
+
   return (
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+        {/* <button
+          onClick={() => hardDelete(id)}
+          className="bg-red-700 px-5 py-5 m-5 text-white"
+        >
+          Delete
+        </button> */}
         <button
           onClick={
             onClick
@@ -123,7 +164,8 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
             }}
             className="text-lg w-full text-left font-medium"
           >
-            {name.replace(/"/g, " ")}
+            {/* @ts-ignore */}
+            {form?.name?.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs font-light pr-4">{FormatDate(updatedOn)}</p>
@@ -143,28 +185,30 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
-                  {options.map((option: any, idx: any) => {
-                    return (
-                      <Menu.Item>
-                        <div>
-                          <button
-                            className={`${
-                              option.title.toLowerCase() === "delete"
-                                ? "text-red-600"
-                                : " text-gray-500"
-                            } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
-                            onClick={() => option.func()}
-                          >
-                            {option.title}
-                          </button>
+                  {options &&
+                    // @ts-ignore
+                    options?.map((option: any, idx: any) => {
+                      return (
+                        <Menu.Item>
+                          <div>
+                            <button
+                              className={`${
+                                option.title.toLowerCase() === "delete"
+                                  ? "text-red-600"
+                                  : " text-gray-500"
+                              } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
+                              onClick={() => option.func()}
+                            >
+                              {option.title}
+                            </button>
 
-                          {idx % 2 === 0 && (
-                            <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
-                          )}
-                        </div>
-                      </Menu.Item>
-                    );
-                  })}
+                            {idx % 2 === 0 && (
+                              <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
+                            )}
+                          </div>
+                        </Menu.Item>
+                      );
+                    })}
                 </Menu.Items>
               </Transition>
             </Menu>

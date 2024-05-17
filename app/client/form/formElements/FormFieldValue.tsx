@@ -1,5 +1,6 @@
 "use client";
 
+import useClientForm from "@/hooks/useClientForm";
 //
 import React from "react";
 
@@ -15,9 +16,7 @@ function FormFieldValue({ field, section }: any) {
     label,
   } = field;
 
-  // Rend
-
-  // types
+  // TYPES
   // text
   // integer
   // string
@@ -26,7 +25,11 @@ function FormFieldValue({ field, section }: any) {
 
   // main styles
 
-  const inputStyle = `border-[0.7px] w-full focus:outline-primary-green text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg`;
+  // functions
+
+  const { saveSingleResponse } = useClientForm();
+
+  const inputStyle = `border-[0.7px] w-full focus:outline-primary-green text-black placeholder:text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg`;
   const labelStyle = `font-sm text-gray-400`;
 
   switch (fieldDataType) {
@@ -39,8 +42,12 @@ function FormFieldValue({ field, section }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <textarea
+            value={field?.response}
+            onChange={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             rows={5}
-            placeholder={placeHolder ? placeHolder : "No placeholder specified"}
+            placeholder={placeHolder ? placeHolder : "Your answer here"}
             className={inputStyle}
           />
         </div>
@@ -55,7 +62,14 @@ function FormFieldValue({ field, section }: any) {
           `}
         >
           <label className={labelStyle}>{label}</label>
-          <input placeholder={placeHolder} className={inputStyle} />
+          <input
+            value={field?.response}
+            onChange={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
+            placeholder={placeHolder ? placeHolder : "Your answer here"}
+            className={inputStyle}
+          />
         </div>
       );
 
@@ -67,7 +81,14 @@ function FormFieldValue({ field, section }: any) {
           `}
         >
           <label className={labelStyle}>{label}</label>
-          <input placeholder={placeHolder} className={inputStyle} />
+          <input
+            value={field?.response}
+            onChange={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
+            placeholder={placeHolder ? placeHolder : "Your answer here"}
+            className={inputStyle}
+          />
         </div>
       );
 
@@ -79,7 +100,14 @@ function FormFieldValue({ field, section }: any) {
           `}
         >
           <label className={labelStyle}>{label}</label>
-          <input placeholder={placeHolder} className={inputStyle} />
+          <input
+            value={field?.response}
+            onChange={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
+            placeholder={placeHolder ? placeHolder : "Your answer here"}
+            className={inputStyle}
+          />
         </div>
       );
 
@@ -91,7 +119,14 @@ function FormFieldValue({ field, section }: any) {
           `}
         >
           <label className={labelStyle}>{label}</label>
-          <input placeholder={placeHolder} className={inputStyle} />
+          <input
+            value={field?.response}
+            onChange={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
+            placeholder={placeHolder ? placeHolder : "Your answer here"}
+            className={inputStyle}
+          />
         </div>
       );
   }

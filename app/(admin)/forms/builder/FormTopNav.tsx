@@ -83,8 +83,9 @@ function FormTopNav() {
           )}
         </Link>
 
-        <button className="bg-white py-2 text-sm px-3 rounded-lg">Share</button>
-        <PublishFormButton form={form} />
+        {/* TODO: NO NOTION OF WHICH COMPANY TO SHARE OR PUBLISH */}
+        {/* <button className="bg-white py-2 text-sm px-3 rounded-lg">Share</button> */}
+        {/* <PublishFormButton form={form} /> */}
       </div>
     </nav>
   );

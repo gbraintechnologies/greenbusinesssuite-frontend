@@ -1,10 +1,6 @@
 import React from "react";
 
-// service
-import { useQuery } from "@tanstack/react-query";
-import services from "@/services";
-
-import FormCard from "../../../(admin)/(dashboard)/components/UserFormCard";
+import FormCard from "./UserFormCard";
 
 // components
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
@@ -12,17 +8,13 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 // icons
 import EmptyListIcon from "@/public/icons/EmptyListIcon";
 
-function CompletedForms() {
-  // TODO: UPDATE AFTER INTEGRATION
-  let formID = 37;
-  const { data: forms, isLoading: isFormsLoading } = useQuery({
-    queryKey: ["form", formID],
-    queryFn: services.getFormById(formID),
-    enabled: Boolean(formID),
-  });
-
-  console.log("forms", forms);
-
+function CompletedForms({
+  forms,
+  isFormsLoading,
+}: {
+  forms: any;
+  isFormsLoading: boolean;
+}) {
   return (
     <div>
       <div className="mt-4">
@@ -36,21 +28,18 @@ function CompletedForms() {
         ) : (
           // ALL FORMS
           <>
-            {forms?.data?.length === 0 ? (
-              <div className="flex flex-col gap-5 items-center justify-center">
+            {forms?.length === 0 ? (
+              <div className="flex h-[40vh] flex-col gap-5 items-center justify-center">
                 <EmptyListIcon />
                 <p>No Completed Forms</p>
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-5 mt-5">
-                {forms &&
-                  // forms?.data
-                  // TODO: UPDATE AFTER INTEGRATION
-                  [forms]
-                    ?.filter((form: any) => form.isTemplate !== true)
-                    ?.map((form: any) => {
-                      return <FormCard key={form.id} form={form} />;
-                    })}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-5">
+                {forms.map((form: any) => {
+                  return (
+                    <FormCard type="completed" key={form.id} form={form} />
+                  );
+                })}
               </div>
             )}
           </>

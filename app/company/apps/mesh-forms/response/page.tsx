@@ -54,7 +54,6 @@ const Page = () => {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
-    // Buffer to store the generated Excel file
     const excelBuffer = XLSX.write(workbook, {
       bookType: "xlsx",
       type: "array",
@@ -148,8 +147,8 @@ const Page = () => {
                   value: formStatusCount?.completedCount,
                 },
                 {
-                  label: "Uncompleted submissions",
-                  value: formStatusCount?.notCompletedCount,
+                  label: "Incompleted submissions",
+                  value: formStatusCount?.unCompletedCount,
                 },
               ]}
             />

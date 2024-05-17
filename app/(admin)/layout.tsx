@@ -74,15 +74,17 @@ export default function AdminLayout({
         if (pathname.includes("/settings")) {
           return;
         }
+        setLoading(true);
         redirect("/company");
       }
+
+      setLoading(true);
 
       // else
       removeAdmin();
       removeAuth();
       //
       router.push("/login");
-      toast.error("Access not granted. Check with your administrator");
     }
   }, [admin, pathname]);
 
@@ -106,12 +108,17 @@ export default function AdminLayout({
     {
       name: "Company setup",
       icon: <PiBuildingsBold size={20} />,
-      link: ["/company-setup", "/company-setup/create", "/company-setup/profile", "/company-setup/profile/edit"],
+      link: [
+        "/company-setup",
+        "/company-setup/create",
+        "/company-setup/profile",
+        "/company-setup/profile/edit",
+      ],
     },
     {
       name: "Jurisdiction setup",
       icon: <BiTargetLock size={20} />,
-      link: "/jurisdiction-setup",
+      link: "/country-setup",
       subNavigation: [
         {
           name: "Country setup",

@@ -16,10 +16,11 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
 // COMPONENTS
-import UnpublishForm from "./components/UnpublishForm";
 import AssignForm from "./components/AssignForm";
 import { useRouter } from "next/navigation";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import PublishFormButton from "../builder/PublishFormButton";
+import toast from "react-hot-toast";
 
 function FormDetail({ params }: any) {
   const [view, setView] = useState("company");
@@ -34,10 +35,15 @@ function FormDetail({ params }: any) {
 
   let formID = params.formId;
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["form", formID],
+  const { data: form, isLoading } = useQuery({
+    queryKey: ["form", parseInt(formID)],
     queryFn: services.getFormById(formID),
     enabled: Boolean(formID),
+  });
+
+  const { data: companies } = useQuery({
+    queryKey: ["all companies"],
+    queryFn: services.getAllCompanies(),
   });
 
   if (isLoading) {
@@ -51,27 +57,48 @@ function FormDetail({ params }: any) {
     );
   }
 
-  if (data) {
-    const { name, publishStatus, deadline, createdOn, description, id, url } =
-      data;
+  // use props in data directly to avoid lags in changes in react query cache
+  if (form) {
     return (
       <div>
         {/* HEADER */}
         <div className="flex items-center justify-between px-5">
           <div>
             <h3 className="text-xl font-semibold">
-              <span className="font-light text-gray-500">Recent /</span> {name}{" "}
+              <span className="font-light text-gray-500">Forms /</span>{" "}
+              {form?.name}{" "}
             </h3>
           </div>
 
           <div className="flex gap-2 items-center">
-            <button
-              onClick={() => setShowAssignModal(true)}
-              className="btn-outline"
-            >
-              <VscLink />
-              Assign form
-            </button>
+            {Boolean(form?.url) && (
+              <button
+                onClick={() => {
+                  if (form?.publishStatus.toLowerCase() === "published") {
+                    navigator.clipboard.writeText(form?.url).then(() => {
+                      toast.dismiss();
+                      toast.success("Form link copied!");
+                    });
+                    return;
+                  }
+                  toast.dismiss();
+                  toast.error("Publish form first to access a shareable link");
+                }}
+                className="btn-outline"
+              >
+                <VscLink /> Copy Form Link
+              </button>
+            )}
+
+            {!Boolean(form?.companyName) && (
+              <button
+                onClick={() => setShowAssignModal(true)}
+                className="btn-outline"
+              >
+                <VscLink /> Assign Form
+              </button>
+            )}
+
             <button
               onClick={() => {
                 router.push(`/forms/builder/${formID}`);
@@ -82,7 +109,7 @@ function FormDetail({ params }: any) {
               <FiEdit2 />
               Edit form
             </button>
-            {publishStatus.toLowerCase() === "published" ? (
+            {/* {publishStatus.toLowerCase() === "published" ? (
               <button
                 onClick={() => setShowUnpublishModal(true)}
                 className="bg-primary-red flex items-center justify-center gap-2 text-white text-sm py-2 px-3 rounded-lg"
@@ -96,7 +123,14 @@ function FormDetail({ params }: any) {
               >
                 <LuUploadCloud /> Publish
               </button>
-            )}
+            )} */}
+
+            <PublishFormButton
+              showUnpublishModal={showUnpublishModal}
+              setShowUnpublishModal={setShowUnpublishModal}
+              companies={companies}
+              formID={form?.id}
+            />
           </div>
         </div>
 
@@ -127,21 +161,14 @@ function FormDetail({ params }: any) {
         </div>
 
         {/* RENDER VIEWS */}
-        {view === "company" && <Company />}
+        {view === "company" && (
+          <Company companies={companies} companyName={form?.companyName} />
+        )}
         {view === "connect" && (
           <div className="px-5 mt-5">
             <ConnectForm style="raw" />
           </div>
         )}
-
-        {/* UNPUBLISH MODAL */}
-        <Modal
-          isOpen={showUnpublishModal}
-          setIsOpen={setShowUnpublishModal}
-          title={`Unpublish this form `}
-        >
-          <UnpublishForm id={formID} setShow={setShowUnpublishModal} />
-        </Modal>
 
         {/* ASSIGN TO NEW COMPANY MODAL */}
         <Modal
@@ -149,7 +176,11 @@ function FormDetail({ params }: any) {
           setIsOpen={setShowAssignModal}
           title={`Assign company to form `}
         >
-          <AssignForm id={formID} setShow={setShowAssignModal} />
+          <AssignForm
+            id={formID}
+            setShow={setShowAssignModal}
+            companies={companies}
+          />
         </Modal>
       </div>
     );

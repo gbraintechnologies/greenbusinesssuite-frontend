@@ -19,9 +19,9 @@ import FormatDate from "@/utils/FormatDate/FormatDate";
 
 // components
 import Modal from "@/components/Modal/Modal";
-import DeleteForm from "../actions/DeleteForm";
+import DeleteForm from "../../../client/(dashboard)/actions/DeleteForm";
 import toast from "react-hot-toast";
-import RenameForm from "../actions/RenameForm";
+import RenameForm from "../../../client/(dashboard)/actions/RenameForm";
 import services from "@/services";
 
 type Props = {
@@ -29,7 +29,7 @@ type Props = {
   addFormResponses?: boolean;
   onClick?: () => void;
 };
-function FormCard({ form, onClick, addFormResponses=false }: Props) {
+function FormCard({ form, onClick, addFormResponses = false }: Props) {
   let {
     id,
     name,
@@ -52,9 +52,11 @@ function FormCard({ form, onClick, addFormResponses=false }: Props) {
 
   const options = [
     {
-      title: addFormResponses ? 'Preview Forms': "Open",
+      title: addFormResponses ? "Preview Forms" : "Open",
       func: () => {
-        addFormResponses ? router.push('/company/forms') : router.push(`/forms/builder/${id}`);
+        addFormResponses
+          ? router.push("/company/forms")
+          : router.push(`/forms/builder/${id}`);
       },
     },
     {
@@ -119,13 +121,13 @@ function FormCard({ form, onClick, addFormResponses=false }: Props) {
   let color = colors[getRandomInt(0, 4)];
 
   const getFormResponses = async () => {
-    const responses  = await services.getFormResponsesById(id)
+    const responses = await services.getFormResponsesById(id);
     setFormResponsesCount(responses.data?.length);
-  }
+  };
 
   useEffect(() => {
     if (addFormResponses) {
-      getFormResponses()
+      getFormResponses();
     }
   }, []);
   return (
@@ -160,7 +162,10 @@ function FormCard({ form, onClick, addFormResponses=false }: Props) {
           </button>
           <div className="flex items-center justify-between mt-1">
             {addFormResponses ? (
-              <p className="text-xs pr-4"><span className="font-bold ">{formResponsesCount}</span> responses</p>
+              <p className="text-xs pr-4">
+                <span className="font-bold ">{formResponsesCount}</span>{" "}
+                responses
+              </p>
             ) : (
               <p className="text-xs font-light pr-4">
                 Edited {FormatDate(updatedOn)}

@@ -5,18 +5,41 @@ import React from "react";
 import { Fragment, useState } from "react";
 import { Combobox, Transition } from "@headlessui/react";
 import services from "@/services";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Image from "next/image";
+import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
+import toast from "react-hot-toast";
 
-function AssignForm({ setShow, form }: any) {
-  const [selected, setSelected] = useState(null);
+function AssignForm({ setShow, id: formId, companies }: any) {
+  const [selected, setSelected] = useState<any>();
   const [query, setQuery] = useState("");
 
-  const { data: companies } = useQuery({
-    queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(),
-  });
+  const queryClient = useQueryClient();
+
+  const [loading, setLoading] = useState(false);
+
+  const assignFormToCompany = async () => {
+    setLoading(true);
+    try {
+      await services.assignFormToCompany(
+        formId,
+        lowerCaseNoSpace(selected?.company_name.toString())
+      );
+
+      // invalidate form data
+      queryClient.invalidateQueries({
+        queryKey: ["form", formId],
+      });
+      setLoading(false);
+      toast.success("Company assigned successfully");
+      setShow(false);
+    } catch (error) {
+      toast.error("An error occurred. Try again later");
+      setLoading(false);
+      setShow(false);
+    }
+  };
 
   if (companies) {
     const filteredCompanies =
@@ -63,7 +86,7 @@ function AssignForm({ setShow, form }: any) {
                   ) : (
                     filteredCompanies.map((company: any) => (
                       <Combobox.Option
-                        key={company.company_name}
+                        key={company?.company_name}
                         className={({ active }) =>
                           `relative  select-none cursor-pointer py-2 pl-10 pr-4 ${
                             active
@@ -77,13 +100,13 @@ function AssignForm({ setShow, form }: any) {
                           <>
                             <span className="truncate font-normal flex items-center gap-2">
                               <Image
-                                src={company.company_logo}
+                                src={company?.company_logo}
                                 alt="Logo"
                                 width={50}
                                 height={50}
                                 className="w-8 h-8 rounded-full object-cover"
                               />
-                              {company.company_name}
+                              {company?.company_name}
                             </span>
                           </>
                         )}
@@ -104,10 +127,11 @@ function AssignForm({ setShow, form }: any) {
             Cancel
           </button>
           <button
-            className="bg-primary-green disabled:cursor-not-allowed disabled:bg-opacity-70 py-3 shadow-md flex text-white text-sm px-6 hover:opacity-95 items-center gap-2 rounded-xl"
-            onClick={() => setShow(false)}
+            disabled={loading}
+            className="bg-primary-green disabled:bg-gray-600 disabled:cursor-not-allowed disabled:bg-opacity-70 py-3 shadow-md flex text-white text-sm px-6 hover:opacity-95 items-center gap-2 rounded-xl"
+            onClick={assignFormToCompany}
           >
-            Assign to new organization
+            {loading ? "Assigning..." : "Assign form"}
           </button>
         </div>
       </div>

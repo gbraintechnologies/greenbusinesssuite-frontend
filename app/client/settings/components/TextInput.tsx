@@ -41,7 +41,7 @@ const TextInput = React.forwardRef<HTMLInputElement, ITextInput>(
     } = props;
 
     return (
-      <div className="flex flex-col w-full">
+      <div className="flex disabled:cursor-not-allowed flex-col w-full">
         {label && (
           <label htmlFor={id} className="font-medium text-slate-700 text-sm">
             {label}{" "}
@@ -50,14 +50,11 @@ const TextInput = React.forwardRef<HTMLInputElement, ITextInput>(
           </label>
         )}
         <div className="relative">
-         
           {PrependIcon && (
             <div className="absolute inset-y-0 mt-1 left-0 flex items-center justify-center pl-3 pr-3 pointer-events-none">
               {PrependIcon}
             </div>
-          )} 
-
-          
+          )}
 
           <input
             id={id}

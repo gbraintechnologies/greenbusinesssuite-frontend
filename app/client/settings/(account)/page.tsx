@@ -125,16 +125,17 @@ function Account() {
                     <TextInput
                       label="Phone number"
                       type="tel"
+                      disabled
                       placeholder="phone number"
                       autoComplete="off"
-                      PrependIcon={
-                        <span className="absolute left-0 top-0 bottom-0 flex items-center pl-2">
-                          <p>+233</p> <RiArrowDropDownLine size={30} />
-                        </span>
-                      }
+                      // PrependIcon={
+                      //   <span className="absolute left-0 top-0 bottom-0 flex items-center pl-2">
+                      //     <p>+233</p> <RiArrowDropDownLine size={30} />
+                      //   </span>
+                      // }
                       {...register("phone")}
                       error={errors.phone?.message}
-                      style={{ paddingLeft: "6.0rem" }}
+                      // style={{ paddingLeft: "6.0rem" }}
                     />
                   </div>
                   <div className="mb-5">
@@ -143,10 +144,11 @@ function Account() {
                       type="text"
                       placeholder=""
                       readOnly
+                      disabled
                       autoComplete="off"
                       {...register("status")}
                       error={errors.status?.message}
-                      PostpendIcon={<RiArrowDropDownLine size={30} />}
+                      // PostpendIcon={<RiArrowDropDownLine size={30} />}
                     />
                   </div>
                 </div>
@@ -166,6 +168,7 @@ function Account() {
                       label="Email address"
                       type="email"
                       placeholder=""
+                      disabled
                       autoComplete="off"
                       {...register("email")}
                       error={errors.email?.message}
@@ -174,13 +177,15 @@ function Account() {
                 </div>
               </form>
             </div>
-            <div className="float-right">
+            {/* <div className="float-right">
               <Button type="button" onClick={() => setShowCancelModal(true)}>
                 Save Changes
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
+
+        {/*  */}
         <Modal
           isOpen={showCancelModal}
           setIsOpen={setShowCancelModal}
