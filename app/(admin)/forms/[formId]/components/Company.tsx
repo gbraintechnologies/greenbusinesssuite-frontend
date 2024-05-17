@@ -12,8 +12,9 @@ import DataTable from "@/components/DataTable/DataTable";
 import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 import UserIcon from "@/public/icons/UserIcon";
 import { CompanyInfo } from "@/types";
+import FormatDate from "@/utils/FormatDate/FormatDate";
 
-function Company({ companies, companyNames }: any) {
+function Company({ companies, companyName }: any) {
   // table column headers
   const columns = [
     {
@@ -53,6 +54,8 @@ function Company({ companies, companyNames }: any) {
       field: "date",
       headerName: "Date Assigned",
       flex: 1,
+      align: "left",
+      headerAlign: "left",
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id}>{params.row.data?.dateAssigned}</div>,
@@ -73,24 +76,38 @@ function Company({ companies, companyNames }: any) {
   ];
 
   const [aggregatedCompanies, setAggregatedCompanies] = useState<any>([
-    companies?.find(
-      (company: any) =>
-        lowerCaseNoSpace(company?.company_name) == companyNames[0]
-    ),
+    // check for when no companies have been assigned to a form
+    companyName?.length > 0
+      ? companies?.find(
+          (company: any) =>
+            lowerCaseNoSpace(company?.company_name) == companyName
+        )
+      : [],
   ]);
 
-  const [rows, setRows] = useState<any>([]);
+  // for late data loads
+  useEffect(() => {
+    if (companyName) {
+      setAggregatedCompanies([
+        companies?.find(
+          (company: any) =>
+            lowerCaseNoSpace(company?.company_name) == companyName
+        ),
+      ]);
+    }
+  }, [companyName, companies]);
 
+  const [rows, setRows] = useState<any>([]);
 
   useEffect(() => {
     if (aggregatedCompanies?.length > 0) {
       const preparedRows = aggregatedCompanies?.map(
         (company: Partial<CompanyInfo>) => {
           return {
-            id: company?.id,
+            id: company?.id ? company?.id : Math.random(),
             data: {
               ...company,
-              dateAssigned: new Date(Date.now()).toLocaleDateString(),
+              dateAssigned: FormatDate(new Date(Date.now())),
             },
           };
         }

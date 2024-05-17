@@ -1,31 +1,76 @@
 "use client";
 
+import services from "@/services";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 // icons
 import { IoCopyOutline } from "react-icons/io5";
 
-function UnpublishForm({ setShow, form }: any) {
+function UnpublishForm({ setShow, loading, setLoading, form }: any) {
   //
   const [name, setName] = useState("");
+
+  const queryClient = useQueryClient();
+
+  const unpublishFormAction = () => {
+    setLoading(true);
+    //
+    toast.loading(`Unpublishing ${form.name}`);
+    services
+      .unpublishForm(form?.id)
+      .then((res) => {
+        toast.dismiss();
+        queryClient.invalidateQueries({
+          queryKey: ["form", form?.id],
+        });
+        setLoading(false);
+        setShow(false);
+        // get updated form
+        // TODO: OLD IMPLEMENTATION when this was  done at builder top nav
+        // services
+        //   .getFormByIdRaw(form.id)
+        //   .then((res) => {
+        //     setLoading(false);
+        //     queryClient.invalidateQueries({
+        //       queryKey: ["form", form?.id],
+        //     });
+        //   })
+        //   .catch((e) => {
+        //     setLoading(false);
+        //     console.log("error getting updated form");
+        //   });
+
+        toast.success("Form unpublished!");
+      })
+      .catch((e) => {
+        setLoading(false);
+        toast.dismiss();
+        setShow(false);
+        toast.error("Error unpublishing form");
+      });
+  };
+
   return (
     <div>
       <div className="mb-5 mx-5">
         <p className="font-light mb-5">
-          Unpublishing this form will make it unreachable to all companies using
-          this form.
+          Unpublishing this form will make it unreachable to all new user who
+          may want to access the form
           <br />
           <br />
-          Enter the name of the file to unpublish the form.
+          Enter the name of this form to unpublish it
         </p>
 
         <div className="bg-gray-100 mt-2 mb-5 flex items-center justify-between px-3 py-2 rounded-lg">
-          <p>Copy the name of this file</p>{" "}
+          <p>Copy form name</p>{" "}
           <button
             className=""
             onClick={() => {
-              toast.success("Named copied");
+              navigator.clipboard.writeText(form?.name).then(() => {
+                toast.success("Form name copied");
+              });
             }}
           >
             <IoCopyOutline size={20} />
@@ -50,11 +95,17 @@ function UnpublishForm({ setShow, form }: any) {
           Cancel
         </button>
         <button
-          disabled={name.length < 4}
+          disabled={name.length < 4 || loading}
           className="bg-primary-red disabled:cursor-not-allowed disabled:bg-opacity-70 py-3 shadow-md flex text-white text-sm px-6 hover:opacity-95 items-center gap-2 rounded-xl"
-          onClick={() => setShow(false)}
+          onClick={() => {
+            if (name === form?.name) {
+              unpublishFormAction();
+            } else {
+              toast.error("Names do not match");
+            }
+          }}
         >
-          Unpublish this form
+          {loading ? "Please wait" : "Unpublish this form"}
         </button>
       </div>
     </div>

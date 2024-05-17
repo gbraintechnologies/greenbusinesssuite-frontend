@@ -20,6 +20,8 @@ import UnpublishForm from "./components/UnpublishForm";
 import AssignForm from "./components/AssignForm";
 import { useRouter } from "next/navigation";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import PublishFormButton from "../builder/PublishFormButton";
+import toast from "react-hot-toast";
 
 function FormDetail({ params }: any) {
   const [view, setView] = useState("company");
@@ -57,27 +59,49 @@ function FormDetail({ params }: any) {
   }
 
   if (data) {
-    const { name, publishStatus, deadline, createdOn, description, id, url, companyNames } =
-      data;
+    const {
+      name,
+      publishStatus,
+      deadline,
+      createdOn,
+      description,
+      id,
+      url,
+      companyName,
+    } = data;
     return (
       <div>
         {/* HEADER */}
         <div className="flex items-center justify-between px-5">
           <div>
             <h3 className="text-xl font-semibold">
-              <span className="font-light text-gray-500">Recent /</span> {name}{" "}
+              <span className="font-light text-gray-500">Forms /</span> {name}{" "}
             </h3>
           </div>
 
           <div className="flex gap-2 items-center">
-            <button
-              onClick={() => setShowAssignModal(true)}
-              className="btn-outline"
-              disabled={companyNames?.length > 1}
-            >
-              <VscLink />
-              {companyNames?.length > 1 ? "Assigned" : "Assign form"}
-            </button>
+            {Boolean(url) && (
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(url).then(() => {
+                    toast.success("Form link copied!");
+                  });
+                }}
+                className="btn-outline"
+              >
+                <VscLink /> Copy Form Link
+              </button>
+            )}
+
+            {!Boolean(companyName) && (
+              <button
+                onClick={() => setShowAssignModal(true)}
+                className="btn-outline"
+              >
+                <VscLink /> Assign Form
+              </button>
+            )}
+
             <button
               onClick={() => {
                 router.push(`/forms/builder/${formID}`);
@@ -88,7 +112,7 @@ function FormDetail({ params }: any) {
               <FiEdit2 />
               Edit form
             </button>
-            {publishStatus.toLowerCase() === "published" ? (
+            {/* {publishStatus.toLowerCase() === "published" ? (
               <button
                 onClick={() => setShowUnpublishModal(true)}
                 className="bg-primary-red flex items-center justify-center gap-2 text-white text-sm py-2 px-3 rounded-lg"
@@ -102,7 +126,14 @@ function FormDetail({ params }: any) {
               >
                 <LuUploadCloud /> Publish
               </button>
-            )}
+            )} */}
+
+            <PublishFormButton
+              showUnpublishModal={showUnpublishModal}
+              setShowUnpublishModal={setShowUnpublishModal}
+              companies={companies}
+              formID={id}
+            />
           </div>
         </div>
 
@@ -133,21 +164,14 @@ function FormDetail({ params }: any) {
         </div>
 
         {/* RENDER VIEWS */}
-        {view === "company" && <Company companies={companies} companyNames={companyNames}/>}
+        {view === "company" && (
+          <Company companies={companies} companyName={companyName} />
+        )}
         {view === "connect" && (
           <div className="px-5 mt-5">
             <ConnectForm style="raw" />
           </div>
         )}
-
-        {/* UNPUBLISH MODAL */}
-        <Modal
-          isOpen={showUnpublishModal}
-          setIsOpen={setShowUnpublishModal}
-          title={`Unpublish this form `}
-        >
-          <UnpublishForm id={formID} setShow={setShowUnpublishModal} />
-        </Modal>
 
         {/* ASSIGN TO NEW COMPANY MODAL */}
         <Modal
@@ -155,7 +179,11 @@ function FormDetail({ params }: any) {
           setIsOpen={setShowAssignModal}
           title={`Assign company to form `}
         >
-          <AssignForm id={formID} setShow={setShowAssignModal} companies={companies}/>
+          <AssignForm
+            id={formID}
+            setShow={setShowAssignModal}
+            companies={companies}
+          />
         </Modal>
       </div>
     );
