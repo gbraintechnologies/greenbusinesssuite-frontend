@@ -69,19 +69,22 @@ function UserManagement() {
     queryKey: ["search data", searchTerm],
     queryFn: services.searchUsers(searchTerm),
     enabled: Boolean(searchTerm),
-    select: filterUsersByCompanyId,
+    select: filterUsersByCompanyId
   });
 
-  const { data: roles, isLoading: rolesLoading } = useQuery({
+  const {
+    data: roles,
+    isLoading: rolesLoading,
+  } = useQuery({
     queryKey: ["mesh roles"],
     // ID OF MESH APP IS 1 IN DB
     queryFn: services.getMeshBusinessSuiteRoles(1),
-    select: filterRoles,
+    select: filterRoles
   });
 
   //Status Filter
   useEffect(() => {
-    console.log("roless ", roles);
+    console.log('roless ', roles)
     if (activeFilter.value === "all") {
       setAggregatedUsers(users);
     } else {
@@ -142,7 +145,7 @@ function UserManagement() {
         }
       }
 
-      console.log("temp ", temp);
+      console.log('temp ',temp)
       setAggregatedUsers(temp);
     } else {
       setAggregatedUsers(users);
@@ -248,6 +251,7 @@ function UserManagement() {
           activeFilter={activeFilter}
         />
         <div className="flex items-center gap-3">
+          
           <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <RoleFilter
             roles={roles}

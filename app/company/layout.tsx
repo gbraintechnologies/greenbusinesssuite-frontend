@@ -42,8 +42,8 @@ export default function CompanyLayout({
 
   // Redirect to login if not authenticated
   useEffect(() => {
+    setLoading(true);
     if (admin === null || !Boolean(auth)) {
-      console.log("Please login to continue");
       router.push("/login");
     } else {
       // CHECK COMPANY ADMIN ROLE: 6
@@ -52,7 +52,13 @@ export default function CompanyLayout({
       // COMPANY ADMIN ROLE ID: 6
       if (role !== 6) {
         router.push("/login");
+        toast.dismiss();
         toast.error("Access not granted. Check with your administrator");
+      }
+
+      // Only allow view if role is 6
+      if (role === 6) {
+        setLoading(false);
       }
     }
   }, [admin, pathname]);

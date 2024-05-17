@@ -85,7 +85,6 @@ export default function AdminLayout({
       removeAuth();
       //
       router.push("/login");
-      toast.error("Access not granted. Check with your administrator");
     }
   }, [admin, pathname]);
 
