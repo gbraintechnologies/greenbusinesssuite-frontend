@@ -109,6 +109,15 @@ export const assignCompanyToForm = (company: any, id: any) => {
   return authApi.post(`/forms/builder/${company}/duplicateForm`);
 };
 
+// TODO: TEMP ENDPOINTS FOR DELETION
+export const hardDeleteForm = (id: any) => {
+  return authApi.delete(`/forms/builder/delete/${id}`);
+};
+
+export const hardDeleteUserForm = (userId: any, formId: any) => {
+  return authApi.delete(`/forms/response/delete/${userId}/${formId}`);
+};
+
 // PUBLIC FORM ENDPOINTS
 export const accessPublicPublishedForm = (id: any) => {
   return () =>
@@ -123,10 +132,26 @@ export const acceptInvite = (
   companyName: any,
   inputData: any
 ) => {
-  return authApi.post(`forms/response/save`, {
+  return authApi.post(`forms/response/create`, {
     formId: formId,
     isCompleted: false,
     inputData: { data: inputData },
+    companyName: companyName,
+    userId: userId,
+  });
+};
+
+export const saveResponse = ({
+  formId,
+  userId,
+  companyName,
+  inputData,
+  isCompleted,
+}: any) => {
+  return authApi.put(`forms/response/update`, {
+    formId: formId,
+    isCompleted: isCompleted,
+    inputData: inputData,
     companyName: companyName,
     userId: userId,
   });
@@ -137,20 +162,4 @@ export const retrieveFormUserResponses = (userId: number, formId: any) => {
     authApi
       .get(`forms/response/data/user-form/${userId}/${formId}`)
       .then((res) => res.data);
-};
-
-export const saveResponse = ({
-  formId,
-  userId,
-  companyName,
-  inputData,
-  isCompleted,
-}: any) => {
-  return authApi.post(`forms/response/save`, {
-    formId: formId,
-    isCompleted: isCompleted,
-    inputData: inputData,
-    companyName: companyName,
-    userId: userId,
-  });
 };
