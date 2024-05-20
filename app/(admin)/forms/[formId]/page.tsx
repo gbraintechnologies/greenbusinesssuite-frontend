@@ -162,7 +162,7 @@ function FormDetail({ params }: any) {
 
         {/* RENDER VIEWS */}
         {view === "company" && (
-          <Company companies={companies} companyName={form?.companyName} />
+          <Company companies={companies} companyName={form?.companyName} assignDate={form?.assignDate}/>
         )}
         {view === "connect" && (
           <div className="px-5 mt-5">

@@ -14,7 +14,7 @@ import UserIcon from "@/public/icons/UserIcon";
 import { CompanyInfo } from "@/types";
 import FormatDate from "@/utils/FormatDate/FormatDate";
 
-function Company({ companies, companyName }: any) {
+function Company({ companies, companyName, assignDate }: any) {
   // table column headers
   const columns = [
     {
@@ -107,7 +107,7 @@ function Company({ companies, companyName }: any) {
             id: company?.id ? company?.id : Math.random(),
             data: {
               ...company,
-              dateAssigned: FormatDate(new Date(Date.now())),
+              dateAssigned: FormatDate(assignDate),
             },
           };
         }
