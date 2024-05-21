@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // icons
 import { FiEdit2 } from "react-icons/fi";
@@ -12,7 +12,7 @@ import Company from "./components/Company";
 import ConnectForm from "./components/ConnectForm";
 import Modal from "@/components/Modal/Modal";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 
 // COMPONENTS
@@ -35,6 +35,9 @@ function FormDetail({ params }: any) {
 
   let formID = params.formId;
 
+  const queryClient = useQueryClient();
+
+
   const { data: form, isLoading } = useQuery({
     queryKey: ["form", parseInt(formID)],
     queryFn: services.getFormById(formID),
@@ -46,6 +49,9 @@ function FormDetail({ params }: any) {
     queryFn: services.getAllCompanies(),
   });
 
+  useEffect(()=> {
+    console.log('form changed to form ', form)
+  }, [form])
   if (isLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
@@ -162,7 +168,7 @@ function FormDetail({ params }: any) {
 
         {/* RENDER VIEWS */}
         {view === "company" && (
-          <Company companies={companies} companyName={form?.companyName} />
+          <Company companies={companies} companyName={form?.companyName} assignDate={form?.assignDate}/>
         )}
         {view === "connect" && (
           <div className="px-5 mt-5">
@@ -180,6 +186,7 @@ function FormDetail({ params }: any) {
             id={formID}
             setShow={setShowAssignModal}
             companies={companies}
+            queryClient={queryClient}
           />
         </Modal>
       </div>

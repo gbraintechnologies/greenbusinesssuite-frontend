@@ -185,7 +185,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
             }}
             className="text-lg w-full text-left font-medium"
           >
-            {name.replace(/"/g, " ")}
+            {name?.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">
             {addFormResponses ? (
