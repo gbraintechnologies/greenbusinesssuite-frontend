@@ -11,11 +11,10 @@ import Image from "next/image";
 import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 import toast from "react-hot-toast";
 
-function AssignForm({ setShow, id: formId, companies }: any) {
+function AssignForm({ setShow, id: formId, companies, queryClient }: any) {
   const [selected, setSelected] = useState<any>();
   const [query, setQuery] = useState("");
 
-  const queryClient = useQueryClient();
 
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +28,7 @@ function AssignForm({ setShow, id: formId, companies }: any) {
 
       // invalidate form data
       queryClient.invalidateQueries({
-        queryKey: ["form", formId],
+        queryKey: ["form", parseInt(formId)],
       });
       setLoading(false);
       toast.success("Company assigned successfully");

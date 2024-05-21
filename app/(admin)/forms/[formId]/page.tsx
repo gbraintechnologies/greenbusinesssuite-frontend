@@ -12,7 +12,7 @@ import Company from "./components/Company";
 import ConnectForm from "./components/ConnectForm";
 import Modal from "@/components/Modal/Modal";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 
 // COMPONENTS
@@ -34,6 +34,9 @@ function FormDetail({ params }: any) {
   const router = useRouter();
 
   let formID = params.formId;
+
+  const queryClient = useQueryClient();
+
 
   const { data: form, isLoading } = useQuery({
     queryKey: ["form", parseInt(formID)],
@@ -183,6 +186,7 @@ function FormDetail({ params }: any) {
             id={formID}
             setShow={setShowAssignModal}
             companies={companies}
+            queryClient={queryClient}
           />
         </Modal>
       </div>
