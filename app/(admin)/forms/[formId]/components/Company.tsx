@@ -13,6 +13,7 @@ import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 import UserIcon from "@/public/icons/UserIcon";
 import { CompanyInfo } from "@/types";
 import FormatDate from "@/utils/FormatDate/FormatDate";
+import { AiFillPauseCircle } from "react-icons/ai";
 
 function Company({ companies, companyName, assignDate }: any) {
   // table column headers
@@ -75,15 +76,7 @@ function Company({ companies, companyName, assignDate }: any) {
     },
   ];
 
-  const [aggregatedCompanies, setAggregatedCompanies] = useState<any>([
-    // check for when no companies have been assigned to a form
-    companyName?.length > 0
-      ? companies?.find(
-          (company: any) =>
-            lowerCaseNoSpace(company?.company_name) == companyName
-        )
-      : [],
-  ]);
+  const [aggregatedCompanies, setAggregatedCompanies] = useState<any>([]);
 
   // for late data loads
   useEffect(() => {
@@ -92,8 +85,8 @@ function Company({ companies, companyName, assignDate }: any) {
         companies?.find(
           (company: any) =>
             lowerCaseNoSpace(company?.company_name) == companyName
-        ),
-      ]);
+        )]
+      );
     }
   }, [companyName, companies]);
 
@@ -101,6 +94,7 @@ function Company({ companies, companyName, assignDate }: any) {
 
   useEffect(() => {
     if (aggregatedCompanies?.length > 0) {
+      console.log('aggregated companies is true ', aggregatedCompanies?.length)
       const preparedRows = aggregatedCompanies?.map(
         (company: Partial<CompanyInfo>) => {
           return {
@@ -118,6 +112,10 @@ function Company({ companies, companyName, assignDate }: any) {
     }
   }, [aggregatedCompanies]);
 
+  useEffect(()=> {
+    console.log('rows changed to ', rows)
+    console.log('aggregated companies changed to ', aggregatedCompanies)
+  }, [rows, aggregatedCompanies, companyName])
   return (
     <div className="mt-4">
       <DataTable isLoading={false} rows={rows} columns={columns} />

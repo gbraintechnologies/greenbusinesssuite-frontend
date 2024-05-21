@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // icons
 import { FiEdit2 } from "react-icons/fi";
@@ -46,6 +46,9 @@ function FormDetail({ params }: any) {
     queryFn: services.getAllCompanies(),
   });
 
+  useEffect(()=> {
+    console.log('form changed to form ', form)
+  }, [form])
   if (isLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
