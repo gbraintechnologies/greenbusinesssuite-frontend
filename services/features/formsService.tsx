@@ -27,7 +27,10 @@ export const getFormByIdRaw = (id: any) => {
 };
 
 export const getFormsByCompanyName = (companyName: string) => {
-  return () => authApi.get(`/forms/builder/company/${companyName}`);
+  return () =>
+    authApi
+      .get(`/forms/builder/company/${companyName}`)
+      .then((res) => res.data);
 };
 
 export const getFormStatisticsForUser = (userId: string) => {
@@ -151,12 +154,12 @@ export const saveResponse = ({
   responseId,
 }: any) => {
   return authApi.put(`forms/response/update`, {
-    id: responseId,
-    formId: formId,
+    id: parseInt(responseId),
+    formId: parseInt(formId),
     isCompleted: isCompleted,
     inputData: inputData,
     companyName: companyName,
-    userId: userId,
+    userId: parseInt(userId),
   });
 };
 

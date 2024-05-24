@@ -14,17 +14,18 @@ import useAdmin from "@/hooks/useAdmin";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { FaBoxesStacked } from "react-icons/fa6";
 import { MdOutlineDashboard } from "react-icons/md";
+import { TbBrandGoogleAnalytics } from "react-icons/tb";
 import { FaWpforms } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
-import { IoMdPaper } from "react-icons/io";
+import { PiListMagnifyingGlassBold } from "react-icons/pi";
 
 // toast
 import toast from "react-hot-toast";
 
 // hooks
 import useAuth from "@/hooks/useAuth";
+import FormsNavIcon from "@/public/icons/FormsNavIcon";
 
 export default function CompanyLayout({
   children,
@@ -71,19 +72,24 @@ export default function CompanyLayout({
       link: "/company",
     },
     {
-      name: "Apps",
-      icon: <FaBoxesStacked size={20} />,
-      link: [
-        "/company/apps",
-        "/company/apps/mesh-forms",
-        "/company/apps/mesh-forms/response",
+      name: "Forms",
+      icon: <FormsNavIcon />,
+      link: "/company/forms",
+    },
+
+    {
+      name: "Reports",
+      icon: <TbBrandGoogleAnalytics size={20} />,
+      link: null,
+      subNavigation: [
+        {
+          name: "Form Reports",
+          icon: null,
+          link: "/company/form-reports",
+        },
       ],
     },
-    {
-      name: "Form Reports",
-      icon: <FaWpforms size={20} />,
-      link: ["/company/forms", "/company/forms/response"],
-    },
+
     {
       name: "User management",
       icon: <FaUsers size={20} />,
@@ -92,10 +98,12 @@ export default function CompanyLayout({
 
     {
       name: "Audit Trail",
-      icon: <IoMdPaper size={20} />,
+      icon: <PiListMagnifyingGlassBold size={18} />,
       link: "/company/audit-trail",
     },
   ];
+
+  const thirdPartyApps: any = [];
 
   return (
     <Suspense>
@@ -110,7 +118,10 @@ export default function CompanyLayout({
           <TopNav />
           <div className="flex flex-row">
             {!pathname.includes("settings") && (
-              <SideNav navigation={navigation} />
+              <SideNav
+                thirdPartyApps={thirdPartyApps}
+                navigation={navigation}
+              />
             )}
 
             <div className=" w-full">{children}</div>

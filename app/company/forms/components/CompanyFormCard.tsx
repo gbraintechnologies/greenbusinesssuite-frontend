@@ -9,19 +9,11 @@ import { Fragment, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 
-//
-import { useQueryClient } from "@tanstack/react-query";
-
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 
-// utils
-import FormatDate from "@/utils/FormatDate/FormatDate";
-
 // components
-import Modal from "@/components/Modal/Modal";
-import DeleteForm from "../actions/DeleteForm";
 import toast from "react-hot-toast";
-import RenameForm from "../actions/RenameForm";
+
 import services from "@/services";
 
 type Props = {
@@ -29,34 +21,18 @@ type Props = {
   addFormResponses?: boolean;
   onClick?: () => void;
 };
-function FormCard({ form, onClick, addFormResponses = false }: Props) {
-  let {
-    id,
-    name,
-    updatedOn,
-    url,
-    publishStatus,
-    description,
-    deadline,
-    createdOn,
-  } = form;
+function FormCard({ form, onClick, addFormResponses = true }: Props) {
+  let { id, name, url } = form;
 
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  // modal controls for delete and rename
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showRenameModal, setShowRenameModal] = useState(false);
 
   const [formResponsesCount, setFormResponsesCount] = useState(0);
 
   const options = [
     {
-      title: addFormResponses ? "Preview Forms" : "Open Builder",
+      title: "Preview Forms",
       func: () => {
-        addFormResponses
-          ? router.push("/company/forms")
-          : router.push(`/forms/builder/${id}`);
+        router.push(`/company/forms/${id}`);
       },
     },
     {
@@ -65,40 +41,6 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
         navigator.clipboard.writeText(url ?? "").then(() => {
           toast.success("Link copied!");
         });
-      },
-    },
-    {
-      title: "Rename",
-      func: () => {
-        setShowRenameModal(true);
-      },
-    },
-    {
-      title: "Duplicate",
-      func: () => {
-        toast.loading("Duplicating form");
-        services
-          .duplicateForm(id)
-          .then((res) => {
-            toast.dismiss();
-            queryClient.invalidateQueries({
-              queryKey: ["all forms"],
-            });
-            console.log("duplicated", res);
-            // Push to builder after duplicating
-            //  router.push(`/forms/builder/${res}`);
-          })
-          .catch((e) => {
-            toast.dismiss();
-            console.log("e dyupl", e);
-            toast.error("Error duplicating form");
-          });
-      },
-    },
-    {
-      title: "Delete",
-      func: () => {
-        setShowDeleteModal(true);
       },
     },
   ];
@@ -131,43 +73,11 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
     }
   }, []);
 
-  // TODO: HARD DELETE
-  // const hardDelete = (id: any) => {
-  //   toast.loading("Deleting");
-  //   services
-  //     .hardDeleteForm(id)
-  //     .then((res) => {
-  //       toast.dismiss();
-  //       console.log("res", res.data);
-  //       toast.success(res.data);
-  //       queryClient.invalidateQueries({
-  //         queryKey: ["all forms"],
-  //       });
-  //     })
-  //     .catch((e) => {
-  //       toast.dismiss();
-  //       // toast.error(e?.response?.data);
-  //       console.log("delete error", e?.response?.data);
-  //     });
-  // };
-
   return (
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
-        {/* <button
-          onClick={() => hardDelete(id)}
-          className="bg-red-700 px-5 py-5 m-5 text-white"
-        >
-          Delete
-        </button> */}
         <button
-          onClick={
-            onClick
-              ? () => onClick()
-              : () => {
-                  router.push(`/forms/${id}`);
-                }
-          }
+          onClick={() => router.push(`/company/forms/${id}`)}
           style={
             {
               // backgroundColor: color?.a,
@@ -181,23 +91,16 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
         <div className="p-3">
           <button
             onClick={() => {
-              router.push(`/forms/${id}`);
+              router.push(`/company/forms/${id}`);
             }}
             className="text-lg w-full text-left font-medium"
           >
             {name?.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">
-            {addFormResponses ? (
-              <p className="text-xs pr-4">
-                <span className="font-bold ">{formResponsesCount}</span>{" "}
-                responses
-              </p>
-            ) : (
-              <p className="text-xs font-light pr-4">
-                Edited {FormatDate(updatedOn)}
-              </p>
-            )}
+            <p className="text-xs font-light pr-4">
+              {formResponsesCount} response(s)
+            </p>
             <Menu as="div" className="relative">
               <div className="relative">
                 <Menu.Button className="relative">
@@ -242,24 +145,6 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
           </div>
         </div>
       </div>
-
-      {/* DELETE FORM MODAL */}
-      <Modal
-        isOpen={showDeleteModal}
-        setIsOpen={setShowDeleteModal}
-        title={`Are you sure you want to delete "${name} form" ? `}
-      >
-        <DeleteForm id={id} setShow={setShowDeleteModal} />
-      </Modal>
-
-      {/* Rename Modal */}
-      <Modal
-        isOpen={showRenameModal}
-        setIsOpen={setShowRenameModal}
-        title={`Rename "${name} form"`}
-      >
-        <RenameForm form={form} setShow={setShowRenameModal} />
-      </Modal>
     </>
   );
 }
