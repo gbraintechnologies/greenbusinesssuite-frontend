@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Nav from "./components/Nav";
 
@@ -12,6 +14,8 @@ import EmptyList from "@/app/(admin)/forms/components/EmptyList";
 import FormCard from "./components/CompanyFormCard";
 
 function CompanyForms() {
+  // TODO: UPDATE TO USE RIGHT COMPANY ID
+  // COMPANY OF CURRENT ADMIN CAN BE RETRIEVED FROM useAdmin()
   const { data: companyData } = useQuery({
     queryKey: ["get company"],
     queryFn: services.getCompanyById(2),

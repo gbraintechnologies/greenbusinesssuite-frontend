@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 // icons
 import { FiEdit2 } from "react-icons/fi";
 import { VscLink } from "react-icons/vsc";
-import { LuUploadCloud } from "react-icons/lu";
 
 //
 import Company from "./components/Company";
@@ -37,7 +36,6 @@ function FormDetail({ params }: any) {
 
   const queryClient = useQueryClient();
 
-
   const { data: form, isLoading } = useQuery({
     queryKey: ["form", parseInt(formID)],
     queryFn: services.getFormById(formID),
@@ -49,9 +47,7 @@ function FormDetail({ params }: any) {
     queryFn: services.getAllCompanies(),
   });
 
-  useEffect(()=> {
-    console.log('form changed to form ', form)
-  }, [form])
+  useEffect(() => {}, [form]);
   if (isLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
@@ -168,7 +164,11 @@ function FormDetail({ params }: any) {
 
         {/* RENDER VIEWS */}
         {view === "company" && (
-          <Company companies={companies} companyName={form?.companyName} assignDate={form?.assignDate}/>
+          <Company
+            companies={companies}
+            companyName={form?.companyName}
+            assignDate={form?.assignDate}
+          />
         )}
         {view === "connect" && (
           <div className="px-5 mt-5">
