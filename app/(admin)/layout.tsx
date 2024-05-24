@@ -18,18 +18,18 @@ import { FormProvider } from "../../contexts/FormContext";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { RxCountdownTimer } from "react-icons/rx";
 import { PiBuildingsBold } from "react-icons/pi";
 import { BiTargetLock } from "react-icons/bi";
 import UserIcon from "@/public/icons/UserIcon";
 import { AiOutlineMoneyCollect } from "react-icons/ai";
 import { RiFlag2Fill } from "react-icons/ri";
 import { FaLandMineOn } from "react-icons/fa6";
-import { PiNewspaperLight } from "react-icons/pi";
+import { PiListMagnifyingGlassBold } from "react-icons/pi";
 
 // toast
 import toast from "react-hot-toast";
 import useAuth from "@/hooks/useAuth";
+import FormsNavIcon from "@/public/icons/FormsNavIcon";
 
 export default function AdminLayout({
   children,
@@ -97,16 +97,11 @@ export default function AdminLayout({
     },
     {
       name: "Forms",
-      icon: <PiNewspaperLight size={22} />,
+      icon: <FormsNavIcon />,
       link: "/forms",
     },
     {
-      name: "User management",
-      icon: <UserIcon />,
-      link: "/usermanagement",
-    },
-    {
-      name: "Company setup",
+      name: "Companies",
       icon: <PiBuildingsBold size={20} />,
       link: [
         "/company-setup",
@@ -118,24 +113,42 @@ export default function AdminLayout({
     {
       name: "Jurisdiction setup",
       icon: <BiTargetLock size={20} />,
-      link: "/country-setup",
+      link: null,
       subNavigation: [
         {
           name: "Country setup",
-          icon: <RiFlag2Fill size={20} />,
+          icon: null, //<RiFlag2Fill size={20} />,
           link: "/country-setup",
         },
         {
           name: "Currency setup",
-          icon: <AiOutlineMoneyCollect size={20} />,
+          icon: null, //<AiOutlineMoneyCollect size={20} />,
           link: "/currency-setup",
         },
         {
           name: "Sector setup",
-          icon: <FaLandMineOn size={20} />,
+          icon: null, //<FaLandMineOn size={20} />,
           link: "/sector-setup",
         },
       ],
+    },
+    {
+      name: "User management",
+      icon: <UserIcon />,
+      link: "/usermanagement",
+    },
+    {
+      name: "Audit trail",
+      icon: <PiListMagnifyingGlassBold size={18} />,
+      link: "/audit-trail",
+    },
+  ];
+
+  const thirdPartyApps = [
+    {
+      name: "Business Analysis Tool",
+      icon: <UserIcon />,
+      link: "/business-analysis",
     },
   ];
 
@@ -161,7 +174,10 @@ export default function AdminLayout({
                 <TopNav />
                 <div className="flex flex-row">
                   {!pathname.includes("settings") && (
-                    <SideNav navigation={navigation} />
+                    <SideNav
+                      thirdPartyApps={thirdPartyApps}
+                      navigation={navigation}
+                    />
                   )}
 
                   <div className=" w-full mt-4 py-2">{children}</div>

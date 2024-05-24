@@ -151,12 +151,12 @@ export const saveResponse = ({
   responseId,
 }: any) => {
   return authApi.put(`forms/response/update`, {
-    id: responseId,
-    formId: formId,
+    id: parseInt(responseId),
+    formId: parseInt(formId),
     isCompleted: isCompleted,
     inputData: inputData,
     companyName: companyName,
-    userId: userId,
+    userId: parseInt(userId),
   });
 };
 
