@@ -9,7 +9,6 @@ import services from "@/services";
 
 // components
 import StepsNav from "./components/StepsNav";
-import { useRouter } from "next/navigation";
 
 // componetns
 import FormSection from "./formElements/FormSection";
@@ -24,7 +23,6 @@ function FillFormHere() {
 
   //
   const search = useSearchParams();
-  const router = useRouter();
 
   let formId = search.get("id");
 
@@ -67,11 +65,11 @@ function FillFormHere() {
       // INPUT DATA -> DATA HOLDS ACTUAL FORM DETAILS
       let form = formData[0]?.inputData?.data;
 
-      console.log("form", formData);
       setForm({
         responseId: formData[0]?.id,
         ...formData[0]?.inputData?.data,
         companyName: fullCompanyName,
+        id: form?.id,
       });
 
       selectClientForm({
