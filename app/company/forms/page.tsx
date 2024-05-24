@@ -1,10 +1,8 @@
-"use client";
-import React, { useState } from "react";
+import React from "react";
 import Nav from "./components/Nav";
 
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-import useAdmin from "@/hooks/useAdmin";
 
 // components
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
@@ -13,16 +11,9 @@ import EmptyList from "@/app/(admin)/forms/components/EmptyList";
 //
 import FormCard from "./components/CompanyFormCard";
 
-//
-import { useRouter } from "next/navigation";
-
 function CompanyForms() {
-  const router = useRouter();
-  const { admin } = useAdmin();
-
   const { data: companyData } = useQuery({
     queryKey: ["get company"],
-
     queryFn: services.getCompanyById(2),
   });
 
@@ -31,8 +22,6 @@ function CompanyForms() {
     queryFn: services.getFormsByCompanyName(companyData?.company_name),
     enabled: !!companyData?.company_name,
   });
-
-  console.log("forms", forms);
 
   return (
     <div className="px-5 pb-20 mt-4 py-2 min-h-screen">

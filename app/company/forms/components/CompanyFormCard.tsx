@@ -21,7 +21,7 @@ type Props = {
   addFormResponses?: boolean;
   onClick?: () => void;
 };
-function FormCard({ form, onClick, addFormResponses = false }: Props) {
+function FormCard({ form, onClick, addFormResponses = true }: Props) {
   let { id, name, url } = form;
 
   const router = useRouter();
@@ -77,13 +77,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
         <button
-          onClick={
-            onClick
-              ? () => onClick()
-              : () => {
-                  router.push(`/forms/${id}`);
-                }
-          }
+          onClick={() => router.push(`/company/forms/${id}`)}
           style={
             {
               // backgroundColor: color?.a,
@@ -97,7 +91,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
         <div className="p-3">
           <button
             onClick={() => {
-              router.push(`/forms/${id}`);
+              router.push(`/company/forms/${id}`);
             }}
             className="text-lg w-full text-left font-medium"
           >
