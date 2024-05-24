@@ -27,7 +27,10 @@ export const getFormByIdRaw = (id: any) => {
 };
 
 export const getFormsByCompanyName = (companyName: string) => {
-  return () => authApi.get(`/forms/builder/company/${companyName}`);
+  return () =>
+    authApi
+      .get(`/forms/builder/company/${companyName}`)
+      .then((res) => res.data);
 };
 
 export const getFormStatisticsForUser = (userId: string) => {

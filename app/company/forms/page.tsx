@@ -1,29 +1,28 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Nav from "./components/Nav";
-import SearchBox from "@/components/SearchBox/SearchBox";
-import { getFormsByCompanyName } from "@/services/features/formsService";
+
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import useAdmin from "@/hooks/useAdmin";
+
+// components
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import EmptyList from "@/app/(admin)/forms/components/EmptyList";
-import FormCard from "@/app/(admin)/forms/components/FormCard";
+
+//
+import FormCard from "./components/CompanyFormCard";
+
+//
 import { useRouter } from "next/navigation";
-import StatsBlock from "@/components/StatsBlock/StatsBlock";
 
 function CompanyForms() {
-  const [searchTerm, setSearchTerm] = useState("");
-
   const router = useRouter();
   const { admin } = useAdmin();
 
   const { data: companyData } = useQuery({
     queryKey: ["get company"],
-    // queryFn: services.getCompanyById(Number(
-    //   admin?.custom_profile_values.find(
-    //     (item: any) => item.custom_profile_item_id === 2
-    //   )?.value)),
+
     queryFn: services.getCompanyById(2),
   });
 
@@ -33,47 +32,39 @@ function CompanyForms() {
     enabled: !!companyData?.company_name,
   });
 
+  console.log("forms", forms);
+
   return (
-    <div className="px-5 pb-20 mt-4 py-2 bg-[#F8FAFC]">
-      <Nav
-        headerLeftTitle="Form Reports"
-      />
-      <div className="mt-4">
-            <StatsBlock
-              stats={[
-                {
-                  label: "No. of Links Opened",
-                  value: "5,468",
-                },
-                {
-                  label: "Ignored Links",
-                  value: "23",
-                },
-                {
-                  label: "New Customers",
-                  value: "145",
-                },
-              ]}
-            />
+    <div className="px-5 pb-20 mt-4 py-2 min-h-screen">
+      <Nav headerLeftTitle="Assigned Forms" />
+
+      <div className="mt-5">
+        {isFormsLoading ? (
+          <div className="h-[20rem] flex items-center justify-center">
+            <div>
+              <LoadingIcon />
+              <p className="mt-2 text-xs text-gray-500">
+                Fetching assigned forms
+              </p>
+            </div>
           </div>
-          <div className="mt-4">
-            <StatsBlock
-              stats={[
-                {
-                  label: "Total Number Of Entries",
-                  value: "5,468",
-                },
-                {
-                  label: "Completed Submissions",
-                  value: "23",
-                },
-                {
-                  label: "Uncompleted Submissions",
-                  value: "145",
-                },
-              ]}
-            />
-          </div>
+        ) : (
+          // ALL COMPANY FORMS
+          <>
+            {forms?.length === 0 ? (
+              <div className="">
+                <EmptyList />
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 gap-5">
+                {forms?.map((form: any) => {
+                  return <FormCard key={form.id} form={form} />;
+                })}
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

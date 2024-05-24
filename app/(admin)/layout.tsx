@@ -26,8 +26,7 @@ import { RiFlag2Fill } from "react-icons/ri";
 import { FaLandMineOn } from "react-icons/fa6";
 import { PiListMagnifyingGlassBold } from "react-icons/pi";
 
-// toast
-import toast from "react-hot-toast";
+//
 import useAuth from "@/hooks/useAuth";
 import FormsNavIcon from "@/public/icons/FormsNavIcon";
 
