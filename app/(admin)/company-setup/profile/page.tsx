@@ -13,14 +13,22 @@ import Link from "next/link";
 import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import UserIcon from "@/public/icons/UserIcon";
+import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import { LuPlusCircle } from "react-icons/lu";
+import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
+import FormCard from "@/components/Form/FormCard";
+import AssignForm from "../components/AssignForm";
+import Modal from "@/components/Modal/Modal";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
     { id: 2, name: "Active", value: "ACTIVE" },
     { id: 3, name: "Inactive", value: "INACTIVE" },
-  ]); // [ACTIVE, INACTIVE, SUSPENDED, PENDING
+  ]);
 
   const [activeStatus, setActiveStatus] = useState({} as any);
+
+  const [showAssignModal, setShowAssignModal] = useState<boolean>(false);
 
   const searchParams = useSearchParams();
 
@@ -29,6 +37,14 @@ const Page = () => {
   const { data: companyData, isLoading } = useQuery({
     queryKey: ["get company"],
     queryFn: services.getCompanyById(Number(id)),
+  });
+
+  const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
+    queryKey: ["get assigned forms"],
+    queryFn: services.getFormsByCompanyName(
+      lowerCaseNoSpace(companyData?.company_name)
+    ),
+    enabled: !!companyData?.company_name,
   });
 
   // const companyData: CompanyInfo = companies?.find(
@@ -80,6 +96,16 @@ const Page = () => {
       toast.error("Failed to update company status");
     }
   };
+  if (isLoading || areFormsLoading) {
+    return (
+      <div className="h-[20rem] flex items-center justify-center">
+        <div>
+          <LoadingIcon />
+          <p className="mt-2 text-xs text-gray-500">Fetching company details</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="px-5 pb-10">
       {/* HEADER */}
@@ -159,58 +185,87 @@ const Page = () => {
         )}
       </div>
 
-      {/* COMPANY BODY */}
-      <div className="max-w-2xl py-5 pb-3">
-        {companyDescription && (
-          <div className="group">
-            <div className="label">Company description</div>
-            <div className="value">{companyDescription}</div>
-          </div>
-        )}
-        {companyData?.industry && (
-          <div className="group">
-            <div className="label">Industry</div>
-            <div className="value">{companyData?.industry}</div>
-          </div>
-        )}
-        {companyData?.primary_contact_name && (
-          <div className="group">
-            <div className="label">Contact person</div>
-            <div className="value">{companyData?.primary_contact_name}</div>
-          </div>
-        )}
+      <div className="flex ">
+        {/* COMPANY BODY */}
+        <div className="flex-1 max-w-2xl py-5 pb-3">
+          {companyDescription && (
+            <div className="group">
+              <div className="label">Company description</div>
+              <div className="value">{companyDescription}</div>
+            </div>
+          )}
+          {companyData?.industry && (
+            <div className="group">
+              <div className="label">Industry</div>
+              <div className="value">{companyData?.industry}</div>
+            </div>
+          )}
+          {companyData?.primary_contact_name && (
+            <div className="group">
+              <div className="label">Contact person</div>
+              <div className="value">{companyData?.primary_contact_name}</div>
+            </div>
+          )}
 
-        <div className="flex justify-between">
-          {companyData?.primary_contact_phone_number && (
-            <div className="group">
-              <div className="label">Phone Number</div>
-              <div className="value">
-                {companyData?.primary_contact_phone_number}
+          <div className="flex justify-between">
+            {companyData?.primary_contact_phone_number && (
+              <div className="group">
+                <div className="label">Phone Number</div>
+                <div className="value">
+                  {companyData?.primary_contact_phone_number}
+                </div>
               </div>
-            </div>
-          )}
-          {companyData?.primary_contact_email && (
-            <div className="group">
-              <div className="label">Email</div>
-              <div className="value">{companyData?.primary_contact_email}</div>
-            </div>
-          )}
+            )}
+            {companyData?.primary_contact_email && (
+              <div className="group">
+                <div className="label">Email</div>
+                <div className="value">
+                  {companyData?.primary_contact_email}
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="flex justify-between">
+            {companyAdminName && (
+              <div className="group">
+                <div className="label">Admin Name</div>
+                <div className="value">{companyAdminName}</div>
+              </div>
+            )}
+            {companyAdminEmail && (
+              <div className="group">
+                <div className="label">Email</div>
+                <div className="value">{companyAdminEmail}</div>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="flex justify-between">
-          {companyAdminName && (
-            <div className="group">
-              <div className="label">Admin Name</div>
-              <div className="value">{companyAdminName}</div>
-            </div>
-          )}
-          {companyAdminEmail && (
-            <div className="group">
-              <div className="label">Email</div>
-              <div className="value">{companyAdminEmail}</div>
-            </div>
-          )}
+        {/* ASSIGNED FORMS */}
+        <div className="flex-1 py-5 pb-3 flex flex-col input-holder max-w-56">
+          <div className="label">Assigned Forms</div>
+          {/**DISPLAYING ASSIGNED FORMS*/}
+          <div className="flex flex-col gap-4 mt-2 h-96 overflow-y-scroll">
+            {/* {assignedForms && assignedForms?.map((form: any) => {
+              return <FormCard key={form.id} form={form} />;
+            })} */}
+          </div>
+          <button
+            className="mt-4 bg-white border border-[rgba(226, 232, 240, 1)] flex text-sm px-4 py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg"
+            onClick={() => setShowAssignModal(true)}
+          >
+            <LuPlusCircle /> Assign New Form
+          </button>
         </div>
       </div>
+
+      {/**ASSIGN FORM MODAL */}
+      <Modal
+        isOpen={showAssignModal}
+        setIsOpen={setShowAssignModal}
+        title="Selected form to assign to organisation"
+      >
+        <AssignForm companyName={companyData?.company_name} />
+      </Modal>
     </div>
   );
 };
