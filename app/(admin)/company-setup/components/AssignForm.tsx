@@ -11,16 +11,25 @@ import toast from "react-hot-toast";
 type Props = {
   companyName: string;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  queryClient: any;
 };
 
-const AssignForm = ({ companyName, setShow }: Props) => {
-  const { data: allForms, isLoading } = useQuery({
+const AssignForm = ({ companyName, setShow, queryClient }: Props) => {
+  const filterForms = React.useCallback<any>((forms: any) => {
+    const filteredForms = forms.content?.filter((form: any) => {
+      return form?.companyName !== lowerCaseNoSpace(companyName)
+    })
+    return filteredForms;
+  }, []);
+
+  const { data: allForms, isLoading: areFormsLoading } = useQuery({
     queryKey: ["get all forms"],
     queryFn: services.allForms(),
+    select: filterForms
   });
 
   const [selected, setSelected] = React.useState<any>();
-  const [isLpading, setLoading] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(false);
 
   const assignFormToCompany = async () => {
     setLoading(true);
@@ -29,8 +38,12 @@ const AssignForm = ({ companyName, setShow }: Props) => {
         selected,
         lowerCaseNoSpace(companyName)
       );
-
+      // invalidate form data
+      queryClient.invalidateQueries({
+        queryKey: ["get assigned forms"],
+      });
       setLoading(false);
+
       toast.success("Company assigned successfully");
       setShow(false);
     } catch (error) {
@@ -40,7 +53,7 @@ const AssignForm = ({ companyName, setShow }: Props) => {
     }
   };
 
-  if (isLoading) {
+  if (areFormsLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
         <div>
@@ -60,7 +73,7 @@ const AssignForm = ({ companyName, setShow }: Props) => {
         ) : (
           <div className="grid grid-cols-3 gap-5 h-96 overflow-scroll">
             {allForms &&
-              allForms.content?.map((form: any) => {
+              allForms?.map((form: any) => {
                 return (
                   <div
                     className={
@@ -82,10 +95,17 @@ const AssignForm = ({ companyName, setShow }: Props) => {
         )}
       </div>
       <div className="flex justify-between">
-        <button className="bg-white disabled:bg-gray-400 py-3 flex border border-[rgba(226, 232, 240, 1)] text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
+        <button
+          className="bg-white disabled:bg-gray-400 py-3 flex border border-[rgba(226, 232, 240, 1)] text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+          onClick={() => setShow(false)}
+        >
           Discard
         </button>
-        <button className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl" onClick={assignFormToCompany}>
+        <button
+          className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+          onClick={assignFormToCompany}
+          disabled={isLoading || !selected}
+        >
           Assign Forms
         </button>
       </div>
