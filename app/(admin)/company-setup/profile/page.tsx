@@ -250,7 +250,7 @@ const Page = () => {
             <div className="flex flex-col gap-4 mt-2 h-96 overflow-y-scroll">
               {assignedForms &&
                 assignedForms?.map((form: any) => {
-                  return <FormCard key={form.id} form={form} />;
+                  return <FormCard key={form.id} form={form} noMetaData={true} />;
                 })}
             </div>
             <button
