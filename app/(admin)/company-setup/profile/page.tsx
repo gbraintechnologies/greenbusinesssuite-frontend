@@ -107,6 +107,7 @@ const Page = () => {
     );
   }
   return (
+    <>
     <div className="px-5 pb-10">
       {/* HEADER */}
       <div className="w-full text-primary-dark  flex justify-between items-center">
@@ -245,9 +246,9 @@ const Page = () => {
           <div className="label">Assigned Forms</div>
           {/**DISPLAYING ASSIGNED FORMS*/}
           <div className="flex flex-col gap-4 mt-2 h-96 overflow-y-scroll">
-            {/* {assignedForms && assignedForms?.map((form: any) => {
+            {assignedForms && assignedForms?.map((form: any) => {
               return <FormCard key={form.id} form={form} />;
-            })} */}
+            })}
           </div>
           <button
             className="mt-4 bg-white border border-[rgba(226, 232, 240, 1)] flex text-sm px-4 py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg"
@@ -259,14 +260,16 @@ const Page = () => {
       </div>
 
       {/**ASSIGN FORM MODAL */}
+    </div>
       <Modal
         isOpen={showAssignModal}
         setIsOpen={setShowAssignModal}
+        size="big"
         title="Selected form to assign to organisation"
       >
-        <AssignForm companyName={companyData?.company_name} />
+        <AssignForm companyName={companyData?.company_name} setShow={setShowAssignModal}/>
       </Modal>
-    </div>
+    </>
   );
 };
 

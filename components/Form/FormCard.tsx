@@ -27,9 +27,15 @@ import RenameForm from "./actions/RenameForm";
 type Props = {
   form: any;
   addFormResponses?: boolean;
+  noMetaData?: boolean;
   onClick?: () => void;
 };
-function FormCard({ form, onClick, addFormResponses = false }: Props) {
+function FormCard({
+  form,
+  onClick,
+  addFormResponses = false,
+  noMetaData = false,
+}: Props) {
   let {
     id,
     name,
@@ -153,66 +159,72 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
         </button>
         <div className="p-3">
           <button
-            onClick={() => {
-              router.push(`/forms/${id}`);
-            }}
-            className="text-lg w-full text-left font-medium"
+            onClick={
+              onClick
+                ? () => onClick()
+                : () => {
+                    router.push(`/forms/${id}`);
+                  }
+            }
+            className={" w-full text-left font-medium " + (noMetaData ? " text-xs" : " text-lg")}
           >
             {name.replace(/"/g, " ")}
           </button>
-          <div className="flex items-center justify-between mt-1">
-            {addFormResponses ? (
-              <p className="text-xs pr-4">
-                <span className="font-bold ">{formResponsesCount}</span>{" "}
-                responses
-              </p>
-            ) : (
-              <p className="text-xs font-light pr-4">
-                Edited {FormatDate(updatedOn)}
-              </p>
-            )}
-            <Menu as="div" className="relative">
-              <div className="relative">
-                <Menu.Button className="relative">
-                  <BsThreeDots />
-                </Menu.Button>
-              </div>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
-                  {options.map((option: any, idx: any) => {
-                    return (
-                      <Menu.Item>
-                        <div>
-                          <button
-                            className={`${
-                              option.title.toLowerCase() === "delete"
-                                ? "text-red-600"
-                                : " text-gray-500"
-                            } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
-                            onClick={() => option.func()}
-                          >
-                            {option.title}
-                          </button>
+          {!noMetaData && (
+            <div className="flex items-center justify-between mt-1">
+              {addFormResponses ? (
+                <p className="text-xs pr-4">
+                  <span className="font-bold ">{formResponsesCount}</span>{" "}
+                  responses
+                </p>
+              ) : (
+                <p className="text-xs font-light pr-4">
+                  Edited {FormatDate(updatedOn)}
+                </p>
+              )}
+              <Menu as="div" className="relative">
+                <div className="relative">
+                  <Menu.Button className="relative">
+                    <BsThreeDots />
+                  </Menu.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
+                    {options.map((option: any, idx: any) => {
+                      return (
+                        <Menu.Item>
+                          <div>
+                            <button
+                              className={`${
+                                option.title.toLowerCase() === "delete"
+                                  ? "text-red-600"
+                                  : " text-gray-500"
+                              } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
+                              onClick={() => option.func()}
+                            >
+                              {option.title}
+                            </button>
 
-                          {idx % 2 === 0 && (
-                            <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
-                          )}
-                        </div>
-                      </Menu.Item>
-                    );
-                  })}
-                </Menu.Items>
-              </Transition>
-            </Menu>
-          </div>
+                            {idx % 2 === 0 && (
+                              <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
+                            )}
+                          </div>
+                        </Menu.Item>
+                      );
+                    })}
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
+          )}
         </div>
       </div>
 
