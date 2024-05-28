@@ -87,7 +87,7 @@ export const createNewForm = (data: any) => {
 };
 
 export const duplicateForm = (id: any) => {
-  return authApi.post(`/forms/builder/${id}/duplicateForm`);
+  return authApi.post(`/forms/builder/duplicateForm/${id}`);
 };
 
 export const publishForm = (id: any) => {
