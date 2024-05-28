@@ -17,7 +17,7 @@ type Props = {
 const AssignForm = ({ companyName, setShow, queryClient }: Props) => {
   const filterForms = React.useCallback<any>((forms: any) => {
     const filteredForms = forms.content?.filter((form: any) => {
-      return form?.companyName !== lowerCaseNoSpace(companyName)
+      return !form?.companyName
     })
     return filteredForms;
   }, []);
@@ -40,7 +40,7 @@ const AssignForm = ({ companyName, setShow, queryClient }: Props) => {
       );
       // invalidate form data
       queryClient.invalidateQueries({
-        queryKey: ["get assigned forms"],
+        queryKey: ["get assigned forms for ",lowerCaseNoSpace(companyName)],
       });
       setLoading(false);
 
@@ -66,12 +66,12 @@ const AssignForm = ({ companyName, setShow, queryClient }: Props) => {
   return (
     <div className="bg-white px-5 py-2">
       <div className="px-2">
-        {allForms?.totalElements === 0 ? (
-          <div className="">
-            <EmptyList />
+        {allForms?.length === 0 ? (
+          <div className="mb-2">
+            <EmptyList text="You do not have any unassigned forms."/>
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-5 h-96 overflow-scroll">
+          <div className="grid grid-cols-3 gap-5 h-96 mb-2 overflow-scroll">
             {allForms &&
               allForms?.map((form: any) => {
                 return (

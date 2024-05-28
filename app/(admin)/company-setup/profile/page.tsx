@@ -35,21 +35,18 @@ const Page = () => {
   const id = searchParams.get("id");
 
   const { data: companyData, isLoading } = useQuery({
-    queryKey: ["get company"],
+    queryKey: ["company", parseInt(id as string)],
     queryFn: services.getCompanyById(Number(id)),
   });
 
   const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
-    queryKey: ["get assigned forms"],
+    queryKey: ["get assigned forms for ",lowerCaseNoSpace(companyData?.company_name)],
     queryFn: services.getFormsByCompanyName(
       lowerCaseNoSpace(companyData?.company_name)
     ),
     enabled: !!companyData?.company_name,
   });
 
-  // const companyData: CompanyInfo = companies?.find(
-  //   (company: CompanyInfo) => company.id === Number(id)
-  // );
 
   const companyDescription =
     companyData?.company_custom_values?.find(
@@ -247,7 +244,7 @@ const Page = () => {
           <div className="flex-1 py-5 pb-3 flex flex-col input-holder max-w-56">
             <div className="label">Assigned Forms ({assignedForms?.length})</div>
             {/**DISPLAYING ASSIGNED FORMS*/}
-            <div className="flex flex-col gap-4 mt-2 h-96 overflow-y-scroll">
+            <div className="flex flex-col gap-4 mt-2 max-h-[28rem] overflow-y-scroll">
               {assignedForms &&
                 assignedForms?.map((form: any) => {
                   return <FormCard key={form.id} form={form} noMetaData={true} />;
