@@ -57,7 +57,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: 150 
+            width: 150
           }
         }}
       >
@@ -70,40 +70,20 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
 
 const SectorSetup: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [rows, setRows] = useState<RowData[]>([]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["all currencies"],
     queryFn: services.allCurrencies(),
   });
-
-
-  const { data: searchsData, isLoading: searchLoading } = useQuery({
-    queryKey: ["all currencies", searchTerm],
-    queryFn: services.SearchJurisdictions(searchTerm),
-    enabled: Boolean(searchTerm),
-  });
-
-
-  const [jurisdictionUser, setJurisdictionUser] = useState<JurisdictionUser[]>([]);
-  const [rows, setRows] = useState<RowData[]>([]);
-
   useEffect(() => {
-    if (searchTerm.length > 1 && searchsData) {
-      setJurisdictionUser(searchsData);
+    // alert(JSON.stringify(data))
+    if (data) {
+      setRows(data);
     }
+  }, [data]);
 
-    if (data && searchTerm.length < 1) {
-      setJurisdictionUser(data);
-    }
-  }, [searchsData, data, searchTerm]);
 
-  useEffect(() => {
-    const temp: RowData[] = jurisdictionUser.map(user => ({
-      id: user.id,
-      data: user,
-    }));
-    setRows(temp);
-  }, [jurisdictionUser]);
 
   const columns = [
     {
@@ -114,7 +94,7 @@ const SectorSetup: React.FC = () => {
       headerAlign: "left",
       flex: 3,
       getActions: (params: any) => [
-        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.data.id}>
+        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
           <label>
             <input
               type="checkbox"
@@ -176,7 +156,7 @@ const SectorSetup: React.FC = () => {
 
       {/* Table */}
       <DataTable
-        isLoading={isLoading || searchLoading}
+        isLoading={isLoading}
         rows={rows}
         columns={columns}
       />
