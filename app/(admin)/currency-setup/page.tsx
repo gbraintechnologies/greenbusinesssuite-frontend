@@ -15,10 +15,10 @@ import SearchIcon from "@/public/icons/SearchIcon";
 import DataTable from "@/components/DataTable/DataTable";
 import "./index.css";
 import Nav from "./components/Nav";
-import { Countrie } from "./components/Countries";
+import { Countrieses } from "./components/Countries";
 
 function CurrencySetup() {
-
+  const [rows, setRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   // fetch all currencies
@@ -27,14 +27,13 @@ function CurrencySetup() {
     queryFn: services.allCurrencies(),
   });
 
+  useEffect(() => {
+   // alert(JSON.stringify(data))
+    if (data) {
+      setRows(data);
+    }
+  }, [data]);
 
-  const { data: searchsData, isLoading: searchLoading } = useQuery({
-    queryKey: ["all currencies", searchTerm],
-    queryFn: services.SearchJurisdictions(searchTerm),
-    enabled: Boolean(searchTerm),
-  });
-
-  const [jurisdictionUser, setJurisdictionUser] = useState([]);
 
   const columns = [
     {
@@ -45,7 +44,7 @@ function CurrencySetup() {
       headerAlign: "left",
       flex: 3,
       getActions: (params: any) => [
-        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.data.id}>
+        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
           <label>
             <input
               type="checkbox"
@@ -53,12 +52,12 @@ function CurrencySetup() {
             />
           </label>
           <div className="w-10 h-10 flex items-center justify-center">
-          <span className=""><img src={Countrie(params.row.data.jurisdiction_name)?.flags.png} alt={Countrie(params.row.data.jurisdiction_name)?.name.common} style={{ height: "auto",width:"30px" }} /></span>
+            <span className=""><img src={Countrieses(params.row.countryName)?.flags.png} alt={Countrieses(params.row.countryName)?.name.common} style={{ height: "auto", width: "30px" }} /></span>
 
           </div>
           <div>
             <p className="font-medium">
-              {params.row.data.currency_name}
+              {params.row.currency}
             </p>
           </div>
         </div>,
@@ -74,7 +73,7 @@ function CurrencySetup() {
       getActions: (params: any) => [
         <div key={params.row.id} className="flex flex-col gap-2">
           <p className="font-medium text-sm">
-            {params.row.data?.currency_symbol}
+            {params.row.symbol}
           </p>
         </div>,
       ],
@@ -93,33 +92,7 @@ function CurrencySetup() {
   ];
 
 
-  useEffect(() => {
-    if (searchTerm.length > 1 && searchsData) {
-      setJurisdictionUser(searchsData);
-    }
 
-    if (data && searchTerm.length < 1) {
-      setJurisdictionUser(data);
-    }
-  }, [searchsData, data, searchTerm]);
-
-  useEffect(() => {
-    let temp: any = [];
-
-    if (jurisdictionUser) {
-      for (let i = 0; i < jurisdictionUser.length; i++) {
-        let user = jurisdictionUser[i];
-        // APP ID ===1 == MESH SUITE APP
-        // @ts-ignore
-        // @ts-ignore
-        temp.push({ id: user?.id, data: user });
-      }
-      setRows(temp);
-    }
-  }, [jurisdictionUser]);
-
-
-  const [rows, setRows] = useState([]);
 
   return (
     <div className="w-full pb-20 ">
@@ -143,7 +116,7 @@ function CurrencySetup() {
 
       {/* Table */}
       <DataTable
-        isLoading={isLoading || searchLoading}
+        isLoading={isLoading}
         rows={rows}
         columns={columns}
       />
