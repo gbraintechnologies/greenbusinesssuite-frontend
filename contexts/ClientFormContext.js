@@ -65,7 +65,7 @@ export const ClientFormProvider = ({ children }) => {
     return services.saveResponse({
       formId: clientForm?.id,
       responseId: clientForm?.responseId,
-      isCompleted: false,
+      isCompleted: true,
       inputData: {
         data: {
           formSections: clientForm?.formSections,
