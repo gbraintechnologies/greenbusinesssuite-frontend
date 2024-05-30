@@ -3,7 +3,7 @@ import noAuthApi from "../axiosNoAuthClient";
 
 export const allForms = () => {
   return () =>
-    authApi.get("/forms/builder/all?page=0&size=2").then((res) => res.data);
+    authApi.get("/forms/builder/all?page=0&size=100").then((res) => res.data);
 };
 
 export const allFormTemplates = () => {
@@ -67,6 +67,20 @@ export const getFormStatusCountById = (id: number) => {
   return () =>
     authApi
       .get(`/forms/response/forms-status/count/${id}`)
+      .then((res) => res.data);
+};
+
+export const publishedFormsCount = () => {
+  return () =>
+    authApi
+      .get(`/forms/dashboard/published-forms/count`)
+      .then((res) => res.data);
+};
+
+export const unpublishedFormsCount = () => {
+  return () =>
+    authApi
+      .get("/forms/dashboard/unpublished-forms/count")
       .then((res) => res.data);
 };
 
