@@ -1,0 +1,15 @@
+.stats-content {
+  @apply text-4xl font-medium;
+}
+
+.stats-section {
+  @apply flex flex-col gap-4 p-4;
+}
+
+.stats-section p {
+  @apply font-light;
+}
+
+.stats-holder {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-10 divide-x mt-5 bg-gray-50 rounded-xl border-gray-100 p-5;
+}

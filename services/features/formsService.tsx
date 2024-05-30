@@ -70,6 +70,20 @@ export const getFormStatusCountById = (id: number) => {
       .then((res) => res.data);
 };
 
+export const publishedFormsCount = () => {
+  return () =>
+    authApi
+      .get(`/forms/dashboard/published-forms/count`)
+      .then((res) => res.data);
+};
+
+export const unpublishedFormsCount = () => {
+  return () =>
+    authApi
+      .get("/forms/dashboard/unpublished-forms/count")
+      .then((res) => res.data);
+};
+
 export const updateForm = (data: any) => {
   return authApi.put(`/forms/builder/update`, data);
 };
