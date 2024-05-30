@@ -29,12 +29,14 @@ type Props = {
   addFormResponses?: boolean;
   noMetaData?: boolean;
   onClick?: () => void;
+  isSelected?: boolean;
 };
 function FormCard({
   form,
   onClick,
   addFormResponses = false,
   noMetaData = false,
+  isSelected = false,
 }: Props) {
   let {
     id,
@@ -138,7 +140,7 @@ function FormCard({
   }, []);
   return (
     <>
-      <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+      <div className={"w-full rounded-lg shadow-md bg-[#F8FAFC] " + (isSelected ? " border-green-400 drop-shadow-main": " ")}>
         <button
           onClick={
             onClick

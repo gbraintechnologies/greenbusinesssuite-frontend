@@ -78,7 +78,7 @@ const AssignForm = ({ companyName, setShow, queryClient }: Props) => {
                   <div
                     className={
                       selected === form.id
-                        ? "rounded-lg border-2 border-green-400 drop-shadow-main"
+                        ? "rounded-lg border-2 border-green-400 drop-shadow-main h-fit w-auto "
                         : " "
                     }
                   >
