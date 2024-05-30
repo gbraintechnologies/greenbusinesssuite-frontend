@@ -106,7 +106,7 @@ const AssignForm = ({ companyName, setShow, queryClient }: Props) => {
           onClick={assignFormToCompany}
           disabled={isLoading || !selected}
         >
-          Assign Forms
+          Assign Form
         </button>
       </div>
     </div>
