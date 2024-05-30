@@ -6,13 +6,15 @@ import * as userManagementService from "./features/userManagementService";
 
 import * as rolesService from "./features/rolesService";
 
-import * as jurisdictionsService from "./features/jurisdictionsService";
+import * as currencyService from "./features/currencyService";
 
 import * as appService from "./features/appService";
 
 import * as formsService from "./features/formsService";
 
 import * as companyService from "./features/companyService";
+
+import * as jurisdictionService from "./features/jurisdictionsService";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -23,5 +25,6 @@ export default {
   ...companyService,
   ...appService,
   ...formsService,
-  ...jurisdictionsService,
+  ...currencyService,
+  ...jurisdictionService
 };

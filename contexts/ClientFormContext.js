@@ -4,6 +4,8 @@ export const ClientFormContext = createContext();
 
 // services and query
 import services from "@/services";
+
+//
 import { useQueryClient } from "@tanstack/react-query";
 
 //toast
@@ -37,6 +39,7 @@ export const ClientFormProvider = ({ children }) => {
           data: {
             formSections: clientForm?.formSections,
             layout: clientForm?.layout,
+            id: clientForm?.id,
           },
         },
         companyName: clientForm?.companyName,
@@ -62,11 +65,12 @@ export const ClientFormProvider = ({ children }) => {
     return services.saveResponse({
       formId: clientForm?.id,
       responseId: clientForm?.responseId,
-      isCompleted: false,
+      isCompleted: true,
       inputData: {
         data: {
           formSections: clientForm?.formSections,
           layout: clientForm?.layout,
+          id: clientForm?.id,
         },
       },
       companyName: clientForm?.companyName,

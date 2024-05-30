@@ -19,21 +19,20 @@ import { Countrie } from "./components/Countries";
 function CountrySetup() {
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [rows, setRows] = useState([]);
 
-  // fetch all jurisdictions
+  //fetch all jurisdictions
   const { data, isLoading } = useQuery({
     queryKey: ["all jurisdictions"],
     queryFn: services.allJurisdictions(),
   });
 
-
-  const { data: searchsData, isLoading: searchLoading } = useQuery({
-    queryKey: ["all jurisdictions", searchTerm],
-    queryFn: services.SearchJurisdictions(searchTerm),
-    enabled: Boolean(searchTerm),
-  });
-
-  const [jurisdictionUser, setJurisdictionUser] = useState([]);
+  useEffect(() => {
+    // alert(JSON.stringify(data))
+    if (data) {
+      setRows(data);
+    }
+  }, [data]);
 
   const columns = [
     {
@@ -52,7 +51,7 @@ function CountrySetup() {
             />
           </label>
           <div className="w-10 h-10 flex items-center justify-center">
-          <span className=""><img src={Countrie(params.row.data.jurisdiction_name)?.flags.png} alt={Countrie(params.row.data.jurisdiction_name)?.name.common} style={{ height: "auto",width:"30px" }} /></span>
+            <span className=""><img src={Countrie(params.row.data.jurisdiction_name)?.flags.png} alt={Countrie(params.row.data.jurisdiction_name)?.name.common} style={{ height: "auto", width: "30px" }} /></span>
 
           </div>
           <div>
@@ -77,33 +76,33 @@ function CountrySetup() {
   ];
 
 
-  useEffect(() => {
-    if (searchTerm.length > 1 && searchsData) {
-      setJurisdictionUser(searchsData);
-    }
+  // useEffect(() => {
+  //   if (searchTerm.length > 1 && searchsData) {
+  //     setJurisdictionUser(searchsData);
+  //   }
 
-    if (data && searchTerm.length < 1) {
-      setJurisdictionUser(data);
-    }
-  }, [searchsData, data, searchTerm]);
+  //   if (data && searchTerm.length < 1) {
+  //     setJurisdictionUser(data);
+  //   }
+  // }, [searchsData, data, searchTerm]);
 
-  useEffect(() => {
-    let temp: any = [];
+  // useEffect(() => {
+  //   let temp: any = [];
 
-    if (jurisdictionUser) {
-      for (let i = 0; i < jurisdictionUser.length; i++) {
-        let user = jurisdictionUser[i];
-        // APP ID ===1 == MESH SUITE APP
-        // @ts-ignore
-        // @ts-ignore
-        temp.push({ id: user?.id, data: user });
-      }
-      setRows(temp);
-    }
-  }, [jurisdictionUser]);
+  //   if (jurisdictionUser) {
+  //     for (let i = 0; i < jurisdictionUser.length; i++) {
+  //       let user = jurisdictionUser[i];
+  //       // APP ID ===1 == MESH SUITE APP
+  //       // @ts-ignore
+  //       // @ts-ignore
+  //       temp.push({ id: user?.id, data: user });
+  //     }
+  //     setRows(temp);
+  //   }
+  // }, [jurisdictionUser]);
 
 
-  const [rows, setRows] = useState([]);
+  // const [rows, setRows] = useState([]);
 
   return (
     <div className="w-full pb-20 ">
@@ -127,7 +126,7 @@ function CountrySetup() {
 
       {/* Table */}
       <DataTable
-        isLoading={isLoading || searchLoading}
+        isLoading={isLoading}
         rows={rows}
         columns={columns}
       />

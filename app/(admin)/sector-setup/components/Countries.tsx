@@ -6,14 +6,9 @@ const Countries = () => {
 };
 
 const Countrie = (itm: string) => {
-    let country = Country.filter(cnt => cnt.cca2 === itm);
-    return (country.length > 0) ? country[0] : null;
-};
-
-const Countrieses = (itm: string) => {
     let country = Country.filter(cnt => cnt.name.common === itm);
     return (country.length > 0) ? country[0] : null;
 };
 
 export default Countries;
-export { Countrie, Countrieses }
+export { Countrie }

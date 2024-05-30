@@ -22,11 +22,10 @@ import PublishFormButton from "../builder/PublishFormButton";
 import toast from "react-hot-toast";
 
 function FormDetail({ params }: any) {
-  const [view, setView] = useState("company");
+  const [view, setView] = useState("responses");
 
   //
   const [showUnpublishModal, setShowUnpublishModal] = useState(false);
-  const [showPublishModal, setShowPublishModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
 
   //
@@ -140,39 +139,22 @@ function FormDetail({ params }: any) {
         <div className="flex justify-between mt-5 items-center px-5">
           <div className="bg-[#F1F5F9]  flex items-center gap-2 rounded-xl my-1 p-1 bg-opacity-50">
             <button
-              onClick={() => setView("company")}
+              onClick={() => setView("responses")}
               className={`${
-                view === "company"
+                view === "responses"
                   ? "bg-white font-medium shadow-sm"
                   : "text-[#64748B] font-light "
               } p-1 rounded-lg px-7`}
             >
-              Company assigned to forms
-            </button>
-            <button
-              onClick={() => setView("connect")}
-              className={`${
-                view === "connect"
-                  ? "bg-white font-medium shadow-sm"
-                  : " text-[#64748B] font-light"
-              } p-1 rounded-lg px-7`}
-            >
-              Connect
+              Responses
             </button>
           </div>
         </div>
 
         {/* RENDER VIEWS */}
-        {view === "company" && (
-          <Company
-            companies={companies}
-            companyName={form?.companyName}
-            assignDate={form?.assignDate}
-          />
-        )}
-        {view === "connect" && (
-          <div className="px-5 mt-5">
-            <ConnectForm style="raw" />
+        {view === "responses" && (
+          <div className="p-6">
+            Logiciel Admin to see form responses as well?
           </div>
         )}
 
