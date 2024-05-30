@@ -9,6 +9,10 @@ export const userByID = (id: any) => {
   return () => authApi.get(`/users/user_by_id/${id}`).then((res) => res.data);
 };
 
+export const userByIDRaw = (id: any) => {
+  return authApi.get(`/users/user_by_id/${id}`).then((res) => res.data);
+};
+
 export const searchUsers = (filter_word: any) => {
   return () =>
     authApi.get(`/users/search_users/${filter_word}`).then((res) => res.data);

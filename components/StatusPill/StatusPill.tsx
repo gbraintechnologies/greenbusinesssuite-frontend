@@ -3,7 +3,9 @@ import React from "react";
 function StatusPill({ status }: any) {
   if (
     status.toLowerCase().includes("inactive") ||
-    status.toLowerCase().includes("temp")
+    status.toLowerCase().includes("temp") ||
+    status.toLowerCase().includes("incomplete")
+
   ) {
     return (
       <span className="text-[#D97706] bg-[#FFFBEB] capitalize text-xs px-5 rounded-full py-1">
@@ -14,7 +16,8 @@ function StatusPill({ status }: any) {
   
   if (
     status.toLowerCase().includes("success") ||
-    status.toLowerCase().includes("active")
+    status.toLowerCase().includes("active") ||
+    status.toLowerCase().includes("complete")
   ) {
     return (
       <span className="text-[#16A34A] bg-[#F0FDF4]  capitalize text-xs px-5 rounded-full py-1">
