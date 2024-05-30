@@ -8,7 +8,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // toast
 import toast from "react-hot-toast";
-import useForm from "@/hooks/useForm";
+
 import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 
 // components
@@ -22,8 +22,6 @@ function PublishFormButton({
   showUnpublishModal,
 }: any) {
   const queryClient = useQueryClient();
-
-  const { selectForm } = useForm();
 
   const { data: form } = useQuery({
     queryKey: ["form", parseInt(formID)],
@@ -48,7 +46,7 @@ function PublishFormButton({
         lowerCaseNoSpace(company?.company_name) == form?.companyName
     )?.company_name;
 
-    // assigning all to "Amazon" company
+    // assigning to company
     let url = `${window.location.origin}/invite?f=${
       form?.id
     }&c=${lowerCaseNoSpace(fullCompanyName)}`;

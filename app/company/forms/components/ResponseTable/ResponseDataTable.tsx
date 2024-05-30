@@ -139,7 +139,7 @@ const ResponseDataTable: React.FC<Props> = ({
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id}>
-          {params.row.data?.isCompleted === "true" ? (
+          {params.row.data?.isCompleted ? (
             <StatusPill status="complete" />
           ) : (
             <StatusPill status="incomplete" />
