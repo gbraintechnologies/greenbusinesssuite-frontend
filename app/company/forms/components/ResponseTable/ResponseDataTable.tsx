@@ -42,13 +42,11 @@ const ResponseDataTable: React.FC<Props> = ({
             return {
               id: index,
               data: response,
-              userId: response?.userId,
               userData: userRes,
             };
           })
         );
         setRows(preparedRows);
-        console.log(preparedRows);
       } else {
         setRows([]);
       }
