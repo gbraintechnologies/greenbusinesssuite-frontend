@@ -85,7 +85,7 @@ function FormCard({
         toast.loading("Duplicating form");
         services
           .duplicateForm(id)
-          .then((res) => {
+          .then((res: any) => {
             toast.dismiss();
             queryClient.invalidateQueries({
               queryKey: ["all forms"],
@@ -94,7 +94,7 @@ function FormCard({
             // Push to builder after duplicating
             //  router.push(`/forms/builder/${res}`);
           })
-          .catch((e) => {
+          .catch((e: any) => {
             toast.dismiss();
             console.log("e dyupl", e);
             toast.error("Error duplicating form");
@@ -138,7 +138,7 @@ function FormCard({
   }, []);
   return (
     <>
-      <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+      <div className={"w-full rounded-lg shadow-md bg-[#F8FAFC] "}>
         <button
           onClick={
             onClick
