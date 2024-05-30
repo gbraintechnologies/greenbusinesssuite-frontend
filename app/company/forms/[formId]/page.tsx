@@ -5,7 +5,6 @@ import React, { useState } from "react";
 // services
 import services from "@/services";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 
 // components
 import AnalyticsGrid from "../components/Analytics/AnalyticsGrid";
@@ -22,6 +21,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import ResponseDataTable from "../components/ResponseTable/ResponseDataTable";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
+import PublishFormButton from "@/app/(admin)/forms/builder/PublishFormButton";
 
 function SingleFormCompany({ params }: any) {
   const [filters, setFilters] = useState([
@@ -35,16 +35,23 @@ function SingleFormCompany({ params }: any) {
     value: "insights",
   });
   //
-  const router = useRouter();
 
   let formID = params.formId;
 
   const queryClient = useQueryClient();
 
+  //
+  const [showUnpublishModal, setShowUnpublishModal] = useState(false);
+
   const { data: form, isLoading } = useQuery({
     queryKey: ["form", parseInt(formID)],
     queryFn: services.getFormById(formID),
     enabled: Boolean(formID),
+  });
+
+  const { data: companies } = useQuery({
+    queryKey: ["all companies"],
+    queryFn: services.getAllCompanies(),
   });
 
   const { data: formResponseData, isLoading: isResponseLoading } = useQuery({
@@ -115,6 +122,13 @@ function SingleFormCompany({ params }: any) {
                 <VscLink /> Share
               </button>
             )}
+
+            <PublishFormButton
+              showUnpublishModal={showUnpublishModal}
+              setShowUnpublishModal={setShowUnpublishModal}
+              companies={companies}
+              formID={form?.id}
+            />
           </div>
         </div>
         {activeFilter.id == 1 && (
@@ -151,8 +165,8 @@ function SingleFormCompany({ params }: any) {
           ) : (
             <DatePicker />
           )}
-          </div>
-          {activeFilter.id == 1 && (
+        </div>
+        {activeFilter.id == 1 && (
           <div className="mt-4">
             <StatsBlock
               stats={[
