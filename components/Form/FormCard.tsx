@@ -138,7 +138,7 @@ function FormCard({
   }, []);
   return (
     <>
-      <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+      <div className={"w-full rounded-lg shadow-md bg-[#F8FAFC] "}>
         <button
           onClick={
             onClick

@@ -265,7 +265,7 @@ const Page = () => {
         isOpen={showAssignModal}
         setIsOpen={setShowAssignModal}
         size="big"
-        title="Selected form to assign to organisation"
+        title="Select form to assign to organisation"
       >
         <AssignForm
           companyName={companyData?.company_name}
