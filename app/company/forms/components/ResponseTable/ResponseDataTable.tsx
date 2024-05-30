@@ -1,10 +1,13 @@
 "use client";
 import DataTable from "@/components/DataTable/DataTable";
+import StatusPill from "@/components/StatusPill/StatusPill";
 import DownloadIcon from "@/public/icons/DownloadIcon";
 import EyeIcon from "@/public/icons/EyeIcon";
 import ListIcon from "@/public/icons/ListIcon";
 import UserIcon from "@/public/icons/UserIcon";
+import services from "@/services";
 import { GridColDef } from "@mui/x-data-grid";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 export interface IResponse {
@@ -31,21 +34,27 @@ const ResponseDataTable: React.FC<Props> = ({
   const [rows, setRows] = useState<any>([]);
 
   useEffect(() => {
-    if (responseData?.length > 0) {
-      const preparedRows = responseData.map(
-        (response: IResponse, index: number) => {
-          return {
-            id: index,
-            data: response,
-          };
-        }
-      );
-      setRows(preparedRows);
-      console.log(preparedRows);
-    } else {
-      setRows([]);
-    }
+    const fetchUserData = async () => {
+      if (responseData?.length > 0) {
+        const preparedRows = await Promise.all(
+          responseData.map(async (response: any, index: number) => {
+            const userRes = await services.userByIDRaw(response?.userId);
+            return {
+              id: index,
+              data: response,
+              userData: userRes,
+            };
+          })
+        );
+        setRows(preparedRows);
+      } else {
+        setRows([]);
+      }
+    };
+
+    fetchUserData();
   }, [responseData]);
+
 
   const columns: GridColDef[] = [
     {
@@ -87,26 +96,45 @@ const ResponseDataTable: React.FC<Props> = ({
       type: "actions",
       getActions: (params: any) => [
         <div className="flex gap-2 items-center">
-          <div className="w-8 h-8 text-sm rounded-full flex items-center justify-center bg-gray-100 text-black">
-              {params.row.data?.inputData?.full_name.split(' ')[0][0]?.toUpperCase()}
-              {params.row.data?.inputData?.full_name.split(' ')[1][0]?.toUpperCase()}
+          <div className="">
+          {params.row.userData.custom_profile_values &&
+          params.row.userData.custom_profile_values.find(
+            (item: any) => item.custom_profile_item_id === 1
+          )?.value?.length > 1 ? (
+            <Image
+              alt="profile"
+              src={
+                params.row.userData.custom_profile_values.find(
+                  (item: any) => item.custom_profile_item_id === 1
+                ).value
+              }
+              width={150}
+              height={150}
+              className="rounded-full w-10 h-10 object-cover"
+            />
+          ) : (
+            <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
+              <UserIcon />
+            </div>
+          )}
+              
             </div>
           <div key={params.row.id} className="flex flex-col gap-2">
-            <p className="font-medium text-sm">{params.row.data?.inputData?.full_name}</p>
+            <p className="font-medium text-sm">{params.row.userData?.first_name} {params.row.userData?.last_name}</p>
             <p className="text-[#475569] text-sm font-normal">
-              {params.row.data?.inputData?.email}
+              {params.row.userData?.email}
             </p>
           </div>
         </div>,
       ],
     },
     {
-      field: "dateCompleted",
-      headerName: "Date Completed",
+      field: "completedStatus",
+      headerName: "Completed Status",
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id}>{params.row.data?.isCompleted === "true" ? new Date(params.row.data?.dateCompleted).toLocaleDateString() : "Not completed"}</div>,
+        <div key={params.row.id}>{params.row.data?.isCompleted === "true" ? <StatusPill status="complete" /> : <StatusPill status="incomplete" />}</div>,
       ],
     },
     {
@@ -116,7 +144,10 @@ const ResponseDataTable: React.FC<Props> = ({
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.data.id} className="flex items-center gap-4">
-          <button onClick={() => exportToExcel([{id: params.row.data.id, ...params.row.data.inputData}])}>
+          {/* <button onClick={() => exportToExcel([{id: params.row.data.id, ...params.row.userData}])}>
+            <DownloadIcon />
+            </button> */}
+             <button>
             <DownloadIcon />
             </button>
           <EyeIcon />

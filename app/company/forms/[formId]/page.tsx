@@ -48,7 +48,7 @@ function SingleFormCompany({ params }: any) {
   });
 
   const { data: formResponseData, isLoading: isResponseLoading } = useQuery({
-    queryKey: ["get form response by id"],
+    queryKey: ["get form response by ", Number(formID)],
     queryFn: services.getFormResponseById(Number(formID)),
   });
 
@@ -137,11 +137,11 @@ function SingleFormCompany({ params }: any) {
             <div className="flex gap-3 items-center">
               <button
                 className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg"
-                onClick={() =>
-                  exportToExcel(
-                    formResponseData?.flatMap((entry: any) => entry.inputData)
-                  )
-                }
+                // onClick={() =>
+                //   exportToExcel(
+                //     formResponseData?.flatMap((entry: any) => entry.inputData)
+                //   )
+                // }
               >
                 <DownloadIcon />
                 <div className="text-sm">Download </div>
@@ -178,11 +178,11 @@ function SingleFormCompany({ params }: any) {
               <div className="font-semibold ">Response Analytics</div>
               <button
                 className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg"
-                onClick={() =>
-                  exportToExcel(
-                    formResponseData?.flatMap((entry: any) => entry.inputData)
-                  )
-                }
+                // onClick={() =>
+                //   exportToExcel(
+                //     formResponseData?.flatMap((entry: any) => entry.inputData)
+                //   )
+                // }
               >
                 <DownloadIcon />
                 <div className="text-sm">Download responses</div>
@@ -191,7 +191,7 @@ function SingleFormCompany({ params }: any) {
             <AnalyticsGrid />
           </div>
         )}
-        {/* {activeFilter.id == 2 && (
+        {activeFilter.id == 2 && (
           <div className="mt-4">
             <ResponseDataTable
               responseData={formResponseData}
@@ -199,7 +199,7 @@ function SingleFormCompany({ params }: any) {
               exportToExcel={exportToExcel}
             />
           </div>
-        )} */}
+        )}
         {/* TODO: SET UP TABS FOR INSIGHTS AND RESPONSES */}
       </div>
     );
