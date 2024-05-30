@@ -55,16 +55,19 @@ const ResponseDataTable: React.FC<Props> = ({
     fetchUserData();
   }, [responseData]);
 
-
   const columns: GridColDef[] = [
     {
       field: "name",
       renderHeader: () => (
         <div className="flex justify-between items-center gap-9">
           <div className="flex items-center gap-3">
-            <input type="checkbox" className="form-check-input" defaultChecked={false} />
-          <div className="font-semibold">Response Id</div>
-            </div>
+            <input
+              type="checkbox"
+              className="form-check-input"
+              defaultChecked={false}
+            />
+            <div className="font-semibold">Response Id</div>
+          </div>
           <ListIcon />
         </div>
       ),
@@ -97,30 +100,31 @@ const ResponseDataTable: React.FC<Props> = ({
       getActions: (params: any) => [
         <div className="flex gap-2 items-center">
           <div className="">
-          {params.row.userData.custom_profile_values &&
-          params.row.userData.custom_profile_values.find(
-            (item: any) => item.custom_profile_item_id === 1
-          )?.value?.length > 1 ? (
-            <Image
-              alt="profile"
-              src={
-                params.row.userData.custom_profile_values.find(
-                  (item: any) => item.custom_profile_item_id === 1
-                ).value
-              }
-              width={150}
-              height={150}
-              className="rounded-full w-10 h-10 object-cover"
-            />
-          ) : (
-            <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
-              <UserIcon />
-            </div>
-          )}
-              
-            </div>
+            {params.row.userData.custom_profile_values &&
+            params.row.userData.custom_profile_values.find(
+              (item: any) => item.custom_profile_item_id === 1
+            )?.value?.length > 1 ? (
+              <Image
+                alt="profile"
+                src={
+                  params.row.userData.custom_profile_values.find(
+                    (item: any) => item.custom_profile_item_id === 1
+                  ).value
+                }
+                width={150}
+                height={150}
+                className="rounded-full w-10 h-10 object-cover"
+              />
+            ) : (
+              <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
+                <UserIcon />
+              </div>
+            )}
+          </div>
           <div key={params.row.id} className="flex flex-col gap-2">
-            <p className="font-medium text-sm">{params.row.userData?.first_name} {params.row.userData?.last_name}</p>
+            <p className="font-medium text-sm">
+              {params.row.userData?.first_name} {params.row.userData?.last_name}
+            </p>
             <p className="text-[#475569] text-sm font-normal">
               {params.row.userData?.email}
             </p>
@@ -134,7 +138,13 @@ const ResponseDataTable: React.FC<Props> = ({
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id}>{params.row.data?.isCompleted === "true" ? <StatusPill status="complete" /> : <StatusPill status="incomplete" />}</div>,
+        <div key={params.row.id}>
+          {params.row.data?.isCompleted === "true" ? (
+            <StatusPill status="complete" />
+          ) : (
+            <StatusPill status="incomplete" />
+          )}
+        </div>,
       ],
     },
     {
@@ -147,9 +157,9 @@ const ResponseDataTable: React.FC<Props> = ({
           {/* <button onClick={() => exportToExcel([{id: params.row.data.id, ...params.row.userData}])}>
             <DownloadIcon />
             </button> */}
-             <button>
+          <button>
             <DownloadIcon />
-            </button>
+          </button>
           <EyeIcon />
         </div>,
       ],

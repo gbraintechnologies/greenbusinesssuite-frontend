@@ -1,37 +1,50 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 // icons
 import { FiEdit2 } from "react-icons/fi";
 import { VscLink } from "react-icons/vsc";
 
-//
-import Company from "./components/Company";
-import ConnectForm from "./components/ConnectForm";
+//components
 import Modal from "@/components/Modal/Modal";
 
+// services
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 
 // COMPONENTS
 import AssignForm from "./components/AssignForm";
-import { useRouter } from "next/navigation";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import PublishFormButton from "../builder/PublishFormButton";
+
+// toast
 import toast from "react-hot-toast";
 
+// extra components
+import ResponseDataTable from "@/app/company/forms/components/ResponseTable/ResponseDataTable";
+
 function FormDetail({ params }: any) {
+  let formID = params.formId;
+
   const [view, setView] = useState("responses");
 
   //
   const [showUnpublishModal, setShowUnpublishModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
 
+  const { data: formResponseData, isLoading: isResponseLoading } = useQuery({
+    queryKey: ["get form response by ", Number(formID)],
+    queryFn: services.getFormResponseById(Number(formID)),
+  });
+
+  const exportToExcel = (responses: any) => {
+    toast.success("Exported");
+  };
+
   //
   const router = useRouter();
-
-  let formID = params.formId;
 
   const queryClient = useQueryClient();
 
@@ -110,21 +123,6 @@ function FormDetail({ params }: any) {
               <FiEdit2 />
               Edit form
             </button>
-            {/* {publishStatus.toLowerCase() === "published" ? (
-              <button
-                onClick={() => setShowUnpublishModal(true)}
-                className="bg-primary-red flex items-center justify-center gap-2 text-white text-sm py-2 px-3 rounded-lg"
-              >
-                <LuUploadCloud /> Unpublish
-              </button>
-            ) : (
-              <button
-                onClick={() => setShowPublishModal(true)}
-                className="bg-primary-green flex items-center justify-center gap-2 text-white text-sm py-2 px-3 rounded-lg"
-              >
-                <LuUploadCloud /> Publish
-              </button>
-            )} */}
 
             <PublishFormButton
               showUnpublishModal={showUnpublishModal}
@@ -154,7 +152,11 @@ function FormDetail({ params }: any) {
         {/* RENDER VIEWS */}
         {view === "responses" && (
           <div className="p-6">
-            Logiciel Admin to see form responses as well?
+            <ResponseDataTable
+              responseData={formResponseData}
+              isResponseLoading={isResponseLoading}
+              exportToExcel={exportToExcel}
+            />
           </div>
         )}
 

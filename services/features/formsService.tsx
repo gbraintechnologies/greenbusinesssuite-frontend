@@ -3,7 +3,7 @@ import noAuthApi from "../axiosNoAuthClient";
 
 export const allForms = () => {
   return () =>
-    authApi.get("/forms/builder/all?page=0&size=2").then((res) => res.data);
+    authApi.get("/forms/builder/all?page=0&size=100").then((res) => res.data);
 };
 
 export const allFormTemplates = () => {
