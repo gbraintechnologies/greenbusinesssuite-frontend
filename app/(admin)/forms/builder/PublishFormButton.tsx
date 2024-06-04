@@ -37,6 +37,7 @@ function PublishFormButton({
 
     // checking for company assignment
     if (!Boolean(form?.companyName)) {
+      toast.dismiss();
       toast.error("Assign company to form before publishing");
       return;
     }
