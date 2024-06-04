@@ -202,7 +202,7 @@ function Page() {
                     placeholder="Enter your password"
                   />
                   <button
-                    className="absolute right-10 bottom-4"
+                    className="absolute right-10 top-9"
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                   >

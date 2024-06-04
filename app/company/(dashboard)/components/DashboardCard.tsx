@@ -10,7 +10,9 @@ const DashboardCard: React.FC<Props> = ({ header, value }) => {
       <div className="text-[#334155] font-bold text-[12px]  tracking-[.02em]">
         {header}
       </div>
-      <div className="font-semibold text-3xl text-slate-900">{value}</div>
+      <div className="font-semibold text-3xl text-slate-900">
+        {value ? value : "-"}
+      </div>
     </div>
   );
 };

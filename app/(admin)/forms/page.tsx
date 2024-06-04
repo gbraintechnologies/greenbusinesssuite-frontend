@@ -33,123 +33,6 @@ function Forms() {
 
   const [showTemplateModal, setShowTemplateModal] = useState(false);
 
-  let sampleFormData = {
-    id: 0,
-    name: "string",
-    url: "string",
-    description: "string",
-    formInstruction: "string",
-    formSections: [
-      {
-        id: 0,
-        name: "string",
-        description: "string",
-        instruction: "string",
-        form: {
-          id: 0,
-          name: "string",
-          url: "string",
-          description: "string",
-          formInstruction: "string",
-          formSections: [
-            {
-              id: 0,
-              name: "string",
-              description: "string",
-              instruction: "string",
-              form: "string",
-              formFields: [
-                {
-                  id: 0,
-                  name: "string",
-                  description: "string",
-                  formSection: "string",
-                  instruction: "string",
-                  ordering: 0,
-                  isDeleted: true,
-                  fieldDataType: "string",
-                  choiceValues: ["string"],
-                  isMandatory: true,
-                  createdOn: "2024-03-11T15:32:02.915Z",
-                  updatedOn: "2024-03-11T15:32:02.915Z",
-                  deletedOn: "2024-03-11T15:32:02.915Z",
-                },
-              ],
-              ordering: 0,
-              isDeleted: true,
-              createdOn: "2024-03-11T15:32:02.915Z",
-              updatedOn: "2024-03-11T15:32:02.915Z",
-              deletedOn: "2024-03-11T15:32:02.915Z",
-            },
-          ],
-          userMandatory: true,
-          deadline: "2024-03-11T15:32:02.915Z",
-          publishStatus: "DRAFT",
-          isDeleted: true,
-          createdOn: "2024-03-11T15:32:02.915Z",
-          updatedOn: "2024-03-11T15:32:02.915Z",
-          deletedOn: "2024-03-11T15:32:02.915Z",
-        },
-        formFields: [
-          {
-            id: 0,
-            name: "string",
-            description: "string",
-            formSection: {
-              id: 0,
-              name: "string",
-              description: "string",
-              instruction: "string",
-              form: "string",
-              formFields: [
-                {
-                  id: 0,
-                  name: "string",
-                  description: "string",
-                  formSection: "string",
-                  instruction: "string",
-                  ordering: 0,
-                  isDeleted: true,
-                  fieldDataType: "string",
-                  choiceValues: ["string"],
-                  isMandatory: true,
-                  createdOn: "2024-03-11T15:32:02.915Z",
-                  updatedOn: "2024-03-11T15:32:02.915Z",
-                  deletedOn: "2024-03-11T15:32:02.915Z",
-                },
-              ],
-              ordering: 0,
-              isDeleted: true,
-              createdOn: "2024-03-11T15:32:02.915Z",
-              updatedOn: "2024-03-11T15:32:02.915Z",
-              deletedOn: "2024-03-11T15:32:02.915Z",
-            },
-            instruction: "string",
-            ordering: 0,
-            isDeleted: true,
-            fieldDataType: "string",
-            choiceValues: ["string"],
-            isMandatory: true,
-            createdOn: "2024-03-11T15:32:02.915Z",
-            updatedOn: "2024-03-11T15:32:02.915Z",
-            deletedOn: "2024-03-11T15:32:02.915Z",
-          },
-        ],
-        ordering: 0,
-        isDeleted: true,
-        createdOn: "2024-03-11T15:32:02.915Z",
-        updatedOn: "2024-03-11T15:32:02.915Z",
-        deletedOn: "2024-03-11T15:32:02.915Z",
-      },
-    ],
-    userMandatory: true,
-    deadline: "2024-03-11T15:32:02.915Z",
-    publishStatus: "DRAFT",
-    isDeleted: true,
-    createdOn: "2024-03-11T15:32:02.915Z",
-    updatedOn: "2024-03-11T15:32:02.915Z",
-    deletedOn: "2024-03-11T15:32:02.915Z",
-  };
   // ACTIONS
   const actions = [
     {
@@ -202,10 +85,8 @@ function Forms() {
   // fetch all forms
   const { data: forms, isLoading } = useQuery({
     queryKey: ["all forms"],
-    queryFn: services.allForms(),
+    queryFn: services.allForms(0, 100),
   });
-
-  console.log("forms", forms);
 
   // unselecting any previous form
   useEffect(() => {
