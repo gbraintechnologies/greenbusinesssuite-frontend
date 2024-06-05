@@ -1,9 +1,15 @@
 import authApi from "../meshAuthClient";
-import noAuthApi from "../axiosNoAuthClient";
 
-export const allForms = () => {
+export const allForms = (pageNumber: number, pageSize: number) => {
   return () =>
-    authApi.get("/forms/builder/all?page=0&size=100").then((res) => res.data);
+    authApi
+      .get(`/forms/builder/all/${pageNumber}/${pageSize}`)
+      .then((res) => res.data);
+};
+
+export const recentForms = (count: number) => {
+  return () =>
+    authApi.get(`/forms/builder/recent/${count}`).then((res) => res.data);
 };
 
 export const allFormTemplates = () => {

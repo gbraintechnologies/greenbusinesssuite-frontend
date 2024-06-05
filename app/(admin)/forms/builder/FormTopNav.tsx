@@ -47,14 +47,15 @@ function FormTopNav() {
         >
           Form builder
         </button>
-        <button
+        {/* <button
+          disabled
           onClick={() => setView("connect")}
           className={`${
             view === "connect" ? "bg-white font-medium" : " text-[#64748B]"
-          } p-1 rounded-lg px-10`}
+          } p-1 rounded-lg disabled:cursor-not-allowed px-10`}
         >
           Connect
-        </button>
+        </button> */}
       </div>
 
       <div className="flex items-center gap-3">
