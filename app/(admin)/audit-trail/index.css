@@ -21,6 +21,8 @@
   
   .css-1nmdiq5-menu {
     background-color: white !important;
+    z-index: 200000000000 !important;
+    display: block;
   }
   
   /* .css-tr4s17-option {

@@ -5,7 +5,6 @@ import React from "react";
 import { Fragment, useState } from "react";
 import { Combobox, Transition } from "@headlessui/react";
 import services from "@/services";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Image from "next/image";
 import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
