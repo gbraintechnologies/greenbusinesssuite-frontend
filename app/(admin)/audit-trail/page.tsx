@@ -154,7 +154,7 @@ function AuditTrail() {
       <div className="h-[20rem] flex items-center justify-center">
         <div>
           <LoadingIcon />
-          <p className="mt-2 text-xs text-gray-500">Fetching user details</p>
+          <p className="mt-2 text-xs text-gray-500">Fetching users</p>
         </div>
       </div>
     );

@@ -139,7 +139,7 @@ export default function AdminLayout({
     {
       name: "Audit trail",
       icon: <PiListMagnifyingGlassBold size={18} />,
-      link: "/audit-trail",
+      link: ["/audit-trail", "/audit-trail/profile"],
     },
   ];
 
