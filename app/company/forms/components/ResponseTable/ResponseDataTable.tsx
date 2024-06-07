@@ -33,12 +33,17 @@ const ResponseDataTable: React.FC<Props> = ({
 
   const [rows, setRows] = useState<any>([]);
 
+  const [fetchingUserData, setFetchingUserData] = useState(false);
+
   useEffect(() => {
+    // fetching user data for each response
     const fetchUserData = async () => {
       if (responseData?.length > 0) {
+        setFetchingUserData(true);
         const preparedRows = await Promise.all(
           responseData.map(async (response: any, index: number) => {
             const userRes = await services.userByIDRaw(response?.userId);
+            setFetchingUserData(false);
             return {
               id: index,
               data: response,
@@ -168,7 +173,7 @@ const ResponseDataTable: React.FC<Props> = ({
 
   return (
     <div>
-      <DataTable isLoading={isResponseLoading} rows={rows} columns={columns} />
+      <DataTable isLoading={isResponseLoading || fetchingUserData} rows={rows} columns={columns} />
     </div>
   );
 };

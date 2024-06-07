@@ -53,6 +53,13 @@ export const getCompletedFormsByUserId = (userId: string) => {
       .then((res) => res.data);
 };
 
+export const getUnassignedForms = () => {
+  return () =>
+    authApi
+      .get(`/forms/builder/unassigned-forms`)
+      .then((res) => res.data);
+}
+
 export const getUncompletedFormsByUserId = (userId: string) => {
   return () =>
     authApi

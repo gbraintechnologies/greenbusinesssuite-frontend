@@ -112,10 +112,7 @@ function Company({ companies, companyName, assignDate }: any) {
     }
   }, [aggregatedCompanies]);
 
-  useEffect(()=> {
-    console.log('rows changed to ', rows)
-    console.log('aggregated companies changed to ', aggregatedCompanies)
-  }, [rows, aggregatedCompanies, companyName])
+
   return (
     <div className="mt-4">
       <DataTable isLoading={false} rows={rows} columns={columns} />

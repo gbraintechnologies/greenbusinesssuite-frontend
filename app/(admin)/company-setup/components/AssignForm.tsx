@@ -23,9 +23,9 @@ const AssignForm = ({ companyName, setShow, queryClient }: Props) => {
   }, []);
 
   const { data: allForms, isLoading: areFormsLoading } = useQuery({
-    queryKey: ["all forms"],
-    queryFn: services.allForms(0, 100),
-    select: filterForms,
+    queryKey: ["get all forms"],
+    queryFn: services.getUnassignedForms(),
+    // select: filterForms
   });
 
   const [selected, setSelected] = React.useState<any>();

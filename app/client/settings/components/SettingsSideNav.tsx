@@ -51,7 +51,7 @@ function SettingsSideNav() {
     <aside className="w-[20rem] sticky   px-5 p-2">
       {/* USER INFORMATION & PICTURE */}
       <div className="flex gap-3 items-center mb-5">
-        {isClient && <div className="flex items-center">
+        <div className="flex items-center">
           {admin?.custom_profile_values &&
           admin?.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1
@@ -73,11 +73,11 @@ function SettingsSideNav() {
               {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
             </button>
           )}
-        </div>}
+        </div>
         <div>
-          {isClient && <h4 className="font-bold text-lg">
+           <h4 className="font-bold text-lg">
             {admin?.first_name} {admin?.last_name}
-          </h4>}
+          </h4>
           <p className="text-sm font-light">Your personal account</p>
         </div>
       </div>
