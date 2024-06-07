@@ -13,7 +13,6 @@ import FormatDate from "@/utils/FormatDate/FormatDate";
 import Link from "next/link";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 
-
 function AuditTrail() {
   const dropdownOptions = [
     { value: "approvals", label: "Approvals" },
@@ -28,54 +27,64 @@ function AuditTrail() {
     dropdownOptions[0]
   );
 
-  const [selectedCompany, setSelectedCompany] = React.useState(
-    dropdownOptions[0]
-  );
-  
-  const [rows, setRows] = React.useState([])
+  const [selectedCompany, setSelectedCompany] = React.useState({
+    company_name: "All Companies",
+  });
+
+  const [rows, setRows] = React.useState([]);
 
   const { data, isLoading: usersLoading } = useQuery({
     queryKey: ["all users"],
     queryFn: services.allUsers(),
   });
 
+  const { data: companies, isLoading: companyDataLoading } = useQuery({
+    queryKey: ["all companies"],
+    queryFn: services.getAllCompanies(),
+  });
+
   useEffect(() => {
-    if(data?.length > 1){
-      setRows(data)
+    if (data?.length > 1) {
+      setRows(data);
     }
   }, [data]);
-
 
   const columns: GridColDef[] = [
     {
       field: "name",
       renderHeader: () => (
-        <div className="text-sm text-[#667085] capitalize font-medium">Timestamp</div>
+        <div className="text-sm text-[#667085] capitalize font-medium">
+          Timestamp
+        </div>
       ),
       type: "actions",
       align: "left",
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div
-          className="flex flex-col gap-3"
-        >
-          <div className="text-[#101828] text-sm font-medium">{new Date().toLocaleDateString("en-us",{
-                day: "numeric",
-                month: "short",
-                year: "numeric"
-          })}</div>
-          <div className="text-sm text-[#667085] font-normal">{new Date().toLocaleTimeString("it-IT", {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}</div>
+        <div className="flex flex-col gap-3">
+          <div className="text-[#101828] text-sm font-medium">
+            {new Date().toLocaleDateString("en-us", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
+          </div>
+          <div className="text-sm text-[#667085] font-normal">
+            {new Date().toLocaleTimeString("it-IT", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </div>
         </div>,
       ],
     },
     {
       field: "Name",
       renderHeader: () => (
-        <div className="text-sm text-[#667085] capitalize font-medium">Name</div>
+        <div className="text-sm text-[#667085] capitalize font-medium">
+          Name
+        </div>
       ),
       flex: 2,
       headerAlign: "left",
@@ -100,8 +109,11 @@ function AuditTrail() {
                 className="rounded-full w-10 h-10 object-cover"
               />
             ) : (
-              <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
-                <UserIcon />
+              <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-medium text-sm rounded-full">
+                {params.row?.first_name &&
+                  params.row?.first_name[0]?.toUpperCase()}
+                {params.row?.last_name &&
+                  params.row?.last_name[0]?.toUpperCase()}
               </div>
             )}
           </div>
@@ -119,17 +131,16 @@ function AuditTrail() {
     {
       field: "userActions",
       renderHeader: () => (
-        <div className="text-sm text-[#667085] capitalize font-medium">User Actions</div>
+        <div className="text-sm text-[#667085] capitalize font-medium">
+          User Actions
+        </div>
       ),
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
         <div>
-          
           <StatusPill
-            status={
-              params?.row?.id % 2 === 0 ? "User Login" : "Failed Login"
-            }
+            status={params?.row?.id % 2 === 0 ? "User Login" : "Failed Login"}
             success={params?.row?.id % 2 === 0 ? true : false}
             textTransform="uppercase font-medium"
           />
@@ -138,18 +149,25 @@ function AuditTrail() {
     },
     {
       field: "action",
-      renderHeader: () => <div className="text-sm text-[#667085] capitalize font-medium">Action</div>,
+      renderHeader: () => (
+        <div className="text-sm text-[#667085] capitalize font-medium">
+          Action
+        </div>
+      ),
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <Link href={`/audit-trail/profile?id=${params.row.id}`} className="text-sm text-blue-500">
+        <Link
+          href={`/audit-trail/profile?id=${params.row.id}`}
+          className="text-sm text-blue-500"
+        >
           Show Details
         </Link>,
       ],
     },
   ];
 
-  if (usersLoading) {
+  if (usersLoading || companyDataLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
         <div>
@@ -159,6 +177,7 @@ function AuditTrail() {
       </div>
     );
   }
+
   return (
     <div className="px-5">
       <div className="w-full text-[#0F172A] ">
@@ -171,21 +190,24 @@ function AuditTrail() {
               options={dropdownOptions}
               selected={selectedOption}
               setSelected={setSelectedOption}
-              width="w-64"
+              labelName={"label"}
             />
+
             <Dropdown
-              options={dropdownOptions}
+              options={[{ company_name: "All Companies" }, ...companies]}
               selected={selectedCompany}
               setSelected={setSelectedCompany}
-              width="w-48"
+              width="w-64"
+              labelName={"company_name"}
             />
+
             <DatePicker />
           </div>
         </div>
       </div>
       <div className="mt-5">
-        <DataTable rows={rows} columns={columns}  />
-        </div>
+        <DataTable rows={rows} columns={columns} />
+      </div>
     </div>
   );
 }

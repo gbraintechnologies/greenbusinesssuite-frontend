@@ -2,7 +2,6 @@ import React from "react";
 import { StringSchema } from "yup";
 
 function StatusPill({ status, success, textTransform="capitalize" }: {status: string, success?: boolean, textTransform?: string}) {
-  console.log('success ', success)
   if (
     status.toLowerCase().includes("inactive") ||
     status.toLowerCase().includes("temp") ||

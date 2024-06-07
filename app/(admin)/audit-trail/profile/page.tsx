@@ -179,8 +179,9 @@ const page = () => {
                 className="rounded-full w-24 h-24 object-cover"
               />
             ) : (
-              <div className="bg-gray-100 w-24 h-24 flex items-center justify-center font-light text-sm rounded-full">
-                <UserIcon />
+              <div className="bg-gray-100 w-24 h-24 flex items-center justify-center text-3xl font-bold rounded-full">
+                {user?.first_name && user?.first_name[0]?.toUpperCase()}
+                {user?.last_name && user?.last_name[0]?.toUpperCase()}
               </div>
             )}
           </div>
