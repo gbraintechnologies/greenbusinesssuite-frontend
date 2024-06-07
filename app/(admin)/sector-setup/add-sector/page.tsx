@@ -98,7 +98,7 @@ function AddSector() {
 
 
   const handleDeleteModalOpen = (id: number) => {
-    alert(id)
+   // alert(id)
     setSectorToDelete(id);
     setShowDeleteModal(true);
   };
