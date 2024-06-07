@@ -73,13 +73,19 @@ const SectorSetup: React.FC = () => {
   const [rows, setRows] = useState<RowData[]>([]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["all currencies"],
-    queryFn: services.allCurrencies(),
+    queryKey: ["all sectors"],
+    queryFn: services.getSectorByCountry("Ghana"),
   });
+
   useEffect(() => {
-    // alert(JSON.stringify(data))
     if (data) {
-      setRows(data);
+      // alert(JSON.stringify(data))
+      const formattedRows = data.map((item: any, index: any) => ({
+        id: index + 1,
+        sectors: item.sectors,
+        subSector: item.subSector,
+      }));
+      setRows(formattedRows);
     }
   }, [data]);
 
@@ -103,8 +109,7 @@ const SectorSetup: React.FC = () => {
           </label>
           <div>
             <p className="font-medium">
-              {/* {params.row.data.currency_name} */}
-              Agriculture
+              {params.row.sectors}
             </p>
           </div>
         </div>,
@@ -120,8 +125,7 @@ const SectorSetup: React.FC = () => {
       getActions: (params: any) => [
         <div key={params.row.id} className="flex flex-col gap-2">
           <p className="font-medium text-sm">
-            12
-            {/* {params.row.data?.currency_symbol} */}
+            {params.row.subSector}
           </p>
         </div>,
       ],
@@ -138,8 +142,6 @@ const SectorSetup: React.FC = () => {
   return (
     <div className="w-full pb-20">
       <Nav />
-
-      {/* Search and filters */}
       <div className="flex items-center px-5 justify-between my-4">
         <div className="flex items-center gap-3">
           <div className="border shadow-sm focus:outline-primary-green border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
@@ -154,7 +156,6 @@ const SectorSetup: React.FC = () => {
         </div>
       </div>
 
-      {/* Table */}
       <DataTable
         isLoading={isLoading}
         rows={rows}
