@@ -240,7 +240,6 @@ const Page = () => {
       toast.success("Company edited successfully");
       router.back();
     } catch (error) {
-      console.log("error", error);
       toast.error("An error occurred");
     } finally {
       setSubmitting(false);
