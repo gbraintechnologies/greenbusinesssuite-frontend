@@ -94,7 +94,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
       .hardDeleteUserForm(user?.id, id)
       .then((res) => {
         console.log("user form deleted");
-        toast.success("delteted");
+        toast.success("deleted");
       })
       .catch((e) => {
         console.log("error", e);
