@@ -17,10 +17,10 @@ import FormatDate from "@/utils/FormatDate/FormatDate";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import useUser from "@/hooks/useUser";
+import services from "@/services";
 
 type Props = {
   form: any;
-
   onClick?: () => void;
   type: "completed" | "uncompleted";
 };
@@ -89,9 +89,27 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     }
   }, []);
 
+  const deleteUserForm = () => {
+    services
+      .hardDeleteUserForm(user?.id, id)
+      .then((res) => {
+        console.log("user form deleted");
+        toast.success("delteted");
+      })
+      .catch((e) => {
+        console.log("error", e);
+      });
+  };
+
   return (
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+        {/* <button
+          className="my-4 bg-red-500 text-white rounded-lg"
+          onClick={deleteUserForm}
+        >
+          Delete
+        </button> */}
         <button
           className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >

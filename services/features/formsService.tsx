@@ -55,10 +55,8 @@ export const getCompletedFormsByUserId = (userId: string) => {
 
 export const getUnassignedForms = () => {
   return () =>
-    authApi
-      .get(`/forms/builder/unassigned-forms`)
-      .then((res) => res.data);
-}
+    authApi.get(`/forms/builder/unassigned-forms`).then((res) => res.data);
+};
 
 export const getUncompletedFormsByUserId = (userId: string) => {
   return () =>
@@ -166,7 +164,7 @@ export const acceptInvite = (
   return authApi.post(`forms/response/create`, {
     formId: formId,
     isCompleted: false,
-    inputData: { data: inputData },
+    inputData: { ...inputData },
     companyName: companyName,
     userId: userId,
   });

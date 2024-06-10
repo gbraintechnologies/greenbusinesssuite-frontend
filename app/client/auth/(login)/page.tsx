@@ -32,8 +32,6 @@ function Page() {
   const formId = search.get("f");
   const companyName = search.get("c");
 
-  console.log("redirect", redirectTo);
-
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 

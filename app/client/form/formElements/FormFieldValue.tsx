@@ -5,16 +5,7 @@ import useClientForm from "@/hooks/useClientForm";
 import React from "react";
 
 function FormFieldValue({ field, section }: any) {
-  const {
-    fieldDataType,
-    horizontalAlign,
-    name,
-    description,
-    placeHolder,
-    instruction,
-    choiceValues,
-    label,
-  } = field;
+  const { fieldDataType, horizontalAlign, placeHolder, label } = field;
 
   // TYPES
   // text
