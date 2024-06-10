@@ -185,9 +185,9 @@ const Page = () => {
           )}
         </div>
 
-        <div className="flex ">
+        <div className="flex">
           {/* COMPANY BODY */}
-          <div className="flex-1 max-w-2xl py-5 pb-3">
+          <div className="flex-1 py-5 pb-3">
             {companyDescription && (
               <div className="group">
                 <div className="label">Company description</div>
@@ -241,17 +241,17 @@ const Page = () => {
             </div>
           </div>
           {/* ASSIGNED FORMS */}
-          <div className="flex-1 py-5 pb-3 flex flex-col input-holder max-w-56">
-            <div className="label">Assigned Forms ({assignedForms?.length})</div>
+          <div className="flex-1 items-end py-5 pb-3 flex flex-col input-holder max-w-56">
+            <div className="label w-full">Assigned Forms ({assignedForms?.length})</div>
             {/**DISPLAYING ASSIGNED FORMS*/}
-            <div className="flex flex-col gap-4 mt-2 max-h-[28rem] overflow-y-scroll">
+            <div className="flex flex-col gap-4 mt-2 w-full max-h-[28rem] overflow-y-scroll">
               {assignedForms &&
                 assignedForms?.map((form: any) => {
                   return <FormCard key={form.id} form={form} noMetaData={true} />;
                 })}
             </div>
             <button
-              className="mt-4 bg-white border border-[rgba(226, 232, 240, 1)] flex text-sm px-4 py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg"
+              className="mt-4 bg-white border border-[rgba(226, 232, 240, 1)] flex text-sm px-4 py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg w-full "
               onClick={() => setShowAssignModal(true)}
             >
               <LuPlusCircle /> Assign New Form
