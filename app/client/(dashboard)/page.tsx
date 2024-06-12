@@ -65,8 +65,6 @@ const Page = () => {
       enabled: Boolean(user?.id),
     });
 
-  console.log("uncompleted forms", uncompletedForms);
-
   useEffect(() => {
     // Deselect any active form
     removeClientForm();

@@ -30,17 +30,42 @@ export const ClientFormProvider = ({ children }) => {
   const saveResponsesRemote = (userId) => {
     setSavingResponses(true);
 
+    // console.log("DATA TO SAVE", {
+    //   formId: clientForm?.id,
+    //   responseId: clientForm?.responseId,
+    //   isCompleted: false,
+    //   inputData: {
+    //     name: data?.name,
+    //     layout: data?.layout,
+    //     formSections: formSections,
+    //   },
+    //   companyName: clientForm?.companyName,
+    //   userId: userId,
+    // });
+
+    let data = clientForm;
+
+    let formSections = [];
+
+    for (let i = 0; i < data?.formSections?.length; i++) {
+      let section = data?.formSections[i];
+      let formFields = [];
+      for (let j = 0; j < section?.formFields?.length; j++) {
+        let field = section?.formFields[j];
+        formFields.push({ id: field?.id, response: field?.response });
+      }
+      formSections.push({ id: section?.id, formFields: formFields });
+    }
+
     services
       .saveResponse({
         formId: clientForm?.id,
         responseId: clientForm?.responseId,
         isCompleted: false,
         inputData: {
-          data: {
-            formSections: clientForm?.formSections,
-            layout: clientForm?.layout,
-            id: clientForm?.id,
-          },
+          name: data?.name,
+          layout: data?.layout,
+          formSections: formSections,
         },
         companyName: clientForm?.companyName,
         userId: userId,
@@ -62,16 +87,29 @@ export const ClientFormProvider = ({ children }) => {
 
   const submitAndCompleteForm = (userId) => {
     setSavingResponses(true);
+
+    let data = clientForm;
+
+    let formSections = [];
+
+    for (let i = 0; i < data?.formSections?.length; i++) {
+      let section = data?.formSections[i];
+      let formFields = [];
+      for (let j = 0; j < section?.formFields?.length; j++) {
+        let field = section?.formFields[j];
+        formFields.push({ id: field?.id, response: field?.response });
+      }
+      formSections.push({ id: section?.id, formFields: formFields });
+    }
+
     return services.saveResponse({
       formId: clientForm?.id,
       responseId: clientForm?.responseId,
       isCompleted: true,
       inputData: {
-        data: {
-          formSections: clientForm?.formSections,
-          layout: clientForm?.layout,
-          id: clientForm?.id,
-        },
+        name: data?.name,
+        layout: data?.layout,
+        formSections: formSections,
       },
       companyName: clientForm?.companyName,
       userId: userId,
