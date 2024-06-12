@@ -9,6 +9,7 @@ import services from "@/services";
 import { GridColDef } from "@mui/x-data-grid";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import Link from "next/link"
 
 export interface IResponse {
   email: string;
@@ -165,7 +166,9 @@ const ResponseDataTable: React.FC<Props> = ({
           <button>
             <DownloadIcon />
           </button>
+          <Link href={`/company/forms/response`}>
           <EyeIcon />
+          </Link>
         </div>,
       ],
     },
