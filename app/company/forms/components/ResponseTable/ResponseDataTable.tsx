@@ -23,12 +23,14 @@ type Props = {
   responseData: IResponse[];
   isResponseLoading: boolean;
   exportToExcel: (responses: any) => void;
+  formId: number | string
 };
 
 const ResponseDataTable: React.FC<Props> = ({
   responseData,
   isResponseLoading,
   exportToExcel,
+  formId
 }) => {
   const [aggregatedResponses, setAggregatedResponses] = useState([]);
 
@@ -166,7 +168,7 @@ const ResponseDataTable: React.FC<Props> = ({
           <button>
             <DownloadIcon />
           </button>
-          <Link href={`/company/forms/response`}>
+          <Link href={`/company/forms/${formId}/response?user=${params.row.userData?.id}`}>
           <EyeIcon />
           </Link>
         </div>,
