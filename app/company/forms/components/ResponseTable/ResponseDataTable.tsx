@@ -9,6 +9,7 @@ import services from "@/services";
 import { GridColDef } from "@mui/x-data-grid";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import Link from "next/link"
 
 export interface IResponse {
   email: string;
@@ -22,12 +23,14 @@ type Props = {
   responseData: IResponse[];
   isResponseLoading: boolean;
   exportToExcel: (responses: any) => void;
+  formId: number | string
 };
 
 const ResponseDataTable: React.FC<Props> = ({
   responseData,
   isResponseLoading,
   exportToExcel,
+  formId
 }) => {
   const [aggregatedResponses, setAggregatedResponses] = useState([]);
 
@@ -165,7 +168,9 @@ const ResponseDataTable: React.FC<Props> = ({
           <button>
             <DownloadIcon />
           </button>
+          <Link href={`/company/forms/${formId}/response?user=${params.row.userData?.id}`}>
           <EyeIcon />
+          </Link>
         </div>,
       ],
     },

@@ -188,7 +188,10 @@ export const saveResponse = ({
   });
 };
 
-export const retrieveFormUserResponses = (userId: number, formId: any) => {
+export const retrieveFormUserResponses = (userId: number | string | null, formId: any) => {
+  if(userId === null){
+    throw new Error("No User Id")
+  }
   return () =>
     authApi
       .get(`forms/response/data/user-form/${userId}/${formId}`)
