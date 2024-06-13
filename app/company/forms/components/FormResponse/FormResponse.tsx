@@ -26,7 +26,7 @@ const renderFormResponse = (formField: any) => {
         />
       );
     case "long-text":
-      return <textarea defaultValue={formField?.response} readOnly />;
+      return <textarea defaultValue={formField?.response} readOnly className=" resize-none"/>;
   }
 };
 const FormResponse = ({ mergedForm }: Props) => {
