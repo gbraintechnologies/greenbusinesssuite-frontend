@@ -11,6 +11,7 @@ import Border from "@/components/Border/Border";
 // icons
 
 import { IoIosArrowDown } from "react-icons/io";
+import ChoiceValuesEditing from "./ChoiceValuesEditing";
 
 function FieldOptions() {
   const { activeField, updateActiveField } = useForm();
@@ -61,8 +62,15 @@ function FieldOptions() {
   }, [selectedInsightType]);
 
   if (localField) {
-    const { isMandatory, label, name, placeHolder, horizontalAlign } =
-      localField;
+    const {
+      isMandatory,
+      label,
+      fieldDataType,
+      choiceValues,
+      name,
+      placeHolder,
+      horizontalAlign,
+    } = localField;
 
     return (
       <div className="bg-white h-[100vh]  border-l-2 border-gray-200 p-3">
@@ -106,7 +114,7 @@ function FieldOptions() {
           </Switch>
         </div>
 
-        <div className="flex flex-col gap-5 my-10">
+        <div className="flex flex-col gap-5 my-5">
           {/* LABEL */}
           <div className="flex flex-col gap-3">
             <label className={labelStyle}>Field Label</label>
@@ -123,7 +131,7 @@ function FieldOptions() {
               onBlur={() => updateActiveField(activeField.section, localField)}
             />
           </div>
-          {/* LABEL */}
+          {/* PLACEHOLDER */}
           <div className="flex flex-col gap-3">
             <label className={labelStyle}>Placeholder</label>
             <input
@@ -155,6 +163,11 @@ function FieldOptions() {
             />
           </div>
         </div>
+
+        {/* CHOICE VALUES EDITING FOR DROPDOWNS AND CHECKBOXES */}
+        {(fieldDataType === "dropdown" || fieldDataType === "checkboxes") && (
+          <ChoiceValuesEditing localField={localField} />
+        )}
 
         {/* HORIZONTAL ALIGNMENT */}
         <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">

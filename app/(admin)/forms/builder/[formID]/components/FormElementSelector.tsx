@@ -2,13 +2,6 @@ import useForm from "@/hooks/useForm";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
-// icon
-import { MdOutlineMailOutline } from "react-icons/md";
-import { MdOutlinePhone } from "react-icons/md";
-import { TiDocumentText } from "react-icons/ti";
-import { BsCardText } from "react-icons/bs";
-import { AiOutlineNumber } from "react-icons/ai";
-
 // components
 import Loader from "@/components/BeatLoader/Loader";
 
@@ -33,7 +26,7 @@ export default function FormElementSelector({ section }: any) {
   }
 
   return (
-    <div className="w-60 z-[100] mx-auto text-center">
+    <div className="w-72 z-[100] mx-auto text-center">
       <Menu as="div" className="relative inline-block text-center">
         <div>
           <Menu.Button
@@ -52,7 +45,7 @@ export default function FormElementSelector({ section }: any) {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute z-[100] -right-[30%] mt-2 w-60 origin-top divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+          <Menu.Items className="absolute z-[100] -right-[30%] mt-2 w-72 origin-top divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
             <div className="px-1 py-1 ">
               {elements.map((item: any) => {
                 return (

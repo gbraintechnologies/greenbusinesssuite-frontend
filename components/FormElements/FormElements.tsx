@@ -4,6 +4,9 @@ import { MdOutlinePhone } from "react-icons/md";
 import { TiDocumentText } from "react-icons/ti";
 import { BsCardText } from "react-icons/bs";
 import { AiOutlineNumber } from "react-icons/ai";
+import { RiDropdownList } from "react-icons/ri";
+import { RiCheckboxMultipleLine } from "react-icons/ri";
+import { LuUploadCloud } from "react-icons/lu";
 
 // general properties
 let template = {
@@ -104,6 +107,45 @@ export const defaultFormElements = [
       description: "Number",
       label: "Number",
       placeHolder: "Enter your number",
+    },
+  },
+  // NEW FORM ELE
+  {
+    icon: <RiDropdownList size={18} />,
+    name: "Dropdown",
+    properties: {
+      ...template,
+      fieldDataType: "dropdown",
+      name: "Dropdown",
+      choiceValues: ["Option 1", "Option 2"],
+      description: "Dropdown",
+      label: "Dropdown",
+      placeHolder: "Select one option",
+    },
+  },
+  {
+    icon: <RiCheckboxMultipleLine size={18} />,
+    name: "Multiple Choice (Checkboxes)",
+    properties: {
+      ...template,
+      fieldDataType: "checkboxes",
+      name: "Multiple Choice",
+      choiceValues: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      description: "Multiple Choice",
+      label: "Multiple Choice",
+      placeHolder: "Select one or more options",
+    },
+  },
+  {
+    icon: <LuUploadCloud size={18} />,
+    name: "File Upload",
+    properties: {
+      ...template,
+      fieldDataType: "upload",
+      name: "Upload file",
+      description: "Upload file",
+      label: "Upload file",
+      placeHolder: "Drag and drop or choose image or document to upload",
     },
   },
 ];
