@@ -37,6 +37,7 @@ const ResponseDataTable: React.FC<Props> = ({
   const [rows, setRows] = useState<any>([]);
 
   const [fetchingUserData, setFetchingUserData] = useState(false);
+  
 
   useEffect(() => {
     // fetching user data for each response
