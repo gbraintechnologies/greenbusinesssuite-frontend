@@ -47,6 +47,6 @@ export default function mergeForm(responseId: number, obj1: any, obj2: any) {
     ...obj1,
     ...obj2,
     responseId,
-    formSections: mergeFormSections(obj1.formSections, obj2.formSections),
+    formSections: mergeFormSections(obj1?.formSections, obj2?.formSections),
   };
 }

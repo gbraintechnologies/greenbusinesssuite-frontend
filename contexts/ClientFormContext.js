@@ -57,32 +57,45 @@ export const ClientFormProvider = ({ children }) => {
       formSections.push({ id: section?.id, formFields: formFields });
     }
 
-    services
-      .saveResponse({
-        formId: clientForm?.id,
-        responseId: clientForm?.responseId,
-        isCompleted: false,
-        inputData: {
-          name: data?.name,
-          layout: data?.layout,
-          formSections: formSections,
-        },
-        companyName: clientForm?.companyName,
-        userId: userId,
-      })
-      .then((res) => {
-        toast.dismiss();
-        setSavingResponses(false);
+    console.log("sending to server", {
+      formId: clientForm?.id,
+      responseId: clientForm?.responseId,
+      isCompleted: false,
+      inputData: {
+        name: data?.name,
+        layout: data?.layout,
+        formSections: formSections,
+      },
+      companyName: clientForm?.companyName,
+      userId: userId,
+    });
 
-        toast.dismiss();
-        toast.success("Saved responses!");
-        router.push("/client");
-      })
-      .catch((e) => {
-        toast.dismiss();
-        setSavingResponses(false);
-        toast.error("Error saving responses. Please try again");
-      });
+    // services
+    //   .saveResponse({
+    //     formId: clientForm?.id,
+    //     responseId: clientForm?.responseId,
+    //     isCompleted: false,
+    //     inputData: {
+    //       name: data?.name,
+    //       layout: data?.layout,
+    //       formSections: formSections,
+    //     },
+    //     companyName: clientForm?.companyName,
+    //     userId: userId,
+    //   })
+    //   .then((res) => {
+    //     toast.dismiss();
+    //     setSavingResponses(false);
+
+    //     toast.dismiss();
+    //     toast.success("Saved responses!");
+    //     router.push("/client");
+    //   })
+    //   .catch((e) => {
+    //     toast.dismiss();
+    //     setSavingResponses(false);
+    //     toast.error("Error saving responses. Please try again");
+    //   });
   };
 
   const submitAndCompleteForm = (userId) => {
@@ -102,18 +115,18 @@ export const ClientFormProvider = ({ children }) => {
       formSections.push({ id: section?.id, formFields: formFields });
     }
 
-    return services.saveResponse({
-      formId: clientForm?.id,
-      responseId: clientForm?.responseId,
-      isCompleted: true,
-      inputData: {
-        name: data?.name,
-        layout: data?.layout,
-        formSections: formSections,
-      },
-      companyName: clientForm?.companyName,
-      userId: userId,
-    });
+    // return services.saveResponse({
+    //   formId: clientForm?.id,
+    //   responseId: clientForm?.responseId,
+    //   isCompleted: true,
+    //   inputData: {
+    //     name: data?.name,
+    //     layout: data?.layout,
+    //     formSections: formSections,
+    //   },
+    //   companyName: clientForm?.companyName,
+    //   userId: userId,
+    // });
   };
 
   const saveSingleResponse = (sectionId, fieldId, value) => {
