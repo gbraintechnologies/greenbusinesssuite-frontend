@@ -48,9 +48,6 @@ function FillFormHere() {
     enabled: Boolean(formId) && Boolean(user),
   });
 
-  console.log("form data", formData);
-  console.log("form user response", formUserResponse);
-
   // COMBINE FORM DATA AND FORM RESPONSE
   let mergedForm =
     formData &&
@@ -80,6 +77,8 @@ function FillFormHere() {
       );
     }
   }, [companies]);
+
+  // console.log("merged form", mergedForm);
 
   useEffect(() => {
     if (mergedForm && fullCompanyName && !Boolean(clientForm)) {

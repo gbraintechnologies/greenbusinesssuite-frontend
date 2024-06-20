@@ -30,19 +30,6 @@ export const ClientFormProvider = ({ children }) => {
   const saveResponsesRemote = (userId) => {
     setSavingResponses(true);
 
-    // console.log("DATA TO SAVE", {
-    //   formId: clientForm?.id,
-    //   responseId: clientForm?.responseId,
-    //   isCompleted: false,
-    //   inputData: {
-    //     name: data?.name,
-    //     layout: data?.layout,
-    //     formSections: formSections,
-    //   },
-    //   companyName: clientForm?.companyName,
-    //   userId: userId,
-    // });
-
     let data = clientForm;
 
     let formSections = [];
@@ -52,50 +39,57 @@ export const ClientFormProvider = ({ children }) => {
       let formFields = [];
       for (let j = 0; j < section?.formFields?.length; j++) {
         let field = section?.formFields[j];
-        formFields.push({ id: field?.id, response: field?.response });
+        formFields.push({
+          id: field?.id,
+          response: field?.response,
+          formFieldId: field?.id,
+          fieldName: field?.name,
+          isStatisticalField: field?.isStatisticalField
+            ? field?.isStatisticalField
+            : "",
+          statisticalFunction: field?.statisticalFunction
+            ? field?.statisticalFunction
+            : "",
+          displayType: field?.displayType ? field?.displayType : "",
+        });
       }
-      formSections.push({ id: section?.id, formFields: formFields });
+      formSections.push({
+        id: section?.id,
+
+        formSectionId: section?.id,
+        formDataFields: formFields,
+      });
     }
 
-    console.log("sending to server", {
+    let response = {
+      id: clientForm?.responseId,
       formId: clientForm?.id,
-      responseId: clientForm?.responseId,
       isCompleted: false,
-      inputData: {
-        name: data?.name,
-        layout: data?.layout,
-        formSections: formSections,
-      },
       companyName: clientForm?.companyName,
       userId: userId,
-    });
+      inputData: {
+        id: clientForm?.responseId,
+        formSections: formSections,
+      },
+      updatedOn: new Date(),
+      createdOn: new Date(),
+    };
 
-    // services
-    //   .saveResponse({
-    //     formId: clientForm?.id,
-    //     responseId: clientForm?.responseId,
-    //     isCompleted: false,
-    //     inputData: {
-    //       name: data?.name,
-    //       layout: data?.layout,
-    //       formSections: formSections,
-    //     },
-    //     companyName: clientForm?.companyName,
-    //     userId: userId,
-    //   })
-    //   .then((res) => {
-    //     toast.dismiss();
-    //     setSavingResponses(false);
+    services
+      .saveResponse(response)
+      .then((res) => {
+        toast.dismiss();
+        setSavingResponses(false);
 
-    //     toast.dismiss();
-    //     toast.success("Saved responses!");
-    //     router.push("/client");
-    //   })
-    //   .catch((e) => {
-    //     toast.dismiss();
-    //     setSavingResponses(false);
-    //     toast.error("Error saving responses. Please try again");
-    //   });
+        toast.dismiss();
+        toast.success("Saved responses!");
+        router.push("/client");
+      })
+      .catch((e) => {
+        toast.dismiss();
+        setSavingResponses(false);
+        toast.error("Error saving responses. Please try again");
+      });
   };
 
   const submitAndCompleteForm = (userId) => {
@@ -110,23 +104,43 @@ export const ClientFormProvider = ({ children }) => {
       let formFields = [];
       for (let j = 0; j < section?.formFields?.length; j++) {
         let field = section?.formFields[j];
-        formFields.push({ id: field?.id, response: field?.response });
+        formFields.push({
+          id: field?.id,
+          response: field?.response,
+          formFieldId: field?.id,
+          fieldName: field?.name,
+          isStatisticalField: field?.isStatisticalField
+            ? field?.isStatisticalField
+            : "",
+          statisticalFunction: field?.statisticalFunction
+            ? field?.statisticalFunction
+            : "",
+          displayType: field?.displayType ? field?.displayType : "",
+        });
       }
-      formSections.push({ id: section?.id, formFields: formFields });
+      formSections.push({
+        id: section?.id,
+
+        formSectionId: section?.id,
+        formDataFields: formFields,
+      });
     }
 
-    // return services.saveResponse({
-    //   formId: clientForm?.id,
-    //   responseId: clientForm?.responseId,
-    //   isCompleted: true,
-    //   inputData: {
-    //     name: data?.name,
-    //     layout: data?.layout,
-    //     formSections: formSections,
-    //   },
-    //   companyName: clientForm?.companyName,
-    //   userId: userId,
-    // });
+    let response = {
+      id: clientForm?.responseId,
+      formId: clientForm?.id,
+      isCompleted: true,
+      companyName: clientForm?.companyName,
+      userId: userId,
+      inputData: {
+        id: clientForm?.responseId,
+        formSections: formSections,
+      },
+      updatedOn: new Date(),
+      createdOn: new Date(),
+    };
+
+    return services.saveResponse(response);
   };
 
   const saveSingleResponse = (sectionId, fieldId, value) => {

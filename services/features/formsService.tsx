@@ -176,10 +176,10 @@ export const saveResponse = ({
   companyName,
   inputData,
   isCompleted,
-  responseId,
+  id,
 }: any) => {
   return authApi.put(`forms/response/update`, {
-    id: parseInt(responseId),
+    id: parseInt(id),
     formId: parseInt(formId),
     isCompleted: isCompleted,
     inputData: inputData,
@@ -188,9 +188,12 @@ export const saveResponse = ({
   });
 };
 
-export const retrieveFormUserResponses = (userId: number | string | null, formId: any) => {
-  if(userId === null){
-    throw new Error("No User Id")
+export const retrieveFormUserResponses = (
+  userId: number | string | null,
+  formId: any
+) => {
+  if (userId === null) {
+    throw new Error("No User Id");
   }
   return () =>
     authApi
