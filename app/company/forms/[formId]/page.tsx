@@ -149,17 +149,13 @@ function SingleFormCompany({ params }: any) {
           />
           {activeFilter.id == 2 ? (
             <div className="flex gap-3 items-center">
-              <button
+              {/* dropped download button */}
+              {/* <button
                 className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg"
-                // onClick={() =>
-                //   exportToExcel(
-                //     formResponseData?.flatMap((entry: any) => entry.inputData)
-                //   )
-                // }
               >
                 <DownloadIcon />
                 <div className="text-sm">Download </div>
-              </button>
+              </button> */}
               <DatePicker />
             </div>
           ) : (

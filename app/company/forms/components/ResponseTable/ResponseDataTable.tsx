@@ -10,6 +10,10 @@ import { GridColDef } from "@mui/x-data-grid";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
+import FormResponse from "../FormResponse/FormResponse";
 
 export interface IResponse {
   email: string;
@@ -37,6 +41,68 @@ const ResponseDataTable: React.FC<Props> = ({
   const [rows, setRows] = useState<any>([]);
 
   const [fetchingUserData, setFetchingUserData] = useState(false);
+
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+  const hiddenRef = React.useRef(null);
+
+  
+  const downloadPDF = (data: any ) => {
+    console.log('data ', data)
+    // Simulate fetching data
+    // const mergedForm = mergeForm(responseId, formData, responseData); 
+
+    // // Render data to hidden element
+    // renderToHiddenElement(mergedForm);
+
+    // const input = hiddenRef.current;
+    // if (input) {
+    //   setPdfGenerating(true);
+    //   html2canvas(input, { scale: 2 }).then((canvas) => { 
+    //     const imgData = canvas.toDataURL("image/png");
+    //     const pdf = new jsPDF("p", "mm", "a4");
+    //     const width = pdf.internal.pageSize.getWidth();
+    //     const height = pdf.internal.pageSize.getHeight();
+    //     const imgWidth = canvas.width;
+    //     const imgHeight = canvas.height;
+    //     const ratio = Math.min(width / imgWidth, height / imgHeight);
+    //     const imgX = (width - imgWidth * ratio) / 2;
+    //     const imgY = 10; 
+
+    //     // Add metadata
+    //     const date = new Date().toLocaleDateString();
+    //     const responseName = "Response Name"; 
+    //     pdf.setFontSize(12);
+    //     pdf.text(`Date Printed: ${date}`, 10, 10);
+    //     pdf.text(`Response Name: ${responseName}`, 10, 20);
+
+    //     pdf.addImage(imgData, "PNG", imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+    //     pdf.save("response.pdf");
+    //     setPdfGenerating(false);
+    //   }).catch(() => {
+    //     setPdfGenerating(false);
+    //   });
+    // }
+  };
+
+  // Function to render data to the hidden element
+  // const renderToHiddenElement = (mergedForm: any) => {
+  //   const hiddenDiv = document.createElement('div');
+  //   hiddenDiv.style.position = 'absolute';
+  //   hiddenDiv.style.top = '-9999px';
+  //   hiddenDiv.style.left = '-9999px';
+  //   hiddenDiv.style.width = '210mm'; // A4 width in mm
+  //   hiddenDiv.style.padding = '20px';
+  //   hiddenDiv.style.backgroundColor = 'white';
+
+  //   const element = (
+  //     <div ref={hiddenRef}>
+  //       <FormResponse mergedForm={mergedForm} />
+  //     </div>
+  //   );
+
+  //   hiddenDiv.appendChild(React.createElement(element));
+  //   document.body.appendChild(hiddenDiv);
+  // };
   
 
   useEffect(() => {
@@ -163,10 +229,7 @@ const ResponseDataTable: React.FC<Props> = ({
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.data.id} className="flex items-center gap-4">
-          {/* <button onClick={() => exportToExcel([{id: params.row.data.id, ...params.row.userData}])}>
-            <DownloadIcon />
-            </button> */}
-          <button>
+          <button onClick={() => downloadPDF(params.row.data)}>
             <DownloadIcon />
           </button>
           <Link
