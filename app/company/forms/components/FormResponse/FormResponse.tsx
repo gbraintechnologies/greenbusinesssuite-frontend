@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import "./index.css";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 
@@ -18,8 +18,8 @@ const renderFormResponse = (formField: any) => {
       return (
         <PhoneSelector
           phone={
-            formField?.response.charAt(0) == 0
-              ? formField?.response.replace("0", "233")
+            formField?.response?.charAt(0) == 0
+              ? formField?.response?.replace("0", "233")
               : formField?.response
           }
           disabled={true}
@@ -29,10 +29,10 @@ const renderFormResponse = (formField: any) => {
       return <textarea defaultValue={formField?.response} readOnly className=" resize-none"/>;
   }
 };
-const FormResponse = ({ mergedForm }: Props) => {
+const FormResponse = forwardRef(function FormResponse({ mergedForm }: Props, ref: any) {
   const formSections = mergedForm?.formSections;
   return (
-    <div className="w-[80%] ">
+    <div className="w-[80%] " ref={ref}>
       {formSections?.map((section: any) => (
         <div className="bg-white rounded-lg mb-4 w-full px-4 py-5">
           <div className=" text-slate-900 font-semibold text-lg my-2">
@@ -57,6 +57,6 @@ const FormResponse = ({ mergedForm }: Props) => {
       ))}
     </div>
   );
-};
+});
 
 export default FormResponse;
