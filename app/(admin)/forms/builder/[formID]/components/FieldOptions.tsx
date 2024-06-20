@@ -226,9 +226,9 @@ function FieldOptions() {
                       <Listbox.Option
                         key={type.id}
                         className={({ active }) =>
-                          `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
                             active
-                              ? "bg-green-100 text-primary-green"
+                              ? "bg-green-50 text-primary-green"
                               : "text-gray-900"
                           }`
                         }
