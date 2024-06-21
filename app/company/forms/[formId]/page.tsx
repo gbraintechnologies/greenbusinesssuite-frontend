@@ -207,7 +207,7 @@ function SingleFormCompany({ params }: any) {
               responseData={formResponseData}
               isResponseLoading={isResponseLoading}
               exportToExcel={exportToExcel}
-              formId={formID}
+              form={form}
             />
           </div>
         )}
