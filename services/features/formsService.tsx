@@ -200,3 +200,15 @@ export const retrieveFormUserResponses = (
       .get(`forms/response/data/user-form/${userId}/${formId}`)
       .then((res) => res.data);
 };
+
+export const retrieveFormUserResponseRaw = (
+  userId: number | string | undefined,
+  formId: number | string
+) => {
+  if (formId === undefined) {
+    throw new Error("No Form Id");
+  }
+  return authApi
+    .get(`forms/response/data/user-form/${userId}/${formId}`)
+    .then((res) => res.data);
+};

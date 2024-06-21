@@ -10,6 +10,13 @@ import { GridColDef } from "@mui/x-data-grid";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
+import FormResponse from "../FormResponse/FormResponse";
+import { createRoot } from "react-dom/client";
+import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import toast from "react-hot-toast";
 
 export interface IResponse {
   email: string;
@@ -23,21 +30,103 @@ type Props = {
   responseData: IResponse[];
   isResponseLoading: boolean;
   exportToExcel: (responses: any) => void;
-  formId?: number | string;
+  form: any;
 };
 
 const ResponseDataTable: React.FC<Props> = ({
   responseData,
   isResponseLoading,
   exportToExcel,
-  formId,
+  form,
 }) => {
   const [aggregatedResponses, setAggregatedResponses] = useState([]);
 
   const [rows, setRows] = useState<any>([]);
 
   const [fetchingUserData, setFetchingUserData] = useState(false);
-  
+
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+  const hiddenRef = React.useRef(null);
+
+  const downloadPDF = async (responseId: number, userData: any) => {
+    try {
+      setPdfGenerating(true);
+      const resData = await services.retrieveFormUserResponseRaw(
+        userData?.id,
+        form?.id
+      );
+
+      if (resData) {
+        const mergedForm = mergeForm(responseId, form, resData[0]?.inputData);
+
+        renderToHiddenElement(mergedForm);
+        
+        const input = hiddenRef.current;
+        if (input) {
+          html2canvas(input, { scale: 2 })
+            .then((canvas) => {
+              const imgData = canvas.toDataURL("image/png");
+              const pdf = new jsPDF("p", "mm", "a4");
+              const width = pdf.internal.pageSize.getWidth();
+              const height = pdf.internal.pageSize.getHeight();
+              const imgWidth = canvas.width;
+              const imgHeight = canvas.height;
+              const ratio = Math.min(width / imgWidth, height / imgHeight);
+              const imgX = (width - imgWidth * ratio) / 2;
+              const imgY = 10;
+
+              // meta data
+              const date = new Date().toLocaleDateString("en-us", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              const responseName = `${userData?.first_name} ${userData?.last_name}`;
+              pdf.setFontSize(8);
+              pdf.text(`Date Printed: ${date}`, 5, 5);
+              pdf.text("|", 60, 5);
+              pdf.text(`Response: ${responseName}`, 65, 5);
+
+              pdf.addImage(
+                imgData,
+                "PNG",
+                imgX,
+                imgY,
+                imgWidth * ratio,
+                imgHeight * ratio
+              );
+              pdf.save(
+                `${form?.name}-${userData?.first_name} ${userData?.last_name}-${responseId}-response`
+              );
+              setPdfGenerating(false)
+            })
+            .catch(() => {
+              setPdfGenerating(false)
+            });
+        }
+      }
+    } catch (error) {
+      toast.error("An error occurred while generating PDF");
+      setPdfGenerating(false);
+    } finally {
+      setPdfGenerating(false);
+    }
+  };
+
+  const renderToHiddenElement = (mergedForm: any) => {
+    const hiddenDiv = document.createElement("div");
+    hiddenDiv.style.position = "absolute";
+    hiddenDiv.style.top = "-100000px";
+    hiddenDiv.style.left = "-100000px";
+    hiddenDiv.style.width = "210mm";
+    hiddenDiv.style.backgroundColor = "white";
+    document.body.appendChild(hiddenDiv);
+
+    const root = createRoot(hiddenDiv);
+    root.render(<FormResponse mergedForm={mergedForm} ref={hiddenRef} />);
+  };
 
   useEffect(() => {
     // fetching user data for each response
@@ -163,14 +252,15 @@ const ResponseDataTable: React.FC<Props> = ({
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.data.id} className="flex items-center gap-4">
-          {/* <button onClick={() => exportToExcel([{id: params.row.data.id, ...params.row.userData}])}>
-            <DownloadIcon />
-            </button> */}
-          <button>
-            <DownloadIcon />
+          <button
+            onClick={() =>
+              downloadPDF(params.row.data?.id, params.row.userData)
+            }
+          >
+            {pdfGenerating ? <LoadingIcon /> : <DownloadIcon />}
           </button>
           <Link
-            href={`/company/forms/${formId}/response?user=${params.row.userData?.id}`}
+            href={`/company/forms/${form?.id}/response?user=${params.row.userData?.id}`}
           >
             <EyeIcon />
           </Link>

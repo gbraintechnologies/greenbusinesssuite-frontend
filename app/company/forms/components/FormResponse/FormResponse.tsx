@@ -33,8 +33,8 @@ const FormResponse = forwardRef(function FormResponse({ mergedForm }: Props, ref
   const formSections = mergedForm?.formSections;
   return (
     <div className="w-[80%] " ref={ref}>
-      {formSections?.map((section: any) => (
-        <div className="bg-white rounded-lg mb-4 w-full px-4 py-5">
+      {formSections?.map((section: any, index: number) => (
+        <div className="bg-white rounded-lg mb-4 w-full px-4 py-5" key={index}>
           <div className=" text-slate-900 font-semibold text-lg my-2">
             {section?.name}
           </div>
