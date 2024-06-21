@@ -78,6 +78,8 @@ function FillFormHere() {
     }
   }, [companies]);
 
+  // console.log("merged form", mergedForm);
+
   useEffect(() => {
     if (mergedForm && fullCompanyName && !Boolean(clientForm)) {
       selectClientForm({
@@ -105,7 +107,7 @@ function FillFormHere() {
   // SKELETON LOADING FOR WHEN FORM ISN'T READY
   if (clientForm) {
     return (
-      <div className="relative flex-col bg-[#F8FAFC] flex md:flex-row gap-5 p-2">
+      <div className="relative flex-col min-h-screen bg-[#F8FAFC] flex md:flex-row gap-5 p-2">
         <div className="hidden md:block w-[21rem] fixed bg-[#E2E8F0]  rounded-lg p-5 h-[91vh] ">
           <StepsNav
             activeSection={activeSection}
@@ -150,7 +152,7 @@ function FillFormHere() {
               Save and continue later
             </button>
             {/* FORM SECTIONS FOR FILLING */}
-            <div className="mx-auto w-[60%] mt-10 ">
+            <div className="mx-auto min-h-screen w-[60%] mt-10 ">
               {/* @ts-ignore */}
               {clientForm?.formSections
                 ?.filter((item: any) => !item.isDeleted)

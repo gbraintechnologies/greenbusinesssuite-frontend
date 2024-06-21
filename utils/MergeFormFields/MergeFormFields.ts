@@ -44,9 +44,9 @@ function mergeFormSections(sections1: any, sections2: any) {
 // Merge the main objects dynamically
 export default function mergeForm(responseId: number, obj1: any, obj2: any) {
   return {
-    ...obj1,
     ...obj2,
+    ...obj1,
     responseId,
-    formSections: mergeFormSections(obj1.formSections, obj2.formSections),
+    formSections: mergeFormSections(obj1?.formSections, obj2?.formSections),
   };
 }
