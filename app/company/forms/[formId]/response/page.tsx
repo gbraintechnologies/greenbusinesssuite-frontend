@@ -53,43 +53,54 @@ const page = ({ params }: any) => {
   const downloadPDF = () => {
     setPdfGenerating(true);
     const input = pdfRef?.current;
-    
+
     if (input) {
-      html2canvas(input, {scale: 2}).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const width = pdf.internal.pageSize.getWidth();
-        const height = pdf.internal.pageSize.getHeight();
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        const ratio = Math.min(width / imgWidth, height / imgHeight);
-        const imgX = (width - imgWidth * ratio) / 2;
-        const imgY = 10;
+      html2canvas(input, { scale: 2 })
+        .then((canvas) => {
+          const imgData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF("p", "mm", "a4");
+          const width = pdf.internal.pageSize.getWidth();
+          const height = pdf.internal.pageSize.getHeight();
+          const imgWidth = canvas.width;
+          const imgHeight = canvas.height;
+          const ratio = Math.min(width / imgWidth, height / imgHeight);
+          const imgX = (width - imgWidth * ratio) / 2;
+          const imgY = 10;
 
-        // meta data
-        const date = new Date().toLocaleDateString("en-us", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
+          // meta data
+          const date = new Date().toLocaleDateString("en-us", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const responseName = `${userData?.first_name} ${userData?.last_name}`;
+          pdf.setFontSize(8);
+          pdf.text(`Date Printed: ${date}`, 5, 5);
+          pdf.text("|", 60, 5);
+          pdf.text(`Response: ${responseName}`, 65, 5);
+
+          pdf.addImage(
+            imgData,
+            "PNG",
+            imgX,
+            imgY,
+            imgWidth * ratio,
+            imgHeight * ratio
+          );
+          pdf.save(
+            `${form?.name}-${userData?.first_name} ${userData?.last_name}-${formUserResponse?.id}-response`
+          );
+          setPdfGenerating(false);
+        })
+        .catch(() => {
+          setPdfGenerating(false);
         });
-        const responseName = `${userData?.first_name} ${userData?.last_name}`; 
-        pdf.setFontSize(8);
-        pdf.text(`Date Printed: ${date}`, 5, 5);
-        pdf.text("|", 60, 5)
-        pdf.text(`Response: ${responseName}`, 65 ,5);
-
-        pdf.addImage(imgData, "PNG", imgX, imgY, imgWidth * ratio, imgHeight * ratio);
-        pdf.save("response.pdf");
-        setPdfGenerating(false);
-      }).catch(() => {
-        setPdfGenerating(false);
-      });
     } else {
       setPdfGenerating(false);
     }
-};
+  };
 
   if (isLoading || isUserLoading) {
     return (
@@ -158,14 +169,20 @@ const page = ({ params }: any) => {
             </p>
           </div>
         </div>
-        <button className="flex items-center gap-2 bg-white border border-[#E2E8F0] drop-shadow-sm px-2 py-2 text-sm rounded-md" onClick={downloadPDF} disabled={pdfGenerating}>
+        <button
+          className="flex items-center gap-2 bg-white border border-[#E2E8F0] drop-shadow-sm px-2 py-2 text-sm rounded-md"
+          onClick={downloadPDF}
+          disabled={pdfGenerating}
+        >
           {pdfGenerating ? <LoadingIcon /> : <DownloadIcon />}
-          <p className="text-sm font-medium text-[#334155]">{pdfGenerating ? "Generating..." : "Download"}</p>
+          <p className="text-sm font-medium text-[#334155]">
+            {pdfGenerating ? "Generating..." : "Download"}
+          </p>
         </button>
       </div>
 
       {/* FORM RESPONSE */}
-      <div className="mt-4" >
+      <div className="mt-4">
         <FormResponse mergedForm={mergedForm} ref={pdfRef} />
       </div>
     </div>

@@ -10,7 +10,7 @@ export const login = (username: any, password: any) => {
 };
 
 export const currentLoggedIn = (token: any) => {
-  return noAuthApi.post(`/users/current_logged_in/?token=${token}`);
+  return authApi.post(`/users/current_logged_in/?token=${token}`);
 };
 
 export const changePassword = ({
@@ -53,3 +53,7 @@ export const notifyUserTempCred = (id: any, channel: string) => {
     channel: channel,
   });
 };
+
+export const userSelfSignUp = (data: any) => {
+  return noAuthApi.post("/users/self_create_account/", data);
+}

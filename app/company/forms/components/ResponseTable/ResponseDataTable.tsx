@@ -61,7 +61,7 @@ const ResponseDataTable: React.FC<Props> = ({
 
         renderToHiddenElement(mergedForm);
         
-        const input = hiddenRef.current;
+        const input = hiddenRef?.current;
         if (input) {
           html2canvas(input, { scale: 2 })
             .then((canvas) => {
