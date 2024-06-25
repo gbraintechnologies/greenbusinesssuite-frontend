@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
 import Logo from "./components/Logo";
-import { login, currentLoggedIn } from "../../../services/features/authService";
+import { login, currentLoggedIn } from "@/services/features/authService";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -145,7 +145,7 @@ function LogIn() {
               )}
             </div>
             <p className="text-green-500 font-bold text-sm underline">
-              <Link href="/forgot-password"> Forgot Password? </Link>
+              <Link href="/auth/forgot-password"> Forgot Password? </Link>
             </p>
             <Button type="submit" isValid={isValid} disabled={isSubmitting}>
               {isSubmitting ? (

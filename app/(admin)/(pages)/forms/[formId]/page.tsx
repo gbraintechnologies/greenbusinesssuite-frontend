@@ -23,7 +23,7 @@ import PublishFormButton from "../builder/PublishFormButton";
 import toast from "react-hot-toast";
 
 // extra components
-import ResponseDataTable from "@/app/company/forms/components/ResponseTable/ResponseDataTable";
+import ResponseDataTable from "@/app/company/(pages)/forms/components/ResponseTable/ResponseDataTable";
 
 function FormDetail({ params }: any) {
   let formID = params.formId;

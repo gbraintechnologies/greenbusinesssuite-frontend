@@ -116,12 +116,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
           <FormPreviewIcon />
         </button>
         <div className="p-3">
-          <button
-            onClick={() => {
-              router.push(`/forms/${id}`);
-            }}
-            className="text-lg w-full text-left font-medium"
-          >
+          <button className="text-lg w-full text-left font-medium">
             {/* @ts-ignore */}
             {form?.name?.replace(/"/g, " ")}
           </button>

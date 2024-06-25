@@ -21,7 +21,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import ResponseDataTable from "../components/ResponseTable/ResponseDataTable";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
-import PublishFormButton from "@/app/(admin)/forms/builder/PublishFormButton";
+import PublishFormButton from "@/app/(admin)/(pages)/forms/builder/PublishFormButton";
 
 function SingleFormCompany({ params }: any) {
   const [filters, setFilters] = useState([

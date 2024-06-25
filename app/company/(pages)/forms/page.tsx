@@ -8,7 +8,7 @@ import services from "@/services";
 
 // components
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import EmptyList from "@/app/(admin)/forms/components/EmptyList";
+import EmptyList from "@/app/(admin)/(pages)/forms/components/EmptyList";
 
 //
 import FormCard from "./components/CompanyFormCard";
@@ -16,20 +16,28 @@ import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 import useAdmin from "@/hooks/useAdmin";
 
 function CompanyForms() {
-  const {admin} = useAdmin();
+  const { admin } = useAdmin();
   // TODO: UPDATE TO USE RIGHT COMPANY ID
   // COMPANY OF CURRENT ADMIN CAN BE RETRIEVED FROM useAdmin()
   const { data: companyData } = useQuery({
     queryKey: ["get company"],
-    queryFn: services.getCompanyById(Number(
-      admin?.custom_profile_values.find(
-        (item: any) => item.custom_profile_item_id === 2
-      )?.value)),
+    queryFn: services.getCompanyById(
+      Number(
+        admin?.custom_profile_values.find(
+          (item: any) => item.custom_profile_item_id === 2
+        )?.value
+      )
+    ),
   });
 
   const { data: forms, isLoading: isFormsLoading } = useQuery({
-    queryKey: ["get company forms for ", lowerCaseNoSpace(companyData?.company_name)],
-    queryFn: services.getFormsByCompanyName(lowerCaseNoSpace(companyData?.company_name)),
+    queryKey: [
+      "get company forms for ",
+      lowerCaseNoSpace(companyData?.company_name),
+    ],
+    queryFn: services.getFormsByCompanyName(
+      lowerCaseNoSpace(companyData?.company_name)
+    ),
     enabled: !!companyData?.company_name,
   });
 
