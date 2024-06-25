@@ -21,6 +21,7 @@ import ReactQueryProvider from "@/lib/ReactQueryProvider/ReactQueryProvider";
 import AdminContextProvider from "@/lib/AdminContextProvider/AdminContextProvider";
 import UserContextProvider from "@/lib/UserContextProvider/UserContextProvider";
 import AuthContextProvider from "@/lib/AuthContextProvider/AuthContextProvider";
+import CompanyContextProvider from "@/lib/CompanyContextProvider/CompanyContextProvider";
 
 export default function RootLayout({
   children,
@@ -58,7 +59,9 @@ export default function RootLayout({
         <ReactQueryProvider>
           <AuthContextProvider>
             <AdminContextProvider>
-              <UserContextProvider>{children}</UserContextProvider>
+              <CompanyContextProvider>
+                <UserContextProvider>{children}</UserContextProvider>
+              </CompanyContextProvider>
               <Toaster position="top-center" reverseOrder={true} />
             </AdminContextProvider>
           </AuthContextProvider>

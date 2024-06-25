@@ -5,9 +5,6 @@ export const ClientFormContext = createContext();
 // services and query
 import services from "@/services";
 
-//
-import { useQueryClient } from "@tanstack/react-query";
-
 //toast
 import toast from "react-hot-toast";
 
@@ -41,12 +38,12 @@ export const ClientFormProvider = ({ children }) => {
         let field = section?.formFields[j];
         formFields.push({
           id: field?.id,
-          response: field?.response,
+          response: field?.response ? field?.response : null,
           formFieldId: field?.id,
           fieldName: field?.name,
           isStatisticalField: field?.isStatisticalField
             ? field?.isStatisticalField
-            : "",
+            : false,
           statisticalFunction: field?.statisticalFunction
             ? field?.statisticalFunction
             : "",
@@ -55,7 +52,6 @@ export const ClientFormProvider = ({ children }) => {
       }
       formSections.push({
         id: section?.id,
-
         formSectionId: section?.id,
         formDataFields: formFields,
       });
@@ -106,12 +102,12 @@ export const ClientFormProvider = ({ children }) => {
         let field = section?.formFields[j];
         formFields.push({
           id: field?.id,
-          response: field?.response,
+          response: field?.response ? field?.response : null,
           formFieldId: field?.id,
           fieldName: field?.name,
           isStatisticalField: field?.isStatisticalField
             ? field?.isStatisticalField
-            : "",
+            : false,
           statisticalFunction: field?.statisticalFunction
             ? field?.statisticalFunction
             : "",

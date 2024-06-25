@@ -106,14 +106,16 @@ function CompanySetup() {
 
   useEffect(() => {
     if (aggregatedCompanies?.length > 0) {
-      const preparedRows = aggregatedCompanies.map(
-        (company: Partial<CompanyInfo>) => {
+      const preparedRows = aggregatedCompanies
+        .filter((item: any) => {
+          return !item.is_deleted;
+        })
+        .map((company: Partial<CompanyInfo>) => {
           return {
             id: company.id,
             data: company,
           };
-        }
-      );
+        });
       setRows(preparedRows);
     } else {
       setRows([]);
