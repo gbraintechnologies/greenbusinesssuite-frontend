@@ -48,6 +48,58 @@ const ResponseDataTable: React.FC<Props> = ({
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const hiddenRef = React.useRef(null);
 
+  const captureAndGeneratePDF = (userData: any, responseId: string) => {
+    const input = hiddenRef?.current;
+
+    console.log("input ", input);
+    if (input) {
+      html2canvas(input, { scale: 2 })
+        .then((canvas) => {
+          const imgData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF("p", "mm", "a4");
+          const width = pdf.internal.pageSize.getWidth();
+          const height = pdf.internal.pageSize.getHeight();
+          const imgWidth = canvas.width;
+          const imgHeight = canvas.height;
+          const ratio = Math.min(width / imgWidth, height / imgHeight);
+          const imgX = (width - imgWidth * ratio) / 2;
+          const imgY = 10;
+
+          // meta data
+          const date = new Date().toLocaleDateString("en-us", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const responseName = `${userData?.first_name} ${userData?.last_name}`;
+          pdf.setFontSize(8);
+          pdf.text(`Date Printed: ${date}`, 5, 5);
+          pdf.text("|", 60, 5);
+          pdf.text(`Response: ${responseName}`, 65, 5);
+
+          pdf.addImage(
+            imgData,
+            "PNG",
+            imgX,
+            imgY,
+            imgWidth * ratio,
+            imgHeight * ratio
+          );
+          pdf.save(
+            `${form?.name}-${userData?.first_name} ${userData?.last_name}-${responseId}-response`
+          );
+          setPdfGenerating(false);
+        })
+        .catch(() => {
+          setPdfGenerating(false);
+        });
+    } else {
+      console.log("no input");
+    }
+  };
+
   const downloadPDF = async (responseId: number, userData: any) => {
     try {
       setPdfGenerating(true);
@@ -59,53 +111,7 @@ const ResponseDataTable: React.FC<Props> = ({
       if (resData) {
         const mergedForm = mergeForm(responseId, form, resData[0]?.inputData);
 
-        renderToHiddenElement(mergedForm);
-        
-        const input = hiddenRef?.current;
-        if (input) {
-          html2canvas(input, { scale: 2 })
-            .then((canvas) => {
-              const imgData = canvas.toDataURL("image/png");
-              const pdf = new jsPDF("p", "mm", "a4");
-              const width = pdf.internal.pageSize.getWidth();
-              const height = pdf.internal.pageSize.getHeight();
-              const imgWidth = canvas.width;
-              const imgHeight = canvas.height;
-              const ratio = Math.min(width / imgWidth, height / imgHeight);
-              const imgX = (width - imgWidth * ratio) / 2;
-              const imgY = 10;
-
-              // meta data
-              const date = new Date().toLocaleDateString("en-us", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              });
-              const responseName = `${userData?.first_name} ${userData?.last_name}`;
-              pdf.setFontSize(8);
-              pdf.text(`Date Printed: ${date}`, 5, 5);
-              pdf.text("|", 60, 5);
-              pdf.text(`Response: ${responseName}`, 65, 5);
-
-              pdf.addImage(
-                imgData,
-                "PNG",
-                imgX,
-                imgY,
-                imgWidth * ratio,
-                imgHeight * ratio
-              );
-              pdf.save(
-                `${form?.name}-${userData?.first_name} ${userData?.last_name}-${responseId}-response`
-              );
-              setPdfGenerating(false)
-            })
-            .catch(() => {
-              setPdfGenerating(false)
-            });
-        }
+        renderToHiddenElement(mergedForm, userData, responseId);
       }
     } catch (error) {
       toast.error("An error occurred while generating PDF");
@@ -115,7 +121,11 @@ const ResponseDataTable: React.FC<Props> = ({
     }
   };
 
-  const renderToHiddenElement = (mergedForm: any) => {
+  const renderToHiddenElement = (
+    mergedForm: any,
+    userData: any,
+    responseId: any
+  ) => {
     const hiddenDiv = document.createElement("div");
     hiddenDiv.style.position = "absolute";
     hiddenDiv.style.top = "-100000px";
@@ -125,7 +135,13 @@ const ResponseDataTable: React.FC<Props> = ({
     document.body.appendChild(hiddenDiv);
 
     const root = createRoot(hiddenDiv);
-    root.render(<FormResponse mergedForm={mergedForm} ref={hiddenRef} />);
+    root.render(
+      <FormResponse
+        mergedForm={mergedForm}
+        ref={hiddenRef}
+        onRendered={() => captureAndGeneratePDF(userData, responseId)}
+      />
+    );
   };
 
   useEffect(() => {

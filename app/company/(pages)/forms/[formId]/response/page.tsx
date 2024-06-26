@@ -46,16 +46,21 @@ const page = ({ params }: any) => {
     formUserResponse &&
     mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData);
 
+  console.log("merged form ", mergedForm);
   const router = useRouter();
 
   const pdfRef = React.useRef(null);
 
   const downloadPDF = () => {
     setPdfGenerating(true);
-    const input = pdfRef?.current;
+    const input: any = pdfRef?.current;
 
     if (input) {
-      html2canvas(input, { scale: 2 })
+      html2canvas(input, {
+        scale: 2,
+        windowWidth: input?.scrollWidth,
+        windowHeight: input?.scrollHeight,
+      })
         .then((canvas) => {
           const imgData = canvas.toDataURL("image/png");
           const pdf = new jsPDF("p", "mm", "a4");
@@ -90,7 +95,7 @@ const page = ({ params }: any) => {
             imgHeight * ratio
           );
           pdf.save(
-            `${form?.name}-${userData?.first_name} ${userData?.last_name}-${formUserResponse?.id}-response`
+            `${form?.name}-${userData?.first_name} ${userData?.last_name}-${mergedForm?.responseId}-response`
           );
           setPdfGenerating(false);
         })
