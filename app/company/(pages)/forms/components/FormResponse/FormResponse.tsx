@@ -1,9 +1,10 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useEffect } from "react";
 import "./index.css";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 
 type Props = {
   mergedForm: any;
+  onRendered?: any;
 };
 
 const renderFormResponse = (formField: any) => {
@@ -26,10 +27,24 @@ const renderFormResponse = (formField: any) => {
         />
       );
     case "long-text":
-      return <textarea defaultValue={formField?.response} readOnly className=" resize-none"/>;
+      return (
+        <textarea
+          defaultValue={formField?.response}
+          readOnly
+          className=" resize-none"
+        />
+      );
   }
 };
-const FormResponse = forwardRef(function FormResponse({ mergedForm }: Props, ref: any) {
+const FormResponse = forwardRef(function FormResponse(
+  { mergedForm, onRendered = () => {} }: Props,
+  ref: any
+) {
+  useEffect(() => {
+    if (onRendered) {
+      onRendered();
+    }
+  }, [onRendered]);
   const formSections = mergedForm?.formSections;
   return (
     <div className="w-[80%] " ref={ref}>
