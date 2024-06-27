@@ -13,7 +13,7 @@ function SideNav({ navigation, thirdPartyApps = [] }: any) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-[22rem] hidden md:block sticky top-[7vh] border-[#E2E8F0] border-r bg-[#F8FAFC] px-5 p-2 h-[93vh]">
+    <aside className="w-[22rem] overflow-y-scroll no-scrollbar hidden md:block  border-[#E2E8F0] border-r bg-[#F8FAFC] px-5 p-2 h-full">
       {/* IN BUILT APPS / FEATURES / COMPANY APPS */}
       <ul className="mt-4">
         <li className="text-xs font-light text-gray-500 mb-2">ORGANIZATION</li>

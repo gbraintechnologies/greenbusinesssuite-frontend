@@ -75,7 +75,7 @@ function FieldOptions() {
     return (
       <div className="bg-white h-[100vh]  border-l-2 border-gray-200 p-3">
         {/* TABS */}
-        <div className="bg-gray-100 p-1  text-sm rounded-lg flex gap-3 items-center justify-center">
+        <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
           <button className="bg-white font-medium p-1 flex-1 rounded-lg">
             General
           </button>
@@ -88,7 +88,7 @@ function FieldOptions() {
         </div>
 
         {/* REQUIRED FIELD OR NOT */}
-        <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">
+        <div className="bg-[#F8FAFC] py-3 mt-8 px-5  rounded-lg flex gap-3 items-center justify-between">
           <p className="font-medium text-base">Required field</p>{" "}
           <Switch
             checked={isMandatory}

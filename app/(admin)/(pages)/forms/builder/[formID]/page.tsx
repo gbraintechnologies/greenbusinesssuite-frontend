@@ -60,7 +60,7 @@ function FormEditing({ params }: any) {
         {view === "connect" && <Connect />}
       </div>
 
-      <div className="w-[24%] fixed right-1">
+      <div className="w-[24%] overflow-y-scroll no-scrollbar fixed right-1">
         <GeneralFormSettings />
       </div>
     </div>
