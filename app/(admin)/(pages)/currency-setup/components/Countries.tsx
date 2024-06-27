@@ -11,9 +11,10 @@ const Countrie = (itm: string) => {
 };
 
 const Countrieses = (itm: string) => {
-    let country = Country.filter(cnt => cnt.name.common === itm);
-    return (country.length > 0) ? country[0] : null;
+    const country = Country.find(cnt => cnt.name.common.trim().toLowerCase() === itm.trim().toLowerCase());
+    return country || null;
 };
+
 
 export default Countries;
 export { Countrie, Countrieses }

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoIosAddCircleOutline } from "react-icons/io";
 import "../index.css"
 import Countries, { Countrie } from "../components/Countries";
@@ -13,54 +13,64 @@ import FormatByte from "../components/FormatByte";
 import ExcelIcon from "@/public/icons/ExcelIcon";
 import Link from 'next/link';
 import * as yup from "yup";
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { createFreeInputJurisdiction, createParentDropdownJurisdiction } from '@/services/features/jurisdictionsService';
 
 
-const schema = yup.object({
-    jurisdictions_id: yup
-        .number(),
-    jurisdiction_name: yup
-        .string(),
-    jurisdiction_symbol: yup
-        .string(),
-    name_of_currency: yup
-        .string(),
-    currency_code: yup
-        .string()
+const schema = yup.object().shape({
+    id: yup.number().required(),
+    name: yup.string().required(),
+    jurisdiction: yup.object().shape({
+        id: yup.number().required(),
+        countryId: yup.number().required(),
+        name: yup.string().required(),
+    }),
+    inputType: yup.string().required(),
 });
 
 
 function NewIndividual() {
-
+    const router = useRouter();
     type typeOfSchema = yup.InferType<typeof schema>;
     const [selectedOption, setSelectedOption] = useState('Free Input');
     const [IDImage, setIDImage] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const [fileName, setFileName] = useState<any>({ 'name': '', 'size': '' })
-    const { register, handleSubmit, formState: { isSubmitting, errors, dirtyFields }, getValues } = useForm<typeOfSchema>({
+    const { register, handleSubmit, setValue, formState: { errors }, getValues } = useForm<typeOfSchema>({
         resolver: yupResolver(schema),
         mode: "onChange",
         defaultValues: {
-            jurisdictions_id: 0,
-            jurisdiction_name: "",
-            jurisdiction_symbol: "",
-            name_of_currency: "",
-            currency_code: ""
+            id: 0,
+            name: '',
+            jurisdiction: {
+                id: 0,
+                countryId: 0,
+                name: 'Ghana'
+            },
+            inputType: 'free-input'
         },
+
     });
+
+
     const [dropdownItems, setDropdownItems] = useState('');
     const [labels, setLabels] = useState<string[]>([]);
 
-    const handleContinue = () => {
-        const items = dropdownItems.split(',').map(item => item.trim()).filter(item => item);
-        setLabels(items);
-    };
+    useEffect(() => {
+        setValue('inputType', selectedOption.toLowerCase().replace(' ', '-'));
+    }, [selectedOption, setValue]);
 
-    const handleOptionClick = (option: any) => {
+    useEffect(() => {
+        const defaultCountry = 'Ghana';
+        setValue('jurisdiction.name', defaultCountry);
+    }, [setValue]);
+
+    const handleOptionClick = (option: string) => {
         setSelectedOption(option);
     };
-
 
     const handleDrop = (acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -85,9 +95,70 @@ function NewIndividual() {
     };
 
     const onSubmit = async (data: typeOfSchema) => {
+        try {
+            const Payload = {
+                id: data.id,
+                name: data.name,
+                jurisdiction: {
+                    id: data.jurisdiction.id,
+                    countryId: data.jurisdiction.countryId,
+                    name: data.jurisdiction.name
+                },
+                inputType: data.inputType
+            };
+            await createFreeInputJurisdiction(Payload);
 
+            toast.success("Jurisdiction created Successfully", {
+                position: "top-center",
+                duration: 3000,
+                style: {
+                    color: 'green'
+                }
+            });
+            router.push("/country-setup");
+        } catch (error: any) {
+            console.error('Error occurred:', error);
+            alert(error.message);
+        }
     };
 
+    const handleSaveAndContinue = async () => {
+        try {
+            const items = dropdownItems.split(',').map(item => item.trim()).filter(item => item);
+            setLabels(items);
+
+            const data = getValues();
+            const Payload2 = {
+                parentAddressScheme: {
+                    id: data.id,
+                    name: data.name,
+                    jurisdiction: {
+                        id: data.jurisdiction.id,
+                        countryId: data.jurisdiction.countryId,
+                        name: data.jurisdiction.name
+                    },
+                    inputType: data.inputType
+                },
+                entries: items.map((label, index) => ({
+                    id: index + 1,
+                    name: label
+                }))
+            };
+            let parentId = await createParentDropdownJurisdiction(Payload2);
+
+            toast.success("Address Scheme saved Successfully", {
+                position: "top-center",
+                duration: 3000,
+                style: {
+                    color: 'green'
+                }
+            });
+            router.push(`/country-setup/region-input?id=${parentId.data}`);
+        } catch (error: any) {
+            console.error('Error occurred:', error);
+            alert(error.message);
+        }
+    };
     return (
         <div className='w-full p-5'>
             <div className="w-full">
@@ -104,13 +175,13 @@ function NewIndividual() {
                                 listdata={Countries()}
                                 label="Country"
                                 autoComplete="off"
-                                {...register("jurisdiction_name")}
-                                error={errors.jurisdiction_name?.message}
+                                {...register("jurisdiction.name")}
+                                error={errors.jurisdiction?.name?.message}
                                 PrependIcon={
                                     <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
                                         <img
-                                            src={Countrie(getValues("jurisdiction_name") ?? '')?.flags.png}
-                                            alt={Countrie(getValues("jurisdiction_name") ?? '')?.name.common}
+                                            src={Countrie(getValues("jurisdiction.name") ?? '')?.flags.png}
+                                            alt={Countrie(getValues("jurisdiction.name") ?? '')?.name.common}
                                             style={{ height: "auto", width: "30px" }}
                                         />
                                     </span>
@@ -132,6 +203,8 @@ function NewIndividual() {
                             placeholder='Enter name of category'
                             className="rounded xl"
                             style={{ width: "30%", height: "30%" }}
+                            {...register("name")}
+                            error={errors.name?.message}
                         />
                     </div>
                     <div>
@@ -188,13 +261,10 @@ function NewIndividual() {
 
                         {selectedOption === 'Free Input' && (
                             <div className="mt-6">
-                                <div>
-                                    <h4 className="font-bold text-black-400">Is this a sub-level?</h4>
-                                    <p className="text-black-400 text-sm mb-4">A sub level allows you to add the configuration under another level</p>
-                                </div>
                                 <div className="flex mb-3" style={{ width: "30%" }}>
                                     <button
                                         type="submit"
+                                        onClick={handleSubmit(onSubmit)}
                                         className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl mr-2"
                                     >
                                         <IoIosAddCircleOutline size={20} />Save Changes
@@ -208,7 +278,6 @@ function NewIndividual() {
                                         </button>
                                     </Link>
                                 </div>
-                                <div style={{ width: '30%', borderBottom: '1px solid lightgray' }}></div>
                             </div>
                         )}
 
@@ -292,15 +361,13 @@ function NewIndividual() {
                                             Cancel
                                         </button>
                                     </Link>
-                                    <Link href={`/country-setup/region-input?labels=${encodeURIComponent(dropdownItems)}`}>
-                                        <button
-                                            type="button"
-                                            onClick={handleContinue}
-                                            className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-                                        >
-                                            Continue
-                                        </button>
-                                    </Link>
+                                    <button
+                                        type="button"
+                                        onClick={handleSaveAndContinue}
+                                        className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                                    >
+                                        Save and Continue
+                                    </button>
                                 </div>
                             </div>
                         )}

@@ -1,10 +1,7 @@
 'use client'
-import React, { ChangeEvent, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { IoIosAddCircleOutline } from "react-icons/io";
-import Countries, { Countrie } from "../components/Countries";
-import SelectInput from "../components/SelectInput";
-import Image from "next/image";
-import { IoCloseCircleOutline } from "react-icons/io5";
+import { Countrie, Countrieses } from "../components/Countries";
 import FormatByte from "../components/FormatByte";
 import Link from 'next/link';
 import * as yup from "yup";
@@ -12,13 +9,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GoDotFill } from "react-icons/go";
 import { useForm } from "react-hook-form";
 import TextInput from '../components/TextInput';
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
 import UploadAreaInput from '../components/UploadAreaInput';
 import DeleteIcon from '@/public/icons/DeleteIcon';
 import EditIconSetup from '@/public/icons/EditIconSetup';
 import Modal from "../../../../components/Modal/Modal";
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { createSector } from '@/services/features/sectorService';
+import ExcelIcon from "@/public/icons/ExcelIcon";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import Papa from 'papaparse';
+import { createSector, csvUpload } from '@/services/features/sectorService';
+import SelectCountryInput from '../components/selectCountryInput';
 
 
 interface SectorData {
@@ -27,10 +30,15 @@ interface SectorData {
   subSector: string[];
 }
 
+interface Country {
+  id: number;
+  name: string;
+}
+
 
 const schema = yup.object({
   id: yup.number(),
-  countryName: yup.string().required(),
+  countryName: yup.string(),
   sectors: yup.array().of(
     yup.object({
       id: yup.number(),
@@ -57,8 +65,11 @@ function AddSector() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [sectorToDelete, setSectorToDelete] = useState<number | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [addingSector, setAddingSector] = useState(false);
-  const { register, handleSubmit, formState: { isSubmitting, errors, dirtyFields }, getValues } = useForm<typeOfSchema>({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mappedData, setMappedData] = useState<any[]>([]);
+  const { register, handleSubmit, formState: { errors, dirtyFields }, getValues } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
@@ -67,6 +78,23 @@ function AddSector() {
       sectors: []
     },
   });
+
+  const { data: countriesData, isLoading: countriesLoading } = useQuery<Country[], Error>({
+    queryKey: ["all_countries"],
+    queryFn: services.allJurisdictions(),
+  });
+
+  useEffect(() => {
+    const countryName = getValues("countryName");
+
+    if (countryName) {
+      const country = Countrieses(countryName);
+      //console.log("Matching country found:", country);
+      if (country) {
+        setSelectedCountry(country.cca2);
+      }
+    }
+  }, [getValues("countryName"), countriesData]);
 
   const handleEditModalOpen: (id: number, subSectorIndex: number, subSector: string) => void = (id, subSectorIndex, subSector) => {
     setEditMode(id);
@@ -98,7 +126,7 @@ function AddSector() {
 
 
   const handleDeleteModalOpen = (id: number) => {
-   // alert(id)
+    // alert(id)
     setSectorToDelete(id);
     setShowDeleteModal(true);
   };
@@ -114,46 +142,149 @@ function AddSector() {
     }
   };
 
-  const handleDrop = (acceptedFiles: File[]) => {
+  const handleDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    const acceptedExtensions = [".csv", ".xls", ".xlsx"];
+  
+    const acceptedExtensions = ['.csv', '.xls', '.xlsx'];
     const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-
-    setFileName({ name: file.name, size: file.size });
-
+  
     if (acceptedExtensions.includes(fileExtension)) {
+      setFileName({ name: file.name, size: file.size });
+      setIDImage(file);
+  
+      console.log('Starting file parsing...');
+      console.log(`File name: ${file.name}, File size: ${file.size} bytes`);
+  
+      Papa.parse(file, {
+        complete: (result) => {
+          console.log('Parsing complete. Result:', result);
+  
+          const parsedData = result.data as {
+            countryName: string;
+            parentSector: string;
+            subSector1: string;
+            subSector2: string;
+            subSector3: string;
+          }[];
+          console.log('Parsed data:', parsedData);
+  
+          if (parsedData.length > 0) {
+            console.log('Processing parsed data...');
+  
+            // No need to map the data into a new structure, just use the parsed data directly
+            console.log('Final data to be uploaded:', parsedData);
+            setMappedData(parsedData); // Assuming you want to set this in your state
+  
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('file', file); // Append the actual file
+  
+            // Call csvUpload to upload the file
+            uploadFile(formData, file.name);
+          } else {
+            console.error('No valid data found in the CSV file.');
+          }
+        },
+        error: (error) => {
+          console.error('Error parsing CSV file:', error);
+        },
+        header: true,
+        skipEmptyLines: true,
+      });
+  
       const simulateImport = () => {
+        console.log('Starting upload progress simulation...');
         for (let i = 0; i <= 100; i += 10) {
           setTimeout(() => {
+            console.log(`Upload progress: ${i}%`);
             setUploadProgress(i);
           }, i * 50);
         }
       };
       simulateImport();
     } else {
-      alert("Please upload a CSV or XLS file.");
+      console.warn('Invalid file type. Please upload a CSV or XLS file.');
+      alert('Please upload a CSV or XLS file.');
+    }
+  };
+  
+  const uploadFile = async (formData: FormData, fileName: string) => {
+    try {
+      const response = await csvUpload(formData, fileName);
+      console.log('Upload successful!', response.data);
+      // Handle any further logic or UI updates based on the response
+    } catch (error) {
+      console.error('Error uploading CSV:', error);
+      // Handle error scenarios, show error messages, etc.
     }
   };
 
   const onSubmit = async (data: typeOfSchema) => {
+    if (isSubmitting) {
+      return;
+    }
+    setIsSubmitting(true);
+
     try {
-      const sectorPayload = {
-        id: data.id,
-        countryName: data.countryName,
-        sectors: sectorlevels,
-      };
-      // alert(JSON.stringify(sectorPayload));
-     // await createSector(sectorPayload);
-      toast.success("Currency added Successfully", {
+      if (IDImage) {
+        const formData = new FormData();
+        formData.append("file", IDImage);
+
+        await csvUpload(formData, fileName.name);
+
+        toast.success("CSV file uploaded Successfully", {
+          position: "top-center",
+          duration: 3000,
+          style: {
+            color: 'green'
+          }
+        });
+        setIDImage(null);
+        setUploadProgress(0);
+        setFileName({ name: '', size: 0 });
+
+        setIsSubmitting(false);
+        return;
+      }
+
+      if ((data.countryName && sectorlevels.length > 0) || sectorlevels.length > 0) {
+        const sectorPayload = {
+          id: data.id,
+          countryName: data.countryName,
+          sectors: sectorlevels,
+        };
+
+        await createSector(sectorPayload);
+
+        toast.success("Sector created Successfully", {
+          position: "top-center",
+          duration: 3000,
+          style: {
+            color: 'green'
+          }
+        });
+        router.push("/sector-setup");
+      } else {
+        toast.error("Please fill out the form or upload a CSV file.", {
+          position: "top-center",
+          duration: 3000,
+        });
+      }
+    } catch (error: any) {
+      console.error('Error occurred:', error);
+      toast.error("An error occurred. Please try again.", {
         position: "top-center",
         duration: 3000,
       });
-      router.push("/sector-setup");
-    } catch (error: any) {
-      console.error('Error occurred:', error);
-      alert(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
+
+
+  const eitherActionCompleted = IDImage !== null || sectorlevels.length > 0;
+
+  const isSaveDisabled = isSubmitting || (IDImage !== null && sectorlevels.length > 0) || (!eitherActionCompleted)
 
   const handleAddSectorLevel = async () => {
     if (newSubSector.trim() === '' || addingSector) return;
@@ -235,7 +366,7 @@ function AddSector() {
 
               <button
                 type="submit"
-                disabled={isSubmitting || !dirtyFields.countryName}
+                disabled={isSaveDisabled}
                 onClick={handleSubmit(onSubmit)}
                 className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               >
@@ -244,21 +375,24 @@ function AddSector() {
             </div>
           </div>
           <div>
-            <div className="mb-8 relative">
-              <SelectInput
-                listdata={Countries()}
+            <div className="mb-3 relative">
+              <SelectCountryInput
+                key={selectedCountry}
+                listdata={countriesData ?? []}
                 label="Country"
                 autoComplete="off"
                 {...register("countryName")}
                 error={errors.countryName?.message}
                 PrependIcon={
-                  <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
-                    <img
-                      src={Countrie(getValues("countryName") ?? '')?.flags.png}
-                      alt={Countrie(getValues("countryName") ?? '')?.name.common}
-                      style={{ height: "auto", width: "30px" }}
-                    />
-                  </span>
+                  selectedCountry ? (
+                    <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
+                      <img
+                        src={selectedCountry ? Countrie(selectedCountry)?.flags.png : ''}
+                        alt={selectedCountry ? Countrie(selectedCountry)?.name.common : ''}
+                        style={{ height: "auto", width: "30px" }}
+                      />
+                    </span>
+                  ) : null
                 }
                 style={{ width: "30%", height: "30%" }}
               />
@@ -300,10 +434,10 @@ function AddSector() {
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <span>{sub}</span>
                             <div className="flex items-center">
-                              <button className="rounded-full" onClick={() => handleEditModalOpen(sectorlevel.id, subIndex, sub)}>
+                              <button type="button" className="rounded-full" onClick={() => handleEditModalOpen(sectorlevel.id, subIndex, sub)}>
                                 <EditIconSetup />
                               </button>
-                              <button className="rounded-full ml-2" onClick={() => handleDeleteModalOpen(sectorlevel.id)}>
+                              <button type="button" className="rounded-full ml-2" onClick={() => handleDeleteModalOpen(sectorlevel.id)}>
                                 <DeleteIcon />
                               </button>
                             </div>
@@ -354,27 +488,41 @@ function AddSector() {
           </div>
 
           <div className="h-[300px]" style={{ width: "30%" }}>
-            {IDImage ? (
-              <div className="border relative border-dashed border-gray-300 p-4">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold">{fileName.name}</span>
-                  <IoCloseCircleOutline
-                    size={24}
-                    className="cursor-pointer"
-                    onClick={() => setIDImage(null)}
-                  />
+            <div className="w-full h-[304px]">
+              {IDImage ? (
+                <div className="px-5 py-5 pb-5 mt-1 border border-dashed border-grey-500 max-w-[540px] min-h-[70px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4 bg-gray-100">
+                  <div className="relative">
+                    <div className="flex flex-row mb-2">
+                      <ExcelIcon />
+                      <div>
+                        <div className="font-semibold">&nbsp;&nbsp;{fileName?.name}</div>
+                        <div>{FormatByte(fileName?.size)}</div>
+                      </div>
+                    </div>
+                    <div className="w-auto h-3 bg-white rounded-full relative">
+                      <div className="h-full bg-green-500 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                    </div>
+                    <div className="absolute top-0 right-0 mb-20">
+                      <button
+                        className="rounded-full"
+                        onClick={() => {
+                          setIDImage(null);
+                          setUploadProgress(0);
+                          setFileName({ name: '', size: 0 });
+                        }}
+                      >
+                        <RiDeleteBin5Line color="red" className="h-5 w-10" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="w-full bg-gray-200 h-1 mt-2 rounded">
-                  <div
-                    className="bg-primary-green h-1 rounded"
-                    style={{ width: `${uploadProgress}%` }}
-                  ></div>
-                </div>
-                <div className="mt-2 text-sm">{FormatByte(fileName.size)}</div>
-              </div>
-            ) : (
-              <UploadAreaInput onDrop={handleDrop} />
-            )}
+              ) : (
+                <UploadAreaInput
+                  onDrop={handleDrop}
+                  label="Drag and drop or choose a file to upload"
+                />
+              )}
+            </div>
           </div>
         </form>
       </div>

@@ -9,5 +9,14 @@ export const createSector = (data: any) => {
 };
 
 export const getSectorByCountry = (countryName: string) => {
-    return () => authApi.get(`/sectors/info/${countryName}`).then((res) => res.data);
-  };
+  return () => authApi.get(`/sectors/info/${countryName}`).then((res) => res.data);
+};
+
+export const csvUpload = (formData: FormData, fileName: string) => {
+  const url = `/csv/sector/upload/${fileName}`;
+  return authApi.post(url, formData, {
+    headers: {
+      'Content-Type': 'multipart/'
+    }
+  });
+};
