@@ -112,17 +112,19 @@ export default function CompanyLayout({
       ) : (
         // TWO LAYOUTS: NORMAL VIEW AND BUILDER VIEW
 
-        <div className="w-full min-h-[100vh]">
+        <div className="w-full min-h-screen">
           <TopNav />
-          <div className="flex flex-row">
-            {!pathname.includes("settings") && (
-              <SideNav
-                thirdPartyApps={thirdPartyApps}
-                navigation={navigation}
-              />
-            )}
+          <div className="flex flex-row h-[93.8vh]">
+            <div className="hidden md:flex h-full  overflow-y-scroll no-scrollbar">
+              {!pathname.includes("settings") && (
+                <SideNav
+                  thirdPartyApps={thirdPartyApps}
+                  navigation={navigation}
+                />
+              )}{" "}
+            </div>
 
-            <div className="w-full">{children}</div>
+            <div className=" w-full mt-4 py-2">{children}</div>
           </div>
         </div>
       )}

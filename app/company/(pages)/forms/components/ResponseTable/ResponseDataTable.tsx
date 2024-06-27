@@ -30,7 +30,7 @@ type Props = {
   responseData: IResponse[];
   isResponseLoading: boolean;
   exportToExcel: (responses: any) => void;
-  form: any;
+  form?: any;
 };
 
 const ResponseDataTable: React.FC<Props> = ({
