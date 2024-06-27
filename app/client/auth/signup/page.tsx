@@ -80,6 +80,7 @@ function Page() {
       email: values.email as string,
       username: ((values.firstName?.toLowerCase() as string) +
         values.lastName?.toLowerCase()) as string,
+      password: values.password as string,
       first_name: values.firstName as string,
       last_name: values.lastName as string,
       phone_number: "233",
@@ -87,12 +88,10 @@ function Page() {
       user_status: "ACTIVE",
     };
 
-    // const createUserResponse = await services.createUser(
-    //   userData,
-    //   );
-    //   toast.success("Sign up success");
+    const createUserResponse = await services.userSelfSignUp(userData);
+      toast.success("Sign up success");
 
-    //   // ROLE ID: 7 for client
+      // ROLE ID: 7 for client
     // const assignRoleResponse = await services.assignRoleToUser(
     //   createUserResponse.data.id,
     //   7

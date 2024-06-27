@@ -77,10 +77,10 @@ export default function ClientLayout({
                 <>
                   {" "}
                   <TopNav />
-                  <div className="flex flex-row">
+                  <div className="flex flex-row h-[93.8vh]">
                     {!pathname.includes("settings") &&
                       pathname !== "/client/form" && (
-                        <div className="hidden md:block">
+                        <div className="hidden md:flex h-full  overflow-y-scroll no-scrollbar">
                           <SideNav navigation={navigation} />
                         </div>
                       )}

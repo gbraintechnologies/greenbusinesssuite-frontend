@@ -28,6 +28,7 @@ const schema = yup.object({
 
 function Account() {
   const { admin, setAdmin } = useAdmin();
+
   type typeOfSchema = yup.InferType<typeof schema>;
   const router = useRouter();
   const [showCancelModal, setShowCancelModal] = useState(false);

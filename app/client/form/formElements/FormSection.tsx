@@ -2,7 +2,7 @@ import React from "react";
 import FormFieldValue from "./FormFieldValue";
 
 function FormSection({ section }: any) {
-  const { id, name, formFields, description, instruction } = section;
+  const { name, formFields, description } = section;
   return (
     <div className="p-3">
       <div className="mb-5">

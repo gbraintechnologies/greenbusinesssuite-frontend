@@ -17,10 +17,15 @@ import FormatDate from "@/utils/FormatDate/FormatDate";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import useUser from "@/hooks/useUser";
+import services from "@/services";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
+import { createRoot } from "react-dom/client";
+import FormResponse from "@/app/company/(pages)/forms/components/FormResponse/FormResponse";
 
 type Props = {
   form: any;
-
   onClick?: () => void;
   type: "completed" | "uncompleted";
 };
@@ -32,7 +37,80 @@ function FormCard({ form, type = "uncompleted" }: Props) {
 
   const queryClient = useQueryClient();
 
+  const hiddenRef = React.useRef(null);
+
   const router = useRouter();
+
+  const captureAndGeneratePDF = (userData: any, responseId: string) => {
+    const input = hiddenRef?.current;
+
+    if (input) {
+      html2canvas(input, { scale: 2 })
+        .then((canvas) => {
+          const imgData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF("p", "mm", "a4");
+          const width = pdf.internal.pageSize.getWidth();
+          const height = pdf.internal.pageSize.getHeight();
+          const imgWidth = canvas.width;
+          const imgHeight = canvas.height;
+          const ratio = Math.min(width / imgWidth, height / imgHeight);
+          const imgX = (width - imgWidth * ratio) / 2;
+          const imgY = 10;
+
+          // meta data
+          const date = new Date().toLocaleDateString("en-us", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const responseName = `${userData?.first_name} ${userData?.last_name}`;
+          pdf.setFontSize(8);
+          pdf.text(`Date Printed: ${date}`, 5, 5);
+          pdf.text("|", 60, 5);
+          pdf.text(`Response: ${responseName}`, 65, 5);
+
+          pdf.addImage(
+            imgData,
+            "PNG",
+            imgX,
+            imgY,
+            imgWidth * ratio,
+            imgHeight * ratio
+          );
+          pdf.save(
+            `${form?.name}-${userData?.first_name} ${userData?.last_name}-${responseId}-response`
+          );
+        })
+        .catch(() => {
+        });
+    }
+  };
+
+  const renderToHiddenElement = (
+    mergedForm: any,
+    userData: any,
+  ) => {
+    const hiddenDiv = document.createElement("div");
+    hiddenDiv.style.position = "absolute";
+    hiddenDiv.style.top = "-100000px";
+    hiddenDiv.style.left = "-100000px";
+    hiddenDiv.style.width = "210mm";
+    hiddenDiv.style.backgroundColor = "white";
+    document.body.appendChild(hiddenDiv);
+
+    console.log('merged form ', mergedForm);
+
+    const root = createRoot(hiddenDiv);
+    root.render(
+      <FormResponse
+        mergedForm={mergedForm}
+        ref={hiddenRef}
+        onRendered={() => captureAndGeneratePDF(userData, mergedForm?.responseId)}
+      />
+    );
+  };
 
   const completedOptions = [
     {
@@ -43,10 +121,24 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     },
     {
       title: "Download",
-      func: () => {
-        //
-
-        toast.success("File would be downloaded");
+      func: async () => {
+        toast.promise(
+          (async () => {
+            const resData = await services.retrieveFormUserResponseRaw(user?.id, form?.id);
+            
+            if (resData) {
+              const mergedForm = mergeForm(form?.responseId, form, resData[0]?.inputData);
+              renderToHiddenElement(mergedForm, user);
+            } else {
+              throw new Error('No data found');
+            }
+          })(),
+          {
+            loading: 'Processing form response...',
+            success: 'Please wait while download starts...',
+            error: 'Error while downloading file',
+          }
+        );
       },
     },
   ];
@@ -89,21 +181,34 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     }
   }, []);
 
+  const deleteUserForm = () => {
+    services
+      .hardDeleteUserForm(user?.id, id)
+      .then((res) => {
+        console.log("user form deleted");
+        toast.success("deleted");
+      })
+      .catch((e) => {
+        console.log("error", e);
+      });
+  };
+
   return (
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+        {/* <button
+          className="my-4 bg-red-500 text-white rounded-lg"
+          onClick={deleteUserForm}
+        >
+          Delete
+        </button> */}
         <button
           className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >
           <FormPreviewIcon />
         </button>
         <div className="p-3">
-          <button
-            onClick={() => {
-              router.push(`/forms/${id}`);
-            }}
-            className="text-lg w-full text-left font-medium"
-          >
+          <button className="text-lg w-full text-left font-medium">
             {/* @ts-ignore */}
             {form?.name?.replace(/"/g, " ")}
           </button>

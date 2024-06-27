@@ -146,6 +146,7 @@ function DataTable({
               },
             }}
             rows={localRows}
+            
             // onRowSelectionModelChange={(ids: any) => {
             //   const selectedIDs = new Set(ids);
             //   const selectedRowData = localRows.filter((row: any) =>

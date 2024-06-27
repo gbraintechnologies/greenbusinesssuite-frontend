@@ -53,6 +53,11 @@ export const getCompletedFormsByUserId = (userId: string) => {
       .then((res) => res.data);
 };
 
+export const getUnassignedForms = () => {
+  return () =>
+    authApi.get(`/forms/builder/unassigned-forms`).then((res) => res.data);
+};
+
 export const getUncompletedFormsByUserId = (userId: string) => {
   return () =>
     authApi
@@ -159,7 +164,7 @@ export const acceptInvite = (
   return authApi.post(`forms/response/create`, {
     formId: formId,
     isCompleted: false,
-    inputData: { data: inputData },
+    inputData: { ...inputData },
     companyName: companyName,
     userId: userId,
   });
@@ -171,10 +176,10 @@ export const saveResponse = ({
   companyName,
   inputData,
   isCompleted,
-  responseId,
+  id,
 }: any) => {
   return authApi.put(`forms/response/update`, {
-    id: parseInt(responseId),
+    id: parseInt(id),
     formId: parseInt(formId),
     isCompleted: isCompleted,
     inputData: inputData,
@@ -183,9 +188,27 @@ export const saveResponse = ({
   });
 };
 
-export const retrieveFormUserResponses = (userId: number, formId: any) => {
+export const retrieveFormUserResponses = (
+  userId: number | string | null,
+  formId: any
+) => {
+  if (userId === null) {
+    throw new Error("No User Id");
+  }
   return () =>
     authApi
       .get(`forms/response/data/user-form/${userId}/${formId}`)
       .then((res) => res.data);
+};
+
+export const retrieveFormUserResponseRaw = (
+  userId: number | string | undefined,
+  formId: number | string
+) => {
+  if (formId === undefined) {
+    throw new Error("No Form Id");
+  }
+  return authApi
+    .get(`forms/response/data/user-form/${userId}/${formId}`)
+    .then((res) => res.data);
 };

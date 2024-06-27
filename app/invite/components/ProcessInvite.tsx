@@ -114,8 +114,45 @@ function ProcessInvite() {
         return;
       }
 
+      // STRIP DATA TO IDS AND REPONSES
       // input data should contain all the form sections for reconstruction
-      let inputData = { ...data };
+      // @ts-ignore
+      let formSections = [];
+
+      for (let i = 0; i < data?.formSections?.length; i++) {
+        let section = data?.formSections[i];
+        let formFields = [];
+        for (let j = 0; j < section?.formFields?.length; j++) {
+          let field = section?.formFields[j];
+          formFields.push({
+            id: field?.id,
+            response: field?.response,
+            formFieldId: field?.id,
+            fieldName: field?.name,
+            isStatisticalField: field?.isStatisticalField
+              ? field?.isStatisticalField
+              : "",
+            statisticalFunction: field?.statisticalFunction
+              ? field?.statisticalFunction
+              : "",
+            displayType: field?.displayType ? field?.displayType : "",
+          });
+        }
+        formSections.push({
+          id: section?.id,
+
+          formSectionId: section?.id,
+          formDataFields: formFields,
+        });
+      }
+
+      // stripping out data under formsections and form fields
+      let inputData = {
+        name: data?.name,
+        layout: data?.layout,
+        formSections: formSections,
+      };
+
       // ASSIGN TO USER UPON LOGIN THEN CLEAR SESSION STORAGE
       services
         .acceptInvite(formId, user?.id, companyName, inputData)

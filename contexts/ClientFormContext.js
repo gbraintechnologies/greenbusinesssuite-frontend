@@ -5,9 +5,6 @@ export const ClientFormContext = createContext();
 // services and query
 import services from "@/services";
 
-//
-import { useQueryClient } from "@tanstack/react-query";
-
 //toast
 import toast from "react-hot-toast";
 
@@ -30,21 +27,52 @@ export const ClientFormProvider = ({ children }) => {
   const saveResponsesRemote = (userId) => {
     setSavingResponses(true);
 
+    let data = clientForm;
+
+    let formSections = [];
+
+    for (let i = 0; i < data?.formSections?.length; i++) {
+      let section = data?.formSections[i];
+      let formFields = [];
+      for (let j = 0; j < section?.formFields?.length; j++) {
+        let field = section?.formFields[j];
+        formFields.push({
+          id: field?.id,
+          response: field?.response ? field?.response : null,
+          formFieldId: field?.id,
+          fieldName: field?.name,
+          isStatisticalField: field?.isStatisticalField
+            ? field?.isStatisticalField
+            : false,
+          statisticalFunction: field?.statisticalFunction
+            ? field?.statisticalFunction
+            : "",
+          displayType: field?.displayType ? field?.displayType : "",
+        });
+      }
+      formSections.push({
+        id: section?.id,
+        formSectionId: section?.id,
+        formDataFields: formFields,
+      });
+    }
+
+    let response = {
+      id: clientForm?.responseId,
+      formId: clientForm?.id,
+      isCompleted: false,
+      companyName: clientForm?.companyName,
+      userId: userId,
+      inputData: {
+        id: clientForm?.responseId,
+        formSections: formSections,
+      },
+      updatedOn: new Date(),
+      createdOn: new Date(),
+    };
+
     services
-      .saveResponse({
-        formId: clientForm?.id,
-        responseId: clientForm?.responseId,
-        isCompleted: false,
-        inputData: {
-          data: {
-            formSections: clientForm?.formSections,
-            layout: clientForm?.layout,
-            id: clientForm?.id,
-          },
-        },
-        companyName: clientForm?.companyName,
-        userId: userId,
-      })
+      .saveResponse(response)
       .then((res) => {
         toast.dismiss();
         setSavingResponses(false);
@@ -62,20 +90,53 @@ export const ClientFormProvider = ({ children }) => {
 
   const submitAndCompleteForm = (userId) => {
     setSavingResponses(true);
-    return services.saveResponse({
+
+    let data = clientForm;
+
+    let formSections = [];
+
+    for (let i = 0; i < data?.formSections?.length; i++) {
+      let section = data?.formSections[i];
+      let formFields = [];
+      for (let j = 0; j < section?.formFields?.length; j++) {
+        let field = section?.formFields[j];
+        formFields.push({
+          id: field?.id,
+          response: field?.response ? field?.response : null,
+          formFieldId: field?.id,
+          fieldName: field?.name,
+          isStatisticalField: field?.isStatisticalField
+            ? field?.isStatisticalField
+            : false,
+          statisticalFunction: field?.statisticalFunction
+            ? field?.statisticalFunction
+            : "",
+          displayType: field?.displayType ? field?.displayType : "",
+        });
+      }
+      formSections.push({
+        id: section?.id,
+
+        formSectionId: section?.id,
+        formDataFields: formFields,
+      });
+    }
+
+    let response = {
+      id: clientForm?.responseId,
       formId: clientForm?.id,
-      responseId: clientForm?.responseId,
       isCompleted: true,
-      inputData: {
-        data: {
-          formSections: clientForm?.formSections,
-          layout: clientForm?.layout,
-          id: clientForm?.id,
-        },
-      },
       companyName: clientForm?.companyName,
       userId: userId,
-    });
+      inputData: {
+        id: clientForm?.responseId,
+        formSections: formSections,
+      },
+      updatedOn: new Date(),
+      createdOn: new Date(),
+    };
+
+    return services.saveResponse(response);
   };
 
   const saveSingleResponse = (sectionId, fieldId, value) => {
