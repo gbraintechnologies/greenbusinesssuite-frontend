@@ -40,8 +40,9 @@ export default function CompanyLayout({
 
   // Redirect to login if not authenticated
   useEffect(() => {
+    console.log("checks", !Boolean(auth) || !Boolean(companyAdmin));
     setLoading(true);
-    if (!Boolean(auth) && !Boolean(companyAdmin)) {
+    if (!Boolean(auth) || !Boolean(companyAdmin)) {
       router.push("/company/auth");
     } else {
       // CHECK COMPANY ADMIN ROLE: 6
@@ -59,7 +60,7 @@ export default function CompanyLayout({
         setLoading(false);
       }
     }
-  }, [companyAdmin, pathname]);
+  }, [companyAdmin, auth, pathname]);
 
   // COMPANY ADMIN NAVIGATION
   const navigation = [

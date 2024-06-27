@@ -1,28 +1,27 @@
-'use client'
-import React, { useState, useEffect } from 'react'
+"use client";
+import React, { useState, useEffect } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { Countrie, Countrieses } from "../components/Countries";
 import FormatByte from "../components/FormatByte";
-import Link from 'next/link';
+import Link from "next/link";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GoDotFill } from "react-icons/go";
 import { useForm } from "react-hook-form";
-import TextInput from '../components/TextInput';
+import TextInput from "../components/TextInput";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-import UploadAreaInput from '../components/UploadAreaInput';
-import DeleteIcon from '@/public/icons/DeleteIcon';
-import EditIconSetup from '@/public/icons/EditIconSetup';
-import Modal from "../../../../components/Modal/Modal";
-import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
+import UploadAreaInput from "../components/UploadAreaInput";
+import DeleteIcon from "@/public/icons/DeleteIcon";
+import EditIconSetup from "@/public/icons/EditIconSetup";
+import Modal from "@/components/Modal/Modal";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import ExcelIcon from "@/public/icons/ExcelIcon";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import Papa from 'papaparse';
-import { createSector, csvUpload } from '@/services/features/sectorService';
-import SelectCountryInput from '../components/selectCountryInput';
-
+import Papa from "papaparse";
+import { createSector, csvUpload } from "@/services/features/sectorService";
+import SelectCountryInput from "../components/selectCountryInput";
 
 interface SectorData {
   id: number;
@@ -35,7 +34,6 @@ interface Country {
   name: string;
 }
 
-
 const schema = yup.object({
   id: yup.number(),
   countryName: yup.string(),
@@ -43,25 +41,30 @@ const schema = yup.object({
     yup.object({
       id: yup.number(),
       parentSector: yup.string(),
-      subSector: yup.array().of(yup.string())
+      subSector: yup.array().of(yup.string()),
     })
-  )
+  ),
 });
 
 function AddSector() {
-
   type typeOfSchema = yup.InferType<typeof schema>;
   const router = useRouter();
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [fileName, setFileName] = useState<any>({ 'name': '', 'size': '' });
+  const [fileName, setFileName] = useState<any>({ name: "", size: "" });
   const [sectorlevels, setSectorLevels] = useState<SectorData[]>([]);
   const [showSectorInput, setShowSectorInput] = useState<boolean>(false);
-  const [sectorlevel, setSectorLevel] = useState<SectorData>({ id: 0, parentSector: '', subSector: [] });
+  const [sectorlevel, setSectorLevel] = useState<SectorData>({
+    id: 0,
+    parentSector: "",
+    subSector: [],
+  });
   const [editMode, setEditMode] = useState<number | null>(null);
-  const [newSubSector, setNewSubSector] = useState('');
-  const [editSubSectorIndex, setEditSubSectorIndex] = useState<number | null>(null);
-  const [editSectorName, setEditSectorName] = useState('');
+  const [newSubSector, setNewSubSector] = useState("");
+  const [editSubSectorIndex, setEditSubSectorIndex] = useState<number | null>(
+    null
+  );
+  const [editSectorName, setEditSectorName] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [sectorToDelete, setSectorToDelete] = useState<number | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -69,17 +72,25 @@ function AddSector() {
   const [addingSector, setAddingSector] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mappedData, setMappedData] = useState<any[]>([]);
-  const { register, handleSubmit, formState: { errors, dirtyFields }, getValues } = useForm<typeOfSchema>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, dirtyFields },
+    getValues,
+  } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
       id: 0,
       countryName: "",
-      sectors: []
+      sectors: [],
     },
   });
 
-  const { data: countriesData, isLoading: countriesLoading } = useQuery<Country[], Error>({
+  const { data: countriesData, isLoading: countriesLoading } = useQuery<
+    Country[],
+    Error
+  >({
     queryKey: ["all_countries"],
     queryFn: services.allJurisdictions(),
   });
@@ -96,7 +107,11 @@ function AddSector() {
     }
   }, [getValues("countryName"), countriesData]);
 
-  const handleEditModalOpen: (id: number, subSectorIndex: number, subSector: string) => void = (id, subSectorIndex, subSector) => {
+  const handleEditModalOpen: (
+    id: number,
+    subSectorIndex: number,
+    subSector: string
+  ) => void = (id, subSectorIndex, subSector) => {
     setEditMode(id);
     setEditSubSectorIndex(subSectorIndex);
     setEditSectorName(subSector);
@@ -105,25 +120,24 @@ function AddSector() {
 
   const handleSaveEdit = () => {
     if (editMode !== null && editSubSectorIndex !== null) {
-      setSectorLevels(prevSectorLevels =>
-        prevSectorLevels.map(sectorlevel =>
+      setSectorLevels((prevSectorLevels) =>
+        prevSectorLevels.map((sectorlevel) =>
           sectorlevel.id === editMode
             ? {
-              ...sectorlevel,
-              subSector: sectorlevel.subSector.map((sub, idx) =>
-                idx === editSubSectorIndex ? editSectorName : sub
-              )
-            }
+                ...sectorlevel,
+                subSector: sectorlevel.subSector.map((sub, idx) =>
+                  idx === editSubSectorIndex ? editSectorName : sub
+                ),
+              }
             : sectorlevel
         )
       );
       setEditMode(null);
       setEditSubSectorIndex(null);
-      setEditSectorName('');
+      setEditSectorName("");
       setShowEditModal(false);
     }
   };
-
 
   const handleDeleteModalOpen = (id: number) => {
     // alert(id)
@@ -131,11 +145,10 @@ function AddSector() {
     setShowDeleteModal(true);
   };
 
-
   const handleDeleteConfirmed = (id: number) => {
     if (id !== null) {
-      setSectorLevels(prevSectorLevels =>
-        prevSectorLevels.filter(sectorlevel => sectorlevel.id !== id)
+      setSectorLevels((prevSectorLevels) =>
+        prevSectorLevels.filter((sectorlevel) => sectorlevel.id !== id)
       );
       setShowDeleteModal(false);
       setEditMode(null);
@@ -144,21 +157,23 @@ function AddSector() {
 
   const handleDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-  
-    const acceptedExtensions = ['.csv', '.xls', '.xlsx'];
-    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-  
+
+    const acceptedExtensions = [".csv", ".xls", ".xlsx"];
+    const fileExtension = file.name
+      .substring(file.name.lastIndexOf("."))
+      .toLowerCase();
+
     if (acceptedExtensions.includes(fileExtension)) {
       setFileName({ name: file.name, size: file.size });
       setIDImage(file);
-  
-      console.log('Starting file parsing...');
+
+      console.log("Starting file parsing...");
       console.log(`File name: ${file.name}, File size: ${file.size} bytes`);
-  
+
       Papa.parse(file, {
         complete: (result) => {
-          console.log('Parsing complete. Result:', result);
-  
+          console.log("Parsing complete. Result:", result);
+
           const parsedData = result.data as {
             countryName: string;
             parentSector: string;
@@ -166,34 +181,34 @@ function AddSector() {
             subSector2: string;
             subSector3: string;
           }[];
-          console.log('Parsed data:', parsedData);
-  
+          console.log("Parsed data:", parsedData);
+
           if (parsedData.length > 0) {
-            console.log('Processing parsed data...');
-  
+            console.log("Processing parsed data...");
+
             // No need to map the data into a new structure, just use the parsed data directly
-            console.log('Final data to be uploaded:', parsedData);
+            console.log("Final data to be uploaded:", parsedData);
             setMappedData(parsedData); // Assuming you want to set this in your state
-  
+
             // Prepare form data
             const formData = new FormData();
-            formData.append('file', file); // Append the actual file
-  
+            formData.append("file", file); // Append the actual file
+
             // Call csvUpload to upload the file
             uploadFile(formData, file.name);
           } else {
-            console.error('No valid data found in the CSV file.');
+            console.error("No valid data found in the CSV file.");
           }
         },
         error: (error) => {
-          console.error('Error parsing CSV file:', error);
+          console.error("Error parsing CSV file:", error);
         },
         header: true,
         skipEmptyLines: true,
       });
-  
+
       const simulateImport = () => {
-        console.log('Starting upload progress simulation...');
+        console.log("Starting upload progress simulation...");
         for (let i = 0; i <= 100; i += 10) {
           setTimeout(() => {
             console.log(`Upload progress: ${i}%`);
@@ -203,18 +218,18 @@ function AddSector() {
       };
       simulateImport();
     } else {
-      console.warn('Invalid file type. Please upload a CSV or XLS file.');
-      alert('Please upload a CSV or XLS file.');
+      console.warn("Invalid file type. Please upload a CSV or XLS file.");
+      alert("Please upload a CSV or XLS file.");
     }
   };
-  
+
   const uploadFile = async (formData: FormData, fileName: string) => {
     try {
       const response = await csvUpload(formData, fileName);
-      console.log('Upload successful!', response.data);
+      console.log("Upload successful!", response.data);
       // Handle any further logic or UI updates based on the response
     } catch (error) {
-      console.error('Error uploading CSV:', error);
+      console.error("Error uploading CSV:", error);
       // Handle error scenarios, show error messages, etc.
     }
   };
@@ -236,18 +251,21 @@ function AddSector() {
           position: "top-center",
           duration: 3000,
           style: {
-            color: 'green'
-          }
+            color: "green",
+          },
         });
         setIDImage(null);
         setUploadProgress(0);
-        setFileName({ name: '', size: 0 });
+        setFileName({ name: "", size: 0 });
 
         setIsSubmitting(false);
         return;
       }
 
-      if ((data.countryName && sectorlevels.length > 0) || sectorlevels.length > 0) {
+      if (
+        (data.countryName && sectorlevels.length > 0) ||
+        sectorlevels.length > 0
+      ) {
         const sectorPayload = {
           id: data.id,
           countryName: data.countryName,
@@ -260,8 +278,8 @@ function AddSector() {
           position: "top-center",
           duration: 3000,
           style: {
-            color: 'green'
-          }
+            color: "green",
+          },
         });
         router.push("/sector-setup");
       } else {
@@ -271,7 +289,7 @@ function AddSector() {
         });
       }
     } catch (error: any) {
-      console.error('Error occurred:', error);
+      console.error("Error occurred:", error);
       toast.error("An error occurred. Please try again.", {
         position: "top-center",
         duration: 3000,
@@ -281,19 +299,23 @@ function AddSector() {
     }
   };
 
-
   const eitherActionCompleted = IDImage !== null || sectorlevels.length > 0;
 
-  const isSaveDisabled = isSubmitting || (IDImage !== null && sectorlevels.length > 0) || (!eitherActionCompleted)
+  const isSaveDisabled =
+    isSubmitting ||
+    (IDImage !== null && sectorlevels.length > 0) ||
+    !eitherActionCompleted;
 
   const handleAddSectorLevel = async () => {
-    if (newSubSector.trim() === '' || addingSector) return;
+    if (newSubSector.trim() === "" || addingSector) return;
 
     setAddingSector(true);
 
     try {
       const updatedSectorLevels = [...sectorlevels];
-      const sectorToUpdateIndex = updatedSectorLevels.findIndex(sector => sector.parentSector === sectorlevel.parentSector);
+      const sectorToUpdateIndex = updatedSectorLevels.findIndex(
+        (sector) => sector.parentSector === sectorlevel.parentSector
+      );
 
       if (sectorToUpdateIndex !== -1) {
         const sectorToUpdate = updatedSectorLevels[sectorToUpdateIndex];
@@ -303,19 +325,22 @@ function AddSector() {
         }
       } else {
         const newId = updatedSectorLevels.length + 1;
-        updatedSectorLevels.push({ id: newId, parentSector: sectorlevel.parentSector, subSector: [newSubSector] });
+        updatedSectorLevels.push({
+          id: newId,
+          parentSector: sectorlevel.parentSector,
+          subSector: [newSubSector],
+        });
       }
 
       setSectorLevels(updatedSectorLevels);
-      setNewSubSector('');
+      setNewSubSector("");
       setShowSectorInput(false);
     } catch (error) {
-      console.error('Error occurred while adding sector:', error);
+      console.error("Error occurred while adding sector:", error);
     } finally {
       setAddingSector(false);
     }
   };
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -328,12 +353,14 @@ function AddSector() {
   const handleInputChange = (index: number, value: string) => {
     setSectorLevels((prevSectorLevels) => {
       const updatedSectorLevels = [...prevSectorLevels];
-      const sectorToUpdateIndex = updatedSectorLevels.findIndex(sector => sector.parentSector === sectorlevel.parentSector);
+      const sectorToUpdateIndex = updatedSectorLevels.findIndex(
+        (sector) => sector.parentSector === sectorlevel.parentSector
+      );
 
       if (sectorToUpdateIndex !== -1) {
         updatedSectorLevels[sectorToUpdateIndex].subSector = [
           ...updatedSectorLevels[sectorToUpdateIndex].subSector,
-          ...value.split(',').map(s => s.trim())
+          ...value.split(",").map((s) => s.trim()),
         ];
       }
 
@@ -346,13 +373,15 @@ function AddSector() {
   };
 
   return (
-    <div className='w-full p-5'>
+    <div className="w-full p-5">
       <div className="w-full">
         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="w-full text-primary-dark flex justify-between">
             <div>
               <h3 className="font-semibold text-xl">Sector Setup</h3>
-              <p className="text-black-400 text-sm">Configure all sectors for a jurisdiction</p>
+              <p className="text-black-400 text-sm">
+                Configure all sectors for a jurisdiction
+              </p>
             </div>
             <div className="flex gap-3 items-center">
               <Link href="/sector-setup">
@@ -370,7 +399,8 @@ function AddSector() {
                 onClick={handleSubmit(onSubmit)}
                 className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               >
-                <IoIosAddCircleOutline size={20} />Save
+                <IoIosAddCircleOutline size={20} />
+                Save
               </button>
             </div>
           </div>
@@ -387,8 +417,16 @@ function AddSector() {
                   selectedCountry ? (
                     <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
                       <img
-                        src={selectedCountry ? Countrie(selectedCountry)?.flags.png : ''}
-                        alt={selectedCountry ? Countrie(selectedCountry)?.name.common : ''}
+                        src={
+                          selectedCountry
+                            ? Countrie(selectedCountry)?.flags.png
+                            : ""
+                        }
+                        alt={
+                          selectedCountry
+                            ? Countrie(selectedCountry)?.name.common
+                            : ""
+                        }
                         style={{ height: "auto", width: "30px" }}
                       />
                     </span>
@@ -411,8 +449,12 @@ function AddSector() {
                 onChange={handleChange}
               />
             </div>
-            <label className="inline-block mr-2 text-xs font-bold text-black-400" htmlFor="input">
-              <GoDotFill className="inline-block " />Sub-sectors
+            <label
+              className="inline-block mr-2 text-xs font-bold text-black-400"
+              htmlFor="input"
+            >
+              <GoDotFill className="inline-block " />
+              Sub-sectors
             </label>
             {sectorlevels.map((sectorlevel, index) => (
               <div className="flex items-center mb-4" key={index}>
@@ -421,23 +463,54 @@ function AddSector() {
                     type="text"
                     id={`sub-level-${index}`}
                     name={`sectors[${index}].subSector`}
-                    value={sectorlevel.subSector.join(', ')}
+                    value={sectorlevel.subSector.join(", ")}
                     className="mr-2 px-5 border-b mb-1 pb-1"
                     style={{ width: "30%" }}
-                    onChange={(e) => handleInputChange(sectorlevel.id, e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange(sectorlevel.id, e.target.value)
+                    }
                   />
                 ) : (
                   <div style={{ width: "100%" }}>
                     {sectorlevel.subSector.map((sub, subIndex) => (
-                      <div key={subIndex} className="flex items-center" style={{ width: "100%" }}>
-                        <div className="mr-2 px-5 border-b mb-1 pb-1" style={{ width: "30%" }}>
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div
+                        key={subIndex}
+                        className="flex items-center"
+                        style={{ width: "100%" }}
+                      >
+                        <div
+                          className="mr-2 px-5 border-b mb-1 pb-1"
+                          style={{ width: "30%" }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                            }}
+                          >
                             <span>{sub}</span>
                             <div className="flex items-center">
-                              <button type="button" className="rounded-full" onClick={() => handleEditModalOpen(sectorlevel.id, subIndex, sub)}>
+                              <button
+                                type="button"
+                                className="rounded-full"
+                                onClick={() =>
+                                  handleEditModalOpen(
+                                    sectorlevel.id,
+                                    subIndex,
+                                    sub
+                                  )
+                                }
+                              >
                                 <EditIconSetup />
                               </button>
-                              <button type="button" className="rounded-full ml-2" onClick={() => handleDeleteModalOpen(sectorlevel.id)}>
+                              <button
+                                type="button"
+                                className="rounded-full ml-2"
+                                onClick={() =>
+                                  handleDeleteModalOpen(sectorlevel.id)
+                                }
+                              >
                                 <DeleteIcon />
                               </button>
                             </div>
@@ -451,7 +524,10 @@ function AddSector() {
             ))}
 
             {showSectorInput && (
-              <div className="combined-input-container flex items-center mb-3" style={{ width: "30%" }}>
+              <div
+                className="combined-input-container flex items-center mb-3"
+                style={{ width: "30%" }}
+              >
                 <TextInput
                   name="subSector"
                   type="text"
@@ -480,10 +556,25 @@ function AddSector() {
               <IoIosAddCircleOutline />
               Add Sub-Sector
             </button>
-            <div style={{ display: 'flex', alignItems: 'center', width: '30%', margin: '20px 0' }}>
-              <div style={{ flex: 1, borderBottom: '1px solid lightgray' }}></div>
-              <span style={{ margin: '0 10px', fontSize: '16px', color: 'black' }}>or</span>
-              <div style={{ flex: 1, borderBottom: '1px solid lightgray' }}></div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                width: "30%",
+                margin: "20px 0",
+              }}
+            >
+              <div
+                style={{ flex: 1, borderBottom: "1px solid lightgray" }}
+              ></div>
+              <span
+                style={{ margin: "0 10px", fontSize: "16px", color: "black" }}
+              >
+                or
+              </span>
+              <div
+                style={{ flex: 1, borderBottom: "1px solid lightgray" }}
+              ></div>
             </div>
           </div>
 
@@ -495,12 +586,17 @@ function AddSector() {
                     <div className="flex flex-row mb-2">
                       <ExcelIcon />
                       <div>
-                        <div className="font-semibold">&nbsp;&nbsp;{fileName?.name}</div>
+                        <div className="font-semibold">
+                          &nbsp;&nbsp;{fileName?.name}
+                        </div>
                         <div>{FormatByte(fileName?.size)}</div>
                       </div>
                     </div>
                     <div className="w-auto h-3 bg-white rounded-full relative">
-                      <div className="h-full bg-green-500 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                      <div
+                        className="h-full bg-green-500 rounded-full"
+                        style={{ width: `${uploadProgress}%` }}
+                      ></div>
                     </div>
                     <div className="absolute top-0 right-0 mb-20">
                       <button
@@ -508,7 +604,7 @@ function AddSector() {
                         onClick={() => {
                           setIDImage(null);
                           setUploadProgress(0);
-                          setFileName({ name: '', size: 0 });
+                          setFileName({ name: "", size: 0 });
                         }}
                       >
                         <RiDeleteBin5Line color="red" className="h-5 w-10" />
@@ -585,7 +681,7 @@ function AddSector() {
         </div>
       </Modal>
     </div>
-  )
+  );
 }
 
 export default AddSector;

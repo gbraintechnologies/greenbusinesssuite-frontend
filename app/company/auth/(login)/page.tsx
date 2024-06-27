@@ -25,7 +25,7 @@ import { FiAlertCircle } from "react-icons/fi";
 //
 
 function CompanyAdminAuth() {
-  const { companyAdmin, addCompanyAdminData } = useCompany();
+  const { addCompanyAdminData } = useCompany();
   const { auth, addAuthData } = useAuth();
 
   const router = useRouter();
@@ -76,7 +76,7 @@ function CompanyAdminAuth() {
           user?.data?.user_status === "TEMP_CREDENTIALS"
         ) {
           toast("Create your password");
-          router.push(`/create-password?temp=${data.password}`);
+          router.push(`/company/auth/create-password?temp=${data.password}`);
 
           // route to admin / company dashboard
         } else {
@@ -94,7 +94,7 @@ function CompanyAdminAuth() {
       <div className="bg-[#f2f4f6] rounded-xl shadow-md">
         {" "}
         <form
-          className="flex flex-col w-[25vw] gap-5 shadow-md bg-white p-6 rounded-xl"
+          className="flex flex-col w-[90%] md:max-w-[25rem] md:w-[25vw] gap-5 shadow-md bg-white p-6 rounded-xl"
           onSubmit={handleSubmit(onSubmit)}
         >
           <h2 className="font-bold text-center text-xl">Sign in</h2>
@@ -149,10 +149,6 @@ function CompanyAdminAuth() {
           </Button>
         </form>
         <div className="text-center  text-gray-400 text-sm py-4">
-          {/* <p>
-            Don't have an account?{" "}
-            <span className="font-bold text-black">Sign Up</span>
-          </p> */}
           <p className="mt-2 text-xs">Powered by Mesh Business Suite</p>
         </div>
       </div>
