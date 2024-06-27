@@ -43,7 +43,7 @@ function CountrySetup() {
       headerAlign: "left",
       flex: 3,
       getActions: (params: any) => [
-        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.data.id}>
+        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
           <label>
             <input
               type="checkbox"
@@ -51,12 +51,12 @@ function CountrySetup() {
             />
           </label>
           <div className="w-10 h-10 flex items-center justify-center">
-            <span className=""><img src={Countrie(params.row.data.jurisdiction_name)?.flags.png} alt={Countrie(params.row.data.jurisdiction_name)?.name.common} style={{ height: "auto", width: "30px" }} /></span>
+            <span className=""><img src={Countrie(params.row.name)?.flags.png} alt={Countrie(params.row.name)?.name.common} style={{ height: "auto", width: "30px" }} /></span>
 
           </div>
           <div>
             <p className="font-medium">
-              {params.row.data.jurisdiction_name}
+              {params.row.name}
             </p>
           </div>
         </div>,
