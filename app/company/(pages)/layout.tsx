@@ -40,7 +40,6 @@ export default function CompanyLayout({
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    console.log("checks", !Boolean(auth) || !Boolean(companyAdmin));
     setLoading(true);
     if (!Boolean(auth) || !Boolean(companyAdmin)) {
       router.push("/company/auth");

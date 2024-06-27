@@ -87,9 +87,7 @@ function CompanyAdminAuth() {
       const token: any = await login(data.username, data.password);
       if (token?.status === 200) {
         addAuthData(token?.data);
-
         const user = await fetchCurrentUser(token.data?.access_token);
-        addCompanyAdminData(user?.data);
         if (
           user?.data?.user_status === "NEWLY_CREATED" ||
           user?.data?.user_status === "TEMP_CREDENTIALS"
@@ -98,9 +96,13 @@ function CompanyAdminAuth() {
           router.push(`/company/auth/create-password?temp=${data.password}`);
 
           // route to admin / company dashboard
-        } else {
+        } else if (user?.data?.profiles[0]?.role_id === 6) {
+          addCompanyAdminData(user?.data);
           toast.success("Logged in");
           router.push("/company");
+        } else {
+          removeAuth();
+          toast.error("Access denied. Contact your administrator");
         }
       }
     } catch (error) {
