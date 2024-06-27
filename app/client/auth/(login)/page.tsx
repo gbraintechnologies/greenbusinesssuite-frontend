@@ -7,7 +7,7 @@ import { Field, Form, Formik } from "formik";
 //
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //
 import { login, currentLoggedIn } from "@/services/features/authService";
@@ -20,13 +20,32 @@ import * as yup from "yup";
 import useUser from "@/hooks/useUser";
 import useAuth from "@/hooks/useAuth";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import toast from "react-hot-toast";
+import useAdmin from "@/hooks/useAdmin";
+import useCompany from "@/hooks/useCompany";
 
 function Page() {
   const router = useRouter();
   const search = useSearchParams();
 
-  const { addUserData } = useUser();
-  const { addAuthData } = useAuth();
+  const { addUserData, removeUser, user } = useUser();
+  const { removeCompanyAdmin } = useCompany();
+  const { removeAdmin } = useAdmin();
+  const { addAuthData, removeAuth, auth } = useAuth();
+
+  // clear all other users if necessary
+  useEffect(() => {
+    if (user !== null && Boolean(auth?.access_token)) {
+      // go to dashboard without logging if data & auth is present
+      toast.success("Logged in");
+      router.push("/client");
+    } else {
+      removeAdmin();
+      removeAuth();
+      removeCompanyAdmin();
+      removeUser();
+    }
+  }, []);
 
   const redirectTo = search.get("redirect");
   const formId = search.get("f");

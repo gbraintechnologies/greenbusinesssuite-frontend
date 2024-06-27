@@ -2,7 +2,7 @@
 
 import useAuth from "@/hooks/useAuth";
 import useCompany from "@/hooks/useCompany";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,12 +21,17 @@ import Button from "@/app/(admin)/auth/(login)/components/Button";
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAlertCircle } from "react-icons/fi";
+import useAdmin from "@/hooks/useAdmin";
+import useUser from "@/hooks/useUser";
 
 //
 
 function CompanyAdminAuth() {
-  const { addCompanyAdminData } = useCompany();
-  const { auth, addAuthData } = useAuth();
+  const { addCompanyAdminData, companyAdmin, removeCompanyAdmin } =
+    useCompany();
+  const { auth, addAuthData, removeAuth } = useAuth();
+  const { removeAdmin } = useAdmin();
+  const { removeUser } = useUser();
 
   const router = useRouter();
 
@@ -41,6 +46,20 @@ function CompanyAdminAuth() {
   });
 
   type typeOfSchema = yup.InferType<typeof schema>;
+
+  // clear all other users if necessary
+  useEffect(() => {
+    if (companyAdmin !== null && Boolean(auth?.access_token)) {
+      // go to dashboard without logging if data & auth is present
+      toast.success("Logged in");
+      router.push("/company");
+    } else {
+      removeAdmin();
+      removeAuth();
+      removeCompanyAdmin();
+      removeUser();
+    }
+  }, []);
 
   const {
     register,

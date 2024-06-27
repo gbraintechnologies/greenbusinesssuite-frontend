@@ -19,6 +19,8 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import useAdmin from "@/hooks/useAdmin";
 import toast from "react-hot-toast";
 import useAuth from "@/hooks/useAuth";
+import useUser from "@/hooks/useUser";
+import useCompany from "@/hooks/useCompany";
 
 const schema = yup.object({
   username: yup.string().required("Email/Username is required"),
@@ -31,8 +33,24 @@ const schema = yup.object({
 function LogIn() {
   const router = useRouter();
 
-  const { admin, addAdminData } = useAdmin();
-  const { auth, addAuthData } = useAuth();
+  const { admin, removeAdmin, addAdminData } = useAdmin();
+  const { auth, removeAuth, addAuthData } = useAuth();
+  const { removeUser } = useUser();
+  const { removeCompanyAdmin } = useCompany();
+
+  // clear all other users if necessary
+  useEffect(() => {
+    if (admin !== null && Boolean(auth?.access_token)) {
+      // go to dashboard without logging if data & auth is present
+      toast.success("Logged in");
+      router.push("/");
+    } else {
+      removeAdmin();
+      removeAuth();
+      removeCompanyAdmin();
+      removeUser();
+    }
+  }, []);
 
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -66,7 +84,7 @@ function LogIn() {
         addAuthData(token?.data);
 
         const user = await fetchCurrentUser(token.data?.access_token);
-        addAdminData(user?.data);
+
         if (
           user?.data?.user_status === "NEWLY_CREATED" ||
           user?.data?.user_status === "TEMP_CREDENTIALS"
@@ -76,6 +94,7 @@ function LogIn() {
 
           // route to admin / company dashboard
         } else if (user?.data?.profiles[0]?.role_id === 1) {
+          addAdminData(user?.data);
           toast.success("Logged in");
           router.push("/");
         } else {
