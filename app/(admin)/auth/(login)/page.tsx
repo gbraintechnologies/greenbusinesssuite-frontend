@@ -19,6 +19,8 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import useAdmin from "@/hooks/useAdmin";
 import toast from "react-hot-toast";
 import useAuth from "@/hooks/useAuth";
+import useUser from "@/hooks/useUser";
+import useCompany from "@/hooks/useCompany";
 
 const schema = yup.object({
   username: yup.string().required("Email/Username is required"),
@@ -31,8 +33,30 @@ const schema = yup.object({
 function LogIn() {
   const router = useRouter();
 
-  const { admin, addAdminData } = useAdmin();
-  const { auth, addAuthData } = useAuth();
+  const { admin, removeAdmin, addAdminData } = useAdmin();
+  const { auth, removeAuth, addAuthData } = useAuth();
+  const { removeUser } = useUser();
+  const { removeCompanyAdmin } = useCompany();
+
+  // clear all other users if necessary
+  useEffect(() => {
+    if (admin !== null && Boolean(auth?.access_token)) {
+      // go to dashboard without logging if data & auth is present
+      // take care of edge case of new user
+      if (
+        admin?.user_status !== "NEWLY_CREATED" ||
+        admin?.user_status !== "TEMP_CREDENTIALS"
+      ) {
+        toast.success("Logged in");
+        router.push("/");
+      }
+    } else {
+      removeAdmin();
+      removeAuth();
+      removeCompanyAdmin();
+      removeUser();
+    }
+  }, []);
 
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -66,22 +90,29 @@ function LogIn() {
         addAuthData(token?.data);
 
         const user = await fetchCurrentUser(token.data?.access_token);
-        addAdminData(user?.data);
+
         if (
           user?.data?.user_status === "NEWLY_CREATED" ||
           user?.data?.user_status === "TEMP_CREDENTIALS"
         ) {
+          addAdminData(user?.data);
           toast("Create your password");
-          router.push(`/create-password?temp=${data.password}`);
-
+          router.push(`/auth/create-password?temp=${data.password}`);
+          return;
           // route to admin / company dashboard
         } else if (user?.data?.profiles[0]?.role_id === 1) {
+          addAdminData(user?.data);
           toast.success("Logged in");
           router.push("/");
+          return;
         } else {
-          toast.success("Logged in");
-          router.push("/company");
+          removeAuth();
+          toast.error("Access denied. Contact your administrator");
         }
+        // else {
+        //   toast.success("Logged in");
+        //   router.push("/company");
+        // }
       }
     } catch (error) {
       setLoginError("Incorrect email address and password");
@@ -89,22 +120,22 @@ function LogIn() {
   };
 
   // if admin is already authenticated, re route
-  useEffect(() => {
-    if (Boolean(admin) && Boolean(auth)) {
-      if (admin?.profiles[0].role_id === 1) {
-        // main admin
-        toast.success("Logged in");
-        router.push("/");
-        return;
-      }
-      // company admin
-      if (admin?.profiles[0].role_id === 6) {
-        toast.success("Logged in");
-        router.push("/company");
-        return;
-      }
-    }
-  }, [admin, auth]);
+  // useEffect(() => {
+  //   if (Boolean(admin) && Boolean(auth)) {
+  //     if (admin?.profiles[0].role_id === 1) {
+  //       // main admin
+  //       toast.success("Logged in");
+  //       router.push("/");
+  //       return;
+  //     }
+  //     // company admin
+  //     if (admin?.profiles[0].role_id === 6) {
+  //       toast.success("Logged in");
+  //       router.push("/company");
+  //       return;
+  //     }
+  //   }
+  // }, [admin, auth]);
 
   return (
     <div>

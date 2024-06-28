@@ -8,9 +8,6 @@ import useAdmin from "@/hooks/useAdmin";
 import Image from "next/image";
 import useForm from "@/hooks/useForm";
 
-// components
-import PublishFormButton from "./PublishFormButton";
-
 function FormTopNav() {
   //
   const { admin } = useAdmin();
@@ -18,7 +15,7 @@ function FormTopNav() {
   const { setView, view, form } = useForm();
 
   return (
-    <nav className="h-[7vh] z-[200] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
+    <nav className="h-[3.5rem] z-[200] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
       <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
         <Link href="/">
           <svg

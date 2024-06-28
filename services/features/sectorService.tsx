@@ -9,5 +9,17 @@ export const createSector = (data: any) => {
 };
 
 export const getSectorByCountry = (countryName: string) => {
-    return () => authApi.get(`/sectors/info/${countryName}`).then((res) => res.data);
-  };
+  return () => authApi.get(`/sectors/info/${countryName}`).then((res) => res.data);
+};
+
+export const deleteSectorByID = (id: any) => {
+  return authApi.delete(`/sectors/${id}`);
+};
+
+export const csvUpload = (formData: FormData ,fileName: string) => {
+  return authApi.post(`/csv/sector/upload/${fileName}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};

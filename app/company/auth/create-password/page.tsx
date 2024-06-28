@@ -3,18 +3,20 @@ import React, { useEffect, useState } from "react";
 import Button from "./components/Button";
 import PasswordInput from "./components/PasswordInput";
 import { FiAlertCircle } from "react-icons/fi";
-import Logo from "../(login)/components/Logo";
+import Logo from "@/app/(admin)/auth/(login)/components/Logo";
 import Link from "next/link";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import useAdmin from "@/hooks/useAdmin";
+
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { changePassword, updateUser } from "@/services/features/authService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SuccessIcon from "@/public/icons/SuccessIcon";
 import { useSearchParams } from "next/navigation";
+import useCompany from "@/hooks/useCompany";
+import useAuth from "@/hooks/useAuth";
 
 const schema = yup.object({
   user_id: yup.number(),
@@ -26,8 +28,11 @@ const schema = yup.object({
 });
 
 function CreatePassword() {
-  const { admin, setAdmin } = useAdmin();
+  const { companyAdmin, removeCompanyAdmin } = useCompany();
+  const { setAuth } = useAuth();
   const router = useRouter();
+
+  //
   type typeOfSchema = yup.InferType<typeof schema>;
   const [loginError, setLoginError] = useState<string | null>(null);
   const [status, setStatus] = useState("main");
@@ -42,7 +47,7 @@ function CreatePassword() {
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
-      user_id: admin?.id,
+      user_id: companyAdmin?.id,
       current_password: password!,
       new_password: "",
     },
@@ -58,13 +63,13 @@ function CreatePassword() {
       await changePassword(passwordPayload);
 
       const userStatusPayload = {
-        id: admin.id,
-        email: admin.email,
-        username: admin.username,
-        first_name: admin.first_name,
-        last_name: admin.last_name,
-        phone_number: admin.phone_number,
-        mobile_phone_number: admin.mobile_phone_number,
+        id: companyAdmin.id,
+        email: companyAdmin.email,
+        username: companyAdmin.username,
+        first_name: companyAdmin.first_name,
+        last_name: companyAdmin.last_name,
+        phone_number: companyAdmin.phone_number,
+        mobile_phone_number: companyAdmin.mobile_phone_number,
         user_status: "ACTIVE",
       };
 
@@ -72,14 +77,14 @@ function CreatePassword() {
         alert(error.message)
       );
 
-      // toast.success("Password changed Successfully", {
-      //   position: "top-center",
-      //   duration: 3000,
-      // });
+      toast.success("Password changed Successfully", {
+        position: "top-center",
+        duration: 3000,
+      });
 
       setStatus("success");
     } catch (error) {
-      setLoginError("This should be the same as the password inputed above");
+      setLoginError("Error setting password. Please try again");
     }
   };
 
@@ -169,8 +174,9 @@ function CreatePassword() {
                   className=""
                   type="submit"
                   onClick={() => {
-                    setAdmin(null);
-                    router.push("/auth");
+                    setAuth(null);
+                    removeCompanyAdmin();
+                    router.push("/company/auth");
                   }}
                 >
                   Go to Login
@@ -182,7 +188,7 @@ function CreatePassword() {
       </div>
       <div className="flex flex-col mt-20 items-center ">
         <div className="flex items-center gap-x-4 text-xs text-opacity-30 text-black font-medium">
-          <p className="font-xs">&copy;&nbsp;Mesh Business Suite</p>
+          <p className="font-xs">&copy;&nbsp;Mesh Agent</p>
           <p>&bull;&nbsp;Contact</p>
           <p>&bull;&nbsp;Privacy policy</p>
         </div>

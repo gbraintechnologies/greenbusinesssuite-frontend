@@ -1,5 +1,5 @@
 'use client'
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, useEffect } from 'react';
 import TextInput from '../components/TextInput';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import SelectInputs from '../components/SelectInputs';
@@ -8,12 +8,13 @@ import { FiEdit2 } from 'react-icons/fi';
 import Link from 'next/link';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import SelectCountryInput from "../components/selectCountryInput";
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { Countrie, Countrieses } from "../components/Countries";
 import { createCurrency } from '@/services/features/currencyService';
 
 const schema = yup.object({
@@ -40,11 +41,12 @@ interface Denomination {
 
 interface Country {
     id: number;
-    jurisdiction_name: string;
+    name: string;
 }
 
 function AddCurrency() {
     const [denominations, setDenominations] = useState<Denomination[]>([]);
+    const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
     const [denomination, setDenomination] = useState({ id: 0, amount: "", name: "", denominationType: "" });
     type typeOfSchema = yup.InferType<typeof schema>;
     const router = useRouter();
@@ -52,6 +54,7 @@ function AddCurrency() {
         queryKey: ["all_countries"],
         queryFn: services.allJurisdictions(),
     });
+
 
     const handleAddLevel = () => {
         setDenominations([...denominations, denomination]);
@@ -84,7 +87,7 @@ function AddCurrency() {
         });
     };
 
-    const { register, handleSubmit, formState: { isSubmitting, errors, dirtyFields }, getValues } = useForm<typeOfSchema>({
+    const { register, handleSubmit, formState: { isSubmitting, errors }, getValues } = useForm<typeOfSchema>({
         resolver: yupResolver(schema),
         mode: "onChange",
         defaultValues: {
@@ -96,6 +99,20 @@ function AddCurrency() {
         },
     });
 
+    useEffect(() => {
+        const countryName = getValues("countryName");
+        console.log("Country name from form:", countryName);
+
+        if (countryName) {
+            const country = Countrieses(countryName);
+            console.log("Matching country found:", country);
+            if (country) {
+                setSelectedCountry(country.cca2);
+            }
+        }
+    }, [getValues("countryName"), countriesData]);
+
+
     const onSubmit = async (data: typeOfSchema) => {
         try {
             const currencyPayload = {
@@ -105,12 +122,15 @@ function AddCurrency() {
                 countryName: data.countryName,
                 denominations: denominations,
             };
-            // alert(JSON.stringify(currencyPayload));
-            // await createCurrency(currencyPayload);
+            //alert(JSON.stringify(currencyPayload));
+            await createCurrency(currencyPayload);
 
-            toast.success("Currency added Successfully", {
+            toast.success("Currency has been added Successfully", {
                 position: "top-center",
                 duration: 3000,
+                style: {
+                    color: 'green'
+                }
             });
             router.push("/currency-setup");
         } catch (error: any) {
@@ -150,25 +170,30 @@ function AddCurrency() {
                     </div>
 
                     <div>
+
                         <div className="mb-3 relative">
                             <SelectCountryInput
+                                key={selectedCountry}
                                 listdata={countriesData ?? []}
                                 label="Country"
                                 autoComplete="off"
                                 {...register("countryName")}
                                 error={errors.countryName?.message}
                                 PrependIcon={
-                                    <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
-                                        {/* <img
-                                            src={Countrie((countriesData?.find(country => country.id === getValues("jurisdiction_id"))?.jurisdiction_name) ?? '')?.flags.png}
-                                            alt={Countrie((countriesData?.find(country => country.id === getValues("jurisdiction_id"))?.jurisdiction_name) ?? '')?.name.common}
-                                            style={{ height: "auto", width: "30px" }}
-                                        /> */}
-                                    </span>
+                                    selectedCountry ? (
+                                        <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
+                                            <img
+                                                src={selectedCountry ? Countrie(selectedCountry)?.flags.png : ''}
+                                                alt={selectedCountry ? Countrie(selectedCountry)?.name.common : ''}
+                                                style={{ height: "auto", width: "30px" }}
+                                            />
+                                        </span>
+                                    ) : null 
                                 }
                                 style={{ width: "30%", height: "30%" }}
                             />
                         </div>
+
                     </div>
                     <div className="mb-1 relative">
                         <TextInput

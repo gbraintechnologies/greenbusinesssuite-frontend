@@ -3,10 +3,8 @@ import React from "react";
 
 interface Country {
     id: number;
-    jurisdiction_name: string;
+    name: string;
 }
-
-
 
 interface ISelectCountryInput extends React.InputHTMLAttributes<HTMLSelectElement> {
     label?: string;
@@ -54,13 +52,11 @@ const SelectCountryInput = React.forwardRef<HTMLSelectElement, ISelectCountryInp
                     </label>
                 )}
                 <div className="relative">
-
                     {PrependIcon && (
                         <div className="inset-y-0 mt-1 left-0 flex items-center justify-center pl-3 pr-3 pointer-events-none">
                             {PrependIcon}
                         </div>
                     )}
-
                     <select
                         id={id}
                         disabled={disabled}
@@ -76,10 +72,9 @@ const SelectCountryInput = React.forwardRef<HTMLSelectElement, ISelectCountryInp
                     >
                         <option value="">Select Country</option>
                         {listdata.map(country =>
-                            <option value={country?.id}>{country?.jurisdiction_name}</option>
+                            <option key={country.id} value={country.name}>{country.name}</option>
                         )}
                     </select>
-
                     {PostpendIcon && (
                         <div className="absolute inset-y-0 mt-1 right-0 flex items-center justify-center pr-3 pointer-events-none">
                             {PostpendIcon}

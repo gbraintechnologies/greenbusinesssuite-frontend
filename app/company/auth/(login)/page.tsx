@@ -2,7 +2,7 @@
 
 import useAuth from "@/hooks/useAuth";
 import useCompany from "@/hooks/useCompany";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,12 +21,17 @@ import Button from "@/app/(admin)/auth/(login)/components/Button";
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAlertCircle } from "react-icons/fi";
+import useAdmin from "@/hooks/useAdmin";
+import useUser from "@/hooks/useUser";
 
 //
 
 function CompanyAdminAuth() {
-  const { companyAdmin, addCompanyAdminData } = useCompany();
-  const { auth, addAuthData } = useAuth();
+  const { addCompanyAdminData, companyAdmin, removeCompanyAdmin } =
+    useCompany();
+  const { auth, addAuthData, removeAuth } = useAuth();
+  const { removeAdmin } = useAdmin();
+  const { removeUser } = useUser();
 
   const router = useRouter();
 
@@ -41,6 +46,27 @@ function CompanyAdminAuth() {
   });
 
   type typeOfSchema = yup.InferType<typeof schema>;
+
+  // clear all other users if necessary
+  useEffect(() => {
+    if (companyAdmin !== null && Boolean(auth?.access_token)) {
+      // go to dashboard without logging if data & auth is present
+      // go to dashboard without logging if data & auth is present
+      // take care of edge case of new user
+      if (
+        companyAdmin?.user_status !== "NEWLY_CREATED" ||
+        companyAdmin?.user_status !== "TEMP_CREDENTIALS"
+      ) {
+        toast.success("Logged in");
+        router.push("/company");
+      }
+    } else {
+      removeAdmin();
+      removeAuth();
+      removeCompanyAdmin();
+      removeUser();
+    }
+  }, []);
 
   const {
     register,
@@ -68,20 +94,23 @@ function CompanyAdminAuth() {
       const token: any = await login(data.username, data.password);
       if (token?.status === 200) {
         addAuthData(token?.data);
-
         const user = await fetchCurrentUser(token.data?.access_token);
-        addCompanyAdminData(user?.data);
         if (
           user?.data?.user_status === "NEWLY_CREATED" ||
           user?.data?.user_status === "TEMP_CREDENTIALS"
         ) {
+          addCompanyAdminData(user?.data);
           toast("Create your password");
-          router.push(`/create-password?temp=${data.password}`);
-
+          router.push(`/company/auth/create-password?temp=${data.password}`);
+          return;
           // route to admin / company dashboard
-        } else {
+        } else if (user?.data?.profiles[0]?.role_id === 6) {
+          addCompanyAdminData(user?.data);
           toast.success("Logged in");
           router.push("/company");
+        } else {
+          removeAuth();
+          toast.error("Access denied. Contact your administrator");
         }
       }
     } catch (error) {
@@ -94,7 +123,7 @@ function CompanyAdminAuth() {
       <div className="bg-[#f2f4f6] rounded-xl shadow-md">
         {" "}
         <form
-          className="flex flex-col w-[25vw] gap-5 shadow-md bg-white p-6 rounded-xl"
+          className="flex flex-col w-[90%] md:max-w-[25rem] md:w-[25vw] gap-5 shadow-md bg-white p-6 rounded-xl"
           onSubmit={handleSubmit(onSubmit)}
         >
           <h2 className="font-bold text-center text-xl">Sign in</h2>
@@ -149,10 +178,6 @@ function CompanyAdminAuth() {
           </Button>
         </form>
         <div className="text-center  text-gray-400 text-sm py-4">
-          {/* <p>
-            Don't have an account?{" "}
-            <span className="font-bold text-black">Sign Up</span>
-          </p> */}
           <p className="mt-2 text-xs">Powered by Mesh Business Suite</p>
         </div>
       </div>
