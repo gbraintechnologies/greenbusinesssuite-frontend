@@ -124,11 +124,11 @@ function AddSector() {
         prevSectorLevels.map((sectorlevel) =>
           sectorlevel.id === editMode
             ? {
-                ...sectorlevel,
-                subSector: sectorlevel.subSector.map((sub, idx) =>
-                  idx === editSubSectorIndex ? editSectorName : sub
-                ),
-              }
+              ...sectorlevel,
+              subSector: sectorlevel.subSector.map((sub, idx) =>
+                idx === editSubSectorIndex ? editSectorName : sub
+              ),
+            }
             : sectorlevel
         )
       );
@@ -189,15 +189,6 @@ function AddSector() {
             // No need to map the data into a new structure, just use the parsed data directly
             console.log("Final data to be uploaded:", parsedData);
             setMappedData(parsedData); // Assuming you want to set this in your state
-
-            // Prepare form data
-            const formData = new FormData();
-            formData.append("file", file); // Append the actual file
-
-            // Call csvUpload to upload the file
-            uploadFile(formData, file.name);
-          } else {
-            console.error("No valid data found in the CSV file.");
           }
         },
         error: (error) => {
@@ -223,16 +214,6 @@ function AddSector() {
     }
   };
 
-  const uploadFile = async (formData: FormData, fileName: string) => {
-    try {
-      const response = await csvUpload(formData, fileName);
-      console.log("Upload successful!", response.data);
-      // Handle any further logic or UI updates based on the response
-    } catch (error) {
-      console.error("Error uploading CSV:", error);
-      // Handle error scenarios, show error messages, etc.
-    }
-  };
 
   const onSubmit = async (data: typeOfSchema) => {
     if (isSubmitting) {
