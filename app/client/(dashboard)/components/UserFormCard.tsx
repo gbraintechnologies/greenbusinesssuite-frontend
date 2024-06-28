@@ -22,7 +22,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import { createRoot } from "react-dom/client";
-import FormResponse from "@/app/company/(pages)/forms/components/FormResponse/FormResponse";
+import FormResponse from "./FormResponse/FormResponse";
 
 type Props = {
   form: any;
@@ -91,6 +91,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
   const renderToHiddenElement = (
     mergedForm: any,
     userData: any,
+    responseId: any
   ) => {
     const hiddenDiv = document.createElement("div");
     hiddenDiv.style.position = "absolute";
@@ -100,14 +101,13 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     hiddenDiv.style.backgroundColor = "white";
     document.body.appendChild(hiddenDiv);
 
-    console.log('merged form ', mergedForm);
-
     const root = createRoot(hiddenDiv);
+
     root.render(
       <FormResponse
         mergedForm={mergedForm}
         ref={hiddenRef}
-        onRendered={() => captureAndGeneratePDF(userData, mergedForm?.responseId)}
+        onRendered={() => captureAndGeneratePDF(userData, responseId)}
       />
     );
   };
@@ -125,17 +125,18 @@ function FormCard({ form, type = "uncompleted" }: Props) {
         toast.promise(
           (async () => {
             const resData = await services.retrieveFormUserResponseRaw(user?.id, form?.id);
+
             
             if (resData) {
-              const mergedForm = mergeForm(form?.responseId, form, resData[0]?.inputData);
-              renderToHiddenElement(mergedForm, user);
+              const mergedForm = mergeForm(resData[0]?.id, form, resData[0]?.inputData);
+              renderToHiddenElement(mergedForm, user, resData[0]?.id);
             } else {
               throw new Error('No data found');
             }
           })(),
           {
             loading: 'Processing form response...',
-            success: 'Please wait while download starts...',
+            success: 'Download will start soon, please wait...',
             error: 'Error while downloading file',
           }
         );
