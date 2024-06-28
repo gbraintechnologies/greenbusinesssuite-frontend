@@ -42,8 +42,14 @@ function LogIn() {
   useEffect(() => {
     if (admin !== null && Boolean(auth?.access_token)) {
       // go to dashboard without logging if data & auth is present
-      toast.success("Logged in");
-      router.push("/");
+      // take care of edge case of new user
+      if (
+        admin?.user_status !== "NEWLY_CREATED" ||
+        admin?.user_status !== "TEMP_CREDENTIALS"
+      ) {
+        toast.success("Logged in");
+        router.push("/");
+      }
     } else {
       removeAdmin();
       removeAuth();
@@ -89,18 +95,24 @@ function LogIn() {
           user?.data?.user_status === "NEWLY_CREATED" ||
           user?.data?.user_status === "TEMP_CREDENTIALS"
         ) {
+          addAdminData(user?.data);
           toast("Create your password");
-          router.push(`/create-password?temp=${data.password}`);
-
+          router.push(`/auth/create-password?temp=${data.password}`);
+          return;
           // route to admin / company dashboard
         } else if (user?.data?.profiles[0]?.role_id === 1) {
           addAdminData(user?.data);
           toast.success("Logged in");
           router.push("/");
+          return;
         } else {
-          toast.success("Logged in");
-          router.push("/company");
+          removeAuth();
+          toast.error("Access denied. Contact your administrator");
         }
+        // else {
+        //   toast.success("Logged in");
+        //   router.push("/company");
+        // }
       }
     } catch (error) {
       setLoginError("Incorrect email address and password");
@@ -108,22 +120,22 @@ function LogIn() {
   };
 
   // if admin is already authenticated, re route
-  useEffect(() => {
-    if (Boolean(admin) && Boolean(auth)) {
-      if (admin?.profiles[0].role_id === 1) {
-        // main admin
-        toast.success("Logged in");
-        router.push("/");
-        return;
-      }
-      // company admin
-      if (admin?.profiles[0].role_id === 6) {
-        toast.success("Logged in");
-        router.push("/company");
-        return;
-      }
-    }
-  }, [admin, auth]);
+  // useEffect(() => {
+  //   if (Boolean(admin) && Boolean(auth)) {
+  //     if (admin?.profiles[0].role_id === 1) {
+  //       // main admin
+  //       toast.success("Logged in");
+  //       router.push("/");
+  //       return;
+  //     }
+  //     // company admin
+  //     if (admin?.profiles[0].role_id === 6) {
+  //       toast.success("Logged in");
+  //       router.push("/company");
+  //       return;
+  //     }
+  //   }
+  // }, [admin, auth]);
 
   return (
     <div>

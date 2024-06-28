@@ -20,11 +20,11 @@ import useAuth from "@/hooks/useAuth";
 
 const schema = yup.object({
   user_id: yup.number(),
-  new_password: yup.string().min(6, "Password must be at least 8 characters"),
+  new_password: yup.string().min(6, "Password must be at least 6 characters"),
   current_password: yup.string(),
   confirm_password: yup
     .string()
-    .min(6, "Password must be at least 8 characters"),
+    .min(6, "Password must be at least 6 characters"),
 });
 
 function CreatePassword() {
@@ -115,7 +115,6 @@ function CreatePassword() {
                     {...register("new_password")}
                     error={errors.new_password?.message}
                   />
-                  <p>Password should at least 8 characters long</p>
                 </div>
                 <div className="mb-2">
                   <PasswordInput
