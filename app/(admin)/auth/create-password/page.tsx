@@ -18,11 +18,11 @@ import { useSearchParams } from "next/navigation";
 
 const schema = yup.object({
   user_id: yup.number(),
-  new_password: yup.string().min(6, "Password must be at least 8 characters"),
+  new_password: yup.string().min(6, "Password must be at least 6 characters"),
   current_password: yup.string(),
   confirm_password: yup
     .string()
-    .min(6, "Password must be at least 8 characters"),
+    .min(6, "Password must be at least 6 characters"),
 });
 
 function CreatePassword() {
@@ -72,14 +72,13 @@ function CreatePassword() {
         alert(error.message)
       );
 
-      toast.success("Password changed Successfully", {
-        position: "top-center",
-        duration: 3000,
-      });
+      // toast.success("Password changed Successfully", {
+      //   position: "top-center",
+      //   duration: 3000,
+      // });
 
       setStatus("success");
     } catch (error) {
-      console.error("Error changing password or updating user status:", error);
       setLoginError("This should be the same as the password inputed above");
     }
   };
@@ -111,7 +110,6 @@ function CreatePassword() {
                     {...register("new_password")}
                     error={errors.new_password?.message}
                   />
-                  <p>Password should at least 8 characters long</p>
                 </div>
                 <div className="mb-2">
                   <PasswordInput
@@ -172,7 +170,7 @@ function CreatePassword() {
                   type="submit"
                   onClick={() => {
                     setAdmin(null);
-                    router.push("/company/auth");
+                    router.push("/auth");
                   }}
                 >
                   Go to Login

@@ -51,8 +51,15 @@ function CompanyAdminAuth() {
   useEffect(() => {
     if (companyAdmin !== null && Boolean(auth?.access_token)) {
       // go to dashboard without logging if data & auth is present
-      toast.success("Logged in");
-      router.push("/company");
+      // go to dashboard without logging if data & auth is present
+      // take care of edge case of new user
+      if (
+        companyAdmin?.user_status !== "NEWLY_CREATED" ||
+        companyAdmin?.user_status !== "TEMP_CREDENTIALS"
+      ) {
+        toast.success("Logged in");
+        router.push("/company");
+      }
     } else {
       removeAdmin();
       removeAuth();
@@ -92,9 +99,10 @@ function CompanyAdminAuth() {
           user?.data?.user_status === "NEWLY_CREATED" ||
           user?.data?.user_status === "TEMP_CREDENTIALS"
         ) {
+          addCompanyAdminData(user?.data);
           toast("Create your password");
           router.push(`/company/auth/create-password?temp=${data.password}`);
-
+          return;
           // route to admin / company dashboard
         } else if (user?.data?.profiles[0]?.role_id === 6) {
           addCompanyAdminData(user?.data);
