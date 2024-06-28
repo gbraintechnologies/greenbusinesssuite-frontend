@@ -19,3 +19,7 @@ export const getParentEntriesById = (id: number) => {
 export const createChildEntries = (data: any) => {
   return authApi.post("/jurisdictions/create-child-address-scheme-with-entries", data);
 };
+
+export const deleteJurisdictionByID = (id: any) => {
+  return authApi.delete(`/jurisdictions/${id}`);
+};
