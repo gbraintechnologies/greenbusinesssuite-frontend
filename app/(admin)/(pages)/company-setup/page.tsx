@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Nav from "./components/Nav";
 import TabItem from "./components/TabItem";
 import SearchIcon from "@/public/icons/SearchIcon";
@@ -15,6 +15,8 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { CompanyInfo } from "@/types";
 import Link from "next/link";
+import { Menu, Transition } from "@headlessui/react";
+import { GridColDef } from "@mui/x-data-grid";
 
 export interface IFilter {
   id: number;
@@ -122,7 +124,7 @@ function CompanySetup() {
     }
   }, [aggregatedCompanies]);
 
-  const columns = [
+  const columns: GridColDef[] = [
     {
       field: "name",
       headerName: "Company Name",
@@ -165,9 +167,9 @@ function CompanySetup() {
     {
       field: "contactPerson",
       headerName: "Contact Person",
-      flex: 1,
+      flex: 2,
       headerAlign: "left",
-      align: "middle",
+      align: "left",
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="flex flex-col gap-2">
@@ -197,9 +199,58 @@ function CompanySetup() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id}>
-          <BsThreeDots size={20} />
-        </div>,
+          <Menu as="div" className="absolute text-left z-50">
+            <Menu.Button as="button">
+              <BsThreeDots size={20} />
+            </Menu.Button>
+            <Transition
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Menu.Items className="absolute right-0 w-56 mt-2 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[10000000000000]">
+                <div className="px-1 py-1 ">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        className={`${
+                          active ? "bg-blue-500 text-white" : "text-gray-900"
+                        } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                        href={"/company-setup/profile?id=" + params.row.data.id}
+                      >
+                        View Company
+                      </Link>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                      className={`${
+                        active ? "bg-blue-500 text-white" : "text-gray-900"
+                      } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                      href={"/company-setup/profile/edit?id=" + params.row.data.id}
+                    >
+                      Edit Company
+                    </Link>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                  {({ active }) => (
+                      <Link
+                      className={`${
+                        active ? "bg-blue-500 text-white" : "text-gray-900"
+                      } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                      href={"/company-setup/profile/edit?id=" + params.row.data.id}
+                    >
+                      Edit Company
+                    </Link>
+                    )}
+                  </Menu.Item>
+                </div>
+              </Menu.Items>
+            </Transition>
+          </Menu>
       ],
     },
   ];
@@ -219,11 +270,11 @@ function CompanySetup() {
           <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </div>
       </div>
-      <DataTable
-        isLoading={isLoading || searchLoading}
-        rows={rows}
-        columns={columns}
-      />
+        <DataTable
+          isLoading={isLoading || searchLoading}
+          rows={rows}
+          columns={columns}
+        />
     </div>
   );
 }

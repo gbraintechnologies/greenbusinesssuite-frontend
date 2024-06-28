@@ -22,7 +22,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import { createRoot } from "react-dom/client";
-import FormResponse from "@/app/company/(pages)/forms/components/FormResponse/FormResponse";
+import FormResponse from "./FormResponse/FormResponse";
 
 type Props = {
   form: any;
@@ -99,8 +99,6 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     hiddenDiv.style.width = "210mm";
     hiddenDiv.style.backgroundColor = "white";
     document.body.appendChild(hiddenDiv);
-
-    console.log('merged form ', mergedForm);
 
     const root = createRoot(hiddenDiv);
     root.render(
