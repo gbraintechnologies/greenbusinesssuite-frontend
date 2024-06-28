@@ -237,14 +237,13 @@ function CompanySetup() {
                   </Menu.Item>
                   <Menu.Item>
                   {({ active }) => (
-                      <Link
+                      <button
                       className={`${
                         active ? "bg-blue-500 text-white" : "text-gray-900"
                       } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                      href={"/company-setup/profile/edit?id=" + params.row.data.id}
                     >
                       Edit Company
-                    </Link>
+                    </button>
                     )}
                   </Menu.Item>
                 </div>
