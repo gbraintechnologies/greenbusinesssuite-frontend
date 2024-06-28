@@ -2,37 +2,101 @@
 
 import React, { useEffect, useState } from "react";
 import Nav from "./components/Nav";
-
-// services
+import { IconButton, Menu, MenuItem } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-
-// icons
 import { BsThreeDots } from "react-icons/bs";
 import SearchIcon from "@/public/icons/SearchIcon";
-
-// shared components
 import DataTable from "@/components/DataTable/DataTable";
 import "./index.css";
 import { Countrie } from "./components/Countries";
+import { useRouter } from 'next/navigation';
+import { deleteJurisdictionByID } from "@/services/features/jurisdictionsService";
+
+interface RowData {
+  id: number;
+}
+
+interface ActionMenuProps {
+  row: RowData;
+  onDeleteSuccess: () => void;
+}
+
+const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const router = useRouter();
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleEdit = () => {
+    handleClose();
+    // console.log('Edit:', row);
+    router.push(`/country-setup/edit-jurisdiction?id=${row.id}`);
+  };
+
+  const handleDelete = async () => {
+    handleClose();
+    try {
+      await deleteJurisdictionByID(row.id);
+      onDeleteSuccess();
+    } catch (error) {
+      console.error("Error deleting row:", error);
+    }
+  };
+
+
+  return (
+    <>
+      <IconButton onClick={handleClick}>
+        <BsThreeDots size={20} />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        PaperProps={{
+          sx: {
+            width: 150
+          }
+        }}
+      >
+        <MenuItem onClick={handleEdit}>Edit</MenuItem>
+        <MenuItem onClick={handleDelete}>Delete</MenuItem>
+      </Menu>
+    </>
+  );
+};
+
+
 
 function CountrySetup() {
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [rows, setRows] = useState([]);
-
-  //fetch all jurisdictions
-  const { data, isLoading } = useQuery({
+  const [rows, setRows] = useState<RowData[]>([]);
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["all jurisdictions"],
     queryFn: services.allJurisdictions(),
   });
 
   useEffect(() => {
-    // alert(JSON.stringify(data))
     if (data) {
       setRows(data);
     }
   }, [data]);
+
+  const handleDeleteSuccess = async () => {
+    try {
+      await refetch();
+    } catch (error) {
+      console.error("Error fetching updated data:", error);
+    }
+  };
 
   const columns = [
     {
@@ -67,48 +131,13 @@ function CountrySetup() {
       headerName: "Actions",
       flex: 1,
       type: "actions",
-      getActions: (params: any) => [
-        <div key={params.row.id}>
-          <BsThreeDots size={20} />
-        </div>,
-      ],
+      renderCell: (params: any) => <ActionMenu row={params.row} onDeleteSuccess={handleDeleteSuccess} />,
     },
   ];
-
-
-  // useEffect(() => {
-  //   if (searchTerm.length > 1 && searchsData) {
-  //     setJurisdictionUser(searchsData);
-  //   }
-
-  //   if (data && searchTerm.length < 1) {
-  //     setJurisdictionUser(data);
-  //   }
-  // }, [searchsData, data, searchTerm]);
-
-  // useEffect(() => {
-  //   let temp: any = [];
-
-  //   if (jurisdictionUser) {
-  //     for (let i = 0; i < jurisdictionUser.length; i++) {
-  //       let user = jurisdictionUser[i];
-  //       // APP ID ===1 == MESH SUITE APP
-  //       // @ts-ignore
-  //       // @ts-ignore
-  //       temp.push({ id: user?.id, data: user });
-  //     }
-  //     setRows(temp);
-  //   }
-  // }, [jurisdictionUser]);
-
-
-  // const [rows, setRows] = useState([]);
 
   return (
     <div className="w-full pb-20 ">
       <Nav />
-
-      {/* Search and filters */}
       <div className="flex items-center px-5 justify-between my-4">
 
         <div className="flex items-center gap-3">
@@ -123,8 +152,6 @@ function CountrySetup() {
           </div>
         </div>
       </div>
-
-      {/* Table */}
       <DataTable
         isLoading={isLoading}
         rows={rows}
