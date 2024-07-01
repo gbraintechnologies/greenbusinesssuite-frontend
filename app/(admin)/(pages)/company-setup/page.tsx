@@ -254,7 +254,7 @@ function CompanySetup() {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Menu.Items className="fixed right-0 w-48 px-1 py-1 mt-2 overflow-auto shadow-md bg-white border border-[#F1F5F9] origin-top-right divide-y divide-gray-100 rounded-md  focus:outline-none flex flex-col z-50">
+              <Menu.Items className="fixed right-0 w-36 px-1 py-1 mt-1 overflow-auto shadow-md bg-white border border-[#F1F5F9] origin-top-right divide-y divide-gray-100 rounded-md  focus:outline-none flex flex-col z-50">
                   <Menu.Item>
                     {({ active }) => (
                       <Link
