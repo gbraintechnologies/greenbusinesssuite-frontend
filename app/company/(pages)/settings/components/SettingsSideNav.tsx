@@ -71,7 +71,7 @@ function SettingsSideNav() {
           <h4 className="font-bold text-lg">
             {companyAdmin?.first_name} {companyAdmin?.last_name}
           </h4>
-          <p className="text-sm font-light">Your personal account</p>
+          <p className="text-sm font-light">Administrator</p>
         </div>
       </div>
 

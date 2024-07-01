@@ -13,15 +13,12 @@ import EmptyList from "@/app/(admin)/(pages)/forms/components/EmptyList";
 //
 import FormCard from "./components/CompanyFormCard";
 import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
-import useAdmin from "@/hooks/useAdmin";
+
 import useCompany from "@/hooks/useCompany";
 
 function CompanyForms() {
   const { companyAdmin: admin } = useCompany();
 
-  console.log(
-    admin
-  )
   // COMPANY OF CURRENT ADMIN CAN BE RETRIEVED FROM useAdmin()
   const { data: companyData } = useQuery({
     queryKey: ["get company"],

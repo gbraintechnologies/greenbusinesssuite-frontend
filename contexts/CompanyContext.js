@@ -32,7 +32,9 @@ export const CompanyProvider = ({ children }) => {
       //
       setCompany(companyData);
     } else {
-      refetch();
+      if (Boolean(companyAdmin)) {
+        refetch();
+      }
     }
   }, [companyAdmin, companyData]);
 

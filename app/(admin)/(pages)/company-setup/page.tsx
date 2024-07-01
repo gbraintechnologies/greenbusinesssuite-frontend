@@ -165,7 +165,7 @@ function CompanySetup() {
           </Menu.Items>
         </Transition>
       </Menu>,
-      document.body 
+      document.body
     );
   };
 
@@ -244,44 +244,46 @@ function CompanySetup() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-          <Menu as="div" className="relative text-left z-20 inline-block">
-            <Menu.Button as="button">
-              <BsThreeDots size={20} />
-            </Menu.Button>
-            <Transition
-              as={Fragment}
-              leave="transition ease-in duration-100"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <Menu.Items className="fixed right-0 w-36 px-1 py-1 mt-1 overflow-auto shadow-md bg-white border border-[#F1F5F9] origin-top-right divide-y divide-gray-100 rounded-md  focus:outline-none flex flex-col z-50">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <Link
-                        className={`${
-                          active ? "bg-[#F1F5F9] " : ""
-                        }  items-center w-full px-2 py-2 rounded-md text-sm text-[#334155]`}
-                        href={"/company-setup/profile?id=" + params.row.data.id}
-                      >
-                        View Company
-                      </Link>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <Link
-                      className={`${
-                        active ? "bg-[#F1F5F9] " : ""
-                      }  items-center w-full px-2 py-2 rounded-md text-sm text-[#334155]`}
-                      href={"/company-setup/profile/edit?id=" + params.row.data.id}
-                    >
-                      Edit Company
-                    </Link>
-                    )}
-                  </Menu.Item>
-              </Menu.Items>
-            </Transition>
-          </Menu>
+        <Menu as="div" className="relative text-left z-20 inline-block">
+          <Menu.Button as="button">
+            <BsThreeDots className="z-10" size={20} />
+          </Menu.Button>
+          <Transition
+            as={Fragment}
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <Menu.Items className="fixed right-0 w-36 px-1 py-1 mt-1 overflow-auto shadow-md bg-white border border-[#F1F5F9] origin-top-right divide-y divide-gray-100 rounded-md  focus:outline-none flex flex-col z-50">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link
+                    className={`${
+                      active ? "bg-[#F1F5F9] " : "bg-white"
+                    }  items-center w-full px-2 py-2 rounded-md text-sm text-[#334155] z-50`}
+                    href={"/company-setup/profile?id=" + params.row.data.id}
+                  >
+                    View Company
+                  </Link>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <Link
+                    className={`${
+                      active ? "bg-[#F1F5F9] " : "bg-white"
+                    }  items-center w-full px-2 py-2 rounded-md text-sm text-[#334155] z-50`}
+                    href={
+                      "/company-setup/profile/edit?id=" + params.row.data.id
+                    }
+                  >
+                    Edit Company
+                  </Link>
+                )}
+              </Menu.Item>
+            </Menu.Items>
+          </Transition>
+        </Menu>,
       ],
     },
   ];
@@ -301,11 +303,11 @@ function CompanySetup() {
           <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </div>
       </div>
-        <DataTable
-          isLoading={isLoading || searchLoading}
-          rows={rows}
-          columns={columns}
-        />
+      <DataTable
+        isLoading={isLoading || searchLoading}
+        rows={rows}
+        columns={columns}
+      />
     </div>
   );
 }

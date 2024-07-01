@@ -239,7 +239,7 @@ const ResponseDataTable: React.FC<Props> = ({
             <p className="font-medium text-sm">
               {params.row.userData?.first_name} {params.row.userData?.last_name}
             </p>
-            <p className="text-[#475569] text-sm font-normal">
+            <p className="text-[#475569] -mt-2 text-sm font-normal">
               {params.row.userData?.email}
             </p>
           </div>
