@@ -125,7 +125,7 @@ function ProcessInvite() {
         for (let j = 0; j < section?.formFields?.length; j++) {
           let field = section?.formFields[j];
           formFields.push({
-            id: field?.id,
+            // id: field?.id,
             response: field?.response ? field?.response : null,
             formFieldId: field?.id,
             fieldName: field?.name,
@@ -139,7 +139,7 @@ function ProcessInvite() {
           });
         }
         formSections.push({
-          id: section?.id,
+          // id: section?.id,
           formSectionId: section?.id,
           formDataFields: formFields,
         });

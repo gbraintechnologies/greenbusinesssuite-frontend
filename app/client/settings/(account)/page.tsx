@@ -4,14 +4,14 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import TextInput from "../components/TextInput";
-import Button from "../components/Button";
-import useAdmin from "@/hooks/useAdmin";
+
 import { updateUser } from "../../../../services/features/authService";
 import toast from "react-hot-toast";
-import { RiArrowDropDownLine } from "react-icons/ri";
+
 import Modal from "../../../../components/Modal/Modal";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import useUser from "@/hooks/useUser";
 
 //
 
@@ -27,7 +27,7 @@ const schema = yup.object({
 });
 
 function Account() {
-  const { admin, setAdmin } = useAdmin();
+  const { user, removeUser } = useUser();
 
   type typeOfSchema = yup.InferType<typeof schema>;
   const router = useRouter();
@@ -41,14 +41,14 @@ function Account() {
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
-      id: admin?.id,
-      firstName: admin?.first_name,
-      lastName: admin?.last_name,
-      phone: admin?.phone_number,
-      status: admin?.user_status,
-      email: admin?.email,
-      username: admin?.username,
-      mobile_phone: admin?.mobile_phone_number,
+      id: user?.id,
+      firstName: user?.first_name,
+      lastName: user?.last_name,
+      phone: user?.phone_number,
+      status: user?.user_status,
+      email: user?.email,
+      username: user?.username,
+      mobile_phone: user?.mobile_phone_number,
     },
   });
 
@@ -69,7 +69,7 @@ function Account() {
       position: "top-center",
       duration: 3000,
     });
-    setAdmin(null);
+    removeUser();
     toast.success("Logged out");
     router.push("/");
   };
@@ -84,14 +84,14 @@ function Account() {
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div style={{ flex: 1 }} className="mt-10">
             <div style={{ textAlign: "center" }} className="mb-7">
-              {admin?.custom_profile_values &&
-              admin?.custom_profile_values.find(
+              {user?.custom_profile_values &&
+              user?.custom_profile_values.find(
                 (item: any) => item.custom_profile_item_id === 1
               )?.value?.length > 1 ? (
                 <Image
                   alt="profile"
                   src={
-                    admin?.custom_profile_values.find(
+                    user?.custom_profile_values.find(
                       (item: any) => item.custom_profile_item_id === 1
                     ).value
                   }
@@ -100,9 +100,9 @@ function Account() {
                   className="rounded-full w-32 h-32 object-cover"
                 />
               ) : (
-                <button className="w-20 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
-                  {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
-                  {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
+                <button className="w-20 h-20 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
+                  {user?.first_name && user?.first_name[0]?.toUpperCase()}
+                  {user?.last_name && user?.last_name[0]?.toUpperCase()}
                 </button>
               )}
             </div>
@@ -129,14 +129,8 @@ function Account() {
                       disabled
                       placeholder="phone number"
                       autoComplete="off"
-                      // PrependIcon={
-                      //   <span className="absolute left-0 top-0 bottom-0 flex items-center pl-2">
-                      //     <p>+233</p> <RiArrowDropDownLine size={30} />
-                      //   </span>
-                      // }
                       {...register("phone")}
                       error={errors.phone?.message}
-                      // style={{ paddingLeft: "6.0rem" }}
                     />
                   </div>
                   <div className="mb-5">
