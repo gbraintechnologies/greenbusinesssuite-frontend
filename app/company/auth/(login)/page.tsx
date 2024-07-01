@@ -23,8 +23,6 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAlertCircle } from "react-icons/fi";
 import useAdmin from "@/hooks/useAdmin";
 import useUser from "@/hooks/useUser";
-import services from "@/services";
-import { useQuery } from "@tanstack/react-query";
 
 //
 
@@ -91,19 +89,6 @@ function CompanyAdminAuth() {
     }
   };
 
-  const [companyId, setCompanyId] = useState();
-
-  const {
-    data: companyData,
-    isLoading,
-    refetch,
-  } = useQuery({
-    // @ts-ignore
-    queryKey: ["company", parseInt(companyId)],
-    queryFn: services.getCompanyById(Number(companyId)),
-    enabled: Boolean(companyId),
-  });
-
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const token: any = await login(data.username, data.password);
@@ -122,10 +107,6 @@ function CompanyAdminAuth() {
         } else if (user?.data?.profiles[0]?.role_id === 6) {
           addCompanyAdminData(user?.data);
           toast.success("Logged in");
-
-          // get company data then push to dashboard
-          setCompanyId(user?.data?.profiles[0]?.id);
-          refetch();
 
           router.push("/company");
         } else {

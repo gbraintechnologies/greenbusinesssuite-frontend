@@ -1,4 +1,6 @@
 //
+import services from "@/services";
+import { useQuery } from "@tanstack/react-query";
 import React, { createContext, useEffect, useState } from "react";
 
 // @ts-ignore
@@ -14,7 +16,25 @@ export const CompanyProvider = ({ children }) => {
   const [companyAdmin, setCompanyAdmin] = useState(CompanyFromLS);
   const [company, setCompany] = useState(null);
 
-  console.log("company details", company);
+  const {
+    data: companyData,
+    isLoading,
+    refetch,
+  } = useQuery({
+    // @ts-ignore
+    queryKey: ["company", parseInt(companyAdmin?.profiles[0]?.id)],
+    queryFn: services.getCompanyById(Number(companyAdmin?.profiles[0]?.id)),
+    enabled: Boolean(companyAdmin?.profiles[0]?.id),
+  });
+
+  useEffect(() => {
+    if (Boolean(companyAdmin) & Boolean(companyData)) {
+      //
+      setCompany(companyData);
+    } else {
+      refetch();
+    }
+  }, [companyAdmin, companyData]);
 
   const addCompanyAdminData = (data) => {
     setCompanyAdmin((prev) => ({ ...prev, ...data }));
