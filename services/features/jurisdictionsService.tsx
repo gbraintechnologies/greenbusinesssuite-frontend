@@ -6,11 +6,9 @@ export const allJurisdictions = () => {
     authApi.get("/jurisdictions/list-jurisdictions").then((res) => res.data);
 };
 
+// @Sidney, Example here, import the client as seen on top and use it in the api call below
 export const exampleAPICallUsingMultipart = () => {
-  return () =>
-    multipartMeshApi
-      .get("/jurisdictions/list-jurisdictions")
-      .then((res) => res.data);
+  return multipartMeshApi.get("/example-route");
 };
 
 export const createFreeInputJurisdiction = (data: any) => {
