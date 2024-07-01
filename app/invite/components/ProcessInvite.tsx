@@ -152,14 +152,7 @@ function ProcessInvite() {
 
       // ASSIGN TO USER UPON LOGIN THEN CLEAR SESSION STORAGE
       services
-        // @ts-ignore
-        .acceptInvite(
-          //@ts-ignore
-          formId,
-          user?.id,
-          companyName,
-          inputData
-        )
+        .acceptInvite(formId, user?.id, companyName, inputData)
         .then((res) => {
           setLoading(false);
           setMessage(

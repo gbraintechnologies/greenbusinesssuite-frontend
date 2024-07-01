@@ -159,8 +159,7 @@ export const acceptInvite = (
   formId: any,
   userId: any,
   companyName: any,
-  inputData: any,
-  id: any
+  inputData: any
 ) => {
   return authApi.post(`forms/response/create`, {
     formId: parseInt(formId),
