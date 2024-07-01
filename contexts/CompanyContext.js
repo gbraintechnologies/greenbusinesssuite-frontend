@@ -12,6 +12,9 @@ const CompanyFromLS =
 
 export const CompanyProvider = ({ children }) => {
   const [companyAdmin, setCompanyAdmin] = useState(CompanyFromLS);
+  const [company, setCompany] = useState(null);
+
+  console.log("company details", company);
 
   const addCompanyAdminData = (data) => {
     setCompanyAdmin((prev) => ({ ...prev, ...data }));
@@ -29,6 +32,8 @@ export const CompanyProvider = ({ children }) => {
     <CompanyContext.Provider
       value={{
         companyAdmin,
+        company,
+        setCompany,
         addCompanyAdminData,
         removeCompanyAdmin,
       }}
