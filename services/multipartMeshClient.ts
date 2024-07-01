@@ -4,18 +4,18 @@ import { getToken, getRefreshToken } from "./localService";
 
 import toast from "react-hot-toast";
 
-const authApi = axios.create({
+const multipartMeshApi = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
 });
 
 // REQUEST INTERCEPTOR
-authApi.interceptors.request.use(
+multipartMeshApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
     return {
       ...config,
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${getToken()}`,
       },
     };
@@ -24,7 +24,7 @@ authApi.interceptors.request.use(
 );
 
 // RESPONSE INTERCEPTOR: listen for a 401 or 403 then refresh token
-authApi.interceptors.response.use(
+multipartMeshApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -79,4 +79,4 @@ authApi.interceptors.response.use(
   }
 );
 
-export default authApi;
+export default multipartMeshApi;

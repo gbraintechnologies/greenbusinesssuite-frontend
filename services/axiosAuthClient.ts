@@ -41,14 +41,14 @@ authApi.interceptors.response.use(
       //  GET REFRESH TOKEN AND RETRY REQUEST
 
       axios
-        .post(`/users/refresh_token/?token=${getRefreshToken()}`)
+        .post(
+          `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`
+        )
         .then((res) => {
-          console.log("get new token and set");
           localStorage.setItem(
             "auth",
             JSON.stringify({
               access_token: res?.data?.access_token,
-              refresh_token: res?.data?.refresh_token,
             })
           );
 
