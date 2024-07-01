@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 // components
 import SideNav from "@/components/SideNav/SideNav";
-import TopNav from "@/components/TopNav/TopNav";
+import TopNav from "@/components/TopNav/CompanyTopNav";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";

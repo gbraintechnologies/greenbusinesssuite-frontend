@@ -8,15 +8,16 @@ import SearchIcon from "@/public/icons/SearchIcon";
 import DataTable from "@/components/DataTable/DataTable";
 import services from "@/services";
 import Nav from "./components/Nav";
+import { deleteSectorByID } from "@/services/features/sectorService";
 
-interface JurisdictionUser {
+interface SectorID {
   id: number;
   // Add other properties relevant to your data
 }
 
 interface RowData {
   id: number;
-  data: JurisdictionUser;
+  data: SectorID;
 }
 
 interface ActionMenuProps {

@@ -12,6 +12,7 @@ import { BsArrowLeft } from "react-icons/bs";
 import FormResponse from "../../components/FormResponse/FormResponse";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import toast from "react-hot-toast";
 
 const page = ({ params }: any) => {
   let formID = params.formId;
@@ -46,24 +47,25 @@ const page = ({ params }: any) => {
     formUserResponse &&
     mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData);
 
-  console.log("merged form ", mergedForm);
   const router = useRouter();
 
   const pdfRef = React.useRef(null);
 
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
     setPdfGenerating(true);
     const input: any = pdfRef?.current;
 
+
     if (input) {
       html2canvas(input, {
-        scale: 2,
-        windowWidth: input?.scrollWidth,
-        windowHeight: input?.scrollHeight,
+        scale: 3, 
+        width: input.scrollWidth,
+        height: input.scrollHeight,
       })
         .then((canvas) => {
           const imgData = canvas.toDataURL("image/png");
-          const pdf = new jsPDF("p", "mm", "a4");
+          const pdf = new jsPDF("p", "mm", "a4", true);
+          console.log('pdf ', pdf);
           const width = pdf.internal.pageSize.getWidth();
           const height = pdf.internal.pageSize.getHeight();
           const imgWidth = canvas.width;
@@ -71,7 +73,6 @@ const page = ({ params }: any) => {
           const ratio = Math.min(width / imgWidth, height / imgHeight);
           const imgX = (width - imgWidth * ratio) / 2;
           const imgY = 10;
-
           // meta data
           const date = new Date().toLocaleDateString("en-us", {
             day: "numeric",

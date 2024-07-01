@@ -104,7 +104,6 @@ const Page = () => {
       }
     }
 
-    // Check for combined fields (e.g., names that might be split)
     if (
       hasValueChanged(
         `${initialValues.adminFirstName} ${initialValues.adminLastName}`,
@@ -123,7 +122,6 @@ const Page = () => {
       return true;
     }
 
-    // Check for phone
     if (hasValueChanged(companyData?.primary_contact_phone_number, phone)) {
       return true;
     }

@@ -68,10 +68,10 @@ authApi.interceptors.response.use(
           localStorage.setItem("user", null);
           // @ts-ignore
           localStorage.setItem("auth", null);
-          window.location.replace("/login");
-          window.location.reload();
+          window.location.replace("/");
+          // window.location.reload();
           toast.dismiss();
-          toast.error("Please login to continue");
+          toast.error("Please login to continue | A");
         });
     }
 

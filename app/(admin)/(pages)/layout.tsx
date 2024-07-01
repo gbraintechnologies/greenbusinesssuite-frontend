@@ -7,7 +7,7 @@ import { redirect, usePathname, useRouter } from "next/navigation";
 
 // components
 import SideNav from "@/components/SideNav/SideNav";
-import TopNav from "@/components/TopNav/TopNav";
+import TopNav from "@/components/TopNav/AdminTopNav";
 import BuilderNav from "./forms/builder/FormTopNav";
 
 // hooks
