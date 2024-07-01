@@ -19,6 +19,15 @@ import { Menu, Transition } from "@headlessui/react";
 import { GridColDef } from "@mui/x-data-grid";
 import { createPortal } from "react-dom";
 
+// TODO: UPDATE: USING THE DROPDOWN COMPONENT FROM NEXT UI
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/dropdown";
+import { Button } from "@nextui-org/button";
+
 export interface IFilter {
   id: number;
   name: string;
@@ -165,7 +174,7 @@ function CompanySetup() {
           </Menu.Items>
         </Transition>
       </Menu>,
-      document.body 
+      document.body
     );
   };
 
@@ -244,17 +253,48 @@ function CompanySetup() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-          <Menu as="div" className="relative text-left z-20 inline-block">
-            <Menu.Button as="button">
-              <BsThreeDots size={20} />
-            </Menu.Button>
-            
-          </Menu>
+        <>
+          {/* TODO: NEW: USING THE DROPDOWN COMPONENT FROM NEXTUI: SUPPORTS
+          DYNAMIC POSITIONING OF MENU TO AVOID CLIPPING WHEN ELEMENT IS AT AN
+          EDGE */}
+          <Dropdown>
+            <DropdownTrigger>
+              <Button variant="bordered">
+                {" "}
+                <BsThreeDots size={20} />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
+              aria-label="Static Actions"
+            >
+              <DropdownItem
+                key="view"
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
+                <Link href={"/company-setup/profile?id=" + params.row.data.id}>
+                  View Company
+                </Link>
+              </DropdownItem>
+              <DropdownItem
+                key="edit"
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
+                <Link
+                  href={"/company-setup/profile/edit?id=" + params.row.data.id}
+                >
+                  Edit Company
+                </Link>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </>,
       ],
     },
   ];
 
   const roles: any = [];
+
   return (
     <div className="w-full pb-20 ">
       <Nav />
@@ -269,11 +309,12 @@ function CompanySetup() {
           <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </div>
       </div>
-        <DataTable
-          isLoading={isLoading || searchLoading}
-          rows={rows}
-          columns={columns}
-        />
+
+      <DataTable
+        isLoading={isLoading || searchLoading}
+        rows={rows}
+        columns={columns}
+      />
     </div>
   );
 }

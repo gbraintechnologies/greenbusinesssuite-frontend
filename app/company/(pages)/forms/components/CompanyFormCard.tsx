@@ -30,7 +30,7 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
 
   const options = [
     {
-      title: "Preview Forms",
+      title: "Details",
       func: () => {
         router.push(`/company/forms/${id}`);
       },

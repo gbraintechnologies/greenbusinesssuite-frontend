@@ -27,7 +27,7 @@ import useUser from "@/hooks/useUser";
 //
 
 function CompanyAdminAuth() {
-  const { addCompanyAdminData, companyAdmin, removeCompanyAdmin } =
+  const { addCompanyAdminData, companyAdmin, setCompany, removeCompanyAdmin } =
     useCompany();
   const { auth, addAuthData, removeAuth } = useAuth();
   const { removeAdmin } = useAdmin();
@@ -107,6 +107,7 @@ function CompanyAdminAuth() {
         } else if (user?.data?.profiles[0]?.role_id === 6) {
           addCompanyAdminData(user?.data);
           toast.success("Logged in");
+
           router.push("/company");
         } else {
           removeAuth();

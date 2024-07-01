@@ -126,12 +126,12 @@ function ProcessInvite() {
           let field = section?.formFields[j];
           formFields.push({
             id: field?.id,
-            response: field?.response,
+            response: field?.response ? field?.response : null,
             formFieldId: field?.id,
             fieldName: field?.name,
             isStatisticalField: field?.isStatisticalField
               ? field?.isStatisticalField
-              : "",
+              : false,
             statisticalFunction: field?.statisticalFunction
               ? field?.statisticalFunction
               : "",
@@ -140,7 +140,6 @@ function ProcessInvite() {
         }
         formSections.push({
           id: section?.id,
-
           formSectionId: section?.id,
           formDataFields: formFields,
         });
@@ -148,8 +147,6 @@ function ProcessInvite() {
 
       // stripping out data under formsections and form fields
       let inputData = {
-        name: data?.name,
-        layout: data?.layout,
         formSections: formSections,
       };
 
