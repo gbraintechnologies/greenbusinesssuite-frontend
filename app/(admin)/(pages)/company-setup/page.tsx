@@ -108,10 +108,8 @@ function CompanySetup() {
         companyDataInfo,
         customFields
       );
-      console.log('edit response ', response);
-      console.log("now invaoliads");
+
       await queryClient.invalidateQueries();
-      console.log("companies invalidated");
       toast.success("Company status updated successfully");
     } catch (error) {
       toast.error("Failed to update company status");
@@ -120,7 +118,6 @@ function CompanySetup() {
 
   //Status Filter
   useEffect(() => {
-    console.log("companies triggered...");
     if (activeFilter.value === "all") {
       setAggregatedCompanies(companies);
     } else {
