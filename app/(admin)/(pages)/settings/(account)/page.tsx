@@ -104,7 +104,7 @@ function Account() {
                     className="rounded-full w-32 h-32 object-cover"
                   />
                 ) : (
-                  <button className="w-20 h-8 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
+                  <button className="w-20 h-20 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
                     {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
                     {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
                   </button>
