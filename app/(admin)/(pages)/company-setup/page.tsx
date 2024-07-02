@@ -83,7 +83,7 @@ function CompanySetup() {
   >([]);
 
   const { data: companies, isLoading } = useQuery({
-    queryKey: ["all companies"],
+    queryKey: ["companies"],
     queryFn: services.getAllCompanies(),
   });
 
@@ -103,12 +103,13 @@ function CompanySetup() {
     delete companyDataInfo[keyToDelete];
 
     try {
-      const response = services.editCompanyWithCustomFields(
+      const response = await services.editCompanyWithCustomFields(
         companyData.id,
         companyDataInfo,
         customFields
       );
-      queryClient.invalidateQueries({ queryKey: ["all companies"] });
+
+      await queryClient.invalidateQueries();
       toast.success("Company status updated successfully");
     } catch (error) {
       toast.error("Failed to update company status");
