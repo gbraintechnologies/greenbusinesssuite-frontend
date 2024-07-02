@@ -28,15 +28,14 @@ export const CompanyProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    if (Boolean(companyAdmin) & Boolean(companyData)) {
-      //
+    if (Boolean(companyData)) {
       setCompany(companyData);
     } else {
-      if (Boolean(companyAdmin)) {
+      if (Boolean(companyAdmin?.profiles[0]?.id) && !Boolean(company)) {
         refetch();
       }
     }
-  }, [companyAdmin, companyData]);
+  }, [companyAdmin, companyData, isLoading]);
 
   const addCompanyAdminData = (data) => {
     setCompanyAdmin((prev) => ({ ...prev, ...data }));

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -19,8 +19,7 @@ import useAdmin from "@/hooks/useAdmin";
 import useAuth from "@/hooks/useAuth";
 
 function SettingsSideNav() {
-  const { admin, setAdmin } = useAdmin();
-  const { user, setUser } = useUser();
+  const { user, setUser, removeUser } = useUser();
   const { removeAuth } = useAuth();
 
   const router = useRouter();
@@ -41,25 +40,25 @@ function SettingsSideNav() {
 
   const [showLogOutModal, setShowLogOutModal] = useState(false);
 
-  const [isClient, setIsClient] = useState(false)
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true)
-  }, [])
+    setIsClient(true);
+  }, []);
 
   return (
     <aside className="w-[20rem] sticky   px-5 p-2">
       {/* USER INFORMATION & PICTURE */}
       <div className="flex gap-3 items-center mb-5">
         <div className="flex items-center">
-          {admin?.custom_profile_values &&
-          admin?.custom_profile_values.find(
+          {user?.custom_profile_values &&
+          user?.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1
           )?.value?.length > 1 ? (
             <Image
               alt="profile"
               src={
-                admin?.custom_profile_values.find(
+                user?.custom_profile_values.find(
                   (item: any) => item.custom_profile_item_id === 1
                 ).value
               }
@@ -69,14 +68,14 @@ function SettingsSideNav() {
             />
           ) : (
             <button className="w-10 h-10 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
-              {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
-              {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
+              {user?.first_name && user?.first_name[0]?.toUpperCase()}
+              {user?.last_name && user?.last_name[0]?.toUpperCase()}
             </button>
           )}
         </div>
         <div>
-           <h4 className="font-bold text-lg">
-            {admin?.first_name} {admin?.last_name}
+          <h4 className="font-bold text-lg">
+            {user?.first_name} {user?.last_name}
           </h4>
           <p className="text-sm font-light">Your personal account</p>
         </div>
@@ -133,7 +132,7 @@ function SettingsSideNav() {
               onClick={() => {
                 setShowLogOutModal(false);
                 router.push("/client/auth");
-                setAdmin(null);
+                removeUser();
                 removeAuth();
                 setUser(null);
                 toast.success("Logged out");

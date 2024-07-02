@@ -26,7 +26,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
               <Image
                 width={300}
                 height={300}
-                className="p-1 rounded-lg"
+                className="p-1 h-8 object-contain rounded-xl"
                 alt={company?.company_name}
                 src={company?.company_logo}
               />
