@@ -36,8 +36,6 @@ const page = () => {
 
   const router = useRouter();
 
-  console.log("user data ", userData);
-
   useEffect(() => {
     let phone = userData?.mobile_phone_number;
     phone?.charAt(0) == "0" ? (phone = phone.replace("0", "233")) : phone;

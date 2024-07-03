@@ -64,7 +64,6 @@ const UserForm = ({
 }: Props) => {
   const inputFileRef = React.useRef();
 
-  console.log("initial values from compo ", initialValues);
 
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>();
 
@@ -99,14 +98,10 @@ const UserForm = ({
           label: data[i].role_name,
         });
       }
-      console.log("temp ", temp);
 
       if (roleId && temp.length > 0) {
         setSelectedRole(temp.find((role: any) => role.id === roleId));
-        console.log(
-          "role o",
-          temp.find((role: any) => role.id === roleId)
-        );
+      
       }
       // @ts-ignore
       setRoles(temp);

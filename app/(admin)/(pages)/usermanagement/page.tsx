@@ -83,7 +83,6 @@ function UserManagement() {
 
   const blacklistUser = async (userId: string) => {
     try {
-      console.log('blacklisting uuuuu....')
       await services.blacklistUser(userId);
       await queryClient.invalidateQueries({ queryKey: ["all users"] });
       toast.success("User blacklisted successfully");

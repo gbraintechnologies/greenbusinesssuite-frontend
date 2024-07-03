@@ -91,7 +91,6 @@ function page() {
       status: data?.user_status,
     };
 
-    console.log("my valuesss ", values)
 
     setInitialValues(values);
 
@@ -99,7 +98,6 @@ function page() {
     phone?.charAt(0) == "0" ? (phone = phone.replace("0", "233")) : phone;
     setPhone(phone);
 
-    console.log('phone ', phone)
 
     setProfilePic(data?.custom_profile_values?.find(
       (item: any) => item?.custom_profile_item_id === 1
