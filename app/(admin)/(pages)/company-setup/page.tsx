@@ -109,7 +109,7 @@ function CompanySetup() {
         customFields
       );
 
-      await queryClient.invalidateQueries();
+      await queryClient.invalidateQueries({queryKey: ["companies"]});
       toast.success("Company status updated successfully");
     } catch (error) {
       toast.error("Failed to update company status");

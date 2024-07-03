@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Nav from "./components/Nav";
 
 // services
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 
 // icons
@@ -18,6 +18,15 @@ import UserIcon from "@/public/icons/UserIcon";
 import DataTable from "@/components/DataTable/DataTable";
 import StatusPill from "@/components/StatusPill/StatusPill";
 import RoleFilter from "./components/RoleFilter";
+import Link from "next/link";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
+import { Button } from "@nextui-org/button";
+import toast from "react-hot-toast";
 
 function UserManagement() {
   const [filters, setFilters] = useState([
@@ -38,6 +47,8 @@ function UserManagement() {
   const [activeRoleFilter, setActiveRoleFilter] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
+
+  const queryClient = useQueryClient();
 
   // fetch all users
   const { data, isLoading } = useQuery({
@@ -69,6 +80,38 @@ function UserManagement() {
   useEffect(() => {
     refetch();
   }, []);
+
+  const blacklistUser = async (userId: string) => {
+    try {
+      console.log('blacklisting uuuuu....')
+      await services.blacklistUser(userId);
+      await queryClient.invalidateQueries({ queryKey: ["all users"] });
+      toast.success("User blacklisted successfully");
+    } catch (error) {
+      toast.error("Failed to blacklist user");
+    }
+  };
+  const editUserStatus = async (userData: any, status: any) => {
+    let userDataInfo = { ...userData, user_status: status };
+
+    const keyToDelete = "custom_profile_values";
+
+    let customFields = userDataInfo[keyToDelete];
+
+    delete userDataInfo[keyToDelete];
+
+    try {
+      await services.editUserWithCustomFields(
+        userDataInfo,
+        customFields,
+        userData.id
+      );
+      toast.success("User status updated successfully");
+      await queryClient.invalidateQueries({ queryKey: ["all users"] });
+    } catch (error) {
+      toast.error("User to update company status");
+    }
+  };
 
   const columns = [
     {
@@ -127,9 +170,57 @@ function UserManagement() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id}>
-          <BsThreeDots size={20} />
-        </div>,
+        <Dropdown>
+          <DropdownTrigger>
+            <Button variant="bordered">
+              {" "}
+              <BsThreeDots size={20} />
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
+            aria-label="Static Actions"
+          >
+            <DropdownItem
+              key="view"
+              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+            >
+              <Link href={"/usermanagement/profile?id=" + params.row.data.id}>
+                View User
+              </Link>
+            </DropdownItem>
+            <DropdownItem
+              key="edit"
+              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+            >
+              <Link href={"/usermanagement/edit-user?id=" + params.row.data.id}>
+                Edit User
+              </Link>
+            </DropdownItem>
+            {(params.row.data?.user_status?.toLowerCase() === "inactive") || (params.row.data?.user_status?.toLowerCase() === "blacklisted")  ? (
+              <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                <button
+                  onClick={() => editUserStatus(params.row.data, "ACTIVE")}
+                >
+                  Activate User
+                </button>
+              </DropdownItem>
+            ) : (
+              <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                <button
+                  onClick={() => editUserStatus(params.row.data, "INACTIVE")}
+                >
+                  Deactivate User
+                </button>
+              </DropdownItem>
+            )}
+            <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+              <button onClick={() => blacklistUser(params.row.data.id)}>
+                Blacklist User
+              </button>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>,
       ],
     },
   ];
