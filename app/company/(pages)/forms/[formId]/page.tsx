@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // services
 import services from "@/services";
@@ -16,12 +16,13 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { VscLink } from "react-icons/vsc";
 import Tabs from "@/components/Tabs/Tabs";
 import DatePicker from "../components/DatePicker";
-import DownloadIcon from "@/public/icons/DownloadIcon";
+
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import ResponseDataTable from "../components/ResponseTable/ResponseDataTable";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import PublishFormButton from "@/app/(admin)/(pages)/forms/builder/PublishFormButton";
+import Analytics from "./_analytics/Analytics";
 
 function SingleFormCompany({ params }: any) {
   const [filters, setFilters] = useState([
@@ -131,9 +132,9 @@ function SingleFormCompany({ params }: any) {
             />
           </div>
         </div>
-        {activeFilter.id == 1 && (
-          <div className="mb-5 text-[#475569]">{form?.description}</div>
-        )}
+
+        <div className="mb-5 text-[#475569]">{form?.description}</div>
+
         <div
           className={
             " mt-5 " +
@@ -159,7 +160,8 @@ function SingleFormCompany({ params }: any) {
               <DatePicker />
             </div>
           ) : (
-            <DatePicker />
+            <></>
+            // <DatePicker />
           )}
         </div>
         {activeFilter.id == 1 && (
@@ -182,25 +184,7 @@ function SingleFormCompany({ params }: any) {
             />
           </div>
         )}
-        {activeFilter.id == 1 && (
-          <div className="mt-4 border border-[#E2E8F0] bg-white  rounded-lg  py-3">
-            <div className="flex justify-between items-center border-b px-5 border-[#E2E8F0] pb-4">
-              <div className="font-semibold ">Response Analytics</div>
-              <button
-                className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg"
-                // onClick={() =>
-                //   exportToExcel(
-                //     formResponseData?.flatMap((entry: any) => entry.inputData)
-                //   )
-                // }
-              >
-                <DownloadIcon />
-                <div className="text-sm">Download responses</div>
-              </button>
-            </div>
-            <AnalyticsGrid />
-          </div>
-        )}
+        {activeFilter.id == 1 && <Analytics formID={formID} />}
         {activeFilter.id == 2 && (
           <div className="mt-4">
             <ResponseDataTable
@@ -211,7 +195,6 @@ function SingleFormCompany({ params }: any) {
             />
           </div>
         )}
-        {/* TODO: SET UP TABS FOR INSIGHTS AND RESPONSES */}
       </div>
     );
   }

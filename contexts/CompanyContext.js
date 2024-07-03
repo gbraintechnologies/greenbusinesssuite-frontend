@@ -22,16 +22,24 @@ export const CompanyProvider = ({ children }) => {
     refetch,
   } = useQuery({
     // @ts-ignore
-    queryKey: ["company", parseInt(companyAdmin?.profiles[0]?.id)],
-    queryFn: services.getCompanyById(Number(companyAdmin?.profiles[0]?.id)),
-    enabled: Boolean(companyAdmin?.profiles[0]?.id),
+    queryKey: [
+      "company",
+      parseInt(companyAdmin?.custom_profile_values[0]?.value),
+    ],
+    queryFn: services.getCompanyById(
+      Number(companyAdmin?.custom_profile_values[0]?.value)
+    ),
+    enabled: Boolean(companyAdmin?.custom_profile_values[0]?.value),
   });
 
   useEffect(() => {
     if (Boolean(companyData)) {
       setCompany(companyData);
     } else {
-      if (Boolean(companyAdmin?.profiles[0]?.id) && !Boolean(company)) {
+      if (
+        Boolean(companyAdmin?.custom_profile_values[0]?.id) &&
+        !Boolean(company)
+      ) {
         refetch();
       }
     }
