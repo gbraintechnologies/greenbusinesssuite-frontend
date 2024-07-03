@@ -30,6 +30,10 @@ export const createUser = (data: any) => {
   return authApi.post("/users/create", data);
 };
 
+export const blacklistUser = (userId: string) => {
+  return authApi.post("/users/blacklist/" + userId);
+}
+
 export const createUserWithCustomProfiles = (
   data: any,
   custom_profiles: any
@@ -40,11 +44,16 @@ export const createUserWithCustomProfiles = (
   });
 };
 
-export const editUserWithCustomProfiles = (data: any, custom_profiles: any) => {
-  return authApi.put("/users/edit_with_custom_fields/", {
-    user_data: data,
-    custom_profiles,
-  });
+export const editUserWithCustomProfiles = (id: any,data: any, custom_profiles: any) => {
+  if(id){
+
+    return authApi.put("/users/edit_with_custom_fields/" + id, {
+      user_data: data,
+      custom_profiles,
+    });
+  } else {
+    throw new Error("User ID is required")
+  }
 };
 
 export const editUserWithCustomFields = (data: any, custom_fields: CustomField[], userId: string) => {

@@ -107,6 +107,8 @@ const CompanyForm: React.FC<Props> = ({
     }
   }, [companyLogo]);
 
+  console.log('company logo ', companyLogo)
+
   return (
     <>
       <Formik
