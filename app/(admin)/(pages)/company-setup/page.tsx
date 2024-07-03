@@ -11,7 +11,7 @@ import UserIcon from "@/public/icons/UserIcon";
 import StatusPill from "@/components/StatusPill/StatusPill";
 import { BsThreeDots } from "react-icons/bs";
 import DataTable from "@/components/DataTable/DataTable";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 import { CompanyInfo } from "@/types";
 import Link from "next/link";
@@ -27,6 +27,7 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
+import toast from "react-hot-toast";
 
 export interface IFilter {
   id: number;
@@ -49,11 +50,18 @@ interface IRow {
   data: IRowData;
 }
 function CompanySetup() {
+  const queryClient = useQueryClient();
+
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "All", value: "all" },
     { id: 2, name: "Active", value: "active" },
     { id: 3, name: "Inactive", value: "inactive" },
     { id: 4, name: "Suspended", value: "suspended" },
+  ]);
+
+  const [statuses, setStatuses] = useState([
+    { id: 2, name: "Active", value: "ACTIVE" },
+    { id: 3, name: "Inactive", value: "INACTIVE" },
   ]);
 
   const [activeFilter, setActiveFilter] = useState<IFilter>({
@@ -75,7 +83,7 @@ function CompanySetup() {
   >([]);
 
   const { data: companies, isLoading } = useQuery({
-    queryKey: ["all companies"],
+    queryKey: ["companies"],
     queryFn: services.getAllCompanies(),
   });
 
@@ -84,6 +92,29 @@ function CompanySetup() {
     queryFn: services.searchCompany(searchTerm),
     enabled: Boolean(searchTerm),
   });
+
+  const editCompanyStatus = async (companyData: any, status: string) => {
+    let companyDataInfo = { ...companyData, status: status };
+
+    const keyToDelete = "company_custom_values";
+
+    let customFields = companyDataInfo[keyToDelete];
+
+    delete companyDataInfo[keyToDelete];
+
+    try {
+      const response = await services.editCompanyWithCustomFields(
+        companyData.id,
+        companyDataInfo,
+        customFields
+      );
+
+      await queryClient.invalidateQueries();
+      toast.success("Company status updated successfully");
+    } catch (error) {
+      toast.error("Failed to update company status");
+    }
+  };
 
   //Status Filter
   useEffect(() => {
@@ -133,50 +164,6 @@ function CompanySetup() {
       setRows([]);
     }
   }, [aggregatedCompanies]);
-
-  const ActionMenu = ({ params }: any) => {
-    return createPortal(
-      <Menu as="div" className="relative text-left z-50">
-        <Menu.Button as="button">
-          <BsThreeDots size={20} />
-        </Menu.Button>
-        <Transition
-          as={Fragment}
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <Menu.Items className="absolute right-0 w-48 px-1 py-1 mt-2 bg-white border border-[#F1F5F9] rounded-md shadow-lg focus:outline-none z-50">
-            <Menu.Item>
-              {({ active }) => (
-                <Link
-                  className={`${
-                    active ? "bg-[#F1F5F9]" : ""
-                  } items-center w-full px-2 py-2 rounded-md text-sm text-[#334155]`}
-                  href={`/company-setup/profile?id=${params.row.data.id}`}
-                >
-                  View Company
-                </Link>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <Link
-                  className={`${
-                    active ? "bg-[#F1F5F9]" : ""
-                  } items-center w-full px-2 py-2 rounded-md text-sm text-[#334155]`}
-                  href={`/company-setup/profile/edit?id=${params.row.data.id}`}
-                >
-                  Edit Company
-                </Link>
-              )}
-            </Menu.Item>
-          </Menu.Items>
-        </Transition>
-      </Menu>,
-      document.body
-    );
-  };
 
   const columns: GridColDef[] = [
     {
@@ -286,6 +273,25 @@ function CompanySetup() {
                   Edit Company
                 </Link>
               </DropdownItem>
+              {params.row.data?.status?.toLowerCase() === "active" ? (
+                <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                  <button
+                    onClick={() =>
+                      editCompanyStatus(params.row.data, "INACTIVE")
+                    }
+                  >
+                    Deactivate Company
+                  </button>
+                </DropdownItem>
+              ) : (
+                <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                  <button
+                    onClick={() => editCompanyStatus(params.row.data, "ACTIVE")}
+                  >
+                    Activate Company
+                  </button>
+                </DropdownItem>
+              )}
             </DropdownMenu>
           </Dropdown>
         </>,

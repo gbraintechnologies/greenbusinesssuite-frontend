@@ -74,6 +74,13 @@ export const getFormResponsesById = (id: number) => {
   return authApi.get(`/forms/response/data/${id}`);
 };
 
+export const formResponseAnalytics = (id: number, companyName: string) => {
+  return () =>
+    authApi
+      .get(`/forms/response/analytics/${id}/${companyName}`)
+      .then((res) => res.data);
+};
+
 export const getFormStatusCountById = (id: number) => {
   return () =>
     authApi

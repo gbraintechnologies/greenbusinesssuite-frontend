@@ -190,7 +190,6 @@ export const FormProvider = ({ children }) => {
 
   // fields
   const addFormField = (section, data) => {
-    console.log("adding data", data);
     setLoadingField(true);
     let sections = form?.formSections;
     //
@@ -210,8 +209,6 @@ export const FormProvider = ({ children }) => {
         tempSections.push(sections[i]);
       }
     }
-
-    console.log("temp sections", tempSections);
 
     // update form
     updateRemoteForm({
