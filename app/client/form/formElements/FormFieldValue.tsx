@@ -20,7 +20,7 @@ function FormFieldValue({ field, section }: any) {
 
   const { saveSingleResponse } = useClientForm();
 
-  const inputStyle = `border-[0.7px] w-full focus:outline-primary-green text-black placeholder:text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg`;
+  const inputStyle = `border-[0.7px] w-full  text-black placeholder:text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg`;
   const labelStyle = `font-sm text-gray-400`;
 
   switch (fieldDataType) {

@@ -28,12 +28,11 @@ function CurrencySetup() {
   });
 
   useEffect(() => {
-   // alert(JSON.stringify(data))
+    // alert(JSON.stringify(data))
     if (data) {
       setRows(data);
     }
   }, [data]);
-
 
   const columns = [
     {
@@ -52,13 +51,16 @@ function CurrencySetup() {
             />
           </label>
           <div className="w-10 h-10 flex items-center justify-center">
-            <span className=""><img src={Countrieses(params.row.countryName)?.flags.png} alt={Countrieses(params.row.countryName)?.name.common} style={{ height: "auto", width: "30px" }} /></span>
-
+            <span className="">
+              <img
+                src={Countrieses(params.row.countryName)?.flags.png}
+                alt={Countrieses(params.row.countryName)?.name.common}
+                style={{ height: "auto", width: "30px" }}
+              />
+            </span>
           </div>
           <div>
-            <p className="font-medium">
-              {params.row.currency}
-            </p>
+            <p className="font-medium">{params.row.currency}</p>
           </div>
         </div>,
       ],
@@ -72,9 +74,7 @@ function CurrencySetup() {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="flex flex-col gap-2">
-          <p className="font-medium text-sm">
-            {params.row.symbol}
-          </p>
+          <p className="font-medium text-sm">{params.row.symbol}</p>
         </div>,
       ],
     },
@@ -91,18 +91,14 @@ function CurrencySetup() {
     },
   ];
 
-
-
-
   return (
     <div className="w-full pb-20 ">
       <Nav />
 
       {/* Search and filters */}
       <div className="flex items-center px-5 justify-between my-4">
-
         <div className="flex items-center gap-3">
-          <div className="border shadow-sm focus:outline-primary-green border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+          <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
             <SearchIcon />
             <input
               value={searchTerm}
@@ -115,14 +111,9 @@ function CurrencySetup() {
       </div>
 
       {/* Table */}
-      <DataTable
-        isLoading={isLoading}
-        rows={rows}
-        columns={columns}
-      />
+      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
     </div>
   );
 }
 
 export default CurrencySetup;
-

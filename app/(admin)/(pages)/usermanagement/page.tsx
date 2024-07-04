@@ -372,7 +372,7 @@ function UserManagement() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="border shadow-sm focus:outline-primary-green border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+          <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
             <SearchIcon />
             <input
               value={searchTerm}
