@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 // services
 import services from "@/services";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
-// components
-import AnalyticsGrid from "../components/Analytics/AnalyticsGrid";
 
 import toast from "react-hot-toast";
 

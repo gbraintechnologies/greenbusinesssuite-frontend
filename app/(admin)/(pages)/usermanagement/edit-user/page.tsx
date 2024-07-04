@@ -28,6 +28,8 @@ import Image from "next/image";
 
 //
 import "../new-user/index.css";
+import UserForm from "../components/UserForm";
+import Modal from "@/components/Modal/Modal";
 
 function page() {
   const search = useSearchParams();
@@ -41,6 +43,11 @@ function page() {
 
   const [phone, setPhone] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
+
+  const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const [roleId, setRoleId] = useState("")
+
 
   const id = search.get("id");
 
@@ -63,20 +70,54 @@ function page() {
       .required("Email address is required"),
   });
 
+  
+  const [profilePic, setProfilePic] = useState(""); 
+
+  const [initialValues, setInitialValues] = useState({
+    email: "",
+    firstname: "",
+    lastname: ""
+  })
+
+  useEffect(() => {
+
+    setRoleId(data?.profiles?.length > 0 && data?.profiles[0]?.role_id);
+
+    let values = {
+      email: data?.email,
+      username: data?.username,
+      firstname: data?.first_name,
+      lastname: data?.last_name,
+      status: data?.user_status,
+    };
+
+
+    setInitialValues(values);
+
+    let phone = data?.phone_number;
+    phone?.charAt(0) == "0" ? (phone = phone.replace("0", "233")) : phone;
+    setPhone(phone);
+
+
+    setProfilePic(data?.custom_profile_values?.find(
+      (item: any) => item?.custom_profile_item_id === 1
+    )?.value) // For Profile Picture
+  }, [data]);
+
   const inputFileRef = React.useRef();
 
   const editUser = async (values: any, resetForm: any) => {
-    let data = {
+    let finalData = {
       email: values.email,
       username: values.firstname.toLowerCase() + values.lastname.toLowerCase(),
       first_name: values.firstname,
       last_name: values.lastname,
       phone_number: phone,
       mobile_phone_number: phone,
-      user_status: "ACTIVE",
+      user_status: data?.user_status,
     };
 
-    let loading = toast.loading("Creating user. Please wait...");
+    let loading = toast.loading("Editing user. Please wait...");
 
     // upload image first, then use image url when creating user
     const profilePicURL =
@@ -85,13 +126,13 @@ function page() {
     const custom_profiles = [
       {
         custom_profile_item_id: 1,
-        value: profilePicURL?.file_url || "",
+        value: profileImage ? profilePicURL?.file_url : profilePic,
       },
     ];
 
     setLoading(true);
     services
-      .editUserWithCustomProfiles(data, custom_profiles)
+      .editUserWithCustomProfiles(id,finalData, custom_profiles)
       .then((res: any) => {
         setLoading(false);
 
@@ -101,10 +142,6 @@ function page() {
           .assignRoleToUser(res.data.id, selectedRole?.value)
           .then((res) => {
             toast.dismiss(loading);
-            resetForm();
-            setProfileImage(null);
-            setPhone("");
-            setSelectedRole(null);
             toast.success("Edited user successfully");
           })
           .catch((e: any) => {
@@ -116,6 +153,7 @@ function page() {
         setLoading(false);
         toast.dismiss(loading);
         toast.dismiss();
+        console.log('error ',e);
 
         if (Array.isArray(e?.response?.data?.detail)) {
           e?.response?.data?.detail?.map((error: any) => {
@@ -127,169 +165,68 @@ function page() {
       });
   };
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return (
+      <div className="h-[20rem] flex items-center justify-center">
       <div>
         <LoadingIcon />
+        <p className="mt-2 text-xs text-gray-500">Fetching user details</p>
       </div>
+    </div>
     );
   }
 
-  if (data) {
-    // formik
-    let initialValues = {
-      email: data?.email,
-      username: data?.username,
-      firstname: data?.first_name,
-      lastname: data?.last_name,
-      status: data?.user_status,
-    };
+  return (
+    <div className="pb-40 px-5">
+      {/* Form */}
+      <UserForm
+        initialValues={initialValues}
+        setShowCancelModal={setShowCancelModal}
+        submitFn={editUser}
+        loading={loading}
+        setLoading={setLoading}
+        phone={phone}
+        setPhone={setPhone}
+        roleId={roleId}
+        profileImage={profileImage}
+        setProfileImage={setProfileImage}
+        profilePic={profilePic}
+        setProfilePic={setProfilePic}
+        profilePicPresentOnLoad={true}
+      />
 
-    return (
-      <div className="pb-40 px-5">
-        {/* Form */}
-        <Formik
-          initialValues={initialValues}
-          onSubmit={(values, { resetForm }) => {
-            editUser(values, resetForm);
-          }}
-          validationSchema={UserSchema}
-        >
-          {({ errors }) => (
-            <Form>
-              {/* HEADER */}
-              <div className="w-full text-primary-dark  flex justify-between">
-                <h3 className="font-semibold text-xl">Edit user account</h3>
+      {/* CANCEL MODAL: DISCARD ALL CHANGES */}
+      <Modal
+        isOpen={showCancelModal}
+        setIsOpen={setShowCancelModal}
+        title="Are you sure you want to discard all changes?"
+      >
+        <div>
+          <p className="px-5 mt-5 text-[#334155]">
+            Discard changes would delete all the changes you have made. <br />{" "}
+            Nothing would be saved.
+          </p>
 
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => router.back()}
-                    className="bg-gray-50 border border-gray-200 shadow-sm py-2 flex text-primary-dark text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-                  >
-                    Discard
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-                  >
-                    {loading ? (
-                      <>
-                        <LoadingIcon />
-                        Saving
-                      </>
-                    ) : (
-                      <>
-                        {" "}
-                        <HiOutlineInboxArrowDown /> Apply Edits
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* profile picture */}
-              <div className="relative w-[140px] h-[140px] rounded-full">
-                {profileImage ? (
-                  <div className="rounded-full overflow-hidden w-[140px] h-[140px]">
-                    <Image
-                      src={URL.createObjectURL(profileImage)}
-                      alt="profile"
-                      width={140}
-                      height={140}
-                      className="rounded-full h-full w-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="rounded-full  flex items-center justify-center w-[140px] h-[140px] bg-slate-50">
-                    <BigUserIcon />
-                  </div>
-                )}
-
-                <input
-                  type="file"
-                  // @ts-ignore
-                  ref={inputFileRef}
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    setProfileImage(e.target.files && e.target.files[0]);
-                  }}
-                />
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    // @ts-ignore
-                    inputFileRef?.current?.click();
-                  }}
-                  className="absolute flex items-center gap-1 border hover:bg-gray-100 border-gray-300 text-sm bg-white rounded-lg px-3 py-1 bottom-4 -right-8"
-                >
-                  <MdOutlineEdit />
-                  Edit
-                </button>
-              </div>
-
-              {/* FORM */}
-              <div className="max-w-2xl rounded-lg py-5 pb-10">
-                {/* NAME */}
-                <div className="flex gap-10">
-                  <div className="input-holder">
-                    <label>First name</label>
-                    <Field
-                      style={getStyles(errors, "firstname")}
-                      name="firstname"
-                      placeholder="First name"
-                    />{" "}
-                    <ShowError name="firstname" />
-                  </div>
-
-                  <div className="input-holder">
-                    <label>Last name</label>
-                    <Field
-                      style={getStyles(errors, "lastname")}
-                      name="lastname"
-                      placeholder="Last name"
-                    />
-                    <ShowError name="lastname" />
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div className="input-holder">
-                  <label>Email</label>
-                  <Field
-                    style={getStyles(errors, "lastname")}
-                    name="email"
-                    placeholder="Email"
-                  />
-                  <ShowError name="email" />
-                </div>
-
-                {/* Phone */}
-                {/* <div className="input-holder">
-                <label>Phone number</label>
-                <div className="w-[50%]">
-                  <PhoneSelector phone={phone} setPhone={setPhone} />
-                </div>
-              </div>
-
-              <div className="input-holder">
-                <label>Roles</label>
-                <Dropdown
-                  selected={selectedRole}
-                  setSelected={setSelectedRole}
-                  options={roles}
-                />
-              </div> */}
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
-    );
-  }
+          <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              onClick={() => setShowCancelModal(false)}
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              onClick={() => {
+                router.back();
+              }}
+            >
+              Yes, discard changes
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
 }
 
 export default page;

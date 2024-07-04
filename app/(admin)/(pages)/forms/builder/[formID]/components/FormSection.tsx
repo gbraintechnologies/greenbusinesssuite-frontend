@@ -45,7 +45,7 @@ function FormSection({ section }: any) {
         <input
           value={localSection?.name}
           placeholder="Section title"
-          className="outline-none focus:outline-none w-full"
+          className="outline-none focus:outline-none w-full input-custom"
           onBlur={runUpdates}
           onChange={(e) => {
             setLocalSection((prev: any) => ({
@@ -60,7 +60,7 @@ function FormSection({ section }: any) {
         <input
           value={localSection?.description}
           placeholder="Section description"
-          className="outline-none focus:outline-none w-full"
+          className="outline-none focus:outline-none w-full input-custom"
           onBlur={runUpdates}
           onChange={(e) => {
             setLocalSection((prev: any) => ({

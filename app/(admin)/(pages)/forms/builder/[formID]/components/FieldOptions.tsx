@@ -8,10 +8,18 @@ import { Listbox, Transition } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import Border from "@/components/Border/Border";
 
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
+
 // icons
 
 import { IoIosArrowDown } from "react-icons/io";
 import ChoiceValuesEditing from "./ChoiceValuesEditing";
+import { capitalize } from "@mui/material";
 
 function FieldOptions() {
   const { activeField, updateActiveField } = useForm();
@@ -24,42 +32,26 @@ function FieldOptions() {
   }, [activeField]);
 
   const inputStyle =
-    "border border-gray-200 focus:outline-primary-green rounded-lg p-2";
+    "border border-gray-200 focus:outline-none rounded-lg p-2 ";
 
   const labelStyle = "font-light";
 
   const insightTypes = [
-    { id: 1, name: "None", displayType: null },
-    { id: 2, name: "Sum", displayType: "sum" },
-    { id: 3, name: "Average", displayType: "sum" },
+    { name: "None", displayType: null },
+    { name: "Sum", displayType: "single" },
+    { name: "Average", displayType: "single" },
+    { name: "Count", displayType: "bar-chart" },
   ];
 
-  const [selectedInsightType, setSelectedInsightType] = useState({
-    id: 1,
-    name: "None",
-  });
+  const displayTypes = [
+    { name: "Bar chart", value: "bar-chart" },
+    { name: "Pie chart", value: "pie-chart" },
+  ];
 
-  // Updating form field with insight type
+  // Updating  main form data
   useEffect(() => {
-    setLocalField((prev: any) => ({
-      ...prev,
-      isStatisticalField: selectedInsightType?.name === "None" ? false : true,
-      displayType: "bar-chart",
-      statisticalFunction:
-        selectedInsightType?.name === "None"
-          ? null
-          : selectedInsightType?.name.toLowerCase(),
-    }));
-    updateActiveField(activeField.section, {
-      ...localField,
-      isStatisticalField: selectedInsightType?.name === "None" ? false : true,
-      displayType: "bar-chart",
-      statisticalFunction:
-        selectedInsightType?.name === "None"
-          ? null
-          : selectedInsightType?.name.toLowerCase(),
-    });
-  }, [selectedInsightType]);
+    updateActiveField(activeField?.section, localField);
+  }, [localField]);
 
   if (localField) {
     const {
@@ -73,7 +65,7 @@ function FieldOptions() {
     } = localField;
 
     return (
-      <div className="bg-white overflow-y-auto pb-40 min-h-[100vh]  border-l-2 border-gray-200 p-3">
+      <div className="bg-white  pb-60 h-screen  no-scrollbar  overflow-y-scroll  border-l-2 border-gray-200 p-3">
         {/* TABS */}
         <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
           <button className="bg-white font-medium p-1 flex-1 rounded-lg">
@@ -126,6 +118,7 @@ function FieldOptions() {
                 setLocalField((prev: any) => ({
                   ...prev,
                   label: e.target.value,
+                  name: e.target.value,
                 }))
               }
               onBlur={() => updateActiveField(activeField.section, localField)}
@@ -147,7 +140,9 @@ function FieldOptions() {
               onBlur={() => updateActiveField(activeField.section, localField)}
             />
           </div>
-          <div className="flex flex-col gap-3">
+
+          {/* HINT */}
+          {/* <div className="flex flex-col gap-3">
             <label className={labelStyle}>Hint</label>
             <input
               value={name}
@@ -156,17 +151,20 @@ function FieldOptions() {
               onChange={(e) =>
                 setLocalField((prev: any) => ({
                   ...prev,
-                  name: e.target.value,
+                  hint: e.target.value,
                 }))
               }
               onBlur={() => updateActiveField(activeField.section, localField)}
             />
-          </div>
+          </div> */}
         </div>
 
         {/* CHOICE VALUES EDITING FOR DROPDOWNS AND CHECKBOXES */}
         {(fieldDataType === "dropdown" || fieldDataType === "checkboxes") && (
-          <ChoiceValuesEditing localField={localField} />
+          <ChoiceValuesEditing
+            choiceValues={choiceValues}
+            localField={localField}
+          />
         )}
 
         {/* HORIZONTAL ALIGNMENT */}
@@ -196,10 +194,56 @@ function FieldOptions() {
         </div>
 
         <Border />
-        {localField.fieldDataType === "number" && (
+
+        {/* INSIGHT TYPE */}
+        {(fieldDataType === "number" ||
+          fieldDataType === "dropdown" ||
+          fieldDataType === "checkboxes") && (
           <div>
             <p className="font-medium text-base mb-4">Insight Type</p>{" "}
-            <Listbox
+            <Dropdown>
+              <DropdownTrigger>
+                <button className="bg-white flex items-center justify-between border rounded-xl px-4 py-2 w-full text-left">
+                  <span className="block truncate">
+                    {localField?.statisticalFunction
+                      ? capitalize(localField?.statisticalFunction)
+                      : "None"}
+                  </span>
+
+                  <IoIosArrowDown className="h-5 w-5 text-gray-600" size={20} />
+                </button>
+              </DropdownTrigger>
+              <DropdownMenu
+                className="shadow-md bg-white border border-[#F1F5F9] w-full rounded-lg flex flex-col gap-3"
+                aria-label="Static Actions"
+              >
+                {insightTypes.map((type: any) => {
+                  return (
+                    <DropdownItem
+                      key={type.id}
+                      onClick={() => {
+                        setLocalField((prev: any) => ({
+                          ...prev,
+                          isStatisticalField:
+                            type?.name === "None" ? false : true,
+                          displayType: type?.displayType
+                            ? type?.displayType
+                            : "",
+                          statisticalFunction:
+                            type?.name === "None"
+                              ? null
+                              : type?.name.toLowerCase(),
+                        }));
+                      }}
+                      className="items-center w-72 p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                    >
+                      {type.name}
+                    </DropdownItem>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+            {/* <Listbox
               value={selectedInsightType}
               onChange={setSelectedInsightType}
             >
@@ -240,7 +284,46 @@ function FieldOptions() {
                   </Listbox.Options>
                 </Transition>
               </div>
-            </Listbox>
+            </Listbox> */}
+          </div>
+        )}
+
+        {/* SELECTING BAR CHART OR PIE CHART IF FUNCTION IS COUNT */}
+        {localField?.statisticalFunction === "count" && (
+          <div className="mt-5">
+            <p className="font-medium text-base mb-4">Charting Type</p>{" "}
+            <Dropdown>
+              <DropdownTrigger>
+                <button className="bg-white flex items-center justify-between border rounded-xl px-4 py-2 w-full text-left">
+                  <span className="block truncate">
+                    {capitalize(localField?.displayType).replace("-", " ")}
+                  </span>
+
+                  <IoIosArrowDown className="h-5 w-5 text-gray-600" size={20} />
+                </button>
+              </DropdownTrigger>
+              <DropdownMenu
+                className="shadow-md bg-white border border-[#F1F5F9] w-full rounded-lg flex flex-col gap-3"
+                aria-label="Static Actions"
+              >
+                {displayTypes.map((type: any) => {
+                  return (
+                    <DropdownItem
+                      key={type.id}
+                      onClick={() => {
+                        setLocalField((prev: any) => ({
+                          ...prev,
+                          displayType: type?.value,
+                        }));
+                      }}
+                      className="items-center w-72 p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                    >
+                      {type.name}
+                    </DropdownItem>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
           </div>
         )}
       </div>

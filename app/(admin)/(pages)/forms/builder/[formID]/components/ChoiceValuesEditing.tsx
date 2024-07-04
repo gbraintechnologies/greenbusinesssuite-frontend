@@ -1,6 +1,6 @@
 import React from "react";
 
-function ChoiceValuesEditing({ localField }: any) {
+function ChoiceValuesEditing({ choiceValues, localField }: any) {
   const inputStyle =
     "border border-gray-200 focus:outline-primary-green rounded-lg p-2";
 
