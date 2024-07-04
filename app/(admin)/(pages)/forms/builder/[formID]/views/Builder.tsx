@@ -123,7 +123,7 @@ function Builder({ data, refetch }: any) {
               <h5 className="font-semibold text-lg w-full">
                 <input
                   value={formName?.replace(/"/g, " ")}
-                  className="outline-none focus:outline-none w-full"
+                  className="outline-none focus:outline-none w-full input-custom"
                   onBlur={rename}
                   onChange={(e) => setFormName(e.target.value)}
                 />
@@ -134,7 +134,7 @@ function Builder({ data, refetch }: any) {
                   {" "}
                   <input
                     value={formDesc}
-                    className="outline-none focus:outline-none w-full"
+                    className="outline-none focus:outline-none w-full input-custom"
                     onBlur={updateDesc}
                     onChange={(e) => setFormDesc(e.target.value)}
                   />
