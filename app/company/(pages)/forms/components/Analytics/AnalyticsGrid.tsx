@@ -3,6 +3,7 @@ import React from "react";
 
 import { BarChart } from "@tremor/react";
 import { LuLineChart } from "react-icons/lu";
+import Barchart from "./BarChart/BarChart";
 
 const dataFormatter = (number: number) =>
   Intl.NumberFormat("us").format(number).toString();
@@ -150,17 +151,7 @@ const DataVisualization = ({ item }: any) => {
 
     case "bar-chart":
       return (
-        <div className="col-span-3 m-3 border border-gray-100 rounded-xl p-2">
-          <BarChart
-            data={item?.data}
-            index="name"
-            categories={["value"]}
-            colors={["green"]}
-            // valueFormatter={dataFormatter}
-            yAxisWidth={48}
-            // onValueChange={(v) => console.log(v)}
-          />
-        </div>
+        <Barchart item={item} />
       );
 
     // DEFAULT CASE WHEN
