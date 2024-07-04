@@ -90,7 +90,7 @@ export default function ClientLayout({
                         pathname.includes("settings") ||
                         pathname.includes("/client/form")
                           ? "ml-0"
-                          : "ml-[22rem]"
+                          : "ml-[20rem]"
                       } hidden md:block w-full`}
                     >
                       {children}

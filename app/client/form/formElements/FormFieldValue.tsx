@@ -11,6 +11,7 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 import { IoIosArrowDown } from "react-icons/io";
+import { LuUploadCloud } from "react-icons/lu";
 
 function FormFieldValue({ field, section }: any) {
   const { fieldDataType, horizontalAlign, placeHolder, label } = field;
@@ -191,6 +192,7 @@ function FormFieldValue({ field, section }: any) {
               return (
                 <div className="flex  items-center flex-row gap-2">
                   <input
+                    // checked={Boolean(field?.response !== null)}
                     onChange={(e) =>
                       saveSingleResponse(section?.id, field?.id, e.target.value)
                     }
@@ -203,6 +205,29 @@ function FormFieldValue({ field, section }: any) {
                 </div>
               );
             })}
+          </div>
+        </div>
+      );
+
+    case "upload":
+      return (
+        <div
+          className={`
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
+          `}
+        >
+          <label className="font-sm text-gray-400 mb-2">
+            {label ? label : "No label"}
+          </label>
+          <div className="border text-gray-400 mt-2 border-gray-200 p-7 my-4 flex items-center justify-center flex-col gap-1 text-center text-sm rounded-lg">
+            <LuUploadCloud size={32} />
+            {placeHolder}
+            <p className="text-xs font-light text-gray-500">
+              Supported formats: PNG, JPEG, PDF (5MB max file size)
+            </p>
+            <button className="border border-gray-100 shadow px-3 py-1 rounded-lg mt-5">
+              Select files{" "}
+            </button>
           </div>
         </div>
       );
