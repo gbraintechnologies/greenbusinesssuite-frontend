@@ -162,14 +162,14 @@ function FormField({ field, section }: any) {
           </label>
           <p className="mt-2">{placeHolder}</p>
 
-          <div className=" text-gray-400  px-3 py-2 grid grid-cols-2 gap-5 ">
+          <div className=" text-gray-400 px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
             {field.choiceValues.map((value: any) => {
               return (
                 <div className="flex flex-row gap-2">
                   <div>
                     <MdOutlineCheckBoxOutlineBlank size={20} />
                   </div>{" "}
-                  <p>{value}</p>
+                  <p className="text-xl">{value}</p>
                 </div>
               );
             })}

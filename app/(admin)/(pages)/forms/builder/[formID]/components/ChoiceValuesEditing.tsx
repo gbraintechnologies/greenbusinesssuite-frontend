@@ -68,7 +68,7 @@ function ChoiceValuesEditing({ localField, setLocalField }: any) {
               ...prev,
               choiceValues: [
                 ...localField?.choiceValues,
-                `Option ${localField?.choiceValues?.length}`,
+                `Option ${localField?.choiceValues?.length + 1}`,
               ],
             }));
           }}

@@ -74,7 +74,7 @@ function FormSection({ section }: any) {
       {/* FORM FIELDS */}
       <div className="grid grid-cols-2 gap-5">
         {localSection?.formFields
-          ?.filter((field: any) => !field.isDeleted)
+          ?.filter((item: any) => !item.isDeleted)
           .map((field: any) => {
             return <FormField section={section} field={field} />;
           })}

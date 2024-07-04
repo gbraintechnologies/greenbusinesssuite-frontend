@@ -25,6 +25,8 @@ function FieldOptions() {
 
   let [localField, setLocalField] = useState(activeField?.field);
 
+  console.log("local Field", localField);
+
   // update local copy if changes are made
   useEffect(() => {
     setLocalField(activeField?.field);
@@ -326,7 +328,7 @@ function FieldOptions() {
         )}
 
         {/* TODO: DELETE ELEMENT */}
-        {/* <div className="px-2 mt-10">
+        <div className="px-2 mt-10">
           <p className="font-medium text-base mb-4">Delete Element</p>
 
           <button
@@ -336,17 +338,12 @@ function FieldOptions() {
                 ...prev,
                 isDeleted: true,
               }));
-              // immediately update active field as well
-              updateActiveField(activeField?.section, {
-                ...localField,
-                isDeleted: true,
-              });
             }}
-            className="bg-red-600 hover:bg-red-800 px-4 py-2 rounded-lg"
+            className="bg-[#DC2626] hover:bg-red-800 px-4 py-2 rounded-lg"
           >
             <AiOutlineDelete size={20} className="text-white cursor-pointer" />
           </button>
-        </div> */}
+        </div>
       </div>
     );
   }
