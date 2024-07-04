@@ -123,7 +123,13 @@ export default function CompanyLayout({
               )}{" "}
             </div>
 
-            <div className="w-full ml-[22rem] pt-4">{children}</div>
+            <div
+              className={`${
+                pathname.includes("settings") ? "ml-0" : "ml-[22rem]"
+              } w-full  pt-4`}
+            >
+              {children}
+            </div>
           </div>
         </div>
       )}

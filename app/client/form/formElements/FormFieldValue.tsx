@@ -4,6 +4,14 @@ import useClientForm from "@/hooks/useClientForm";
 //
 import React from "react";
 
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/dropdown";
+import { IoIosArrowDown } from "react-icons/io";
+
 function FormFieldValue({ field, section }: any) {
   const { fieldDataType, horizontalAlign, placeHolder, label } = field;
 
@@ -118,6 +126,84 @@ function FormFieldValue({ field, section }: any) {
             placeholder={placeHolder ? placeHolder : "Your answer here"}
             className={inputStyle}
           />
+        </div>
+      );
+
+    case "dropdown":
+      return (
+        <div
+          className={`
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
+          `}
+        >
+          <label className={labelStyle}>{label}</label>
+
+          <p className="mt-2 text-sm">{placeHolder}</p>
+
+          <Dropdown
+            // classNames={{
+            //   base: "before:bg-default-200", // change arrow background
+            //   content: "p-0 border-small border-divider bg-background",
+            // }}
+            className="w-full"
+          >
+            <DropdownTrigger className="w-full">
+              <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
+                {field?.response ? field?.response : "No option selected"}
+                <IoIosArrowDown />
+              </p>
+            </DropdownTrigger>
+            <DropdownMenu
+              selectionMode="single"
+              aria-label="Dynamic Actions"
+              className="bg-white shadow-sm rounded-lg w-60"
+            >
+              {field.choiceValues.map((value: any) => {
+                return (
+                  <DropdownItem
+                    key={value}
+                    onClick={() =>
+                      saveSingleResponse(section?.id, field?.id, value)
+                    }
+                    className="flex hover:bg-gray-100 px-4  items-center flex-row gap-2"
+                  >
+                    <p className="text-base">{value}</p>
+                  </DropdownItem>
+                );
+              })}
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      );
+
+    case "checkboxes":
+      return (
+        <div
+          className={`
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
+          `}
+        >
+          <label className={labelStyle}>{label}</label>
+          <p className="mt-2 text-sm">{placeHolder}</p>
+
+          <div className=" text-black px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
+            {field.choiceValues.map((value: any) => {
+              return (
+                <div className="flex  items-center flex-row gap-2">
+                  <input
+                    onChange={(e) =>
+                      saveSingleResponse(section?.id, field?.id, e.target.value)
+                    }
+                    key={value}
+                    value={value}
+                    type="checkbox"
+                  />
+
+                  <p className="text-base">{value}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       );
   }
