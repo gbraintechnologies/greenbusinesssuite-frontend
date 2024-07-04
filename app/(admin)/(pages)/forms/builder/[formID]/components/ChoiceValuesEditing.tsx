@@ -29,7 +29,7 @@ function ChoiceValuesEditing({ localField, setLocalField }: any) {
                   // find item and replace in arary
                   let allValues = localField?.choiceValues;
 
-                  let temp = [];
+                  let temp: any = [];
                   for (let i = 0; i < allValues.length; i++) {
                     if (allValues[i] === value) {
                       temp.push(e.target.value);
