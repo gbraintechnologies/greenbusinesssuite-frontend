@@ -123,7 +123,7 @@ export default function CompanyLayout({
               )}{" "}
             </div>
 
-            <div className=" w-full mt-4 py-2">{children}</div>
+            <div className=" w-full">{children}</div>
           </div>
         </div>
       )}
