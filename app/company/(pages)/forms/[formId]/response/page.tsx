@@ -55,17 +55,16 @@ const page = ({ params }: any) => {
     setPdfGenerating(true);
     const input: any = pdfRef?.current;
 
-
     if (input) {
       html2canvas(input, {
-        scale: 3, 
+        scale: 3,
         width: input.scrollWidth,
         height: input.scrollHeight,
       })
         .then((canvas) => {
           const imgData = canvas.toDataURL("image/png");
           const pdf = new jsPDF("p", "mm", "a4", true);
-          console.log('pdf ', pdf);
+          console.log("pdf ", pdf);
           const width = pdf.internal.pageSize.getWidth();
           const height = pdf.internal.pageSize.getHeight();
           const imgWidth = canvas.width;
