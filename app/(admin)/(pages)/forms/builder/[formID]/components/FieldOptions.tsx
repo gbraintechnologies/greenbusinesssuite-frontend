@@ -1,9 +1,8 @@
 "use client";
 
 import useForm from "@/hooks/useForm";
-import React, { useEffect, Fragment, useRef, useState } from "react";
-
-import { Listbox, Transition } from "@headlessui/react";
+import React, { useEffect, useState } from "react";
+import { AiOutlineDelete } from "react-icons/ai";
 
 import { Switch } from "@headlessui/react";
 import Border from "@/components/Border/Border";
@@ -25,6 +24,8 @@ function FieldOptions() {
   const { activeField, updateActiveField } = useForm();
 
   let [localField, setLocalField] = useState(activeField?.field);
+
+  console.log("local Field", localField);
 
   // update local copy if changes are made
   useEffect(() => {
@@ -58,14 +59,13 @@ function FieldOptions() {
       isMandatory,
       label,
       fieldDataType,
-      choiceValues,
-      name,
+
       placeHolder,
       horizontalAlign,
     } = localField;
 
     return (
-      <div className="bg-white  pb-60 h-screen  no-scrollbar  overflow-y-scroll  border-l-2 border-gray-200 p-3">
+      <div className="bg-white  pb-[25rem] h-screen  no-scrollbar  overflow-y-scroll  border-l-2 border-gray-200 p-3">
         {/* TABS */}
         <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
           <button className="bg-white font-medium p-1 flex-1 rounded-lg">
@@ -162,7 +162,7 @@ function FieldOptions() {
         {/* CHOICE VALUES EDITING FOR DROPDOWNS AND CHECKBOXES */}
         {(fieldDataType === "dropdown" || fieldDataType === "checkboxes") && (
           <ChoiceValuesEditing
-            choiceValues={choiceValues}
+            setLocalField={setLocalField}
             localField={localField}
           />
         )}
@@ -326,6 +326,24 @@ function FieldOptions() {
             </Dropdown>
           </div>
         )}
+
+        {/* TODO: DELETE ELEMENT */}
+        <div className="px-2 mt-10">
+          <p className="font-medium text-base mb-4">Delete Element</p>
+
+          <button
+            onClick={() => {
+              // update local field
+              setLocalField((prev: any) => ({
+                ...prev,
+                isDeleted: true,
+              }));
+            }}
+            className="bg-[#DC2626] hover:bg-red-800 px-4 py-2 rounded-lg"
+          >
+            <AiOutlineDelete size={20} className="text-white cursor-pointer" />
+          </button>
+        </div>
       </div>
     );
   }

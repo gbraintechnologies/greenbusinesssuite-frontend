@@ -19,7 +19,6 @@ import { Menu, Transition } from "@headlessui/react";
 import { GridColDef } from "@mui/x-data-grid";
 import { createPortal } from "react-dom";
 
-// TODO: UPDATE: USING THE DROPDOWN COMPONENT FROM NEXT UI
 import {
   Dropdown,
   DropdownTrigger,
@@ -109,7 +108,7 @@ function CompanySetup() {
         customFields
       );
 
-      await queryClient.invalidateQueries({queryKey: ["companies"]});
+      await queryClient.invalidateQueries({ queryKey: ["companies"] });
       toast.success("Company status updated successfully");
     } catch (error) {
       toast.error("Failed to update company status");

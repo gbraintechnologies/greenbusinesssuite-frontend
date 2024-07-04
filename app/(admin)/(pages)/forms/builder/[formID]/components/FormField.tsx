@@ -5,6 +5,7 @@ import React from "react";
 import { LuUploadCloud } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
+import Border from "@/components/Border/Border";
 
 function FormField({ field, section }: any) {
   const {
@@ -50,7 +51,7 @@ function FormField({ field, section }: any) {
             rows={5}
             disabled
             placeholder={placeHolder ? placeHolder : "No placeholder specified"}
-            className="border w-full focus:outline-primary-green text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg"
+            className="border w-full  text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg"
           />
         </div>
       );
@@ -159,14 +160,16 @@ function FormField({ field, section }: any) {
           <label className="font-sm text-gray-400">
             {label ? label : "No label"}
           </label>
-          <div className=" text-gray-400 mt-2  px-3 py-2 grid grid-cols-2 gap-5 ">
+          <p className="mt-2">{placeHolder}</p>
+
+          <div className=" text-gray-400 px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
             {field.choiceValues.map((value: any) => {
               return (
                 <div className="flex flex-row gap-2">
                   <div>
                     <MdOutlineCheckBoxOutlineBlank size={20} />
                   </div>{" "}
-                  <p>{value}</p>
+                  <p className="text-xl">{value}</p>
                 </div>
               );
             })}

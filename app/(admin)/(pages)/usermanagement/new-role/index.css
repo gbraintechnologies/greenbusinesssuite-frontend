@@ -4,7 +4,7 @@
 
 .input-holder input,
 textarea {
-  @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff] focus:outline-primary-green rounded-lg my-2 shadow-sm;
+  @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-2 shadow-sm;
 }
 
 .input-holder label {
