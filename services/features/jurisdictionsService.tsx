@@ -3,12 +3,11 @@ import multipartMeshApi from "../multipartMeshClient";
 
 export const allJurisdictions = () => {
   return () =>
-    authApi.get("/jurisdictions/list-jurisdictions").then((res) => res.data);
+    authApi.get("/jurisdictions/all").then((res) => res.data);
 };
 
-// @Sidney, Example here, import the client as seen on top and use it in the api call below
-export const exampleAPICallUsingMultipart = () => {
-  return multipartMeshApi.get("/example-route");
+export const csvUploads = (formData: FormData, file: string) => {
+  return multipartMeshApi.post(`jurisdictions/csv/${file}`, formData);
 };
 
 export const createFreeInputJurisdiction = (data: any) => {
@@ -17,23 +16,32 @@ export const createFreeInputJurisdiction = (data: any) => {
 
 export const createParentDropdownJurisdiction = (data: any) => {
   return authApi.post(
-    "/jurisdictions/create-parent-address-scheme-with-manual-entries",
+    "/jurisdictions/create-parent-address-scheme/manual-entries",
     data
   );
 };
 
 export const getParentEntriesById = (id: number) => {
   return () =>
-    authApi.get(`/jurisdictions/${id}/entries`).then((res) => res.data);
+    authApi.get(`/jurisdictions/entries/parent-address/${id}`).then((res) => res.data);
+};
+
+export const getJurisdictionById = (id: number) => {
+  return () =>
+    authApi.get(`/jurisdictions/find-by/${id}`).then((res) => res.data);
+};
+
+export const updateJurisdictionByID = (id: number, data: any) => {
+  return authApi.put(`/sectors/edit/${id}`, data);
 };
 
 export const createChildEntries = (data: any) => {
   return authApi.post(
-    "/jurisdictions/create-child-address-scheme-with-entries",
+    "/jurisdictions/create-child/address-scheme/with-entries",
     data
   );
 };
 
 export const deleteJurisdictionByID = (id: any) => {
-  return authApi.delete(`/jurisdictions/${id}`);
+  return authApi.delete(`/jurisdictions/delete/${id}`);
 };

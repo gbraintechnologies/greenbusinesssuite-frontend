@@ -6,9 +6,7 @@ import Countries, { Countrie } from "../components/Countries";
 import SelectInput from "../components/SelectInput";
 import TextInput from "../components/TextInput";
 import UploadAreaInput from "../components/UploadAreaInput";
-import Image from "next/image";
-import { AiOutlineDelete } from "react-icons/ai";
-import { IoCloseCircleOutline } from "react-icons/io5";
+import { RiDeleteBin5Line } from "react-icons/ri";
 import FormatByte from "../components/FormatByte";
 import ExcelIcon from "@/public/icons/ExcelIcon";
 import Link from "next/link";
@@ -20,6 +18,7 @@ import { useForm } from "react-hook-form";
 import {
   createFreeInputJurisdiction,
   createParentDropdownJurisdiction,
+  csvUploads,
 } from "@/services/features/jurisdictionsService";
 
 const schema = yup.object().shape({
@@ -40,6 +39,7 @@ function NewIndividual() {
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [fileName, setFileName] = useState<any>({ name: "", size: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -77,25 +77,32 @@ function NewIndividual() {
     setSelectedOption(option);
   };
 
-  const handleDrop = (acceptedFiles: File[]) => {
+  const handleDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
+
     const acceptedExtensions = [".csv", ".xls", ".xlsx"];
     const fileExtension = file.name
       .substring(file.name.lastIndexOf("."))
       .toLowerCase();
 
-    setFileName({ name: file.name, size: file.size });
-
     if (acceptedExtensions.includes(fileExtension)) {
+      setFileName({ name: file.name, size: file.size });
+      setIDImage(file);
+
+      console.log("File accepted for upload:", file);
+
       const simulateImport = () => {
+        console.log("Starting upload progress simulation...");
         for (let i = 0; i <= 100; i += 10) {
           setTimeout(() => {
+            console.log(`Upload progress: ${i}%`);
             setUploadProgress(i);
           }, i * 50);
         }
       };
       simulateImport();
     } else {
+      console.warn("Invalid file type. Please upload a CSV or XLS file.");
       alert("Please upload a CSV or XLS file.");
     }
   };
@@ -129,14 +136,49 @@ function NewIndividual() {
   };
 
   const handleSaveAndContinue = async () => {
+    // console.log("Button clicked, function triggered.");
+
+    if (isSubmitting) {
+      // console.log("Submission is already in progress.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    // console.log("Submission started.");
+
     try {
+      if (IDImage && fileName) {
+        const formData = new FormData();
+        formData.append("file", IDImage);
+        await csvUploads(formData, fileName.name);
+
+        toast.success("CSV file uploaded Successfully", {
+          position: "top-center",
+          duration: 3000,
+          style: {
+            color: "green",
+          },
+        });
+
+        setIDImage(null);
+        setUploadProgress(0);
+        setFileName({ name: "", size: 0 });
+
+        setIsSubmitting(false);
+
+        router.push("/country-setup");
+        return;
+      }
+
       const items = dropdownItems
         .split(",")
         .map((item) => item.trim())
         .filter((item) => item);
-      setLabels(items);
+      console.log("Dropdown items set:", items);
 
       const data = getValues();
+      console.log("Form values:", data);
+
       const Payload2 = {
         parentAddressScheme: {
           id: data.id,
@@ -153,7 +195,10 @@ function NewIndividual() {
           name: label,
         })),
       };
-      let parentId = await createParentDropdownJurisdiction(Payload2);
+      //console.log("Payload prepared:", Payload2);
+
+      const parentId = await createParentDropdownJurisdiction(Payload2);
+      // console.log("Parent dropdown created:", parentId);
 
       toast.success("Address Scheme saved Successfully", {
         position: "top-center",
@@ -162,12 +207,18 @@ function NewIndividual() {
           color: "green",
         },
       });
+
       router.push(`/country-setup/region-input?id=${parentId.data}`);
     } catch (error: any) {
       console.error("Error occurred:", error);
-      alert(error.message);
+      alert(
+        `An error occurred: ${error.response?.data?.message || error.message}`
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
   return (
     <div className="w-full p-5">
       <div className="w-full">
@@ -257,9 +308,7 @@ function NewIndividual() {
                       readOnly
                     />
                   </div>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Free for the first two weeks
-                  </p>
+                  <p className="text-sm text-gray-500 mt-2">Free input</p>
                 </div>
               </div>
 
@@ -288,7 +337,7 @@ function NewIndividual() {
                     />
                   </div>
                   <p className="text-sm text-gray-500 mt-2">
-                    Free for the first two weeks
+                    Immediately add your sublevels
                   </p>
                 </div>
               </div>
@@ -358,39 +407,17 @@ function NewIndividual() {
                   </div>
                   <div className="h-[300px]" style={{ width: "30%" }}>
                     {IDImage ? (
-                      <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
-                        <Image
-                          src={URL.createObjectURL(IDImage)}
-                          alt="profile"
-                          width={280}
-                          height={224}
-                          className="rounded-md h-full w-full object-cover"
-                        />
-                        <div className="absolute top-2 right-2">
-                          <button
-                            className="bg-red-200 hover:bg-red-500 rounded-full p-1"
-                            onClick={() => setIDImage(null)}
-                          >
-                            <AiOutlineDelete className="h-5 w-5 text-white" />
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <UploadAreaInput
-                        onDrop={handleDrop}
-                        label="Drag and drop or choose a file to upload"
-                      />
-                    )}
-                    {uploadProgress > 0 && (
                       <div className="px-5 py-5 pb-5 mt-1 border border-dashed border-grey-500 max-w-[540px] min-h-[70px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4 bg-gray-100">
                         <div className="relative">
-                          <div className="flex flex-row">
+                          <div className="flex flex-row mb-2">
                             <ExcelIcon />
                             <div>
                               <div className="font-semibold">
                                 &nbsp;&nbsp;{fileName?.name}
                               </div>
-                              <div>{FormatByte(fileName?.size)}</div>
+                              <div>
+                                {FormatByte(fileName ? fileName.size : 0)}
+                              </div>
                             </div>
                           </div>
                           <div className="w-auto h-3 bg-white rounded-full relative">
@@ -402,13 +429,25 @@ function NewIndividual() {
                           <div className="absolute top-0 right-0 mb-20">
                             <button
                               className="rounded-full"
-                              onClick={() => setUploadProgress(0)}
+                              onClick={() => {
+                                setIDImage(null);
+                                setUploadProgress(0);
+                                setFileName({ name: "", size: 0 });
+                              }}
                             >
-                              <IoCloseCircleOutline className="h-5 w-10" />
+                              <RiDeleteBin5Line
+                                color="red"
+                                className="h-5 w-10"
+                              />
                             </button>
                           </div>
                         </div>
                       </div>
+                    ) : (
+                      <UploadAreaInput
+                        onDrop={handleDrop}
+                        label="Drag and drop or choose a file to upload"
+                      />
                     )}
                   </div>
                 </div>

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 // services
 import services from "@/services";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import toast from "react-hot-toast";
 
@@ -35,8 +35,6 @@ function SingleFormCompany({ params }: any) {
   //
 
   let formID = params.formId;
-
-  const queryClient = useQueryClient();
 
   //
   const [showUnpublishModal, setShowUnpublishModal] = useState(false);

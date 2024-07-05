@@ -12,6 +12,8 @@ import * as appService from "./features/appService";
 
 import * as formsService from "./features/formsService";
 
+import * as reportService from "./features/reportService";
+
 import * as companyService from "./features/companyService";
 
 import * as jurisdictionService from "./features/jurisdictionsService";
@@ -29,5 +31,6 @@ export default {
   ...formsService,
   ...currencyService,
   ...jurisdictionService,
-  ...sectorService
+  ...sectorService,
+  ...reportService,
 };
