@@ -6,15 +6,14 @@ type Props = {
 }
 const Barchart = ({item}: Props) => {
   return (
-    <div className="col-span-3 m-3 border border-gray-100 rounded-xl p-2">
+    <div className="col-span-3 border border-gray-100 px-5 py-2">
+      <h1 className="font-medium text-lg text-slate-900 mb-2">{item?.fieldName}</h1>
           <BarChart
             data={item?.data}
             index="name"
             categories={["value"]}
             colors={["green"]}
-            // valueFormatter={dataFormatter}
             yAxisWidth={48}
-            // onValueChange={(v) => console.log(v)}
           />
         </div>
   )

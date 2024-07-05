@@ -148,6 +148,7 @@ const ResponseDataTable: React.FC<Props> = ({
     // fetching user data for each response
     const fetchUserData = async () => {
       if (responseData?.length > 0) {
+        console.log('response data ', responseData);
         setFetchingUserData(true);
         const preparedRows = await Promise.all(
           responseData.map(async (response: any, index: number) => {
