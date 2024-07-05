@@ -19,7 +19,6 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import ExcelIcon from "@/public/icons/ExcelIcon";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import Papa from "papaparse";
 import { createSector, csvUpload } from "@/services/features/sectorService";
 import SelectCountryInput from "../components/selectCountryInput";
 
@@ -51,7 +50,7 @@ function AddSector() {
   const router = useRouter();
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [fileName, setFileName] = useState<any>({ name: "", size: "" });
+  const [fileName, setFileName] = useState<{ name: string; size: number } | null>(null);
   const [sectorlevels, setSectorLevels] = useState<SectorData[]>([]);
   const [showSectorInput, setShowSectorInput] = useState<boolean>(false);
   const [sectorlevel, setSectorLevel] = useState<SectorData>({
@@ -71,7 +70,6 @@ function AddSector() {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [addingSector, setAddingSector] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mappedData, setMappedData] = useState<any[]>([]);
   const {
     register,
     handleSubmit,
@@ -167,36 +165,7 @@ function AddSector() {
       setFileName({ name: file.name, size: file.size });
       setIDImage(file);
 
-      console.log("Starting file parsing...");
-      console.log(`File name: ${file.name}, File size: ${file.size} bytes`);
-
-      Papa.parse(file, {
-        complete: (result) => {
-          console.log("Parsing complete. Result:", result);
-
-          const parsedData = result.data as {
-            countryName: string;
-            parentSector: string;
-            subSector1: string;
-            subSector2: string;
-            subSector3: string;
-          }[];
-          console.log("Parsed data:", parsedData);
-
-          if (parsedData.length > 0) {
-            console.log("Processing parsed data...");
-
-            // No need to map the data into a new structure, just use the parsed data directly
-            console.log("Final data to be uploaded:", parsedData);
-            setMappedData(parsedData); // Assuming you want to set this in your state
-          }
-        },
-        error: (error) => {
-          console.error("Error parsing CSV file:", error);
-        },
-        header: true,
-        skipEmptyLines: true,
-      });
+      console.log("File accepted for upload:", file);
 
       const simulateImport = () => {
         console.log("Starting upload progress simulation...");
@@ -208,6 +177,7 @@ function AddSector() {
         }
       };
       simulateImport();
+
     } else {
       console.warn("Invalid file type. Please upload a CSV or XLS file.");
       alert("Please upload a CSV or XLS file.");
@@ -220,14 +190,13 @@ function AddSector() {
       return;
     }
     setIsSubmitting(true);
-
+  
     try {
-      if (IDImage) {
+      if (IDImage && fileName) {
         const formData = new FormData();
         formData.append("file", IDImage);
-
         await csvUpload(formData, fileName.name);
-
+  
         toast.success("CSV file uploaded Successfully", {
           position: "top-center",
           duration: 3000,
@@ -235,14 +204,17 @@ function AddSector() {
             color: "green",
           },
         });
+  
         setIDImage(null);
         setUploadProgress(0);
         setFileName({ name: "", size: 0 });
-
+  
         setIsSubmitting(false);
+        
+        router.push("/sector-setup");
         return;
       }
-
+  
       if (
         (data.countryName && sectorlevels.length > 0) ||
         sectorlevels.length > 0
@@ -252,9 +224,9 @@ function AddSector() {
           countryName: data.countryName,
           sectors: sectorlevels,
         };
-
+  
         await createSector(sectorPayload);
-
+  
         toast.success("Sector created Successfully", {
           position: "top-center",
           duration: 3000,
@@ -279,6 +251,7 @@ function AddSector() {
       setIsSubmitting(false);
     }
   };
+  
 
   const eitherActionCompleted = IDImage !== null || sectorlevels.length > 0;
 
@@ -570,7 +543,7 @@ function AddSector() {
                         <div className="font-semibold">
                           &nbsp;&nbsp;{fileName?.name}
                         </div>
-                        <div>{FormatByte(fileName?.size)}</div>
+                        <div>{FormatByte(fileName ? fileName.size : 0)}</div>
                       </div>
                     </div>
                     <div className="w-auto h-3 bg-white rounded-full relative">

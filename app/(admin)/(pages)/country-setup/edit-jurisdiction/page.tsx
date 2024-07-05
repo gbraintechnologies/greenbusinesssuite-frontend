@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import Link from 'next/link';
+import services from "@/services";
+import { useQuery } from "@tanstack/react-query";
+import { updateJurisdictionByID } from "@/services/features/jurisdictionsService";
 
 
 const schema = yup.object().shape({
@@ -23,6 +26,16 @@ function EditJurisdiction() {
     type typeOfSchema = yup.InferType<typeof schema>;
     const searchParams = useSearchParams();
     const Id = searchParams.get('id');
+
+    const { data, isLoading } = useQuery({
+        queryKey: ["all jurisdictionByID", Id],
+        queryFn: services.getJurisdictionById(Number(Id)),
+        enabled: !!Id,
+      });
+
+    //   useEffect(() => {
+    //     alert(JSON.stringify(data))
+    //   }, [data]);
 
     const { register, handleSubmit, setValue, formState: { errors }, getValues } = useForm<typeOfSchema>({
         resolver: yupResolver(schema),
