@@ -10,11 +10,15 @@ type Props = {
 const renderFormResponse = (formField: any) => {
   switch (formField?.fieldDataType) {
     case "short-text":
-      return <input defaultValue={formField?.response} readOnly />;
+      return <input defaultValue={formField?.response} className="fit" readOnly />;
     case "email":
-      return <input defaultValue={formField?.response} className="email-input" readOnly />;
+      return <input defaultValue={formField?.response} className="fit" readOnly />;
     case "number":
-      return <input defaultValue={formField?.response} readOnly />;
+      return <input defaultValue={formField?.response} className="fit" readOnly />;
+    case "checkboxes":
+      return <input defaultValue={formField?.response} className="fit" readOnly />;
+    case "dropdown":
+      return <input defaultValue={formField?.response} className="fit" readOnly />;
     case "phone":
       return (
         <PhoneSelector
