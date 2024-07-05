@@ -35,6 +35,8 @@ const SelectCountryEdit: React.FC<ISelectCountryEdit> = ({
         disabled={readOnly}
         className={`focus:ring-0 border border-slate-300 focus:border focus:border-teal-600 rounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${
           error ? 'border-red-500' : ''
+        } ${
+          readOnly ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : '' // Adding gray color for readonly mode
         }`}
       >
         <option value="">Select Country</option>

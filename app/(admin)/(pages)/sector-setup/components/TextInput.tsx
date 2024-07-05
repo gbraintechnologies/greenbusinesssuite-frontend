@@ -19,10 +19,11 @@ interface ITextInput extends React.InputHTMLAttributes<HTMLInputElement> {
   extraClasses?: string;
   btnSize?: "normal" | "small";
   optional?: boolean;
+  readOnly?: boolean; // Added readOnly prop
 }
 
 const TextInput = React.forwardRef<HTMLInputElement, ITextInput>(
-  ({ ...props }, forwardedRef) => {
+  ({ readOnly, ...props }, forwardedRef) => {
     const {
       label,
       error,
@@ -35,7 +36,6 @@ const TextInput = React.forwardRef<HTMLInputElement, ITextInput>(
       PostpendIcon,
       id,
       extraClasses,
-      optional,
       btnSize = "normal",
       ...rest
     } = props;
@@ -45,19 +45,15 @@ const TextInput = React.forwardRef<HTMLInputElement, ITextInput>(
         {label && (
           <label htmlFor={id} className="font-medium text-slate-700 text-sm">
             {label}{" "}
-            {optional && <span className="text-slate-400">(Optional)</span>}
             {required && <span className="text-red-500">*</span>}
           </label>
         )}
         <div className="relative">
-         
           {PrependIcon && (
             <div className="absolute inset-y-0 mt-1 left-0 flex items-center justify-center pl-3 pr-3 pointer-events-none">
               {PrependIcon}
             </div>
-          )} 
-
-          
+          )}
 
           <input
             id={id}
@@ -71,7 +67,9 @@ const TextInput = React.forwardRef<HTMLInputElement, ITextInput>(
               PostpendIcon ? "pr-10" : "",
               PrependIcon ? "pl-10" : "",
               btnSize === "normal" ? "h-[46px]" : "h-[40px]",
-              `focus:ring-0 border border-slate-300 focus:border focus:border-teal-600 rounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${extraClasses}`
+              readOnly ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "", // Conditional readOnly styles
+              "focus:ring-0 border border-slate-300 focus:border focus:border-teal-600 rounded-[6px]",
+              `mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium ${extraClasses}`
             )}
           />
           {PostpendIcon && (
