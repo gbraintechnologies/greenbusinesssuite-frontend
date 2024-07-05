@@ -8,7 +8,7 @@ import SearchIcon from "@/public/icons/SearchIcon";
 import DataTable from "@/components/DataTable/DataTable";
 import services from "@/services";
 import Nav from "./components/Nav";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { deleteBySubSectorID } from "@/services/features/sectorService";
 
 interface RowData {
@@ -20,10 +20,14 @@ interface RowData {
 interface ActionMenuProps {
   row: RowData;
   onDeleteSuccess: () => void;
-  countryId: number | undefined
+  countryId: number | undefined;
 }
 
-const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess, countryId }) => {
+const ActionMenu: React.FC<ActionMenuProps> = ({
+  row,
+  onDeleteSuccess,
+  countryId,
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const router = useRouter();
 
@@ -36,9 +40,11 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess, countryId
   };
 
   const handleEdit = () => {
-   // alert(JSON.stringify(countryId))
+    // alert(JSON.stringify(countryId))
     handleClose();
-    router.push(`/sector-setup/edit-sector?id=${row.id}&countryId=${countryId}`);
+    router.push(
+      `/sector-setup/edit-sector?id=${row.id}&countryId=${countryId}`
+    );
   };
 
   const handleDelete = async () => {
@@ -62,8 +68,8 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess, countryId
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: 150
-          }
+            width: 150,
+          },
         }}
       >
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
@@ -83,7 +89,7 @@ const SectorSetup: React.FC = () => {
   });
 
   useEffect(() => {
-   // alert(JSON.stringify(data))
+    // alert(JSON.stringify(data))
     if (data) {
       const sectorStats = data[0]?.sectorStats || [];
       setRows(sectorStats);
@@ -115,9 +121,7 @@ const SectorSetup: React.FC = () => {
             />
           </label>
           <div>
-            <p className="font-medium">
-              {params.row.parentSector}
-            </p>
+            <p className="font-medium">{params.row.parentSector}</p>
           </div>
         </div>,
       ],
@@ -131,9 +135,7 @@ const SectorSetup: React.FC = () => {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="flex flex-col gap-2">
-          <p className="font-medium text-sm">
-            {params.row.subSectorCount}
-          </p>
+          <p className="font-medium text-sm">{params.row.subSectorCount}</p>
         </div>,
       ],
     },
@@ -142,15 +144,14 @@ const SectorSetup: React.FC = () => {
       headerName: "Actions",
       flex: 1,
       type: "actions",
-      renderCell: (params: any) => (
+      renderCell: (params: any) =>
         data && data.length > 0 ? (
           <ActionMenu
             row={params.row}
             onDeleteSuccess={handleDeleteSuccess}
             countryId={data[0]?.id}
           />
-        ) : null
-      ),
+        ) : null,
     },
   ];
 
@@ -164,18 +165,14 @@ const SectorSetup: React.FC = () => {
             <input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="outline-none text-sm focus:outline-none bg-white"
+              className="outline-none text-sm focus:outline-none bg-white input-custom"
               placeholder="Search"
             />
           </div>
         </div>
       </div>
 
-      <DataTable
-        isLoading={isLoading}
-        rows={rows}
-        columns={columns}
-      />
+      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
     </div>
   );
 };

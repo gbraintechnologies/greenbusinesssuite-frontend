@@ -146,7 +146,7 @@ function CountrySetup() {
             <input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="outline-none text-sm focus:outline-none bg-white"
+              className="outline-none text-sm focus:outline-none bg-white input-custom"
               placeholder="Search"
             />
           </div>
