@@ -2,22 +2,20 @@ import { DonutChart } from "@tremor/react";
 import React from "react";
 
 const baseColors = [
-  '#16C8C7', // teal
-  '#3B82F6', // blue
-  '#FFCE56', // yellow
-  '#9966FF', // purple
-  '#FF9F40', // orange
-  '#9CA3AF', // gray
-  '#F472B6', // pink
-  '#10B981', // emerald
-  '#F59E0B', // amber
-  '#EF4444', // red
-  '#22D3EE', // cyan
-  '#A3E635', // lime
-  '#C084FC', // purple
+  "#16C8C7", // teal
+  "#3B82F6", // blue
+  "#FFCE56", // yellow
+  "#9966FF", // purple
+  "#FF9F40", // orange
+  "#9CA3AF", // gray
+  "#F472B6", // pink
+  "#10B981", // emerald
+  "#F59E0B", // amber
+  "#EF4444", // red
+  "#22D3EE", // cyan
+  "#A3E635", // lime
+  "#C084FC", // purple
 ];
-
-
 
 type Props = {
   item?: any;
@@ -30,17 +28,15 @@ const Donutchart = ({ item }: Props) => {
     let colorIndex = 0;
 
     const newDataWithColors = item?.data?.map((item: any) => {
-      const color = baseColors[colorIndex] ;
+      const color = baseColors[colorIndex];
       colorIndex++;
       return {
         ...item,
         color,
       };
-      
     });
     setDataWithColors(newDataWithColors);
   }, [item]);
-
 
   return (
     <div className="col-span-2 py-7 border border-gray-100 px-5">
