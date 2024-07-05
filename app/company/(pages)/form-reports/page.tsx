@@ -1,32 +1,37 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+
+import React from "react";
 import Nav from "../forms/components/Nav";
 
+//
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-import useAdmin from "@/hooks/useAdmin";
 
-import { useRouter } from "next/navigation";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
+import useCompany from "@/hooks/useCompany";
 
 function CompanyFormReports() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const { company } = useCompany();
 
-  const { admin } = useAdmin();
-
-  const { data: companyData } = useQuery({
-    queryKey: ["get company"],
-    // queryFn: services.getCompanyById(Number(
-    //   admin?.custom_profile_values.find(
-    //     (item: any) => item.custom_profile_item_id === 2
-    //   )?.value)),
-    queryFn: services.getCompanyById(2),
+  // reports
+  const { data: uniqueUsersCount, isLoading } = useQuery({
+    queryKey: ["unique users count", company?.company_name],
+    queryFn: services.uniqueUsersCount(company?.company_name),
   });
 
-  const { data: forms, isLoading: isFormsLoading } = useQuery({
-    queryKey: ["get company forms"],
-    queryFn: services.getFormsByCompanyName(companyData?.company_name),
-    enabled: !!companyData?.company_name,
+  const { data: totalEntries } = useQuery({
+    queryKey: ["total entries per company", company?.company_name],
+    queryFn: services.totalEntries(company?.company_name),
+  });
+
+  const { data: linksOpened } = useQuery({
+    queryKey: ["links opened per company", company?.company_name],
+    queryFn: services.linksOpened(company?.company_name),
+  });
+
+  const { data: linksIgnored } = useQuery({
+    queryKey: ["ignored links per company", company?.company_name],
+    queryFn: services.ignoredLinks(company?.company_name),
   });
 
   return (
@@ -37,15 +42,15 @@ function CompanyFormReports() {
           stats={[
             {
               label: "No. of Links Opened",
-              value: "5,468",
+              value: linksOpened !== null ? linksOpened : "-",
             },
             {
               label: "Ignored Links",
-              value: "23",
+              value: linksIgnored !== null ? linksIgnored : "-",
             },
             {
               label: "New Customers",
-              value: "145",
+              value: "-",
             },
           ]}
         />
@@ -55,15 +60,15 @@ function CompanyFormReports() {
           stats={[
             {
               label: "Total Number Of Entries",
-              value: "5,468",
+              value: totalEntries !== null ? totalEntries : "-",
             },
             {
               label: "Completed Submissions",
-              value: "23",
+              value: "-",
             },
             {
               label: "Uncompleted Submissions",
-              value: "145",
+              value: "-",
             },
           ]}
         />
