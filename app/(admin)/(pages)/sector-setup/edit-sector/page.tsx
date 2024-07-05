@@ -1,19 +1,19 @@
-'use client'
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+"use client";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { IoIosAddCircleOutline } from 'react-icons/io';
-import Link from 'next/link';
+import { IoIosAddCircleOutline } from "react-icons/io";
+import Link from "next/link";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import Modal from "@/components/Modal/Modal";
 import { GoDotFill } from "react-icons/go";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import EditIconSetup from "@/public/icons/EditIconSetup";
-import SelectCountryEdit from '../components/selectCountryEdit';
-import TextInput from '../components/TextInput';
+import SelectCountryEdit from "../components/selectCountryEdit";
+import TextInput from "../components/TextInput";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Countrie, Countrieses } from "../components/Countries";
@@ -22,53 +22,64 @@ import { editSubsectorByID } from "@/services/features/sectorService";
 const schema = yup.object().shape({
   id: yup.number().required(),
   countryName: yup.string().required(),
-  sector: yup.object().shape({
-    sectorId: yup.number().required(),
-    subSectors: yup.array().of(yup.string().required()).required(),
-    parentSector: yup.string().required(),
-  }).required(),
+  sector: yup
+    .object()
+    .shape({
+      sectorId: yup.number().required(),
+      subSectors: yup.array().of(yup.string().required()).required(),
+      parentSector: yup.string().required(),
+    })
+    .required(),
 });
 
 function EditSector() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const Id = searchParams.get('id');
-  const countryId = searchParams.get('countryId');
+  const Id = searchParams.get("id");
+  const countryId = searchParams.get("countryId");
   const { data, isLoading } = useQuery({
     queryKey: ["all sectorByID", countryId, Id],
     queryFn: services.getSubSectorByID(Number(countryId), Number(Id)),
     enabled: !!countryId && !!Id,
   });
 
-  const { register, handleSubmit, setValue, formState: { errors }, watch } = useForm({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    watch,
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       id: 0,
-      countryName: '',
+      countryName: "",
       sector: {
         sectorId: 0,
         subSectors: [],
-        parentSector: '',
+        parentSector: "",
       },
     },
   });
 
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editValue, setEditValue] = useState<string>('');
+  const [editValue, setEditValue] = useState<string>("");
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-  const [subSectorToDelete, setSubSectorToDelete] = useState<number | null>(null);
+  const [subSectorToDelete, setSubSectorToDelete] = useState<number | null>(
+    null
+  );
 
   useEffect(() => {
     if (data) {
-      setValue('id', data.id);
-      setValue('countryName', data.countryName);
-      setValue('sector.sectorId', data.sector.sectorId);
-      setValue('sector.subSectors', data.sector.subSectors);
-      setValue('sector.parentSector', data.sector.parentSector);
+      setValue("id", data.id);
+      setValue("countryName", data.countryName);
+      setValue("sector.sectorId", data.sector.sectorId);
+      setValue("sector.subSectors", data.sector.subSectors);
+      setValue("sector.parentSector", data.sector.parentSector);
     }
   }, [data, setValue]);
 
-  const subSectors = watch('sector.subSectors');
+  const subSectors = watch("sector.subSectors");
 
   const handleEdit = (index: number) => {
     setEditIndex(index);
@@ -79,9 +90,9 @@ function EditSector() {
     if (editIndex !== null) {
       const updatedSubSectors = [...subSectors];
       updatedSubSectors[editIndex] = editValue;
-      setValue('sector.subSectors', updatedSubSectors);
+      setValue("sector.subSectors", updatedSubSectors);
       setEditIndex(null);
-      setEditValue('');
+      setEditValue("");
     }
   };
 
@@ -92,8 +103,10 @@ function EditSector() {
 
   const handleDeleteConfirmed = () => {
     if (subSectorToDelete !== null) {
-      const updatedSubSectors = subSectors.filter((_, i) => i !== subSectorToDelete);
-      setValue('sector.subSectors', updatedSubSectors);
+      const updatedSubSectors = subSectors.filter(
+        (_, i) => i !== subSectorToDelete
+      );
+      setValue("sector.subSectors", updatedSubSectors);
       setShowDeleteModal(false);
       setSubSectorToDelete(null);
     }
@@ -101,12 +114,15 @@ function EditSector() {
 
   const onSubmit = async () => {
     try {
-      const subSectorsToSend = watch('sector.subSectors');
-      const sectorIdToSend = watch('sector.sectorId');
-      console.log('Submitting with sectorId:', sectorIdToSend);
-      console.log('Submitting subSectors:', subSectorsToSend);
+      const subSectorsToSend = watch("sector.subSectors");
+      const sectorIdToSend = watch("sector.sectorId");
+      console.log("Submitting with sectorId:", sectorIdToSend);
+      console.log("Submitting subSectors:", subSectorsToSend);
 
-      const response = await editSubsectorByID(Number(sectorIdToSend),subSectorsToSend,);
+      const response = await editSubsectorByID(
+        Number(sectorIdToSend),
+        subSectorsToSend
+      );
 
       toast.success("Sub-sector edited successfully", {
         position: "top-center",
@@ -115,10 +131,10 @@ function EditSector() {
           color: "green",
         },
       });
-      router.push('/sector-setup'); // Redirect to sector setup page
+      router.push("/sector-setup"); // Redirect to sector setup page
     } catch (error) {
-      console.error('Error submitting data:', error);
-      toast.error('Error submitting data');
+      console.error("Error submitting data:", error);
+      toast.error("Error submitting data");
     }
   };
 
@@ -158,9 +174,9 @@ function EditSector() {
                 label="Country"
                 autoComplete="off"
                 {...register("countryName")}
-                value={watch('countryName')}
+                value={watch("countryName")}
                 error={errors.countryName?.message}
-                options={[data?.countryName || '']} // Ensure options is an array
+                options={[data?.countryName || ""]} // Ensure options is an array
                 readOnly
                 PrependIcon={
                   data?.countryName ? (
@@ -185,7 +201,7 @@ function EditSector() {
                 {...register("sector.parentSector")}
                 error={errors.sector?.parentSector?.message}
                 style={{ width: "30%", height: "30%" }}
-                defaultValue={watch('sector.parentSector')}
+                defaultValue={watch("sector.parentSector")}
                 readOnly
               />
             </div>
@@ -196,48 +212,54 @@ function EditSector() {
               <GoDotFill className="inline-block " />
               Sub-sectors
             </label>
-            {subSectors && subSectors.map((subSector, index) => (
-              <div className="flex items-center mb-4" key={index}>
-                <input
-                  type="text"
-                  {...register(`sector.subSectors.${index}`)}
-                  defaultValue={subSector}
-                  className="mr-2 px-5 border-b mb-1 pb-1"
-                  style={{ width: "30%" }}
-                  readOnly
-                />
-                <div style={{ width: "100%" }}>
-                  <div className="flex items-center" style={{ width: "30%" }}>
-                    <div className="mr-2 px-5 border-b mb-1 pb-1" style={{ width: "30%" }}>
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}>
-                        <span></span>
-                        <div className="flex items-center">
-                          <button
-                            type="button"
-                            onClick={() => handleEdit(index)}
-                            className="rounded-full"
-                          >
-                            <EditIconSetup />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(index)}
-                            className="rounded-full ml-2"
-                          >
-                            <DeleteIcon />
-                          </button>
+            {subSectors &&
+              subSectors.map((subSector, index) => (
+                <div className="flex items-center mb-4" key={index}>
+                  <input
+                    type="text"
+                    {...register(`sector.subSectors.${index}`)}
+                    defaultValue={subSector}
+                    className="mr-2 px-5 border-b mb-1 pb-1 input-custom"
+                    style={{ width: "30%" }}
+                    readOnly
+                  />
+                  <div style={{ width: "100%" }}>
+                    <div className="flex items-center" style={{ width: "30%" }}>
+                      <div
+                        className="mr-2 px-5 border-b mb-1 pb-1"
+                        style={{ width: "30%" }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <span></span>
+                          <div className="flex items-center">
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(index)}
+                              className="rounded-full"
+                            >
+                              <EditIconSetup />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(index)}
+                              className="rounded-full ml-2"
+                            >
+                              <DeleteIcon />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            <div
+              ))}
+            {/* <div
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -256,7 +278,7 @@ function EditSector() {
               <div
                 style={{ flex: 1, borderBottom: "1px solid lightgray" }}
               ></div>
-            </div>
+            </div> */}
           </div>
         </form>
       </div>
@@ -320,7 +342,7 @@ function EditSector() {
         </Modal>
       )}
     </div>
-  )
+  );
 }
 
 export default EditSector;

@@ -24,6 +24,13 @@ function CompanyDashboard() {
     queryFn: services.totalEntries(company?.company_name),
   });
 
+  const { data: formStats } = useQuery({
+    queryKey: ["form stats completed/incompleted", company?.company_name],
+    queryFn: services.companyFormStats(company?.company_name),
+  });
+
+  console.log("instatus", formStats);
+
   return (
     <div className="px-5 pb-20 mt-5">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>

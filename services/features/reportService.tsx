@@ -14,6 +14,13 @@ export const totalEntries = (companyName: string) => {
       .then((res) => res.data);
 };
 
+export const companyFormStats = (companyName: string) => {
+  return () =>
+    authApi
+      .get(`/forms/response/total-forms/${companyName}`)
+      .then((res) => res.data);
+};
+
 export const linksOpened = (companyName: string) => {
   return () =>
     authApi

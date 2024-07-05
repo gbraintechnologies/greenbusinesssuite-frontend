@@ -15,7 +15,11 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { createFreeInputJurisdiction, createParentDropdownJurisdiction, csvUploads } from "@/services/features/jurisdictionsService";
+import {
+  createFreeInputJurisdiction,
+  createParentDropdownJurisdiction,
+  csvUploads,
+} from "@/services/features/jurisdictionsService";
 
 const schema = yup.object().shape({
   id: yup.number().required(),
@@ -97,7 +101,6 @@ function NewIndividual() {
         }
       };
       simulateImport();
-
     } else {
       console.warn("Invalid file type. Please upload a CSV or XLS file.");
       alert("Please upload a CSV or XLS file.");
@@ -133,22 +136,22 @@ function NewIndividual() {
   };
 
   const handleSaveAndContinue = async () => {
-   // console.log("Button clicked, function triggered.");
+    // console.log("Button clicked, function triggered.");
 
     if (isSubmitting) {
-     // console.log("Submission is already in progress.");
+      // console.log("Submission is already in progress.");
       return;
     }
 
     setIsSubmitting(true);
-   // console.log("Submission started.");
+    // console.log("Submission started.");
 
     try {
       if (IDImage && fileName) {
         const formData = new FormData();
         formData.append("file", IDImage);
         await csvUploads(formData, fileName.name);
-  
+
         toast.success("CSV file uploaded Successfully", {
           position: "top-center",
           duration: 3000,
@@ -156,17 +159,17 @@ function NewIndividual() {
             color: "green",
           },
         });
-  
+
         setIDImage(null);
         setUploadProgress(0);
         setFileName({ name: "", size: 0 });
-  
+
         setIsSubmitting(false);
-        
+
         router.push("/country-setup");
         return;
       }
-  
+
       const items = dropdownItems
         .split(",")
         .map((item) => item.trim())
@@ -195,7 +198,7 @@ function NewIndividual() {
       //console.log("Payload prepared:", Payload2);
 
       const parentId = await createParentDropdownJurisdiction(Payload2);
-     // console.log("Parent dropdown created:", parentId);
+      // console.log("Parent dropdown created:", parentId);
 
       toast.success("Address Scheme saved Successfully", {
         position: "top-center",
@@ -208,13 +211,14 @@ function NewIndividual() {
       router.push(`/country-setup/region-input?id=${parentId.data}`);
     } catch (error: any) {
       console.error("Error occurred:", error);
-      alert(`An error occurred: ${error.response?.data?.message || error.message}`);
+      alert(
+        `An error occurred: ${error.response?.data?.message || error.message}`
+      );
     } finally {
-      setIsSubmitting(false); 
+      setIsSubmitting(false);
     }
   };
 
-  
   return (
     <div className="w-full p-5">
       <div className="w-full">
@@ -282,8 +286,9 @@ function NewIndividual() {
             <div className="flex space-x-4">
               <div
                 onClick={() => handleOptionClick("Free Input")}
-                className={`flex border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer relative ${selectedOption === "Free Input" ? "border-green-500" : ""
-                  }`}
+                className={`flex border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer relative ${
+                  selectedOption === "Free Input" ? "border-green-500" : ""
+                }`}
                 style={{
                   backgroundColor:
                     selectedOption === "Free Input" ? "#E5FFEF" : "",
@@ -303,18 +308,17 @@ function NewIndividual() {
                       readOnly
                     />
                   </div>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Free for the first two weeks
-                  </p>
+                  <p className="text-sm text-gray-500 mt-2">Free input</p>
                 </div>
               </div>
 
               <div
                 onClick={() => handleOptionClick("Dropdown")}
-                className={`flex border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer relative ${selectedOption === "Dropdown"
-                  ? "border-green-500 hover:bg-teal-50"
-                  : "hover:bg-teal-50"
-                  }`}
+                className={`flex border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer relative ${
+                  selectedOption === "Dropdown"
+                    ? "border-green-500 hover:bg-teal-50"
+                    : "hover:bg-teal-50"
+                }`}
                 style={{
                   backgroundColor:
                     selectedOption === "Dropdown" ? "#E5FFEF" : "",
@@ -333,7 +337,7 @@ function NewIndividual() {
                     />
                   </div>
                   <p className="text-sm text-gray-500 mt-2">
-                    Free for the first two weeks
+                    Immediately add your sublevels
                   </p>
                 </div>
               </div>
@@ -411,7 +415,9 @@ function NewIndividual() {
                               <div className="font-semibold">
                                 &nbsp;&nbsp;{fileName?.name}
                               </div>
-                              <div>{FormatByte(fileName ? fileName.size : 0)}</div>
+                              <div>
+                                {FormatByte(fileName ? fileName.size : 0)}
+                              </div>
                             </div>
                           </div>
                           <div className="w-auto h-3 bg-white rounded-full relative">
@@ -429,7 +435,10 @@ function NewIndividual() {
                                 setFileName({ name: "", size: 0 });
                               }}
                             >
-                              <RiDeleteBin5Line color="red" className="h-5 w-10" />
+                              <RiDeleteBin5Line
+                                color="red"
+                                className="h-5 w-10"
+                              />
                             </button>
                           </div>
                         </div>
