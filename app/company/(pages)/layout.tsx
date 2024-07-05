@@ -125,8 +125,8 @@ export default function CompanyLayout({
 
             <div
               className={`${
-                pathname.includes("settings") ? "ml-0" : "ml-[22rem]"
-              } w-full  pt-4`}
+                pathname.includes("settings") ? "ml-0" : "ml-[20rem]"
+              } w-full`}
             >
               {children}
             </div>

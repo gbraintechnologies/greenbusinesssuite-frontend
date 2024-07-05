@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
 
-import { BarChart } from "@tremor/react";
 import { LuLineChart } from "react-icons/lu";
+
+// display types
 import Barchart from "./BarChart/BarChart";
 import Single from "./Single/Single";
 import Donutchart from "./DonutChart/DonutChart";
@@ -149,17 +150,13 @@ export default AnalyticsGrid;
 const DataVisualization = ({ item }: any) => {
   switch (item?.displayType) {
     case "pie-chart":
-      return <Donutchart item={item}/>;
+      return <Donutchart item={item} />;
 
     case "bar-chart":
-      return (
-        <Barchart item={item} />
-      );
+      return <Barchart item={item} />;
 
     // DEFAULT CASE WHEN
     default:
-      return (
-        <Single item={item}/>
-      );
+      return <Single item={item} />;
   }
 };

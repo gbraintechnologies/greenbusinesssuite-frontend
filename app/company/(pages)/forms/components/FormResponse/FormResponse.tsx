@@ -11,10 +11,19 @@ const renderFormResponse = (formField: any) => {
   switch (formField?.fieldDataType) {
     case "short-text":
       return <input defaultValue={formField?.response} readOnly />;
+
     case "email":
-      return <input defaultValue={formField?.response} className="email-input" readOnly />;
+      return (
+        <input
+          defaultValue={formField?.response}
+          className="email-input"
+          readOnly
+        />
+      );
+
     case "number":
       return <input defaultValue={formField?.response} readOnly />;
+
     case "phone":
       return (
         <PhoneSelector
