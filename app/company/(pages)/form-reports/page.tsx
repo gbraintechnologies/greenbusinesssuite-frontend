@@ -34,6 +34,11 @@ function CompanyFormReports() {
     queryFn: services.ignoredLinks(company?.company_name),
   });
 
+  const { data: formStats } = useQuery({
+    queryKey: ["form stats completed/incompleted", company?.company_name],
+    queryFn: services.companyFormStats(company?.company_name),
+  });
+
   return (
     <div className="px-5 pb-20 mt-4 py-2 min-h-screen">
       <Nav headerLeftTitle="Form Reports" />
@@ -41,7 +46,7 @@ function CompanyFormReports() {
         <StatsBlock
           stats={[
             {
-              label: "No. of Links Opened",
+              label: "Links Opened",
               value: linksOpened !== null ? linksOpened : "-",
             },
             {
@@ -49,8 +54,8 @@ function CompanyFormReports() {
               value: linksIgnored !== null ? linksIgnored : "-",
             },
             {
-              label: "New Customers",
-              value: "-",
+              label: "Total Customers",
+              value: uniqueUsersCount !== null ? uniqueUsersCount : "-",
             },
           ]}
         />
@@ -64,11 +69,11 @@ function CompanyFormReports() {
             },
             {
               label: "Completed Submissions",
-              value: "-",
+              value: formStats?.completedForms,
             },
             {
               label: "Uncompleted Submissions",
-              value: "-",
+              value: formStats?.uncompletedForms,
             },
           ]}
         />

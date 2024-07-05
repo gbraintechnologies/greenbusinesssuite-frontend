@@ -29,8 +29,6 @@ function CompanyDashboard() {
     queryFn: services.companyFormStats(company?.company_name),
   });
 
-  console.log("instatus", formStats);
-
   return (
     <div className="px-5 pb-20 mt-5">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
@@ -42,7 +40,7 @@ function CompanyDashboard() {
           },
           {
             label: "Submitted Applications",
-            value: "-",
+            value: formStats?.completedForms,
           },
           {
             label: "Active Users",
