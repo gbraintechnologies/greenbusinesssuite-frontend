@@ -3,6 +3,9 @@ import React from "react";
 
 import { BarChart } from "@tremor/react";
 import { LuLineChart } from "react-icons/lu";
+import Barchart from "./BarChart/BarChart";
+import Single from "./Single/Single";
+import Donutchart from "./DonutChart/DonutChart";
 
 const dataFormatter = (number: number) =>
   Intl.NumberFormat("us").format(number).toString();
@@ -85,7 +88,7 @@ const AnalyticsGrid = ({ analytics }: any) => {
 
   // analytics
   return (
-    <div className="grid grid-cols-3 gap-5 mt-5 px-5">
+    <div className="grid grid-cols-3 mb-5">
       {analytics.map((item: any) => {
         return <DataVisualization key={item.fieldName} item={item} />;
       })}
@@ -146,42 +149,17 @@ export default AnalyticsGrid;
 const DataVisualization = ({ item }: any) => {
   switch (item?.displayType) {
     case "pie-chart":
-      return <div className="col-span-1 m-3">PIECHART IMPLEMENTATION HERE</div>;
+      return <Donutchart item={item}/>;
 
     case "bar-chart":
       return (
-        <div className="col-span-3 m-3 border border-gray-100 rounded-xl p-2">
-          <BarChart
-            data={item?.data}
-            index="name"
-            categories={["value"]}
-            colors={["green"]}
-            // valueFormatter={dataFormatter}
-            yAxisWidth={48}
-            // onValueChange={(v) => console.log(v)}
-          />
-        </div>
+        <Barchart item={item} />
       );
 
     // DEFAULT CASE WHEN
     default:
       return (
-        <div className="col-span-1 m-3 border border-gray-100 rounded-xl p-6">
-          <div>
-            {item?.data?.map((single: any) => {
-              return (
-                <div className="">
-                  <p>
-                    {item?.function} of {item?.name}
-                  </p>
-                  <h3 className="text-7xl my-2 font-bold">{single?.value}</h3>
-
-                  <p>{single?.name}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <Single item={item}/>
       );
   }
 };
