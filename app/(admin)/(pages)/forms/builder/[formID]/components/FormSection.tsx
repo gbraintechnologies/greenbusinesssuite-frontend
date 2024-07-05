@@ -45,7 +45,7 @@ function FormSection({ section }: any) {
         <input
           value={localSection?.name}
           placeholder="Section title"
-          className="outline-none focus:outline-none w-full"
+          className="outline-none focus:outline-none w-full input-custom"
           onBlur={runUpdates}
           onChange={(e) => {
             setLocalSection((prev: any) => ({
@@ -60,7 +60,7 @@ function FormSection({ section }: any) {
         <input
           value={localSection?.description}
           placeholder="Section description"
-          className="outline-none focus:outline-none w-full"
+          className="outline-none focus:outline-none w-full input-custom"
           onBlur={runUpdates}
           onChange={(e) => {
             setLocalSection((prev: any) => ({
@@ -73,9 +73,11 @@ function FormSection({ section }: any) {
 
       {/* FORM FIELDS */}
       <div className="grid grid-cols-2 gap-5">
-        {localSection?.formFields?.map((field: any) => {
-          return <FormField section={section} field={field} />;
-        })}
+        {localSection?.formFields
+          ?.filter((item: any) => !item.isDeleted)
+          .map((field: any) => {
+            return <FormField section={section} field={field} />;
+          })}
       </div>
 
       <div

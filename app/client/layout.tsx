@@ -85,7 +85,16 @@ export default function ClientLayout({
                         </div>
                       )}
 
-                    <div className="hidden md:block w-full">{children}</div>
+                    <div
+                      className={`${
+                        pathname.includes("settings") ||
+                        pathname.includes("/client/form")
+                          ? "ml-0"
+                          : "ml-[20rem]"
+                      } hidden md:block w-full`}
+                    >
+                      {children}
+                    </div>
                     <div className="flex items-center p-20 text-center mx-auto justify-center h-[70vh] md:hidden">
                       <p>
                         Please visit this page on your laptop to access Mesh

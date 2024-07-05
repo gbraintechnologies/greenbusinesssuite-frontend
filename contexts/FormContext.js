@@ -65,25 +65,6 @@ export const FormProvider = ({ children }) => {
   };
 
   const updateActiveField = (section, data) => {
-    // let allSections = form?.formSections;
-    // let selectedSection = section;
-    // let allFields = selectedSection?.formFields;
-    // let selectedField = data;
-    // let indexSection = allSections?.indexOf(selectedSection);
-    // let indexField = allFields?.indexOf(
-    //   allFields.find((element) => element.id == data.id)
-    // );
-
-    // // update selected field
-    // if (indexField !== -1) {
-    //   allFields[indexField] = selectedField;
-    // }
-
-    // // update section with fields
-    // if (indexSection !== -1) {
-    //   allSections[indexSection] = { ...section, formFields: allFields };
-    // }
-
     services
       .updateFormField({ ...data, updatedOn: new Date() })
       .then((res) => {

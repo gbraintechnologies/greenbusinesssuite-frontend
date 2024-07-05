@@ -75,7 +75,7 @@ const Page = () => {
       <LoadingIcon />
     </div>
   ) : (
-    <div className="px-5 pb-20 mt-5 h-full bg-[#F8FAFC]">
+    <div className="px-5 pb-20 mt-5 min-h-screen bg-[#F8FAFC]">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
       <div className="mt-4 grid grid-col-1 gap-3">
         {uncompletedForms?.map((form: any) => {
@@ -98,7 +98,7 @@ const Page = () => {
       </div>
 
       {/* My FORMS */}
-      <div className="mt-8">
+      <div className="mt-8 ">
         <div className="text-slate-900 font-semibold text-lg mb-5">
           My forms
         </div>

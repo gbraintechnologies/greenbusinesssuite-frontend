@@ -132,7 +132,7 @@ export default function AdminLayout({
     },
   ];
 
-  const thirdPartyApps = [
+  let thirdPartyApps = [
     {
       name: "Business Analysis Tool",
       icon: <UserIcon />,
@@ -163,8 +163,8 @@ export default function AdminLayout({
                 // NORMAL VIEW
                 <div className="w-full min-h-screen">
                   <TopNav />
-                  <div className="flex flex-row h-[93.8vh]">
-                    <div className="hidden md:flex h-full  overflow-y-scroll no-scrollbar">
+                  <div className="flex mt-[3.5rem]   flex-row h-screen">
+                    <div className="hidden  md:flex h-full absolute  overflow-y-scroll no-scrollbar">
                       {!pathname.includes("settings") && (
                         <SideNav
                           thirdPartyApps={thirdPartyApps}
@@ -173,7 +173,13 @@ export default function AdminLayout({
                       )}{" "}
                     </div>
 
-                    <div className=" w-full mt-4 py-2">{children}</div>
+                    <div
+                      className={`${
+                        pathname.includes("settings") ? "ml-0" : "ml-[22rem]"
+                      } w-full  pt-4`}
+                    >
+                      {children}
+                    </div>
                   </div>
                 </div>
               )}

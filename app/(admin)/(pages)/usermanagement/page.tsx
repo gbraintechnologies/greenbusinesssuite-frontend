@@ -196,7 +196,8 @@ function UserManagement() {
                 Edit User
               </Link>
             </DropdownItem>
-            {(params.row.data?.user_status?.toLowerCase() === "inactive") || (params.row.data?.user_status?.toLowerCase() === "blacklisted")  ? (
+            {params.row.data?.user_status?.toLowerCase() === "inactive" ||
+            params.row.data?.user_status?.toLowerCase() === "blacklisted" ? (
               <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
                 <button
                   onClick={() => editUserStatus(params.row.data, "ACTIVE")}
@@ -371,12 +372,12 @@ function UserManagement() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="border shadow-sm focus:outline-primary-green border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+          <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
             <SearchIcon />
             <input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="outline-none text-sm focus:outline-none bg-white"
+              className="outline-none text-sm focus:outline-none bg-white custom-input input-custom"
               placeholder="Search by name only"
             />
           </div>

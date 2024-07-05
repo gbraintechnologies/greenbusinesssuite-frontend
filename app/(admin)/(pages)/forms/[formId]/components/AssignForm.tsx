@@ -14,7 +14,6 @@ function AssignForm({ setShow, id: formId, companies, queryClient }: any) {
   const [selected, setSelected] = useState<any>();
   const [query, setQuery] = useState("");
 
-
   const [loading, setLoading] = useState(false);
 
   const assignFormToCompany = async () => {
@@ -63,7 +62,7 @@ function AssignForm({ setShow, id: formId, companies, queryClient }: any) {
                 <p className="mb-2 text-xs">Select an organization</p>
                 <Combobox.Input
                   placeholder="Search company name"
-                  className="w-full text-gray-800 px-3 py-3 border border-gray-300 focus:outline-primary-green rounded-xl"
+                  className="w-full text-gray-800 px-3 py-3 border border-gray-300  rounded-xl"
                   // @ts-ignore
                   displayValue={(person) => person?.company_name}
                   onChange={(event) => setQuery(event.target.value)}

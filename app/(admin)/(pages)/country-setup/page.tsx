@@ -10,7 +10,7 @@ import SearchIcon from "@/public/icons/SearchIcon";
 import DataTable from "@/components/DataTable/DataTable";
 import "./index.css";
 import { Countrie } from "./components/Countries";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { deleteJurisdictionByID } from "@/services/features/jurisdictionsService";
 
 interface RowData {
@@ -50,7 +50,6 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
     }
   };
 
-
   return (
     <>
       <IconButton onClick={handleClick}>
@@ -62,8 +61,8 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: 150
-          }
+            width: 150,
+          },
         }}
       >
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
@@ -73,10 +72,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
   );
 };
 
-
-
 function CountrySetup() {
-
   const [searchTerm, setSearchTerm] = useState("");
   const [rows, setRows] = useState<RowData[]>([]);
   const { data, isLoading, refetch } = useQuery({
@@ -115,13 +111,16 @@ function CountrySetup() {
             />
           </label>
           <div className="w-10 h-10 flex items-center justify-center">
-            <span className=""><img src={Countrie(params.row.name)?.flags.png} alt={Countrie(params.row.name)?.name.common} style={{ height: "auto", width: "30px" }} /></span>
-
+            <span className="">
+              <img
+                src={Countrie(params.row.name)?.flags.png}
+                alt={Countrie(params.row.name)?.name.common}
+                style={{ height: "auto", width: "30px" }}
+              />
+            </span>
           </div>
           <div>
-            <p className="font-medium">
-              {params.row.name}
-            </p>
+            <p className="font-medium">{params.row.name}</p>
           </div>
         </div>,
       ],
@@ -131,7 +130,9 @@ function CountrySetup() {
       headerName: "Actions",
       flex: 1,
       type: "actions",
-      renderCell: (params: any) => <ActionMenu row={params.row} onDeleteSuccess={handleDeleteSuccess} />,
+      renderCell: (params: any) => (
+        <ActionMenu row={params.row} onDeleteSuccess={handleDeleteSuccess} />
+      ),
     },
   ];
 
@@ -139,9 +140,8 @@ function CountrySetup() {
     <div className="w-full pb-20 ">
       <Nav />
       <div className="flex items-center px-5 justify-between my-4">
-
         <div className="flex items-center gap-3">
-          <div className="border shadow-sm focus:outline-primary-green border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+          <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
             <SearchIcon />
             <input
               value={searchTerm}
@@ -152,11 +152,7 @@ function CountrySetup() {
           </div>
         </div>
       </div>
-      <DataTable
-        isLoading={isLoading}
-        rows={rows}
-        columns={columns}
-      />
+      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
     </div>
   );
 }

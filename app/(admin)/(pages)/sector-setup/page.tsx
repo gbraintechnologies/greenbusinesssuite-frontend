@@ -37,13 +37,13 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
 
   const handleEdit = () => {
     handleClose();
-    console.log('Edit:', row);
+    console.log("Edit:", row);
     // Add your edit logic here
   };
 
   const handleDelete = () => {
     handleClose();
-    console.log('Delete:', row);
+    console.log("Delete:", row);
     // Add your delete logic here
   };
 
@@ -58,8 +58,8 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: 150
-          }
+            width: 150,
+          },
         }}
       >
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
@@ -90,8 +90,6 @@ const SectorSetup: React.FC = () => {
     }
   }, [data]);
 
-
-
   const columns = [
     {
       field: "sector",
@@ -109,9 +107,7 @@ const SectorSetup: React.FC = () => {
             />
           </label>
           <div>
-            <p className="font-medium">
-              {params.row.sectors}
-            </p>
+            <p className="font-medium">{params.row.sectors}</p>
           </div>
         </div>,
       ],
@@ -125,9 +121,7 @@ const SectorSetup: React.FC = () => {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="flex flex-col gap-2">
-          <p className="font-medium text-sm">
-            {params.row.subSector}
-          </p>
+          <p className="font-medium text-sm">{params.row.subSector}</p>
         </div>,
       ],
     },
@@ -145,7 +139,7 @@ const SectorSetup: React.FC = () => {
       <Nav />
       <div className="flex items-center px-5 justify-between my-4">
         <div className="flex items-center gap-3">
-          <div className="border shadow-sm focus:outline-primary-green border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+          <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
             <SearchIcon />
             <input
               value={searchTerm}
@@ -157,11 +151,7 @@ const SectorSetup: React.FC = () => {
         </div>
       </div>
 
-      <DataTable
-        isLoading={isLoading}
-        rows={rows}
-        columns={columns}
-      />
+      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
     </div>
   );
 };

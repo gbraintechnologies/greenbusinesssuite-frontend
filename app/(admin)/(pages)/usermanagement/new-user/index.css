@@ -3,7 +3,7 @@
 }
 
 .input-holder input {
-  @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff] focus:outline-primary-green focus:outline-[0.2px] rounded-lg my-2 shadow-sm;
+  @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff]  focus:outline-[0.2px] rounded-lg my-2 shadow-sm;
 }
 
 .input-holder label {

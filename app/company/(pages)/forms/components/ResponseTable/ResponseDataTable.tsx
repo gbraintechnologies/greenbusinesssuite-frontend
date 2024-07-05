@@ -51,7 +51,6 @@ const ResponseDataTable: React.FC<Props> = ({
   const captureAndGeneratePDF = (userData: any, responseId: string) => {
     const input = hiddenRef?.current;
 
-    console.log("input ", input);
     if (input) {
       html2canvas(input, { scale: 2 })
         .then((canvas) => {
@@ -96,7 +95,7 @@ const ResponseDataTable: React.FC<Props> = ({
           setPdfGenerating(false);
         });
     } else {
-      console.log("no input");
+      // console.log("no input");
     }
   };
 
@@ -152,16 +151,25 @@ const ResponseDataTable: React.FC<Props> = ({
         setFetchingUserData(true);
         const preparedRows = await Promise.all(
           responseData.map(async (response: any, index: number) => {
-            const userRes = await services.userByIDRaw(response?.userId);
-            setFetchingUserData(false);
-            return {
-              id: index,
-              data: response,
-              userData: userRes,
-            };
+            if (Boolean(response?.userId)) {
+              const userRes = await services.userByIDRaw(response?.userId);
+              setFetchingUserData(false);
+              return {
+                id: index,
+                data: response,
+                userData: userRes,
+              };
+            } else {
+              return {
+                id: null,
+                data: null,
+                userData: null,
+              };
+            }
           })
         );
-        setRows(preparedRows);
+
+        setRows(preparedRows.filter((item) => item.id !== null));
       } else {
         setRows([]);
       }
