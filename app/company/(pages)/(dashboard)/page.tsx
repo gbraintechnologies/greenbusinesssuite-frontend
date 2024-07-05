@@ -1,20 +1,53 @@
+"use client";
+
 import React from "react";
 import DashboardCard from "./components/DashboardCard";
+import StatsBlock from "@/components/StatsBlock/StatsBlock";
+
+//
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
+import useCompany from "@/hooks/useCompany";
 
 function CompanyDashboard() {
-  const data = [
-    { header: "Number Of Registrations", value: "" },
-    { header: "Number Of Submitted Applications", value: "" },
-    { header: "Number Of Active Users", value: "" },
-  ];
+  //
+  const { company } = useCompany();
+
+  // reports
+  const { data: uniqueUsersCount, isLoading } = useQuery({
+    queryKey: ["unique users count", company?.company_name],
+    queryFn: services.uniqueUsersCount(company?.company_name),
+  });
+
+  const { data: totalEntries } = useQuery({
+    queryKey: ["total entries per company", company?.company_name],
+    queryFn: services.totalEntries(company?.company_name),
+  });
+
   return (
     <div className="px-5 pb-20 mt-5">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
-      <div className="flex gap-5 flex-wrap">
+      <StatsBlock
+        stats={[
+          {
+            label: "Number of Registrations",
+            value: totalEntries ? totalEntries : "-",
+          },
+          {
+            label: "Submitted Applications",
+            value: "-",
+          },
+          {
+            label: "Active Users",
+            value: uniqueUsersCount ? uniqueUsersCount : "-",
+          },
+        ]}
+      />
+      {/* <div className="flex gap-5 flex-wrap">
         {data.map((item: any, index: number) => (
           <DashboardCard header={item.header} value={item.value} key={index} />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
