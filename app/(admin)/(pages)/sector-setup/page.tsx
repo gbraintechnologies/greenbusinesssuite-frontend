@@ -8,24 +8,24 @@ import SearchIcon from "@/public/icons/SearchIcon";
 import DataTable from "@/components/DataTable/DataTable";
 import services from "@/services";
 import Nav from "./components/Nav";
-import { deleteSectorByID } from "@/services/features/sectorService";
-
-interface SectorID {
-  id: number;
-  // Add other properties relevant to your data
-}
+import { useRouter } from 'next/navigation';
+import { deleteBySubSectorID } from "@/services/features/sectorService";
 
 interface RowData {
   id: number;
-  data: SectorID;
+  parentSector: string;
+  subSectorCount: number;
 }
 
 interface ActionMenuProps {
   row: RowData;
+  onDeleteSuccess: () => void;
+  countryId: number | undefined
 }
 
-const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
+const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess, countryId }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const router = useRouter();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -36,15 +36,19 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
   };
 
   const handleEdit = () => {
+   // alert(JSON.stringify(countryId))
     handleClose();
-    console.log("Edit:", row);
-    // Add your edit logic here
+    router.push(`/sector-setup/edit-sector?id=${row.id}&countryId=${countryId}`);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     handleClose();
-    console.log("Delete:", row);
-    // Add your delete logic here
+    try {
+      await deleteBySubSectorID(row.id);
+      onDeleteSuccess();
+    } catch (error) {
+      console.error("Error deleting row:", error);
+    }
   };
 
   return (
@@ -58,8 +62,8 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: 150,
-          },
+            width: 150
+          }
         }}
       >
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
@@ -73,22 +77,26 @@ const SectorSetup: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [rows, setRows] = useState<RowData[]>([]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["all sectors"],
     queryFn: services.getSectorByCountry("Ghana"),
   });
 
   useEffect(() => {
+   // alert(JSON.stringify(data))
     if (data) {
-      // alert(JSON.stringify(data))
-      const formattedRows = data.map((item: any, index: any) => ({
-        id: index + 1,
-        sectors: item.sectors,
-        subSector: item.subSector,
-      }));
-      setRows(formattedRows);
+      const sectorStats = data[0]?.sectorStats || [];
+      setRows(sectorStats);
     }
   }, [data]);
+
+  const handleDeleteSuccess = async () => {
+    try {
+      await refetch();
+    } catch (error) {
+      console.error("Error fetching updated data:", error);
+    }
+  };
 
   const columns = [
     {
@@ -107,13 +115,15 @@ const SectorSetup: React.FC = () => {
             />
           </label>
           <div>
-            <p className="font-medium">{params.row.sectors}</p>
+            <p className="font-medium">
+              {params.row.parentSector}
+            </p>
           </div>
         </div>,
       ],
     },
     {
-      field: "Sub Sectors",
+      field: "subSectors",
       headerName: "Sub Sectors",
       flex: 1,
       headerAlign: "left",
@@ -121,7 +131,9 @@ const SectorSetup: React.FC = () => {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="flex flex-col gap-2">
-          <p className="font-medium text-sm">{params.row.subSector}</p>
+          <p className="font-medium text-sm">
+            {params.row.subSectorCount}
+          </p>
         </div>,
       ],
     },
@@ -130,7 +142,15 @@ const SectorSetup: React.FC = () => {
       headerName: "Actions",
       flex: 1,
       type: "actions",
-      renderCell: (params: any) => <ActionMenu row={params.row} />,
+      renderCell: (params: any) => (
+        data && data.length > 0 ? (
+          <ActionMenu
+            row={params.row}
+            onDeleteSuccess={handleDeleteSuccess}
+            countryId={data[0]?.id}
+          />
+        ) : null
+      ),
     },
   ];
 
@@ -139,7 +159,7 @@ const SectorSetup: React.FC = () => {
       <Nav />
       <div className="flex items-center px-5 justify-between my-4">
         <div className="flex items-center gap-3">
-          <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+          <div className="border shadow-sm focus:outline-primary-green border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
             <SearchIcon />
             <input
               value={searchTerm}
@@ -151,7 +171,11 @@ const SectorSetup: React.FC = () => {
         </div>
       </div>
 
-      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
+      <DataTable
+        isLoading={isLoading}
+        rows={rows}
+        columns={columns}
+      />
     </div>
   );
 };
