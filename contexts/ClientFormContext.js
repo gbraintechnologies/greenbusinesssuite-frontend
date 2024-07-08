@@ -38,8 +38,8 @@ export const ClientFormProvider = ({ children }) => {
         let field = section?.formFields[j];
         formFields.push({
           id: field?.id,
-          response: field?.response ? field?.response : null,
-          formFieldId: field?.id,
+          response: field?.response ? field?.response : "",
+          formFieldId: field?.formFieldId,
           fieldName: field?.name,
           isStatisticalField: field?.isStatisticalField
             ? field?.isStatisticalField
@@ -52,7 +52,7 @@ export const ClientFormProvider = ({ children }) => {
       }
       formSections.push({
         id: section?.id,
-        formSectionId: section?.id,
+        formSectionId: section?.formSectionId,
         formDataFields: formFields,
       });
     }
@@ -70,8 +70,6 @@ export const ClientFormProvider = ({ children }) => {
       updatedOn: new Date(),
       createdOn: new Date(),
     };
-
-    console.log("saving response", response);
 
     services
       .saveResponse(response)
@@ -104,8 +102,8 @@ export const ClientFormProvider = ({ children }) => {
         let field = section?.formFields[j];
         formFields.push({
           id: field?.id,
-          response: field?.response ? field?.response : null,
-          formFieldId: field?.id,
+          response: field?.response ? field?.response : "",
+          formFieldId: field?.formFieldId,
           fieldName: field?.name,
           isStatisticalField: field?.isStatisticalField
             ? field?.isStatisticalField
@@ -118,8 +116,7 @@ export const ClientFormProvider = ({ children }) => {
       }
       formSections.push({
         id: section?.id,
-
-        formSectionId: section?.id,
+        formSectionId: section?.formSectionId,
         formDataFields: formFields,
       });
     }
@@ -137,8 +134,6 @@ export const ClientFormProvider = ({ children }) => {
       updatedOn: new Date(),
       createdOn: new Date(),
     };
-
-    console.log("submitting response", response);
 
     return services.saveResponse(response);
   };
