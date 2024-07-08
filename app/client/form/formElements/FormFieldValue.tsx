@@ -13,7 +13,7 @@ import {
 import { IoIosArrowDown } from "react-icons/io";
 import { LuUploadCloud } from "react-icons/lu";
 
-function FormFieldValue({ field, section }: any) {
+function FormFieldValue({ field, section, viewOnly }: any) {
   const { fieldDataType, horizontalAlign, placeHolder, label } = field;
 
   // TYPES
@@ -42,6 +42,7 @@ function FormFieldValue({ field, section }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <textarea
+            disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
@@ -63,6 +64,7 @@ function FormFieldValue({ field, section }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <input
+            disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
@@ -82,6 +84,7 @@ function FormFieldValue({ field, section }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <input
+            disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
@@ -101,6 +104,7 @@ function FormFieldValue({ field, section }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <input
+            disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
@@ -120,6 +124,7 @@ function FormFieldValue({ field, section }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <input
+            disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
@@ -148,7 +153,7 @@ function FormFieldValue({ field, section }: any) {
             // }}
             className="w-full"
           >
-            <DropdownTrigger className="w-full">
+            <DropdownTrigger disabled={viewOnly} className="w-full">
               <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
                 {field?.response ? field?.response : "No option selected"}
                 <IoIosArrowDown />
@@ -192,6 +197,7 @@ function FormFieldValue({ field, section }: any) {
               return (
                 <div className="flex  items-center flex-row gap-2">
                   <input
+                    disabled={viewOnly}
                     // checked={Boolean(field?.response !== null)}
                     onChange={(e) =>
                       saveSingleResponse(section?.id, field?.id, e.target.value)

@@ -134,7 +134,7 @@ function FormDetail({ params }: any) {
         </div>
 
         {/* VIEWS SELECTOR */}
-        <div className="flex justify-between mt-5 items-center px-5">
+        {/* <div className="flex justify-between mt-5 items-center px-5">
           <div className="bg-[#F1F5F9]  flex items-center gap-2 rounded-xl my-1 p-1 bg-opacity-50">
             <button
               onClick={() => setView("responses")}
@@ -147,10 +147,11 @@ function FormDetail({ params }: any) {
               Responses
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* RENDER VIEWS */}
-        {view === "responses" && (
+        {/* {view === "responses" && (
+          <div>UI In progress</div>
           <div className="p-6">
             <ResponseDataTable
               responseData={formResponseData}
@@ -158,7 +159,7 @@ function FormDetail({ params }: any) {
               exportToExcel={exportToExcel}
             />
           </div>
-        )}
+        )} */}
 
         {/* ASSIGN TO NEW COMPANY MODAL */}
         <Modal

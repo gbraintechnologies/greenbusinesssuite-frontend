@@ -126,7 +126,7 @@ function ProcessInvite() {
           let field = section?.formFields[j];
           formFields.push({
             // id: field?.id,
-            response: field?.response ? field?.response : null,
+            response: field?.response ? field?.response : "",
             formFieldId: field?.id,
             fieldName: field?.name,
             isStatisticalField: field?.isStatisticalField

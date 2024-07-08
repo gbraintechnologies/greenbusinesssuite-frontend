@@ -83,8 +83,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
             `${form?.name}-${userData?.first_name} ${userData?.last_name}-${responseId}-response`
           );
         })
-        .catch(() => {
-        });
+        .catch(() => {});
     }
   };
 
@@ -116,7 +115,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     {
       title: "View",
       func: () => {
-        router.push(`/client/form?id=${form?.id}`);
+        router.push(`/client/form/view?id=${form?.id}`);
       },
     },
     {
@@ -124,20 +123,26 @@ function FormCard({ form, type = "uncompleted" }: Props) {
       func: async () => {
         toast.promise(
           (async () => {
-            const resData = await services.retrieveFormUserResponseRaw(user?.id, form?.id);
+            const resData = await services.retrieveFormUserResponseRaw(
+              user?.id,
+              form?.id
+            );
 
-            
             if (resData) {
-              const mergedForm = mergeForm(resData[0]?.id, form, resData[0]?.inputData);
+              const mergedForm = mergeForm(
+                resData[0]?.id,
+                form,
+                resData[0]?.inputData
+              );
               renderToHiddenElement(mergedForm, user, resData[0]?.id);
             } else {
-              throw new Error('No data found');
+              throw new Error("No data found");
             }
           })(),
           {
-            loading: 'Processing form response...',
-            success: 'Download will start soon, please wait...',
-            error: 'Error while downloading file',
+            loading: "Processing form response...",
+            success: "Download will start soon, please wait...",
+            error: "Error while downloading file",
           }
         );
       },
