@@ -1,7 +1,7 @@
 import React from "react";
 import FormFieldValue from "./FormFieldValue";
 
-function FormSection({ section, viewOnly }: any) {
+function FormSection({ section, viewOnly = false }: any) {
   const { name, formFields, description } = section;
   return (
     <div className="p-3">

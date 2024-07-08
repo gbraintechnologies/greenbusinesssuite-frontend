@@ -68,6 +68,10 @@ body {
   border: 1px;
 }
 
+button {
+  @apply cursor-pointer;
+}
+
 /* CUSTOM SCROLLBARS */
 /* width */
 ::-webkit-scrollbar {
@@ -156,5 +160,3 @@ textarea {
 .css-13cymwt-control {
   background-color: #f8fafc !important;
 }
-
-
