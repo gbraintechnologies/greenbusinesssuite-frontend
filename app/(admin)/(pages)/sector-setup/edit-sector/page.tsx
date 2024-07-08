@@ -215,70 +215,29 @@ function EditSector() {
             {subSectors &&
               subSectors.map((subSector, index) => (
                 <div className="flex items-center mb-4" key={index}>
-                  <input
-                    type="text"
-                    {...register(`sector.subSectors.${index}`)}
-                    defaultValue={subSector}
-                    className="mr-2 px-5 border-b mb-1 pb-1 input-custom"
-                    style={{ width: "30%" }}
-                    readOnly
-                  />
-                  <div style={{ width: "100%" }}>
-                    <div className="flex items-center" style={{ width: "30%" }}>
-                      <div
-                        className="mr-2 px-5 border-b mb-1 pb-1"
-                        style={{ width: "30%" }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <span></span>
-                          <div className="flex items-center">
-                            <button
-                              type="button"
-                              onClick={() => handleEdit(index)}
-                              className="rounded-full"
-                            >
-                              <EditIconSetup />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDelete(index)}
-                              className="rounded-full ml-2"
-                            >
-                              <DeleteIcon />
-                            </button>
-                          </div>
-                        </div>
+                  <div style={{ width: "30%", borderBottom: "1px solid lightgray" }}>
+                    <div className="flex items-center justify-between">
+                      <input
+                        type="text"
+                        {...register(`sector.subSectors.${index}`)}
+                        defaultValue={subSector}
+                        className="mr-2 px-5 border-b pb-1 input-custom"
+                        style={{ width: "calc(100% - 50px)", borderBottom: "none" }}
+                        readOnly
+                      />
+                      <div className="flex items-center">
+                        <button type="button" onClick={() => handleEdit(index)} className="rounded-full">
+                          <EditIconSetup />
+                        </button>
+                        <button type="button" onClick={() => handleDelete(index)} className="rounded-full ml-2">
+                          <DeleteIcon />
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
+
               ))}
-            {/* <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                width: "30%",
-                margin: "20px 0",
-              }}
-            >
-              <div
-                style={{ flex: 1, borderBottom: "1px solid lightgray" }}
-              ></div>
-              <span
-                style={{ margin: "0 10px", fontSize: "16px", color: "black" }}
-              >
-                or
-              </span>
-              <div
-                style={{ flex: 1, borderBottom: "1px solid lightgray" }}
-              ></div>
-            </div> */}
           </div>
         </form>
       </div>
