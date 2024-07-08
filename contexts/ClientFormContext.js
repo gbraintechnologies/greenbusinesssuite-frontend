@@ -71,6 +71,8 @@ export const ClientFormProvider = ({ children }) => {
       createdOn: new Date(),
     };
 
+    console.log("saving response", response);
+
     services
       .saveResponse(response)
       .then((res) => {
@@ -135,6 +137,8 @@ export const ClientFormProvider = ({ children }) => {
       updatedOn: new Date(),
       createdOn: new Date(),
     };
+
+    console.log("submitting response", response);
 
     return services.saveResponse(response);
   };

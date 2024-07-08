@@ -151,13 +151,14 @@ function FormDetail({ params }: any) {
 
         {/* RENDER VIEWS */}
         {view === "responses" && (
-          <div className="p-6">
-            <ResponseDataTable
-              responseData={formResponseData}
-              isResponseLoading={isResponseLoading}
-              exportToExcel={exportToExcel}
-            />
-          </div>
+          <div>UI In progress</div>
+          // <div className="p-6">
+          //   <ResponseDataTable
+          //     responseData={formResponseData}
+          //     isResponseLoading={isResponseLoading}
+          //     exportToExcel={exportToExcel}
+          //   />
+          // </div>
         )}
 
         {/* ASSIGN TO NEW COMPANY MODAL */}

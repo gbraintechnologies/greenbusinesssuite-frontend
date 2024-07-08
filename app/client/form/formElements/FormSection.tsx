@@ -1,7 +1,7 @@
 import React from "react";
 import FormFieldValue from "./FormFieldValue";
 
-function FormSection({ section }: any) {
+function FormSection({ section, viewOnly }: any) {
   const { name, formFields, description } = section;
   return (
     <div className="p-3">
@@ -14,7 +14,13 @@ function FormSection({ section }: any) {
 
       <div className="bg-white min-h-[10rem] p-5 rounded-lg">
         {formFields?.map((field: any) => {
-          return <FormFieldValue section={section} field={field} />;
+          return (
+            <FormFieldValue
+              viewOnly={viewOnly}
+              section={section}
+              field={field}
+            />
+          );
         })}
       </div>
     </div>
