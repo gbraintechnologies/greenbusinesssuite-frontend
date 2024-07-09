@@ -16,6 +16,7 @@ import {
 import { CompanyInfo} from "@/types";
 import CompanyForm from "../components/CompanyForm";
 import services from "@/services";
+import { useQuery } from "@tanstack/react-query";
 
 interface ICompany {
   companyName: string;
@@ -63,6 +64,11 @@ const CreateCompany = () => {
   const [companyLogo, setCompanyLogo] = useState<File | null>(null);
 
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
+
+  const { data: industries, isLoading, refetch } = useQuery({
+    queryKey: ["all sectors"],
+    queryFn: services.getSectorByCountry("Ghana"),
+  });
 
   const router = useRouter();
 
@@ -158,12 +164,12 @@ const CreateCompany = () => {
         toast.success("Admin created successfully successfully");
 
         // ROLE ID: 6 for company admin
-      const assignRoleResponse = await services.assignRoleToUser(
+      await services.assignRoleToUser(
         createUserResponse.data.id,
         6
       );
 
-      const notifyUserResponse = await services.notifyUserTempCred(
+      await services.notifyUserTempCred(
         createUserResponse?.data?.id,
         "EMAIL"
       );

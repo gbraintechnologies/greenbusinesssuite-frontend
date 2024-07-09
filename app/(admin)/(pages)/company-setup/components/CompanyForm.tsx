@@ -1,5 +1,4 @@
 "use client";
-import Dropdown from "@/components/Dropdown/Dropdown";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
@@ -9,6 +8,16 @@ import React, { useEffect, useState } from "react";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import * as Yup from "yup";
 import UploadIcon from "@/public/svg/upload.svg";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
+import { Button } from "@nextui-org/button";
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
+import { Countrie } from "../../country-setup/components/Countries";
 
 export interface ICompany {
   companyName: string;
@@ -98,6 +107,20 @@ const CompanyForm: React.FC<Props> = ({
   selectedJurisdiction,
   setSelectedJurisdiction,
 }) => {
+  const { data: industries, isLoading } = useQuery({
+    queryKey: ["all sectors"],
+    queryFn: services.getSectorByCountry("Ghana"),
+  });
+
+  const {
+    data: jurisdictions,
+    isLoading: jurisdictionsLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["all jurisdictions"],
+    queryFn: services.allJurisdictions(),
+  });
+
   useEffect(() => {
     if (companyLogo) {
       const url = URL.createObjectURL(companyLogo);
@@ -106,8 +129,6 @@ const CompanyForm: React.FC<Props> = ({
       return () => URL.revokeObjectURL(url);
     }
   }, [companyLogo]);
-
-  console.log('company logo ', companyLogo)
 
   return (
     <>
@@ -186,26 +207,97 @@ const CompanyForm: React.FC<Props> = ({
                 {/* INDUSTRY */}
                 <div className="input-holder half">
                   <label>Industry</label>
-                  <Dropdown
-                    options={[
-                      { label: "Finance", value: "finance" },
-                      { label: "Technology", value: "Technology" },
-                    ]}
-                    selected={selectedIndustry}
-                    setSelected={setSelectedIndustry}
-                    bgColor="bg-slate-50"
-                  />
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        variant="bordered"
+                        className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                      >
+                        {selectedIndustry?.label || "Select Industry"}
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                      aria-label="Static Actions"
+                      variant="flat"
+                      selectionMode="single"
+                    >
+                      {industries?.map((industry: any) => (
+                        <DropdownItem
+                          key="view"
+                          className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                          onClick={() =>
+                            setSelectedIndustry({
+                              label: industry?.sectorStats[0]?.parentSector,
+                              value: industry?.sectorStats[0]?.id,
+                            })
+                          }
+                        >
+                          {industry?.sectorStats[0]?.parentSector}
+                        </DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
                   <ShowError name="industry" />
                 </div>
                 {/* JURISDICTION */}
                 <div className="input-holder half">
                   <label>Company jurisdiction</label>
-                  <Dropdown
-                    options={[]}
-                    selected={selectedJurisdiction}
-                    setSelected={setSelectedJurisdiction}
-                    bgColor="bg-slate-50"
-                  />
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        variant="bordered"
+                        className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                      >
+                        <div className="flex gap-4 items-center">
+                          {typeof(selectedJurisdiction) !== "undefined" && (
+                            <img
+                              src={
+                                Countrie(selectedJurisdiction?.label)?.flags.png
+                              }
+                              alt={
+                                Countrie(selectedJurisdiction?.label)?.name
+                                  .common
+                              }
+                              style={{ height: "20px", width: "25px" }}
+                            />
+                          )}
+                          <p>
+                            {selectedJurisdiction?.label ||
+                              "Select Jurisdiction"}
+                          </p>
+                        </div>
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                      aria-label="Static Actions"
+                      variant="flat"
+                      selectionMode="single"
+                    >
+                      {jurisdictions?.map((jurisdiction: any) => (
+                        <DropdownItem
+                          key="view"
+                          className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                          onClick={() =>
+                            setSelectedJurisdiction({
+                              label: jurisdiction?.name,
+                              value: jurisdiction?.id,
+                            })
+                          }
+                        >
+                          <div className="flex gap-4 items-center">
+                            <img
+                              src={Countrie(jurisdiction?.name)?.flags.png}
+                              alt={Countrie(jurisdiction?.name)?.name.common}
+                              style={{ height: "20px", width: "25px" }}
+                            />
+                            <p>{jurisdiction?.name}</p>
+                          </div>
+                        </DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
                   <ShowError name="industry" />
                 </div>
                 {/* COMPANY LOGO */}
@@ -308,7 +400,16 @@ const CompanyForm: React.FC<Props> = ({
                 <div className="input-holder">
                   <label>Company admin email address</label>
                   <Field
-                    style={logoPresentOnLoad ? {...getStyles(errors, "adminEmail"),  backgroundColor: "rgba(248 250 252,0.5)", color: "#666", cursor: "not-allowed"}: getStyles(errors,"adminEmail")}
+                    style={
+                      logoPresentOnLoad
+                        ? {
+                            ...getStyles(errors, "adminEmail"),
+                            backgroundColor: "rgba(248 250 252,0.5)",
+                            color: "#666",
+                            cursor: "not-allowed",
+                          }
+                        : getStyles(errors, "adminEmail")
+                    }
                     name="adminEmail"
                     placeholder=""
                     disabled={logoPresentOnLoad}
