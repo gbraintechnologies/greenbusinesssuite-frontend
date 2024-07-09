@@ -36,7 +36,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 
   const handleEdit = () => {
     handleClose();
-    // console.log('Edit:', row);
+    //alert(JSON.stringify(row.id))
     router.push(`/country-setup/edit-jurisdiction?id=${row.id}`);
   };
 

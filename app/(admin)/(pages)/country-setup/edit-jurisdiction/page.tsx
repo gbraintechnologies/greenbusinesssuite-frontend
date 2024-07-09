@@ -8,18 +8,18 @@ import { IoIosAddCircleOutline } from 'react-icons/io';
 import Link from 'next/link';
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
+import { Countrie } from "../components/Countries";
+import DeleteIcon from "@/public/icons/DeleteIcon";
+import EditIconSetup from "@/public/icons/EditIconSetup";
 import { updateJurisdictionByID } from "@/services/features/jurisdictionsService";
+import SelectCountryEdit from '../components/selectCountryEdit';
+import { BsDot } from "react-icons/bs";
 
 
 const schema = yup.object().shape({
     id: yup.number().required(),
+    countryId: yup.number().required(),
     name: yup.string().required(),
-    jurisdiction: yup.object().shape({
-        id: yup.number().required(),
-        countryId: yup.number().required(),
-        name: yup.string().required(),
-    }),
-    inputType: yup.string().required(),
 });
 
 function EditJurisdiction() {
@@ -31,31 +31,25 @@ function EditJurisdiction() {
         queryKey: ["all jurisdictionByID", Id],
         queryFn: services.getJurisdictionById(Number(Id)),
         enabled: !!Id,
-      });
+    });
 
-    //   useEffect(() => {
-    //     alert(JSON.stringify(data))
-    //   }, [data]);
-
-    const { register, handleSubmit, setValue, formState: { errors }, getValues } = useForm<typeOfSchema>({
+    const { register, handleSubmit, setValue, formState: { errors }, watch } = useForm<typeOfSchema>({
         resolver: yupResolver(schema),
         mode: "onChange",
         defaultValues: {
             id: 0,
-            name: '',
-            jurisdiction: {
-                id: 0,
-                countryId: 0,
-                name: 'Ghana'
-            },
-            inputType: 'free-input'
+            countryId: 0,
+            name: ''
         },
 
     });
 
     useEffect(() => {
-        //alert(JSON.stringify(Id))
-    }, []);
+        if (data) {
+            setValue("id", data.id);
+            setValue("name", data.name);
+        }
+    }, [data, setValue]);
 
     const onSubmit = async (data: typeOfSchema) => {
 
@@ -89,12 +83,52 @@ function EditJurisdiction() {
                         </div>
 
                     </div>
-                    <div className='mb-5'>
-
+                    <div>
+                        <div className="mb-3 relative">
+                            <SelectCountryEdit
+                                label="Country"
+                                autoComplete="off"
+                                {...register("name")}
+                                value={watch("name")}
+                                error={errors.name?.message}
+                                options={[data?.name || ""]} // Ensure options is an array
+                                readOnly
+                                PrependIcon={
+                                    data?.name ? (
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <img
+                                                src={Countrie(data.name)?.flags.png}
+                                                alt={Countrie(data.name)?.name.common}
+                                                style={{ height: 'auto', width: '30px', marginRight: '10px' }}
+                                            />
+                                        </div>
+                                    ) : null
+                                }
+                                style={{ width: "30%", height: "30%" }}
+                            />
+                        </div>
                     </div>
-                    <div className='mt-3'>
+                    <div>
                         <h4 className="font-bold text-black-400">Addressing Scheme</h4>
                         <p className="text-black-400 text-sm">Setup all Parent and Child sub-levels for the Country</p>
+                    </div>
+                    <div className="flex items-center justify-between"  style={{ width: '30%' }}>
+                        <div>
+                            <h4 className="font-bold text-black-400">Regions</h4>
+                            <span style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                                <p style={{ margin: 0, marginRight: '10px' }}>Dropdown</p>
+                                <BsDot size={30} />
+                                <p style={{ margin: 0 }}>Sub-Level</p>
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-end" style={{ width: '30%' }}>
+                            <button type="button" className="rounded-full relative" style={{ right: '-10px' }}>
+                                <EditIconSetup />
+                            </button>
+                            <button type="button" className="rounded-full ml-2 relative" style={{ right: '-10px' }}>
+                                <DeleteIcon />
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
