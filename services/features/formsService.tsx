@@ -39,7 +39,10 @@ export const getFormsByCompanyId = (companyId: string) => {
       .then((res) => res.data);
 };
 
-export const getFormStatisticsForUser = (userId: string) => {
+export const getFormStatisticsForUser = (userId: string | null ) => {
+  if(!userId){
+    throw new Error("No User Id")
+  }
   return () =>
     authApi
       .get(`/forms/builder/user/form-statistics/${userId}`)
@@ -64,6 +67,13 @@ export const getUncompletedFormsByUserId = (userId: string) => {
       .get(`/forms/builder/user/uncompleted-forms/${userId}`)
       .then((res) => res.data);
 };
+
+export const getFormsByUserId = (userId: string | null) => {
+  if(!userId){
+    throw new Error("User ID is required")
+  }
+  return () => authApi.get(`/forms/builder/user-forms/${userId}`).then((res) => res.data);
+}
 
 export const getFormResponseById = (id: number) => {
   return () =>
@@ -202,6 +212,7 @@ export const retrieveFormUserResponses = (
   if (userId === null) {
     throw new Error("No User Id");
   }
+
   return () =>
     authApi
       .get(`forms/response/data/user-form/${userId}/${formId}`)
@@ -209,7 +220,7 @@ export const retrieveFormUserResponses = (
 };
 
 export const retrieveFormUserResponseRaw = (
-  userId: number | string | undefined,
+  userId: number | string | undefined | null,
   formId: number | string
 ) => {
   if (formId === undefined) {
