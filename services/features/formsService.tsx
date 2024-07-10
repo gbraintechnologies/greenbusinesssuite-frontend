@@ -19,9 +19,9 @@ export const allFormTemplates = () => {
 
 export const assignFormToCompany = (
   formId: number | string,
-  companyName: string
+  companyId: string
 ) => {
-  return authApi.put(`/forms/builder/company/${formId}/${companyName}`);
+  return authApi.put(`/forms/builder/company/${formId}/${companyId}`);
 };
 
 export const getFormById = (id: any) => {
@@ -32,10 +32,10 @@ export const getFormByIdRaw = (id: any) => {
   return authApi.get(`/forms/builder/${id}`);
 };
 
-export const getFormsByCompanyName = (companyName: string) => {
+export const getFormsByCompanyId = (companyId: string) => {
   return () =>
     authApi
-      .get(`/forms/builder/company/${companyName}`)
+      .get(`/forms/builder/company/${companyId}`)
       .then((res) => res.data);
 };
 

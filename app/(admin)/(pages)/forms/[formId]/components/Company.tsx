@@ -15,7 +15,7 @@ import { CompanyInfo } from "@/types";
 import FormatDate from "@/utils/FormatDate/FormatDate";
 import { AiFillPauseCircle } from "react-icons/ai";
 
-function Company({ companies, companyName, assignDate }: any) {
+function Company({ companies, companyId, assignDate }: any) {
   // table column headers
   const columns = [
     {
@@ -80,15 +80,15 @@ function Company({ companies, companyName, assignDate }: any) {
 
   // for late data loads
   useEffect(() => {
-    if (companyName) {
+    if (companyId) {
       setAggregatedCompanies([
         companies?.find(
           (company: any) =>
-            lowerCaseNoSpace(company?.company_name) == companyName
+            company?.id == companyId
         )]
       );
     }
-  }, [companyName, companies]);
+  }, [companyId, companies]);
 
   const [rows, setRows] = useState<any>([]);
 

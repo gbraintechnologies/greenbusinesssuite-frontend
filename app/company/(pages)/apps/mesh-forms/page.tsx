@@ -1,7 +1,6 @@
 "use client";
 import React, { use, useEffect, useState } from "react";
 import SearchBox from "@/components/SearchBox/SearchBox";
-import { getFormsByCompanyName } from "@/services/features/formsService";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import useAdmin from "@/hooks/useAdmin";
@@ -30,8 +29,8 @@ function CompanyForms() {
 
   const { data: forms, isLoading: isFormsLoading } = useQuery({
     queryKey: ["get company forms"],
-    queryFn: services.getFormsByCompanyName(lowerCaseNoSpace(companyData?.company_name)),
-    enabled: !!companyData?.company_name,
+    queryFn: services.getFormsByCompanyId(companyData?.id),
+    enabled: !!companyData?.id,
   });
 
 
