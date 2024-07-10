@@ -21,6 +21,8 @@ import FormCard from "./components/FormCard";
 import useForm from "@/hooks/useForm";
 import Modal from "@/components/Modal/Modal";
 import UsingTemplate from "./components/UsingTemplate";
+import Pagination from "@/components/Pagination/Pagination";
+import FormGridLoader from "./components/FormGridLoader";
 
 function Forms() {
   const router = useRouter();
@@ -82,10 +84,14 @@ function Forms() {
     },
   ];
 
+  // pagination
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+
   // fetch all forms
   const { data: forms, isLoading } = useQuery({
-    queryKey: ["all forms"],
-    queryFn: services.allForms(0, 100),
+    queryKey: ["all forms", page, limit],
+    queryFn: services.allForms(page, limit),
   });
 
   // unselecting any previous form
@@ -119,15 +125,19 @@ function Forms() {
       </div>
 
       {/* recent forms  */}
-      <h3 className="font-semibold mb-8 mt-10 text-lg">Recent Forms</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold mb-8 mt-10 text-lg">Recent Forms</h3>
+        <Pagination
+          limit={limit}
+          variant="no-text"
+          page={page}
+          currentData={forms?.content}
+          setPage={setPage}
+        />
+      </div>
 
       {isLoading ? (
-        <div className="h-[20rem] flex items-center justify-center">
-          <div>
-            <LoadingIcon />
-            <p className="mt-2 text-xs text-gray-500">Fetching all forms</p>
-          </div>
-        </div>
+        <FormGridLoader />
       ) : (
         // ALL FORMS
         <>
