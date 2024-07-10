@@ -286,24 +286,18 @@ function NewIndividual() {
             <div className="flex space-x-4">
               <div
                 onClick={() => handleOptionClick("Free Input")}
-                className={`flex border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer relative ${
-                  selectedOption === "Free Input" ? "border-green-500" : ""
-                }`}
+                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${selectedOption === "Free Input" ? "border-green-500" : ""}`}
                 style={{
-                  backgroundColor:
-                    selectedOption === "Free Input" ? "#E5FFEF" : "",
+                  backgroundColor: selectedOption === "Free Input" ? "#E5FFEF" : "",
                 }}
               >
-                <div className="mr-3"></div>
-                <div className="flex flex-col justify-between">
-                  <div className="flex justify-between items-center relative">
-                    <p className="text-sm font-bold text-gray-900">
-                      Free Input
-                    </p>
+                <div className="flex flex-col justify-between h-full px-3">
+                  <div className="flex justify-between items-center w-full relative">
+                    <p className="text-sm font-bold text-gray-900">Free Input</p>
                     <input
                       type="radio"
                       id="free-input"
-                      className="custom-radio"
+                      className="custom-radio absolute top-0 right-0 mr-5 mt-0.5"
                       checked={selectedOption === "Free Input"}
                       readOnly
                     />
@@ -314,34 +308,27 @@ function NewIndividual() {
 
               <div
                 onClick={() => handleOptionClick("Dropdown")}
-                className={`flex border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer relative ${
-                  selectedOption === "Dropdown"
-                    ? "border-green-500 hover:bg-teal-50"
-                    : "hover:bg-teal-50"
-                }`}
+                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${selectedOption === "Dropdown" ? "border-green-500" : ""}`}
                 style={{
-                  backgroundColor:
-                    selectedOption === "Dropdown" ? "#E5FFEF" : "",
+                  backgroundColor: selectedOption === "Dropdown" ? "#E5FFEF" : "",
                 }}
               >
-                <div className="mr-3"></div>
-                <div className="flex flex-col justify-between">
-                  <div className="flex justify-between items-center relative">
+                <div className="flex flex-col justify-between h-full px-3">
+                  <div className="flex justify-between items-center w-full relative">
                     <p className="text-sm font-bold text-gray-900">Dropdown</p>
                     <input
                       type="radio"
                       id="dropdown"
-                      className="custom-radio"
+                      className="custom-radio absolute top-0 right-0 mr-5 mt-0.5"
                       checked={selectedOption === "Dropdown"}
                       readOnly
                     />
                   </div>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Immediately add your sublevels
-                  </p>
+                  <p className="text-sm text-gray-500 mt-2"> Add your sublevels</p>
                 </div>
               </div>
             </div>
+
 
             {selectedOption === "Free Input" && (
               <div className="mt-6">

@@ -132,24 +132,24 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
   }, []);
 
   // TODO: HARD DELETE
-  // const hardDelete = (id: any) => {
-  //   toast.loading("Deleting");
-  //   services
-  //     .hardDeleteForm(id)
-  //     .then((res) => {
-  //       toast.dismiss();
-  //       console.log("res", res.data);
-  //       toast.success(res.data);
-  //       queryClient.invalidateQueries({
-  //         queryKey: ["all forms"],
-  //       });
-  //     })
-  //     .catch((e) => {
-  //       toast.dismiss();
-  //       // toast.error(e?.response?.data);
-  //       console.log("delete error", e?.response?.data);
-  //     });
-  // };
+  const hardDelete = (id: any) => {
+    toast.loading("Deleting");
+    services
+      .hardDeleteForm(id)
+      .then((res) => {
+        toast.dismiss();
+        console.log("res", res.data);
+        toast.success(res.data);
+        queryClient.invalidateQueries({
+          queryKey: ["all forms"],
+        });
+      })
+      .catch((e) => {
+        toast.dismiss();
+        // toast.error(e?.response?.data);
+        console.log("delete error", e?.response?.data);
+      });
+  };
 
   return (
     <>

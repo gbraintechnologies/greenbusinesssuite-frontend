@@ -42,6 +42,7 @@ const SelectCountryEdit: React.FC<ISelectCountryEdit> = ({
         <option value="">Select Country</option>
         {options.map((option) => (
           <option key={option} value={option}>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {option}
           </option>
         ))}

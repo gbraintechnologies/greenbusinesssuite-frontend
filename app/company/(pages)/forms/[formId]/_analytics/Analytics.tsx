@@ -9,7 +9,7 @@ function Analytics({ formID }: { formID: number }) {
   const { company } = useCompany();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["form analytics", formID],
+    queryKey: ["form analytics", formID, company],
     queryFn: services.formResponseAnalytics(
       Number(formID),
       company?.company_name
