@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import toast from "react-hot-toast";
-import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 
 //
 import FormCard from "./components/FormCard";
@@ -86,7 +85,7 @@ function Forms() {
 
   // pagination
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(8);
 
   // fetch all forms
   const { data: forms, isLoading } = useQuery({

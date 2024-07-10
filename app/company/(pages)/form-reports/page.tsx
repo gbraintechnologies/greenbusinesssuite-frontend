@@ -15,28 +15,28 @@ function CompanyFormReports() {
 
   // reports
   const { data: uniqueUsersCount, isLoading } = useQuery({
-    queryKey: ["unique users count", company?.company_name],
-    queryFn: services.uniqueUsersCount(company?.company_name),
+    queryKey: ["unique users count", company?.id],
+    queryFn: services.uniqueUsersCount(company?.id),
   });
 
   const { data: totalEntries } = useQuery({
-    queryKey: ["total entries per company", company?.company_name],
-    queryFn: services.totalEntries(company?.company_name),
+    queryKey: ["total entries per company", company?.id],
+    queryFn: services.totalEntries(company?.id),
   });
 
   const { data: linksOpened } = useQuery({
-    queryKey: ["links opened per company", company?.company_name],
-    queryFn: services.linksOpened(company?.company_name),
+    queryKey: ["links opened per company", company?.id],
+    queryFn: services.linksOpened(company?.id),
   });
 
   const { data: linksIgnored } = useQuery({
-    queryKey: ["ignored links per company", company?.company_name],
-    queryFn: services.ignoredLinks(company?.company_name),
+    queryKey: ["ignored links per company", company?.id],
+    queryFn: services.ignoredLinks(company?.id),
   });
 
   const { data: formStats } = useQuery({
-    queryKey: ["form stats completed/incompleted", company?.company_name],
-    queryFn: services.companyFormStats(company?.company_name),
+    queryKey: ["form stats completed/incompleted", company?.id],
+    queryFn: services.companyFormStats(company?.id),
   });
 
   return (
