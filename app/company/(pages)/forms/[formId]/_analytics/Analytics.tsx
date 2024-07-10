@@ -19,8 +19,8 @@ function Analytics({ formID }: { formID: number }) {
 
   return (
     <div className="pb-40">
-      <div className="mt-4 border border-[#E2E8F0] bg-white  rounded-lg  py-3">
-        <div className="flex justify-between items-center border-b px-5 border-[#E2E8F0] pb-4 mb-5">
+      <div className="mt-4 border border-[#E2E8F0] bg-white  rounded-lg  pt-3">
+        <div className="flex justify-between items-center border-b px-5 border-[#E2E8F0] pb-4">
           <div className="font-semibold ">Response Insights</div>
         </div>
 
