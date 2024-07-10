@@ -97,7 +97,6 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             {label} <MandatoryLabel field={field} />
           </label>
           <input
-            type="number"
             onBlur={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
             }
