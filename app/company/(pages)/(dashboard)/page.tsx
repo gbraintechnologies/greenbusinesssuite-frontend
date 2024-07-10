@@ -14,7 +14,7 @@ function CompanyDashboard() {
   const { company } = useCompany();
 
   // reports
-  const { data: uniqueUsersCount, isLoading } = useQuery({
+  const { data: uniqueUsersCount } = useQuery({
     queryKey: ["unique users count", company?.id],
     queryFn: services.uniqueUsersCount(company?.id),
   });

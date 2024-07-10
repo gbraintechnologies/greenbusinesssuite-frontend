@@ -121,7 +121,7 @@ export const duplicateForm = (id: any) => {
 };
 
 export const publishForm = (id: any) => {
-  return authApi.get(`/forms/builder/publish/${id}`);
+  return authApi.put(`/forms/builder/publish/${id}`);
 };
 
 export const unpublishForm = (id: any) => {

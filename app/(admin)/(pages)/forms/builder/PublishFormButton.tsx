@@ -17,7 +17,6 @@ import UnpublishForm from "../[formId]/components/UnpublishForm";
 
 function PublishFormButton({
   formID,
-  companies,
   setShowUnpublishModal,
   showUnpublishModal,
 }: any) {
@@ -32,25 +31,18 @@ function PublishFormButton({
   const [loading, setLoading] = useState(false);
 
   const publishForm = () => {
-    toast.loading(`Publishing ${form.name}`);
+    toast.loading(`Publishing ${form?.name}`);
     setLoading(true);
 
     // checking for company assignment
-    if (!Boolean(form?.companyName)) {
+    if (!Boolean(form?.companyId)) {
       toast.dismiss();
       toast.error("Assign company to form before publishing");
       return;
     }
 
-    let fullCompanyName = companies?.find(
-      (company: any) =>
-        lowerCaseNoSpace(company?.company_name) == form?.companyName
-    )?.company_name;
-
     // assigning to company
-    let url = `${window.location.origin}/invite?f=${
-      form?.id
-    }&c=${lowerCaseNoSpace(fullCompanyName)}`;
+    let url = `${window.location.origin}/invite?f=${form?.id}&c=${form?.companyId}`;
 
     // update form with url then publish
     services

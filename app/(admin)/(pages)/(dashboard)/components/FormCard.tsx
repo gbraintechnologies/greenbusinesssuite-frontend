@@ -30,16 +30,7 @@ type Props = {
   onClick?: () => void;
 };
 function FormCard({ form, onClick, addFormResponses = false }: Props) {
-  let {
-    id,
-    name,
-    updatedOn,
-    url,
-    publishStatus,
-    description,
-    deadline,
-    createdOn,
-  } = form;
+  let { id, name, updatedOn, url } = form;
 
   const router = useRouter();
   const queryClient = useQueryClient();
