@@ -34,12 +34,12 @@ function CompanyForms() {
   const { data: forms, isLoading: isFormsLoading } = useQuery({
     queryKey: [
       "get company forms for ",
-      lowerCaseNoSpace(companyData?.company_name),
+      Number(companyData?.id),
     ],
-    queryFn: services.getFormsByCompanyName(
-      lowerCaseNoSpace(companyData?.company_name)
+    queryFn: services.getFormsByCompanyId(
+      companyData?.id
     ),
-    enabled: !!companyData?.company_name,
+    enabled: !!companyData?.id,
   });
 
   return (
