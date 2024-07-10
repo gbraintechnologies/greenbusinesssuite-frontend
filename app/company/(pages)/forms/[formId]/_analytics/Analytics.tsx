@@ -12,7 +12,7 @@ function Analytics({ formID }: { formID: number }) {
     queryKey: ["form analytics", formID, company],
     queryFn: services.formResponseAnalytics(
       Number(formID),
-      company?.company_name
+      company?.id
     ),
     enabled: Boolean(Boolean(formID) && Boolean(company?.company_name)),
   });

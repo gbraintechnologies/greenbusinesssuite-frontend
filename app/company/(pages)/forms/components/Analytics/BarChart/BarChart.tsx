@@ -6,7 +6,7 @@ type Props = {
 };
 const Barchart = ({ item }: Props) => {
   return (
-    <div className="col-span-3 border border-gray-100 px-5 py-2">
+    <div className="col-span-2 border border-gray-100 px-5 py-2">
       <h1 className="font-medium text-lg text-slate-900 mb-2">
         {item?.fieldName}
       </h1>

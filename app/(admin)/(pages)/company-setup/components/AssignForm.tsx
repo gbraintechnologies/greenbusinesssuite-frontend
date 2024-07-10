@@ -3,29 +3,22 @@ import EmptyList from "@/components/Form/EmptyList";
 import FormCard from "@/components/Form/FormCard";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import services from "@/services";
-import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 
 type Props = {
-  companyName: string;
+  companyId: string;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   queryClient: any;
 };
 
-const AssignForm = ({ companyName, setShow, queryClient }: Props) => {
-  const filterForms = React.useCallback<any>((forms: any) => {
-    const filteredForms = forms.content?.filter((form: any) => {
-      return !form?.companyName;
-    });
-    return filteredForms;
-  }, []);
+const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
+ 
 
   const { data: allForms, isLoading: areFormsLoading } = useQuery({
     queryKey: ["get all forms"],
     queryFn: services.getUnassignedForms(),
-    // select: filterForms
   });
 
   const [selected, setSelected] = React.useState<any>();
@@ -36,11 +29,11 @@ const AssignForm = ({ companyName, setShow, queryClient }: Props) => {
     try {
       await services.assignFormToCompany(
         selected,
-        lowerCaseNoSpace(companyName)
+        companyId
       );
       // invalidate form data
       queryClient.invalidateQueries({
-        queryKey: ["get assigned forms for ", lowerCaseNoSpace(companyName)],
+        queryKey: ["get assigned forms for ", Number(companyId)],
       });
       setLoading(false);
 

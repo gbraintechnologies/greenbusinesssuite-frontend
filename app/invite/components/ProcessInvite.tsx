@@ -17,7 +17,6 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 // navigation
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 
 function ProcessInvite() {
   // hooks
@@ -28,7 +27,7 @@ function ProcessInvite() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const formId = searchParams.get("f");
-  let companyName = searchParams.get("c");
+  let companyId = searchParams.get("c");
 
   const [loading, setLoading] = useState(true);
 
@@ -36,9 +35,9 @@ function ProcessInvite() {
   useEffect(() => {
     sessionStorage.setItem(
       "form-to-assign",
-      JSON.stringify({ formId: formId, companyName: companyName })
+      JSON.stringify({ formId: formId, companyId: companyId })
     );
-  }, [formId, companyName]);
+  }, [formId, companyId]);
 
   // PROMPT TO LOGIN / CREATE ACCOUNT TO FILL FORM IF NOT AUTHENTICATED
   if (!Boolean(auth) && !Boolean(user)) {
@@ -58,7 +57,7 @@ function ProcessInvite() {
           <button
             onClick={() =>
               router.push(
-                `/client/auth?redirect=invitiation&f=${formId}&c=${companyName}`
+                `/client/auth?redirect=invitiation&f=${formId}&c=${companyId}`
               )
             }
             className="bg-[#16A34A] mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
@@ -82,19 +81,6 @@ function ProcessInvite() {
   // GET RIGHT COMPANY NAME FROM COMPANIES ENDPOINT
 
   const [message, setMessage] = useState("");
-
-  const { data: companies } = useQuery({
-    queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(),
-  });
-
-  useEffect(() => {
-    companyName =
-      companies &&
-      companies?.find(
-        (company: any) => lowerCaseNoSpace(company?.company_name) == companyName
-      )?.company_name;
-  }, [companies]);
 
   useEffect(() => {
     //
@@ -152,7 +138,7 @@ function ProcessInvite() {
 
       // ASSIGN TO USER UPON LOGIN THEN CLEAR SESSION STORAGE
       services
-        .acceptInvite(formId, user?.id, companyName, inputData)
+        .acceptInvite(formId, user?.id, companyId, inputData)
         .then((res) => {
           setLoading(false);
           setMessage(

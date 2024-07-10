@@ -38,6 +38,7 @@ export default function ClientLayout({
     // if on a an authenticated page and isn't logged in
     if (!Boolean(user) && !pathname.includes("auth")) {
       router.push("/client/auth");
+
       toast.error("Please login to continue");
     } else {
       setLoading(false);
@@ -77,7 +78,7 @@ export default function ClientLayout({
                 <>
                   {" "}
                   <TopNav />
-                  <div className="flex flex-row h-[93.8vh]">
+                  <div className="flex flex-row h-[93.8vh] mt-[3.5rem]">
                     {!pathname.includes("settings") &&
                       pathname !== "/client/form" && (
                         <div className="hidden md:flex h-full  overflow-y-scroll no-scrollbar">

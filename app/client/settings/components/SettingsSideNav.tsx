@@ -47,7 +47,7 @@ function SettingsSideNav() {
   }, []);
 
   return (
-    <aside className="w-[20rem] sticky   px-5 p-2">
+    <aside className="w-[20rem] sticky mt-4   px-5 p-2">
       {/* USER INFORMATION & PICTURE */}
       <div className="flex gap-3 items-center mb-5">
         <div className="flex items-center">

@@ -26,9 +26,7 @@ const UncompletedCard = ({ form }: any) => {
       </div>
       <button
         onClick={() => {
-          router.push(
-            `/client/form?id=${form?.id}&company=${form?.companyName}`
-          );
+          router.push(`/client/form?id=${form?.id}&company=${form?.companyId}`);
         }}
         className="bg-primary-green flex text-white text-xs md:text-sm px-4 py-2 hover:opacity-95 items-center gap-2 rounded-lg"
       >

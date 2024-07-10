@@ -8,52 +8,6 @@ import Barchart from "./BarChart/BarChart";
 import Single from "./Single/Single";
 import Donutchart from "./DonutChart/DonutChart";
 
-const dataFormatter = (number: number) =>
-  Intl.NumberFormat("us").format(number).toString();
-
-// const data = [
-//   {
-//     id: 1,
-//     question: "What gender are you?",
-//     totalNumOfEntries: 1000,
-//     type: "Category",
-//     categories: [
-//       { label: "Males", value: 670 },
-//       { label: "Females", value: 330 },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     question: "What gender are you?",
-//     totalNumOfEntries: 1000,
-//     type: "Category",
-//     categories: [
-//       { label: "Males", value: 670 },
-//       { label: "Females", value: 330 },
-//     ],
-//   },
-//   {
-//     id: 3,
-//     question: "What gender are you?",
-//     totalNumOfEntries: 1000,
-//     type: "Category",
-//     categories: [
-//       { label: "Males", value: 670 },
-//       { label: "Females", value: 330 },
-//     ],
-//   },
-//   {
-//     id: 4,
-//     question: "What gender are you?",
-//     totalNumOfEntries: 1000,
-//     type: "Category",
-//     categories: [
-//       { label: "Males", value: 670 },
-//       { label: "Females", value: 330 },
-//     ],
-//   },
-// ];
-
 const AnalyticsGrid = ({ analytics }: any) => {
   const categoryColors = ["#8471F2", "#67E2AE", "#49C4E5"];
 
@@ -89,7 +43,7 @@ const AnalyticsGrid = ({ analytics }: any) => {
 
   // analytics
   return (
-    <div className="grid grid-cols-3 mb-5">
+    <div className="grid grid-cols-4">
       {analytics.map((item: any) => {
         return <DataVisualization key={item.fieldName} item={item} />;
       })}

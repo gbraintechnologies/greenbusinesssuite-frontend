@@ -82,7 +82,7 @@ function Account() {
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div style={{ flex: 1 }} className="mt-10">
-            <div style={{ textAlign: "center" }} className="mb-7">
+            {/* <div style={{ textAlign: "center" }} className="mb-7">
               {user?.custom_profile_values &&
               user?.custom_profile_values.find(
                 (item: any) => item.custom_profile_item_id === 1
@@ -104,7 +104,7 @@ function Account() {
                   {user?.last_name && user?.last_name[0]?.toUpperCase()}
                 </button>
               )}
-            </div>
+            </div> */}
             <div style={{ display: "flex", justifyContent: "center" }}>
               <form
                 onSubmit={handleSubmit(onSubmit)}

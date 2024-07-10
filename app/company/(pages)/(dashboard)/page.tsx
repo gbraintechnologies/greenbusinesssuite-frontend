@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import DashboardCard from "./components/DashboardCard";
+
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 
 //
@@ -14,19 +14,19 @@ function CompanyDashboard() {
   const { company } = useCompany();
 
   // reports
-  const { data: uniqueUsersCount, isLoading } = useQuery({
-    queryKey: ["unique users count", company?.company_name],
-    queryFn: services.uniqueUsersCount(company?.company_name),
+  const { data: uniqueUsersCount } = useQuery({
+    queryKey: ["unique users count", company?.id],
+    queryFn: services.uniqueUsersCount(company?.id),
   });
 
   const { data: totalEntries } = useQuery({
-    queryKey: ["total entries per company", company?.company_name],
-    queryFn: services.totalEntries(company?.company_name),
+    queryKey: ["total entries per company", company?.id],
+    queryFn: services.totalEntries(company?.id),
   });
 
   const { data: formStats } = useQuery({
-    queryKey: ["form stats completed/incompleted", company?.company_name],
-    queryFn: services.companyFormStats(company?.company_name),
+    queryKey: ["form stats completed/incompleted", company?.id],
+    queryFn: services.companyFormStats(company?.id),
   });
 
   return (
@@ -36,7 +36,7 @@ function CompanyDashboard() {
         stats={[
           {
             label: "Number of Registrations",
-            value: totalEntries ? totalEntries : "-",
+            value: totalEntries !== null ? totalEntries : "-",
           },
           {
             label: "Submitted Applications",
@@ -44,7 +44,7 @@ function CompanyDashboard() {
           },
           {
             label: "Active Users",
-            value: uniqueUsersCount ? uniqueUsersCount : "-",
+            value: uniqueUsersCount !== null ? uniqueUsersCount : "-",
           },
         ]}
       />

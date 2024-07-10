@@ -104,7 +104,7 @@ function FormDetail({ params }: any) {
               </button>
             )}
 
-            {!Boolean(form?.companyName) && (
+            {!Boolean(form?.companyId) && (
               <button
                 onClick={() => setShowAssignModal(true)}
                 className="btn-outline"
@@ -127,7 +127,6 @@ function FormDetail({ params }: any) {
             <PublishFormButton
               showUnpublishModal={showUnpublishModal}
               setShowUnpublishModal={setShowUnpublishModal}
-              companies={companies}
               formID={form?.id}
             />
           </div>

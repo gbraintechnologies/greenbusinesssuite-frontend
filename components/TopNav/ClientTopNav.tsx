@@ -13,7 +13,7 @@ function TopNav() {
   const { user } = useUser();
 
   return (
-    <nav className="h-[7vh] z-[100] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
+    <nav className="h-[3.5rem] z-[100] fixed top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
       <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
         <Link href="/client">
           <svg

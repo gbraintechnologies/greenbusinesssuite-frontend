@@ -55,14 +55,9 @@ const Page = () => {
   });
 
   const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
-    queryKey: [
-      "get assigned forms for ",
-      lowerCaseNoSpace(companyData?.company_name),
-    ],
-    queryFn: services.getFormsByCompanyName(
-      lowerCaseNoSpace(companyData?.company_name)
-    ),
-    enabled: !!companyData?.company_name,
+    queryKey: ["get assigned forms for ", Number(companyData?.id)],
+    queryFn: services.getFormsByCompanyId(companyData?.id),
+    enabled: !!companyData?.id,
   });
 
   const companyDescription =
@@ -89,6 +84,7 @@ const Page = () => {
         status.value.toLowerCase() === companyData?.status?.toLowerCase()
     );
     setActiveStatus(status);
+    console.log("company data ", companyData);
   }, [companyData]);
 
   const editCompanyStatus = async (status: any) => {
@@ -322,7 +318,7 @@ const Page = () => {
         title="Select form to assign to organisation"
       >
         <AssignForm
-          companyName={companyData?.company_name}
+          companyId={companyData?.id}
           setShow={setShowAssignModal}
           queryClient={queryClient}
         />
