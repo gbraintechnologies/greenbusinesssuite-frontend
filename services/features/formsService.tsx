@@ -74,10 +74,10 @@ export const getFormResponsesById = (id: number) => {
   return authApi.get(`/forms/response/data/${id}`);
 };
 
-export const formResponseAnalytics = (id: number, companyName: string) => {
+export const formResponseAnalytics = (id: number, companyId: string) => {
   return () =>
     authApi
-      .get(`/forms/response/analytics/${id}/${companyName}`)
+      .get(`/forms/response/analytics/${id}/${companyId}`)
       .then((res) => res.data);
 };
 
