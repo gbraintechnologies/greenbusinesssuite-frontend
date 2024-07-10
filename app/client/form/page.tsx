@@ -68,7 +68,7 @@ function FillFormHere() {
         )
       );
     }
-  }, [isRefetching]);
+  }, [isRefetching, formData, formUserResponse]);
 
   // store form in LS
   const { selectClientForm, clientForm, saveResponsesRemote, savingResponses } =
