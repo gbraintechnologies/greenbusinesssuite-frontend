@@ -19,9 +19,18 @@
     @apply border cursor-default text-sm py-2 px-5 border-[#E2E8F0] bg-slate-50 rounded-lg my-2 shadow-sm text-[#666];
   }
 
+  .input-holder .like-input {
+    @apply border cursor-default text-sm py-2 px-5 border-[#E2E8F0] bg-slate-50 rounded-lg my-2 shadow-sm text-[#666];
+  }
+
   .input-holder .fit {
     height: 2.375rem !important;
     padding: 0rem 1.25rem !important;
+  }
+
+  .input-holder .big-fit {
+    padding: 1rem 1.25rem !important;
+    height:fit-content !important;
   }
 
   .input-holder input,

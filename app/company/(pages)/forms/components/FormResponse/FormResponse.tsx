@@ -32,11 +32,9 @@ const renderFormResponse = (formField: any) => {
       );
     case "long-text":
       return (
-        <textarea
-          defaultValue={formField?.response}
-          readOnly
-          className=" resize-none"
-        />
+        <div className="like-input big-fit">
+          {formField?.response}
+        </div>
       );
   }
 };

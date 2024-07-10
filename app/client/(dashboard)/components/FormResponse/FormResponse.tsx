@@ -32,11 +32,9 @@ const renderFormResponse = (formField: any) => {
       );
     case "long-text":
       return (
-        <textarea
-          defaultValue={formField?.response}
-          readOnly
-          className=" resize-none"
-        />
+        <div className="like-input big-fit">
+          {formField?.response}
+        </div>
       );
   }
 };
@@ -49,6 +47,7 @@ const FormResponse = forwardRef(function FormResponse(
       onRendered();
     }
   }, [onRendered]);
+
   const formSections = mergedForm?.formSections;
   return (
     <div className="w-[80%] " ref={ref}>
