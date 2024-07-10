@@ -40,8 +40,13 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2  mb-3
           `}
         >
-          <label className={labelStyle}>{label}</label>
+          <label className={labelStyle}>
+            {label} <MandatoryLabel field={field} />
+          </label>
           <textarea
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
@@ -62,8 +67,14 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           } p-2 mb-3 
           `}
         >
-          <label className={labelStyle}>{label}</label>
+          <label className={labelStyle}>
+            {label} <MandatoryLabel field={field} />
+          </label>
           <input
+            type="number"
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
@@ -82,8 +93,13 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
           `}
         >
-          <label className={labelStyle}>{label}</label>
+          <label className={labelStyle}>
+            {label} <MandatoryLabel field={field} />
+          </label>
           <input
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
@@ -102,9 +118,15 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
           `}
         >
-          <label className={labelStyle}>{label}</label>
+          <label className={labelStyle}>
+            {label} <MandatoryLabel field={field} />
+          </label>
           <input
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
+            type="email"
             value={field?.response}
             onChange={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
@@ -122,8 +144,14 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
           `}
         >
-          <label className={labelStyle}>{label}</label>
+          <label className={labelStyle}>
+            {label} <MandatoryLabel field={field} />
+          </label>
           <input
+            type="number"
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
@@ -142,7 +170,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
           `}
         >
-          <label className={labelStyle}>{label}</label>
+          <label className={labelStyle}>
+            {label} <MandatoryLabel field={field} />
+          </label>
 
           <p className="mt-2 text-sm">{placeHolder}</p>
 
@@ -189,7 +219,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
           `}
         >
-          <label className={labelStyle}>{label}</label>
+          <label className={labelStyle}>
+            {label} <MandatoryLabel field={field} />
+          </label>
           <p className="mt-2 text-sm">{placeHolder}</p>
 
           <div className=" text-black px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
@@ -239,5 +271,13 @@ function FormFieldValue({ field, section, viewOnly }: any) {
       );
   }
 }
+
+const MandatoryLabel = ({ field }: any) => {
+  return (
+    <div className="inline-block">
+      {field?.isMandatory && <span className="text-red-400 font-light">*</span>}
+    </div>
+  );
+};
 
 export default FormFieldValue;

@@ -34,9 +34,7 @@ export const getFormByIdRaw = (id: any) => {
 
 export const getFormsByCompanyId = (companyId: string) => {
   return () =>
-    authApi
-      .get(`/forms/builder/company/${companyId}`)
-      .then((res) => res.data);
+    authApi.get(`/forms/builder/company/${companyId}`).then((res) => res.data);
 };
 
 export const getFormStatisticsForUser = (userId: string | null ) => {
@@ -133,7 +131,7 @@ export const duplicateForm = (id: any) => {
 };
 
 export const publishForm = (id: any) => {
-  return authApi.get(`/forms/builder/publish/${id}`);
+  return authApi.put(`/forms/builder/publish/${id}`);
 };
 
 export const unpublishForm = (id: any) => {
@@ -155,7 +153,6 @@ export const assignCompanyToForm = (company: any, id: any) => {
   return authApi.post(`/forms/builder/${company}/duplicateForm`);
 };
 
-// TODO: TEMP ENDPOINTS FOR DELETION
 export const hardDeleteForm = (id: any) => {
   return authApi.delete(`/forms/builder/delete/${id}`);
 };
@@ -175,14 +172,14 @@ export const accessPublicPublishedForm = (id: any) => {
 export const acceptInvite = (
   formId: any,
   userId: any,
-  companyName: any,
+  companyId: any,
   inputData: any
 ) => {
   return authApi.post(`forms/response/create`, {
     formId: parseInt(formId),
     isCompleted: false,
     inputData: inputData,
-    companyName: companyName,
+    companyId: companyId,
     userId: parseInt(userId),
   });
 };
@@ -190,7 +187,7 @@ export const acceptInvite = (
 export const saveResponse = ({
   formId,
   userId,
-  companyName,
+  companyId,
   inputData,
   isCompleted,
   id,
@@ -200,7 +197,7 @@ export const saveResponse = ({
     formId: parseInt(formId),
     isCompleted: isCompleted,
     inputData: inputData,
-    companyName: companyName,
+    companyId: companyId,
     userId: parseInt(userId),
   });
 };

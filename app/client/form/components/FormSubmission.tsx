@@ -26,27 +26,63 @@ function FormSubmission() {
 
   //
 
-  const { submitAndCompleteForm, savingResponses, setSavingResponses } =
-    useClientForm();
+  const {
+    submitAndCompleteForm,
+    savingResponses,
+    clientForm,
+    setSavingResponses,
+  } = useClientForm();
 
   const finish = () => {
-    // TODO: CHECK THAT EVERY FIELD HAS A RESPONSE FOR REQUIRED FIELDS BEFORE ALLOWING USER TO FINISH
-    submitAndCompleteForm(user?.id)
-      .then((res: any) => {
-        toast.dismiss();
-        setSavingResponses(false);
+    toast.dismiss();
+    // Check if all required fields are filled
+    let data = clientForm;
+    let completedRequired = true;
 
-        // TODO:  invalidate form queries to reload cached data
-        toast.dismiss();
-        setShowConfirmationModal(false);
-        setShowSuccessModal(true);
-      })
-      .catch((e: any) => {
-        toast.dismiss();
-        setSavingResponses(false);
-        toast.error("Error submitting form. Please try again");
-      });
+    for (let i = 0; i < data?.formSections?.length; i++) {
+      let section = data?.formSections[i];
+
+      for (let j = 0; j < section?.formFields?.length; j++) {
+        let field = section?.formFields[j];
+        if (
+          (field?.response === null || field?.response === "") &&
+          field?.isMandatory
+        ) {
+          setSavingResponses(false);
+          setShowConfirmationModal(false);
+          toast.error("Please fill all required fields");
+          completedRequired = false;
+          return;
+        }
+      }
+    }
+
+    setSavingResponses(false);
+    setShowConfirmationModal(false);
+
+    // Only submit if all required fields are completed
+    if (completedRequired) {
+      toast.loading("Submitting form. Please wait...");
+
+      submitAndCompleteForm(user?.id)
+        .then((res: any) => {
+          toast.dismiss();
+          setSavingResponses(false);
+
+          // TODO:  invalidate form queries to reload cached data
+          toast.dismiss();
+          setShowConfirmationModal(false);
+          setShowSuccessModal(true);
+        })
+        .catch((e: any) => {
+          toast.dismiss();
+          setSavingResponses(false);
+          toast.error("Error submitting form. Please try again");
+        });
+    }
   };
+
+  // r
   return (
     <div>
       <div className="w-full flex items-center justify-between">
@@ -92,8 +128,6 @@ function FormSubmission() {
               disabled={savingResponses}
               className="bg-primary-green disabled:bg-gray-700 disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               onClick={() => {
-                toast.loading("Submitting form. Please wait...");
-
                 finish();
               }}
             >

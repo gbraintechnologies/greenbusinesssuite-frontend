@@ -28,10 +28,15 @@ function FillFormHere() {
 
   let formId = search.get("id");
 
-  let companyName = search.get("company");
+  let companyId = search.get("company");
 
   // GET USER RESPONSE
-  const { data: formUserResponse, isLoading } = useQuery({
+  const {
+    data: formUserResponse,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery({
     queryKey: ["form", user?.id, formId],
     queryFn: services.retrieveFormUserResponses(user?.id, formId),
     enabled: Boolean(formId && user?.id),
@@ -44,31 +49,40 @@ function FillFormHere() {
     enabled: Boolean(formId) && Boolean(user),
   });
 
-  // COMBINE FORM DATA AND FORM RESPONSE
-  let mergedForm =
-    formData &&
-    formUserResponse &&
-    mergeForm(
-      formUserResponse[0]?.id,
-      formData,
-      formUserResponse[0]?.inputData
-    );
+  const [mergedForm, setMergedForm] = useState(null);
+
+  // refetch user response and merge on mount
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  //
+  useEffect(() => {
+    if (!isRefetching && formData && formUserResponse) {
+      setMergedForm(
+        mergeForm(
+          formUserResponse[0]?.id,
+          formData,
+          formUserResponse[0]?.inputData
+        )
+      );
+    }
+  }, [isRefetching, formData, formUserResponse]);
 
   // store form in LS
   const { selectClientForm, clientForm, saveResponsesRemote, savingResponses } =
     useClientForm();
 
-  // console.log("merged form", mergedForm);
-
   useEffect(() => {
-    if (mergedForm && !Boolean(clientForm)) {
+    if (Boolean(mergedForm) && companyId && !Boolean(clientForm)) {
       selectClientForm({
+        // @ts-ignore
         ...mergedForm,
-        companyName: "",
+        companyId: companyId,
         isCompleted: false,
       });
     }
-  }, [mergedForm]);
+  }, [mergedForm, companyId]);
 
   const [activeSection, setActiveSection] = useState(null);
 

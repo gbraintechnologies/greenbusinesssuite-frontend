@@ -7,7 +7,6 @@ import { Combobox, Transition } from "@headlessui/react";
 import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Image from "next/image";
-import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 import toast from "react-hot-toast";
 
 function AssignForm({ setShow, id: formId, companies, queryClient }: any) {
@@ -19,10 +18,7 @@ function AssignForm({ setShow, id: formId, companies, queryClient }: any) {
   const assignFormToCompany = async () => {
     setLoading(true);
     try {
-      await services.assignFormToCompany(
-        formId,
-        lowerCaseNoSpace(selected?.company_name.toString())
-      );
+      await services.assignFormToCompany(formId, selected?.id);
 
       // invalidate form data
       queryClient.invalidateQueries({
