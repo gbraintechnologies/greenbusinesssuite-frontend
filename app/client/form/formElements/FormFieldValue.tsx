@@ -42,6 +42,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <textarea
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
@@ -64,6 +67,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <input
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
@@ -84,6 +90,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <input
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
@@ -104,6 +113,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <input
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>
@@ -124,6 +136,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
         >
           <label className={labelStyle}>{label}</label>
           <input
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
             disabled={viewOnly}
             value={field?.response}
             onChange={(e) =>

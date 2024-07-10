@@ -153,7 +153,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     {
       title: "Continue editing",
       func: () => {
-        router.push(`/client/form?id=${form?.id}&company=${form.companyName}`);
+        router.push(`/client/form?id=${form?.id}&company=${form?.companyId}`);
       },
     },
   ];

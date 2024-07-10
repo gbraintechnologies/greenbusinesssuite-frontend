@@ -61,7 +61,7 @@ export const ClientFormProvider = ({ children }) => {
       id: clientForm?.responseId,
       formId: clientForm?.id,
       isCompleted: false,
-      companyName: clientForm?.companyName,
+      companyId: clientForm?.companyId,
       userId: userId,
       inputData: {
         id: clientForm?.responseId,
@@ -125,7 +125,7 @@ export const ClientFormProvider = ({ children }) => {
       id: clientForm?.responseId,
       formId: clientForm?.id,
       isCompleted: true,
-      companyName: clientForm?.companyName,
+      companyId: clientForm?.companyId,
       userId: userId,
       inputData: {
         id: clientForm?.responseId,
@@ -176,145 +176,6 @@ export const ClientFormProvider = ({ children }) => {
     setClientForm(data);
   };
 
-  // const updateActiveField = (section, data) => {
-  //   services
-  //     .updateFormField({ ...data, updatedOn: new Date() })
-  //     .then((res) => {
-  //       // setForm(res.data);
-  //       setLoadingField(false);
-  //       setLoadingSection(false);
-  //       services
-  //         .getFormByIdRaw(form.id)
-  //         .then((res) => {
-  //           setForm(res.data);
-  //           queryClient.invalidateQueries({
-  //             queryKey: ["form", form?.id],
-  //           });
-  //         })
-  //         .catch((e) => {
-  //           console.log("error getting updated form");
-  //         });
-
-  //       toast.dismiss();
-  //       // TODO: REMOVE AFTER TESTS
-  //       // toast.success("updated field");
-  //     })
-  //     .catch((e) => {
-  //       toast.dismiss();
-  //       toast.error("Error occured");
-  //       console.log("error updating remote form:", e);
-  //     });
-
-  //   // updateRemoteForm({ ...form, formSections: allSections });
-  // };
-
-  // const updateNameAndDescription = (data) => {
-  //   updateRemoteForm({ ...form, ...data });
-  // };
-
-  // const removeForm = () => {
-  //   setForm(null);
-  // };
-
-  // // sections
-  // const addFormSection = (data) => {
-  //   setLoadingSection(true);
-  //   updateRemoteForm({
-  //     ...form,
-  //     formSections: [
-  //       ...form.formSections,
-  //       { ordering: form.formSections.length, ...data },
-  //     ],
-  //   });
-  //   // setForm((prev) => ({
-  //   //   ...prev,
-  //   //   formSections: [
-  //   //     ...form.formSections,
-  //   //     { ordering: form.formSections.length, ...data },
-  //   //   ],
-  //   // }));
-  // };
-
-  // const updateSection = (data) => {
-  //   // setLoadingField(true);
-  //   let sections = form?.formSections;
-  //   //
-  //   let tempSections = [];
-  //   for (let i = 0; i < sections.length; i++) {
-  //     //
-  //     if (sections[i]?.id === data.id) {
-  //       tempSections.push(data);
-  //     } else {
-  //       tempSections.push(sections[i]);
-  //     }
-  //   }
-
-  //   // update form
-  //   updateRemoteForm({
-  //     ...form,
-  //     formSections: tempSections,
-  //   });
-  //   // setForm((prev) => ({
-  //   //   ...prev,
-  //   //   formSections: tempSections,
-  //   // }));
-  // };
-
-  // const removeSection = (data) => {
-  //   setLoadingSection(true);
-
-  //   let tempFormSections = form?.formSections;
-
-  //   let indexSection = tempFormSections?.indexOf(data);
-
-  //   if (indexSection !== -1) {
-  //     tempFormSections[indexSection] = {
-  //       ...data,
-  //       isDeleted: true,
-  //       deletedOn: new Date(),
-  //     };
-  //   }
-
-  //   updateRemoteForm({
-  //     ...form,
-  //     formSections: [...tempFormSections],
-  //   });
-  // };
-
-  // // fields
-  // const addFormField = (section, data) => {
-  //   setLoadingField(true);
-  //   let sections = form?.formSections;
-  //   //
-  //   let tempSections = [];
-  //   for (let i = 0; i < sections.length; i++) {
-  //     //
-  //     if (sections[i]?.id === section.id) {
-  //       // add new element to sections
-  //       tempSections.push({
-  //         ...section,
-  //         formFields: [
-  //           ...section?.formFields,
-  //           { ...data, ordering: section?.formFields?.length },
-  //         ],
-  //       });
-  //     } else {
-  //       tempSections.push(sections[i]);
-  //     }
-  //   }
-
-  //   // update form
-  //   updateRemoteForm({
-  //     ...form,
-  //     formSections: tempSections,
-  //   });
-  //   // setForm((prev) => ({
-  //   //   ...prev,
-  //   //   formSections: tempSections,
-  //   // }));
-  // };
-
-  // update LS FORM
   useEffect(() => {
     localStorage.setItem("client-form", JSON.stringify(clientForm));
   }, [clientForm]);

@@ -143,7 +143,6 @@ export const assignCompanyToForm = (company: any, id: any) => {
   return authApi.post(`/forms/builder/${company}/duplicateForm`);
 };
 
-// TODO: TEMP ENDPOINTS FOR DELETION
 export const hardDeleteForm = (id: any) => {
   return authApi.delete(`/forms/builder/delete/${id}`);
 };
@@ -163,14 +162,14 @@ export const accessPublicPublishedForm = (id: any) => {
 export const acceptInvite = (
   formId: any,
   userId: any,
-  companyName: any,
+  companyId: any,
   inputData: any
 ) => {
   return authApi.post(`forms/response/create`, {
     formId: parseInt(formId),
     isCompleted: false,
     inputData: inputData,
-    companyName: companyName,
+    companyId: companyId,
     userId: parseInt(userId),
   });
 };
@@ -178,7 +177,7 @@ export const acceptInvite = (
 export const saveResponse = ({
   formId,
   userId,
-  companyName,
+  companyId,
   inputData,
   isCompleted,
   id,
@@ -188,7 +187,7 @@ export const saveResponse = ({
     formId: parseInt(formId),
     isCompleted: isCompleted,
     inputData: inputData,
-    companyName: companyName,
+    companyId: companyId,
     userId: parseInt(userId),
   });
 };
