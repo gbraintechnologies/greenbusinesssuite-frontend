@@ -79,7 +79,7 @@ function FormDetail({ params }: any) {
   // use props in data directly to avoid lags in changes in react query cache
   if (form) {
     return (
-      <div>
+      <div className="">
         {/* HEADER */}
         <div className="flex items-center justify-between px-5">
           <div>

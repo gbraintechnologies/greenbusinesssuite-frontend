@@ -161,9 +161,9 @@ export default function AdminLayout({
                 </div>
               ) : (
                 // NORMAL VIEW
-                <div className="w-full min-h-screen">
+                <div className="w-full min-h-[90vh]">
                   <TopNav />
-                  <div className="flex mt-[3.5rem]   flex-row h-screen">
+                  <div className="flex mt-[3.5rem]   flex-row min-h-[90vh] ">
                     <div className="hidden  md:flex h-full absolute  overflow-y-scroll no-scrollbar">
                       {!pathname.includes("settings") && (
                         <SideNav
