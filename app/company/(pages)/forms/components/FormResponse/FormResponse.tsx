@@ -10,15 +10,55 @@ type Props = {
 const renderFormResponse = (formField: any) => {
   switch (formField?.fieldDataType) {
     case "short-text":
-      return <input defaultValue={formField?.response} className="fit" readOnly />;
+      return (
+        <input defaultValue={formField?.response} className="fit" readOnly />
+      );
     case "email":
-      return <input defaultValue={formField?.response} className="fit" readOnly />;
+      return (
+        <input defaultValue={formField?.response} className="fit" readOnly />
+      );
     case "number":
-      return <input defaultValue={formField?.response} className="fit" readOnly />;
+      return (
+        <input defaultValue={formField?.response} className="fit" readOnly />
+      );
     case "checkboxes":
-      return <input defaultValue={formField?.response} className="fit" readOnly />;
+      return (
+        <>
+          <input defaultValue={formField?.response} className="fit" readOnly />
+          <div className="mt-2 flex justify-between flex-wrap w-full">
+            {formField?.choiceValues?.map((option: any, index: number) => (
+              <div key={index} className="flex gap-2 items-center">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  checked={option == formField?.response}
+                  disabled
+                />
+                <div className="text-sm font-normal text-slate-700">{option}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      );
     case "dropdown":
-      return <input defaultValue={formField?.response} className="fit" readOnly />;
+      return (
+        <>
+          <input defaultValue={formField?.response} className="fit" readOnly />
+          <div className="mt-2 flex justify-between items-center flex-wrap w-full">
+            {formField?.choiceValues?.map((option: any, index: number) => (
+              <div key={index} className="flex gap-2 items-center">
+                <input
+                  type="radio"
+                  className=""
+                  checked={option == formField?.response}
+                  disabled
+                />
+                <div className="text-sm font-normal text-slate-700">{option}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      );
     case "phone":
       return (
         <PhoneSelector
@@ -31,11 +71,7 @@ const renderFormResponse = (formField: any) => {
         />
       );
     case "long-text":
-      return (
-        <div className="like-input big-fit">
-          {formField?.response}
-        </div>
-      );
+      return <div className="like-input big-fit">{formField?.response}</div>;
   }
 };
 const FormResponse = forwardRef(function FormResponse(
@@ -47,6 +83,8 @@ const FormResponse = forwardRef(function FormResponse(
       onRendered();
     }
   }, [onRendered]);
+
+  console.log("merged form ", mergedForm);
 
   const formSections = mergedForm?.formSections;
   return (
