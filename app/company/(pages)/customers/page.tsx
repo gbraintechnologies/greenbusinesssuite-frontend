@@ -44,11 +44,13 @@ function Customers() {
   useEffect(() => {
     let temp: any = [];
 
-    if (customers?.customersDetail) {
+    if (customers?.customersDetail && users) {
       for (let i = 0; i < customers?.customersDetail.length; i++) {
         let customer = customers?.customersDetail[i];
         // @ts-ignore
-        const userData = users.find((item: any) => item.id === customer.userId);
+        const userData = users?.find(
+          (item: any) => item.id === customer.userId
+        );
 
         // @ts-ignore
         temp.push({
