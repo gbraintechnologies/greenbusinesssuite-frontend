@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
@@ -7,12 +7,16 @@ import * as yup from "yup";
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import Link from 'next/link';
 import services from "@/services";
+import TextInput from "../components/TextInput";
+import Modal from "@/components/Modal/Modal";
 import { useQuery } from "@tanstack/react-query";
 import { Countrie } from "../components/Countries";
+import DataTable from "@/components/DataTable/DataTable";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import EditIconSetup from "@/public/icons/EditIconSetup";
-import { updateJurisdictionByID } from "@/services/features/jurisdictionsService";
+import { editJurisdictionEntriesByID, deleteParentAddressAndChildByID, deleteParentAddressAndAssociatesByID } from "@/services/features/jurisdictionsService";
 import SelectCountryEdit from '../components/selectCountryEdit';
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsDot } from "react-icons/bs";
 
 
@@ -22,14 +26,27 @@ const schema = yup.object().shape({
     name: yup.string().required(),
 });
 
+type Row = {
+    id: number;
+    regions: string;
+    districts: string;
+};
+
 function EditJurisdiction() {
     type typeOfSchema = yup.InferType<typeof schema>;
+    const [rows, setRows] = useState<Row[]>([]);
     const searchParams = useSearchParams();
     const Id = searchParams.get('id');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [deleteAllModalOpen, setDeleteAllModalOpen] = useState(false);
+    const [editRow, setEditRow] = useState<Row | null>(null);
+    const [inputValue, setInputValue] = useState('');
 
-    const { data, isLoading } = useQuery({
-        queryKey: ["all jurisdictionByID", Id],
-        queryFn: services.getJurisdictionById(Number(Id)),
+
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: ["all parentSchemeEntries", Id],
+        queryFn: services.getJurisdictionEntriesById(Number(Id)),
         enabled: !!Id,
     });
 
@@ -45,15 +62,128 @@ function EditJurisdiction() {
     });
 
     useEffect(() => {
+        //alert(JSON.stringify(Id))
         if (data) {
             setValue("id", data.id);
             setValue("name", data.name);
+            const formattedRows: Row[] = data.parentAddressScheme.entries.map((entry: any, index: number) => ({
+                id: entry.id,
+                regions: entry.name,
+                districts: entry.childEntries.map((childEntry: any) => childEntry.name).join(", ")
+            }));
+
+            setRows(formattedRows);
         }
     }, [data, setValue]);
 
     const onSubmit = async (data: typeOfSchema) => {
 
     };
+
+    const columns = [
+        {
+            field: "regions",
+            headerName: data?.parentAddressScheme.name,
+            type: "actions",
+            align: "left",
+            headerAlign: "left",
+            flex: 1,
+            getActions: (params: any) => [
+                <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
+                    <div className="h-10 flex items-center justify-center"></div>
+                    <div>
+                        <p className="font-medium"></p>{params.row.regions}
+                    </div>
+                </div>,
+            ],
+        },
+        {
+            field: "sub level",
+            headerName: "Sub Level",
+            flex: 4,
+            headerAlign: "left",
+            align: "middle",
+            type: "actions",
+            getActions: (params: any) => [
+                <div key={params.row.id} className="flex flex-col gap-2 my-2" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                    <p className="font-medium text-sm">{params.row.districts}</p>
+                </div>,
+            ],
+        },
+        {
+            field: "actions",
+            headerName: "Actions",
+            flex: 1,
+            type: "actions",
+            getActions: (params: any) => [
+                <div className="flex items-center justify-end" key={params.row.id}>
+                    <button type="button" className="rounded-full " style={{ right: '-10px' }} onClick={() => handleEditClick(params.row)}>
+                        <EditIconSetup />
+                    </button>
+                    <button type="button" className="rounded-full" style={{ right: '-10px' }} onClick={() => { setEditRow(params.row); setDeleteModalOpen(true); }}>
+                        <DeleteIcon />
+                    </button>
+                </div>
+            ],
+        },
+    ];
+
+    const handleSaveEdit = () => {
+        if (!editRow) return;
+        const rowIndex = rows.findIndex(row => row.id === editRow.id);
+
+        if (rowIndex === -1) {
+            console.error("Row not found in rows array.");
+            return;
+        }
+        const updatedRows = [...rows];
+        updatedRows[rowIndex] = {
+            ...updatedRows[rowIndex],
+            regions: editRow.regions,
+            districts: editRow.districts,
+        };
+        setRows(updatedRows);
+        setIsModalOpen(false);
+    };
+
+    const handleDeleteRow = async (row: Row | null) => {
+        try {
+            if (!row || !row.id) {
+                console.error("No row selected for deletion or row ID is invalid.");
+                return;
+            }
+
+            await deleteParentAddressAndChildByID(row.id);
+            setDeleteModalOpen(false);
+            await refetch();
+        } catch (error) {
+            console.error("Error deleting row:", error);
+        }
+    };
+
+    const handleDeleteAll = async () => {
+        try {
+            if (!Id) {
+                console.error("No ID provided for deletion.");
+                return;
+            }
+
+            await deleteParentAddressAndAssociatesByID(Id);
+            setDeleteAllModalOpen(false);
+            await refetch(); // Refresh the data
+        } catch (error) {
+            console.error("Error deleting parent address and associates:", error);
+        }
+    };
+
+    const handleEditClick = (row: Row) => {
+        setEditRow(row);
+        setIsModalOpen(true);
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(e.target.value);
+    }
 
     return (
         <div className="w-full p-5">
@@ -81,7 +211,6 @@ function EditJurisdiction() {
                                 <IoIosAddCircleOutline size={20} />Save
                             </button>
                         </div>
-
                     </div>
                     <div>
                         <div className="mb-3 relative">
@@ -91,7 +220,7 @@ function EditJurisdiction() {
                                 {...register("name")}
                                 value={watch("name")}
                                 error={errors.name?.message}
-                                options={[data?.name || ""]} // Ensure options is an array
+                                options={[data?.name || ""]}
                                 readOnly
                                 PrependIcon={
                                     data?.name ? (
@@ -112,26 +241,142 @@ function EditJurisdiction() {
                         <h4 className="font-bold text-black-400">Addressing Scheme</h4>
                         <p className="text-black-400 text-sm">Setup all Parent and Child sub-levels for the Country</p>
                     </div>
-                    <div className="flex items-center justify-between"  style={{ width: '30%' }}>
-                        <div>
-                            <h4 className="font-bold text-black-400">Regions</h4>
-                            <span style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
-                                <p style={{ margin: 0, marginRight: '10px' }}>Dropdown</p>
-                                <BsDot size={30} />
-                                <p style={{ margin: 0 }}>Sub-Level</p>
-                            </span>
+                    <div className="flex flex-col items-start" style={{ width: '100%' }}>
+                        <div className="flex justify-between w-full mb-4">
+                            <div>
+                                <h4 className="font-bold text-black-400">{data?.parentAddressScheme.name}</h4>
+                                <span style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                                    <BsDot size={30} />
+                                    <p style={{ margin: 0, marginRight: '100px' }}>{data?.parentAddressScheme.inputType}</p>
+                                </span>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setDeleteAllModalOpen(true)}
+                                className="bg-primary-red disabled:bg-gray-400 flex text-white text-sm py-1.5 hover:opacity-95 items-center gap-2 rounded-xl ml-auto"
+                                style={{ minHeight: '2.5rem', height: '2.5em', lineHeight: '2.0rem', fontSize: '0.875rem', padding: '0.25rem 0.5rem' }}
+                            >
+                                <RiDeleteBin6Line size={20} />Delete all {data?.parentAddressScheme.name}
+                            </button>
                         </div>
-                        <div className="flex items-center justify-end" style={{ width: '30%' }}>
-                            <button type="button" className="rounded-full relative" style={{ right: '-10px' }}>
-                                <EditIconSetup />
-                            </button>
-                            <button type="button" className="rounded-full ml-2 relative" style={{ right: '-10px' }}>
-                                <DeleteIcon />
-                            </button>
+                        <div className="w-full">
+                            <DataTable isLoading={isLoading} rows={rows} columns={columns} />
                         </div>
                     </div>
                 </form>
             </div>
+            <Modal
+                isOpen={isModalOpen}
+                setIsOpen={setIsModalOpen}
+                title="Edit Values"
+            >
+                <div>
+                    <div className="px-7">
+                        <TextInput
+                            type="text"
+                            placeholder="Edit Regions"
+                            autoComplete="off"
+                            value={editRow?.regions || ""}
+                            onChange={(e) => setEditRow(prevState => ({ ...prevState!, regions: e.target.value }))}
+                        />
+                    </div>
+                    <div className="px-7">
+                        <TextInput
+                            type="text"
+                            placeholder="Edit Districts"
+                            autoComplete="off"
+                            value={editRow?.districts || ""}
+                            extraClasses="h-[90px]"
+                            onChange={(e) => setEditRow(prevState => ({ ...prevState!, districts: e.target.value }))}
+                        />
+                    </div>
+
+                    <div className="p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+                        <button
+                            className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
+                            onClick={() => {
+                                setEditRow(null);
+                                setIsModalOpen(false);
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleSaveEdit}
+                            className="bg-primary-green py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl"
+                        >
+                            <IoIosAddCircleOutline size={20} /> Save
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+            <Modal
+                isOpen={deleteModalOpen}
+                setIsOpen={setDeleteModalOpen}
+                title="Are you sure you want delete this ?"
+            >
+                <div>
+                    <p className="px-5 text-center mt-5 text-[#334155]">
+                        Deleting this would delete all the values you have inputed
+                    </p>
+                    <p className="text-center text-[#334155]">
+                        under this {data?.parentAddressScheme.name}.
+                    </p>
+                    <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+                        <button
+                            className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
+                            onClick={() => setDeleteModalOpen(false)}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={() => handleDeleteRow(editRow)}
+                            className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl"
+                        >
+                            Yes, delete values
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+            <Modal
+                isOpen={deleteAllModalOpen}
+                setIsOpen={setDeleteAllModalOpen}
+                title="Are you sure you want to delete all values"
+            >
+                <div>
+                    <p className="px-5 text-center mt-5 text-[#334155]">
+                        Deleting all {data?.parentAddressScheme.name} would delete all the {data?.parentAddressScheme.name} and sub-
+                    </p>
+                    <p className="text-center text-[#334155] mb-3">
+                        level values you have inputted.
+                    </p>
+                    <p className="text-center text-sm text-[#334155] mt-5">Type the phrase “delete all” to delete the {data?.parentAddressScheme.name}.</p>
+                    <div className="px-7">
+                        <TextInput
+                            type="text"
+                            autoComplete="off"
+                            value={inputValue}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+
+                    <div className="p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+                        <button
+                            onClick={() => setDeleteAllModalOpen(false)}
+                            className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleDeleteAll}
+                            className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${inputValue === 'delete all' ? 'bg-primary-red' : 'bg-red-300'} ${inputValue !== 'delete all' ? 'cursor-not-allowed' : ''}`}
+                            disabled={inputValue !== 'delete all'}
+                        >
+                            Yes,delete all
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     )
 }

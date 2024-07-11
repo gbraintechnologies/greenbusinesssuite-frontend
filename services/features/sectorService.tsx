@@ -21,6 +21,10 @@ export const deleteBySubSectorID = (subSectorID: any) => {
   return authApi.delete(`/sectors/delete/${subSectorID}`);
 }; 
 
+export const deleteBySectorID = (id: any) => {
+  return authApi.delete(`/sectors/${id}`);
+}; 
+
 export const getSubSectorByID = (sectorSetupID: number, SectorID: number | null) => {
   return () => authApi.get(`/sectors/details/${sectorSetupID}/${SectorID}`).then((res) => res.data);
 };

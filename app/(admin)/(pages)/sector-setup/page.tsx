@@ -23,6 +23,18 @@ interface ActionMenuProps {
   countryId: number | undefined;
 }
 
+interface SectorStat {
+  parentSector: string;
+  id: number;
+  subSectorCount: number;
+}
+
+
+interface DataItem {
+  sectorStats: SectorStat[];
+  id: number;
+}
+
 const ActionMenu: React.FC<ActionMenuProps> = ({
   row,
   onDeleteSuccess,
@@ -40,7 +52,6 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   };
 
   const handleEdit = () => {
-    // alert(JSON.stringify(countryId))
     handleClose();
     router.push(
       `/sector-setup/edit-sector?id=${row.id}&countryId=${countryId}`
@@ -79,20 +90,21 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   );
 };
 
-const SectorSetup: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [rows, setRows] = useState<RowData[]>([]);
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["all sectors"],
-    queryFn: services.getSectorByCountry("Ghana"),
+const SectorSetup: React.FC = () => {
+  const [rows, setRows] = useState<RowData[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const { data, isLoading, refetch } = useQuery<DataItem[], Error>({
+    queryKey: ['all sectors', searchTerm],
+    queryFn:  services.getSectorByCountry(searchTerm),
+    enabled: !!searchTerm, 
   });
 
+
   useEffect(() => {
-    // alert(JSON.stringify(data))
     if (data) {
-      const sectorStats = data[0]?.sectorStats || [];
-      setRows(sectorStats);
+      const allRows = data.flatMap(item => item.sectorStats); // Flatten sectorStats from all items
+      setRows(allRows);
     }
   }, [data]);
 
@@ -121,7 +133,9 @@ const SectorSetup: React.FC = () => {
             />
           </label>
           <div>
+          <div>
             <p className="font-medium">{params.row.parentSector}</p>
+          </div>
           </div>
         </div>,
       ],
