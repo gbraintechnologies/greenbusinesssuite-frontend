@@ -66,23 +66,22 @@ function FillFormHere() {
           formUserResponse[0]?.inputData
         )
       );
+      selectClientForm({
+        // @ts-ignore
+        ...mergeForm(
+          formUserResponse[0]?.id,
+          formData,
+          formUserResponse[0]?.inputData
+        ),
+        companyId: companyId,
+        isCompleted: false,
+      });
     }
   }, [isRefetching, formData, formUserResponse]);
 
   // store form in LS
   const { selectClientForm, clientForm, saveResponsesRemote, savingResponses } =
     useClientForm();
-
-  useEffect(() => {
-    if (Boolean(mergedForm) && companyId && !Boolean(clientForm)) {
-      selectClientForm({
-        // @ts-ignore
-        ...mergedForm,
-        companyId: companyId,
-        isCompleted: false,
-      });
-    }
-  }, [mergedForm, companyId]);
 
   const [activeSection, setActiveSection] = useState(null);
 

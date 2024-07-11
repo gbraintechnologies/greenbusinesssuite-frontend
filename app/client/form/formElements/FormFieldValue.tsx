@@ -177,6 +177,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           <p className="mt-2 text-sm">{placeHolder}</p>
 
           <Dropdown
+            isDisabled={viewOnly}
             // classNames={{
             //   base: "before:bg-default-200", // change arrow background
             //   content: "p-0 border-small border-divider bg-background",
