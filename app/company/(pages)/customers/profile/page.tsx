@@ -1,7 +1,7 @@
 "use client";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
-import useCompany from "@/hooks/useCompany";
+
 import UserIcon from "@/public/icons/UserIcon";
 import services from "@/services";
 import { Button } from "@nextui-org/button";
@@ -13,7 +13,7 @@ import {
 } from "@nextui-org/dropdown";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import Link from "next/link";
+
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";

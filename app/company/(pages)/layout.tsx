@@ -14,6 +14,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdOutlineDashboard } from "react-icons/md";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
 import { FaUsers } from "react-icons/fa";
+import { MdOutlineSupervisedUserCircle } from "react-icons/md";
 import { PiListMagnifyingGlassBold } from "react-icons/pi";
 
 // toast
@@ -72,6 +73,11 @@ export default function CompanyLayout({
       name: "Forms",
       icon: <FormsNavIcon />,
       link: "/company/forms",
+    },
+    {
+      name: "Customers",
+      icon: <MdOutlineSupervisedUserCircle size={20} />,
+      link: "/company/customers",
     },
 
     {

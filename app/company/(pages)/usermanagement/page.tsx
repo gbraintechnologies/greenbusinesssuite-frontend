@@ -6,17 +6,18 @@ import React, { useCallback, useEffect, useState } from "react";
 import Nav from "./components/Nav";
 import { BsThreeDots } from "react-icons/bs";
 import StatusPill from "@/components/StatusPill/StatusPill";
-import Link from "next/link";
+
 import UserIcon from "@/public/icons/UserIcon";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { IFilter } from "@/types";
-import useAdmin from "@/hooks/useAdmin";
+
 import RoleFilter from "./components/RoleFilter";
+import useCompany from "@/hooks/useCompany";
 
 function UserManagement() {
-  const { admin } = useAdmin();
+  const { company } = useCompany();
 
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "All", value: "all" },
@@ -40,19 +41,22 @@ function UserManagement() {
   const [rows, setRows] = useState<{ id: number | undefined; data: any }[]>([]);
 
   //Filter users by role id
-  const filterUsersByCompanyId = useCallback<any>((users: any) => {
-    const companyId = admin.custom_profile_values.find(
-      (item: any) => item.custom_profile_item_id === 2
-    ).value;
-    const filteredUsers = users?.filter((user: any) => {
-      return (
-        user.custom_profile_values.find(
-          (item: any) => item.custom_profile_item_id === 2
-        )?.value === companyId
-      );
-    });
-    return filteredUsers;
-  }, []);
+  const filterUsersByCompanyId = useCallback<any>(
+    (users: any) => {
+      const companyId = company?.id;
+
+      const filteredUsers = users?.filter((user: any) => {
+        return (
+          user.custom_profile_values.find(
+            (item: any) => item.custom_profile_item_id === 2
+          )?.value == companyId
+        );
+      });
+
+      return filteredUsers;
+    },
+    [company]
+  );
 
   const filterRoles = useCallback<any>((roles: any) => {
     //Filter for just Company Admin and Client roles
