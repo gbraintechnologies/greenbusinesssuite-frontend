@@ -141,13 +141,13 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="h-screen">
+    <div className="min-h-[90vh]">
       {pathname.includes("auth") ? (
         <>{children}</>
       ) : (
         <FormProvider>
           {loading ? (
-            <div className="w-full h-screen flex items-center justify-center">
+            <div className="w-full min-h-[90vh] flex items-center justify-center">
               <AiOutlineLoading3Quarters size={24} className="animate-spin" />
             </div>
           ) : (
