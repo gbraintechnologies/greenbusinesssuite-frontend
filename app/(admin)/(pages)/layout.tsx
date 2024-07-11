@@ -141,13 +141,13 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="h-screen">
+    <div className="min-h-[90vh]">
       {pathname.includes("auth") ? (
         <>{children}</>
       ) : (
         <FormProvider>
           {loading ? (
-            <div className="w-full h-screen flex items-center justify-center">
+            <div className="w-full min-h-[90vh] flex items-center justify-center">
               <AiOutlineLoading3Quarters size={24} className="animate-spin" />
             </div>
           ) : (
@@ -161,9 +161,9 @@ export default function AdminLayout({
                 </div>
               ) : (
                 // NORMAL VIEW
-                <div className="w-full min-h-screen">
+                <div className="w-full min-h-[90vh]">
                   <TopNav />
-                  <div className="flex mt-[3.5rem]   flex-row h-screen">
+                  <div className="flex mt-[3.5rem]   flex-row min-h-[90vh] ">
                     <div className="hidden  md:flex h-full absolute  overflow-y-scroll no-scrollbar">
                       {!pathname.includes("settings") && (
                         <SideNav

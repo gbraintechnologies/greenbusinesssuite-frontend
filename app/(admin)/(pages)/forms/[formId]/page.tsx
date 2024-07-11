@@ -25,7 +25,6 @@ import PublishFormButton from "../builder/PublishFormButton";
 import toast from "react-hot-toast";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import Image from "next/image";
-import UserIcon from "@/public/icons/UserIcon";
 
 function FormDetail({ params }: any) {
   let formID = params.formId;
@@ -38,11 +37,6 @@ function FormDetail({ params }: any) {
   const router = useRouter();
 
   const queryClient = useQueryClient();
-
-  // scroll to top
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const { data: form, isLoading } = useQuery({
     queryKey: ["form", parseInt(formID)],
@@ -66,6 +60,11 @@ function FormDetail({ params }: any) {
     queryFn: services.getFormStatusCountById(Number(formID)),
   });
 
+  // scroll to top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
@@ -80,7 +79,7 @@ function FormDetail({ params }: any) {
   // use props in data directly to avoid lags in changes in react query cache
   if (form) {
     return (
-      <div>
+      <div className="">
         {/* HEADER */}
         <div className="flex items-center justify-between px-5">
           <div>
@@ -147,7 +146,7 @@ function FormDetail({ params }: any) {
             <div className="bg-gray-200 rounded-lg p-5 animate-pulse h-28"></div>
           ) : (
             <div className="bg-gray-50 rounded-lg p-5">
-              {companyData === null ? (
+              {companyData === null || form?.companyId === null ? (
                 <div className="flex gap-4 items-center">
                   <div className="rounded-full bg-gray-100 p-4 w-24 h-24 flex items-center justify-center">
                     {" "}
@@ -155,7 +154,7 @@ function FormDetail({ params }: any) {
                   </div>
                   <div>
                     <p className="text-lg font-semibold"> Unassigned Form</p>
-                    <p className="mb-4">Assign a company to a form</p>
+                    <p className="mb-4">Assign a company to form</p>
                     <button
                       onClick={() => setShowAssignModal(true)}
                       className="btn-outline"
