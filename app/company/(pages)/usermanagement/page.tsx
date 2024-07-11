@@ -226,17 +226,17 @@ function UserManagement() {
         </div>,
       ],
     },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      type: "actions",
-      getActions: (params: any) => [
-        <div key={params.row.id}>
-          <BsThreeDots size={20} />
-        </div>,
-      ],
-    },
+    // {
+    //   field: "actions",
+    //   headerName: "Actions",
+    //   flex: 1,
+    //   type: "actions",
+    //   getActions: (params: any) => [
+    //     <div key={params.row.id}>
+    //       <BsThreeDots size={20} />
+    //     </div>,
+    //   ],
+    // },
   ];
 
   return (

@@ -98,6 +98,8 @@ function FillFormHere() {
     }
   };
 
+  console.log("client form", clientForm);
+
   // SKELETON LOADING FOR WHEN FORM ISN'T READY
   if (clientForm) {
     return (

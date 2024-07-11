@@ -122,7 +122,7 @@ const page = ({ params }: any) => {
   }
   // if(form){
   return (
-    <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 h-full">
+    <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 min-h-screen">
       {/* HEADER */}
       <div>
         <h3 className="text-xl font-semibold">
@@ -170,7 +170,10 @@ const page = ({ params }: any) => {
             <p className="text-[#475569] text-sm font-normal">
               {userData?.email}
             </p>
-            <Link href={`/company/customers/profile?id=${userId}`} className="text-[#15803D] text-sm underline cursor-pointer w-auto">
+            <Link
+              href={`/company/customers/profile?id=${userId}`}
+              className="text-[#15803D] text-sm underline cursor-pointer w-auto"
+            >
               Go to user profile
             </Link>
           </div>

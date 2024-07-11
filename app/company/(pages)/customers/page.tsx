@@ -4,16 +4,15 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import DataTable from "@/components/DataTable/DataTable";
 import SearchBox from "@/components/SearchBox/SearchBox";
-import Tabs from "@/components/Tabs/Tabs";
 
 import { BsThreeDots } from "react-icons/bs";
 import StatusPill from "@/components/StatusPill/StatusPill";
-import Link from "next/link";
+
 import UserIcon from "@/public/icons/UserIcon";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-import { IFilter } from "@/types";
+
 import useAdmin from "@/hooks/useAdmin";
 
 function UserManagement() {

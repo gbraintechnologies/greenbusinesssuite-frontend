@@ -223,6 +223,21 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             {label} <MandatoryLabel field={field} />
           </label>
           <p className="mt-2 text-sm">{placeHolder}</p>
+          <div className="mt-2 flex justify-between flex-wrap w-full">
+            {field?.choiceValues?.map((option: any, index: number) => (
+              <div key={index} className="flex gap-2 items-center">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  checked={option == field?.response}
+                  disabled
+                />
+                <div className="text-sm font-normal text-slate-700">
+                  {option}
+                </div>
+              </div>
+            ))}
+          </div>
 
           <div className=" text-black px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
             {field.choiceValues.map((value: any) => {

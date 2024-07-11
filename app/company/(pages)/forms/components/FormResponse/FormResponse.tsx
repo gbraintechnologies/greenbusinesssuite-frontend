@@ -34,7 +34,9 @@ const renderFormResponse = (formField: any) => {
                   checked={option == formField?.response}
                   disabled
                 />
-                <div className="text-sm font-normal text-slate-700">{option}</div>
+                <div className="text-sm font-normal text-slate-700">
+                  {option}
+                </div>
               </div>
             ))}
           </div>
@@ -53,7 +55,9 @@ const renderFormResponse = (formField: any) => {
                   checked={option == formField?.response}
                   disabled
                 />
-                <div className="text-sm font-normal text-slate-700">{option}</div>
+                <div className="text-sm font-normal text-slate-700">
+                  {option}
+                </div>
               </div>
             ))}
           </div>
@@ -83,8 +87,6 @@ const FormResponse = forwardRef(function FormResponse(
       onRendered();
     }
   }, [onRendered]);
-
-  console.log("merged form ", mergedForm);
 
   const formSections = mergedForm?.formSections;
   return (
