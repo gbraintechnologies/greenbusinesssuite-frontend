@@ -79,8 +79,8 @@ function FormDetail({ params }: any) {
         <div className="flex items-center justify-between px-5">
           <div>
             <h3 className="text-xl font-semibold">
-              <span className="font-light text-gray-500">Forms /</span>{" "}
-              {form?.name}{" "}
+              <span className="font-light text-gray-500">Forms /</span>
+              {form?.name}
             </h3>
           </div>
 

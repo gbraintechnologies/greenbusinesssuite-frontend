@@ -25,7 +25,7 @@ const renderFormResponse = (formField: any) => {
       return (
         <>
           <input defaultValue={formField?.response} className="fit" readOnly />
-          <div className="mt-2 flex justify-between flex-wrap w-full">
+          {/* <div className="mt-2 flex justify-between flex-wrap w-full">
             {formField?.choiceValues?.map((option: any, index: number) => (
               <div key={index} className="flex gap-2 items-center">
                 <input
@@ -39,6 +39,30 @@ const renderFormResponse = (formField: any) => {
                 </div>
               </div>
             ))}
+          </div> */}
+          <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
+            {formField.choiceValues.map((value: any) => {
+              // values user selected
+              let selected =
+                formField.response == null || formField.response == ""
+                  ? []
+                  : [...formField?.response?.split(",")];
+
+              return (
+                <div className="flex  items-center flex-row gap-2">
+                  <input
+                    className="form-check-input"
+                    disabled
+                    checked={selected.includes(value)}
+                    key={value}
+                    value={value}
+                    type="checkbox"
+                  />
+
+                  <p className="text-base">{value}</p>
+                </div>
+              );
+            })}
           </div>
         </>
       );

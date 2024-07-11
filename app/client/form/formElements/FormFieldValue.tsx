@@ -223,32 +223,40 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             {label} <MandatoryLabel field={field} />
           </label>
           <p className="mt-2 text-sm">{placeHolder}</p>
-          <div className="mt-2 flex justify-between flex-wrap w-full">
-            {field?.choiceValues?.map((option: any, index: number) => (
-              <div key={index} className="flex gap-2 items-center">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  checked={option == field?.response}
-                  disabled
-                />
-                <div className="text-sm font-normal text-slate-700">
-                  {option}
-                </div>
-              </div>
-            ))}
-          </div>
 
-          <div className=" text-black px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
+          <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
             {field.choiceValues.map((value: any) => {
+              // values user selected
+              let selected =
+                field.response == null || field.response == ""
+                  ? []
+                  : [...field?.response?.split(",")];
+
               return (
                 <div className="flex  items-center flex-row gap-2">
                   <input
+                    className="form-check-input"
                     disabled={viewOnly}
-                    // checked={Boolean(field?.response !== null)}
-                    onChange={(e) =>
-                      saveSingleResponse(section?.id, field?.id, e.target.value)
-                    }
+                    checked={selected.includes(value)}
+                    onChange={(e) => {
+                      // speical case for checkboxes - using comma to store all values in string
+
+                      let update = selected;
+
+                      if (update.includes(value)) {
+                        update = update.filter(
+                          (item) => item !== e.target.value
+                        );
+                      } else {
+                        update.push(value);
+                      }
+
+                      saveSingleResponse(
+                        section?.id,
+                        field?.id,
+                        update.join(",")
+                      );
+                    }}
                     key={value}
                     value={value}
                     type="checkbox"
