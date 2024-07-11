@@ -15,10 +15,7 @@ export const createFreeInputJurisdiction = (data: any) => {
 };
 
 export const createParentDropdownJurisdiction = (data: any) => {
-  return authApi.post(
-    "/jurisdictions/create-parent-address-scheme/manual-entries",
-    data
-  );
+  return authApi.post("/jurisdictions/create-parent-address-scheme/manual-entries", data);
 };
 
 export const getParentEntriesById = (id: number) => {
@@ -45,3 +42,22 @@ export const createChildEntries = (data: any) => {
 export const deleteJurisdictionByID = (id: any) => {
   return authApi.delete(`/jurisdictions/delete/${id}`);
 };
+
+export const deleteParentAddressAndChildByID = (parentAddressSchemeEntryID: any) => {
+  return authApi.delete(`/jurisdictions/parent-address-scheme-entry/delete/${parentAddressSchemeEntryID}`);
+};
+
+export const getJurisdictionEntriesById = (id: number) => {
+  return () =>
+    authApi.get(`/jurisdictions/get-a-jurisdiction/with-entries/${id}`).then((res) => res.data);
+};
+
+export const editJurisdictionEntriesByID = (parentAddressSchemeID: number, data: any) => {
+  return authApi.patch(`/jurisdictions/edit/parent-address-scheme-and-entries/${parentAddressSchemeID}`, data);
+};
+
+export const deleteParentAddressAndAssociatesByID = (parentAddressSchemeID: any) => {
+  return authApi.delete(`/jurisdictions/delete-parent-address-scheme/${parentAddressSchemeID}`);
+};
+
+
