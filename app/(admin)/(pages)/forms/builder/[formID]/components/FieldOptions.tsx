@@ -25,8 +25,6 @@ function FieldOptions() {
 
   let [localField, setLocalField] = useState(activeField?.field);
 
-  console.log("local Field", localField);
-
   // update local copy if changes are made
   useEffect(() => {
     setLocalField(activeField?.field);

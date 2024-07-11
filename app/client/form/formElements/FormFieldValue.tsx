@@ -177,6 +177,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           <p className="mt-2 text-sm">{placeHolder}</p>
 
           <Dropdown
+            isDisabled={viewOnly}
             // classNames={{
             //   base: "before:bg-default-200", // change arrow background
             //   content: "p-0 border-small border-divider bg-background",
@@ -224,16 +225,39 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           </label>
           <p className="mt-2 text-sm">{placeHolder}</p>
 
-          <div className=" text-black px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
+          <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
             {field.choiceValues.map((value: any) => {
+              // values user selected
+              let selected =
+                field.response == null || field.response == ""
+                  ? []
+                  : [...field?.response?.split(",")];
+
               return (
                 <div className="flex  items-center flex-row gap-2">
                   <input
+                    className="form-check-input"
                     disabled={viewOnly}
-                    // checked={Boolean(field?.response !== null)}
-                    onChange={(e) =>
-                      saveSingleResponse(section?.id, field?.id, e.target.value)
-                    }
+                    checked={selected.includes(value)}
+                    onChange={(e) => {
+                      // speical case for checkboxes - using comma to store all values in string
+
+                      let update = selected;
+
+                      if (update.includes(value)) {
+                        update = update.filter(
+                          (item) => item !== e.target.value
+                        );
+                      } else {
+                        update.push(value);
+                      }
+
+                      saveSingleResponse(
+                        section?.id,
+                        field?.id,
+                        update.join(",")
+                      );
+                    }}
                     key={value}
                     value={value}
                     type="checkbox"

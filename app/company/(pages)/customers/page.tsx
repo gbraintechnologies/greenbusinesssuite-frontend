@@ -1,9 +1,10 @@
 "use client";
+
+import React, { useCallback, useEffect, useState } from "react";
+
 import DataTable from "@/components/DataTable/DataTable";
 import SearchBox from "@/components/SearchBox/SearchBox";
-import Tabs from "@/components/Tabs/Tabs";
-import React, { useCallback, useEffect, useState } from "react";
-import Nav from "./components/Nav";
+
 import { BsThreeDots } from "react-icons/bs";
 import StatusPill from "@/components/StatusPill/StatusPill";
 
@@ -11,26 +12,11 @@ import UserIcon from "@/public/icons/UserIcon";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-import { IFilter } from "@/types";
 
-import RoleFilter from "./components/RoleFilter";
-import useCompany from "@/hooks/useCompany";
+import useAdmin from "@/hooks/useAdmin";
 
 function UserManagement() {
-  const { company } = useCompany();
-
-  const [filters, setFilters] = useState<IFilter[]>([
-    { id: 1, name: "All", value: "all" },
-    { id: 2, name: "Active", value: "active" },
-    { id: 3, name: "Inactive", value: "inactive" },
-    { id: 4, name: "Suspended", value: "suspended" },
-  ]);
-
-  const [activeFilter, setActiveFilter] = useState<IFilter>({
-    id: 1,
-    name: "All",
-    value: "all",
-  });
+  const { admin } = useAdmin();
 
   const [activeRoleFilter, setActiveRoleFilter] = useState([]);
 
@@ -41,22 +27,19 @@ function UserManagement() {
   const [rows, setRows] = useState<{ id: number | undefined; data: any }[]>([]);
 
   //Filter users by role id
-  const filterUsersByCompanyId = useCallback<any>(
-    (users: any) => {
-      const companyId = company?.id;
-
-      const filteredUsers = users?.filter((user: any) => {
-        return (
-          user.custom_profile_values.find(
-            (item: any) => item.custom_profile_item_id === 2
-          )?.value == companyId
-        );
-      });
-
-      return filteredUsers;
-    },
-    [company]
-  );
+  const filterUsersByCompanyId = useCallback<any>((users: any) => {
+    const companyId = admin.custom_profile_values.find(
+      (item: any) => item.custom_profile_item_id === 2
+    ).value;
+    const filteredUsers = users?.filter((user: any) => {
+      return (
+        user.custom_profile_values.find(
+          (item: any) => item.custom_profile_item_id === 2
+        )?.value === companyId
+      );
+    });
+    return filteredUsers;
+  }, []);
 
   const filterRoles = useCallback<any>((roles: any) => {
     //Filter for just Company Admin and Client roles
@@ -85,16 +68,8 @@ function UserManagement() {
 
   //Status Filter
   useEffect(() => {
-    if (activeFilter.value === "all") {
-      setAggregatedUsers(users);
-    } else {
-      const filteredUsers = users?.filter(
-        (user: any) =>
-          user.user_status.toLowerCase() === activeFilter.value.toLowerCase()
-      );
-      setAggregatedUsers(filteredUsers);
-    }
-  }, [activeFilter, users]);
+    setAggregatedUsers(users);
+  }, [users]);
 
   //Search Filter
   useEffect(() => {
@@ -226,36 +201,25 @@ function UserManagement() {
         </div>,
       ],
     },
-    // {
-    //   field: "actions",
-    //   headerName: "Actions",
-    //   flex: 1,
-    //   type: "actions",
-    //   getActions: (params: any) => [
-    //     <div key={params.row.id}>
-    //       <BsThreeDots size={20} />
-    //     </div>,
-    //   ],
-    // },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id}>
+          <BsThreeDots size={20} />
+        </div>,
+      ],
+    },
   ];
 
   return (
     <div className="w-full pb-20 mt-4 py-2 ">
-      <Nav />
       <div className="flex items-center px-5 justify-between my-4">
-        {/* FILTERS AND SEARCHBOX */}
-        <Tabs
-          filters={filters}
-          setActiveFilter={setActiveFilter}
-          activeFilter={activeFilter}
-        />
+        <h3 className="px-1 text-xl font-semibold">Customers</h3>
         <div className="flex items-center gap-3">
           <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <RoleFilter
-            roles={roles}
-            selected={activeRoleFilter}
-            setSelected={setActiveRoleFilter}
-          />
         </div>
       </div>
       <DataTable

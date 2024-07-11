@@ -41,6 +41,8 @@ const ResponseDataTable: React.FC<Props> = ({
 }) => {
   const [aggregatedResponses, setAggregatedResponses] = useState([]);
 
+  const [activeResponseId, setActiveResponseId] = useState<any>()
+
   const [rows, setRows] = useState<any>([]);
 
   const [fetchingUserData, setFetchingUserData] = useState(false);
@@ -102,6 +104,7 @@ const ResponseDataTable: React.FC<Props> = ({
   const downloadPDF = async (responseId: number, userData: any) => {
     try {
       setPdfGenerating(true);
+      setActiveResponseId(responseId);
       const resData = await services.retrieveFormUserResponseRaw(
         userData?.id,
         form?.id
@@ -282,7 +285,7 @@ const ResponseDataTable: React.FC<Props> = ({
               downloadPDF(params.row.data?.id, params.row.userData)
             }
           >
-            {pdfGenerating ? <LoadingIcon /> : <DownloadIcon />}
+            {pdfGenerating && activeResponseId == params.row.data?.id ? <LoadingIcon /> : <DownloadIcon />}
           </button>
           <Link
             href={`/company/forms/${form?.id}/response?user=${params.row.userData?.id}`}

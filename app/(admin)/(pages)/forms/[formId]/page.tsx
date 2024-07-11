@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { VscEmptyWindow } from "react-icons/vsc";
+
 // icons
 import { FiEdit2 } from "react-icons/fi";
 import { VscLink } from "react-icons/vsc";
@@ -21,27 +23,15 @@ import PublishFormButton from "../builder/PublishFormButton";
 
 // toast
 import toast from "react-hot-toast";
-
-// extra components
-import ResponseDataTable from "@/app/company/(pages)/forms/components/ResponseTable/ResponseDataTable";
+import StatsBlock from "@/components/StatsBlock/StatsBlock";
+import Image from "next/image";
 
 function FormDetail({ params }: any) {
   let formID = params.formId;
 
-  const [view, setView] = useState("responses");
-
   //
   const [showUnpublishModal, setShowUnpublishModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
-
-  const { data: formResponseData, isLoading: isResponseLoading } = useQuery({
-    queryKey: ["get form response by ", Number(formID)],
-    queryFn: services.getFormResponseById(Number(formID)),
-  });
-
-  const exportToExcel = (responses: any) => {
-    toast.success("Exported");
-  };
 
   //
   const router = useRouter();
@@ -59,7 +49,22 @@ function FormDetail({ params }: any) {
     queryFn: services.getAllCompanies(),
   });
 
-  useEffect(() => {}, [form]);
+  const { data: companyData, isLoading: isLoadingCompanyInfo } = useQuery({
+    queryKey: ["company", parseInt(form?.companyId as string)],
+    queryFn: services.getCompanyById(Number(form?.companyId)),
+    enabled: Boolean(form?.companyId),
+  });
+
+  const { data: formStatusCount } = useQuery({
+    queryKey: ["Get forms status count"],
+    queryFn: services.getFormStatusCountById(Number(formID)),
+  });
+
+  // scroll to top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
@@ -74,13 +79,13 @@ function FormDetail({ params }: any) {
   // use props in data directly to avoid lags in changes in react query cache
   if (form) {
     return (
-      <div>
+      <div className="">
         {/* HEADER */}
         <div className="flex items-center justify-between px-5">
           <div>
             <h3 className="text-xl font-semibold">
-              <span className="font-light text-gray-500">Forms /</span>{" "}
-              {form?.name}{" "}
+              <span className="font-light text-gray-500">Forms / </span>
+              {form?.name}
             </h3>
           </div>
 
@@ -132,33 +137,79 @@ function FormDetail({ params }: any) {
           </div>
         </div>
 
-        {/* VIEWS SELECTOR */}
-        {/* <div className="flex justify-between mt-5 items-center px-5">
-          <div className="bg-[#F1F5F9]  flex items-center gap-2 rounded-xl my-1 p-1 bg-opacity-50">
-            <button
-              onClick={() => setView("responses")}
-              className={`${
-                view === "responses"
-                  ? "bg-white font-medium shadow-sm"
-                  : "text-[#64748B] font-light "
-              } p-1 rounded-lg px-7`}
-            >
-              Responses
-            </button>
-          </div>
-        </div> */}
+        <div className="px-10 py-10">
+          {/* company assigned */}
+          {companyData && (
+            <p className="font-semibold mb-5">Company Assigned</p>
+          )}
+          {isLoadingCompanyInfo ? (
+            <div className="bg-gray-200 rounded-lg p-5 animate-pulse h-28"></div>
+          ) : (
+            <div className="bg-gray-50 rounded-lg p-5">
+              {companyData === null || form?.companyId === null ? (
+                <div className="flex gap-4 items-center">
+                  <div className="rounded-full bg-gray-100 p-4 w-24 h-24 flex items-center justify-center">
+                    {" "}
+                    <VscEmptyWindow size={40} />
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold"> Unassigned Form</p>
+                    <p className="mb-4">Assign a company to a form</p>
+                    <button
+                      onClick={() => setShowAssignModal(true)}
+                      className="btn-outline"
+                    >
+                      <VscLink /> Assign Company
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex items-center gap-5">
+                    <Image
+                      // @ts-ignore
+                      src={companyData?.company_logo}
+                      width={144}
+                      height={144}
+                      className="rounded-full w-20 h-20 object-cover border border-[rgba(226, 232, 240, 1)]"
+                      alt="Company Logo"
+                    />
+                    {/* @ts-ignore */}
+                    {companyData?.company_name && (
+                      <div className="flex flex-col gap-0">
+                        <div className="text-xl  font-bold">
+                          {/* @ts-ignore */}
+                          {companyData?.company_name}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
-        {/* RENDER VIEWS */}
-        {/* {view === "responses" && (
-          <div>UI In progress</div>
-          <div className="p-6">
-            <ResponseDataTable
-              responseData={formResponseData}
-              isResponseLoading={isResponseLoading}
-              exportToExcel={exportToExcel}
+          {/* statistics */}
+          <div className="mt-10">
+            <p className="font-semibold mb-5">Submission Statistics</p>
+            <StatsBlock
+              stats={[
+                {
+                  label: "Total number of entries",
+                  value: formStatusCount?.totalCount,
+                },
+                {
+                  label: "Completed submissions",
+                  value: formStatusCount?.completedCount,
+                },
+                {
+                  label: "Incompleted submissions",
+                  value: formStatusCount?.unCompletedCount,
+                },
+              ]}
             />
           </div>
-        )} */}
+        </div>
 
         {/* ASSIGN TO NEW COMPANY MODAL */}
         <Modal

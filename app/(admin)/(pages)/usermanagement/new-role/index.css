@@ -2,7 +2,7 @@
   @apply flex flex-col w-full mb-5;
 }
 
-.input-holder input,
+.input-holder input:not([type="checkbox"]):not([type="radio"]),
 textarea {
   @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-2 shadow-sm;
 }

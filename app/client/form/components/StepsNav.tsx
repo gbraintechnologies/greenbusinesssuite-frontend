@@ -39,7 +39,7 @@ function StepsNav({
                   >
                     {idx}
                   </div>
-                  <p className="text-base">{section.name}</p>
+                  <p className="text-base text-left">{section.name}</p>
                 </div>
                 <IoIosArrowForward />
               </button>
