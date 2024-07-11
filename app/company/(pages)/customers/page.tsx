@@ -5,6 +5,16 @@ import React, { useEffect, useState } from "react";
 import DataTable from "@/components/DataTable/DataTable";
 import SearchBox from "@/components/SearchBox/SearchBox";
 
+import Link from "next/link";
+
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
+import { Button } from "@nextui-org/button";
+
 import { BsThreeDots } from "react-icons/bs";
 
 import UserIcon from "@/public/icons/UserIcon";
@@ -109,9 +119,29 @@ function Customers() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id}>
-          <BsThreeDots size={20} />
-        </div>,
+        <Dropdown>
+          <DropdownTrigger>
+            <Button variant="bordered">
+              {" "}
+              <BsThreeDots size={20} />
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
+            aria-label="Static Actions"
+          >
+            <DropdownItem
+              key="view"
+              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+            >
+              <Link
+                href={"/company/customers/profile?id=" + params.row.data.id}
+              >
+                View User
+              </Link>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>,
       ],
     },
   ];
