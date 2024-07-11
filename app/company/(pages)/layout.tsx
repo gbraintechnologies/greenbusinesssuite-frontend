@@ -99,11 +99,11 @@ export default function CompanyLayout({
       link: "/company/usermanagement",
     },
 
-    {
-      name: "Audit Trail",
-      icon: <PiListMagnifyingGlassBold size={18} />,
-      link: "/company/audit-trail",
-    },
+    // {
+    //   name: "Audit Trail",
+    //   icon: <PiListMagnifyingGlassBold size={18} />,
+    //   link: "/company/audit-trail",
+    // },
   ];
 
   const thirdPartyApps: any = [];
