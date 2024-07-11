@@ -154,7 +154,7 @@ function FormDetail({ params }: any) {
                   </div>
                   <div>
                     <p className="text-lg font-semibold"> Unassigned Form</p>
-                    <p className="mb-4">Assign a company to a form</p>
+                    <p className="mb-4">Assign a company to form</p>
                     <button
                       onClick={() => setShowAssignModal(true)}
                       className="btn-outline"

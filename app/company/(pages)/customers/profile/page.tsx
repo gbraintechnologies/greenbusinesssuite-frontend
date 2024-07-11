@@ -14,14 +14,17 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import FormResponse from "../../forms/components/FormResponse/FormResponse";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
+import { IoIosArrowBack } from "react-icons/io";
 
 const page = () => {
   const searchParams = useSearchParams();
+
+  const router = useRouter();
 
   const userId = searchParams.get("id") ? searchParams.get("id") : "";
 
@@ -93,6 +96,12 @@ const page = () => {
   }
   return (
     <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 h-full">
+      <button
+        className="my-3 flex items-center gap-2"
+        onClick={() => router.back()}
+      >
+        <IoIosArrowBack size={12} /> Go Back
+      </button>
       <div className="flex gap-2 items-center mt-5">
         <div className="">
           {userData?.custom_profile_values &&

@@ -17,6 +17,13 @@ export const allFormTemplates = () => {
     authApi.get("/forms/builder/list-templates").then((res) => res.data);
 };
 
+export const companyCustomersWithFormCount = (companyId: number) => {
+  return () =>
+    authApi
+      .get(`/forms/response/completed-forms-count/${companyId}`)
+      .then((res) => res.data);
+};
+
 export const assignFormToCompany = (
   formId: number | string,
   companyId: string
@@ -37,9 +44,9 @@ export const getFormsByCompanyId = (companyId: string) => {
     authApi.get(`/forms/builder/company/${companyId}`).then((res) => res.data);
 };
 
-export const getFormStatisticsForUser = (userId: string | null ) => {
-  if(!userId){
-    throw new Error("No User Id")
+export const getFormStatisticsForUser = (userId: string | null) => {
+  if (!userId) {
+    throw new Error("No User Id");
   }
   return () =>
     authApi
@@ -67,11 +74,12 @@ export const getUncompletedFormsByUserId = (userId: string) => {
 };
 
 export const getFormsByUserId = (userId: string | null) => {
-  if(!userId){
-    throw new Error("User ID is required")
+  if (!userId) {
+    throw new Error("User ID is required");
   }
-  return () => authApi.get(`/forms/builder/user-forms/${userId}`).then((res) => res.data);
-}
+  return () =>
+    authApi.get(`/forms/builder/user-forms/${userId}`).then((res) => res.data);
+};
 
 export const getFormResponseById = (id: number) => {
   return () =>
