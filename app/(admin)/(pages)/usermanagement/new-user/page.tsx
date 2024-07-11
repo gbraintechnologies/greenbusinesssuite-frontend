@@ -256,7 +256,7 @@ function NewUser() {
                 type="file"
                 // @ts-ignore
                 ref={inputFileRef}
-                accept="image/*"
+                accept=".jpg, .png, .jpeg"
                 className="hidden"
                 onChange={(e) => {
                   setProfileImage(e.target.files && e.target.files[0]);

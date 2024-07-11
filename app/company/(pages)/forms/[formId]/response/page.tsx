@@ -13,6 +13,7 @@ import FormResponse from "../../components/FormResponse/FormResponse";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const page = ({ params }: any) => {
   let formID = params.formId;
@@ -169,9 +170,9 @@ const page = ({ params }: any) => {
             <p className="text-[#475569] text-sm font-normal">
               {userData?.email}
             </p>
-            <p className="text-[#15803D] text-sm underline cursor-pointer w-auto">
+            <Link href={`/company/customers/profile?id=${userId}`} className="text-[#15803D] text-sm underline cursor-pointer w-auto">
               Go to user profile
-            </p>
+            </Link>
           </div>
         </div>
         <button

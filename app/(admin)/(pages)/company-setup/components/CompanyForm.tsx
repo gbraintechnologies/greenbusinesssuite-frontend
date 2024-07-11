@@ -109,7 +109,8 @@ const CompanyForm: React.FC<Props> = ({
 }) => {
   const { data: industries, isLoading } = useQuery({
     queryKey: ["all sectors"],
-    queryFn: services.getSectorByCountry("Ghana"),
+    queryFn: services.getSectorByCountry(selectedJurisdiction?.label || ""),
+    enabled: !! selectedJurisdiction?.label
   });
 
   const {
@@ -204,42 +205,6 @@ const CompanyForm: React.FC<Props> = ({
                   />
                   <ShowError name="companyDescription" />
                 </div>
-                {/* INDUSTRY */}
-                <div className="input-holder half">
-                  <label>Industry</label>
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <Button
-                        variant="bordered"
-                        className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                      >
-                        {selectedIndustry?.label || "Select Industry"}
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
-                      aria-label="Static Actions"
-                      variant="flat"
-                      selectionMode="single"
-                    >
-                      {industries?.map((industry: any) => (
-                        <DropdownItem
-                          key="view"
-                          className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                          onClick={() =>
-                            setSelectedIndustry({
-                              label: industry?.sectorStats[0]?.parentSector,
-                              value: industry?.sectorStats[0]?.id,
-                            })
-                          }
-                        >
-                          {industry?.sectorStats[0]?.parentSector}
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </Dropdown>
-                  <ShowError name="industry" />
-                </div>
                 {/* JURISDICTION */}
                 <div className="input-holder half">
                   <label>Company jurisdiction</label>
@@ -300,6 +265,42 @@ const CompanyForm: React.FC<Props> = ({
                   </Dropdown>
                   <ShowError name="industry" />
                 </div>
+                            {/* INDUSTRY */}
+                            <div className="input-holder half">
+                              <label>Industry</label>
+                              <Dropdown>
+                                <DropdownTrigger>
+                                  <Button
+                                    variant="bordered"
+                                    className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                                  >
+                                    {selectedIndustry?.label || "Select Industry"}
+                                  </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                  className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                                  aria-label="Static Actions"
+                                  variant="flat"
+                                  selectionMode="single"
+                                >
+                                  {industries?.map((industry: any) => (
+                                    <DropdownItem
+                                      key="view"
+                                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                      onClick={() =>
+                                        setSelectedIndustry({
+                                          label: industry?.sectorStats[0]?.parentSector,
+                                          value: industry?.sectorStats[0]?.id,
+                                        })
+                                      }
+                                    >
+                                      {industry?.sectorStats[0]?.parentSector}
+                                    </DropdownItem>
+                                  ))}
+                                </DropdownMenu>
+                              </Dropdown>
+                              <ShowError name="industry" />
+                            </div>
                 {/* COMPANY LOGO */}
                 <div className="flex justify-center items-center w-full relative">
                   <label
