@@ -74,11 +74,11 @@ export default function CompanyLayout({
       icon: <FormsNavIcon />,
       link: "/company/forms",
     },
-    // {
-    //   name: "Customers",
-    //   icon: <MdOutlineSupervisedUserCircle size={20} />,
-    //   link: "/company/customers",
-    // },
+    {
+      name: "Customers",
+      icon: <MdOutlineSupervisedUserCircle size={20} />,
+      link: "/company/customers",
+    },
 
     {
       name: "Reports",
