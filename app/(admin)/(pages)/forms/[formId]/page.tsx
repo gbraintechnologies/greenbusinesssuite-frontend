@@ -25,7 +25,6 @@ import PublishFormButton from "../builder/PublishFormButton";
 import toast from "react-hot-toast";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import Image from "next/image";
-import UserIcon from "@/public/icons/UserIcon";
 
 function FormDetail({ params }: any) {
   let formID = params.formId;
@@ -38,11 +37,6 @@ function FormDetail({ params }: any) {
   const router = useRouter();
 
   const queryClient = useQueryClient();
-
-  // scroll to top
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const { data: form, isLoading } = useQuery({
     queryKey: ["form", parseInt(formID)],
@@ -65,6 +59,11 @@ function FormDetail({ params }: any) {
     queryKey: ["Get forms status count"],
     queryFn: services.getFormStatusCountById(Number(formID)),
   });
+
+  // scroll to top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (isLoading) {
     return (
@@ -147,7 +146,7 @@ function FormDetail({ params }: any) {
             <div className="bg-gray-200 rounded-lg p-5 animate-pulse h-28"></div>
           ) : (
             <div className="bg-gray-50 rounded-lg p-5">
-              {companyData === null ? (
+              {companyData === null || form?.companyId === null ? (
                 <div className="flex gap-4 items-center">
                   <div className="rounded-full bg-gray-100 p-4 w-24 h-24 flex items-center justify-center">
                     {" "}
