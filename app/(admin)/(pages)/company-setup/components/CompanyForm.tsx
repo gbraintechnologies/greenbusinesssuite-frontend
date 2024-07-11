@@ -9,7 +9,6 @@ import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import * as Yup from "yup";
 import UploadIcon from "@/public/svg/upload.svg";
 import {
-  Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
@@ -18,6 +17,7 @@ import { Button } from "@nextui-org/button";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { Countrie } from "../../country-setup/components/Countries";
+import Dropdown from "@/components/Dropdown/Dropdown";
 
 export interface ICompany {
   companyName: string;
@@ -110,7 +110,7 @@ const CompanyForm: React.FC<Props> = ({
   const { data: industries, isLoading } = useQuery({
     queryKey: ["all sectors"],
     queryFn: services.getSectorByCountry(selectedJurisdiction?.label || ""),
-    enabled: !! selectedJurisdiction?.label
+    enabled: !!selectedJurisdiction?.label,
   });
 
   const {
@@ -208,7 +208,7 @@ const CompanyForm: React.FC<Props> = ({
                 {/* JURISDICTION */}
                 <div className="input-holder half">
                   <label>Company jurisdiction</label>
-                  <Dropdown>
+                  {/* <Dropdown>
                     <DropdownTrigger>
                       <Button
                         variant="bordered"
@@ -262,13 +262,29 @@ const CompanyForm: React.FC<Props> = ({
                         </DropdownItem>
                       ))}
                     </DropdownMenu>
-                  </Dropdown>
+                  </Dropdown> */}
+                  <Dropdown
+                    options={[]}
+                    selected={selectedJurisdiction}
+                    setSelected={setSelectedJurisdiction}
+                    bgColor="bg-slate-50"
+                  />
+
                   <ShowError name="industry" />
                 </div>
-                            {/* INDUSTRY */}
-                            <div className="input-holder half">
-                              <label>Industry</label>
-                              <Dropdown>
+                {/* INDUSTRY */}
+                <div className="input-holder half">
+                  <label>Industry</label>
+                  <Dropdown
+                    options={[
+                      { label: "Finance", value: "finance" },
+                      { label: "Technology", value: "Technology" },
+                    ]}
+                    selected={selectedIndustry}
+                    setSelected={setSelectedIndustry}
+                    bgColor="bg-slate-50"
+                  />
+                  {/* <Dropdown>
                                 <DropdownTrigger>
                                   <Button
                                     variant="bordered"
@@ -298,9 +314,9 @@ const CompanyForm: React.FC<Props> = ({
                                     </DropdownItem>
                                   ))}
                                 </DropdownMenu>
-                              </Dropdown>
-                              <ShowError name="industry" />
-                            </div>
+                              </Dropdown> */}
+                  <ShowError name="industry" />
+                </div>
                 {/* COMPANY LOGO */}
                 <div className="flex justify-center items-center w-full relative">
                   <label
