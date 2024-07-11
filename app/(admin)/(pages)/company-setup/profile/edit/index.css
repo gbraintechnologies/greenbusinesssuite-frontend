@@ -25,10 +25,13 @@ select {
 .react-international-phone-input-container .react-international-phone-input {
   background-color: #f8fafc !important;
   height: 42px !important;
+  margin: 0 !important;
 }
 
 .input-holder
   .react-international-phone-input-container
   .react-international-phone-input {
   background-color: #f8fafc !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
 }
