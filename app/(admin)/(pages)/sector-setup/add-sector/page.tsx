@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import ExcelIcon from "@/public/icons/ExcelIcon";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { createSector, csvUpload } from "@/services/features/sectorService";
+import { createSector, csvUpload, updateSector } from "@/services/features/sectorService";
 import SelectCountryInput from "../components/selectCountryInput";
 
 interface SectorData {
@@ -210,30 +210,38 @@ function AddSector() {
         setFileName({ name: "", size: 0 });
   
         setIsSubmitting(false);
-        
+  
         router.push("/sector-setup");
         return;
       }
   
-      if (
-        (data.countryName && sectorlevels.length > 0) ||
-        sectorlevels.length > 0
-      ) {
+      if ((data.countryName && sectorlevels.length > 0) || sectorlevels.length > 0) {
         const sectorPayload = {
           id: data.id,
           countryName: data.countryName,
           sectors: sectorlevels,
         };
   
-        await createSector(sectorPayload);
+        if (data.id && data.id > 0) {
+          await updateSector(sectorPayload);
+          toast.success("Sector updated Successfully", {
+            position: "top-center",
+            duration: 3000,
+            style: {
+              color: "green",
+            },
+          });
+        } else {
+          await createSector(sectorPayload);
+          toast.success("Sector created Successfully", {
+            position: "top-center",
+            duration: 3000,
+            style: {
+              color: "green",
+            },
+          });
+        }
   
-        toast.success("Sector created Successfully", {
-          position: "top-center",
-          duration: 3000,
-          style: {
-            color: "green",
-          },
-        });
         router.push("/sector-setup");
       } else {
         toast.error("Please fill out the form or upload a CSV file.", {
@@ -251,7 +259,7 @@ function AddSector() {
       setIsSubmitting(false);
     }
   };
-  
+
 
   const eitherActionCompleted = IDImage !== null || sectorlevels.length > 0;
 
