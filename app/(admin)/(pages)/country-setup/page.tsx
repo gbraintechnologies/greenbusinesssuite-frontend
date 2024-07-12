@@ -15,6 +15,7 @@ import { deleteJurisdictionByID } from "@/services/features/jurisdictionsService
 
 interface RowData {
   id: number;
+  name: string
 }
 
 interface ActionMenuProps {
@@ -36,7 +37,6 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 
   const handleEdit = () => {
     handleClose();
-    //alert(JSON.stringify(row.id))
     router.push(`/country-setup/edit-jurisdiction?id=${row.id}`);
   };
 
@@ -136,6 +136,11 @@ function CountrySetup() {
     },
   ];
 
+  const filteredRows = rows.filter(
+    (row) =>
+      row.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="w-full pb-20 ">
       <Nav />
@@ -152,7 +157,7 @@ function CountrySetup() {
           </div>
         </div>
       </div>
-      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
+      <DataTable isLoading={isLoading} rows={filteredRows} columns={columns} />
     </div>
   );
 }

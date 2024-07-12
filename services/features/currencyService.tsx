@@ -7,3 +7,7 @@ export const allCurrencies = () => {
 export const createCurrency = (data: any) => {
   return authApi.post("/forms/currency-setup", data);
 };
+
+export const deleteCurrencyByID = (id: any) => {
+  return authApi.delete(`/forms/currency-setup/hard-delete/${id}`);
+};
