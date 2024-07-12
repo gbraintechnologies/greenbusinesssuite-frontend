@@ -10,36 +10,35 @@ import services from "@/services";
 import Nav from "./components/Nav";
 import { useRouter } from "next/navigation";
 import { deleteBySubSectorID } from "@/services/features/sectorService";
+import { Countrieses } from "./components/Countries";
+
+interface ParentSector {
+  id: number;
+  parentSector: string;
+  subSectorCount: number;
+}
 
 interface RowData {
   id: number;
+  countryName: string;
+  parentSectors: ParentSector[];
+}
+
+interface FlattenedRowData {
+  id: number;
+  rowId: number;
+  countryId: number;
+  countryName: string;
   parentSector: string;
   subSectorCount: number;
 }
 
 interface ActionMenuProps {
-  row: RowData;
+  row: FlattenedRowData;
   onDeleteSuccess: () => void;
-  countryId: number | undefined;
 }
 
-interface SectorStat {
-  parentSector: string;
-  id: number;
-  subSectorCount: number;
-}
-
-
-interface DataItem {
-  sectorStats: SectorStat[];
-  id: number;
-}
-
-const ActionMenu: React.FC<ActionMenuProps> = ({
-  row,
-  onDeleteSuccess,
-  countryId,
-}) => {
+const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const router = useRouter();
 
@@ -54,14 +53,14 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   const handleEdit = () => {
     handleClose();
     router.push(
-      `/sector-setup/edit-sector?id=${row.id}&countryId=${countryId}`
+      `/sector-setup/edit-sector?id=${row.rowId}&countryId=${row.countryId}`
     );
   };
 
   const handleDelete = async () => {
     handleClose();
     try {
-      await deleteBySubSectorID(row.id);
+      await deleteBySubSectorID(row.rowId);
       onDeleteSuccess();
     } catch (error) {
       console.error("Error deleting row:", error);
@@ -90,21 +89,27 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   );
 };
 
-
 const SectorSetup: React.FC = () => {
-  const [rows, setRows] = useState<RowData[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const { data, isLoading, refetch } = useQuery<DataItem[], Error>({
-    queryKey: ['all sectors', searchTerm],
-    queryFn:  services.getSectorByCountry(searchTerm),
-    enabled: !!searchTerm, 
+  const [rows, setRows] = useState<FlattenedRowData[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["allSectors"],
+    queryFn: services.allParentSectors(),
   });
-
 
   useEffect(() => {
     if (data) {
-      const allRows = data.flatMap(item => item.sectorStats); // Flatten sectorStats from all items
-      setRows(allRows);
+      const flattenedData = data.flatMap((sector: RowData) =>
+        sector.parentSectors.map((parentSector) => ({
+          id: parentSector.id, // unique identifier for each row (MUI DataGrid requirement)
+          rowId: parentSector.id, // unique identifier for each row
+          countryId: sector.id,
+          countryName: sector.countryName,
+          parentSector: parentSector.parentSector,
+          subSectorCount: parentSector.subSectorCount,
+        }))
+      );
+      setRows(flattenedData);
     }
   }, [data]);
 
@@ -118,56 +123,73 @@ const SectorSetup: React.FC = () => {
 
   const columns = [
     {
-      field: "sector",
-      headerName: "Sectors",
-      type: "actions",
-      align: "left",
+      field: "countryName",
+      headerName: "Country",
+      flex: 1,
       headerAlign: "left",
-      flex: 3,
-      getActions: (params: any) => [
-        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
+      align: "left",
+      renderCell: (params: any) => (
+        <div className="flex py-3 gap-4 my-3 items-center">
           <label>
             <input
               type="checkbox"
               className="mr-4 styled-checkbox flex items-center justify-center"
             />
           </label>
-          <div>
-          <div>
-            <p className="font-medium">{params.row.parentSector}</p>
+          <div className="w-10 h-10 flex items-center justify-center">
+            <span className="">
+              <img
+                src={Countrieses(params.row.countryName)?.flags.png}
+                alt={Countrieses(params.row.countryName)?.name.common}
+                style={{ height: "auto", width: "30px" }}
+              />
+            </span>
           </div>
+          <div>
+            <p className="font-medium">{params.row.countryName}</p>
           </div>
-        </div>,
-      ],
+        </div>
+      ),
     },
     {
-      field: "subSectors",
+      field: "parentSector",
+      headerName: "Sectors",
+      flex: 1,
+      headerAlign: "left",
+      align: "middle",
+      renderCell: (params: any) => (
+        <div className="flex flex-col gap-2">
+          <p className="font-medium text-sm">{params.row.parentSector}</p>
+        </div>
+      ),
+    },
+    {
+      field: "subSectorCount",
       headerName: "Sub Sectors",
       flex: 1,
       headerAlign: "left",
       align: "middle",
-      type: "actions",
-      getActions: (params: any) => [
-        <div key={params.row.id} className="flex flex-col gap-2">
+      renderCell: (params: any) => (
+        <div className="flex flex-col gap-2">
           <p className="font-medium text-sm">{params.row.subSectorCount}</p>
-        </div>,
-      ],
+        </div>
+      ),
     },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
-      type: "actions",
-      renderCell: (params: any) =>
-        data && data.length > 0 ? (
-          <ActionMenu
-            row={params.row}
-            onDeleteSuccess={handleDeleteSuccess}
-            countryId={data[0]?.id}
-          />
-        ) : null,
+      renderCell: (params: any) => (
+        <ActionMenu row={params.row} onDeleteSuccess={handleDeleteSuccess} />
+      ),
     },
   ];
+
+  const filteredRows = rows.filter(
+    (row) =>
+      row.countryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      row.parentSector.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="w-full pb-20">
@@ -180,13 +202,12 @@ const SectorSetup: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="outline-none text-sm focus:outline-none bg-white input-custom"
-              placeholder="Search"
+              placeholder="Search by Country"
             />
           </div>
         </div>
       </div>
-
-      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
+      <DataTable isLoading={isLoading} rows={filteredRows} columns={columns} />
     </div>
   );
 };

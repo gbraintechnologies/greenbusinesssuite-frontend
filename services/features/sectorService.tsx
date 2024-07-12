@@ -5,6 +5,10 @@ export const allSectors = () => {
   return () => authApi.get("/sectors").then((res) => res.data);
 };
 
+export const allParentSectors = () => {
+  return () => authApi.get("/sectors/all/info-data").then((res) => res.data);
+};
+
 export const createSector = (data: any) => {
   return authApi.post("/sectors", data);
 };
@@ -15,6 +19,10 @@ export const getSectorByCountry = (countryName: string) => {
 
 export const editSubsectorByID = (subSectorID: number, data: any) => {
   return authApi.put(`/sectors/edit/${subSectorID}`, data);
+};
+
+export const updateSector = (data: any) => {
+  return authApi.put(`/sectors/update`, data);
 };
 
 export const deleteBySubSectorID = (subSectorID: any) => {

@@ -14,7 +14,7 @@ import { Countrie } from "../components/Countries";
 import DataTable from "@/components/DataTable/DataTable";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import EditIconSetup from "@/public/icons/EditIconSetup";
-import { editJurisdictionEntriesByID, deleteParentAddressAndChildByID, deleteParentAddressAndAssociatesByID } from "@/services/features/jurisdictionsService";
+import { editParentSchemeChildEntriesByID, deleteParentAddressAndChildByID, deleteParentAddressAndAssociatesByID } from "@/services/features/jurisdictionsService";
 import SelectCountryEdit from '../components/selectCountryEdit';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsDot } from "react-icons/bs";
@@ -22,8 +22,14 @@ import { BsDot } from "react-icons/bs";
 
 const schema = yup.object().shape({
     id: yup.number().required(),
-    countryId: yup.number().required(),
     name: yup.string().required(),
+    childEntries: yup.array().of(
+        yup.object().shape({
+            id: yup.number().required(),
+            name: yup.string().required(),
+            parentAddressSchemeEntriesId: yup.number().required(),
+        })
+    ).required(),
 });
 
 type Row = {
@@ -55,14 +61,19 @@ function EditJurisdiction() {
         mode: "onChange",
         defaultValues: {
             id: 0,
-            countryId: 0,
-            name: ''
-        },
-
+            name: '',
+            childEntries: [
+                {
+                    id: 0,
+                    name: '',
+                    parentAddressSchemeEntriesId: 0,
+                },
+            ],
+        }
     });
 
     useEffect(() => {
-        //alert(JSON.stringify(Id))
+       // alert(JSON.stringify(data))
         if (data) {
             setValue("id", data.id);
             setValue("name", data.name);
@@ -76,9 +87,6 @@ function EditJurisdiction() {
         }
     }, [data, setValue]);
 
-    const onSubmit = async (data: typeOfSchema) => {
-
-    };
 
     const columns = [
         {
@@ -184,6 +192,30 @@ function EditJurisdiction() {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
     }
+
+    const onSubmit = async (formData: typeOfSchema) => {
+        alert('here')
+        try {
+            // Prepare the payload with updated childEntries IDs matching parentAddressSchemeEntriesId
+            const payload = {
+                id: formData.id,
+                name: formData.name,
+                childEntries: formData.childEntries.map((entry) => ({
+                    ...entry,
+                    id: entry.parentAddressSchemeEntriesId // Ensure childEntries ID matches parentAddressSchemeEntriesId
+                }))
+            };
+
+            alert(JSON.stringify(payload))
+            await editParentSchemeChildEntriesByID(formData.id, payload);
+
+            // Example of refreshing data after update
+            await refetch(); // Refresh the data after update
+
+        } catch (error) {
+            console.error("Error submitting form:", error);
+        }
+    };
 
     return (
         <div className="w-full p-5">
