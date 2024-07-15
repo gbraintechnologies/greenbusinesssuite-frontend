@@ -358,22 +358,29 @@ const Page = () => {
         : companyData?.industry,
         value: companyData?.industry,
       });
-      setSelectedSubSector({
-        label: companySubSector,
-        value: companySubSector,
-      });
+      if(companySubSector){
+
+        setSelectedSubSector({
+          label: companySubSector,
+          value: companySubSector,
+        });
+      }
+
+      if(companyParentAddressId){
       setSelectedJurisdiction({
         label: country?.name,
         value: companyData?.company_address,
-      })
+      })}
 
+      if(companyParentAddressId){
       setSelectedSubJurisdiction({
         label: country?.parentAddressScheme?.entries?.find(
         (entry: any) => entry?.id == companyParentAddressId
       )?.name,
         value: companyParentAddressId,
-      })
+      })}
 
+      if(companyChildAddressId){
       setSelectedSubLevel({
         label: country?.parentAddressScheme?.entries?.find(
         (entry: any) => entry?.id == companyParentAddressId
@@ -381,9 +388,12 @@ const Page = () => {
           (entry: any) => entry?.id == companyChildAddressId
         )?.name,
         value: companyChildAddressId
-      })
+      }) }
 
-      setSectorId(companySectorId)
+      if(companySectorId){
+
+        setSectorId(companySectorId)
+      }
 
 
       setBackgroundImageUrl(companyData?.company_logo);
