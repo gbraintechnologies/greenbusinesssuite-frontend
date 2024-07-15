@@ -17,6 +17,10 @@ export const getSectorByCountry = (countryName: string) => {
   return () => authApi.get(`/sectors/info/${countryName}`).then((res) => res.data);
 };
 
+export const getSectorByCountryRaw = (countryName: string) => {
+  return authApi.get(`/sectors/info/${countryName}`).then((res) => res.data);
+};
+
 export const editSubsectorByID = (subSectorID: number, data: any) => {
   return authApi.put(`/sectors/edit/${subSectorID}`, data);
 };
@@ -33,9 +37,16 @@ export const deleteBySectorID = (id: any) => {
   return authApi.delete(`/sectors/${id}`);
 }; 
 
+export const getSectorByID = (sectorID: number) => {
+  return () => authApi.get(`/sectors/data/${sectorID}`).then((res) => res.data);
+}
 export const getSubSectorByID = (sectorSetupID: number, SectorID: number | null) => {
   return () => authApi.get(`/sectors/details/${sectorSetupID}/${SectorID}`).then((res) => res.data);
 };
+
+export const getSubSectorByIdRaw = (sectorSetupId: number, sectorId: number) => {
+  return authApi.get(`/sectors/details/${sectorSetupId}/${sectorId}`).then((res) => res.data);
+}
 
 
 export const csvUpload = (formData: FormData, fileName: string) => {

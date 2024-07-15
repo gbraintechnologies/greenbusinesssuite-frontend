@@ -4,7 +4,7 @@ import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { Field, Form, Formik } from "formik";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import * as Yup from "yup";
 import UploadIcon from "@/public/svg/upload.svg";
@@ -12,12 +12,13 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Dropdown,
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { Countrie } from "../../country-setup/components/Countries";
-import Dropdown from "@/components/Dropdown/Dropdown";
+import toast from "react-hot-toast";
 
 export interface ICompany {
   companyName: string;
@@ -87,6 +88,55 @@ type Props = {
       | undefined
     >
   >;
+  selectedSubJurisdiction:
+    | {
+        label: string;
+        value: string;
+      }
+    | undefined;
+  setSelectedSubJurisdiction: React.Dispatch<
+    React.SetStateAction<
+      | {
+          label: string;
+          value: string;
+        }
+      | undefined
+    >
+  >;
+  selectedSubLevel:
+    | {
+        label: string;
+        value: string;
+      }
+    | undefined;
+  setSelectedSubLevel: React.Dispatch<
+    React.SetStateAction<
+      | {
+          label: string;
+          value: string;
+        }
+      | undefined
+    >
+  >;
+  selectedSubSector:
+    | {
+        label: string;
+        value: string;
+      }
+    | undefined;
+  setSelectedSubSector: React.Dispatch<
+    React.SetStateAction<
+      | {
+          label: string;
+          value: string;
+        }
+      | undefined
+    >
+  >;
+  sectorId: number | string;
+  setSectorId: React.Dispatch<React.SetStateAction<number | string>>;
+  initialLoad: boolean;
+  setInitialLoad: React.Dispatch<React.SetStateAction<boolean>>;
   phone: string;
   setPhone: React.Dispatch<React.SetStateAction<string>>;
 };
@@ -106,12 +156,27 @@ const CompanyForm: React.FC<Props> = ({
   setSelectedIndustry,
   selectedJurisdiction,
   setSelectedJurisdiction,
+  selectedSubJurisdiction,
+  setSelectedSubJurisdiction,
+  selectedSubLevel,
+  setSelectedSubLevel,
+  selectedSubSector,
+  setSelectedSubSector,
+  sectorId,
+  setSectorId,
+  initialLoad,
+  setInitialLoad,
 }) => {
-  const { data: industries, isLoading } = useQuery({
-    queryKey: ["all sectors"],
-    queryFn: services.getSectorByCountry(selectedJurisdiction?.label || ""),
-    enabled: !!selectedJurisdiction?.label,
-  });
+  const [industries, setIndustries] = useState<any>([]);
+
+  const [subSectors, setSubSectors] = useState<any>([]);
+
+  const [subJurisdiction, setSubJurisdiction] = useState<any>([]);
+
+  const [subSectorsLoading, setSubSectorsLoading] = useState<any>([]);
+
+  const [subJurisdictionsLoading, setSubJurisdictionsLoading] =
+    useState<boolean>(false);
 
   const {
     data: jurisdictions,
@@ -122,6 +187,65 @@ const CompanyForm: React.FC<Props> = ({
     queryFn: services.allJurisdictions(),
   });
 
+  const fetchIndustries = async (jurisdiction: string) => {
+    try {
+      if (!initialLoad) {
+        setSelectedIndustry(undefined);
+        setSelectedSubSector(undefined);
+        setIndustries([]);
+        setSubSectors([]);
+      }
+      const response = await services.getSectorByCountryRaw(jurisdiction);
+      console.log("response ", response);
+      setIndustries(response);
+    } catch (err) {
+      toast.error("An error occurred while fetching industries");
+    }
+  };
+
+  const fetchSubSectors = async (
+    sectorSetupId: string | number,
+    sectorId: string
+  ) => {
+    try {
+      if (!initialLoad) {
+        setSubSectorsLoading(true);
+      }
+      const response = await services.getSubSectorByIdRaw(
+        Number(sectorSetupId),
+        Number(sectorId)
+      );
+      setSubSectors(response?.sector?.subSectors);
+    } catch (err) {
+      toast.error("An error occurred while fetching sub sectors");
+    } finally {
+      if (!initialLoad) {
+        setSubSectorsLoading(false);
+      }
+    }
+  };
+
+  const getJurisdictionEntries = async (jurisdictionId: number) => {
+    try {
+      if (!initialLoad) {
+        setSubJurisdictionsLoading(true);
+        setSelectedSubJurisdiction(undefined);
+        setSelectedSubLevel(undefined);
+        setSubJurisdiction([]);
+      }
+      const response = await services.getJurisdictionEntriesByIdRaw(
+        jurisdictionId
+      );
+      setSubJurisdiction(response);
+    } catch (err) {
+      console.log("error ", err);
+    } finally {
+      if (!initialLoad) {
+        setSubJurisdictionsLoading(false);
+      }
+    }
+  };
+
   useEffect(() => {
     if (companyLogo) {
       const url = URL.createObjectURL(companyLogo);
@@ -130,6 +254,25 @@ const CompanyForm: React.FC<Props> = ({
       return () => URL.revokeObjectURL(url);
     }
   }, [companyLogo]);
+
+  useLayoutEffect(() => {
+    if (selectedJurisdiction?.label) {
+      fetchIndustries(selectedJurisdiction?.label);
+      getJurisdictionEntries(Number(selectedJurisdiction?.value));
+    } 
+  }, [selectedJurisdiction]);
+
+  useLayoutEffect(() => {
+    if (!initialLoad) {
+      setSelectedSubLevel(undefined);
+    }
+  }, [selectedSubJurisdiction]);
+
+  useLayoutEffect(() => {
+    if (selectedIndustry?.value && sectorId) {
+      fetchSubSectors(sectorId, selectedIndustry?.value);
+    }
+  }, [selectedIndustry, sectorId]);
 
   return (
     <>
@@ -208,14 +351,14 @@ const CompanyForm: React.FC<Props> = ({
                 {/* JURISDICTION */}
                 <div className="input-holder half">
                   <label>Company jurisdiction</label>
-                  {/* <Dropdown>
+                  <Dropdown>
                     <DropdownTrigger>
                       <Button
                         variant="bordered"
                         className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
                       >
                         <div className="flex gap-4 items-center">
-                          {typeof(selectedJurisdiction) !== "undefined" && (
+                          {typeof selectedJurisdiction !== "undefined" && (
                             <img
                               src={
                                 Countrie(selectedJurisdiction?.label)?.flags.png
@@ -244,12 +387,13 @@ const CompanyForm: React.FC<Props> = ({
                         <DropdownItem
                           key="view"
                           className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                          onClick={() =>
+                          onClick={() => {
                             setSelectedJurisdiction({
                               label: jurisdiction?.name,
                               value: jurisdiction?.id,
-                            })
-                          }
+                            });
+                            setInitialLoad(false);
+                          }}
                         >
                           <div className="flex gap-4 items-center">
                             <img
@@ -262,61 +406,184 @@ const CompanyForm: React.FC<Props> = ({
                         </DropdownItem>
                       ))}
                     </DropdownMenu>
-                  </Dropdown> */}
-                  <Dropdown
-                    options={[]}
-                    selected={selectedJurisdiction}
-                    setSelected={setSelectedJurisdiction}
-                    bgColor="bg-slate-50"
-                  />
+                  </Dropdown>
 
                   <ShowError name="industry" />
                 </div>
-                {/* INDUSTRY */}
-                <div className="input-holder half">
-                  <label>Industry</label>
-                  <Dropdown
-                    options={[
-                      { label: "Finance", value: "finance" },
-                      { label: "Technology", value: "Technology" },
-                    ]}
-                    selected={selectedIndustry}
-                    setSelected={setSelectedIndustry}
-                    bgColor="bg-slate-50"
-                  />
-                  {/* <Dropdown>
-                                <DropdownTrigger>
-                                  <Button
-                                    variant="bordered"
-                                    className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                                  >
-                                    {selectedIndustry?.label || "Select Industry"}
-                                  </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                  className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
-                                  aria-label="Static Actions"
-                                  variant="flat"
-                                  selectionMode="single"
+
+                {subJurisdictionsLoading && <LoadingIcon />}
+                {!(typeof selectedJurisdiction == "undefined") &&
+                  !subJurisdictionsLoading && (
+                    <div className="flex gap-5">
+                      {/* SUB JURISDICTION */}
+                      <div className="input-holder half">
+                        <label>
+                          {subJurisdiction?.parentAddressScheme?.name}
+                        </label>
+                        <Dropdown>
+                          <DropdownTrigger>
+                            <Button
+                              variant="bordered"
+                              className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                            >
+                              {selectedSubJurisdiction?.label || `Select`}
+                            </Button>
+                          </DropdownTrigger>
+                          <DropdownMenu
+                            className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                            aria-label="Static Actions"
+                            variant="flat"
+                            selectionMode="single"
+                          >
+                            {subJurisdiction?.parentAddressScheme?.entries?.map(
+                              (subJurisdiction: any) => (
+                                <DropdownItem
+                                  key="view"
+                                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                  onClick={() => {
+                                    setSelectedSubJurisdiction({
+                                      label: subJurisdiction?.name,
+                                      value: subJurisdiction?.id,
+                                    });
+                                    setInitialLoad(false);
+                                  }}
                                 >
-                                  {industries?.map((industry: any) => (
-                                    <DropdownItem
-                                      key="view"
-                                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                      onClick={() =>
-                                        setSelectedIndustry({
-                                          label: industry?.sectorStats[0]?.parentSector,
-                                          value: industry?.sectorStats[0]?.id,
-                                        })
-                                      }
-                                    >
-                                      {industry?.sectorStats[0]?.parentSector}
-                                    </DropdownItem>
-                                  ))}
-                                </DropdownMenu>
-                              </Dropdown> */}
-                  <ShowError name="industry" />
-                </div>
+                                  {subJurisdiction?.name}
+                                </DropdownItem>
+                              )
+                            )}
+                          </DropdownMenu>
+                        </Dropdown>
+                        {subJurisdictionsLoading && <LoadingIcon />}
+                      </div>
+                      {/* SUB LEVEL */}
+                      {selectedSubJurisdiction && (
+                        <div className="input-holder half">
+                          <label>Sub Level</label>
+                          <Dropdown>
+                            <DropdownTrigger>
+                              <Button
+                                variant="bordered"
+                                className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                              >
+                                {selectedSubLevel?.label || `Select Sub Level`}
+                              </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                              className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                              aria-label="Static Actions"
+                              variant="flat"
+                              selectionMode="single"
+                            >
+                              {subJurisdiction?.parentAddressScheme?.entries
+                                ?.find(
+                                  (entry: any) =>
+                                    entry?.name ==
+                                    selectedSubJurisdiction?.label
+                                )
+                                ?.childEntries?.map((subLevel: any) => (
+                                  <DropdownItem
+                                    key="view"
+                                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                    onClick={() => {
+                                      setSelectedSubLevel({
+                                        label: subLevel?.name,
+                                        value: subLevel?.id,
+                                      });
+                                      setInitialLoad(false);
+                                    }}
+                                  >
+                                    {subLevel?.name}
+                                  </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                          </Dropdown>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                {/* INDUSTRY */}
+                {selectedJurisdiction && (
+                  <div className="flex gap-5">
+                    <div className="input-holder half">
+                      <label>Industry</label>
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button
+                            variant="bordered"
+                            className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                          >
+                            {selectedIndustry?.label || "Select Industry"}
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                          className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                          aria-label="Static Actions"
+                          variant="flat"
+                          selectionMode="single"
+                        >
+                          {industries?.map((industry: any) => (
+                            <DropdownItem
+                              key="view"
+                              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                              onClick={() => {
+                                setSelectedIndustry({
+                                  label: industry?.sectorStats[0]?.parentSector,
+                                  value: industry?.sectorStats[0]?.id,
+                                });
+                                setSectorId(industry?.id);
+                                setInitialLoad(false);
+                              }}
+                            >
+                              {industry?.sectorStats[0]?.parentSector}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </Dropdown>
+                      <ShowError name="industry" />
+                    </div>
+
+                    {selectedIndustry && (
+                      <div className="input-holder half">
+                        <label>Sub Sector</label>
+                        <Dropdown>
+                          <DropdownTrigger>
+                            <Button
+                              variant="bordered"
+                              className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                            >
+                              {selectedSubSector?.label || "Select Sub Sector"}
+                            </Button>
+                          </DropdownTrigger>
+                          <DropdownMenu
+                            className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                            aria-label="Static Actions"
+                            variant="flat"
+                            selectionMode="single"
+                          >
+                            {subSectors?.map((sector: any) => (
+                              <DropdownItem
+                                key="view"
+                                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                onClick={() => {
+                                  setSelectedSubSector({
+                                    label: sector,
+                                    value: sector,
+                                  });
+                                  setInitialLoad(false);
+                                }}
+                              >
+                                {sector}
+                              </DropdownItem>
+                            ))}
+                          </DropdownMenu>
+                        </Dropdown>
+                        <ShowError name="industry" />
+                      </div>
+                    )}
+                  </div>
+                )}
                 {/* COMPANY LOGO */}
                 <div className="flex justify-center items-center w-full relative">
                   <label

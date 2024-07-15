@@ -59,11 +59,31 @@ const CreateCompany = () => {
     value: string;
   }>();
 
+  const [selectedSubJurisdiction, setSelectedSubJurisdiction] = useState<{
+    label: string;
+    value: string;
+  }>();
+
+  const [selectedSubLevel, setSelectedSubLevel] = useState<{
+    label: string;
+    value: string;
+  }>();
+
+  const [selectedSubSector, setSelectedSubSector] = useState<{
+    label: string;
+    value: string;
+  }>();
+
+  const [sectorId, setSectorId] = useState<number | string>("");
+
   const [phone, setPhone] = useState("");
 
   const [companyLogo, setCompanyLogo] = useState<File | null>(null);
 
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
+
+  const [initialLoad, setInitialLoad] = useState<boolean>(false);
+
 
   const { data: industries, isLoading, refetch } = useQuery({
     queryKey: ["all sectors"],
@@ -111,6 +131,7 @@ const CreateCompany = () => {
       primary_contact_phone_number: phone,
       company_logo: companyLogoURL?.file_url || "",
       industry: selectedIndustry?.value as string,
+      company_address: selectedJurisdiction?.value as string,
       primary_currency: "GHS",
     };
 
@@ -129,7 +150,27 @@ const CreateCompany = () => {
         //Admin Email
         custom_profile_item_id: 3,
         value: values.adminEmail as string,
+      }, 
+      {
+        // Sub Sector ID
+        custom_profile_item_id: 4,
+        value: selectedSubSector?.value as string,
       },
+      {
+        // Parent Address Scheme ID
+        custom_profile_item_id: 5,
+        value: selectedSubJurisdiction?.value as string,
+      },
+      {
+        //Child Address Scheme ID
+        custom_profile_item_id: 6,
+        value: selectedSubLevel?.value as string,
+      },
+      {
+        // Sector ID
+        custom_profile_item_id: 7,
+        value: sectorId as string,
+      }
     ];
 
     const adminData = {
@@ -207,6 +248,16 @@ const CreateCompany = () => {
           setSelectedIndustry={setSelectedIndustry}
           selectedJurisdiction={selectedJurisdiction}
           setSelectedJurisdiction={setSelectedJurisdiction}
+          selectedSubJurisdiction={selectedSubJurisdiction}
+          setSelectedSubJurisdiction={setSelectedSubJurisdiction}
+          selectedSubLevel={selectedSubLevel}
+          setSelectedSubLevel={setSelectedSubLevel}
+          selectedSubSector={selectedSubSector}
+          setSelectedSubSector={setSelectedSubSector}
+          sectorId={sectorId}
+          setSectorId={setSectorId}
+          initialLoad={initialLoad}
+          setInitialLoad={setInitialLoad}
         />
         {/* CANCEL MODAL: DISCARD ALL CHANGES */}
         <Modal
