@@ -146,7 +146,9 @@ function FormDetail({ params }: any) {
             <div className="bg-gray-200 rounded-lg p-5 animate-pulse h-28"></div>
           ) : (
             <div className="bg-gray-50 rounded-lg p-5">
-              {companyData === null || form?.companyId === null ? (
+              {companyData === null ||
+              form?.companyId === null ||
+              form?.companyId === 0 ? (
                 <div className="flex gap-4 items-center">
                   <div className="rounded-full bg-gray-100 p-4 w-24 h-24 flex items-center justify-center">
                     {" "}
