@@ -37,9 +37,9 @@ function StepsNav({
                         : "bg-[#cbd0d7]"
                     } w-7 h-7 text-xs rounded-full flex items-center justify-center font-light `}
                   >
-                    {idx}
+                    {idx + 1}
                   </div>
-                  <p className="text-base text-left">{section.name}</p>
+                  <p className="text-base text-left">{section?.name}</p>
                 </div>
                 <IoIosArrowForward />
               </button>

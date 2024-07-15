@@ -84,7 +84,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
             queryClient.invalidateQueries({
               queryKey: ["all forms"],
             });
-            console.log("duplicated", res);
+
             // Push to builder after duplicating
             //  router.push(`/forms/builder/${res}`);
           })

@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import ClientDashboardIcon from "@/public/icons/ClientDashboardIcon";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { TbCurrentLocation } from "react-icons/tb";
+import { HiOutlineDocumentText } from "react-icons/hi";
 
 // hooks
 import useUser from "@/hooks/useUser";
@@ -53,6 +54,11 @@ export default function ClientLayout({
       link: "/client",
     },
     {
+      name: "Documents",
+      icon: <HiOutlineDocumentText />,
+      link: "/client/documents",
+    },
+    {
       name: "Settings",
       icon: <TbCurrentLocation size={20} />,
       link: "/client/settings",
@@ -82,7 +88,7 @@ export default function ClientLayout({
                     {!pathname.includes("settings") &&
                       pathname !== "/client/form" && (
                         <div className="hidden md:flex h-full  overflow-y-scroll no-scrollbar">
-                          <SideNav navigation={navigation} />
+                          <SideNav type="client" navigation={navigation} />
                         </div>
                       )}
 

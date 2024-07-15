@@ -90,7 +90,7 @@ function FormCard({
             queryClient.invalidateQueries({
               queryKey: ["all forms"],
             });
-            console.log("duplicated", res);
+            // console.log("duplicated", res);
             // Push to builder after duplicating
             //  router.push(`/forms/builder/${res}`);
           })
@@ -166,7 +166,10 @@ function FormCard({
                     router.push(`/forms/${id}`);
                   }
             }
-            className={" w-full text-left font-medium " + (noMetaData ? " text-xs" : " text-lg")}
+            className={
+              " w-full text-left font-medium " +
+              (noMetaData ? " text-xs" : " text-lg")
+            }
           >
             {name.replace(/"/g, " ")}
           </button>

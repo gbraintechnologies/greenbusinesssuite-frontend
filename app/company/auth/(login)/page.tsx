@@ -115,7 +115,7 @@ function CompanyAdminAuth() {
         }
       }
     } catch (error) {
-      setLoginError("Incorrect username address and password");
+      setLoginError("Incorrect username and password");
     }
   };
 
