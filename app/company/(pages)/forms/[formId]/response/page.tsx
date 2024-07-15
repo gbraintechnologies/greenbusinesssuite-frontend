@@ -4,16 +4,29 @@ import DownloadIcon from "@/public/icons/DownloadIcon";
 import UserIcon from "@/public/icons/UserIcon";
 import services from "@/services";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
+
+//
+import { Menu, Transition } from "@headlessui/react";
+
+//
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { BsArrowLeft } from "react-icons/bs";
 import FormResponse from "../../components/FormResponse/FormResponse";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import toast from "react-hot-toast";
 import Link from "next/link";
+
+// ICONS
+import { IoIosArrowDown } from "react-icons/io";
+
+// COMPONENTS
+import Tabs from "@/components/Tabs/Tabs";
+import Uploaded from "./components/Uploaded";
+import Issued from "./components/Issued";
 
 const page = ({ params }: any) => {
   let formID = params.formId;
@@ -36,8 +49,25 @@ const page = ({ params }: any) => {
     enabled: Boolean(userId),
   });
 
+  //
+  const [tabs, setTabs] = useState([
+    { id: 0, name: "Responses", value: "Responses" },
+    { id: 1, name: "Uploaded", value: "Uploaded" },
+    { id: 2, name: "Issued", value: "Issued" },
+  ]);
+
+  const [activeTab, setActiveTab] = useState({
+    id: 0,
+    name: "Responses",
+    value: "Responses",
+  });
+
   // GET USER RESPONSE
-  const { data: formUserResponse, isLoading: userResponseLoading } = useQuery({
+  const {
+    data: formUserResponse,
+    isLoading: userResponseLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["form", userId, formID],
     queryFn: services.retrieveFormUserResponses(userId, formID),
     enabled: Boolean(formID && userId),
@@ -47,6 +77,39 @@ const page = ({ params }: any) => {
     form &&
     formUserResponse &&
     mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData);
+
+  // PROCESSING STATUSES
+  const [statuses] = useState([
+    { id: 2, name: "Pending", value: "PENDING" },
+    { id: 3, name: "Processing", value: "PROCESSING" },
+    { id: 4, name: "Completed", value: "COMPLETED" },
+  ]);
+
+  const [activeStatus, setActiveStatus] = useState({} as any);
+
+  useEffect(() => {
+    if (!formUserResponse) return;
+    const status = statuses.find(
+      (status) =>
+        status.value.toLowerCase() ===
+        formUserResponse[0]?.status?.toLowerCase()
+    );
+    setActiveStatus(status);
+  }, [formUserResponse]);
+
+  const updateFormResponseStatus = (status: any) => {
+    services
+      .updateResponseStatus(status.value, formUserResponse[0]?.id)
+      .then((res) => {
+        //
+        toast.success("Response status updated!");
+        setActiveStatus(status);
+        refetch();
+      })
+      .catch((e) => {
+        toast.error("Error updating response status. Please try again");
+      });
+  };
 
   const router = useRouter();
 
@@ -120,6 +183,7 @@ const page = ({ params }: any) => {
       </div>
     );
   }
+
   // if(form){
   return (
     <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 min-h-screen">
@@ -178,21 +242,79 @@ const page = ({ params }: any) => {
             </Link>
           </div>
         </div>
-        <button
-          className="flex items-center gap-2 bg-white border border-[#E2E8F0] drop-shadow-sm px-2 py-2 text-sm rounded-md"
-          onClick={downloadPDF}
-          disabled={pdfGenerating}
-        >
-          {pdfGenerating ? <LoadingIcon /> : <DownloadIcon />}
-          <p className="text-sm font-medium text-[#334155]">
-            {pdfGenerating ? "Generating..." : "Download"}
-          </p>
-        </button>
+
+        <div className="flex items-center gap-4">
+          {/* DOWNLOAD FORM */}
+          <button
+            className="flex items-center gap-2 bg-white border border-[#E2E8F0] drop-shadow-sm px-2 py-2 text-sm rounded-md"
+            onClick={downloadPDF}
+            disabled={pdfGenerating}
+          >
+            {pdfGenerating ? <LoadingIcon /> : <DownloadIcon />}
+            <p className="text-sm font-medium text-[#334155]">
+              {pdfGenerating ? "Generating..." : "Download"}
+            </p>
+          </button>
+
+          {/* CHANGE RESPONSE STATUS */}
+          {formUserResponse[0]?.status && (
+            <div className="flex flex-col gap-3">
+              <Menu as={"div"} className={"z-20 relative inline-block"}>
+                <Menu.Button className=" border border-[rgba(226, 232, 240, 1)]  text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
+                  {activeStatus?.name}
+                  <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
+                  <IoIosArrowDown />
+                </Menu.Button>
+
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="z-50 absolute right-0 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] ring-1 ring-black/5 focus:outline-none">
+                    {statuses
+                      .filter((status) => status.id !== activeStatus?.id)
+                      .map((status) => (
+                        <Menu.Item key={status.id}>
+                          <button
+                            // disabled={status.id == activeStatus?.id}
+                            className="flex hover:text-primary-dark w-32 bg-gray-200 hover:bg-gray-50 border disabled:cursor-not-allowed border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg px-3 py-2"
+                            onClick={() => updateFormResponseStatus(status)}
+                          >
+                            {status.name}
+                          </button>
+                        </Menu.Item>
+                      ))}
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* FORM RESPONSE */}
-      <div className="mt-4">
-        <FormResponse mergedForm={mergedForm} ref={pdfRef} />
+      <div className="mt-6">
+        <div className="mt-3">
+          <Tabs
+            filters={tabs}
+            setActiveFilter={setActiveTab}
+            activeFilter={activeTab}
+          />
+        </div>
+        <div className="mt-6">
+          {activeTab.id == 0 && (
+            <FormResponse mergedForm={mergedForm} ref={pdfRef} />
+          )}
+          {activeTab.id == 1 && <Uploaded user={userData} form={mergedForm} />}
+          {activeTab.id == 2 && (
+            <Issued user={userData} form={mergedForm} />
+          )}{" "}
+        </div>
       </div>
     </div>
   );

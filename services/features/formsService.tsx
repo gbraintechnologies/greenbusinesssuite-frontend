@@ -192,6 +192,13 @@ export const acceptInvite = (
   });
 };
 
+export const updateResponseStatus = (
+  status: string,
+  formResponseId: number
+) => {
+  return authApi.put(`forms/response/${status}/${formResponseId}`);
+};
+
 export const saveResponse = ({
   formId,
   userId,

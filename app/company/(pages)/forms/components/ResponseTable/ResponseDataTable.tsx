@@ -41,7 +41,7 @@ const ResponseDataTable: React.FC<Props> = ({
 }) => {
   const [aggregatedResponses, setAggregatedResponses] = useState([]);
 
-  const [activeResponseId, setActiveResponseId] = useState<any>()
+  const [activeResponseId, setActiveResponseId] = useState<any>();
 
   const [rows, setRows] = useState<any>([]);
 
@@ -150,7 +150,6 @@ const ResponseDataTable: React.FC<Props> = ({
     // fetching user data for each response
     const fetchUserData = async () => {
       if (responseData?.length > 0) {
-        console.log('response data ', responseData);
         setFetchingUserData(true);
         const preparedRows = await Promise.all(
           responseData.map(async (response: any, index: number) => {
@@ -260,7 +259,7 @@ const ResponseDataTable: React.FC<Props> = ({
     },
     {
       field: "completedStatus",
-      headerName: "Completed Status",
+      headerName: "User Status",
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
@@ -269,6 +268,19 @@ const ResponseDataTable: React.FC<Props> = ({
             <StatusPill status="complete" />
           ) : (
             <StatusPill status="incomplete" />
+          )}
+        </div>,
+      ],
+    },
+    {
+      field: "adminStatus",
+      headerName: "Processing Status",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id}>
+          {params.row.data?.status && (
+            <StatusPill status={params.row.data?.status} />
           )}
         </div>,
       ],
@@ -285,7 +297,11 @@ const ResponseDataTable: React.FC<Props> = ({
               downloadPDF(params.row.data?.id, params.row.userData)
             }
           >
-            {pdfGenerating && activeResponseId == params.row.data?.id ? <LoadingIcon /> : <DownloadIcon />}
+            {pdfGenerating && activeResponseId == params.row.data?.id ? (
+              <LoadingIcon />
+            ) : (
+              <DownloadIcon />
+            )}
           </button>
           <Link
             href={`/company/forms/${form?.id}/response?user=${params.row.userData?.id}`}
