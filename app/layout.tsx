@@ -62,7 +62,18 @@ export default function RootLayout({
               <CompanyContextProvider>
                 <UserContextProvider>{children}</UserContextProvider>
               </CompanyContextProvider>
-              <Toaster position="top-center" reverseOrder={true} />
+              <Toaster
+                // toastOptions={{
+                //   className: "",
+                //   style: {
+                //     border: "1px solid #fff",
+                //     padding: "16px",
+                //     color: "#1d1d1d",
+                //   },
+                // }}
+                position="top-right"
+                reverseOrder={true}
+              />
             </AdminContextProvider>
           </AuthContextProvider>
         </ReactQueryProvider>

@@ -67,16 +67,22 @@ const page = ({ params }: any) => {
     data: formUserResponse,
     isLoading: userResponseLoading,
     refetch,
+    isRefetching,
   } = useQuery({
     queryKey: ["form", userId, formID],
     queryFn: services.retrieveFormUserResponses(userId, formID),
     enabled: Boolean(formID && userId),
   });
 
-  let mergedForm =
-    form &&
-    formUserResponse &&
-    mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData);
+  const [mergedForm, setMergedForm] = useState(null);
+  //
+  useEffect(() => {
+    if (!isRefetching && form && formUserResponse) {
+      setMergedForm(
+        mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData)
+      );
+    }
+  }, [form, formUserResponse]);
 
   // PROCESSING STATUSES
   const [statuses] = useState([
@@ -159,6 +165,7 @@ const page = ({ params }: any) => {
             imgHeight * ratio
           );
           pdf.save(
+            // @ts-ignore
             `${form?.name}-${userData?.first_name} ${userData?.last_name}-${mergedForm?.responseId}-response`
           );
           setPdfGenerating(false);

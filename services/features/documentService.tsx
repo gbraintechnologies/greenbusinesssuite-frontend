@@ -36,3 +36,23 @@ export const issueFileToClient = (
     formData
   );
 };
+
+export const getUserUploadedDocsByFormId = (userId: any, formId: any) => {
+  return () =>
+    authApi
+      .get(`/s3/resource/user-files/${userId}/${formId}`)
+      .then((res) => res.data);
+};
+
+export const issueFileToUserWithFormId = (
+  userId: any,
+  companyId: any,
+  formId: any,
+  formData: FormData,
+  file: string
+) => {
+  return multipartMeshApi.post(
+    `/s3/resource/file/${userId}/${companyId}/${formId}/${file}`,
+    formData
+  );
+};
