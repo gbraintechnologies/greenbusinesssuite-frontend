@@ -416,7 +416,7 @@ const CompanyForm: React.FC<Props> = ({
                   !subJurisdictionsLoading && (
                     <div className="flex gap-5">
                       {/* SUB JURISDICTION */}
-                      <div className="input-holder half">
+                      <div className="input-holder">
                         <label>
                           {subJurisdiction?.parentAddressScheme?.name}
                         </label>
@@ -458,7 +458,7 @@ const CompanyForm: React.FC<Props> = ({
                       </div>
                       {/* SUB LEVEL */}
                       {selectedSubJurisdiction && (
-                        <div className="input-holder half">
+                        <div className="input-holder">
                           <label>Sub Level</label>
                           <Dropdown>
                             <DropdownTrigger>
@@ -506,7 +506,7 @@ const CompanyForm: React.FC<Props> = ({
                 {/* INDUSTRY */}
                 {selectedJurisdiction && (
                   <div className="flex gap-5">
-                    <div className="input-holder half">
+                    <div className="input-holder">
                       <label>Industry</label>
                       <Dropdown>
                         <DropdownTrigger>
@@ -545,7 +545,7 @@ const CompanyForm: React.FC<Props> = ({
                     </div>
 
                     {selectedIndustry && (
-                      <div className="input-holder half">
+                      <div className="input-holder">
                         <label>Sub Sector</label>
                         <Dropdown>
                           <DropdownTrigger>
