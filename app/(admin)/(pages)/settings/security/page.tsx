@@ -60,7 +60,7 @@ function Security() {
       position: "top-center",
       duration: 3000,
     });
-    router.push("/dashboard");
+    router.push("/");
   };
 
   return (

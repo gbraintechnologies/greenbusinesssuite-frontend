@@ -161,7 +161,7 @@ function CompanyAdminAuth() {
             )}
           </div>
           <p className="text-gray-700 font-bold text-sm underline">
-            <Link href="/auth/forgot-password"> Forgot Password? </Link>
+            <Link href="/company/auth/forgot-password"> Forgot Password? </Link>
           </p>
           <Button type="submit" isValid={isValid} disabled={isSubmitting}>
             {isSubmitting ? (

@@ -9,8 +9,8 @@ import PasswordInput from "../components/PasswordInput";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { changePassword } from "@/services/features/authService";
 import toast from "react-hot-toast";
-import useAdmin from "@/hooks/useAdmin";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import useCompany from "@/hooks/useCompany";
 
 const schema = yup.object({
   user_id: yup.number(),
@@ -23,7 +23,7 @@ const schema = yup.object({
 
 function Security() {
   const router = useRouter();
-  const { admin } = useAdmin();
+  const { companyAdmin } = useCompany();
   type typeOfSchema = yup.InferType<typeof schema>;
 
   const {
@@ -34,7 +34,7 @@ function Security() {
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
-      user_id: admin?.id,
+      user_id: companyAdmin?.id,
       current_password: "",
       new_password: "",
     },
