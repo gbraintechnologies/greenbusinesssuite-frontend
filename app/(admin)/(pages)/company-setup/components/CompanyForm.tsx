@@ -355,8 +355,7 @@ const CompanyForm: React.FC<Props> = ({
                   <Dropdown>
                     <DropdownTrigger>
                       <Button
-                        variant="bordered"
-                        className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
                       >
                         <div className="flex gap-4 items-center">
                           {typeof selectedJurisdiction !== "undefined" && (
@@ -379,7 +378,7 @@ const CompanyForm: React.FC<Props> = ({
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu
-                      className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                      className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
                       aria-label="Static Actions"
                       variant="flat"
                       selectionMode="single"
@@ -417,21 +416,20 @@ const CompanyForm: React.FC<Props> = ({
                   !subJurisdictionsLoading && (
                     <div className="flex gap-5">
                       {/* SUB JURISDICTION */}
-                      <div className="input-holder">
+                      <div className="input-holder half">
                         <label>
                           {subJurisdiction?.parentAddressScheme?.name}
                         </label>
                         <Dropdown>
                           <DropdownTrigger>
-                            <Button
-                              variant="bordered"
-                              className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                            >
+                          <Button
+                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                      >
                               {selectedSubJurisdiction?.label || `Select`}
                             </Button>
                           </DropdownTrigger>
                           <DropdownMenu
-                            className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                            className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
                             aria-label="Static Actions"
                             variant="flat"
                             selectionMode="single"
@@ -459,19 +457,18 @@ const CompanyForm: React.FC<Props> = ({
                       </div>
                       {/* SUB LEVEL */}
                       {selectedSubJurisdiction && (
-                        <div className="input-holder">
+                        <div className="input-holder half">
                           <label>Sub Level</label>
                           <Dropdown>
                             <DropdownTrigger>
-                              <Button
-                                variant="bordered"
-                                className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                              >
+                            <Button
+                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                      >
                                 {selectedSubLevel?.label || `Select Sub Level`}
                               </Button>
                             </DropdownTrigger>
                             <DropdownMenu
-                              className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                              className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
                               aria-label="Static Actions"
                               variant="flat"
                               selectionMode="single"
@@ -507,19 +504,18 @@ const CompanyForm: React.FC<Props> = ({
                 {/* INDUSTRY */}
                 {selectedJurisdiction && (
                   <div className="flex gap-5">
-                    <div className="input-holder">
+                    <div className="input-holder half">
                       <label>Industry</label>
                       <Dropdown>
                         <DropdownTrigger>
-                          <Button
-                            variant="bordered"
-                            className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                          >
+                        <Button
+                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                      >
                             {selectedIndustry?.label || "Select Industry"}
                           </Button>
                         </DropdownTrigger>
                         <DropdownMenu
-                          className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                          className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
                           aria-label="Static Actions"
                           variant="flat"
                           selectionMode="single"
@@ -546,19 +542,18 @@ const CompanyForm: React.FC<Props> = ({
                     </div>
 
                     {selectedIndustry && (
-                      <div className="input-holder">
+                      <div className="input-holder half">
                         <label>Sub Sector</label>
                         <Dropdown>
                           <DropdownTrigger>
-                            <Button
-                              variant="bordered"
-                              className="border w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                            >
+                          <Button
+                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
+                      >
                               {selectedSubSector?.label || "Select Sub Sector"}
                             </Button>
                           </DropdownTrigger>
                           <DropdownMenu
-                            className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-72 flex flex-col gap-3"
+                            className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
                             aria-label="Static Actions"
                             variant="flat"
                             selectionMode="single"
@@ -588,7 +583,7 @@ const CompanyForm: React.FC<Props> = ({
                 {/* COMPANY LOGO */}
                 <div className="flex justify-center items-center w-full relative">
                   <label
-                    className="flex justify-center items-center bg-slate-50 rounded-lg border-2 border-dashed w-full h-64 group text-center"
+                    className="flex justify-center items-center bg-slate-50 rounded-lg border-2 border-dashed w-full h-64 group-item text-center"
                     style={{
                       backgroundImage: logoPresentOnLoad
                         ? `url(${backgroundImageUrl})`

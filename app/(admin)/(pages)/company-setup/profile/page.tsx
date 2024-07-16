@@ -263,13 +263,13 @@ const Page = () => {
               <>
                 <div className="flex-1 py-5 pb-3">
                   {companyDescription && (
-                    <div className="group">
+                    <div className="group-item">
                       <div className="label">Company description</div>
                       <div className="value">{companyDescription}</div>
                     </div>
                   )}
                   {companyData?.company_address && (
-                    <div className="group">
+                    <div className="group-item">
                       <div className="label">Jurisdiction</div>
                       <div className="value">
                         {country?.name}
@@ -285,7 +285,7 @@ const Page = () => {
                     </div>
                   )}
                   {companyData?.industry && (
-                    <div className="group">
+                    <div className="group-item">
                       <div className="label">Industry</div>
                       <div className="value">
                         {isConvertibleToNumber(companyData?.industry)
@@ -297,7 +297,7 @@ const Page = () => {
                     </div>
                   )}
                   {companyData?.primary_contact_name && (
-                    <div className="group">
+                    <div className="group-item">
                       <div className="label">Contact person</div>
                       <div className="value">
                         {companyData?.primary_contact_name}
@@ -307,7 +307,7 @@ const Page = () => {
 
                   <div className="flex justify-between">
                     {companyData?.primary_contact_phone_number && (
-                      <div className="group">
+                      <div className="group-item">
                         <div className="label">Phone Number</div>
                         <div className="value">
                           {companyData?.primary_contact_phone_number}
@@ -315,7 +315,7 @@ const Page = () => {
                       </div>
                     )}
                     {companyData?.primary_contact_email && (
-                      <div className="group">
+                      <div className="group-item">
                         <div className="label">Email</div>
                         <div className="value">
                           {companyData?.primary_contact_email}
@@ -325,13 +325,13 @@ const Page = () => {
                   </div>
                   <div className="flex justify-between">
                     {companyAdminName && (
-                      <div className="group">
+                      <div className="group-item">
                         <div className="label">Admin Name</div>
                         <div className="value">{companyAdminName}</div>
                       </div>
                     )}
                     {companyAdminEmail && (
-                      <div className="group">
+                      <div className="group-item">
                         <div className="label">Email</div>
                         <div className="value">{companyAdminEmail}</div>
                       </div>
