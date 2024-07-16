@@ -20,6 +20,8 @@ import * as jurisdictionService from "./features/jurisdictionsService";
 
 import * as sectorService from "./features/sectorService";
 
+import * as documentService from "./features/documentService";
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   ...localService,
@@ -33,4 +35,5 @@ export default {
   ...jurisdictionService,
   ...sectorService,
   ...reportService,
+  ...documentService,
 };
