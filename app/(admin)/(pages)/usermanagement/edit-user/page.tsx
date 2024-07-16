@@ -31,6 +31,8 @@ import "../new-user/index.css";
 import UserForm from "../components/UserForm";
 import Modal from "@/components/Modal/Modal";
 
+import "./index.css";
+
 function page() {
   const search = useSearchParams();
   const router = useRouter();

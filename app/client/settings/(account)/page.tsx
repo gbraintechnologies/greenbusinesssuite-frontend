@@ -71,7 +71,7 @@ function Account() {
     });
     removeUser();
     toast.success("Logged out");
-    router.push("/");
+    router.push("/client");
   };
 
   return (

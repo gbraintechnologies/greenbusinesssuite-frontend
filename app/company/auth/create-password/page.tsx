@@ -93,7 +93,7 @@ function CreatePassword() {
       <div className="flex px-4 md:flex flex-[2] items-center justify-center py-12 mt-20">
         <div className="mb-10">
           <div className="flex items-left justify-left mb-10">
-            <Link href="/">
+            <Link href="/company">
               <Logo src={"/svg/mesh_logo.svg"} width={100} />
             </Link>
           </div>

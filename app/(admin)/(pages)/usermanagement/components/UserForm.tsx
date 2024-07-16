@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { MdOutlineEdit } from "react-icons/md";
 import * as Yup from "yup";
+import "../edit-user/index.css";
 
 const UserSchema = Yup.object().shape({
   firstname: Yup.string()
@@ -268,7 +269,7 @@ const UserForm = ({
                     selected={selectedRole}
                     setSelected={setSelectedRole}
                     options={roles}
-                    disabled={readonly}
+                    disabled={true}
                   />
                 </div>
               </div>
