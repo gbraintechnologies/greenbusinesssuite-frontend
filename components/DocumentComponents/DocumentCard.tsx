@@ -15,12 +15,10 @@ import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 // utils
 import FormatDate from "@/utils/FormatDate/FormatDate";
 
-import { toast } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import useUser from "@/hooks/useUser";
-import services from "@/services";
 
 function DocumentCard({ document }: any) {
+  // console.log("docu", document);
   //
   let { id, updatedOn } = document;
 
@@ -30,9 +28,9 @@ function DocumentCard({ document }: any) {
 
   const options = [
     {
-      title: "Continue editing",
+      title: "Download",
       func: () => {
-        router.push(`/client/form?id=${document?.id}`);
+        // router.push(`/client/form?id=${document?.id}`);
       },
     },
   ];
@@ -48,7 +46,7 @@ function DocumentCard({ document }: any) {
         <div className="p-3">
           <button className="text-lg w-full text-left font-medium">
             {/* @ts-ignore */}
-            {form?.name?.replace(/"/g, " ")}
+            Name
           </button>
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs font-light pr-4">{FormatDate(updatedOn)}</p>

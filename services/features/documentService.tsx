@@ -1,15 +1,15 @@
 import authApi from "../meshAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
 
-export const allUserUploads = (userId: any) => {
+export const getAllUserUploads = (userId: any) => {
   return () =>
-    authApi.get(`/s3/upload/all-files/${userId}`).then((res) => res.data);
+    authApi.get(`/s3/resource/user-files/${userId}`).then((res) => res.data);
 };
 
-export const getIssuedDocs = (userId: any, companyId: any) => {
+export const getAllIssuedDocs = (userId: any, companyId: any) => {
   return () =>
     authApi
-      .get(`/s3/upload/all-issued-docs/${userId}/${companyId}`)
+      .get(`/s3/resource/all-issued-docs/${userId}/${companyId}`)
       .then((res) => res.data);
 };
 
@@ -17,22 +17,11 @@ export const uploadUserFile = (
   userId: any,
   companyId: any,
   formData: FormData,
+  formId: any,
   file: string
 ) => {
   return multipartMeshApi.post(
-    `s3/upload/file/${userId}/${companyId}/${file}`,
-    formData
-  );
-};
-
-export const issueFileToClient = (
-  userId: any,
-  companyId: any,
-  formData: FormData,
-  file: string
-) => {
-  return multipartMeshApi.post(
-    `s3/upload/issued/${userId}/${companyId}/${file}`,
+    `s3/resource/file/${userId}/${companyId}/${formId}/${file}`,
     formData
   );
 };
@@ -49,10 +38,10 @@ export const issueFileToUserWithFormId = (
   companyId: any,
   formId: any,
   formData: FormData,
-  file: string
+  fileName: string
 ) => {
   return multipartMeshApi.post(
-    `/s3/resource/file/${userId}/${companyId}/${formId}/${file}`,
+    `/s3/resource/issued/${userId}/${companyId}/${formId}/${fileName}`,
     formData
   );
 };

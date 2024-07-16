@@ -16,7 +16,7 @@ function Uploaded() {
     refetch,
   } = useQuery({
     queryKey: ["all user uploads", user?.id],
-    queryFn: services.allUserUploads(user?.id),
+    queryFn: services.getAllUserUploads(user?.id),
     enabled: Boolean(user?.id),
   });
 

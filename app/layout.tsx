@@ -71,7 +71,7 @@ export default function RootLayout({
                 //     color: "#1d1d1d",
                 //   },
                 // }}
-                position="top-right"
+                position="top-center"
                 reverseOrder={true}
               />
             </AdminContextProvider>

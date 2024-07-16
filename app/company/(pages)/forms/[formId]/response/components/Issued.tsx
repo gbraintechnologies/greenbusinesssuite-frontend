@@ -21,6 +21,7 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/modal";
+import UploadFileToIssue from "./UploadFileToIssue";
 
 function Issued({ user, form }: any) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -58,7 +59,7 @@ function Issued({ user, form }: any) {
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
         {issuedFiles &&
           issuedFiles?.map((document: any) => {
             return <DocumentCard document={document} key={document?.id} />;
@@ -67,12 +68,16 @@ function Issued({ user, form }: any) {
 
       {/* Issue a new file */}
 
-      <Button className="bg-black text-white" onPress={onOpen}>
-        Issue new file
+      <Button
+        className="bg-black rounded-lg text-sm text-white"
+        onPress={onOpen}
+      >
+        Issue new file (s)
       </Button>
       <Modal
+        size="xl"
         backdrop="opaque"
-        className="bg-white"
+        className="bg-white rounded-lg p-5"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         classNames={{
@@ -83,36 +88,16 @@ function Issued({ user, form }: any) {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Modal Title
+                Issue File(s) to client
               </ModalHeader>
               <ModalBody>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Magna exercitation reprehenderit magna aute tempor cupidatat
-                  consequat elit dolor adipisicing. Mollit dolor eiusmod sunt ex
-                  incididunt cillum quis. Velit duis sit officia eiusmod Lorem
-                  aliqua enim laboris do dolor eiusmod. Et mollit incididunt
-                  nisi consectetur esse laborum eiusmod pariatur proident Lorem
-                  eiusmod et. Culpa deserunt nostrud ad veniam.
-                </p>
+                <UploadFileToIssue
+                  refetch={refetch}
+                  onClose={onClose}
+                  formId={form?.id}
+                  userId={user?.id}
+                />
               </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
-                </Button>
-              </ModalFooter>
             </>
           )}
         </ModalContent>
