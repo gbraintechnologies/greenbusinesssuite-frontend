@@ -523,7 +523,7 @@ const CompanyForm: React.FC<Props> = ({
                           variant="flat"
                           selectionMode="single"
                         >
-                          {industries?.map((industry: any) => (
+                          {industries?.filter((industry: any) => industry?.sectorStats?.length > 0)?.map((industry: any) => (
                             <DropdownItem
                               key="view"
                               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
