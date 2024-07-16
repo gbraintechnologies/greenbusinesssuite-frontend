@@ -210,6 +210,7 @@ const CompanyForm: React.FC<Props> = ({
     try {
       if (!initialLoad) {
         setSubSectorsLoading(true);
+        setSelectedSubSector(undefined);
       }
       const response = await services.getSubSectorByIdRaw(
         Number(sectorSetupId),

@@ -11,6 +11,7 @@ import { changePassword } from "../../../../services/features/authService";
 import toast from "react-hot-toast";
 import useAdmin from "@/hooks/useAdmin";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import useUser from "@/hooks/useUser";
 
 const schema = yup.object({
   user_id: yup
@@ -27,7 +28,7 @@ const schema = yup.object({
 
 function Security() {
   const router = useRouter();
-  const { admin } = useAdmin();
+  const {user} = useUser();
   type typeOfSchema = yup.InferType<typeof schema>;
 
 
@@ -39,7 +40,7 @@ function Security() {
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
-      user_id: admin?.id,
+      user_id: user?.id,
       current_password: "",
       new_password: ""
     },
@@ -66,7 +67,7 @@ function Security() {
       position: "top-center",
       duration: 3000,
     });
-    router.push("/dashboard");
+    router.push("/client");
   };
 
 
