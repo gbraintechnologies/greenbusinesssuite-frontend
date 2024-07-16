@@ -115,8 +115,32 @@ const CreateCompany = () => {
       return;
     }
 
+    if (!selectedJurisdiction?.value) {
+      toast.error("Jurisdiction is required");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!selectedSubJurisdiction?.value) {
+      toast.error("Sub Jurisdiction is required");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!selectedSubLevel?.value) {
+      toast.error("Sub Level is required");
+      setSubmitting(false);
+      return;
+    }
+
     if (!selectedIndustry?.value) {
       toast.error("Industry is required");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!selectedSubSector?.value) {
+      toast.error("Sub Sector is required");
       setSubmitting(false);
       return;
     }
