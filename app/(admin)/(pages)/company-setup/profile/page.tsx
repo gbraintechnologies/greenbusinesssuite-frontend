@@ -23,6 +23,7 @@ import Modal from "@/components/Modal/Modal";
 
 import { IFilter } from "@/types";
 import EmptyList from "@/components/Form/EmptyList";
+import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -45,6 +46,8 @@ const Page = () => {
 
   const [showAssignModal, setShowAssignModal] = useState<boolean>(false);
 
+  const [parentAddressScheme, setParentAddressScheme] = useState<any>();
+
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
@@ -52,12 +55,6 @@ const Page = () => {
   const { data: companyData, isLoading } = useQuery({
     queryKey: ["company", parseInt(id as string)],
     queryFn: services.getCompanyById(Number(id)),
-  });
-
-  const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
-    queryKey: ["get assigned forms for ", Number(companyData?.id)],
-    queryFn: services.getFormsByCompanyId(companyData?.id),
-    enabled: !!companyData?.id,
   });
 
   const companyDescription =
@@ -75,6 +72,52 @@ const Page = () => {
       (field: any) => field.custom_profile_item_id == 3
     )?.value ?? "";
 
+  const companySubSector =
+    companyData?.company_custom_values?.find(
+      (field: any) => field.custom_profile_item_id == 4
+    )?.value ?? "";
+
+  const companyParentAddressId =
+    companyData?.company_custom_values?.find(
+      (field: any) => field.custom_profile_item_id == 5
+    )?.value ?? "";
+
+  const companyChildAddressId =
+    companyData?.company_custom_values?.find(
+      (field: any) => field.custom_profile_item_id == 6
+    )?.value ?? "";
+
+  const companySectorId =
+    companyData?.company_custom_values?.find(
+      (field: any) => field.custom_profile_item_id == 7
+    )?.value ?? "";
+
+  const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
+    queryKey: ["get assigned forms for ", Number(companyData?.id)],
+    queryFn: services.getFormsByCompanyId(companyData?.id),
+    enabled: !!companyData?.id,
+  });
+
+  const { data: country, isLoading: isCountryLoading } = useQuery({
+    queryKey: ["country", companyData?.company_address],
+    queryFn: services.getJurisdictionEntriesById(companyData?.company_address),
+    enabled:
+      !!companyData?.company_address &&
+      isConvertibleToNumber(companyData?.company_address),
+  });
+
+  const { data: industry, isLoading: isIndustryLoading } = useQuery({
+    queryKey: ["industry", companyData?.industry],
+    queryFn: services.getSubSectorByID(
+      Number(companySectorId),
+      Number(companyData?.industry)
+    ),
+    enabled:
+      !!companyData?.industry &&
+      !!companySectorId &&
+      isConvertibleToNumber(companyData?.industry),
+  });
+
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -84,8 +127,15 @@ const Page = () => {
         status.value.toLowerCase() === companyData?.status?.toLowerCase()
     );
     setActiveStatus(status);
+    setParentAddressScheme(
+      country?.parentAddressScheme?.entries?.find(
+        (entry: any) => entry?.id == companyParentAddressId
+      )
+    );
+
+    console.log("yue ", country?.parentAddressScheme?.entries);
     console.log("company data ", companyData);
-  }, [companyData]);
+  }, [companyData, country]);
 
   const editCompanyStatus = async (status: any) => {
     let companyDataInfo = { ...companyData, status: status.value };
@@ -108,7 +158,7 @@ const Page = () => {
       toast.error("Failed to update company status");
     }
   };
-  if (isLoading || areFormsLoading) {
+  if (isLoading || areFormsLoading || isCountryLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
         <div>
@@ -218,10 +268,32 @@ const Page = () => {
                       <div className="value">{companyDescription}</div>
                     </div>
                   )}
+                  {companyData?.company_address && (
+                    <div className="group">
+                      <div className="label">Jurisdiction</div>
+                      <div className="value">
+                        {country?.name}
+                        {","}
+                        {parentAddressScheme?.name}
+                        {","}
+                        {
+                          parentAddressScheme?.childEntries?.find(
+                            (entry: any) => entry?.id == companyChildAddressId
+                          )?.name
+                        }
+                      </div>
+                    </div>
+                  )}
                   {companyData?.industry && (
                     <div className="group">
                       <div className="label">Industry</div>
-                      <div className="value">{companyData?.industry}</div>
+                      <div className="value">
+                        {isConvertibleToNumber(companyData?.industry)
+                          ? industry?.sector?.parentSector
+                          : companyData?.industry}
+                        {","}
+                        {companySubSector}
+                      </div>
                     </div>
                   )}
                   {companyData?.primary_contact_name && (

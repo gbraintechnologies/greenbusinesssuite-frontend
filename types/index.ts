@@ -29,6 +29,7 @@ export interface CompanyInfo {
   primary_contact_phone_number: string;
   company_logo: string;
   industry: string;
+  company_address: string;
   company_admin_id?: number;
   primary_currency: string;
   id?: number;
