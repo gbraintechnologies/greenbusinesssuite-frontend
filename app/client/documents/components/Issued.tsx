@@ -31,7 +31,7 @@ function Issued() {
     refetch,
   } = useQuery({
     queryKey: ["all user issued docs", user?.id, companyId],
-    queryFn: services.getIssuedDocs(user?.id, companyId),
+    queryFn: services.getAllIssuedDocs(user?.id, companyId),
     enabled: Boolean(user?.id),
   });
 
