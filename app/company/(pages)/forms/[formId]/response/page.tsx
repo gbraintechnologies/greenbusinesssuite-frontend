@@ -77,7 +77,7 @@ const page = ({ params }: any) => {
   const [mergedForm, setMergedForm] = useState(null);
   //
   useEffect(() => {
-    if (!isRefetching && form && formUserResponse[0]) {
+    if (!isRefetching && form && formUserResponse) {
       setMergedForm(
         mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData)
       );
