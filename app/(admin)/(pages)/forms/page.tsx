@@ -85,7 +85,7 @@ function Forms() {
 
   // pagination
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(8);
+  const [limit, setLimit] = useState(12);
 
   // fetch all forms
   const { data: forms, isLoading } = useQuery({

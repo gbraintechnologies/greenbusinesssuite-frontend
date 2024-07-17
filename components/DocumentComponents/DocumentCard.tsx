@@ -53,6 +53,7 @@ function DocumentCard({ document }: any) {
           className={`flex items-center bg-gradient-to-br from-[#FFCAD4] to bg-[#FEA7B7] justify-center w-full  rounded-tl-lg rounded-tr-lg`}
         >
           <div className="m-2 my-10 px-4 py-2 flex items-center justify-center  rounded-lg bg-white">
+            {/* ADD TYPE OF FILE: UPLOAD / ISSUE */}
             <IoDocumentAttachOutline className="text-gray-600" size={30} />
           </div>
         </button>
@@ -61,6 +62,9 @@ function DocumentCard({ document }: any) {
             {startWithCapital(fileName?.split(".")[0])}
           </button>
           <div className="flex items-center justify-between mt-1">
+            {/* TODO: FORM NAME HERE Fetch form using formID */}
+            {/* UPDATE PREVIEW TO IGNORE UPLOAD ELEMENT */}
+            {/* UPDATE CLIENT TO ALSO IGNORE UPLOAD */}
             <p className="text-xs font-light pr-4">{FormatDate(createdOn)}</p>
             <Menu as="div" className="relative">
               <div className="relative">
