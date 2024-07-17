@@ -264,7 +264,7 @@ const page = ({ params }: any) => {
           </button>
 
           {/* CHANGE RESPONSE STATUS */}
-          {formUserResponse[0]?.status && (
+          {formUserResponse && formUserResponse[0]?.status && (
             <div className="flex flex-col gap-3">
               <Menu as={"div"} className={"z-20 relative inline-block"}>
                 <Menu.Button className=" border border-[rgba(226, 232, 240, 1)]  text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
