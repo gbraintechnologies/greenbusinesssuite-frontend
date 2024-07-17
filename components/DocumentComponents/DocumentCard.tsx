@@ -15,18 +15,28 @@ import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 // utils
 import FormatDate from "@/utils/FormatDate/FormatDate";
 
+import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import useUser from "@/hooks/useUser";
+import services from "@/services";
 
 function DocumentCard({ document }: any) {
-  // console.log("docu", document);
   //
-  let { id, updatedOn } = document;
+  let { id, fileName, createdOn, url, formId } = document;
+
+  // console.log("document", document);
 
   const queryClient = useQueryClient();
 
   const router = useRouter();
 
   const options = [
+    {
+      title: "View",
+      func: () => {
+        // router.push(`/client/form?id=${document?.id}`);
+      },
+    },
     {
       title: "Download",
       func: () => {
@@ -45,11 +55,10 @@ function DocumentCard({ document }: any) {
         </button>
         <div className="p-3">
           <button className="text-lg w-full text-left font-medium">
-            {/* @ts-ignore */}
-            Name
+            {fileName}
           </button>
           <div className="flex items-center justify-between mt-1">
-            <p className="text-xs font-light pr-4">{FormatDate(updatedOn)}</p>
+            <p className="text-xs font-light pr-4">{FormatDate(createdOn)}</p>
             <Menu as="div" className="relative">
               <div className="relative">
                 <Menu.Button className="relative">
@@ -71,22 +80,16 @@ function DocumentCard({ document }: any) {
                     options?.map((option: any, idx: any) => {
                       return (
                         <Menu.Item>
-                          <div>
-                            <button
-                              className={`${
-                                option.title.toLowerCase() === "delete"
-                                  ? "text-red-600"
-                                  : " text-gray-500"
-                              } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
-                              onClick={() => option.func()}
-                            >
-                              {option.title}
-                            </button>
-
-                            {idx % 2 === 0 && (
-                              <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
-                            )}
-                          </div>
+                          <button
+                            className={`${
+                              option.title.toLowerCase() === "delete"
+                                ? "text-red-600"
+                                : " text-gray-500"
+                            } py-3  px-4 font-light hover:bg-gray-50 cursor text-left w-full`}
+                            onClick={() => option.func()}
+                          >
+                            {option.title}
+                          </button>
                         </Menu.Item>
                       );
                     })}

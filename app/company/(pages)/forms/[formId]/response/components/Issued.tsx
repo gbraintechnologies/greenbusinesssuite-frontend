@@ -18,21 +18,32 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   useDisclosure,
 } from "@nextui-org/modal";
 import UploadFileToIssue from "./UploadFileToIssue";
+import useCompany from "@/hooks/useCompany";
 
 function Issued({ user, form }: any) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const { company } = useCompany();
 
   const {
     data: issuedFiles,
     isLoading: loading,
     refetch,
   } = useQuery({
-    queryKey: ["all user issued docs by formId", user?.id, form?.id],
-    queryFn: services.getUserUploadedDocsByFormId(user?.id, form?.id),
+    queryKey: [
+      "all user issued docs by formId and company id",
+      form?.id,
+      company?.id,
+      user?.id,
+    ],
+    queryFn: services.getUserIssuedDocsByFormIdAndCompanyId(
+      form?.id,
+      company?.id,
+      user?.id
+    ),
     enabled: Boolean(user?.id) && Boolean(form?.id),
   });
 

@@ -48,11 +48,15 @@ function FormSubmission() {
           (field?.response === null || field?.response === "") &&
           field?.isMandatory
         ) {
-          setSavingResponses(false);
-          setShowConfirmationModal(false);
-          toast.error("Please fill all required fields");
-          completedRequired = false;
-          return;
+          if (field?.fieldDataType.toLowerCase() == "upload") {
+            // no response for uploads
+          } else {
+            setSavingResponses(false);
+            setShowConfirmationModal(false);
+            toast.error("Please fill all required fields");
+            completedRequired = false;
+            return;
+          }
         }
       }
     }

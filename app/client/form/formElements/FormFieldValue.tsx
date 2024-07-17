@@ -1,8 +1,12 @@
 "use client";
 
 import useClientForm from "@/hooks/useClientForm";
+
+import formatBytes from "@/utils/FormatBytes/formatBytes";
+
 //
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
 
 import {
   Dropdown,
@@ -10,11 +14,68 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/dropdown";
+
+// icons
+import { IoCloseCircleOutline } from "react-icons/io5";
+
 import { IoIosArrowDown } from "react-icons/io";
 import { LuUploadCloud } from "react-icons/lu";
+import { CiCircleInfo } from "react-icons/ci";
+
+//
+import toast from "react-hot-toast";
 
 function FormFieldValue({ field, section, viewOnly }: any) {
+  // functions
+  const {
+    saveSingleResponse,
+    storeUploadedFile,
+    setFilesToSubmit,
+    removeStoredFile,
+  } = useClientForm();
+
+  //
   const { fieldDataType, horizontalAlign, placeHolder, label } = field;
+
+  // for file uploads
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  // set all files in both files to submit and selected files to null when new here
+  useEffect(() => {
+    setFilesToSubmit([]);
+    setSelectedFiles([]);
+  }, []);
+
+  const onDrop = useCallback((acceptedFiles: any, fileRejections: any) => {
+    // @ts-ignore
+    setSelectedFiles((prev) => [...prev, ...acceptedFiles]);
+
+    storeUploadedFile(acceptedFiles);
+
+    // show errors for rejected files
+    fileRejections.map(({ file, errors }: any) => {
+      for (const error of errors) {
+        if (error.code === "file-too-large") {
+          toast.error(`${file.name} is larger than 1Mb`);
+        }
+
+        if (error.code === "file-invalid-type") {
+          toast.error(
+            `${file.name} is invalid and doesn't meet upload criteria`
+          );
+        }
+      }
+    });
+  }, []);
+
+  //
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    maxSize: 1048576,
+    accept: {
+      // 'image/jpeg': ['.jpeg', '.png']
+    },
+  });
 
   // TYPES
   // text
@@ -24,10 +85,6 @@ function FormFieldValue({ field, section, viewOnly }: any) {
   // phone
 
   // main styles
-
-  // functions
-
-  const { saveSingleResponse } = useClientForm();
 
   const inputStyle = `border-[0.7px] w-full  text-black placeholder:text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg`;
   const labelStyle = `font-sm text-gray-400`;
@@ -273,25 +330,74 @@ function FormFieldValue({ field, section, viewOnly }: any) {
 
     case "upload":
       return (
-        <div
-          className={`
-          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
-          `}
-        >
-          <label className="font-sm text-gray-400 mb-2">
-            {label ? label : "No label"}
-          </label>
-          <div className="border text-gray-400 mt-2 border-gray-200 p-7 my-4 flex items-center justify-center flex-col gap-1 text-center text-sm rounded-lg">
-            <LuUploadCloud size={32} />
-            {placeHolder}
-            <p className="text-xs font-light text-gray-500">
-              Supported formats: PNG, JPEG, PDF (5MB max file size)
-            </p>
-            <button className="border border-gray-100 shadow px-3 py-1 rounded-lg mt-5">
-              Select files{" "}
-            </button>
+        <>
+          <div>
+            <label className="font-sm text-gray-400 mb-2">
+              {label ? label : "No label"}
+            </label>
+            <div {...getRootProps()}>
+              <input {...getInputProps()} />
+              <div className="border text-gray-400 mt-2 border-gray-200 p-7 my-4 flex items-center justify-center flex-col gap-1 text-center text-sm rounded-lg">
+                <LuUploadCloud size={32} />
+                {placeHolder}
+                <p className="text-xs font-light text-gray-500">
+                  Supported formats: PNG, JPEG, PDF (1MB max file size)
+                </p>
+                <button className="border  hover:text-black border-gray-100 shadow px-3 py-1 rounded-lg mt-5">
+                  Select file(s){" "}
+                </button>
+              </div>
+            </div>
+
+            {/*  */}
+            {selectedFiles?.length > 0 && (
+              <div>
+                <div className="my-4 text-gray-500 font-light">
+                  Selected Files
+                </div>
+                <div className="grid grid-cols-2 gap-4 mb-5">
+                  {selectedFiles?.map((file: any) => {
+                    return (
+                      <div className="flex gap-4 bg-gray-100 p-2 pl-3 justify-between rounded-lg">
+                        <div className="flex flex-col">
+                          <p className="font-semibold text-sm">{file?.name}</p>
+                          <p className="text-xs text-gray-600">
+                            {formatBytes(file?.size)}
+                          </p>
+                        </div>
+                        <IoCloseCircleOutline
+                          size={20}
+                          className="text-gray-500 w-10 hover:text-black cursor-pointer"
+                          onClick={() => {
+                            removeStoredFile(file);
+                            setSelectedFiles((prev) => [
+                              ...prev.filter(
+                                (item: any) => item.name !== file.name
+                              ),
+                            ]);
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+
+          {/* INFO NOTICE ON HOW FILES ARE HANDLES / PROCESSED */}
+          <div className="bg-red-50 p-3 rounded-lg text-lg flex flex-row gap-3 mb-10">
+            <CiCircleInfo size={40} />{" "}
+            <p className="text-xs font-light italic">
+              Selected file(s){" "}
+              <span className="font-bold">
+                would only be uploaded when the entire form is submitted.{" "}
+              </span>
+              Saving the progress of the form would not save the selected
+              file(s).
+            </p>
+          </div>
+        </>
       );
   }
 }

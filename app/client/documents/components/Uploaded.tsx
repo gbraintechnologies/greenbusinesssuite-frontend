@@ -2,9 +2,11 @@ import useUser from "@/hooks/useUser";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
-import NoDocuments from "./NoDocuments";
-import DocumentCard from "./DocumentCard";
-import DocumentSkeleton from "./DocumentSkeleton";
+
+//
+import NoDocuments from "@/components/DocumentComponents/NoDocuments";
+import DocumentCard from "@/components/DocumentComponents/DocumentCard";
+import DocumentSkeleton from "@/components/DocumentComponents/DocumentSkeleton";
 
 function Uploaded() {
   // GET ALL FORM DETAILS
@@ -37,10 +39,10 @@ function Uploaded() {
 
   return (
     <div>
-      {uploaded?.length === 0 && <NoDocuments />}
+      {(uploaded == undefined || uploaded?.length === 0) && <NoDocuments />}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {uploaded.map((document: any) => {
+        {uploaded?.map((document: any) => {
           return <DocumentCard document={document} key={document?.id} />;
         })}
       </div>

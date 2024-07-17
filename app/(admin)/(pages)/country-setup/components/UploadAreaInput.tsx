@@ -26,13 +26,18 @@ const UploadAreaInput: React.FC<UploadAreaInputProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-  
-  const inputProps = { ...getInputProps(), accept: ".csv, .xls, application/vnd.ms-excel" };
+
+  const inputProps = {
+    ...getInputProps(),
+    accept: ".csv, .xls, application/vnd.ms-excel",
+  };
 
   const baseStyle =
     "bg-white border border-dotted cursor-pointer border-slate-300 rounded-md w-full h-full flex flex-col items-center justify-center text-center";
   const activeStyle = "bg-teal-500";
-  const inputClasses = `${baseStyle} ${isDragActive ? activeStyle : ""} ${className}`;
+  const inputClasses = `${baseStyle} ${
+    isDragActive ? activeStyle : ""
+  } ${className}`;
 
   const handleFileSelect = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -74,7 +79,7 @@ const UploadAreaInput: React.FC<UploadAreaInputProps> = ({
             <UploadIcon />
             <h5 className="text-slate-700 mt-2 text-md font-bold">{label}</h5>
             <p className="text-xs text-slate-500">
-              {subLabel || "Supported format: CSV, XLS(5MB max file size)"}
+              {subLabel || "Supported format: CSV, XLS(1MB max file size)"}
             </p>
             <button
               onClick={handleFileSelect}

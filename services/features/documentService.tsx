@@ -16,12 +16,12 @@ export const getAllIssuedDocs = (userId: any, companyId: any) => {
 export const uploadUserFile = (
   userId: any,
   companyId: any,
-  formData: FormData,
   formId: any,
-  file: string
+  formData: FormData,
+  fileName: string
 ) => {
   return multipartMeshApi.post(
-    `s3/resource/file/${userId}/${companyId}/${formId}/${file}`,
+    `s3/resource/file/${userId}/${companyId}/${formId}/${fileName}`,
     formData
   );
 };
@@ -30,6 +30,17 @@ export const getUserUploadedDocsByFormId = (userId: any, formId: any) => {
   return () =>
     authApi
       .get(`/s3/resource/user-files/${userId}/${formId}`)
+      .then((res) => res.data);
+};
+
+export const getUserIssuedDocsByFormIdAndCompanyId = (
+  formId: any,
+  companyId: any,
+  userId: any
+) => {
+  return () =>
+    authApi
+      .get(`/s3/resource/issued-docs/${formId}/${companyId}/${userId}`)
       .then((res) => res.data);
 };
 
