@@ -24,8 +24,6 @@ function Uploaded({ user, form }: any) {
     refetch();
   }, []);
 
-  console.log("uploaded", uploaded);
-
   if (loading) {
     return (
       <div className="grid grid-cols-4 gap-10">
