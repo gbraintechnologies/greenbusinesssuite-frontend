@@ -4,7 +4,7 @@ import { IFilter } from "@/types";
 
 type Props = {
   activeFilter: IFilter;
-  setActiveFilter: React.Dispatch<React.SetStateAction<IFilter>>;
+  setActiveFilter: any;
   filters: IFilter[];
 };
 

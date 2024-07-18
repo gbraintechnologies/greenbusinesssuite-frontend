@@ -20,6 +20,9 @@ import ResponseDataTable from "../components/ResponseTable/ResponseDataTable";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import PublishFormButton from "@/app/(admin)/(pages)/forms/builder/PublishFormButton";
 import Analytics from "./_analytics/Analytics";
+import { useQueryState } from 'nuqs';
+import { IFilter } from "@/types";
+
 
 function SingleFormCompany({ params }: any) {
   const [filters, setFilters] = useState([
@@ -27,11 +30,22 @@ function SingleFormCompany({ params }: any) {
     { id: 2, name: "Responses", value: "responses" },
   ]);
 
-  const [activeFilter, setActiveFilter] = useState({
-    id: 1,
-    name: "Insights",
-    value: "insights",
+  
+  const [activeFilterId, setActiveFilterId] = useQueryState('tab', {
+    parse: Number,
+    serialize: String,
+    defaultValue: 1
   });
+  
+  const [activeFilter, setActiveFilter] = useState(filters.find(filter => filter.id === activeFilterId) || filters[0]);
+
+  const handleTabChange = (filter: IFilter) => {
+    setActiveFilter(filter);
+    setActiveFilterId(filter.id);
+  }
+
+  
+
   //
 
   let formID = params.formId;
@@ -141,7 +155,7 @@ function SingleFormCompany({ params }: any) {
           <Tabs
             filters={filters}
             activeFilter={activeFilter}
-            setActiveFilter={setActiveFilter}
+            setActiveFilter={handleTabChange}
           />
           {activeFilter.id == 2 ? (
             <div className="flex gap-3 items-center">

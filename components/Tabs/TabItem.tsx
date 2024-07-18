@@ -3,7 +3,7 @@ import React from "react";
 
 type Props = {
   activeFilter: IFilter;
-  setActiveFilter: React.Dispatch<React.SetStateAction<IFilter>>;
+  setActiveFilter: any;
   filter: IFilter;
 };
 const TabItem: React.FC<Props> = ({

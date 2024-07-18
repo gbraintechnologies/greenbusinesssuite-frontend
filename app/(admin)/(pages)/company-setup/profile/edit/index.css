@@ -3,7 +3,7 @@
 }
 
 .input-holder.half {
-  @apply w-1/2 !important;
+  @apply w-[49%] !important;
 }
 
 .input-holder input:not([type="checkbox"]):not([type="radio"]),
