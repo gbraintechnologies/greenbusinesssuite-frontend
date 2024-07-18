@@ -7,6 +7,10 @@ import { AiOutlineNumber } from "react-icons/ai";
 import { RiDropdownList } from "react-icons/ri";
 import { RiCheckboxMultipleLine } from "react-icons/ri";
 import { LuUploadCloud } from "react-icons/lu";
+import { LuUser2 } from "react-icons/lu";
+import { FaRegBuilding } from "react-icons/fa";
+import { FaRegMap } from "react-icons/fa";
+import { IoCalendarOutline } from "react-icons/io5";
 
 // general properties
 let template = {
@@ -50,6 +54,30 @@ let template = {
 
 export const defaultFormElements = [
   {
+    icon: <LuUser2 size={18} />,
+    name: "Full Name",
+    properties: {
+      ...template,
+      fieldDataType: "short-text",
+      name: "Full name",
+      description: "Full name",
+      label: "Full name",
+      placeHolder: "Enter your full name here",
+    },
+  },
+  {
+    icon: <MdOutlinePhone size={18} />,
+    name: "Contact",
+    properties: {
+      ...template,
+      fieldDataType: "phone",
+      name: "Phone Number",
+      description: "Phone Number",
+      label: "Phone Number",
+      placeHolder: "Enter your phone number",
+    },
+  },
+  {
     icon: <MdOutlineMailOutline size={18} />,
     name: "Email",
     properties: {
@@ -62,15 +90,27 @@ export const defaultFormElements = [
     },
   },
   {
-    icon: <MdOutlinePhone size={18} />,
-    name: "Phone Number",
+    icon: <FaRegMap size={18} />,
+    name: "Address information",
     properties: {
       ...template,
-      fieldDataType: "phone",
-      name: "Phone Number",
-      description: "Phone Number",
-      label: "Phone Number",
-      placeHolder: "Enter your phone number",
+      fieldDataType: "long-text",
+      name: "Address information",
+      description: "Address information",
+      label: "Address information",
+      placeHolder: "Enter your address information",
+    },
+  },
+  {
+    icon: <FaRegBuilding size={18} />,
+    name: "Business information",
+    properties: {
+      ...template,
+      fieldDataType: "long-text",
+      name: "Business information",
+      description: "Business information",
+      label: "Business information",
+      placeHolder: "Enter your business information here",
     },
   },
   {
@@ -109,7 +149,19 @@ export const defaultFormElements = [
       placeHolder: "Enter your number",
     },
   },
-  // NEW FORM ELE
+  {
+    icon: <IoCalendarOutline size={18} />,
+    name: "Date",
+    properties: {
+      ...template,
+      fieldDataType: "calendar",
+      name: "Date Select",
+      choiceValues: [],
+      description: "Select date",
+      label: "Select date",
+      placeHolder: "Select date",
+    },
+  },
   {
     icon: <RiDropdownList size={18} />,
     name: "Dropdown",

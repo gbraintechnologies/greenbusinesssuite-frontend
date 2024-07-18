@@ -47,16 +47,20 @@ export default function FormElementSelector({ section }: any) {
         >
           <Menu.Items className="absolute z-[100] -right-[30%] mt-2 w-72 origin-top divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
             <div className="px-1 py-1 ">
-              {elements.map((item: any) => {
+              {elements.map((item: any, idx: any) => {
                 return (
-                  <Menu.Item>
-                    <button
-                      onClick={item.func}
-                      className="group flex gap-2 w-full hover:bg-gray-100 items-center rounded-md px-2 py-3 text-sm"
-                    >
-                      {item.icon} {item.name}
-                    </button>
-                  </Menu.Item>
+                  <>
+                    <p>Preset form elements</p>
+                    <Menu.Item>
+                      <button
+                        onClick={item.func}
+                        className="group flex gap-2 w-full hover:bg-gray-100 items-center rounded-md px-2 py-3 text-sm"
+                      >
+                        {item.icon} {item.name}
+                      </button>
+                      {idx === 4 && <p>Configuratable form elements</p>}
+                    </Menu.Item>
+                  </>
                 );
               })}
             </div>
