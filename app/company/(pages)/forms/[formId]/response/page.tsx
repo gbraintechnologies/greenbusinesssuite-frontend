@@ -27,6 +27,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import Tabs from "@/components/Tabs/Tabs";
 import Uploaded from "./components/Uploaded";
 import Issued from "./components/Issued";
+import { IFilter } from "@/types";
+import { useQueryState } from "nuqs";
 
 const page = ({ params }: any) => {
   let formID = params.formId;
@@ -56,18 +58,24 @@ const page = ({ params }: any) => {
     { id: 2, name: "Issued", value: "Issued" },
   ]);
 
-  const [activeTab, setActiveTab] = useState({
-    id: 0,
-    name: "Responses",
-    value: "Responses",
+  const [activeTabId, setActiveTabId] = useQueryState('tab', {
+    parse: Number,
+    serialize: String,
+    defaultValue: 0
   });
+  
+  const [activeTab, setActiveTab] = useState(tabs.find(tab => tab.id === activeTabId) || tabs[0]);
+
+  const handleTabChange = (tab: IFilter) => {
+    setActiveTab(tab);
+    setActiveTabId(tab.id);
+  }
 
   // GET USER RESPONSE
   const {
     data: formUserResponse,
     isLoading: userResponseLoading,
     refetch,
-    isRefetching,
   } = useQuery({
     queryKey: ["form", userId, formID],
     queryFn: services.retrieveFormUserResponses(userId, formID),
@@ -77,12 +85,13 @@ const page = ({ params }: any) => {
   const [mergedForm, setMergedForm] = useState(null);
   //
   useEffect(() => {
-    if (!isRefetching && form && formUserResponse) {
+    if (form && formUserResponse) {
       setMergedForm(
         mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData)
       );
     }
   }, [form, formUserResponse]);
+
 
   // PROCESSING STATUSES
   const [statuses] = useState([
@@ -309,7 +318,7 @@ const page = ({ params }: any) => {
         <div className="mt-3">
           <Tabs
             filters={tabs}
-            setActiveFilter={setActiveTab}
+            setActiveFilter={handleTabChange}
             activeFilter={activeTab}
           />
         </div>
