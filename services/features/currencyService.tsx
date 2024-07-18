@@ -11,3 +11,12 @@ export const createCurrency = (data: any) => {
 export const deleteCurrencyByID = (id: any) => {
   return authApi.delete(`/forms/currency-setup/hard-delete/${id}`);
 };
+
+export const getCurrencyByID = (id: number) => {
+  return () =>
+    authApi.get(`/forms/currency-setup/${id}`).then((res) => res.data);
+};
+
+export const updateCurrency = (data: any) => {
+  return authApi.put("/forms/currency-setup/update", data);
+};
