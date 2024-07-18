@@ -147,7 +147,7 @@ function SingleFormCompany({ params }: any) {
         <div
           className={
             " mt-5 " +
-            (activeFilter.id === 1
+            (activeFilter.id === 0
               ? "flex flex-col gap-5"
               : "flex justify-between items-center")
           }
@@ -157,7 +157,7 @@ function SingleFormCompany({ params }: any) {
             activeFilter={activeFilter}
             setActiveFilter={handleTabChange}
           />
-          {activeFilter.id == 2 ? (
+          {activeFilter.id == 1 ? (
             <div className="flex gap-3 items-center">
               {/* dropped download button */}
               {/* <button
@@ -173,7 +173,7 @@ function SingleFormCompany({ params }: any) {
             // <DatePicker />
           )}
         </div>
-        {activeFilter.id == 1 && (
+        {activeFilter.id == 0 && (
           <div className="mt-4">
             <StatsBlock
               stats={[
@@ -193,8 +193,8 @@ function SingleFormCompany({ params }: any) {
             />
           </div>
         )}
-        {activeFilter.id == 1 && <Analytics formID={formID} />}
-        {activeFilter.id == 2 && (
+        {activeFilter.id == 0 && <Analytics formID={formID} />}
+        {activeFilter.id == 1 && (
           <div className="mt-4">
             <ResponseDataTable
               responseData={formResponseData}
