@@ -57,10 +57,8 @@ function DocumentCard({ document }: any) {
         link.click();
 
         document.body.removeChild(link);
-        if (typeof window !== "undefined") {
-          // @ts-ignore
-          window.URL.revokeObjectURL(url);
-        }
+        // @ts-ignore
+        typeof window !== "undefined" && window.URL.revokeObjectURL(url);
       })
       .catch((error) => {
         console.error("Error fetching the file:", error);

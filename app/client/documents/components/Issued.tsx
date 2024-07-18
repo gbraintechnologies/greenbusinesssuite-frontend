@@ -1,3 +1,5 @@
+"use client";
+
 import useUser from "@/hooks/useUser";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";

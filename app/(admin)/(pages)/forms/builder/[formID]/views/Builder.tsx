@@ -29,7 +29,7 @@ function isObjEmpty(obj: any) {
 function Builder({ data, refetch }: any) {
   // scroll to top
   useEffect(() => {
-    window.scrollTo(0, 0);
+    typeof window !== "undefined" && window.scrollTo(0, 0);
   }, []);
 
   //
