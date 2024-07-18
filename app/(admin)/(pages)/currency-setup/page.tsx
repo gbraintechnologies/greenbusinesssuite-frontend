@@ -41,11 +41,11 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
     setAnchorEl(null);
   };
 
-  // const handleEdit = () => {
-  //   handleClose();
-  //   //alert(JSON.stringify(row.id))
-  //   router.push(`/country-setup/edit-jurisdiction?id=${row.id}`);
-  // };
+  const handleEdit = () => {
+    handleClose();
+  //  alert(JSON.stringify(row.id))
+     router.push(`/currency-setup/edit-currency?id=${row.id}`);
+  };
 
   const handleDelete = async () => {
     handleClose();
@@ -72,7 +72,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
           },
         }}
       >
-        {/* <MenuItem onClick={handleEdit}>Edit</MenuItem> */}
+        <MenuItem onClick={handleEdit}>Edit</MenuItem>
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
       </Menu>
     </>

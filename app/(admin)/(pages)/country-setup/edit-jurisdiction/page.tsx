@@ -14,7 +14,8 @@ import { Countrie } from "../components/Countries";
 import DataTable from "@/components/DataTable/DataTable";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import EditIconSetup from "@/public/icons/EditIconSetup";
-import { editParentSchemeChildEntriesByID, deleteParentAddressAndChildByID, deleteParentAddressAndAssociatesByID } from "@/services/features/jurisdictionsService";
+import { useRouter } from "next/navigation";
+import { editParentSchemeChildEntriesByID, deleteParentAddressAndChildByID, deleteJurisdictionByID } from "@/services/features/jurisdictionsService";
 import SelectCountryEdit from '../components/selectCountryEdit';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsDot } from "react-icons/bs";
@@ -40,6 +41,7 @@ type Row = {
 
 function EditJurisdiction() {
     type typeOfSchema = yup.InferType<typeof schema>;
+    const router = useRouter();
     const [rows, setRows] = useState<Row[]>([]);
     const searchParams = useSearchParams();
     const Id = searchParams.get('id');
@@ -56,7 +58,7 @@ function EditJurisdiction() {
         enabled: !!Id,
     });
 
-    const { register, handleSubmit, setValue, formState: { errors }, watch } = useForm<typeOfSchema>({
+    const { register, handleSubmit, setValue, getValues, formState: { errors }, watch } = useForm<typeOfSchema>({
         resolver: yupResolver(schema),
         mode: "onChange",
         defaultValues: {
@@ -73,7 +75,7 @@ function EditJurisdiction() {
     });
 
     useEffect(() => {
-       // alert(JSON.stringify(data))
+        // alert(JSON.stringify(data))
         if (data) {
             setValue("id", data.id);
             setValue("name", data.name);
@@ -86,7 +88,6 @@ function EditJurisdiction() {
             setRows(formattedRows);
         }
     }, [data, setValue]);
-
 
     const columns = [
         {
@@ -176,9 +177,9 @@ function EditJurisdiction() {
                 return;
             }
 
-            await deleteParentAddressAndAssociatesByID(Id);
+            await deleteJurisdictionByID(Id);
             setDeleteAllModalOpen(false);
-            await refetch(); // Refresh the data
+            router.push("/country-setup");
         } catch (error) {
             console.error("Error deleting parent address and associates:", error);
         }
@@ -193,25 +194,44 @@ function EditJurisdiction() {
         setInputValue(e.target.value);
     }
 
-    const onSubmit = async (formData: typeOfSchema) => {
-        alert('here')
+    const mapRowsToPayload = () => {
+        const row = rows[0];
+
+        const entry = data?.parentAddressScheme.entries.find((entry: any) => entry.name === row.regions);
+
+        return {
+            id: row.id,
+            name: row.regions,
+            childEntries: row.districts.split(", ").map((district) => {
+                if (entry) {
+                    const childEntry = entry.childEntries.find((child: any) => child.name === district.trim());
+                    if (childEntry) {
+                        return {
+                            id: childEntry.id,
+                            name: district.trim(),
+                            parentAddressSchemeEntriesId: row.id,
+                        };
+                    }
+                }
+                return {
+                    id: 0,
+                    name: district.trim(),
+                    parentAddressSchemeEntriesId: row.id,
+                };
+            }),
+        };
+    };
+
+
+    const onSubmitHandler = async (formData: typeOfSchema) => {
         try {
-            // Prepare the payload with updated childEntries IDs matching parentAddressSchemeEntriesId
-            const payload = {
-                id: formData.id,
-                name: formData.name,
-                childEntries: formData.childEntries.map((entry) => ({
-                    ...entry,
-                    id: entry.parentAddressSchemeEntriesId // Ensure childEntries ID matches parentAddressSchemeEntriesId
-                }))
-            };
+            const payload = mapRowsToPayload();
 
-            alert(JSON.stringify(payload))
-            await editParentSchemeChildEntriesByID(formData.id, payload);
+            // alert(JSON.stringify(payload))
 
-            // Example of refreshing data after update
-            await refetch(); // Refresh the data after update
+            await editParentSchemeChildEntriesByID(payload.id, payload);
 
+            await refetch();
         } catch (error) {
             console.error("Error submitting form:", error);
         }
@@ -220,7 +240,10 @@ function EditJurisdiction() {
     return (
         <div className="w-full p-5">
             <div className="w-full">
-                <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)} style={{ display: "inline-flex", width: "100%" }}>
+                <form className="flex flex-col gap-6" onSubmit={(e) => {
+                    e.preventDefault();
+                    onSubmitHandler(getValues())
+                }} style={{ display: "inline-flex", width: "100%" }}>
                     <div className="w-full text-primary-dark flex justify-between">
                         <div>
                             <h3 className="font-semibold text-xl">Country / Jurisdiction Setup</h3>
@@ -237,7 +260,6 @@ function EditJurisdiction() {
                             </Link>
                             <button
                                 type="submit"
-                                onClick={handleSubmit(onSubmit)}
                                 className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
                             >
                                 <IoIosAddCircleOutline size={20} />Save

@@ -51,31 +51,9 @@ function AddSector() {
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [fileName, setFileName] = useState<{ name: string; size: number } | null>(null);
-  const [sectorlevels, setSectorLevels] = useState<SectorData[]>([]);
-  const [showSectorInput, setShowSectorInput] = useState<boolean>(false);
-  const [sectorlevel, setSectorLevel] = useState<SectorData>({
-    id: 0,
-    parentSector: "",
-    subSector: [],
-  });
-  const [editMode, setEditMode] = useState<number | null>(null);
-  const [newSubSector, setNewSubSector] = useState("");
-  const [editSubSectorIndex, setEditSubSectorIndex] = useState<number | null>(
-    null
-  );
-  const [editSectorName, setEditSectorName] = useState("");
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [sectorToDelete, setSectorToDelete] = useState<number | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [addingSector, setAddingSector] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, dirtyFields },
-    getValues,
-  } = useForm<typeOfSchema>({
+  const { register, handleSubmit, formState: { errors, dirtyFields }, getValues, } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
@@ -84,6 +62,7 @@ function AddSector() {
       sectors: [],
     },
   });
+  const [parentsectorItems, setParentSectorItems] = useState("");
 
   const { data: countriesData, isLoading: countriesLoading } = useQuery<
     Country[],
@@ -105,53 +84,7 @@ function AddSector() {
     }
   }, [getValues("countryName"), countriesData]);
 
-  const handleEditModalOpen: (
-    id: number,
-    subSectorIndex: number,
-    subSector: string
-  ) => void = (id, subSectorIndex, subSector) => {
-    setEditMode(id);
-    setEditSubSectorIndex(subSectorIndex);
-    setEditSectorName(subSector);
-    setShowEditModal(true);
-  };
 
-  const handleSaveEdit = () => {
-    if (editMode !== null && editSubSectorIndex !== null) {
-      setSectorLevels((prevSectorLevels) =>
-        prevSectorLevels.map((sectorlevel) =>
-          sectorlevel.id === editMode
-            ? {
-              ...sectorlevel,
-              subSector: sectorlevel.subSector.map((sub, idx) =>
-                idx === editSubSectorIndex ? editSectorName : sub
-              ),
-            }
-            : sectorlevel
-        )
-      );
-      setEditMode(null);
-      setEditSubSectorIndex(null);
-      setEditSectorName("");
-      setShowEditModal(false);
-    }
-  };
-
-  const handleDeleteModalOpen = (id: number) => {
-    // alert(id)
-    setSectorToDelete(id);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirmed = (id: number) => {
-    if (id !== null) {
-      setSectorLevels((prevSectorLevels) =>
-        prevSectorLevels.filter((sectorlevel) => sectorlevel.id !== id)
-      );
-      setShowDeleteModal(false);
-      setEditMode(null);
-    }
-  };
 
   const handleDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -190,70 +123,45 @@ function AddSector() {
       return;
     }
     setIsSubmitting(true);
-  
+
     try {
       if (IDImage && fileName) {
         const formData = new FormData();
         formData.append("file", IDImage);
+
         await csvUpload(formData, fileName.name);
-  
-        toast.success("CSV file uploaded Successfully", {
+
+        toast.success("CSV file uploaded successfully", {
           position: "top-center",
           duration: 3000,
           style: {
             color: "green",
           },
         });
-  
+
         setIDImage(null);
         setUploadProgress(0);
         setFileName({ name: "", size: 0 });
-  
-        setIsSubmitting(false);
-  
+
         router.push("/sector-setup");
-        return;
-      }
-  
-      if ((data.countryName && sectorlevels.length > 0) || sectorlevels.length > 0) {
-        const sectorPayload = {
-          id: data.id,
-          countryName: data.countryName,
-          sectors: sectorlevels,
-        };
-  
-        if (data.id && data.id > 0) {
-          await updateSector(sectorPayload);
-          toast.success("Sector updated Successfully", {
-            position: "top-center",
-            duration: 3000,
-            style: {
-              color: "green",
-            },
-          });
-        } else {
-          await createSector(sectorPayload);
-          toast.success("Sector created Successfully", {
-            position: "top-center",
-            duration: 3000,
-            style: {
-              color: "green",
-            },
-          });
-        }
-  
-        router.push("/sector-setup");
+        return; // Return early if file upload is successful
       } else {
-        toast.error("Please fill out the form or upload a CSV file.", {
+        toast.error("Please upload a CSV file before submitting.", {
           position: "top-center",
           duration: 3000,
+          style: {
+            color: "red",
+          },
         });
       }
     } catch (error: any) {
       console.error("Error occurred:", error);
-      toast.error("An error occurred. Please try again.", {
+      toast.error(`An error occurred: ${error.response?.data?.message || error.message}`, {
         position: "top-center",
         duration: 3000,
+        style: {
+          color: "red",
+        },
       });
     } finally {
       setIsSubmitting(false);
@@ -261,77 +169,34 @@ function AddSector() {
   };
 
 
-  const eitherActionCompleted = IDImage !== null || sectorlevels.length > 0;
+  const saveAndContinue = async (data: typeOfSchema) => {
+    const items = parentsectorItems
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item);
+    console.log("Dropdown items set:", items);
 
-  const isSaveDisabled =
-    isSubmitting ||
-    (IDImage !== null && sectorlevels.length > 0) ||
-    !eitherActionCompleted;
+    const formData = getValues();
+    console.log("Form values:", formData);
 
-  const handleAddSectorLevel = async () => {
-    if (newSubSector.trim() === "" || addingSector) return;
+    const Payload = {
+      countryName: formData.countryName,
+      sectors: items.map((item) => ({
+        parentSector: item,
+        subSector: [],
+      })),
+    };
+    console.log("Payload prepared:", Payload);
 
-    setAddingSector(true);
-
-    try {
-      const updatedSectorLevels = [...sectorlevels];
-      const sectorToUpdateIndex = updatedSectorLevels.findIndex(
-        (sector) => sector.parentSector === sectorlevel.parentSector
-      );
-
-      if (sectorToUpdateIndex !== -1) {
-        const sectorToUpdate = updatedSectorLevels[sectorToUpdateIndex];
-        if (!sectorToUpdate.subSector.includes(newSubSector)) {
-          sectorToUpdate.subSector.push(newSubSector);
-          updatedSectorLevels[sectorToUpdateIndex] = sectorToUpdate;
-        }
-      } else {
-        const newId = updatedSectorLevels.length + 1;
-        updatedSectorLevels.push({
-          id: newId,
-          parentSector: sectorlevel.parentSector,
-          subSector: [newSubSector],
-        });
-      }
-
-      setSectorLevels(updatedSectorLevels);
-      setNewSubSector("");
-      setShowSectorInput(false);
-    } catch (error) {
-      console.error("Error occurred while adding sector:", error);
-    } finally {
-      setAddingSector(false);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setSectorLevel((prevSectorLevel) => ({
-      ...prevSectorLevel,
-      parentSector: value,
-    }));
-  };
-
-  const handleInputChange = (index: number, value: string) => {
-    setSectorLevels((prevSectorLevels) => {
-      const updatedSectorLevels = [...prevSectorLevels];
-      const sectorToUpdateIndex = updatedSectorLevels.findIndex(
-        (sector) => sector.parentSector === sectorlevel.parentSector
-      );
-
-      if (sectorToUpdateIndex !== -1) {
-        updatedSectorLevels[sectorToUpdateIndex].subSector = [
-          ...updatedSectorLevels[sectorToUpdateIndex].subSector,
-          ...value.split(",").map((s) => s.trim()),
-        ];
-      }
-
-      return updatedSectorLevels;
+    toast.success("Sector saved successfully", {
+      position: "top-center",
+      duration: 3000,
+      style: {
+        color: "green",
+      },
     });
-  };
 
-  const handleNewSubSectorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewSubSector(e.target.value);
+    router.push(`/country-setup/parentsector-inputs?id=${formData.id}`);
   };
 
   return (
@@ -357,7 +222,6 @@ function AddSector() {
 
               <button
                 type="submit"
-                disabled={isSaveDisabled}
                 onClick={handleSubmit(onSubmit)}
                 className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               >
@@ -398,7 +262,7 @@ function AddSector() {
               />
             </div>
             <label className="inline-block mr-2 text-xs font-bold text-black-300">
-              Parent Sector Name
+              Parent Sectors
             </label>
             <div className="mb-5 relative">
               <TextInput
@@ -406,117 +270,19 @@ function AddSector() {
                 autoComplete="off"
                 className="rounded xl"
                 name="parentSector"
-                value={sectorlevel.parentSector}
+                value={parentsectorItems}
+                onChange={(e) => setParentSectorItems(e.target.value)}
                 style={{ width: "30%", height: "30%" }}
-                onChange={handleChange}
               />
             </div>
-            <label
-              className="inline-block mr-2 text-xs font-bold text-black-400"
-              htmlFor="input"
-            >
-              <GoDotFill className="inline-block " />
-              Sub-sectors
-            </label>
-            {sectorlevels.map((sectorlevel, index) => (
-              <div className="flex items-center mb-4" key={index}>
-                {editMode === sectorlevel.id ? (
-                  <input
-                    type="text"
-                    id={`sub-level-${index}`}
-                    name={`sectors[${index}].subSector`}
-                    value={sectorlevel.subSector.join(", ")}
-                    className="mr-2 px-5 border-b mb-1 pb-1"
-                    style={{ width: "30%" }}
-                    onChange={(e) =>
-                      handleInputChange(sectorlevel.id, e.target.value)
-                    }
-                  />
-                ) : (
-                  <div style={{ width: "100%" }}>
-                    {sectorlevel.subSector.map((sub, subIndex) => (
-                      <div
-                        key={subIndex}
-                        className="flex items-center"
-                        style={{ width: "100%" }}
-                      >
-                        <div
-                          className="mr-2 px-5 border-b mb-1 pb-1"
-                          style={{ width: "30%" }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <span>{sub}</span>
-                            <div className="flex items-center">
-                              <button
-                                type="button"
-                                className="rounded-full"
-                                onClick={() =>
-                                  handleEditModalOpen(
-                                    sectorlevel.id,
-                                    subIndex,
-                                    sub
-                                  )
-                                }
-                              >
-                                <EditIconSetup />
-                              </button>
-                              <button
-                                type="button"
-                                className="rounded-full ml-2"
-                                onClick={() =>
-                                  handleDeleteModalOpen(sectorlevel.id)
-                                }
-                              >
-                                <DeleteIcon />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {showSectorInput && (
-              <div
-                className="combined-input-container flex items-center mb-3"
-                style={{ width: "30%" }}
-              >
-                <TextInput
-                  name="subSector"
-                  type="text"
-                  autoComplete="off"
-                  className="rounded xl"
-                  style={{ width: "93%" }}
-                  value={newSubSector}
-                  onChange={handleNewSubSectorChange}
-                />
-                &nbsp;&nbsp;
-                <button
-                  type="button"
-                  onClick={handleAddSectorLevel}
-                  className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
-                >
-                  Add
-                </button>
-              </div>
-            )}
             <button
               type="button"
-              onClick={() => setShowSectorInput(true)}
-              className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
+              onClick={handleSubmit(saveAndContinue)}
+              className="bg-primary-green py-3 text-white text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl"
               style={{ width: "30%" }}
             >
               <IoIosAddCircleOutline />
-              Add Sub-Sector
+              Save and add Sub-sectors
             </button>
             <div
               style={{
@@ -584,64 +350,6 @@ function AddSector() {
           </div>
         </form>
       </div>
-      <Modal
-        isOpen={showEditModal}
-        setIsOpen={setShowEditModal}
-        title="Edit Sub-Sector"
-      >
-        <div>
-          <div className="px-7">
-            <TextInput
-              label="Sub-Sector name"
-              type="text"
-              placeholder=""
-              autoComplete="off"
-              value={editSectorName}
-              onChange={(e) => setEditSectorName(e.target.value)}
-            />
-          </div>
-
-          <div className="p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
-            <button
-              onClick={() => setShowEditModal(false)}
-              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSaveEdit}
-              className="bg-primary-green py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </Modal>
-
-      <Modal
-        isOpen={showDeleteModal}
-        setIsOpen={setShowDeleteModal}
-        title="Are you sure you want to delete sub-sector?"
-      >
-        <div>
-          <p className="px-5 mt-5 text-[#334155]">
-            The sub-sector will be deleted permanently
-          </p>
-
-          <div className=" float-center p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-center mt-5">
-            <button
-              onClick={() => {
-                if (sectorToDelete !== null) {
-                  handleDeleteConfirmed(sectorToDelete);
-                }
-              }}
-              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
-            >
-              Okay
-            </button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

@@ -9,15 +9,15 @@ import Link from "next/link";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import Modal from "@/components/Modal/Modal";
-import { GoDotFill } from "react-icons/go";
+import { Countrie } from "../components/Countries";
+import DataTable from "@/components/DataTable/DataTable";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import EditIconSetup from "@/public/icons/EditIconSetup";
 import SelectCountryEdit from "../components/selectCountryEdit";
 import TextInput from "../components/TextInput";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Countrie, Countrieses } from "../components/Countries";
-import { editSubsectorByID } from "@/services/features/sectorService";
 
 const schema = yup.object().shape({
   id: yup.number().required(),
@@ -32,21 +32,28 @@ const schema = yup.object().shape({
     .required(),
 });
 
+type Row = {
+  id: number;
+  regions: string;
+  districts: string;
+};
+
 function EditSector() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const Id = searchParams.get("id");
-  const countryId = searchParams.get("countryId");
-  const { data, isLoading } = useQuery({
-    queryKey: ["all sectorByID", countryId, Id],
-    queryFn: services.getSubSectorByID(Number(countryId), Number(Id)),
-    enabled: !!countryId && !!Id,
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["all parentSchemeEntries", Id],
+    queryFn: services.getJurisdictionEntriesById(Number(Id)),
+    enabled: !!Id,
   });
+
 
   const {
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
     watch,
   } = useForm({
@@ -61,95 +68,98 @@ function EditSector() {
       },
     },
   });
+  type typeOfSchema = yup.InferType<typeof schema>;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteAllModalOpen, setDeleteAllModalOpen] = useState(false);
+  const [editRow, setEditRow] = useState<Row | null>(null);
+  const [inputValue, setInputValue] = useState('');
+  const [rows, setRows] = useState<Row[]>([]);
 
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editValue, setEditValue] = useState<string>("");
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-  const [subSectorToDelete, setSubSectorToDelete] = useState<number | null>(
-    null
-  );
-
-  useEffect(() => {
-    if (data) {
-      setValue("id", data.id);
-      setValue("countryName", data.countryName);
-      setValue("sector.sectorId", data.sector.sectorId);
-      setValue("sector.subSectors", data.sector.subSectors);
-      setValue("sector.parentSector", data.sector.parentSector);
-    }
-  }, [data, setValue]);
-
-  const subSectors = watch("sector.subSectors");
-
-  const handleEdit = (index: number) => {
-    setEditIndex(index);
-    setEditValue(subSectors[index]);
-  };
 
   const handleSaveEdit = () => {
-    if (editIndex !== null) {
-      const updatedSubSectors = [...subSectors];
-      updatedSubSectors[editIndex] = editValue;
-      setValue("sector.subSectors", updatedSubSectors);
-      setEditIndex(null);
-      setEditValue("");
-    }
+
   };
 
-  const handleDelete = (index: number) => {
-    setSubSectorToDelete(index);
-    setShowDeleteModal(true);
+  const handleDeleteRow = async (row: Row | null) => {
   };
 
-  const handleDeleteConfirmed = () => {
-    if (subSectorToDelete !== null) {
-      const updatedSubSectors = subSectors.filter(
-        (_, i) => i !== subSectorToDelete
-      );
-      setValue("sector.subSectors", updatedSubSectors);
-      setShowDeleteModal(false);
-      setSubSectorToDelete(null);
-    }
+  const handleDeleteAll = async () => {
   };
 
-  const onSubmit = async () => {
-    try {
-      const subSectorsToSend = watch("sector.subSectors");
-      const sectorIdToSend = watch("sector.sectorId");
-      console.log("Submitting with sectorId:", sectorIdToSend);
-      console.log("Submitting subSectors:", subSectorsToSend);
+  const handleEditClick = (row: Row) => {
+    setEditRow(row);
+    setIsModalOpen(true);
+  };
 
-      const response = await editSubsectorByID(
-        Number(sectorIdToSend),
-        subSectorsToSend
-      );
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  }
+  const columns = [
+    {
+      field: "sector",
+      headerName: "Sector",
+      type: "actions",
+      align: "left",
+      headerAlign: "left",
+      flex: 1,
+      getActions: (params: any) => [
+        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
+          <div className="h-10 flex items-center justify-center"></div>
+          <div>
+            <p className="font-medium"></p>{params.row.regions}
+          </div>
+        </div>,
+      ],
+    },
+    {
+      field: "sub sector",
+      headerName: "Sub Sector",
+      flex: 4,
+      headerAlign: "left",
+      align: "middle",
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="flex flex-col gap-2 my-2" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+          <p className="font-medium text-sm">{params.row.districts}</p>
+        </div>,
+      ],
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div className="flex items-center justify-end" key={params.row.id}>
+          <button type="button" className="rounded-full " style={{ right: '-10px' }} onClick={() => handleEditClick(params.row)}>
+            <EditIconSetup />
+          </button>
+          <button type="button" className="rounded-full" style={{ right: '-10px' }} onClick={() => { setEditRow(params.row); setDeleteModalOpen(true); }}>
+            <DeleteIcon />
+          </button>
+        </div>
+      ],
+    },
+  ];
 
-      toast.success("Sub-sector edited successfully", {
-        position: "top-center",
-        duration: 3000,
-        style: {
-          color: "green",
-        },
-      });
-      router.push("/sector-setup"); // Redirect to sector setup page
-    } catch (error) {
-      console.error("Error submitting data:", error);
-      toast.error("Error submitting data");
-    }
+  const onSubmitHandler = async (formData: typeOfSchema) => {
+
   };
 
   return (
     <div className="w-full p-5">
       <div className="w-full">
-        <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="flex flex-col gap-6" onSubmit={(e) => {
+          e.preventDefault();
+          onSubmitHandler(getValues())
+        }} style={{ display: "inline-flex", width: "100%" }}>
           <div className="w-full text-primary-dark flex justify-between">
             <div>
-              <h3 className="font-semibold text-xl">Sector Setup</h3>
-              <p className="text-black-400 text-sm">
-                Configure all sectors for a jurisdiction
-              </p>
+              <h3 className="font-semibold text-xl">Edit Setup</h3>
+              <p className="text-black-400 text-sm">Edit parent sector and sub-sectors</p>
             </div>
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-3 items-center justify-end">
               <Link href="/sector-setup">
                 <button
                   type="button"
@@ -158,148 +168,174 @@ function EditSector() {
                   Cancel
                 </button>
               </Link>
-
               <button
                 type="submit"
                 className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               >
-                <IoIosAddCircleOutline size={20} />
-                Save Changes
+                <IoIosAddCircleOutline size={20} />Save
               </button>
             </div>
           </div>
           <div>
             <div className="mb-3 relative">
-              <SelectCountryEdit
+              {/* <SelectCountryEdit
                 label="Country"
                 autoComplete="off"
-                {...register("countryName")}
-                value={watch("countryName")}
-                error={errors.countryName?.message}
-                options={[data?.countryName || ""]} // Ensure options is an array
+                // {...register("name")}
+                // value={watch("name")}
+                // error={errors.name?.message}
+                // options={[data?.name || ""]}
                 readOnly
                 PrependIcon={
-                  data?.countryName ? (
-                    <img
-                      src={Countrie(data.countryName)?.flags.png}
-                      alt={Countrie(data.countryName)?.name.common}
-                      style={{ height: "auto", width: "30px" }}
-                    />
+                  data?.name ? (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <img
+                        src={Countrie(data.name)?.flags.png}
+                        alt={Countrie(data.name)?.name.common}
+                        style={{ height: 'auto', width: '30px', marginRight: '10px' }}
+                      />
+                    </div>
                   ) : null
                 }
                 style={{ width: "30%", height: "30%" }}
-              />
+              /> */}
             </div>
-            <label className="inline-block mr-2 text-xs font-bold text-black-300">
-              Parent Sector Name
-            </label>
-            <div className="mb-5 relative">
-              <TextInput
-                type="text"
-                autoComplete="off"
-                className="rounded xl"
-                {...register("sector.parentSector")}
-                error={errors.sector?.parentSector?.message}
-                style={{ width: "30%", height: "30%" }}
-                defaultValue={watch("sector.parentSector")}
-                readOnly
-              />
+          </div>
+          <div className="flex flex-col items-start" style={{ width: '100%' }}>
+            <div className="flex justify-between w-full mb-4">
+              <div>
+                <h4 className="font-bold text-black-400"></h4>
+                <span style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                  <p style={{ margin: 0, marginRight: '100px' }}></p>
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDeleteAllModalOpen(true)}
+                className="bg-primary-red disabled:bg-gray-400 flex text-white text-sm py-1.5 hover:opacity-95 items-center gap-2 rounded-xl ml-auto"
+                style={{ minHeight: '2.5rem', height: '2.5em', lineHeight: '2.0rem', fontSize: '0.875rem', padding: '0.25rem 0.5rem' }}
+              >
+                <RiDeleteBin6Line size={20} />Delete all sectors
+              </button>
             </div>
-            <label
-              className="inline-block mr-2 text-xs font-bold text-black-400"
-              htmlFor="input"
-            >
-              <GoDotFill className="inline-block " />
-              Sub-sectors
-            </label>
-            {subSectors &&
-              subSectors.map((subSector, index) => (
-                <div className="flex items-center mb-4" key={index}>
-                  <div style={{ width: "30%", borderBottom: "1px solid lightgray" }}>
-                    <div className="flex items-center justify-between">
-                      <input
-                        type="text"
-                        {...register(`sector.subSectors.${index}`)}
-                        defaultValue={subSector}
-                        className="mr-2 px-5 border-b pb-1 input-custom"
-                        style={{ width: "calc(100% - 50px)", borderBottom: "none" }}
-                        readOnly
-                      />
-                      <div className="flex items-center">
-                        <button type="button" onClick={() => handleEdit(index)} className="rounded-full">
-                          <EditIconSetup />
-                        </button>
-                        <button type="button" onClick={() => handleDelete(index)} className="rounded-full ml-2">
-                          <DeleteIcon />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              ))}
+            <div className="w-full">
+              <DataTable isLoading={isLoading} rows={rows} columns={columns} />
+            </div>
           </div>
         </form>
       </div>
-
-      {editIndex !== null && (
-        <Modal
-          isOpen={editIndex !== null}
-          setIsOpen={() => setEditIndex(null)}
-          title="Edit Sub-Sector"
-        >
-          <div>
-            <div className="px-7">
-              <TextInput
-                label="Sub-Sector name"
-                type="text"
-                placeholder=""
-                autoComplete="off"
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-              />
-            </div>
-
-            <div className="p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
-              <button
-                onClick={() => setEditIndex(null)}
-                className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveEdit}
-                className="bg-primary-green py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl"
-              >
-                Save
-              </button>
-            </div>
+      <Modal
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+        title="Edit Values"
+      >
+        <div>
+          <div className="px-7">
+            <TextInput
+              type="text"
+              placeholder="Edit Regions"
+              autoComplete="off"
+              value={editRow?.regions || ""}
+              onChange={(e) => setEditRow(prevState => ({ ...prevState!, regions: e.target.value }))}
+            />
           </div>
-        </Modal>
-      )}
-
-      {showDeleteModal && (
-        <Modal
-          isOpen={showDeleteModal}
-          setIsOpen={setShowDeleteModal}
-          title="Are you sure you want to delete this sub-sector?"
-        >
-          <div>
-            <p className="px-5 mt-5 text-[#334155]">
-              The sub-sector will be deleted permanently.
-            </p>
-
-            <div className="p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-center mt-5">
-              <button
-                onClick={handleDeleteConfirmed}
-                className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
-              >
-                Okay
-              </button>
-            </div>
+          <div className="px-7">
+            <TextInput
+              type="text"
+              placeholder="Edit Districts"
+              autoComplete="off"
+              value={editRow?.districts || ""}
+              extraClasses="h-[90px]"
+              onChange={(e) => setEditRow(prevState => ({ ...prevState!, districts: e.target.value }))}
+            />
           </div>
-        </Modal>
-      )}
+
+          <div className="p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
+              onClick={() => {
+                setEditRow(null);
+                setIsModalOpen(false);
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSaveEdit}
+              className="bg-primary-green py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl"
+            >
+              <IoIosAddCircleOutline size={20} /> Save
+            </button>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={deleteModalOpen}
+        setIsOpen={setDeleteModalOpen}
+        title="Are you sure you want delete this ?"
+      >
+        <div>
+          <p className="px-5 text-center mt-5 text-[#334155]">
+            Deleting this would delete all the values you have inputed
+          </p>
+          <p className="text-center text-[#334155]">
+            under this {data?.parentAddressScheme.name}.
+          </p>
+          <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
+              onClick={() => setDeleteModalOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => handleDeleteRow(editRow)}
+              className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl"
+            >
+              Yes, delete values
+            </button>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={deleteAllModalOpen}
+        setIsOpen={setDeleteAllModalOpen}
+        title="Are you sure you want to delete all values"
+      >
+        <div>
+          <p className="px-5 text-center mt-5 text-[#334155]">
+            Deleting all {data?.parentAddressScheme.name} would delete all the {data?.parentAddressScheme.name} and sub-
+          </p>
+          <p className="text-center text-[#334155] mb-3">
+            level values you have inputted.
+          </p>
+          <p className="text-center text-sm text-[#334155] mt-5">Type the phrase “delete all” to delete the {data?.parentAddressScheme.name}.</p>
+          <div className="px-7">
+            <TextInput
+              type="text"
+              autoComplete="off"
+              value={inputValue}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              onClick={() => setDeleteAllModalOpen(false)}
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteAll}
+              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${inputValue === 'delete all' ? 'bg-primary-red' : 'bg-red-300'} ${inputValue !== 'delete all' ? 'cursor-not-allowed' : ''}`}
+              disabled={inputValue !== 'delete all'}
+            >
+              Yes,delete all
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
