@@ -64,7 +64,7 @@ function DocumentCard({ document }: any) {
       })
       .catch((error) => {
         console.error("Error fetching the file:", error);
-        toast.error("Error occured downloading file");
+        toast.error("Error downloading. Please try again");
       });
   };
 

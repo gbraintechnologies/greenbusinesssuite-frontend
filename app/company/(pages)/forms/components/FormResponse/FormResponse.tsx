@@ -17,6 +17,16 @@ const renderFormResponse = (formField: any) => {
       return (
         <input defaultValue={formField?.response} className="fit" readOnly />
       );
+    case "calendar":
+      return (
+        <input
+          disabled
+          defaultValue={formField?.response}
+          className="fit"
+          readOnly
+        />
+      );
+
     case "number":
       return (
         <input defaultValue={formField?.response} className="fit" readOnly />
