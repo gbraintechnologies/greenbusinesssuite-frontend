@@ -8,8 +8,6 @@ import { Fragment, useState } from "react";
 // icons
 import { BsThreeDots } from "react-icons/bs";
 
-import { useRouter } from "next/navigation";
-
 import { IoDocumentAttachOutline } from "react-icons/io5";
 
 // utils
@@ -17,31 +15,65 @@ import FormatDate from "@/utils/FormatDate/FormatDate";
 
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import useUser from "@/hooks/useUser";
+
+import {
+  Modal,
+  ModalContent,
+  ModalBody,
+  useDisclosure,
+} from "@nextui-org/modal";
+
+//
 import services from "@/services";
+
+// components
 import { startWithCapital } from "@/utils/Capitalize/startWithCapital";
+import DocumentViewer from "./DocumentViewer";
 
 function DocumentCard({ document }: any) {
   //
   let { id, fileName, createdOn, url, formId } = document;
 
+  //
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   // console.log("document", document);
 
   const queryClient = useQueryClient();
 
-  const router = useRouter();
+  const handleDownload = (url: string, fileName: string) => {
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName || "downloaded-file";
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error fetching the file:", error);
+        toast.error("Error occured downloading file");
+      });
+  };
 
   const options = [
     {
       title: "View",
       func: () => {
-        // router.push(`/client/form?id=${document?.id}`);
+        onOpen();
       },
     },
     {
       title: "Download",
       func: () => {
-        // router.push(`/client/form?id=${document?.id}`);
+        handleDownload(url, fileName);
       },
     },
   ];
@@ -81,7 +113,7 @@ function DocumentCard({ document }: any) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
+                <Menu.Items className="absolute z-50  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
                   {options &&
                     // @ts-ignore
                     options?.map((option: any, idx: any) => {
@@ -106,6 +138,32 @@ function DocumentCard({ document }: any) {
           </div>
         </div>
       </div>
+
+      {/* Viewing DOCUMENT */}
+      <Modal
+        size="full"
+        backdrop="opaque"
+        className="bg-white rounded-lg p-5"
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        classNames={{
+          backdrop: "bg-black bg-opacity-20 backdrop-opacity-20",
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                <DocumentViewer
+                  url={url}
+                  fileName={fileName}
+                  onClose={onClose}
+                />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 }
