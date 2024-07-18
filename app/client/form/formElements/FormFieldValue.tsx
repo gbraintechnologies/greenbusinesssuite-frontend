@@ -84,6 +84,8 @@ function FormFieldValue({ field, section, viewOnly }: any) {
   // email
   // phone
 
+  // calendar
+
   // main styles
 
   const inputStyle = `border-[0.7px] w-full  text-black placeholder:text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg`;
@@ -325,6 +327,32 @@ function FormFieldValue({ field, section, viewOnly }: any) {
               );
             })}
           </div>
+        </div>
+      );
+
+    case "calendar":
+      return (
+        <div
+          className={`${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3 
+          `}
+        >
+          <label className="font-sm text-gray-400">
+            {label ? label : "No label"}
+          </label>
+
+          <input
+            onBlur={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
+            disabled={viewOnly}
+            value={field?.response}
+            onChange={(e) =>
+              saveSingleResponse(section?.id, field?.id, e.target.value)
+            }
+            className="block mt-2 w-full border-gray-400 text-gray-500 border px-3 py-2 rounded-lg"
+            placeholder={placeHolder ? placeHolder : "No placeholder specified"}
+            type="date"
+          />
         </div>
       );
 

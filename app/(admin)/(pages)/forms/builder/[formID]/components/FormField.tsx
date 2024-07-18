@@ -177,6 +177,30 @@ function FormField({ field, section }: any) {
         </div>
       );
 
+    case "calendar":
+      return (
+        <div
+          onClick={() => setActiveField({ field, section })}
+          className={`
+           ${field?.id === activeField?.field?.id && activeFieldStyle}
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
+          `}
+        >
+          <label className="font-sm text-gray-400">
+            {label ? label : "No label"}
+          </label>
+          {/* <p className="mt-2">
+            {placeHolder ? placeHolder : "No placeholder specified"}
+          </p> */}
+          <input
+            disabled
+            className="block mt-2 w-full border-gray-400 text-gray-500 border px-3 py-2 rounded-lg"
+            placeholder={placeHolder ? placeHolder : "No placeholder specified"}
+            type="date"
+          />
+        </div>
+      );
+
     case "upload":
       return (
         <div

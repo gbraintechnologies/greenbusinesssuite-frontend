@@ -102,6 +102,20 @@ export const defaultFormElements = [
     },
   },
   {
+    icon: <IoCalendarOutline size={18} />,
+    name: "Date of birth",
+    properties: {
+      ...template,
+      fieldDataType: "calendar",
+      horizontalAlign: true,
+      name: "Date of birth",
+      choiceValues: [],
+      description: "Select date of birth",
+      label: "Date of birth",
+      placeHolder: "Select your date of birth",
+    },
+  },
+  {
     icon: <FaRegBuilding size={18} />,
     name: "Business information",
     properties: {
@@ -156,9 +170,10 @@ export const defaultFormElements = [
       ...template,
       fieldDataType: "calendar",
       name: "Date Select",
+      horizontalAlign: true,
       choiceValues: [],
       description: "Select date",
-      label: "Select date",
+      label: "Date",
       placeHolder: "Select date",
     },
   },

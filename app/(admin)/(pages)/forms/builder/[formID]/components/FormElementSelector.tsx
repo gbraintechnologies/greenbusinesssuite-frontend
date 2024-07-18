@@ -5,6 +5,8 @@ import { Fragment, useEffect, useRef, useState } from "react";
 // components
 import Loader from "@/components/BeatLoader/Loader";
 
+import "./index.css";
+
 // default form elements
 import { defaultFormElements } from "@/components/FormElements/FormElements";
 
@@ -49,18 +51,29 @@ export default function FormElementSelector({ section }: any) {
             <div className="px-1 py-1 ">
               {elements.map((item: any, idx: any) => {
                 return (
-                  <>
-                    <p>Preset form elements</p>
-                    <Menu.Item>
+                  <Menu.Item>
+                    <div>
+                      {idx === 6 && (
+                        <p className="custom-p text-left ml-4">
+                          Configurable form elements
+                        </p>
+                      )}
+                      {idx === 0 && (
+                        <p className="custom-p2 text-left ml-4">
+                          Preset elements
+                        </p>
+                      )}
+
                       <button
                         onClick={item.func}
-                        className="group flex gap-2 w-full hover:bg-gray-100 items-center rounded-md px-2 py-3 text-sm"
+                        className={`${
+                          (idx == 6 || 0) && "-mt-4"
+                        } group flex gap-2 w-full hover:bg-gray-100 items-center rounded-md px-2 py-3 text-sm`}
                       >
                         {item.icon} {item.name}
                       </button>
-                      {idx === 4 && <p>Configuratable form elements</p>}
-                    </Menu.Item>
-                  </>
+                    </div>
+                  </Menu.Item>
                 );
               })}
             </div>
