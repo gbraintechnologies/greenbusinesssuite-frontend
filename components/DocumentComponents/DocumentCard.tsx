@@ -26,13 +26,15 @@ import {
 //
 import services from "@/services";
 
-// components
+// utils
 import { startWithCapital } from "@/utils/Capitalize/startWithCapital";
+
+// components
 import DocumentViewer from "./DocumentViewer";
 
 function DocumentCard({ document }: any) {
   //
-  let { id, fileName, createdOn, url, formId } = document;
+  let { fileName, createdOn, url, formId } = document;
 
   //
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -45,7 +47,9 @@ function DocumentCard({ document }: any) {
     fetch(url)
       .then((response) => response.blob())
       .then((blob) => {
-        const url = window.URL.createObjectURL(new Blob([blob]));
+        const url =
+          typeof window !== "undefined" &&
+          window.URL.createObjectURL(new Blob([blob]));
 
         const link = document.createElement("a");
         link.href = url;
@@ -55,7 +59,8 @@ function DocumentCard({ document }: any) {
         link.click();
 
         document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+        // @ts-ignore
+        typeof window !== "undefined" && window.URL.revokeObjectURL(url);
       })
       .catch((error) => {
         console.error("Error fetching the file:", error);

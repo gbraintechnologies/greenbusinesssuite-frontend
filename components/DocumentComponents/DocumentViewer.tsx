@@ -1,16 +1,23 @@
-import React from "react";
+"use client";
 
-// @ts-ignore
-import FileViewer from "react-file-viewer";
+import React, { useState } from "react";
 
 //
 import { startWithCapital } from "@/utils/Capitalize/startWithCapital";
 import { Button } from "@nextui-org/button";
 
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import "@cyntler/react-doc-viewer/dist/index.css";
+
 //
 import { IoCloseCircleOutline } from "react-icons/io5";
 
 function DocumentViewer({ fileName, url, onClose }: any) {
+  const docs = [
+    { uri: url }, // Remote file
+  ];
+  const [activeDocument, setActiveDocument] = useState(docs[0]);
+
   return (
     <div className="mt-[3.5rem]">
       <div className="w-full flex items-center justify-between">
@@ -20,17 +27,14 @@ function DocumentViewer({ fileName, url, onClose }: any) {
         </Button>
       </div>
 
+      <hr />
       <div className="min-h-[80vh]">
-        <FileViewer
-          fileType={fileName?.split(".")[1]}
-          filePath={url}
-          // errorComponent={CustomErrorComponent}
-          // onError={(e) => {
-          //   console.log("erropr", e);
-          // }}
+        <DocViewer
+          documents={docs}
+          activeDocument={activeDocument}
+          pluginRenderers={DocViewerRenderers}
         />
       </div>
-      <hr />
     </div>
   );
 }

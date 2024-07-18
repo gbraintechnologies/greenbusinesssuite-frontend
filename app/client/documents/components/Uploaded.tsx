@@ -1,5 +1,9 @@
+"use client";
+
 import useUser from "@/hooks/useUser";
 import services from "@/services";
+
+//
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 
@@ -42,9 +46,12 @@ function Uploaded() {
       {(uploaded == undefined || uploaded?.length === 0) && <NoDocuments />}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {uploaded?.map((document: any) => {
-          return <DocumentCard document={document} key={document?.id} />;
-        })}
+        {uploaded &&
+          uploaded?.map((document: any) => {
+            return (
+              <DocumentCard document={document} key={document?.fileName} />
+            );
+          })}
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ import GeneralFormSettings from "./components/GeneralFormSettings";
 
 function FormEditing({ params }: any) {
   useEffect(() => {
-    window.scrollTo(0, 0);
+    typeof window !== "undefined" && window.scrollTo(0, 0);
   }, []);
 
   const { view, selectForm } = useForm();
