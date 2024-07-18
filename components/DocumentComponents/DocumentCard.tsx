@@ -26,13 +26,15 @@ import {
 //
 import services from "@/services";
 
-// components
+// utils
 import { startWithCapital } from "@/utils/Capitalize/startWithCapital";
+
+// components
 import DocumentViewer from "./DocumentViewer";
 
 function DocumentCard({ document }: any) {
   //
-  let { id, fileName, createdOn, url, formId } = document;
+  let { fileName, createdOn, url, formId } = document;
 
   //
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

@@ -64,9 +64,12 @@ function Issued() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {issuedDocsForClient?.map((document: any) => {
-          return <DocumentCard document={document} key={document?.id} />;
-        })}
+        {issuedDocsForClient &&
+          issuedDocsForClient?.map((document: any) => {
+            return (
+              <DocumentCard document={document} key={document?.fileName} />
+            );
+          })}
       </div>
     </div>
   );
