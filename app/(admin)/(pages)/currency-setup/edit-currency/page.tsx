@@ -38,11 +38,6 @@ interface Denomination {
     denominationType: string
 }
 
-interface Country {
-    id: number;
-    name: string;
-}
-
 function EditCurrency() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -52,9 +47,9 @@ function EditCurrency() {
     const [denominationAmount, setDenominationAmount] = useState<string>("");
     const [denominationType, setDenominationType] = useState<string>("");
 
-    const { data, isLoading, refetch } = useQuery({
+    const { data } = useQuery({
         queryKey: ["all currenciesByid", Id],
-        queryFn: services.getCurrencyByID(Number(Id)), // Ensure queryFn is wrapped in a function
+        queryFn: services.getCurrencyByID(Number(Id)),
         enabled: !!Id,
     });
 
@@ -98,13 +93,13 @@ function EditCurrency() {
         const updatedDenominations = [...(watch('denominations') as Denomination[])];
         if (editingIndex !== null) {
             updatedDenominations[editingIndex] = {
-                id: updatedDenominations[editingIndex].id, // keep the id of the denomination
+                id: updatedDenominations[editingIndex].id, 
                 amount: denominationAmount,
                 denominationType
             };
         } else {
             updatedDenominations.push({
-                id: Date.now(), // generate a new id for the new denomination
+                id: Date.now(), 
                 amount: denominationAmount,
                 denominationType
             });
@@ -141,6 +136,7 @@ function EditCurrency() {
         }
     }
 
+    const isAddOrUpdateDisabled = !denominationAmount || !denominationType;
     return (
         <div className="w-full p-5">
             <div className="w-full">
@@ -236,7 +232,8 @@ function EditCurrency() {
                         <button
                             type="button"
                             onClick={handleAddOrUpdate}
-                            className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
+                            disabled={isAddOrUpdateDisabled}
+                            className={`bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100 ${isAddOrUpdateDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                         >
                            {editingIndex !== null ? 'Update' : 'Add'}
                         </button>
