@@ -26,17 +26,17 @@ import { IFilter } from "@/types";
 
 function SingleFormCompany({ params }: any) {
   const [filters, setFilters] = useState([
-    { id: 1, name: "Insights", value: "insights" },
-    { id: 2, name: "Responses", value: "responses" },
+    { id: 0, name: "Insights", value: "insights" },
+    { id: 1, name: "Responses", value: "responses" },
   ]);
 
   
   const [activeFilterId, setActiveFilterId] = useQueryState('tab', {
     parse: Number,
     serialize: String,
-    defaultValue: 1
+    defaultValue: 0
   });
-  
+
   const [activeFilter, setActiveFilter] = useState(filters.find(filter => filter.id === activeFilterId) || filters[0]);
 
   const handleTabChange = (filter: IFilter) => {
