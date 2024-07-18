@@ -326,7 +326,7 @@ function FieldOptions() {
         )}
 
         {/* TODO: DELETE ELEMENT */}
-        <div className="px-2 mt-10">
+        {/* <div className="px-2 mt-10">
           <p className="font-medium text-base mb-4">Delete Element</p>
 
           <button
@@ -341,7 +341,7 @@ function FieldOptions() {
           >
             <AiOutlineDelete size={20} className="text-white cursor-pointer" />
           </button>
-        </div>
+        </div> */}
       </div>
     );
   }

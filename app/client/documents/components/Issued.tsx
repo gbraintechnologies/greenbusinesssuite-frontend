@@ -2,9 +2,13 @@ import useUser from "@/hooks/useUser";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
-import NoDocuments from "./NoDocuments";
-import DocumentCard from "./DocumentCard";
-import DocumentSkeleton from "./DocumentSkeleton";
+
+// components
+
+//
+import NoDocuments from "@/components/DocumentComponents/NoDocuments";
+import DocumentCard from "@/components/DocumentComponents/DocumentCard";
+import DocumentSkeleton from "@/components/DocumentComponents/DocumentSkeleton";
 
 function Issued() {
   // GET ALL FORM DETAILS
@@ -26,12 +30,12 @@ function Issued() {
 
   //
   const {
-    data: uploaded,
+    data: issuedDocsForClient,
     isLoading: loading,
     refetch,
   } = useQuery({
-    queryKey: ["all user issued docs", user?.id, companyId],
-    queryFn: services.getIssuedDocs(user?.id, companyId),
+    queryKey: ["all user issued docs for client", user?.id, companyId],
+    queryFn: services.getAllIssuedDocs(user?.id, companyId),
     enabled: Boolean(user?.id),
   });
 
@@ -52,10 +56,13 @@ function Issued() {
 
   return (
     <div>
-      {uploaded?.length === 0 && <NoDocuments text="No Issued Documents" />}
+      {(issuedDocsForClient == undefined ||
+        issuedDocsForClient?.length === 0) && (
+        <NoDocuments text="No Issued Documents" />
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {uploaded.map((document: any) => {
+        {issuedDocsForClient?.map((document: any) => {
           return <DocumentCard document={document} key={document?.id} />;
         })}
       </div>

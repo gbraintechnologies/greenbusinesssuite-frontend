@@ -193,7 +193,7 @@ function FormField({ field, section }: any) {
             <LuUploadCloud size={32} />
             {placeHolder ? placeHolder : "No placeholder specified"}
             <p className="text-xs font-light text-gray-500">
-              Supported formats: PNG, JPEG, PDF (5MB max file size)
+              Supported formats: PNG, JPEG, PDF (1MB max file size)
             </p>
             <button className="border border-gray-100 shadow px-3 py-1 rounded-lg mt-5">
               Select files{" "}

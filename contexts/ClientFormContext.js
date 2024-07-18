@@ -22,7 +22,24 @@ export const ClientFormProvider = ({ children }) => {
 
   const [savingResponses, setSavingResponses] = useState(false);
 
+  const [filesToSubmit, setFilesToSubmit] = useState([]);
+
   const router = useRouter();
+
+  const storeUploadedFile = (acceptedFiles) => {
+    //
+    for (let file of acceptedFiles) {
+      if (!filesToSubmit.some((f) => f === file)) {
+        setFilesToSubmit((prev) => [...prev, file]);
+      }
+    }
+  };
+
+  const removeStoredFile = (file) => {
+    setFilesToSubmit((prev) => [
+      ...prev.filter((item) => item.name !== file.name),
+    ]);
+  };
 
   const saveResponsesRemote = (userId) => {
     setSavingResponses(true);
@@ -36,19 +53,21 @@ export const ClientFormProvider = ({ children }) => {
       let formFields = [];
       for (let j = 0; j < section?.formFields?.length; j++) {
         let field = section?.formFields[j];
-        formFields.push({
-          id: field?.id,
-          response: field?.response ? field?.response : "",
-          formFieldId: field?.formFieldId,
-          fieldName: field?.name,
-          isStatisticalField: field?.isStatisticalField
-            ? field?.isStatisticalField
-            : false,
-          statisticalFunction: field?.statisticalFunction
-            ? field?.statisticalFunction
-            : "",
-          displayType: field?.displayType ? field?.displayType : "",
-        });
+        if (Boolean(field?.formFieldId)) {
+          formFields.push({
+            id: field?.id,
+            response: field?.response ? field?.response : "",
+            formFieldId: field?.formFieldId,
+            fieldName: field?.name,
+            isStatisticalField: field?.isStatisticalField
+              ? field?.isStatisticalField
+              : false,
+            statisticalFunction: field?.statisticalFunction
+              ? field?.statisticalFunction
+              : "",
+            displayType: field?.displayType ? field?.displayType : "",
+          });
+        }
       }
       formSections.push({
         id: section?.id,
@@ -80,6 +99,7 @@ export const ClientFormProvider = ({ children }) => {
         toast.dismiss();
         toast.success("Saved responses!");
         router.push("/client");
+        setFilesToSubmit([]);
       })
       .catch((e) => {
         toast.dismiss();
@@ -88,7 +108,7 @@ export const ClientFormProvider = ({ children }) => {
       });
   };
 
-  const submitAndCompleteForm = (userId) => {
+  const submitAndCompleteForm = async (userId) => {
     setSavingResponses(true);
 
     let data = clientForm;
@@ -100,19 +120,21 @@ export const ClientFormProvider = ({ children }) => {
       let formFields = [];
       for (let j = 0; j < section?.formFields?.length; j++) {
         let field = section?.formFields[j];
-        formFields.push({
-          id: field?.id,
-          response: field?.response ? field?.response : "",
-          formFieldId: field?.formFieldId,
-          fieldName: field?.name,
-          isStatisticalField: field?.isStatisticalField
-            ? field?.isStatisticalField
-            : false,
-          statisticalFunction: field?.statisticalFunction
-            ? field?.statisticalFunction
-            : "",
-          displayType: field?.displayType ? field?.displayType : "",
-        });
+        if (Boolean(field?.formFieldId)) {
+          formFields.push({
+            id: field?.id,
+            response: field?.response ? field?.response : "",
+            formFieldId: field?.formFieldId,
+            fieldName: field?.name,
+            isStatisticalField: field?.isStatisticalField
+              ? field?.isStatisticalField
+              : false,
+            statisticalFunction: field?.statisticalFunction
+              ? field?.statisticalFunction
+              : "",
+            displayType: field?.displayType ? field?.displayType : "",
+          });
+        }
       }
       formSections.push({
         id: section?.id,
@@ -121,6 +143,30 @@ export const ClientFormProvider = ({ children }) => {
       });
     }
 
+    // submit files if any
+    for (const file of filesToSubmit) {
+      const formData = new FormData();
+      formData.append("file", file);
+      // @ts-ignore
+      let fileName = file?.name;
+      let companyId = clientForm?.companyId;
+      let formId = clientForm?.id;
+
+      try {
+        await services.uploadUserFile(
+          userId,
+          companyId,
+          formId,
+          formData,
+          fileName
+        );
+        toast.success(`Submitted ${fileName} successfully!`);
+      } catch (e) {
+        toast.error(`Error submitting ${fileName}`);
+      }
+    }
+
+    // submit responses
     let response = {
       id: clientForm?.responseId,
       formId: clientForm?.id,
@@ -191,6 +237,10 @@ export const ClientFormProvider = ({ children }) => {
         savingResponses,
         setSavingResponses,
         submitAndCompleteForm,
+        storeUploadedFile,
+        removeStoredFile,
+        filesToSubmit,
+        setFilesToSubmit,
       }}
     >
       {children}

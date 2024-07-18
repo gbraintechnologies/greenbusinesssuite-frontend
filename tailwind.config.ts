@@ -8,6 +8,8 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@nextui-org/theme/dist/components/(button|dropdown|modal|ripple|spinner|menu|divider|popover).js",
   ],
   theme: {
     transparent: "transparent",
@@ -110,14 +112,22 @@ const config: Config = {
       pattern:
         /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
     },
-    ...["[#ffcc33]","[#3B82F6]", "[#16C8C7]","[#FFCE56]", "[#9966FF]", "[#FF9F40]",'#9CA3AF', // gray
-  "[#F472B6]", 
-  "[#10B981]", 
-  "[#F59E0B]", 
-  "[#EF4444]", 
-  "[#22D3EE]", 
-  "[#A3E635]", 
-  "[#C084FC]", ].flatMap((customColor) => [
+    ...[
+      "[#ffcc33]",
+      "[#3B82F6]",
+      "[#16C8C7]",
+      "[#FFCE56]",
+      "[#9966FF]",
+      "[#FF9F40]",
+      "#9CA3AF", // gray
+      "[#F472B6]",
+      "[#10B981]",
+      "[#F59E0B]",
+      "[#EF4444]",
+      "[#22D3EE]",
+      "[#A3E635]",
+      "[#C084FC]",
+    ].flatMap((customColor) => [
       `bg-${customColor}`,
       `border-${customColor}`,
       `hover:bg-${customColor}`,
@@ -130,8 +140,8 @@ const config: Config = {
       `ui-selected:bg-${customColor}`,
       `ui-selected:border-${customColor}`,
       `ui-selected:text-${customColor}`,
-    ])
-    ],
+    ]),
+  ],
   plugins: [require("@headlessui/tailwindcss"), require("@tailwindcss/forms")],
 };
 export default config;

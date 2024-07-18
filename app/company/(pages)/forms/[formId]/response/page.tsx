@@ -67,16 +67,22 @@ const page = ({ params }: any) => {
     data: formUserResponse,
     isLoading: userResponseLoading,
     refetch,
+    isRefetching,
   } = useQuery({
     queryKey: ["form", userId, formID],
     queryFn: services.retrieveFormUserResponses(userId, formID),
     enabled: Boolean(formID && userId),
   });
 
-  let mergedForm =
-    form &&
-    formUserResponse &&
-    mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData);
+  const [mergedForm, setMergedForm] = useState(null);
+  //
+  useEffect(() => {
+    if (!isRefetching && form && formUserResponse) {
+      setMergedForm(
+        mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData)
+      );
+    }
+  }, [form, formUserResponse]);
 
   // PROCESSING STATUSES
   const [statuses] = useState([
@@ -159,6 +165,7 @@ const page = ({ params }: any) => {
             imgHeight * ratio
           );
           pdf.save(
+            // @ts-ignore
             `${form?.name}-${userData?.first_name} ${userData?.last_name}-${mergedForm?.responseId}-response`
           );
           setPdfGenerating(false);
@@ -257,7 +264,7 @@ const page = ({ params }: any) => {
           </button>
 
           {/* CHANGE RESPONSE STATUS */}
-          {formUserResponse[0]?.status && (
+          {formUserResponse && formUserResponse[0]?.status && (
             <div className="flex flex-col gap-3">
               <Menu as={"div"} className={"z-20 relative inline-block"}>
                 <Menu.Button className=" border border-[rgba(226, 232, 240, 1)]  text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">

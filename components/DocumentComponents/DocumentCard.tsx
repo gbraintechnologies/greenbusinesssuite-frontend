@@ -10,7 +10,7 @@ import { BsThreeDots } from "react-icons/bs";
 
 import { useRouter } from "next/navigation";
 
-import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
+import { IoDocumentAttachOutline } from "react-icons/io5";
 
 // utils
 import FormatDate from "@/utils/FormatDate/FormatDate";
@@ -19,10 +19,13 @@ import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import useUser from "@/hooks/useUser";
 import services from "@/services";
+import { startWithCapital } from "@/utils/Capitalize/startWithCapital";
 
 function DocumentCard({ document }: any) {
   //
-  let { id, updatedOn } = document;
+  let { id, fileName, createdOn, url, formId } = document;
+
+  // console.log("document", document);
 
   const queryClient = useQueryClient();
 
@@ -30,9 +33,15 @@ function DocumentCard({ document }: any) {
 
   const options = [
     {
-      title: "Continue editing",
+      title: "View",
       func: () => {
-        router.push(`/client/form?id=${document?.id}`);
+        // router.push(`/client/form?id=${document?.id}`);
+      },
+    },
+    {
+      title: "Download",
+      func: () => {
+        // router.push(`/client/form?id=${document?.id}`);
       },
     },
   ];
@@ -41,17 +50,22 @@ function DocumentCard({ document }: any) {
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
         <button
-          className={`flex items-center bg-gradient-to-br from-[#FFCAD4] to bg-[#FEA7B7] justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          className={`flex items-center bg-gradient-to-br from-[#FFCAD4] to bg-[#FEA7B7] justify-center w-full  rounded-tl-lg rounded-tr-lg`}
         >
-          <FormPreviewIcon />
+          <div className="m-2 my-10 px-4 py-2 flex items-center justify-center  rounded-lg bg-white">
+            {/* ADD TYPE OF FILE: UPLOAD / ISSUE */}
+            <IoDocumentAttachOutline className="text-gray-600" size={30} />
+          </div>
         </button>
         <div className="p-3">
-          <button className="text-lg w-full text-left font-medium">
-            {/* @ts-ignore */}
-            {form?.name?.replace(/"/g, " ")}
+          <button className="text-base w-full text-left font-medium">
+            {startWithCapital(fileName?.split(".")[0])}
           </button>
           <div className="flex items-center justify-between mt-1">
-            <p className="text-xs font-light pr-4">{FormatDate(updatedOn)}</p>
+            {/* TODO: FORM NAME HERE Fetch form using formID */}
+            {/* UPDATE PREVIEW TO IGNORE UPLOAD ELEMENT */}
+            {/* UPDATE CLIENT TO ALSO IGNORE UPLOAD */}
+            <p className="text-xs font-light pr-4">{FormatDate(createdOn)}</p>
             <Menu as="div" className="relative">
               <div className="relative">
                 <Menu.Button className="relative">
@@ -73,22 +87,16 @@ function DocumentCard({ document }: any) {
                     options?.map((option: any, idx: any) => {
                       return (
                         <Menu.Item>
-                          <div>
-                            <button
-                              className={`${
-                                option.title.toLowerCase() === "delete"
-                                  ? "text-red-600"
-                                  : " text-gray-500"
-                              } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
-                              onClick={() => option.func()}
-                            >
-                              {option.title}
-                            </button>
-
-                            {idx % 2 === 0 && (
-                              <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
-                            )}
-                          </div>
+                          <button
+                            className={`${
+                              option.title.toLowerCase() === "delete"
+                                ? "text-red-600"
+                                : " text-gray-500"
+                            } py-3  px-4 font-light hover:bg-gray-50 cursor text-left w-full`}
+                            onClick={() => option.func()}
+                          >
+                            {option.title}
+                          </button>
                         </Menu.Item>
                       );
                     })}

@@ -124,7 +124,7 @@ function CompanyAdminAuth() {
       <div className="bg-[#f2f4f6] rounded-xl shadow-md">
         {" "}
         <form
-          className="flex flex-col w-[90%] md:max-w-[25rem] md:w-[25vw] gap-5 shadow-md bg-white p-6 rounded-xl"
+          className="flex flex-col w-[90%] md:max-w-[25rem] md:w-[25vw] min-w-[20rem] gap-5 shadow-md bg-white p-6 rounded-xl"
           onSubmit={handleSubmit(onSubmit)}
         >
           <h2 className="font-bold text-center text-xl">Sign in</h2>
