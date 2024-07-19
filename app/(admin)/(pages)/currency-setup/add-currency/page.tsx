@@ -3,12 +3,12 @@ import React, { ChangeEvent, useState, useEffect } from 'react';
 import TextInput from '../components/TextInput';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import SelectInputs from '../components/SelectInputs';
-import { RiDeleteBin5Line } from 'react-icons/ri';
-import { FiEdit2 } from 'react-icons/fi';
+import DeleteIcon from "@/public/icons/DeleteIcon";
+import EditIconSetup from "@/public/icons/EditIconSetup";
 import Link from 'next/link';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import SelectCountryInput from "../components/selectCountryInput";
@@ -50,13 +50,16 @@ function AddCurrency() {
     const [denomination, setDenomination] = useState({ id: 0, amount: "", name: "", denominationType: "" });
     type typeOfSchema = yup.InferType<typeof schema>;
     const router = useRouter();
-    const { data: countriesData, isLoading: countriesLoading } = useQuery<Country[], Error>({
+    const { data: countriesData } = useQuery<Country[], Error>({
         queryKey: ["all_countries"],
         queryFn: services.allJurisdictions(),
     });
 
 
     const handleAddLevel = () => {
+        if (denomination.amount.trim() === "" || denomination.denominationType.trim() === "") {
+            return;
+        }
         setDenominations([...denominations, denomination]);
         setDenomination({ id: 0, name: "", amount: "", denominationType: "" });
     };
@@ -243,7 +246,8 @@ function AddCurrency() {
                         <button
                             type="button"
                             onClick={handleAddLevel}
-                            className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100"
+                            disabled={denomination.amount.trim() === "" || denomination.denominationType.trim() === ""}
+                            className={`bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100 ${denomination.amount.trim() === "" || denomination.denominationType.trim() === "" ? 'cursor-not-allowed opacity-50' : ''}`}
                         >
                             Add
                         </button>
@@ -254,9 +258,21 @@ function AddCurrency() {
                             {denominations.map((denomination, index) => (
                                 <div key={denomination.id} className="combined-input-container flex items-center justify-between border-b mb-1 pb-1" style={{ width: "100%" }}>
                                     <span>{denomination.amount} &nbsp;{denomination.denominationType}</span>
-                                    <div style={{ display: "inline-flex", width: "30%", justifyContent: "flex-end" }}>
-                                        <FiEdit2 size={20} onClick={() => handleEdit(denomination.id.toString())} /> &nbsp;
-                                        <RiDeleteBin5Line size={20} onClick={() => handleDelete(index)} />
+                                    <div className="flex gap-1">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleEdit(denomination.id.toString())}
+                                            className=" text-white rounded-xl"
+                                        >
+                                            <EditIconSetup />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDelete(index)}
+                                            className=" text-white rounded-xl"
+                                        >
+                                            <DeleteIcon />
+                                        </button>
                                     </div>
                                 </div>
                             ))}

@@ -6,15 +6,11 @@ import FormatByte from "../components/FormatByte";
 import Link from "next/link";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { GoDotFill } from "react-icons/go";
 import { useForm } from "react-hook-form";
 import TextInput from "../components/TextInput";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import UploadAreaInput from "../components/UploadAreaInput";
-import DeleteIcon from "@/public/icons/DeleteIcon";
-import EditIconSetup from "@/public/icons/EditIconSetup";
-import Modal from "@/components/Modal/Modal";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import ExcelIcon from "@/public/icons/ExcelIcon";
@@ -119,53 +115,53 @@ function AddSector() {
 
 
   const onSubmit = async (data: typeOfSchema) => {
-    if (isSubmitting) {
-      return;
-    }
-    setIsSubmitting(true);
+    // if (isSubmitting) {
+    //   return;
+    // }
+    // setIsSubmitting(true);
 
-    try {
-      if (IDImage && fileName) {
-        const formData = new FormData();
-        formData.append("file", IDImage);
+    // try {
+    //   if (IDImage && fileName) {
+    //     const formData = new FormData();
+    //     formData.append("file", IDImage);
 
-        await csvUpload(formData, fileName.name);
+    //     await csvUpload(formData, fileName.name);
 
-        toast.success("CSV file uploaded successfully", {
-          position: "top-center",
-          duration: 3000,
-          style: {
-            color: "green",
-          },
-        });
+    //     toast.success("CSV file uploaded successfully", {
+    //       position: "top-center",
+    //       duration: 3000,
+    //       style: {
+    //         color: "green",
+    //       },
+    //     });
 
-        setIDImage(null);
-        setUploadProgress(0);
-        setFileName({ name: "", size: 0 });
+    //     setIDImage(null);
+    //     setUploadProgress(0);
+    //     setFileName({ name: "", size: 0 });
 
-        router.push("/sector-setup");
-        return; // Return early if file upload is successful
-      } else {
-        toast.error("Please upload a CSV file before submitting.", {
-          position: "top-center",
-          duration: 3000,
-          style: {
-            color: "red",
-          },
-        });
-      }
-    } catch (error: any) {
-      console.error("Error occurred:", error);
-      toast.error(`An error occurred: ${error.response?.data?.message || error.message}`, {
-        position: "top-center",
-        duration: 3000,
-        style: {
-          color: "red",
-        },
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    //     router.push("/sector-setup");
+    //     return;
+    //   } else {
+    //     toast.error("Please upload a CSV file before submitting.", {
+    //       position: "top-center",
+    //       duration: 3000,
+    //       style: {
+    //         color: "red",
+    //       },
+    //     });
+    //   }
+    // } catch (error: any) {
+    //   console.error("Error occurred:", error);
+    //   toast.error(`An error occurred: ${error.response?.data?.message || error.message}`, {
+    //     position: "top-center",
+    //     duration: 3000,
+    //     style: {
+    //       color: "red",
+    //     },
+    //   });
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
   };
 
 
@@ -179,24 +175,24 @@ function AddSector() {
     const formData = getValues();
     console.log("Form values:", formData);
 
-    const Payload = {
-      countryName: formData.countryName,
-      sectors: items.map((item) => ({
-        parentSector: item,
-        subSector: [],
-      })),
-    };
-    console.log("Payload prepared:", Payload);
+    // const Payload = {
+    //   countryName: formData.countryName,
+    //   sectors: items.map((item) => ({
+    //     parentSector: item,
+    //     //subSector: [],
+    //   })),
+    // };
+    // console.log("Payload prepared:", Payload);
 
-    toast.success("Sector saved successfully", {
-      position: "top-center",
-      duration: 3000,
-      style: {
-        color: "green",
-      },
-    });
+    // toast.success("Sector saved successfully", {
+    //   position: "top-center",
+    //   duration: 3000,
+    //   style: {
+    //     color: "green",
+    //   },
+    // });
 
-    router.push(`/country-setup/parentsector-inputs?id=${formData.id}`);
+    router.push(`/sector-setup/parentsector-inputs?id=${formData.id}`);
   };
 
   return (
