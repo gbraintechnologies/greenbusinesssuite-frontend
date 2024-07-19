@@ -6,11 +6,11 @@ import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 import FieldOptions from "./FieldOptions";
 
 function GeneralFormSettings({ refetch }: any) {
-  const { formLayout, setFormLayout, activeField } = useForm();
+  const { formLayout, setFormLayout, activeField, setActiveField } = useForm();
 
-  // useEffect(()=> {
-
-  // }, [])
+  useEffect(() => {
+    setActiveField(null);
+  }, []);
 
   if (activeField) {
     return <FieldOptions refetch={refetch} />;

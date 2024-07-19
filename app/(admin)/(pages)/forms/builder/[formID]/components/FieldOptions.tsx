@@ -72,15 +72,16 @@ function FieldOptions({ refetch }: any) {
       <div className="bg-white  pb-[25rem] h-screen  no-scrollbar  overflow-y-scroll  border-l-2 border-gray-200 p-3">
         {/* TABS */}
         <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
-          <button className="bg-white font-medium p-1 flex-1 rounded-lg">
-            General
-          </button>
-          <button className="flex-1 disabled:cursor-not-allowed">
+          <div className="bg-white text-center font-medium p-1 flex-1 rounded-lg">
+            Field Options
+          </div>
+
+          {/* <button className="flex-1 disabled:cursor-not-allowed">
             Options
           </button>
           <button className="flex-1 disabled:cursor-not-allowed">
             Advanced
-          </button>
+          </button> */}
         </div>
 
         {/* REQUIRED FIELD OR NOT */}
