@@ -120,6 +120,7 @@ const FormResponse = forwardRef(function FormResponse(
               const isHorizontalAlign = formField?.horizontalAlign;
 
               const itemClass = isHorizontalAlign ? "half-width" : "full-width";
+              if(formField?.fieldDataType !== "upload"){
               return (
                 <div className={itemClass} key={index}>
                   <div className={"input-holder"}>
@@ -127,7 +128,7 @@ const FormResponse = forwardRef(function FormResponse(
                     {renderFormResponse(formField)}
                   </div>
                 </div>
-              );
+              )};
             })}
           </div>
         </div>
