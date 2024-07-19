@@ -61,7 +61,7 @@ function FormEditing({ params }: any) {
       </div>
 
       <div className="w-[24%] overflow-y-scroll no-scrollbar fixed right-1">
-        <GeneralFormSettings />
+        <GeneralFormSettings refetch={refetch} />
       </div>
     </div>
   );

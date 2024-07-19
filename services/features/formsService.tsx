@@ -165,6 +165,10 @@ export const hardDeleteForm = (id: any) => {
   return authApi.delete(`/forms/builder/delete/${id}`);
 };
 
+export const deleteFormField = (id: any) => {
+  return authApi.delete(`/forms/builder/formfield/${id}`);
+};
+
 export const hardDeleteUserForm = (userId: any, formId: any) => {
   return authApi.delete(`/forms/response/delete/${userId}/${formId}`);
 };

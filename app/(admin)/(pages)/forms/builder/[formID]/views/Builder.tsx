@@ -160,7 +160,9 @@ function Builder({ data, refetch }: any) {
             {formSections
               ?.filter((item: any) => !item.isDeleted)
               ?.map((section: any, idx: any) => {
-                return <FormSection key={idx} section={section} />;
+                return (
+                  <FormSection refetch={refetch} key={idx} section={section} />
+                );
               })}
           </div>
 

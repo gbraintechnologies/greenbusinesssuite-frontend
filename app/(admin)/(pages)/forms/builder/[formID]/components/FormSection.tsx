@@ -13,7 +13,7 @@ import useForm from "@/hooks/useForm";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
-function FormSection({ section }: any) {
+function FormSection({ section, refetch }: any) {
   const { form } = useForm();
 
   const { data: formStatusCount } = useQuery({
