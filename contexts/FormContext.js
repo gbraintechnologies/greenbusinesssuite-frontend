@@ -64,6 +64,11 @@ export const FormProvider = ({ children }) => {
     setForm(data);
   };
 
+  const updateIsTemplate = (isTemplate) => {
+    setForm((prev) => ({ ...prev, isTemplate: isTemplate }));
+    updateRemoteForm({ ...form, isTemplate: isTemplate });
+  };
+
   const updateActiveField = (section, data) => {
     services
       .updateFormField({ ...data, updatedOn: new Date() })
@@ -227,6 +232,7 @@ export const FormProvider = ({ children }) => {
         addFormField,
         formLayout,
         setFormLayout,
+        updateIsTemplate,
       }}
     >
       {children}

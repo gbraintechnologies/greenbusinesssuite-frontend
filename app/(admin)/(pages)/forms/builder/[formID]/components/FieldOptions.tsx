@@ -27,7 +27,7 @@ import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 
 function FieldOptions({ refetch }: any) {
-  const { activeField, updateActiveField, form } = useForm();
+  const { activeField, updateActiveField, form, updateIsTemplate } = useForm();
 
   let [localField, setLocalField] = useState(activeField?.field);
 
@@ -75,10 +75,10 @@ function FieldOptions({ refetch }: any) {
           <button className="bg-white font-medium p-1 flex-1 rounded-lg">
             General
           </button>
-          <button disabled className="flex-1 disabled:cursor-not-allowed">
+          <button className="flex-1 disabled:cursor-not-allowed">
             Options
           </button>
-          <button disabled className="flex-1 disabled:cursor-not-allowed">
+          <button className="flex-1 disabled:cursor-not-allowed">
             Advanced
           </button>
         </div>
@@ -369,6 +369,36 @@ function FieldOptions({ refetch }: any) {
             </button>
           </div>
         )}
+
+        <Border />
+
+        {/* use as template */}
+        <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">
+          <div>
+            <p className="font-medium text-base">Use form as template</p>{" "}
+            <p className="text-xs font-light text-gray-500">
+              The form will be used by the assigned company, and a similar
+              template will be created for reuse with other forms.
+            </p>
+          </div>
+          <Switch
+            checked={form?.isTemplate}
+            onChange={() => {
+              //  set form as template
+              updateIsTemplate(!form?.isTemplate);
+            }}
+            className={`${form?.isTemplate ? "bg-primary-green" : "bg-gray-500"}
+          relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
+          >
+            <span
+              aria-hidden="true"
+              className={`${
+                form?.isTemplate ? "translate-x-6" : "translate-x-0"
+              }
+            pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+            />
+          </Switch>
+        </div>
       </div>
     );
   }

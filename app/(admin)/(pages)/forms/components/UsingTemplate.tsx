@@ -1,7 +1,9 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 
 //
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 
 //
@@ -10,9 +12,14 @@ import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
+//
+
 function UsingTemplate() {
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
+
+  const queryClient = useQueryClient();
   const { data: forms, isLoading } = useQuery({
     queryKey: ["form templates"],
     queryFn: services.allFormTemplates(),
@@ -21,6 +28,34 @@ function UsingTemplate() {
   const useTemplate = (id: any) => {
     //
     toast.loading("Creating form using template");
+    setLoading(true);
+    toast.loading("Creating form...");
+    services
+      .createNewForm({
+        name: "Untitled",
+        url: "",
+        description: "",
+        formInstruction: "",
+        formSections: [],
+        userMandatory: false,
+        publishStatus: "DRAFT",
+        isDeleted: false,
+        createdOn: new Date(),
+        updatedOn: new Date(),
+      })
+      .then((res) => {
+        setLoading(false);
+        toast.dismiss();
+        queryClient.invalidateQueries({
+          queryKey: ["all forms"],
+        });
+        //
+        router.push(`/forms/builder/${res.data}`);
+      })
+      .catch((e: Error) => {
+        toast.dismiss();
+        toast.error("Error occured");
+      });
   };
 
   return (
