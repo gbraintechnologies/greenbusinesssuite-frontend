@@ -73,7 +73,7 @@ function FieldOptions({ refetch }: any) {
         {/* TABS */}
         <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
           <div className="bg-white text-center font-medium p-1 flex-1 rounded-lg">
-            Field Options
+            Options & Settings
           </div>
 
           {/* <button className="flex-1 disabled:cursor-not-allowed">
