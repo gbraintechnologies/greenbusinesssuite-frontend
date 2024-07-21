@@ -1,0 +1,19 @@
+.next
+node_modules
+.env
+notes
+package-lock.json
+
+# local env files
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# 
+notes.md
