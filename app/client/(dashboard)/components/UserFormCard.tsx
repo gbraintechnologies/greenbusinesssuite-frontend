@@ -187,8 +187,6 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     enabled: Boolean(id && user?.id),
   });
 
-  console.log("formuser reso", formUserResponse);
-
   const [options, setOptions] = useState(null);
 
   useEffect(() => {

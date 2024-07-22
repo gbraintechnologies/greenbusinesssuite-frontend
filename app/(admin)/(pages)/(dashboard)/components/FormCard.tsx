@@ -81,7 +81,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
           })
           .catch((e) => {
             toast.dismiss();
-            console.log("e dyupl", e);
+
             toast.error("Error duplicating form");
           });
       },
