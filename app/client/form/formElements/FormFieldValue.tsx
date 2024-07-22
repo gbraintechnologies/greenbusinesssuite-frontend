@@ -24,6 +24,7 @@ import { CiCircleInfo } from "react-icons/ci";
 
 //
 import toast from "react-hot-toast";
+import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 
 function FormFieldValue({ field, section, viewOnly }: any) {
   // functions
@@ -87,6 +88,14 @@ function FormFieldValue({ field, section, viewOnly }: any) {
   // calendar
 
   // main styles
+
+  const [phone, setPhone] = useState(null);
+
+  useEffect(() => {
+    if (fieldDataType === "phone") {
+      saveSingleResponse(section?.id, field?.id, phone);
+    }
+  }, [phone]);
 
   const inputStyle = `border-[0.7px] w-full  text-black placeholder:text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg`;
   const labelStyle = `font-sm text-gray-400`;
@@ -206,7 +215,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           <label className={labelStyle}>
             {label} <MandatoryLabel field={field} />
           </label>
-          <input
+          {/* <input
             type="number"
             onBlur={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
@@ -218,6 +227,12 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             }
             placeholder={placeHolder ? placeHolder : "Your answer here"}
             className={inputStyle}
+          /> */}
+          <PhoneSelector
+            style={{ outline: "none" }}
+            disabled={viewOnly}
+            value={field?.response}
+            setPhone={setPhone}
           />
         </div>
       );

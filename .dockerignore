@@ -17,3 +17,9 @@ next-env.d.ts
 
 # 
 notes.md
+
+
+.venv/
+.git/
+venv/
+*.pyc
