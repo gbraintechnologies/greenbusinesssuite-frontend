@@ -22,6 +22,11 @@ import useUser from "@/hooks/useUser";
 const Page = () => {
   const [filters] = useState([
     {
+      id: 0,
+      name: "All",
+      value: "all",
+    },
+    {
       id: 1,
       name: "Completed",
       value: "completed",
@@ -57,6 +62,12 @@ const Page = () => {
       queryFn: services.getUncompletedFormsByUserId(user?.id),
       enabled: Boolean(user?.id),
     });
+
+  const { data: allUserForms, isLoading: allUserFormsLoading } = useQuery({
+    queryKey: ["all user forms", user?.id],
+    queryFn: services.getAllFormsByUserId(user?.id),
+    enabled: Boolean(user?.id),
+  });
 
   const { data: completedForms, isLoading: areCompletedFormsLoading } =
     useQuery({
@@ -110,6 +121,12 @@ const Page = () => {
           />
         </div>
         <div className="mt-4">
+          {activeFilter.id === 0 && (
+            <CompletedForms
+              forms={allUserForms}
+              isFormsLoading={allUserFormsLoading}
+            />
+          )}
           {activeFilter.id === 1 && (
             <CompletedForms
               forms={completedForms}
