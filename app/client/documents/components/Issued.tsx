@@ -3,7 +3,7 @@
 import useUser from "@/hooks/useUser";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 // components
 
@@ -17,8 +17,30 @@ function Issued() {
 
   const { user } = useUser();
 
+  const [issued, setIssued] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const fetchIssued = async (uniqueCompanyIds: any) => {
+    setLoading(true);
+    let temp: any = [];
+    for (let i = 0; i < uniqueCompanyIds.length; i++) {
+      try {
+        await services
+          .getAllIssuedDocsRaw(user?.id, uniqueCompanyIds[i])
+          .then((res) => {
+            temp.push(...res.data);
+          });
+      } catch (e) {
+        //
+      }
+    }
+
+    setIssued(temp);
+    setLoading(false);
+  };
+
   // TODO: Get company id from user profile after major changes
-  let companyId = 4;
 
   // completed forms
   const { data: completedForms, isLoading: areCompletedFormsLoading } =
@@ -28,12 +50,28 @@ function Issued() {
       enabled: Boolean(user?.id),
     });
 
-  // console.log("completed forms", completedForms);
+  // TODO: TEMPORAL WAY OF FETCHING TO GET ALL ISSUED FROM ALL COMPANIES - AFTER MULTITENANCY CHANGE
+  useEffect(() => {
+    //
+    if (completedForms?.length > 0) {
+      setIssued([]);
+
+      const uniqueCompanyIds = [
+        // @ts-ignore
+        ...new Set(completedForms.map((item: any) => item.companyId)),
+      ];
+
+      fetchIssued(uniqueCompanyIds);
+    }
+  }, [completedForms, areCompletedFormsLoading]);
+
+  // TODO: Get companies from user form responses
+  let companyId = 7;
 
   //
   const {
     data: issuedDocsForClient,
-    isLoading: loading,
+    isLoading,
     refetch,
   } = useQuery({
     queryKey: ["all user issued docs for client", user?.id, companyId],
@@ -58,14 +96,13 @@ function Issued() {
 
   return (
     <div>
-      {(issuedDocsForClient == undefined ||
-        issuedDocsForClient?.length === 0) && (
+      {(issued == undefined || issued?.length === 0) && (
         <NoDocuments text="No Issued Documents" />
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         {issuedDocsForClient &&
-          issuedDocsForClient?.map((document: any) => {
+          issued?.map((document: any) => {
             return (
               <DocumentCard document={document} key={document?.fileName} />
             );

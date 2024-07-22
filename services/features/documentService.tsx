@@ -13,6 +13,10 @@ export const getAllIssuedDocs = (userId: any, companyId: any) => {
       .then((res) => res.data);
 };
 
+export const getAllIssuedDocsRaw = (userId: any, companyId: any) => {
+  return authApi.get(`/s3/resource/all-issued-docs/${userId}/${companyId}`);
+};
+
 export const uploadUserFile = (
   userId: any,
   companyId: any,
