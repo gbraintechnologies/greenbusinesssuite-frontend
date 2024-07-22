@@ -41,10 +41,36 @@ export const setPassword = ({
   });
 };
 
+// STEP 1
 export const attemptPasswordReset = (email: any) => {
   return noAuthApi.post("/users/noauth/attempt_password_reset/", {
     user_email: email,
   });
+};
+
+// STEP 2
+export const verifyResetAttempt = (code: string) => {
+  return noAuthApi
+    .get("/users/noauth/verify_password_reset/" + code)
+    .then((res) => res.data);
+};
+
+// STEP 3
+export const resetPassword = (
+  userId: string | number,
+  resetCode: string,
+  userEmail: string,
+  newPassword: string
+) => {
+  return noAuthApi
+    .post("/users/noauth/reset_password/", {
+      user_id: userId,
+      user_email: userEmail,
+      reset_code: resetCode,
+      new_password: newPassword,
+      otp_value: null,
+    })
+    .then((res) => res.data);
 };
 
 export const notifyUserTempCred = (id: any, channel: string) => {
@@ -56,4 +82,4 @@ export const notifyUserTempCred = (id: any, channel: string) => {
 
 export const userSelfSignUp = (data: any) => {
   return noAuthApi.post("/users/self_create_account/", data);
-}
+};
