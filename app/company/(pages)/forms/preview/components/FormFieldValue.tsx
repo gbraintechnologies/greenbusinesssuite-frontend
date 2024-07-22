@@ -1,12 +1,9 @@
 "use client";
 
-import useClientForm from "@/hooks/useClientForm";
-
 import formatBytes from "@/utils/FormatBytes/formatBytes";
 
 //
-import React, { useCallback, useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import React, { useEffect, useState } from "react";
 
 import {
   Dropdown,
@@ -23,60 +20,18 @@ import { LuUploadCloud } from "react-icons/lu";
 import { CiCircleInfo } from "react-icons/ci";
 
 //
-import toast from "react-hot-toast";
+
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 
 function FormFieldValue({ field, section, viewOnly }: any) {
   // functions
-  const {
-    saveSingleResponse,
-    storeUploadedFile,
-    setFilesToSubmit,
-    removeStoredFile,
-  } = useClientForm();
 
   //
   const { fieldDataType, horizontalAlign, placeHolder, label } = field;
 
   // for file uploads
-  const [selectedFiles, setSelectedFiles] = useState([]);
 
   // set all files in both files to submit and selected files to null when new here
-  useEffect(() => {
-    setFilesToSubmit([]);
-    setSelectedFiles([]);
-  }, []);
-
-  const onDrop = useCallback((acceptedFiles: any, fileRejections: any) => {
-    // @ts-ignore
-    setSelectedFiles((prev) => [...prev, ...acceptedFiles]);
-
-    storeUploadedFile(acceptedFiles);
-
-    // show errors for rejected files
-    fileRejections.map(({ file, errors }: any) => {
-      for (const error of errors) {
-        if (error.code === "file-too-large") {
-          toast.error(`${file.name} is larger than 1Mb`);
-        }
-
-        if (error.code === "file-invalid-type") {
-          toast.error(
-            `${file.name} is invalid and doesn't meet upload criteria`
-          );
-        }
-      }
-    });
-  }, []);
-
-  //
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    maxSize: 1048576,
-    accept: {
-      // 'image/jpeg': ['.jpeg', '.png']
-    },
-  });
 
   // TYPES
   // text
@@ -90,12 +45,6 @@ function FormFieldValue({ field, section, viewOnly }: any) {
   // main styles
 
   const [phone, setPhone] = useState(null);
-
-  useEffect(() => {
-    if (fieldDataType === "phone") {
-      saveSingleResponse(section?.id, field?.id, phone);
-    }
-  }, [phone]);
 
   const inputStyle = `border-[0.7px] w-full  text-black bg-white placeholder:text-gray-400 mt-2 border-gray-200 px-3 py-2 rounded-lg`;
   const labelStyle = `font-sm text-gray-400`;
@@ -112,14 +61,8 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             {label} <MandatoryLabel field={field} />
           </label>
           <textarea
-            onBlur={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             disabled={viewOnly}
             value={field?.response}
-            onChange={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             rows={5}
             placeholder={placeHolder ? placeHolder : "Your answer here"}
             className={inputStyle}
@@ -140,14 +83,8 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           </label>
           <input
             type="number"
-            onBlur={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             disabled={viewOnly}
             value={field?.response}
-            onChange={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             placeholder={placeHolder ? placeHolder : "Your answer here"}
             className={inputStyle}
           />
@@ -165,14 +102,8 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             {label} <MandatoryLabel field={field} />
           </label>
           <input
-            onBlur={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             disabled={viewOnly}
             value={field?.response}
-            onChange={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             placeholder={placeHolder ? placeHolder : "Your answer here"}
             className={inputStyle}
           />
@@ -190,15 +121,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             {label} <MandatoryLabel field={field} />
           </label>
           <input
-            onBlur={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             disabled={viewOnly}
             type="email"
             value={field?.response}
-            onChange={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             placeholder={placeHolder ? placeHolder : "Your answer here"}
             className={inputStyle}
           />
@@ -215,19 +140,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           <label className={labelStyle}>
             {label} <MandatoryLabel field={field} />
           </label>
-          {/* <input
-            type="number"
-            onBlur={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
-            disabled={viewOnly}
-            value={field?.response}
-            onChange={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
-            placeholder={placeHolder ? placeHolder : "Your answer here"}
-            className={inputStyle}
-          /> */}
+
           <PhoneSelector
             style={{ outline: "none" }}
             disabled={viewOnly}
@@ -250,14 +163,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
 
           <p className="mt-2 text-sm">{placeHolder}</p>
 
-          <Dropdown
-            isDisabled={viewOnly}
-            // classNames={{
-            //   base: "before:bg-default-200", // change arrow background
-            //   content: "p-0 border-small border-divider bg-background",
-            // }}
-            className="w-full"
-          >
+          <Dropdown isDisabled={viewOnly} className="w-full">
             <DropdownTrigger disabled={viewOnly} className="w-full">
               <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
                 {field?.response ? field?.response : "No option selected"}
@@ -273,9 +179,6 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                 return (
                   <DropdownItem
                     key={value}
-                    onClick={() =>
-                      saveSingleResponse(section?.id, field?.id, value)
-                    }
                     className="flex hover:bg-gray-100 px-4  items-center flex-row gap-2"
                   >
                     <p className="text-base">{value}</p>
@@ -313,25 +216,6 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                     className="form-check-input"
                     disabled={viewOnly}
                     checked={selected.includes(value)}
-                    onChange={(e) => {
-                      // speical case for checkboxes - using comma to store all values in string
-
-                      let update = selected;
-
-                      if (update.includes(value)) {
-                        update = update.filter(
-                          (item) => item !== e.target.value
-                        );
-                      } else {
-                        update.push(value);
-                      }
-
-                      saveSingleResponse(
-                        section?.id,
-                        field?.id,
-                        update.join(",")
-                      );
-                    }}
                     key={value}
                     value={value}
                     type="checkbox"
@@ -356,14 +240,8 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           </label>
 
           <input
-            onBlur={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             disabled={viewOnly}
             value={field?.response}
-            onChange={(e) =>
-              saveSingleResponse(section?.id, field?.id, e.target.value)
-            }
             className="block mt-2 w-full border-gray-400 text-gray-500 border px-3 py-2 rounded-lg"
             placeholder={placeHolder ? placeHolder : "No placeholder specified"}
             type="date"
@@ -374,58 +252,25 @@ function FormFieldValue({ field, section, viewOnly }: any) {
     case "upload":
       return (
         <>
-          <div>
+          <div
+            className={`
+  
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
+          `}
+          >
             <label className="font-sm text-gray-400 mb-2">
               {label ? label : "No label"}
             </label>
-            <div {...getRootProps()}>
-              <input {...getInputProps()} />
-              <div className="border text-gray-400 mt-2 border-gray-200 p-7 my-4 flex items-center justify-center flex-col gap-1 text-center text-sm rounded-lg">
-                <LuUploadCloud size={32} />
-                {placeHolder}
-                <p className="text-xs font-light text-gray-500">
-                  Supported formats: PNG, JPEG, PDF (1MB max file size)
-                </p>
-                <button className="border  hover:text-black border-gray-100 shadow px-3 py-1 rounded-lg mt-5">
-                  Select file(s){" "}
-                </button>
-              </div>
+            <div className="border text-gray-400 mt-2 border-gray-200 p-7 my-4 flex items-center justify-center flex-col gap-1 text-center text-sm rounded-lg">
+              <LuUploadCloud size={32} />
+              {placeHolder ? placeHolder : "No placeholder specified"}
+              <p className="text-xs font-light text-gray-500">
+                Supported formats: PNG, JPEG, PDF (1MB max file size)
+              </p>
+              <button className="border border-gray-100 shadow px-3 py-1 rounded-lg mt-5">
+                Select files{" "}
+              </button>
             </div>
-
-            {/*  */}
-            {selectedFiles?.length > 0 && (
-              <div>
-                <div className="my-4 text-gray-500 font-light">
-                  Selected Files
-                </div>
-                <div className="grid grid-cols-2 gap-4 mb-5">
-                  {selectedFiles?.map((file: any) => {
-                    return (
-                      <div className="flex gap-4 bg-gray-100 p-2 pl-3 justify-between rounded-lg">
-                        <div className="flex flex-col">
-                          <p className="font-semibold text-sm">{file?.name}</p>
-                          <p className="text-xs text-gray-600">
-                            {formatBytes(file?.size)}
-                          </p>
-                        </div>
-                        <IoCloseCircleOutline
-                          size={20}
-                          className="text-gray-500 w-10 hover:text-black cursor-pointer"
-                          onClick={() => {
-                            removeStoredFile(file);
-                            setSelectedFiles((prev) => [
-                              ...prev.filter(
-                                (item: any) => item.name !== file.name
-                              ),
-                            ]);
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* INFO NOTICE ON HOW FILES ARE HANDLES / PROCESSED */}

@@ -30,6 +30,12 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
 
   const options = [
     {
+      title: "Preview",
+      func: () => {
+        router.push(`/company/forms/preview/${id}`);
+      },
+    },
+    {
       title: "Details",
       func: () => {
         router.push(`/company/forms/${id}`);
@@ -132,9 +138,9 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
                             {option.title}
                           </button>
 
-                          {idx % 2 === 0 && (
+                          {/* {idx % 2 === 0 && (
                             <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
-                          )}
+                          )} */}
                         </div>
                       </Menu.Item>
                     );
