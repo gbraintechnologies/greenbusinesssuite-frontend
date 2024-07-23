@@ -40,7 +40,7 @@ function RegionInput() {
   const searchParams = useSearchParams();
   const parentId = searchParams.get('id');
   const router = useRouter();
-  const { data: initialEntries, isLoading } = useQuery<Entry[]>({
+  const { data: initialEntries } = useQuery<Entry[]>({
     queryKey: ['all Parent entries'],
     queryFn: services.getParentEntriesById(parseInt(parentId || '', 10)),
     enabled: !!parentId,
@@ -49,6 +49,7 @@ function RegionInput() {
   const [formEntries, setFormEntries] = useState<string[]>([]);
 
   useEffect(() => {
+    // alert(JSON.stringify(initialEntries))
     if (initialEntries) {
       setFormEntries(initialEntries.map(() => ''));
     }

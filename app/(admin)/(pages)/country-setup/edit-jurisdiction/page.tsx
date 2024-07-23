@@ -19,6 +19,7 @@ import { editParentSchemeChildEntriesByID, deleteParentAddressAndChildByID, dele
 import SelectCountryEdit from '../components/selectCountryEdit';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsDot } from "react-icons/bs";
+import toast from 'react-hot-toast';
 
 
 const schema = yup.object().shape({
@@ -75,7 +76,7 @@ function EditJurisdiction() {
     });
 
     useEffect(() => {
-        // alert(JSON.stringify(data))
+      // alert(JSON.stringify(data))
         if (data) {
             setValue("id", data.id);
             setValue("name", data.name);
@@ -151,6 +152,7 @@ function EditJurisdiction() {
             regions: editRow.regions,
             districts: editRow.districts,
         };
+        console.log(updatedRows)
         setRows(updatedRows);
         setIsModalOpen(false);
     };
@@ -196,46 +198,61 @@ function EditJurisdiction() {
 
     const mapRowsToPayload = () => {
         const row = rows[0];
-
+    
+        // Find the corresponding entry in the initial data
         const entry = data?.parentAddressScheme.entries.find((entry: any) => entry.name === row.regions);
-
+    
         return {
             id: row.id,
             name: row.regions,
             childEntries: row.districts.split(", ").map((district) => {
+                const trimmedDistrict = district.trim();
+                console.log('trimmed district',trimmedDistrict)
+    
+                // Find the corresponding child entry in the initial data
+                let childEntryId = 0;
                 if (entry) {
-                    const childEntry = entry.childEntries.find((child: any) => child.name === district.trim());
+                    console.log("entry",entry)
+                    const childEntry = entry.childEntries.find((child: any) => child.name === trimmedDistrict);
+                    console.log("childEntry",childEntry)
                     if (childEntry) {
-                        return {
-                            id: childEntry.id,
-                            name: district.trim(),
-                            parentAddressSchemeEntriesId: row.id,
-                        };
+                        childEntryId = childEntry.id;
                     }
                 }
+    
                 return {
-                    id: 0,
-                    name: district.trim(),
+                    id: childEntryId,
+                    name: trimmedDistrict,
                     parentAddressSchemeEntriesId: row.id,
                 };
             }),
         };
     };
+    
+    
+    
+        const onSubmitHandler = async (formData: typeOfSchema) => {
+            try {
+                const payload = mapRowsToPayload();
+    
+               // alert(JSON.stringify(payload))
+    
+                await editParentSchemeChildEntriesByID(payload.id, payload);
+    
+                toast.success("Edited Successfully", {
+                    position: "top-center",
+                    duration: 3000,
+                    style: {
+                        color: "green",
+                    },
+                });
+                 router.push("/country-setup");
+            } catch (error) {
+                console.error("Error submitting form:", error);
+            }
+        };
+    
 
-
-    const onSubmitHandler = async (formData: typeOfSchema) => {
-        try {
-            const payload = mapRowsToPayload();
-
-            // alert(JSON.stringify(payload))
-
-            await editParentSchemeChildEntriesByID(payload.id, payload);
-
-            await refetch();
-        } catch (error) {
-            console.error("Error submitting form:", error);
-        }
-    };
 
     return (
         <div className="w-full p-5">

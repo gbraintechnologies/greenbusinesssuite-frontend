@@ -9,27 +9,16 @@ import DataTable from "@/components/DataTable/DataTable";
 import services from "@/services";
 import Nav from "./components/Nav";
 import { useRouter } from "next/navigation";
-import { deleteBySubSectorID } from "@/services/features/sectorService";
+import { deleteBySectorID, deleteBySubSectorID } from "@/services/features/sectorService";
 import { Countrieses } from "./components/Countries";
 
-interface ParentSector {
-  id: number;
-  parentSector: string;
-  subSectorCount: number;
-}
-
-interface RowData {
-  id: number;
-  countryName: string;
-  parentSectors: ParentSector[];
-}
 
 interface FlattenedRowData {
   id: number;
   rowId: number;
   countryId: number;
   countryName: string;
-  parentSector: string;
+  parentSectorCount: number;
   subSectorCount: number;
 }
 
@@ -53,14 +42,14 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
   const handleEdit = () => {
     handleClose();
     router.push(
-      `/sector-setup/edit-sector?id=${row.rowId}&countryId=${row.countryId}`
+      `/sector-setup/edit-sector?id=${row.rowId}`
     );
   };
 
   const handleDelete = async () => {
     handleClose();
     try {
-      await deleteBySubSectorID(row.rowId);
+      await deleteBySectorID(row.rowId);
       onDeleteSuccess();
     } catch (error) {
       console.error("Error deleting row:", error);
@@ -99,16 +88,14 @@ const SectorSetup: React.FC = () => {
 
   useEffect(() => {
     if (data) {
-      const flattenedData = data.flatMap((sector: RowData) =>
-        sector.parentSectors.map((parentSector) => ({
-          id: parentSector.id, // unique identifier for each row (MUI DataGrid requirement)
-          rowId: parentSector.id, // unique identifier for each row
-          countryId: sector.id,
-          countryName: sector.countryName,
-          parentSector: parentSector.parentSector,
-          subSectorCount: parentSector.subSectorCount,
-        }))
-      );
+      const flattenedData = data.map((sector: any) => ({
+        id: sector.id,
+        rowId: sector.id,
+        countryId: sector.id,
+        countryName: sector.countryName,
+        parentSectorCount: sector.parentSectorCount,
+        subSectorCount: sector.subSectorCount,
+      }));
       setRows(flattenedData);
     }
   }, [data]);
@@ -152,14 +139,14 @@ const SectorSetup: React.FC = () => {
       ),
     },
     {
-      field: "parentSector",
+      field: "parentSectorCount",
       headerName: "Sectors",
       flex: 1,
       headerAlign: "left",
       align: "middle",
       renderCell: (params: any) => (
         <div className="flex flex-col gap-2">
-          <p className="font-medium text-sm">{params.row.parentSector}</p>
+          <p className="font-medium text-sm">{params.row.parentSectorCount}</p>
         </div>
       ),
     },
@@ -187,8 +174,7 @@ const SectorSetup: React.FC = () => {
 
   const filteredRows = rows.filter(
     (row) =>
-      row.countryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      row.parentSector.toLowerCase().includes(searchTerm.toLowerCase())
+      row.countryName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

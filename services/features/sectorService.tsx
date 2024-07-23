@@ -13,6 +13,10 @@ export const createSector = (data: any) => {
   return authApi.post("/sectors", data);
 };
 
+export const createorUpdateSector = (data: any) => {
+  return authApi.post("/sectors/createOrUpdate", data);
+};
+
 export const getSectorByCountry = (countryName: string) => {
   return () => authApi.get(`/sectors/info/${countryName}`).then((res) => res.data);
 };
@@ -35,6 +39,10 @@ export const deleteBySubSectorID = (subSectorID: any) => {
 
 export const deleteBySectorID = (id: any) => {
   return authApi.delete(`/sectors/${id}`);
+}; 
+
+export const deleteAllSectors = (id: any) => {
+  return authApi.delete(`/sectors/delete-all/${id}`);
 }; 
 
 export const getSectorByID = (sectorID: number) => {

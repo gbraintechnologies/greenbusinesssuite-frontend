@@ -38,7 +38,7 @@ const schema = yup.object().shape({
 
 function parentSectorInputs() {
   const searchParams = useSearchParams();
-  const parentId = searchParams.get('id');
+  const Id = searchParams.get('id');
   const router = useRouter();
 
   const { handleSubmit } = useForm<FormData>({
@@ -48,9 +48,12 @@ function parentSectorInputs() {
       entries: [],
     },
   });
+  useEffect(() => {
+    alert(JSON.stringify(Id))
+  }, [])
 
   const onSubmit = async () => {
-   
+
   };
 
   return (
@@ -59,25 +62,21 @@ function parentSectorInputs() {
         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="w-full text-primary-dark flex justify-between">
             <div>
-              <h3 className="font-semibold text-xl">Country / Jurisdiction Setup</h3>
-              <p className="text-black-400 text-sm">Configure all jurisdictions for the company</p>
+              <h3 className="font-semibold text-xl">Sector Setup</h3>
+              <p className="text-black-400 text-sm">Configure all sectors for the jurisdiction</p>
             </div>
-          </div>
-          <div>
-            <h4 className="font-bold text-black-400">Individual dropdown options</h4>
-            <p className="text-black-400 text-sm">Setup all Parent and Child sub-levels for the Country</p>
           </div>
 
           <div className="mt-4">
-              <div className="mb-1 relative">
-                <TextInput
-                  type="text"
-                  autoComplete="off" 
-                  placeholder="Enter comma separated values"
-                  className="rounded xl"
-                  style={{ width: '30%', height: '100px' }}
-                />
-              </div>
+            <div className="mb-1 relative">
+              <TextInput
+                type="text"
+                autoComplete="off"
+                placeholder="Enter comma separated values"
+                className="rounded xl"
+                style={{ width: '30%', height: '100px' }}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end mt-1" style={{ width: '30%' }}>

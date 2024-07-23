@@ -79,7 +79,7 @@ export const editJurisdictionEntriesByID = (
 };
 
 export const editParentSchemeChildEntriesByID = (ID: number, data: any) => {
-  return authApi.patch(`/jurisdictions/edit/${ID}`, data);
+  return authApi.put(`/jurisdictions/edit/${ID}`, data);
 };
 
 export const deleteParentAddressAndAssociatesByID = (

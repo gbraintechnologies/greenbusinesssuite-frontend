@@ -9,7 +9,7 @@ import Link from "next/link";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import Modal from "@/components/Modal/Modal";
-import { Countrie } from "../components/Countries";
+import { Countrie } from "../../country-setup/components/Countries";
 import DataTable from "@/components/DataTable/DataTable";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import DeleteIcon from "@/public/icons/DeleteIcon";
@@ -18,24 +18,27 @@ import SelectCountryEdit from "../components/selectCountryEdit";
 import TextInput from "../components/TextInput";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { deleteAllSectors } from "@/services/features/sectorService";
 
 const schema = yup.object().shape({
   id: yup.number().required(),
   countryName: yup.string().required(),
-  sector: yup
-    .object()
-    .shape({
-      sectorId: yup.number().required(),
-      subSectors: yup.array().of(yup.string().required()).required(),
-      parentSector: yup.string().required(),
-    })
+  sectors: yup
+    .array()
+    .of(
+      yup.object().shape({
+        id: yup.number().required(),
+        parentSector: yup.string().required(),
+        subSectors: yup.array().of(yup.string().required()).required(),
+      })
+    )
     .required(),
 });
 
 type Row = {
   id: number;
-  regions: string;
-  districts: string;
+  sector: string;
+  subSector: string;
 };
 
 function EditSector() {
@@ -43,11 +46,14 @@ function EditSector() {
   const searchParams = useSearchParams();
   const Id = searchParams.get("id");
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["all parentSchemeEntries", Id],
-    queryFn: services.getJurisdictionEntriesById(Number(Id)),
+    queryKey: ["all sectors", Id],
+    queryFn: services.getSectorByID(Number(Id)),
     enabled: !!Id,
   });
 
+  useEffect(() => {
+    alert(JSON.stringify(data))
+  }, [data])
 
   const {
     register,
@@ -61,11 +67,7 @@ function EditSector() {
     defaultValues: {
       id: 0,
       countryName: "",
-      sector: {
-        sectorId: 0,
-        subSectors: [],
-        parentSector: "",
-      },
+      sectors: [],
     },
   });
   type typeOfSchema = yup.InferType<typeof schema>;
@@ -76,16 +78,62 @@ function EditSector() {
   const [inputValue, setInputValue] = useState('');
   const [rows, setRows] = useState<Row[]>([]);
 
+  useEffect(() => {
+    if (data) {
+      setValue("id", data.id);
+      setValue("countryName", data.countryName);
+      setValue("sectors", data.sectors);
+
+      if (Array.isArray(data.sectors)) {
+        const transformedRows = data.sectors.map((sector: any) => ({
+          id: sector.id,
+          sector: sector.parentSector,
+          subSector: sector.subSector.join(", "),
+        }));
+
+        setRows(transformedRows);
+      }
+    }
+  }, [data, setValue]);
+
+
 
   const handleSaveEdit = () => {
+    if (!editRow) return;
+    const rowIndex = rows.findIndex(row => row.id === editRow.id);
 
-  };
+    if (rowIndex === -1) {
+        console.error("Row not found in rows array.");
+        return;
+    }
+    const updatedRows = [...rows];
+    updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        sector: editRow.sector,
+        subSector: editRow.subSector,
+    };
+    setRows(updatedRows);
+    setIsModalOpen(false);
+};
 
   const handleDeleteRow = async (row: Row | null) => {
   };
 
   const handleDeleteAll = async () => {
-  };
+   // alert(JSON.stringify(Id))
+    try {
+        if (!Id) {
+            console.error("No ID provided for deletion.");
+            return;
+        }
+
+        await deleteAllSectors(Id);
+        setDeleteAllModalOpen(false);
+        router.push("/sector-setup");
+    } catch (error) {
+        console.error("Error deleting parent address and associates:", error);
+    }
+};
 
   const handleEditClick = (row: Row) => {
     setEditRow(row);
@@ -99,39 +147,31 @@ function EditSector() {
     {
       field: "sector",
       headerName: "Sector",
-      type: "actions",
-      align: "left",
-      headerAlign: "left",
       flex: 1,
-      getActions: (params: any) => [
-        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
-          <div className="h-10 flex items-center justify-center"></div>
-          <div>
-            <p className="font-medium"></p>{params.row.regions}
+      renderCell: (params: any) => (
+        <div className="flex py-3 gap-4 my-3 items-center">
+          <div className="h-10 flex items-center justify-center">
+            {params.value}
           </div>
-        </div>,
-      ],
+        </div>
+      ),
     },
     {
-      field: "sub sector",
+      field: "subSector",
       headerName: "Sub Sector",
       flex: 4,
-      headerAlign: "left",
-      align: "middle",
-      type: "actions",
-      getActions: (params: any) => [
-        <div key={params.row.id} className="flex flex-col gap-2 my-2" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
-          <p className="font-medium text-sm">{params.row.districts}</p>
-        </div>,
-      ],
+      renderCell: (params: any) => (
+        <div className="flex flex-col gap-2 my-2" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+          <p className="font-medium text-sm">{params.value}</p>
+        </div>
+      ),
     },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
-      type: "actions",
-      getActions: (params: any) => [
-        <div className="flex items-center justify-end" key={params.row.id}>
+      renderCell: (params: any) => (
+        <div className="flex items-center justify-end">
           <button type="button" className="rounded-full " style={{ right: '-10px' }} onClick={() => handleEditClick(params.row)}>
             <EditIconSetup />
           </button>
@@ -139,9 +179,10 @@ function EditSector() {
             <DeleteIcon />
           </button>
         </div>
-      ],
+      ),
     },
   ];
+
 
   const onSubmitHandler = async (formData: typeOfSchema) => {
 
@@ -176,30 +217,29 @@ function EditSector() {
               </button>
             </div>
           </div>
+          <div className="mb-3 relative">
+            <SelectCountryEdit
+              label="Country"
+              autoComplete="off"
+              {...register("countryName")}
+              value={watch("countryName")}
+              error={errors.countryName?.message}
+              options={[data?.countryName || ""]}
+              readOnly
+              PrependIcon={
+                data?.countryName ? (
+                  <img
+                    src={Countrie(data.countryName)?.flags.png}
+                    alt={Countrie(data.countryName)?.name.common}
+                    style={{ height: "auto", width: "30px" }}
+                  />
+                ) : null
+              }
+              style={{ width: "30%", height: "30%" }}
+            />
+          </div>
           <div>
-            <div className="mb-3 relative">
-              {/* <SelectCountryEdit
-                label="Country"
-                autoComplete="off"
-                // {...register("name")}
-                // value={watch("name")}
-                // error={errors.name?.message}
-                // options={[data?.name || ""]}
-                readOnly
-                PrependIcon={
-                  data?.name ? (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <img
-                        src={Countrie(data.name)?.flags.png}
-                        alt={Countrie(data.name)?.name.common}
-                        style={{ height: 'auto', width: '30px', marginRight: '10px' }}
-                      />
-                    </div>
-                  ) : null
-                }
-                style={{ width: "30%", height: "30%" }}
-              /> */}
-            </div>
+            <h4 className="font-bold text-black-400">Sectors</h4>
           </div>
           <div className="flex flex-col items-start" style={{ width: '100%' }}>
             <div className="flex justify-between w-full mb-4">
@@ -233,20 +273,20 @@ function EditSector() {
           <div className="px-7">
             <TextInput
               type="text"
-              placeholder="Edit Regions"
+              placeholder="Edit sector"
               autoComplete="off"
-              value={editRow?.regions || ""}
-              onChange={(e) => setEditRow(prevState => ({ ...prevState!, regions: e.target.value }))}
+               value={editRow?.sector || ""}
+              onChange={(e) => setEditRow(prevState => ({ ...prevState!, sector: e.target.value }))}
             />
           </div>
           <div className="px-7">
             <TextInput
               type="text"
-              placeholder="Edit Districts"
+              placeholder="Edit Subsectors"
               autoComplete="off"
-              value={editRow?.districts || ""}
+               value={editRow?.subSector || ""}
               extraClasses="h-[90px]"
-              onChange={(e) => setEditRow(prevState => ({ ...prevState!, districts: e.target.value }))}
+              onChange={(e) => setEditRow(prevState => ({ ...prevState!, subSector: e.target.value }))}
             />
           </div>
 
@@ -279,7 +319,7 @@ function EditSector() {
             Deleting this would delete all the values you have inputed
           </p>
           <p className="text-center text-[#334155]">
-            under this {data?.parentAddressScheme.name}.
+            under this
           </p>
           <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
             <button
@@ -300,16 +340,16 @@ function EditSector() {
       <Modal
         isOpen={deleteAllModalOpen}
         setIsOpen={setDeleteAllModalOpen}
-        title="Are you sure you want to delete all values"
+        title="Are you sure you want to delete all sectors"
       >
         <div>
           <p className="px-5 text-center mt-5 text-[#334155]">
-            Deleting all {data?.parentAddressScheme.name} would delete all the {data?.parentAddressScheme.name} and sub-
+            Deleting all sectors would delete all the sectors and sub-
           </p>
           <p className="text-center text-[#334155] mb-3">
             level values you have inputted.
           </p>
-          <p className="text-center text-sm text-[#334155] mt-5">Type the phrase “delete all” to delete the {data?.parentAddressScheme.name}.</p>
+          <p className="text-center text-sm text-[#334155] mt-5">Type the phrase “delete all” to delete the sectors.</p>
           <div className="px-7">
             <TextInput
               type="text"
