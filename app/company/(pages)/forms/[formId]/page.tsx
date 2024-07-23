@@ -26,17 +26,17 @@ import { IFilter } from "@/types";
 
 function SingleFormCompany({ params }: any) {
   const [filters, setFilters] = useState([
-    { id: 1, name: "Insights", value: "insights" },
-    { id: 2, name: "Responses", value: "responses" },
+    { id: 0, name: "Insights", value: "insights" },
+    { id: 1, name: "Responses", value: "responses" },
   ]);
 
   
   const [activeFilterId, setActiveFilterId] = useQueryState('tab', {
     parse: Number,
     serialize: String,
-    defaultValue: 1
+    defaultValue: 0
   });
-  
+
   const [activeFilter, setActiveFilter] = useState(filters.find(filter => filter.id === activeFilterId) || filters[0]);
 
   const handleTabChange = (filter: IFilter) => {
@@ -147,7 +147,7 @@ function SingleFormCompany({ params }: any) {
         <div
           className={
             " mt-5 " +
-            (activeFilter.id === 1
+            (activeFilter.id === 0
               ? "flex flex-col gap-5"
               : "flex justify-between items-center")
           }
@@ -157,7 +157,7 @@ function SingleFormCompany({ params }: any) {
             activeFilter={activeFilter}
             setActiveFilter={handleTabChange}
           />
-          {activeFilter.id == 2 ? (
+          {activeFilter.id == 1 ? (
             <div className="flex gap-3 items-center">
               {/* dropped download button */}
               {/* <button
@@ -173,7 +173,7 @@ function SingleFormCompany({ params }: any) {
             // <DatePicker />
           )}
         </div>
-        {activeFilter.id == 1 && (
+        {activeFilter.id == 0 && (
           <div className="mt-4">
             <StatsBlock
               stats={[
@@ -193,8 +193,8 @@ function SingleFormCompany({ params }: any) {
             />
           </div>
         )}
-        {activeFilter.id == 1 && <Analytics formID={formID} />}
-        {activeFilter.id == 2 && (
+        {activeFilter.id == 0 && <Analytics formID={formID} />}
+        {activeFilter.id == 1 && (
           <div className="mt-4">
             <ResponseDataTable
               responseData={formResponseData}

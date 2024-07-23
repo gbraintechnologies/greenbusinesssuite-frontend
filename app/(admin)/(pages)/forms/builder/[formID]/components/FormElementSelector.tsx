@@ -5,6 +5,8 @@ import { Fragment, useEffect, useRef, useState } from "react";
 // components
 import Loader from "@/components/BeatLoader/Loader";
 
+import "./index.css";
+
 // default form elements
 import { defaultFormElements } from "@/components/FormElements/FormElements";
 
@@ -47,15 +49,30 @@ export default function FormElementSelector({ section }: any) {
         >
           <Menu.Items className="absolute z-[100] -right-[30%] mt-2 w-72 origin-top divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
             <div className="px-1 py-1 ">
-              {elements.map((item: any) => {
+              {elements.map((item: any, idx: any) => {
                 return (
                   <Menu.Item>
-                    <button
-                      onClick={item.func}
-                      className="group flex gap-2 w-full hover:bg-gray-100 items-center rounded-md px-2 py-3 text-sm"
-                    >
-                      {item.icon} {item.name}
-                    </button>
+                    <div>
+                      {idx === 6 && (
+                        <p className="custom-p text-left ml-4">
+                          Configurable form elements
+                        </p>
+                      )}
+                      {idx === 0 && (
+                        <p className="custom-p2 text-left ml-4">
+                          Preset elements
+                        </p>
+                      )}
+
+                      <button
+                        onClick={item.func}
+                        className={`${
+                          (idx == 6 || 0) && "-mt-4"
+                        } group flex gap-2 w-full hover:bg-gray-100 items-center rounded-md px-2 py-3 text-sm`}
+                      >
+                        {item.icon} {item.name}
+                      </button>
+                    </div>
                   </Menu.Item>
                 );
               })}

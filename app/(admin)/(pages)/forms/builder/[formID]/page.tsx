@@ -22,7 +22,7 @@ import GeneralFormSettings from "./components/GeneralFormSettings";
 
 function FormEditing({ params }: any) {
   useEffect(() => {
-    window.scrollTo(0, 0);
+    typeof window !== "undefined" && window.scrollTo(0, 0);
   }, []);
 
   const { view, selectForm } = useForm();
@@ -61,7 +61,7 @@ function FormEditing({ params }: any) {
       </div>
 
       <div className="w-[24%] overflow-y-scroll no-scrollbar fixed right-1">
-        <GeneralFormSettings />
+        <GeneralFormSettings refetch={refetch} />
       </div>
     </div>
   );

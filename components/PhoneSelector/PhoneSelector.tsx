@@ -4,7 +4,7 @@ import "react-international-phone/style.css";
 //
 import "./index.css";
 
-export function PhoneSelector({ setPhone, phone, disabled=false }: any) {
+export function PhoneSelector({ setPhone, phone, disabled = false }: any) {
   return (
     <PhoneInput
       defaultCountry="gh"

@@ -1,5 +1,4 @@
 import React from "react";
-import { StringSchema } from "yup";
 
 function StatusPill({
   status,
@@ -10,14 +9,17 @@ function StatusPill({
   success?: boolean;
   textTransform?: string;
 }) {
-  if (
-    status.toLowerCase().includes("inactive") ||
-    status.toLowerCase().includes("temp") ||
-    status.toLowerCase().includes("incomplete") ||
-    status.toLowerCase().includes("process")
-  ) {
+  if (status.toLowerCase().includes("process")) {
     return (
-      <span className="text-[#D97706] bg-[#FFFBEB] capitalize text-xs px-5 rounded-full py-1">
+      <span className="text-[#D97706] font-bold  capitalize text-xs  rounded-full ">
+        {status.toLowerCase().replaceAll("_", " ")}
+      </span>
+    );
+  }
+
+  if (status.toLowerCase().includes("pending")) {
+    return (
+      <span className="text-[#0E7490] font-bold  capitalize text-xs  rounded-full ">
         {status.toLowerCase().replaceAll("_", " ")}
       </span>
     );
@@ -31,7 +33,7 @@ function StatusPill({
   ) {
     return (
       <span
-        className={`text-[#16A34A] bg-[#F0FDF4]  ${textTransform} text-xs px-5 rounded-full py-1`}
+        className={`text-[#16A34A] font-bold  ${textTransform} text-xs  rounded-full `}
       >
         {status.toLowerCase().replaceAll("_", " ")}
       </span>
@@ -41,7 +43,7 @@ function StatusPill({
   if (success === false) {
     return (
       <span
-        className={`text-red-700 bg-red-50 ${textTransform} text-xs px-5 rounded-full py-1`}
+        className={`text-red-700 bg-red-50 font-bold ${textTransform} text-xs  rounded-full `}
       >
         {status.toLowerCase().replaceAll("_", " ")}
       </span>
@@ -50,7 +52,7 @@ function StatusPill({
 
   // DEFAULT FILTER
   return (
-    <span className="  text-[#344054] bg-[#F1F5F9]  capitalize text-xs px-5 rounded-full py-1">
+    <span className="  text-[#344054] font-bold  capitalize text-xs  rounded-full ">
       {status.toLowerCase().replaceAll("_", " ")}
     </span>
   );

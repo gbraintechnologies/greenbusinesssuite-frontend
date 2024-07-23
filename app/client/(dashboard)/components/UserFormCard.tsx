@@ -12,10 +12,10 @@ import { useRouter } from "next/navigation";
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 
 // utils
-import FormatDate from "@/utils/FormatDate/FormatDate";
+import FormatDate, { FormatDateShort } from "@/utils/FormatDate/FormatDate";
 
 import toast from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useUser from "@/hooks/useUser";
 import services from "@/services";
 import html2canvas from "html2canvas";
@@ -23,6 +23,7 @@ import jsPDF from "jspdf";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import { createRoot } from "react-dom/client";
 import FormResponse from "./FormResponse/FormResponse";
+import StatusPill from "@/components/StatusPill/StatusPillText";
 
 type Props = {
   form: any;
@@ -175,6 +176,17 @@ function FormCard({ form, type = "uncompleted" }: Props) {
 
   let color = colors[getRandomInt(0, 4)];
 
+  const {
+    data: formUserResponse,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["form", user?.id, id],
+    queryFn: services.retrieveFormUserResponses(user?.id, id),
+    enabled: Boolean(id && user?.id),
+  });
+
   const [options, setOptions] = useState(null);
 
   useEffect(() => {
@@ -209,7 +221,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
           Delete
         </button> */}
         <button
-          className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          className={`flex relative items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >
           <FormPreviewIcon />
         </button>
@@ -218,8 +230,21 @@ function FormCard({ form, type = "uncompleted" }: Props) {
             {/* @ts-ignore */}
             {form?.name?.replace(/"/g, " ")}
           </button>
-          <div className="flex items-center justify-between mt-1">
-            <p className="text-xs font-light pr-4">{FormatDate(updatedOn)}</p>
+          {formUserResponse && (
+            <div className="-mt-1">
+              <StatusPill status={formUserResponse[0]?.status} />
+            </div>
+          )}
+
+          <div className="flex items-center justify-between">
+            {formUserResponse && (
+              <p className="text-xs font-light pr-4">
+                Updated on{" "}
+                {formUserResponse &&
+                  FormatDateShort(formUserResponse[0]?.updatedOn)}
+              </p>
+            )}
+
             <Menu as="div" className="relative">
               <div className="relative">
                 <Menu.Button className="relative">

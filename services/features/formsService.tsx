@@ -73,6 +73,11 @@ export const getUncompletedFormsByUserId = (userId: string) => {
       .then((res) => res.data);
 };
 
+export const getAllFormsByUserId = (userId: string) => {
+  return () =>
+    authApi.get(`/forms/builder/user-forms/${userId}`).then((res) => res.data);
+};
+
 export const getFormsByUserId = (userId: string | null) => {
   if (!userId) {
     throw new Error("User ID is required");
@@ -163,6 +168,10 @@ export const assignCompanyToForm = (company: any, id: any) => {
 
 export const hardDeleteForm = (id: any) => {
   return authApi.delete(`/forms/builder/delete/${id}`);
+};
+
+export const deleteFormField = (id: any) => {
+  return authApi.delete(`/forms/builder/formfield/${id}`);
 };
 
 export const hardDeleteUserForm = (userId: any, formId: any) => {

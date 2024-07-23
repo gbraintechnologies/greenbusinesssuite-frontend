@@ -7,6 +7,9 @@ import { AiOutlineDelete } from "react-icons/ai";
 import { Switch } from "@headlessui/react";
 import Border from "@/components/Border/Border";
 
+// icons
+import { CiCircleInfo } from "react-icons/ci";
+
 import {
   Dropdown,
   DropdownItem,
@@ -19,11 +22,20 @@ import {
 import { IoIosArrowDown } from "react-icons/io";
 import ChoiceValuesEditing from "./ChoiceValuesEditing";
 import { capitalize } from "@mui/material";
+import services from "@/services";
+import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
-function FieldOptions() {
-  const { activeField, updateActiveField } = useForm();
+function FieldOptions({ refetch }: any) {
+  const { activeField, updateActiveField, form, updateIsTemplate } = useForm();
 
   let [localField, setLocalField] = useState(activeField?.field);
+
+  const { data: formStatusCount } = useQuery({
+    queryKey: ["Get forms status count"],
+    queryFn: services.getFormStatusCountById(Number(form?.id)),
+    enabled: Boolean(form?.id),
+  });
 
   // update local copy if changes are made
   useEffect(() => {
@@ -53,28 +65,23 @@ function FieldOptions() {
   }, [localField]);
 
   if (localField) {
-    const {
-      isMandatory,
-      label,
-      fieldDataType,
-
-      placeHolder,
-      horizontalAlign,
-    } = localField;
+    const { isMandatory, label, fieldDataType, placeHolder, horizontalAlign } =
+      localField;
 
     return (
       <div className="bg-white  pb-[25rem] h-screen  no-scrollbar  overflow-y-scroll  border-l-2 border-gray-200 p-3">
         {/* TABS */}
         <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
-          <button className="bg-white font-medium p-1 flex-1 rounded-lg">
-            General
-          </button>
-          <button disabled className="flex-1 disabled:cursor-not-allowed">
+          <div className="bg-white text-center font-medium p-1 flex-1 rounded-lg">
+            Options & Settings
+          </div>
+
+          {/* <button className="flex-1 disabled:cursor-not-allowed">
             Options
           </button>
-          <button disabled className="flex-1 disabled:cursor-not-allowed">
+          <button className="flex-1 disabled:cursor-not-allowed">
             Advanced
-          </button>
+          </button> */}
         </div>
 
         {/* REQUIRED FIELD OR NOT */}
@@ -326,22 +333,73 @@ function FieldOptions() {
         )}
 
         {/* TODO: DELETE ELEMENT */}
-        {/* <div className="px-2 mt-10">
-          <p className="font-medium text-base mb-4">Delete Element</p>
 
-          <button
-            onClick={() => {
-              // update local field
-              setLocalField((prev: any) => ({
-                ...prev,
-                isDeleted: true,
-              }));
+        {/* ONLY ALLOW DELETION IF NO RESPONSES */}
+        {formStatusCount && formStatusCount?.totalCount > 0 ? (
+          <div className="bg-red-50 p-3 rounded-lg text-lg flex flex-row gap-2">
+            <CiCircleInfo size={20} />{" "}
+            <p className="text-xs font-light italic">
+              Form fields cannot be deleted since this form has started taking
+              responses
+            </p>
+          </div>
+        ) : (
+          <div className="px-2 mt-10">
+            <p className="font-medium text-base mb-4">Delete Form Field</p>
+
+            <button
+              onClick={() => {
+                services
+                  .deleteFormField(localField.id)
+                  .then(() => {
+                    //
+                    toast.success("Deleted form field");
+                    refetch();
+                  })
+                  .catch((e) => {
+                    toast.error("Error deleting");
+                  });
+              }}
+              className="bg-[#DC2626] hover:bg-red-800 px-4 flex items-center gap-2 text-sm text-white py-2 rounded-lg"
+            >
+              <AiOutlineDelete
+                size={20}
+                className="text-white cursor-pointer"
+              />{" "}
+              Delete
+            </button>
+          </div>
+        )}
+
+        <Border />
+
+        {/* use as template */}
+        <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">
+          <div>
+            <p className="font-medium text-base">Use form as template</p>{" "}
+            <p className="text-xs font-light text-gray-500">
+              The form will be used by the assigned company, and a similar
+              template will be created for reuse with other forms.
+            </p>
+          </div>
+          <Switch
+            checked={form?.isTemplate}
+            onChange={() => {
+              //  set form as template
+              updateIsTemplate(!form?.isTemplate);
             }}
-            className="bg-[#DC2626] hover:bg-red-800 px-4 py-2 rounded-lg"
+            className={`${form?.isTemplate ? "bg-primary-green" : "bg-gray-500"}
+          relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
           >
-            <AiOutlineDelete size={20} className="text-white cursor-pointer" />
-          </button>
-        </div> */}
+            <span
+              aria-hidden="true"
+              className={`${
+                form?.isTemplate ? "translate-x-6" : "translate-x-0"
+              }
+            pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+            />
+          </Switch>
+        </div>
       </div>
     );
   }

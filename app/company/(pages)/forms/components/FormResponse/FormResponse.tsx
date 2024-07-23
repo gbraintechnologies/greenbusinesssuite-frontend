@@ -17,6 +17,16 @@ const renderFormResponse = (formField: any) => {
       return (
         <input defaultValue={formField?.response} className="fit" readOnly />
       );
+    case "calendar":
+      return (
+        <input
+          disabled
+          defaultValue={formField?.response}
+          className="fit"
+          readOnly
+        />
+      );
+
     case "number":
       return (
         <input defaultValue={formField?.response} className="fit" readOnly />
@@ -110,14 +120,16 @@ const FormResponse = forwardRef(function FormResponse(
               const isHorizontalAlign = formField?.horizontalAlign;
 
               const itemClass = isHorizontalAlign ? "half-width" : "full-width";
-              return (
-                <div className={itemClass} key={index}>
-                  <div className={"input-holder"}>
-                    <div className="label">{formField?.label}</div>
-                    {renderFormResponse(formField)}
+              if (formField?.fieldDataType !== "upload") {
+                return (
+                  <div className={itemClass} key={index}>
+                    <div className={"input-holder"}>
+                      <div className="label">{formField?.label}</div>
+                      {renderFormResponse(formField)}
+                    </div>
                   </div>
-                </div>
-              );
+                );
+              }
             })}
           </div>
         </div>

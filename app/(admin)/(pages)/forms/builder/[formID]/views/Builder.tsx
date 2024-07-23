@@ -17,7 +17,7 @@ import { FormatDateTime } from "@/utils/FormatDate/FormatDate";
 import FormSection from "../components/FormSection";
 
 //
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 import toast from "react-hot-toast";
 import Loader from "@/components/BeatLoader/Loader";
@@ -29,7 +29,7 @@ function isObjEmpty(obj: any) {
 function Builder({ data, refetch }: any) {
   // scroll to top
   useEffect(() => {
-    window.scrollTo(0, 0);
+    typeof window !== "undefined" && window.scrollTo(0, 0);
   }, []);
 
   //
@@ -46,6 +46,12 @@ function Builder({ data, refetch }: any) {
     updateNameAndDescription,
     loadingSection,
   } = useForm();
+
+  const { data: formStatusCount } = useQuery({
+    queryKey: ["Get forms status count"],
+    queryFn: services.getFormStatusCountById(Number(form?.id)),
+    enabled: Boolean(form?.id),
+  });
 
   // local variables
   const [formName, setFormName] = useState(form?.name);
@@ -160,40 +166,46 @@ function Builder({ data, refetch }: any) {
             {formSections
               ?.filter((item: any) => !item.isDeleted)
               ?.map((section: any, idx: any) => {
-                return <FormSection key={idx} section={section} />;
+                return (
+                  <FormSection refetch={refetch} key={idx} section={section} />
+                );
               })}
           </div>
 
           {/* Add New Section */}
-          <div className="flex justify-end items-end w-full">
-            <button
-              disabled={loadingSection}
-              onClick={() => {
-                let template = {
-                  name: "",
-                  description: "",
-                  instruction: "",
-                  formFields: [],
-                  isDeleted: false,
-                  createdOn: new Date(),
-                  updatedOn: new Date(),
-                  deletedOn: null,
-                };
+          {formStatusCount && formStatusCount?.totalCount > 0 ? (
+            <></>
+          ) : (
+            <div className="flex justify-end items-end w-full">
+              <button
+                disabled={loadingSection}
+                onClick={() => {
+                  let template = {
+                    name: "",
+                    description: "",
+                    instruction: "",
+                    formFields: [],
+                    isDeleted: false,
+                    createdOn: new Date(),
+                    updatedOn: new Date(),
+                    deletedOn: null,
+                  };
 
-                addFormSection(template);
-              }}
-              className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
-            >
-              {loadingSection ? (
-                <Loader color="#1d1d1d" />
-              ) : (
-                <>
-                  {" "}
-                  <CiCirclePlus size={18} /> Add section
-                </>
-              )}
-            </button>
-          </div>
+                  addFormSection(template);
+                }}
+                className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
+              >
+                {loadingSection ? (
+                  <Loader color="#1d1d1d" />
+                ) : (
+                  <>
+                    {" "}
+                    <CiCirclePlus size={18} /> Add section
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );

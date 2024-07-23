@@ -15,10 +15,10 @@ import useCompany from "@/hooks/useCompany";
 const schema = yup.object({
   user_id: yup.number(),
   current_password: yup.string(),
-  new_password: yup.string().min(6, "Password must be at least 8 characters"),
+  new_password: yup.string().min(6, "Password must be at least 6 characters"),
   confirm_password: yup
     .string()
-    .min(6, "Password must be at least 8 characters"),
+    .min(6, "Password must be at least 6 characters"),
 });
 
 function Security() {
@@ -94,23 +94,8 @@ function Security() {
                     error={errors.new_password?.message}
                   />
                 </div>
-                <p>Hint text give the user some feedback</p>
-                <div className="flex items-center justify-start py-2">
-                  <FaRegCheckCircle fontSize={"small"} />
-                  <h1>&nbsp;one lower case character</h1>&nbsp;&nbsp;
-                  <FaRegCheckCircle fontSize={"small"} />
-                  <h1>&nbsp;one number</h1>&nbsp;&nbsp;
-                  <FaRegCheckCircle fontSize={"small"} />
-                  <h1>&nbsp;one uppercase character</h1>
-                </div>
-                <div className="flex items-center justify-start py-2">
-                  <FaRegCheckCircle fontSize={"small"} />
-                  <h1>&nbsp;8 characters minimum</h1>&nbsp;&nbsp;
-                  <FaRegCheckCircle fontSize={"small"} />
-                  <h1>&nbsp;one special character</h1>&nbsp;&nbsp;
-                </div>
 
-                <div className="mt-6 w-[600px] mb-7">
+                <div className="mt-3 w-[600px] mb-2">
                   <PasswordInput
                     label="Confirm password"
                     placeholder="Enter your password"
@@ -118,6 +103,23 @@ function Security() {
                     {...register("confirm_password")}
                     error={errors.confirm_password?.message}
                   />
+                </div>
+                <div className="text-gray-500 text-sm">
+                  <p className="mt-5">Password requirements</p>
+                  {/* <div className="flex items-center justify-start py-2">
+                  <FaRegCheckCircle fontSize={"small"} />
+                  <h1>&nbsp;one lower case character</h1>&nbsp;&nbsp;
+                  <FaRegCheckCircle fontSize={"small"} />
+                  <h1>&nbsp;one number</h1>&nbsp;&nbsp;
+                  <FaRegCheckCircle fontSize={"small"} />
+                  <h1>&nbsp;one uppercase character</h1>
+                </div> */}
+                  <div className="flex items-center justify-start py-2">
+                    <FaRegCheckCircle fontSize={"small"} />
+                    <h1>&nbsp;6 characters minimum</h1>&nbsp;&nbsp;
+                    {/* <FaRegCheckCircle fontSize={"small"} />
+                  <h1>&nbsp;one special character</h1>&nbsp;&nbsp; */}
+                  </div>
                 </div>
               </div>
             </form>

@@ -26,13 +26,15 @@ import {
 //
 import services from "@/services";
 
-// components
+// utils
 import { startWithCapital } from "@/utils/Capitalize/startWithCapital";
+
+// components
 import DocumentViewer from "./DocumentViewer";
 
 function DocumentCard({ document }: any) {
   //
-  let { id, fileName, createdOn, url, formId } = document;
+  let { fileName, createdOn, url, formId } = document;
 
   //
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -41,42 +43,7 @@ function DocumentCard({ document }: any) {
 
   const queryClient = useQueryClient();
 
-  const handleDownload = (url: string, fileName: string) => {
-    fetch(url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(new Blob([blob]));
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName || "downloaded-file";
-        document.body.appendChild(link);
-
-        link.click();
-
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        console.error("Error fetching the file:", error);
-        toast.error("Error occured downloading file");
-      });
-  };
-
-  const options = [
-    {
-      title: "View",
-      func: () => {
-        onOpen();
-      },
-    },
-    {
-      title: "Download",
-      func: () => {
-        handleDownload(url, fileName);
-      },
-    },
-  ];
+  // https://www.npmjs.com/package/react-use-downloader
 
   return (
     <>
@@ -95,8 +62,7 @@ function DocumentCard({ document }: any) {
           </button>
           <div className="flex items-center justify-between mt-1">
             {/* TODO: FORM NAME HERE Fetch form using formID */}
-            {/* UPDATE PREVIEW TO IGNORE UPLOAD ELEMENT */}
-            {/* UPDATE CLIENT TO ALSO IGNORE UPLOAD */}
+
             <p className="text-xs font-light pr-4">{FormatDate(createdOn)}</p>
             <Menu as="div" className="relative">
               <div className="relative">
@@ -114,24 +80,24 @@ function DocumentCard({ document }: any) {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute z-50  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
-                  {options &&
-                    // @ts-ignore
-                    options?.map((option: any, idx: any) => {
-                      return (
-                        <Menu.Item>
-                          <button
-                            className={`${
-                              option.title.toLowerCase() === "delete"
-                                ? "text-red-600"
-                                : " text-gray-500"
-                            } py-3  px-4 font-light hover:bg-gray-50 cursor text-left w-full`}
-                            onClick={() => option.func()}
-                          >
-                            {option.title}
-                          </button>
-                        </Menu.Item>
-                      );
-                    })}
+                  <Menu.Item>
+                    <button
+                      className={`text-gray-500 py-3  px-4 font-light hover:bg-gray-50 cursor text-left w-full`}
+                      onClick={onOpen}
+                    >
+                      View
+                    </button>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <a
+                      className={`text-gray-500 py-3  px-4 font-light hover:bg-gray-50 cursor text-left w-full`}
+                      download={fileName}
+                      target="_blank"
+                      href={url}
+                    >
+                      Download
+                    </a>
+                  </Menu.Item>
                 </Menu.Items>
               </Transition>
             </Menu>
@@ -153,7 +119,7 @@ function DocumentCard({ document }: any) {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalBody>
+              <ModalBody className="overflow-scroll">
                 <DocumentViewer
                   url={url}
                   fileName={fileName}

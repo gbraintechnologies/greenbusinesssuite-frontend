@@ -2,13 +2,27 @@
 
 import React, { useEffect, useState } from "react";
 
+// icons
+import { CiCircleInfo } from "react-icons/ci";
+
 // components
 import FormField from "./FormField";
 
-import useForm from "@/hooks/useForm";
 import FormElementSelector from "./FormElementSelector";
+import useForm from "@/hooks/useForm";
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
 
-function FormSection({ section }: any) {
+function FormSection({ section, refetch }: any) {
+  const { form } = useForm();
+
+  const { data: formStatusCount } = useQuery({
+    queryKey: ["Get forms status count"],
+    queryFn: services.getFormStatusCountById(Number(form?.id)),
+    enabled: Boolean(form?.id),
+  });
+
+  //
   let [localSection, setLocalSection] = useState(section);
 
   // update local copy if changes are made
@@ -97,7 +111,19 @@ function FormSection({ section }: any) {
             </p>
           </div>
         )}
-        <FormElementSelector section={section} />
+
+        {/* ONLY ALLOW FORMS WITHOUT RESPONSES TO BE EDITED */}
+        {formStatusCount && formStatusCount?.totalCount > 0 ? (
+          <div className="bg-red-50 p-3 rounded-lg text-lg flex flex-row gap-2">
+            <CiCircleInfo size={20} />{" "}
+            <p className="text-xs font-light italic">
+              No new fields can be added to this form once it has started
+              accepting responses.{" "}
+            </p>
+          </div>
+        ) : (
+          <FormElementSelector section={section} />
+        )}
       </div>
 
       {/* DELETE ICON */}
@@ -151,23 +177,3 @@ function FormSection({ section }: any) {
 }
 
 export default FormSection;
-
-// FIELD
-//  {
-//       id: 3,
-//       name: "full_name",
-//       description: "Your full name",
-//       label: "Full Name",
-//       placeHolder: "Enter your full name",
-//       instruction: "Enter your full name as per official records",
-//       ordering: 1,
-//       isDeleted: false,
-//       fieldDataType: "string",
-//       choiceValues: [],
-//       isMandatory: true,
-//       horizontalAlign: false,
-//       validPattern: null,
-//       createdOn: "2024-03-22T09:07:40.646085",
-//       updatedOn: "2024-03-22T09:07:40.646112",
-//       deletedOn: null,
-//     },

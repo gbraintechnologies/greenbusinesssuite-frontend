@@ -34,24 +34,23 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="flex flex-col justify-center h-screen">
+    <div className="flex justify-center items-center h-screen">
       {status === "forgot" && (
-        <div className="bg-white rounded-lg max-w-md p-10 -mt-[40vh] shadow-md">
-          <h1 className="font-semibold text-lg">Forgot password</h1>
-          <p className="opacity-50 font-light text-sm mt-2 mb-5">
+        <div className="w-96 m-auto rounded-md bg-white h-auto shadow-sm px-5 py-2">
+          <h1 className="font-semibold text-base text-slate-900 text-left pt-4">Forgot password</h1>
+          <p className="text-[#475569] text-sm mb-2">
             Enter the email address for your account so we can send you reset
             instructions.
           </p>
           <form
-            className="flex flex-col gap-6"
+            className="flex flex-col gap-3"
             onSubmit={(e) => {
               e.preventDefault();
               runAttempt();
             }}
           >
-            <div>
+            <div className="input-holder">
               <label
-                className="block mb-2 text-xs font-light text-gray-400"
                 htmlFor="input"
               >
                 Email address
@@ -60,7 +59,6 @@ function ForgotPassword() {
                 value={email}
                 required
                 type="email"
-                className="block focus:outline-[#16A34A] border border-gray-300 px-3 py-2 rounded-lg w-full"
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
               />
@@ -71,7 +69,7 @@ function ForgotPassword() {
             </Link>
             <button
               disabled={loading}
-              className="w-full disabled:cursor-not-allowed disabled:opacity-80 px-4 py-3 hover:bg-opacity-80 rounded-lg bg-[#16A34A] text-white"
+              className=" w-full mb-2 bg-[#16A34A] disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg py-2 text-sm"
               type="submit"
             >
               {loading ? <LoadingIcon /> : "Send reset instructions"}
@@ -81,12 +79,12 @@ function ForgotPassword() {
       )}
 
       {status === "sent" && (
-        <div className="bg-white rounded-lg max-w-md p-10 -mt-[30vh] shadow-md">
+        <div className="w-96 m-auto rounded-md bg-white h-auto shadow-sm px-5 py-2">
           <EmailIcon />
           <h1 className="font-semibold mt-5 text-lg">
             Magic link sent to {email}
           </h1>
-          <p className="opacity-50 font-light text-sm mt-2 mb-5">
+          <p className="text-[#475569] text-sm mb-5">
             Thank you. If an account exist with your email address, you should
             receive an email address to reset your password.
           </p>

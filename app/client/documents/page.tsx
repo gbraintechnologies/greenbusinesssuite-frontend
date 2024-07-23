@@ -19,6 +19,7 @@ function Documents() {
     name: "Uploaded",
     value: "Uploaded",
   });
+
   return (
     <div className="px-5 pt-5  ">
       <div className="text-slate-900 font-semibold text-lg mb-5">Documents</div>
@@ -31,8 +32,8 @@ function Documents() {
       </div>
 
       <div className="mt-6">
-        {activeTab.id == 1 && <Uploaded />}
-        {activeTab.id == 2 && <Issued />}{" "}
+        {activeTab?.id === 1 && <Uploaded />}
+        {activeTab?.id === 2 && <Issued />}{" "}
       </div>
     </div>
   );

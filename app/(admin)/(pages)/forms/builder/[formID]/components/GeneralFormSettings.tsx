@@ -1,15 +1,19 @@
 import useForm from "@/hooks/useForm";
-import React from "react";
+import React, { useEffect } from "react";
 
 // components
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 import FieldOptions from "./FieldOptions";
 
-function GeneralFormSettings() {
-  const { formLayout, setFormLayout, activeField } = useForm();
+function GeneralFormSettings({ refetch }: any) {
+  const { formLayout, setFormLayout, activeField, setActiveField } = useForm();
+
+  useEffect(() => {
+    setActiveField(null);
+  }, []);
 
   if (activeField) {
-    return <FieldOptions />;
+    return <FieldOptions refetch={refetch} />;
   }
   return (
     <div className="bg-white min-h-[100vh]  border-l-2 border-gray-200 p-3">

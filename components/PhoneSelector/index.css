@@ -1,5 +1,11 @@
 /* Customizing styles for phone input */
 
+.input:focus {
+  outline: none !important;
+  border: none !important;
+  outline-color: white auto 0px;
+}
+
 .react-international-phone-input-container {
   display: flex;
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -17,7 +23,7 @@
 
   --tw-border-opacity: 1;
   border-color: #e2e8f0 !important;
-  background-color: #fcfdff ;
+  background-color: #fcfdff;
   border-top-left-radius: 0.5rem !important;
   border-bottom-left-radius: 0.5rem !important;
 }
@@ -42,7 +48,7 @@
   border-bottom-right-radius: 0.5rem !important;
   --tw-border-opacity: 1;
   border-color: #e2e8f0 !important;
-  background-color: #fcfdff ;
+  background-color: #fcfdff;
 }
 
 /* size of emoji */

@@ -17,3 +17,17 @@ export const getRefreshToken = () => {
     return "";
   }
 };
+
+export const setSessionStorage = (key: any, value: any) => {
+  if (typeof window !== 'undefined') {
+    window.sessionStorage.setItem(key, JSON.stringify(value));
+  }
+};
+
+export const getSessionStorage = (key: any) => {
+  if (typeof window !== 'undefined') {
+    const value = window.sessionStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
+  }
+  return null;
+};
