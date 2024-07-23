@@ -187,6 +187,7 @@ function EditJurisdiction() {
       districts: editRow.districts,
     };
     setRows(updatedRows);
+    handleParentChildrenUpdate(editRow);
     setIsModalOpen(false);
   };
 
@@ -229,49 +230,74 @@ function EditJurisdiction() {
     setInputValue(e.target.value);
   };
 
-  const mapRowsToPayload = () => {
-    const row = rows[0];
+  const mapRowsToPayload = (updatedRow: any) => {
+    const row = updatedRow ? updatedRow : rows[0];
 
+    // UPDATE 1: FINDING ENTRIES USING ID NOT NAME
+    // prevents undefinied error if name of region is changed
     const entry = data?.parentAddressScheme.entries.find(
-      (entry: any) => entry.name === row.regions
+      (entry: any) => entry.id === row.id
     );
 
     return {
       id: row.id,
       name: row.regions,
-      childEntries: row.districts.split(", ").map((district) => {
+      childEntries: row.districts.split(", ").map((district: any, idx: any) => {
         if (entry) {
-          const childEntry = entry.childEntries.find(
-            (child: any) => child.name === district.trim()
-          );
-          if (childEntry) {
+          // UPDATE 2: USING POSITION IN ARRAY TO FIND CHILDREN NOT NAMES
+          const childEntry = entry.childEntries[idx];
+
+          // HANLDE CASE OF EDITING EXISTING CHILDREN : ALREADY HAVE AN ID
+          if (childEntry?.id) {
             return {
               id: childEntry.id,
               name: district.trim(),
               parentAddressSchemeEntriesId: row.id,
             };
+          } else {
+            // HANLDE CASE OF ADDING NEW CHILDREN : NO ID
+            return {
+              name: district.trim(),
+              parentAddressSchemeEntriesId: row.id,
+            };
           }
         }
-        return {
-          id: 0,
-          name: district.trim(),
-          parentAddressSchemeEntriesId: row.id,
-        };
+        // return {
+        //   id: 0,
+        //   name: district.trim(),
+        //   parentAddressSchemeEntriesId: row.id,
+        // };
       }),
     };
   };
 
   const onSubmitHandler = async (formData: typeOfSchema) => {
-    try {
-      const payload = mapRowsToPayload();
+    // try {
+    //   const payload = mapRowsToPayload();
+    //   console.log("payload", payload);
+    //   await editParentSchemeChildEntriesByID(payload.id, payload);
+    //   toast.success("Update successful");
+    //   await refetch();
+    // } catch (error) {
+    //   console.error("Error submitting form:", error);
+    // }
+  };
 
-      // alert(JSON.stringify(payload))
+  const handleParentChildrenUpdate = async (data: any) => {
+    let loadingToast = toast.loading("Please wait...");
+    //
+    try {
+      const payload = mapRowsToPayload(data);
 
       await editParentSchemeChildEntriesByID(payload.id, payload);
 
+      toast.dismiss(loadingToast);
+      toast.success(payload?.name + " updated");
+
       await refetch();
     } catch (error) {
-      console.error("Error submitting form:", error);
+      toast.dismiss(loadingToast);
+      toast.error("Error updating. Please try again");
     }
   };
 
@@ -280,10 +306,10 @@ function EditJurisdiction() {
       <div className="w-full">
         <form
           className="flex flex-col gap-6"
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSubmitHandler(getValues());
-          }}
+          // onSubmit={(e) => {
+          //   e.preventDefault();
+          //   onSubmitHandler(getValues());
+          // }}
           style={{ display: "inline-flex", width: "100%" }}
         >
           <div className="w-full text-primary-dark flex justify-between">
@@ -292,7 +318,7 @@ function EditJurisdiction() {
                 Country / Jurisdiction Setup
               </h3>
               <p className="text-black-400 text-sm">
-                configure all jurisdiction for the company
+                Configure all jurisdiction for the company
               </p>
             </div>
             <div className="flex gap-3 items-center justify-end">
@@ -301,16 +327,16 @@ function EditJurisdiction() {
                   type="button"
                   className="button bg-gray-50 border border-gray-200 shadow-sm py-3 px-4 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
                 >
-                  Cancel
+                  Go back
                 </button>
               </Link>
-              <button
+              {/* <button
                 type="submit"
                 className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               >
                 <IoIosAddCircleOutline size={20} />
                 Save
-              </button>
+              </button> */}
             </div>
           </div>
           <div>
@@ -389,6 +415,7 @@ function EditJurisdiction() {
           </div>
         </form>
       </div>
+      {/* EDIT SINGLE JURISDICTION */}
       <Modal
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
@@ -444,6 +471,7 @@ function EditJurisdiction() {
           </div>
         </div>
       </Modal>
+      {/* DELETE CONFIRMATION */}
       <Modal
         isOpen={deleteModalOpen}
         setIsOpen={setDeleteModalOpen}
@@ -454,7 +482,7 @@ function EditJurisdiction() {
             Deleting this would delete all the values you have inputed
           </p>
           <p className="text-center text-[#334155]">
-            under this {data?.parentAddressScheme.name}.
+            under this {data?.parentAddressScheme?.name}.
           </p>
           <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
             <button
@@ -472,6 +500,8 @@ function EditJurisdiction() {
           </div>
         </div>
       </Modal>
+
+      {/* DELETE ALL VALUES MODAL */}
       <Modal
         isOpen={deleteAllModalOpen}
         setIsOpen={setDeleteAllModalOpen}
