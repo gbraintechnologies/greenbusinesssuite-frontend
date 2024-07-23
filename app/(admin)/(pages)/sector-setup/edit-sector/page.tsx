@@ -18,7 +18,7 @@ import SelectCountryEdit from "../components/selectCountryEdit";
 import TextInput from "../components/TextInput";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { deleteAllSectors } from "@/services/features/sectorService";
+import { deleteAllSectors, updateSector } from "@/services/features/sectorService";
 
 const schema = yup.object().shape({
   id: yup.number().required(),
@@ -41,6 +41,28 @@ type Row = {
   subSector: string;
 };
 
+interface SectorPayload {
+  id: number;
+  countryName: string;
+  sectors: Array<{
+    id: number;
+    parentSector: string;
+    subSectors: string[];
+  }>;
+}
+
+interface UpdatedRow {
+  id: number;
+  countryName: string;
+  sector: string;
+  subSector: string;
+  sectors: Array<{
+    id: number;
+    parentSector: string;
+    subSectors: string[];
+  }>;
+}
+
 function EditSector() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -52,7 +74,7 @@ function EditSector() {
   });
 
   useEffect(() => {
-    alert(JSON.stringify(data))
+    // alert(JSON.stringify(data))
   }, [data])
 
   const {
@@ -97,43 +119,108 @@ function EditSector() {
   }, [data, setValue]);
 
 
-
+  // Assuming UpdatedRow includes 'countryName' and 'sectorsts'
   const handleSaveEdit = () => {
     if (!editRow) return;
+  
+    // Create an UpdatedRow object without countryName and sectors
+    const updatedEditRow: UpdatedRow = {
+      id: editRow.id,
+      sector: editRow.sector,
+      subSector: editRow.subSector,
+      countryName: '', // If not needed, you can leave it empty or adjust as necessary
+      sectors: [], // If not needed, you can leave it empty or adjust as necessary
+    };
+  
+    // Update rows
     const rowIndex = rows.findIndex(row => row.id === editRow.id);
-
+  
     if (rowIndex === -1) {
-        console.error("Row not found in rows array.");
-        return;
+      console.error("Row not found in rows array.");
+      return;
     }
+  
     const updatedRows = [...rows];
     updatedRows[rowIndex] = {
-        ...updatedRows[rowIndex],
-        sector: editRow.sector,
-        subSector: editRow.subSector,
+      ...updatedRows[rowIndex],
+      sector: editRow.sector,
+      subSector: editRow.subSector,
     };
+  
     setRows(updatedRows);
+    handleParentChildrenUpdate(updatedEditRow); // Use UpdatedRow here
     setIsModalOpen(false);
+  };
+  
+
+const mapRowsToPayload = (updatedRow: UpdatedRow): SectorPayload => {
+  const formData = getValues();
+  const { id, countryName, sectors } = formData;
+
+  const updatedSectors = sectors.map((sector: any) => {
+    if (sector.id === updatedRow.id) {
+      return {
+        ...sector,
+        parentSector: updatedRow.sector,
+        subSectors: updatedRow.subSector.split(", ").map((sub: string) => sub.trim()),
+      };
+    }
+    return sector;
+  });
+
+  return {
+    id,
+    countryName,
+    sectors: updatedSectors,
+  };
 };
+
+
+  
+  const handleParentChildrenUpdate = async (data: UpdatedRow) => {
+    let loadingToast = toast.loading("Please wait...");
+    try {
+      const payload = mapRowsToPayload(data);
+  
+      // Log the payload to check if it's correct
+      console.log('Payload to be sent:', JSON.stringify(payload));
+  
+      // Update sector using the API function
+      await updateSector(payload);
+  
+      toast.dismiss(loadingToast);
+      toast.success(payload?.sectors[0].parentSector + " updated");
+  
+      await refetch();
+    } catch (error) {
+      toast.dismiss(loadingToast);
+  
+      // Log the error to understand what went wrong
+      console.error('Error updating sector:', error);
+  
+      toast.error("Error updating. Please try again");
+    }
+  };
+  
 
   const handleDeleteRow = async (row: Row | null) => {
   };
 
   const handleDeleteAll = async () => {
-   // alert(JSON.stringify(Id))
+    // alert(JSON.stringify(Id))
     try {
-        if (!Id) {
-            console.error("No ID provided for deletion.");
-            return;
-        }
+      if (!Id) {
+        console.error("No ID provided for deletion.");
+        return;
+      }
 
-        await deleteAllSectors(Id);
-        setDeleteAllModalOpen(false);
-        router.push("/sector-setup");
+      await deleteAllSectors(Id);
+      setDeleteAllModalOpen(false);
+      router.push("/sector-setup");
     } catch (error) {
-        console.error("Error deleting parent address and associates:", error);
+      console.error("Error deleting parent address and associates:", error);
     }
-};
+  };
 
   const handleEditClick = (row: Row) => {
     setEditRow(row);
@@ -184,17 +271,15 @@ function EditSector() {
   ];
 
 
-  const onSubmitHandler = async (formData: typeOfSchema) => {
-
-  };
-
   return (
     <div className="w-full p-5">
       <div className="w-full">
-        <form className="flex flex-col gap-6" onSubmit={(e) => {
-          e.preventDefault();
-          onSubmitHandler(getValues())
-        }} style={{ display: "inline-flex", width: "100%" }}>
+        <form className="flex flex-col gap-6"
+          //  onSubmit={(e) => {
+          //   e.preventDefault();
+          //   onSubmitHandler(getValues())
+          // }}
+          style={{ display: "inline-flex", width: "100%" }}>
           <div className="w-full text-primary-dark flex justify-between">
             <div>
               <h3 className="font-semibold text-xl">Edit Setup</h3>
@@ -206,15 +291,15 @@ function EditSector() {
                   type="button"
                   className="button bg-gray-50 border border-gray-200 shadow-sm py-3 px-4 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
                 >
-                  Cancel
+                  Go Back
                 </button>
               </Link>
-              <button
+              {/* <button
                 type="submit"
                 className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               >
                 <IoIosAddCircleOutline size={20} />Save
-              </button>
+              </button> */}
             </div>
           </div>
           <div className="mb-3 relative">
@@ -275,7 +360,7 @@ function EditSector() {
               type="text"
               placeholder="Edit sector"
               autoComplete="off"
-               value={editRow?.sector || ""}
+              value={editRow?.sector || ""}
               onChange={(e) => setEditRow(prevState => ({ ...prevState!, sector: e.target.value }))}
             />
           </div>
@@ -284,7 +369,7 @@ function EditSector() {
               type="text"
               placeholder="Edit Subsectors"
               autoComplete="off"
-               value={editRow?.subSector || ""}
+              value={editRow?.subSector || ""}
               extraClasses="h-[90px]"
               onChange={(e) => setEditRow(prevState => ({ ...prevState!, subSector: e.target.value }))}
             />
