@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
 import TextInput from '../components/TextInput';
 import Link from 'next/link';
@@ -11,74 +11,122 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import services from '@/services';
 import { useQuery } from '@tanstack/react-query';
-import { createChildEntries } from '@/services/features/jurisdictionsService';
+import { updateSector } from '@/services/features/sectorService';
 
-interface Entry {
+interface Sector {
   id: number;
-  name: string;
-  parentAddressSchemeEntriesId: number;
+  parentSector: string;
+  subSector: string[];
 }
 
 interface FormData {
-  entries: Entry[];
+  id: number;
+  countryName: string;
+  sectors: Sector[];
 }
 
-const schema = yup.object().shape({
-  entries: yup
-    .array()
-    .of(
-      yup.object().shape({
-        id: yup.number().required(),
-        name: yup.string().required(),
-        parentAddressSchemeEntriesId: yup.number().required(),
-      })
-    )
-    .required(),
+const schema = yup.object({
+  id: yup.number().required(),
+  countryName: yup.string().required(),
+  sectors: yup.array().of(
+    yup.object({
+      id: yup.number().required(),
+      parentSector: yup.string().required(),
+      subSector: yup.array().of(yup.string().required()).required(),
+    })
+  ).required(),
 });
 
-function parentSectorInputs() {
+function ParentSectorInputs() {
   const searchParams = useSearchParams();
-  const parentId = searchParams.get('id');
+  const Id = searchParams.get('id');
   const router = useRouter();
 
-  const { handleSubmit } = useForm<FormData>({
-    resolver: yupResolver(schema),
-    mode: 'onChange',
-    defaultValues: {
-      entries: [],
-    },
+  const { data: initialEntries } = useQuery<FormData>({
+    queryKey: ['all Parent entries'],
+    queryFn: services.getSectorByID(parseInt(Id || '', 10)),
+    enabled: !!Id,
   });
 
-  const onSubmit = async () => {
-   
+  const { handleSubmit, setValue, getValues, reset, formState: { errors, isDirty } } = useForm<FormData>({
+    resolver: yupResolver(schema),
+    mode: 'onChange',
+  });
+
+  const [formData, setFormData] = useState<FormData>({ id: 0, countryName: '', sectors: [] });
+
+  useEffect(() => {
+    if (initialEntries) {
+      setFormData(initialEntries);
+      reset(initialEntries);
+    }
+  }, [initialEntries, reset]);
+
+  const handleChange = (index: number, value: string) => {
+    const updatedSectors = [...formData.sectors];
+    updatedSectors[index].subSector = value.split(',').map(s => s.trim());
+    setFormData(prev => ({ ...prev, sectors: updatedSectors }));
+    setValue(`sectors.${index}.subSector`, updatedSectors[index].subSector);
+  };
+
+  const onSubmitHandler = async (data: FormData) => {
+    try {
+      console.log("Form Data Before Payload Construction:", getValues());
+
+      const payload = {
+        id: data.id,
+        countryName: data.countryName,
+        sectors: data.sectors.map((sector, index) => ({
+          id: sector.id,
+          parentSector: sector.parentSector,
+          subSector: formData.sectors[index].subSector,
+        })),
+      };
+
+      console.log("Constructed Payload:", payload);
+      await updateSector(payload);
+
+      // Success feedback
+      toast.success('Sector Setup created successfully', {
+        position: 'top-center',
+        duration: 3000,
+        style: {
+          color: 'green',
+        },
+      });
+      router.push('/sector-setup');
+    } catch (error) {
+      console.error('Error occurred:', error);
+    }
   };
 
   return (
     <div className="w-full p-5">
       <div className="w-full">
-        <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmitHandler)}>
           <div className="w-full text-primary-dark flex justify-between">
             <div>
-              <h3 className="font-semibold text-xl">Country / Jurisdiction Setup</h3>
-              <p className="text-black-400 text-sm">Configure all jurisdictions for the company</p>
+              <h3 className="font-semibold text-xl">Sector Setup</h3>
+              <p className="text-black-400 text-sm">Configure all sectors for the jurisdiction</p>
             </div>
           </div>
-          <div>
-            <h4 className="font-bold text-black-400">Individual dropdown options</h4>
-            <p className="text-black-400 text-sm">Setup all Parent and Child sub-levels for the Country</p>
-          </div>
 
-          <div className="mt-4">
+          {formData.sectors.map((sector, index) => (
+            <div className="mt-4" key={sector.id}>
               <div className="mb-1 relative">
                 <TextInput
                   type="text"
-                  autoComplete="off" 
+                  autoComplete="off"
+                  label={sector.parentSector}
                   placeholder="Enter comma separated values"
                   className="rounded xl"
                   style={{ width: '30%', height: '100px' }}
+                  value={sector.subSector.join(', ')}
+                  onChange={(e) => handleChange(index, e.target.value)}
                 />
               </div>
-          </div>
+            </div>
+          ))}
 
           <div className="flex justify-end mt-1" style={{ width: '30%' }}>
             <Link href="/sector-setup/add-sector">
@@ -102,4 +150,4 @@ function parentSectorInputs() {
   );
 }
 
-export default parentSectorInputs;
+export default ParentSectorInputs;
