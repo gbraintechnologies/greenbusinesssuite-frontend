@@ -184,7 +184,7 @@ function UserManagement() {
               key="view"
               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
             >
-              <Link href={"/usermanagement/profile?id=" + params.row.data.id}>
+              <Link href={"/usermanagement/profile?id=" + params.row.data.id} className="w-full block">
                 View User
               </Link>
             </DropdownItem>
@@ -192,7 +192,7 @@ function UserManagement() {
               key="edit"
               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
             >
-              <Link href={"/usermanagement/edit-user?id=" + params.row.data.id}>
+              <Link href={"/usermanagement/edit-user?id=" + params.row.data.id} className="w-full block">
                 Edit User
               </Link>
             </DropdownItem>
@@ -215,7 +215,7 @@ function UserManagement() {
               </DropdownItem>
             )}
             <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
-              <button onClick={() => blacklistUser(params.row.data.id)}>
+              <button onClick={() => blacklistUser(params.row.data.id)} >
                 Blacklist User
               </button>
             </DropdownItem>

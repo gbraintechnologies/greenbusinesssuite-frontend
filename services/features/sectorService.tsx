@@ -48,6 +48,11 @@ export const deleteAllSectors = (id: any) => {
 export const getSectorByID = (sectorID: number) => {
   return () => authApi.get(`/sectors/data/${sectorID}`).then((res) => res.data);
 }
+
+export const getSectorByIDRaw = (sectorID: number) => {
+  return authApi.get(`/sectors/data/${sectorID}`).then((res) => res.data);
+}
+
 export const getSubSectorByID = (sectorSetupID: number, SectorID: number | null) => {
   return () => authApi.get(`/sectors/details/${sectorSetupID}/${SectorID}`).then((res) => res.data);
 };
