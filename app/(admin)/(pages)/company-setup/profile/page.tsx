@@ -132,9 +132,7 @@ const Page = () => {
         (entry: any) => entry?.id == companyParentAddressId
       )
     );
-
-    console.log("yue ", country?.parentAddressScheme?.entries);
-    console.log("company data ", companyData);
+    
   }, [companyData, country]);
 
   const editCompanyStatus = async (status: any) => {
