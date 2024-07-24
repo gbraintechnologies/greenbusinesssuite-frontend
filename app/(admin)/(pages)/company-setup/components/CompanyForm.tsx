@@ -542,8 +542,8 @@ const CompanyForm: React.FC<Props> = ({
                                   label: industry?.parentSector,
                                   value: industry?.id,
                                 });
-                                setSectorId(industry?.id);
-                                setInitialLoad(false);
+                                setSectorId(industries.id);
+                                                                setInitialLoad(false);
                               }}
                             >
                               {industry?.parentSector}
