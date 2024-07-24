@@ -199,9 +199,12 @@ const CompanyForm: React.FC<Props> = ({
       console.log("response ", response);
       let industryId = response[0]?.id;
 
-      const sectorsResponse = await services.getSectorByIDRaw(industryId);
-
-      setIndustries(sectorsResponse);
+      if(industryId){
+        const sectorsResponse = await services.getSectorByIDRaw(industryId); 
+        setIndustries(sectorsResponse);
+      } else {
+        setIndustries([]);
+      }
     } catch (err) {
       toast.error("An error occurred while fetching industries");
     }
@@ -428,7 +431,7 @@ const CompanyForm: React.FC<Props> = ({
                       {/* SUB JURISDICTION */}
                       <div className="input-holder half">
                         <label>
-                          {subJurisdiction?.parentAddressScheme?.name}
+                          {subJurisdiction?.parentAddressScheme?.name || "Sub Jurisdiction"}
                         </label>
                         <Dropdown>
                           <DropdownTrigger>

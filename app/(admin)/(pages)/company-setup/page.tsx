@@ -258,7 +258,10 @@ function CompanySetup() {
                 key="view"
                 className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
               >
-                <Link href={"/company-setup/profile?id=" + params.row.data.id}>
+                <Link
+                  href={"/company-setup/profile?id=" + params.row.data.id}
+                  className="w-full block"
+                >
                   View Company
                 </Link>
               </DropdownItem>
@@ -268,6 +271,7 @@ function CompanySetup() {
               >
                 <Link
                   href={"/company-setup/profile/edit?id=" + params.row.data.id}
+                  className="w-full block"
                 >
                   Edit Company
                 </Link>
