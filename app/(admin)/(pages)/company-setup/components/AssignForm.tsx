@@ -2,6 +2,7 @@
 import EmptyList from "@/components/Form/EmptyList";
 import FormCard from "@/components/Form/FormCard";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import SearchBox from "@/components/SearchBox/SearchBox";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
@@ -23,7 +24,18 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
 
   const [selected, setSelected] = React.useState<any>();
   const [isLoading, setLoading] = React.useState(false);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [filteredForms, setFilteredForms] = React.useState([]);
 
+  React.useEffect(()=> {
+    if(searchTerm === "") {
+      setFilteredForms(allForms)
+    } else {
+      setFilteredForms(allForms.filter((form: any) => form.name.toLowerCase()
+      .replace(/\s+/g, "")
+      .includes(searchTerm.toLowerCase().replace(/\s+/g, ""))))
+    }
+  }, [allForms, searchTerm])
   const assignFormToCompany = async () => {
     setLoading(true);
     try {
@@ -64,9 +76,11 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
             <EmptyList text="You do not have any unassigned forms." />
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-5 h-96 mb-2 overflow-scroll">
+          <div>
+            <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} placeholder="Search by form name"/>
+          <div className="grid grid-cols-3 gap-5 h-72 mb-2 overflow-scroll mt-2">
             {allForms &&
-              allForms?.map((form: any) => {
+              filteredForms?.map((form: any) => {
                 return (
                   <div
                     className={
@@ -84,6 +98,7 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
                   </div>
                 );
               })}
+          </div>
           </div>
         )}
       </div>

@@ -344,8 +344,17 @@ const Page = () => {
             {activeFilter.value === "assigned_forms" && (
               <>
                 <div className="">
-                  <div className="label w-full my-4">
-                    Assigned Forms ({assignedForms?.length})
+                  <div className="flex items-center justify-between mb-3 mt-2">
+                    <div className="label w-full my-4">
+                      Assigned Forms ({assignedForms?.length})
+                    </div>
+                    {/* ASSIGN NEW FORM */}
+                    <button
+                      className=" bg-white border border-[rgba(226, 232, 240, 1)] flex max-w-64 text-sm px-4 py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg w-full "
+                      onClick={() => setShowAssignModal(true)}
+                    >
+                      <LuPlusCircle /> Assign New Form
+                    </button>
                   </div>
 
                   {/* NO ASSIGNED FORM */}
@@ -368,14 +377,6 @@ const Page = () => {
                         );
                       })}
                   </div>
-
-                  {/* ASSIGN NEW FORM */}
-                  <button
-                    className="mt-8 bg-white border border-[rgba(226, 232, 240, 1)] flex max-w-80 text-sm px-4 py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg w-full "
-                    onClick={() => setShowAssignModal(true)}
-                  >
-                    <LuPlusCircle /> Assign New Form
-                  </button>
                 </div>
               </>
             )}

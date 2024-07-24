@@ -197,34 +197,38 @@ const CompanyForm: React.FC<Props> = ({
       }
       const response = await services.getSectorByCountryRaw(jurisdiction);
       console.log("response ", response);
-      setIndustries(response);
+      let industryId = response[0]?.id;
+
+      const sectorsResponse = await services.getSectorByIDRaw(industryId);
+
+      setIndustries(sectorsResponse);
     } catch (err) {
       toast.error("An error occurred while fetching industries");
     }
   };
 
-  const fetchSubSectors = async (
-    sectorSetupId: string | number,
-    sectorId: string
-  ) => {
-    try {
-      if (!initialLoad) {
-        setSubSectorsLoading(true);
-        setSelectedSubSector(undefined);
-      }
-      const response = await services.getSubSectorByIdRaw(
-        Number(sectorSetupId),
-        Number(sectorId)
-      );
-      setSubSectors(response?.sector?.subSectors);
-    } catch (err) {
-      toast.error("An error occurred while fetching sub sectors");
-    } finally {
-      if (!initialLoad) {
-        setSubSectorsLoading(false);
-      }
-    }
-  };
+  // const fetchSubSectors = async (
+  //   sectorSetupId: string | number,
+  //   sectorId: string
+  // ) => {
+  //   try {
+  //     if (!initialLoad) {
+  //       setSubSectorsLoading(true);
+  //       setSelectedSubSector(undefined);
+  //     }
+  //     const response = await services.getSubSectorByIdRaw(
+  //       Number(sectorSetupId),
+  //       Number(sectorId)
+  //     );
+  //     setSubSectors(response?.sector?.subSectors);
+  //   } catch (err) {
+  //     toast.error("An error occurred while fetching sub sectors");
+  //   } finally {
+  //     if (!initialLoad) {
+  //       setSubSectorsLoading(false);
+  //     }
+  //   }
+  // };
 
   const getJurisdictionEntries = async (jurisdictionId: number) => {
     try {
@@ -270,10 +274,16 @@ const CompanyForm: React.FC<Props> = ({
   }, [selectedSubJurisdiction]);
 
   useLayoutEffect(() => {
-    if (selectedIndustry?.value && sectorId) {
-      fetchSubSectors(sectorId, selectedIndustry?.value);
+    if(!initialLoad) {
+      setSelectedSubSector(undefined);
     }
-  }, [selectedIndustry, sectorId]);
+  }, [selectedIndustry])
+
+  // useLayoutEffect(() => {
+  //   if (selectedIndustry?.value && sectorId) {
+  //     fetchSubSectors(sectorId, selectedIndustry?.value);
+  //   }
+  // }, [selectedIndustry, sectorId]);
 
   return (
     <>
@@ -520,20 +530,20 @@ const CompanyForm: React.FC<Props> = ({
                           variant="flat"
                           selectionMode="single"
                         >
-                          {industries?.filter((industry: any) => industry?.sectorStats?.length > 0)?.map((industry: any) => (
+                          {industries?.sectors?.map((industry: any) => (
                             <DropdownItem
                               key="view"
                               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                               onClick={() => {
                                 setSelectedIndustry({
-                                  label: industry?.sectorStats[0]?.parentSector,
-                                  value: industry?.sectorStats[0]?.id,
+                                  label: industry?.parentSector,
+                                  value: industry?.id,
                                 });
                                 setSectorId(industry?.id);
                                 setInitialLoad(false);
                               }}
                             >
-                              {industry?.sectorStats[0]?.parentSector}
+                              {industry?.parentSector}
                             </DropdownItem>
                           ))}
                         </DropdownMenu>
@@ -558,7 +568,7 @@ const CompanyForm: React.FC<Props> = ({
                             variant="flat"
                             selectionMode="single"
                           >
-                            {subSectors?.map((sector: any) => (
+                            {industries?.sectors?.find((sector: any) => sector?.parentSector == selectedIndustry?.label)?.subSector?.map((sector: any) => (
                               <DropdownItem
                                 key="view"
                                 className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
