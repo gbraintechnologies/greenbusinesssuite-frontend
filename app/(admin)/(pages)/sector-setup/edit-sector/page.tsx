@@ -18,7 +18,7 @@ import SelectCountryEdit from "../components/selectCountryEdit";
 import TextInput from "../components/TextInput";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { deleteAllSectors, updateSector } from "@/services/features/sectorService";
+import { deleteAllSectors, updateSector, deleteBySubSectorID } from "@/services/features/sectorService";
 
 const schema = yup.object().shape({
   id: yup.number().required(),
@@ -122,7 +122,7 @@ function EditSector() {
   // Assuming UpdatedRow includes 'countryName' and 'sectorsts'
   const handleSaveEdit = () => {
     if (!editRow) return;
-  
+
     // Create an UpdatedRow object without countryName and sectors
     const updatedEditRow: UpdatedRow = {
       id: editRow.id,
@@ -131,83 +131,94 @@ function EditSector() {
       countryName: '', // If not needed, you can leave it empty or adjust as necessary
       sectors: [], // If not needed, you can leave it empty or adjust as necessary
     };
-  
+
     // Update rows
     const rowIndex = rows.findIndex(row => row.id === editRow.id);
-  
+
     if (rowIndex === -1) {
       console.error("Row not found in rows array.");
       return;
     }
-  
+
     const updatedRows = [...rows];
     updatedRows[rowIndex] = {
       ...updatedRows[rowIndex],
       sector: editRow.sector,
       subSector: editRow.subSector,
     };
-  
+
     setRows(updatedRows);
     handleParentChildrenUpdate(updatedEditRow); // Use UpdatedRow here
     setIsModalOpen(false);
   };
-  
 
-const mapRowsToPayload = (updatedRow: UpdatedRow): SectorPayload => {
-  const formData = getValues();
-  const { id, countryName, sectors } = formData;
 
-  const updatedSectors = sectors.map((sector: any) => {
-    if (sector.id === updatedRow.id) {
-      return {
-        ...sector,
-        parentSector: updatedRow.sector,
-        subSectors: updatedRow.subSector.split(", ").map((sub: string) => sub.trim()),
-      };
-    }
-    return sector;
-  });
+  const mapRowsToPayload = (updatedRow: UpdatedRow): SectorPayload => {
+    const formData = getValues();
+    const { id, countryName, sectors } = formData;
 
-  return {
-    id,
-    countryName,
-    sectors: updatedSectors,
+    const updatedSectors = sectors.map((sector: any) => {
+      if (sector.id === updatedRow.id) {
+        return {
+          ...sector,
+          parentSector: updatedRow.sector,
+          subSectors: updatedRow.subSector.split(", ").map((sub: string) => sub.trim()),
+        };
+      }
+      return sector;
+    });
+
+    return {
+      id,
+      countryName,
+      sectors: updatedSectors,
+    };
   };
-};
 
 
-  
+
   const handleParentChildrenUpdate = async (data: UpdatedRow) => {
     let loadingToast = toast.loading("Please wait...");
     try {
       const payload = mapRowsToPayload(data);
-  
+
       // Log the payload to check if it's correct
       console.log('Payload to be sent:', JSON.stringify(payload));
-  
+
       // Update sector using the API function
       await updateSector(payload);
-  
+
       toast.dismiss(loadingToast);
       toast.success(payload?.sectors[0].parentSector + " updated");
-  
+
       await refetch();
     } catch (error) {
       toast.dismiss(loadingToast);
-  
+
       // Log the error to understand what went wrong
       console.error('Error updating sector:', error);
-  
+
       toast.error("Error updating. Please try again");
     }
   };
-  
+
 
   const handleDeleteRow = async (row: Row | null) => {
+    try {
+      if (!row || !row.id) {
+        console.error("No row selected for deletion or row ID is invalid.");
+        return;
+      }
+
+      await deleteBySubSectorID(row.id);
+      setDeleteModalOpen(false);
+      await refetch();
+    } catch (error) {
+      console.error("Error deleting row:", error);
+    }
   };
 
   const handleDeleteAll = async () => {
-    // alert(JSON.stringify(Id))
     try {
       if (!Id) {
         console.error("No ID provided for deletion.");

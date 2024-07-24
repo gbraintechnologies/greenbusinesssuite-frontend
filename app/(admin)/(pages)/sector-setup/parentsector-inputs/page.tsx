@@ -46,13 +46,13 @@ function ParentSectorInputs() {
     queryKey: ['all Parent entries'],
     queryFn: services.getSectorByID(parseInt(Id || '', 10)),
     enabled: !!Id,
+    refetchOnWindowFocus: true,
   });
 
   const { handleSubmit, setValue, getValues, reset, formState: { errors, isDirty } } = useForm<FormData>({
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
-
   const [formData, setFormData] = useState<FormData>({ id: 0, countryName: '', sectors: [] });
 
   useEffect(() => {
@@ -111,7 +111,7 @@ function ParentSectorInputs() {
             </div>
           </div>
 
-          {formData.sectors.map((sector, index) => (
+          {formData.sectors && formData.sectors.map((sector, index) => (
             <div className="mt-4" key={sector.id}>
               <div className="mb-1 relative">
                 <TextInput
