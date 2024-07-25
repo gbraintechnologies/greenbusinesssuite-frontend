@@ -21,7 +21,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
     <nav className="h-[3.5rem] z-[100] fixed top-0 bg-black w-full flex justify-between items-center px-5">
       <div className="flex items-center gap-3">
         <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
-          <Link href="/company">
+          <Link href="/company/admin">
             {company?.company_logo ? (
               <Image
                 width={300}
@@ -55,7 +55,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
 
       <div className="flex items-center gap-3">
         <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20"></div>
-        <Link href={settingsLink ?? "/company/settings"}>
+        <Link href={settingsLink ?? "/company/admin/settings"}>
           {companyAdmin?.custom_profile_values &&
           companyAdmin?.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1

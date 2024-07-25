@@ -51,17 +51,17 @@ export default function ClientLayout({
     {
       name: "Dashboard",
       icon: <ClientDashboardIcon />,
-      link: "/client",
+      link: "/company/client",
     },
     {
       name: "Documents",
       icon: <HiOutlineDocumentText />,
-      link: "/client/documents",
+      link: "/company/client/documents",
     },
     {
       name: "Settings",
       icon: <TbCurrentLocation size={20} />,
-      link: "/client/settings",
+      link: "/company/client/settings",
     },
   ];
 

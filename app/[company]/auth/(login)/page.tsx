@@ -21,6 +21,11 @@ import Button from "@/app/(admin)/auth/(login)/components/Button";
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAlertCircle } from "react-icons/fi";
+
+// logos
+import MeshSuiteLogo from "@/public/icons/MeshSuitLogoGray";
+
+// hooks
 import useAdmin from "@/hooks/useAdmin";
 import useUser from "@/hooks/useUser";
 
@@ -29,9 +34,9 @@ import useUser from "@/hooks/useUser";
 function CompanyAdminAuth() {
   const { addCompanyAdminData, companyAdmin, setCompany, removeCompanyAdmin } =
     useCompany();
+  const { addUserData, removeUser } = useUser();
   const { auth, addAuthData, removeAuth } = useAuth();
   const { removeAdmin } = useAdmin();
-  const { removeUser } = useUser();
 
   const router = useRouter();
 
@@ -103,15 +108,28 @@ function CompanyAdminAuth() {
           toast("Create your password");
           router.push(`/company/auth/create-password?temp=${data.password}`);
           return;
-          // route to admin / company dashboard
-        } else if (user?.data?.profiles[0]?.role_id === 6) {
+        }
+        // ROLE 6 - COMPANY ADMIN
+        else if (user?.data?.profiles[0]?.role_id === 6) {
           addCompanyAdminData(user?.data);
           toast.success("Logged in");
 
-          router.push("/company");
-        } else {
-          removeAuth();
-          toast.error("Access denied. Contact your administrator");
+          // TODO: UPDATE TO NAME AND ID OF COMPANY
+          router.push("/company/admin");
+        }
+        // else  if (user?.data?.profiles[0]?.role_id === 6) {
+        //     addCompanyAdminData(user?.data);
+        //     toast.success("Logged in");
+
+        //     router.push("/company");
+        //   }
+        else {
+          addUserData(user?.data);
+          toast.success("Logged in");
+
+          router.push("/company/client");
+          // removeAuth();
+          // toast.error("Access denied. Contact your administrator");
         }
       }
     } catch (error) {
@@ -124,10 +142,15 @@ function CompanyAdminAuth() {
       <div className="bg-[#f2f4f6] rounded-xl shadow-md">
         {" "}
         <form
-          className="flex flex-col w-[90%] md:max-w-[25rem] md:w-[25vw] min-w-[20rem] gap-5 shadow-md bg-white p-6 rounded-xl"
+          className="flex flex-col w-[90%] md:max-w-[25rem] md:w-[30vw] min-w-[25rem] gap-5 shadow-md bg-white p-6 rounded-xl"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <h2 className="font-bold text-center text-xl">Sign in</h2>
+          <div className="text-center text-sm text-gray-600">
+            [Company Logo]
+          </div>
+          <h2 className="font-bold text-center text-xl">
+            Sign in to [My Company]
+          </h2>
           <p className="mb-2 text-center text-sm text-gray-500 -mt-3">
             Welcome back! Please sign in to continue
           </p>
@@ -179,7 +202,17 @@ function CompanyAdminAuth() {
           </Button>
         </form>
         <div className="text-center  text-gray-400 text-sm py-4">
-          <p className="mt-2 text-xs">Powered by Mesh Business Suite</p>
+          <p className="mb-3">
+            Don't have an account{" "}
+            <Link href="auth/sign-up">
+              {" "}
+              <span className="font-semibold text-black">Sign Up</span>
+            </Link>
+          </p>
+          <hr />
+          <div className="mt-2 flex justify-center gap-2 items-center text-xs">
+            Powered by <MeshSuiteLogo />{" "}
+          </div>
         </div>
       </div>
     </div>

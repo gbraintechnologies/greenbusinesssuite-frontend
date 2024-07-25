@@ -67,17 +67,17 @@ export default function CompanyLayout({
     {
       name: "Dashboard",
       icon: <MdOutlineDashboard size={20} />,
-      link: "/company",
+      link: "/company/admin",
     },
     {
       name: "Forms",
       icon: <FormsNavIcon />,
-      link: "/company/forms",
+      link: "/company/admin/forms",
     },
     {
       name: "Customers",
       icon: <MdOutlineSupervisedUserCircle size={20} />,
-      link: "/company/customers",
+      link: "/company/admin/customers",
     },
 
     {
@@ -88,7 +88,7 @@ export default function CompanyLayout({
         {
           name: "Form Reports",
           icon: null,
-          link: "/company/form-reports",
+          link: "/company/admin/form-reports",
         },
       ],
     },
@@ -96,7 +96,7 @@ export default function CompanyLayout({
     {
       name: "User management",
       icon: <FaUsers size={20} />,
-      link: "/company/usermanagement",
+      link: "/company/admin/usermanagement",
     },
 
     // {

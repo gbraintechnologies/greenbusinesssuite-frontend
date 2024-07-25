@@ -1,17 +1,17 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import TextInput from '../components/TextInput';
-import Link from 'next/link';
-import { IoIosAddCircleOutline } from 'react-icons/io';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
-import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
-import services from '@/services';
-import { useQuery } from '@tanstack/react-query';
-import { updateSector } from '@/services/features/sectorService';
+"use client";
+import React, { useState, useEffect } from "react";
+import TextInput from "../components/TextInput";
+import Link from "next/link";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import services from "@/services";
+import { useQuery } from "@tanstack/react-query";
+import { updateSector } from "@/services/features/sectorService";
 
 interface Sector {
   id: number;
@@ -28,32 +28,45 @@ interface FormData {
 const schema = yup.object({
   id: yup.number().required(),
   countryName: yup.string().required(),
-  sectors: yup.array().of(
-    yup.object({
-      id: yup.number().required(),
-      parentSector: yup.string().required(),
-      subSector: yup.array().of(yup.string().required()).required(),
-    })
-  ).required(),
+  sectors: yup
+    .array()
+    .of(
+      yup.object({
+        id: yup.number().required(),
+        parentSector: yup.string().required(),
+        subSector: yup.array().of(yup.string().required()).required(),
+      })
+    )
+    .required(),
 });
 
 function ParentSectorInputs() {
   const searchParams = useSearchParams();
-  const Id = searchParams.get('id');
+  const Id = searchParams.get("id");
   const router = useRouter();
 
   const { data: initialEntries } = useQuery<FormData>({
-    queryKey: ['all Parent entries'],
-    queryFn: services.getSectorByID(parseInt(Id || '', 10)),
+    queryKey: ["all Parent entries"],
+    queryFn: services.getSectorByID(parseInt(Id || "", 10)),
     enabled: !!Id,
     refetchOnWindowFocus: true,
   });
 
-  const { handleSubmit, setValue, getValues, reset, formState: { errors, isDirty } } = useForm<FormData>({
+  const {
+    handleSubmit,
+    setValue,
+    getValues,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm<FormData>({
     resolver: yupResolver(schema),
-    mode: 'onChange',
+    mode: "onChange",
   });
-  const [formData, setFormData] = useState<FormData>({ id: 0, countryName: '', sectors: [] });
+  const [formData, setFormData] = useState<FormData>({
+    id: 0,
+    countryName: "",
+    sectors: [],
+  });
 
   useEffect(() => {
     if (initialEntries) {
@@ -64,8 +77,8 @@ function ParentSectorInputs() {
 
   const handleChange = (index: number, value: string) => {
     const updatedSectors = [...formData.sectors];
-    updatedSectors[index].subSector = value.split(',').map(s => s.trim());
-    setFormData(prev => ({ ...prev, sectors: updatedSectors }));
+    updatedSectors[index].subSector = value.split(",").map((s) => s.trim());
+    setFormData((prev) => ({ ...prev, sectors: updatedSectors }));
     setValue(`sectors.${index}.subSector`, updatedSectors[index].subSector);
   };
 
@@ -87,48 +100,54 @@ function ParentSectorInputs() {
       await updateSector(payload);
 
       // Success feedback
-      toast.success('Sector Setup created successfully', {
-        position: 'top-center',
+      toast.success("Sector Setup created successfully", {
+        position: "top-center",
         duration: 3000,
         style: {
-          color: 'green',
+          color: "green",
         },
       });
-      router.push('/sector-setup');
+      router.push("/sector-setup");
     } catch (error) {
-      console.error('Error occurred:', error);
+      console.error("Error occurred:", error);
     }
   };
 
   return (
     <div className="w-full p-5">
       <div className="w-full">
-        <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmitHandler)}>
+        <form
+          className="flex flex-col gap-6"
+          onSubmit={handleSubmit(onSubmitHandler)}
+        >
           <div className="w-full text-primary-dark flex justify-between">
             <div>
               <h3 className="font-semibold text-xl">Sector Setup</h3>
-              <p className="text-black-400 text-sm">Configure all sectors for the jurisdiction</p>
+              <p className="text-black-400 text-sm">
+                Configure all sectors for the jurisdiction
+              </p>
             </div>
           </div>
 
-          {formData.sectors && formData.sectors.map((sector, index) => (
-            <div className="mt-4" key={sector.id}>
-              <div className="mb-1 relative">
-                <TextInput
-                  type="text"
-                  autoComplete="off"
-                  label={sector.parentSector}
-                  placeholder="Enter comma separated values"
-                  className="rounded xl"
-                  style={{ width: '30%', height: '100px' }}
-                  value={sector.subSector.join(', ')}
-                  onChange={(e) => handleChange(index, e.target.value)}
-                />
+          {formData.sectors &&
+            formData.sectors.map((sector, index) => (
+              <div className="mt-4" key={sector.id}>
+                <div className="mb-1 relative">
+                  <TextInput
+                    type="text"
+                    autoComplete="off"
+                    label={sector.parentSector}
+                    placeholder="Enter comma separated values"
+                    className="rounded xl"
+                    style={{ width: "30%", height: "100px" }}
+                    value={sector.subSector.join(", ")}
+                    onChange={(e) => handleChange(index, e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          <div className="flex justify-end mt-1" style={{ width: '30%' }}>
+          <div className="flex justify-end mt-1" style={{ width: "30%" }}>
             <Link href="/sector-setup/add-sector">
               <button
                 type="button"
