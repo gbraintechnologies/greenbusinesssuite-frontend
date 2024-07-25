@@ -33,7 +33,7 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
                         <p key={item.name}>
                           <li
                             className={`${
-                              pathname == item.link
+                              pathname.includes(item.link)
                                 ? "bg-[#E2E8F0] text-[#1E293B] font-semibold"
                                 : "text-gray-600 "
                             } flex items-center gap-3 w-full mb-1 py-2 px-3 rounded-xl font-medium `}

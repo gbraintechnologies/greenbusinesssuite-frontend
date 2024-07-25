@@ -13,7 +13,6 @@ export const getRefreshToken = () => {
     // @ts-ignore
     let auth = JSON.parse(localStorage.getItem("auth"));
     if (auth !== null) {
-      console.log("auth token goet", auth?.refresh_token);
       return auth?.refresh_token;
     } else {
       return "";

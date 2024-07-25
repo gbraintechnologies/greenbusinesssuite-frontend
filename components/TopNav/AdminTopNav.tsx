@@ -18,8 +18,11 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
 
   return (
     <nav className="h-[3.5rem] z-[100] fixed top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
-      <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
-        <Link href="/">
+      <div className="flex h-full items-center gap-3">
+        <Link
+          className="flex items-center w-10 h-[60%] justify-center rounded-lg bg-[#F1F5F9]"
+          href="/"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="19"
@@ -35,6 +38,9 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
             />
           </svg>
         </Link>
+        <div className="bg-white font-semibold text-white px-3 text-sm bg-opacity-20 py-1 rounded-full">
+          Logiciel Administrator
+        </div>
       </div>
 
       <div className="flex items-center gap-3">
