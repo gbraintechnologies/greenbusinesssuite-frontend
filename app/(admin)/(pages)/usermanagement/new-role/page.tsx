@@ -5,8 +5,7 @@ import { Field, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import React, { useState } from "react";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import toast from "react-hot-toast";
-
+import { toast } from "sonner";
 
 //
 //
@@ -21,7 +20,6 @@ import toCamelCase from "@/utils/CamelCase/CamelCase";
 // components
 import Modal from "@/components/Modal/Modal";
 import services from "@/services";
-
 
 interface Permission {
   id: number;
@@ -110,25 +108,25 @@ function NewRole() {
 
   const handleSubmit = async (
     values: FormValues,
-    { setSubmitting }: FormikHelpers<FormValues>,
+    { setSubmitting }: FormikHelpers<FormValues>
   ) => {
- 
-    const {roleName, roleDescription} = values;
+    const { roleName, roleDescription } = values;
 
     let loading = toast.loading("Creating role. Please wait...");
 
     try {
-      const response = await services.createRole({name: roleName, description: roleDescription});
+      const response = await services.createRole({
+        name: roleName,
+        description: roleDescription,
+      });
       toast.dismiss(loading);
       toast.success("Role created successfully");
-
     } catch (error) {
       toast.dismiss(loading);
       toast.error("An error occurred. Please try again");
     } finally {
       setSubmitting(false);
     }
-
   };
 
   return (

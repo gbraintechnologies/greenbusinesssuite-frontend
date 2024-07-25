@@ -23,7 +23,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import ChoiceValuesEditing from "./ChoiceValuesEditing";
 import { capitalize } from "@mui/material";
 import services from "@/services";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 
 function FieldOptions({ refetch }: any) {

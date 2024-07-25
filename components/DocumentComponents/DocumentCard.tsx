@@ -13,7 +13,7 @@ import { IoDocumentAttachOutline } from "react-icons/io5";
 // utils
 import FormatDate from "@/utils/FormatDate/FormatDate";
 
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
 import {

@@ -23,7 +23,7 @@ import { LuUploadCloud } from "react-icons/lu";
 import { CiCircleInfo } from "react-icons/ci";
 
 //
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 
 function FormFieldValue({ field, section, viewOnly }: any) {

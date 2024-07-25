@@ -26,7 +26,7 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 export interface IFilter {
   id: number;

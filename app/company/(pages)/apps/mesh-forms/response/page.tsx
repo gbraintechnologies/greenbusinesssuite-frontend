@@ -16,7 +16,7 @@ import WriteIcon from "@/public/icons/WriteIcon";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 const Page = () => {
   const [filters, setFilters] = useState([

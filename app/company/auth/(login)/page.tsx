@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 
 import { login, currentLoggedIn } from "@/services/features/authService";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import TextInput from "@/app/(admin)/auth/(login)/components/TextInput";
 import PasswordInput from "@/app/(admin)/auth/(login)/components/PasswordInput";

@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { getToken, getRefreshToken } from "./localService";
 
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 const multipartMeshApi = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
@@ -39,16 +39,21 @@ multipartMeshApi.interceptors.response.use(
       originalRequest._retry = true;
 
       //  GET REFRESH TOKEN AND RETRY REQUEST
-
       axios
         .post(
-          `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`
+          `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
+          {
+            "Content-Type": "application/json",
+          }
         )
         .then((res) => {
+          const oldRefreshToken = getRefreshToken();
+
           localStorage.setItem(
             "auth",
             JSON.stringify({
               access_token: res?.data?.access_token,
+              refresh_token: oldRefreshToken,
             })
           );
 
@@ -56,22 +61,22 @@ multipartMeshApi.interceptors.response.use(
           return axios({
             ...originalRequest,
             headers: {
-              Authorization: `Bearer ${getToken()}`,
+              // USE NEW TOKEN IN RETRY REQUEST
+              Authorization: `Bearer ${res?.data?.access_token}`,
             },
           });
         })
         .catch((e) => {
-          console.log("Unable to refresh token", e);
+          // TODO: HANDLE LOGIC HERE TO GO TO RIGHT LOGIN SCREEN
+          // TO COMPANY OR TO LOGICIEL ADMIN
+          toast.dismiss();
+          toast.warning("Login to continue", {
+            description: "Your session has expired. Please login to continue",
+          });
           // @ts-ignore
-          localStorage.setItem("admin", null);
-          // @ts-ignore
-          localStorage.setItem("user", null);
-          // @ts-ignore
-          localStorage.setItem("auth", null);
+          localStorage.clear();
           window.location.replace("/");
           window.location.reload();
-          toast.dismiss();
-          toast.error("Please login to continue | M");
         });
     }
 

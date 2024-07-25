@@ -1,19 +1,14 @@
 "use client";
 import "./index.css";
 import Modal from "@/components/Modal/Modal";
-import {
-
-  FormikHelpers,
-} from "formik";
+import { FormikHelpers } from "formik";
 import { useRouter } from "next/navigation";
-import {  useState } from "react";
+import { useState } from "react";
 import * as Yup from "yup";
 import useFileUpload from "@/hooks/useFileUpload";
-import toast from "react-hot-toast";
-import {
-  createCompanyWithCustomFields,
-} from "@/services/features/companyService";
-import { CompanyInfo} from "@/types";
+import { toast } from "sonner";
+import { createCompanyWithCustomFields } from "@/services/features/companyService";
+import { CompanyInfo } from "@/types";
 import CompanyForm from "../components/CompanyForm";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
@@ -84,8 +79,11 @@ const CreateCompany = () => {
 
   const [initialLoad, setInitialLoad] = useState<boolean>(false);
 
-
-  const { data: industries, isLoading, refetch } = useQuery({
+  const {
+    data: industries,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["all sectors"],
     queryFn: services.getSectorByCountry("Ghana"),
   });
@@ -174,7 +172,7 @@ const CreateCompany = () => {
         //Admin Email
         custom_profile_item_id: 3,
         value: values.adminEmail as string,
-      }, 
+      },
       {
         // Sub Sector ID
         custom_profile_item_id: 4,
@@ -194,7 +192,7 @@ const CreateCompany = () => {
         // Sector ID
         custom_profile_item_id: 7,
         value: sectorId as string,
-      }
+      },
     ];
 
     const adminData = {
@@ -225,19 +223,13 @@ const CreateCompany = () => {
       const createUserResponse = await services.createUserWithCustomProfiles(
         adminData,
         custom_profiles
-        );
-        toast.success("Admin created successfully successfully");
-
-        // ROLE ID: 6 for company admin
-      await services.assignRoleToUser(
-        createUserResponse.data.id,
-        6
       );
+      toast.success("Admin created successfully successfully");
 
-      await services.notifyUserTempCred(
-        createUserResponse?.data?.id,
-        "EMAIL"
-      );
+      // ROLE ID: 6 for company admin
+      await services.assignRoleToUser(createUserResponse.data.id, 6);
+
+      await services.notifyUserTempCred(createUserResponse?.data?.id, "EMAIL");
 
       toast.success(`Temporary password sent to ${adminData.email}`);
 

@@ -7,7 +7,7 @@ import TextInput from "../components/TextInput";
 import Button from "../components/Button";
 import useAdmin from "@/hooks/useAdmin";
 import { updateUser } from "@/services/features/authService";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Modal from "@/components/Modal/Modal";
 import { useRouter } from "next/navigation";

@@ -9,7 +9,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 
 import { usePathname, useRouter } from "next/navigation";
 
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Modal from "@/components/Modal/Modal";
 import Image from "next/image";
 

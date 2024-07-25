@@ -18,7 +18,7 @@ import { MdOutlineSupervisedUserCircle } from "react-icons/md";
 import { PiListMagnifyingGlassBold } from "react-icons/pi";
 
 // toast
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 // hooks
 import useAuth from "@/hooks/useAuth";

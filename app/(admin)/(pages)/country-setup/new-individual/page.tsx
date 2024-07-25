@@ -12,7 +12,7 @@ import ExcelIcon from "@/public/icons/ExcelIcon";
 import Link from "next/link";
 import * as yup from "yup";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import {
@@ -286,14 +286,19 @@ function NewIndividual() {
             <div className="flex space-x-4">
               <div
                 onClick={() => handleOptionClick("Free Input")}
-                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${selectedOption === "Free Input" ? "border-green-500" : ""}`}
+                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${
+                  selectedOption === "Free Input" ? "border-green-500" : ""
+                }`}
                 style={{
-                  backgroundColor: selectedOption === "Free Input" ? "#E5FFEF" : "",
+                  backgroundColor:
+                    selectedOption === "Free Input" ? "#E5FFEF" : "",
                 }}
               >
                 <div className="flex flex-col justify-between h-full px-3">
                   <div className="flex justify-between items-center w-full relative">
-                    <p className="text-sm font-bold text-gray-900">Free Input</p>
+                    <p className="text-sm font-bold text-gray-900">
+                      Free Input
+                    </p>
                     <input
                       type="radio"
                       id="free-input"
@@ -308,9 +313,12 @@ function NewIndividual() {
 
               <div
                 onClick={() => handleOptionClick("Dropdown")}
-                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${selectedOption === "Dropdown" ? "border-green-500" : ""}`}
+                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${
+                  selectedOption === "Dropdown" ? "border-green-500" : ""
+                }`}
                 style={{
-                  backgroundColor: selectedOption === "Dropdown" ? "#E5FFEF" : "",
+                  backgroundColor:
+                    selectedOption === "Dropdown" ? "#E5FFEF" : "",
                 }}
               >
                 <div className="flex flex-col justify-between h-full px-3">
@@ -324,11 +332,13 @@ function NewIndividual() {
                       readOnly
                     />
                   </div>
-                  <p className="text-sm text-gray-500 mt-2"> Add your sublevels</p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    {" "}
+                    Add your sublevels
+                  </p>
                 </div>
               </div>
             </div>
-
 
             {selectedOption === "Free Input" && (
               <div className="mt-6">

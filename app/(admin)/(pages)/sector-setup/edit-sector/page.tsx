@@ -16,9 +16,13 @@ import DeleteIcon from "@/public/icons/DeleteIcon";
 import EditIconSetup from "@/public/icons/EditIconSetup";
 import SelectCountryEdit from "../components/selectCountryEdit";
 import TextInput from "../components/TextInput";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { deleteAllSectors, updateSector, deleteBySubSectorID } from "@/services/features/sectorService";
+import {
+  deleteAllSectors,
+  updateSector,
+  deleteBySubSectorID,
+} from "@/services/features/sectorService";
 
 const schema = yup.object().shape({
   id: yup.number().required(),
@@ -75,7 +79,7 @@ function EditSector() {
 
   useEffect(() => {
     // alert(JSON.stringify(data))
-  }, [data])
+  }, [data]);
 
   const {
     register,
@@ -97,7 +101,7 @@ function EditSector() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteAllModalOpen, setDeleteAllModalOpen] = useState(false);
   const [editRow, setEditRow] = useState<Row | null>(null);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
 
   useEffect(() => {
@@ -118,7 +122,6 @@ function EditSector() {
     }
   }, [data, setValue]);
 
-
   // Assuming UpdatedRow includes 'countryName' and 'sectorsts'
   const handleSaveEdit = () => {
     if (!editRow) return;
@@ -128,12 +131,12 @@ function EditSector() {
       id: editRow.id,
       sector: editRow.sector,
       subSector: editRow.subSector,
-      countryName: '', // If not needed, you can leave it empty or adjust as necessary
+      countryName: "", // If not needed, you can leave it empty or adjust as necessary
       sectors: [], // If not needed, you can leave it empty or adjust as necessary
     };
 
     // Update rows
-    const rowIndex = rows.findIndex(row => row.id === editRow.id);
+    const rowIndex = rows.findIndex((row) => row.id === editRow.id);
 
     if (rowIndex === -1) {
       console.error("Row not found in rows array.");
@@ -152,7 +155,6 @@ function EditSector() {
     setIsModalOpen(false);
   };
 
-
   const mapRowsToPayload = (updatedRow: UpdatedRow): SectorPayload => {
     const formData = getValues();
     const { id, countryName, sectors } = formData;
@@ -162,7 +164,9 @@ function EditSector() {
         return {
           ...sector,
           parentSector: updatedRow.sector,
-          subSectors: updatedRow.subSector.split(", ").map((sub: string) => sub.trim()),
+          subSectors: updatedRow.subSector
+            .split(", ")
+            .map((sub: string) => sub.trim()),
         };
       }
       return sector;
@@ -175,15 +179,13 @@ function EditSector() {
     };
   };
 
-
-
   const handleParentChildrenUpdate = async (data: UpdatedRow) => {
     let loadingToast = toast.loading("Please wait...");
     try {
       const payload = mapRowsToPayload(data);
 
       // Log the payload to check if it's correct
-      console.log('Payload to be sent:', JSON.stringify(payload));
+      console.log("Payload to be sent:", JSON.stringify(payload));
 
       // Update sector using the API function
       await updateSector(payload);
@@ -196,12 +198,11 @@ function EditSector() {
       toast.dismiss(loadingToast);
 
       // Log the error to understand what went wrong
-      console.error('Error updating sector:', error);
+      console.error("Error updating sector:", error);
 
       toast.error("Error updating. Please try again");
     }
   };
-
 
   const handleDeleteRow = async (row: Row | null) => {
     try {
@@ -240,7 +241,7 @@ function EditSector() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-  }
+  };
   const columns = [
     {
       field: "sector",
@@ -259,7 +260,10 @@ function EditSector() {
       headerName: "Sub Sector",
       flex: 4,
       renderCell: (params: any) => (
-        <div className="flex flex-col gap-2 my-2" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+        <div
+          className="flex flex-col gap-2 my-2"
+          style={{ whiteSpace: "normal", wordBreak: "break-word" }}
+        >
           <p className="font-medium text-sm">{params.value}</p>
         </div>
       ),
@@ -270,10 +274,23 @@ function EditSector() {
       flex: 1,
       renderCell: (params: any) => (
         <div className="flex items-center justify-end">
-          <button type="button" className="rounded-full " style={{ right: '-10px' }} onClick={() => handleEditClick(params.row)}>
+          <button
+            type="button"
+            className="rounded-full "
+            style={{ right: "-10px" }}
+            onClick={() => handleEditClick(params.row)}
+          >
             <EditIconSetup />
           </button>
-          <button type="button" className="rounded-full" style={{ right: '-10px' }} onClick={() => { setEditRow(params.row); setDeleteModalOpen(true); }}>
+          <button
+            type="button"
+            className="rounded-full"
+            style={{ right: "-10px" }}
+            onClick={() => {
+              setEditRow(params.row);
+              setDeleteModalOpen(true);
+            }}
+          >
             <DeleteIcon />
           </button>
         </div>
@@ -281,20 +298,23 @@ function EditSector() {
     },
   ];
 
-
   return (
     <div className="w-full p-5">
       <div className="w-full">
-        <form className="flex flex-col gap-6"
+        <form
+          className="flex flex-col gap-6"
           //  onSubmit={(e) => {
           //   e.preventDefault();
           //   onSubmitHandler(getValues())
           // }}
-          style={{ display: "inline-flex", width: "100%" }}>
+          style={{ display: "inline-flex", width: "100%" }}
+        >
           <div className="w-full text-primary-dark flex justify-between">
             <div>
               <h3 className="font-semibold text-xl">Edit Setup</h3>
-              <p className="text-black-400 text-sm">Edit parent sector and sub-sectors</p>
+              <p className="text-black-400 text-sm">
+                Edit parent sector and sub-sectors
+              </p>
             </div>
             <div className="flex gap-3 items-center justify-end">
               <Link href="/sector-setup">
@@ -337,21 +357,34 @@ function EditSector() {
           <div>
             <h4 className="font-bold text-black-400">Sectors</h4>
           </div>
-          <div className="flex flex-col items-start" style={{ width: '100%' }}>
+          <div className="flex flex-col items-start" style={{ width: "100%" }}>
             <div className="flex justify-between w-full mb-4">
               <div>
                 <h4 className="font-bold text-black-400"></h4>
-                <span style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
-                  <p style={{ margin: 0, marginRight: '100px' }}></p>
+                <span
+                  style={{
+                    fontSize: "0.875rem",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <p style={{ margin: 0, marginRight: "100px" }}></p>
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => setDeleteAllModalOpen(true)}
                 className="bg-primary-red disabled:bg-gray-400 flex text-white text-sm py-1.5 hover:opacity-95 items-center gap-2 rounded-xl ml-auto"
-                style={{ minHeight: '2.5rem', height: '2.5em', lineHeight: '2.0rem', fontSize: '0.875rem', padding: '0.25rem 0.5rem' }}
+                style={{
+                  minHeight: "2.5rem",
+                  height: "2.5em",
+                  lineHeight: "2.0rem",
+                  fontSize: "0.875rem",
+                  padding: "0.25rem 0.5rem",
+                }}
               >
-                <RiDeleteBin6Line size={20} />Delete all sectors
+                <RiDeleteBin6Line size={20} />
+                Delete all sectors
               </button>
             </div>
             <div className="w-full">
@@ -372,7 +405,12 @@ function EditSector() {
               placeholder="Edit sector"
               autoComplete="off"
               value={editRow?.sector || ""}
-              onChange={(e) => setEditRow(prevState => ({ ...prevState!, sector: e.target.value }))}
+              onChange={(e) =>
+                setEditRow((prevState) => ({
+                  ...prevState!,
+                  sector: e.target.value,
+                }))
+              }
             />
           </div>
           <div className="px-7">
@@ -382,7 +420,12 @@ function EditSector() {
               autoComplete="off"
               value={editRow?.subSector || ""}
               extraClasses="h-[90px]"
-              onChange={(e) => setEditRow(prevState => ({ ...prevState!, subSector: e.target.value }))}
+              onChange={(e) =>
+                setEditRow((prevState) => ({
+                  ...prevState!,
+                  subSector: e.target.value,
+                }))
+              }
             />
           </div>
 
@@ -414,9 +457,7 @@ function EditSector() {
           <p className="px-5 text-center mt-5 text-[#334155]">
             Deleting this would delete all the values you have inputed
           </p>
-          <p className="text-center text-[#334155]">
-            under this
-          </p>
+          <p className="text-center text-[#334155]">under this</p>
           <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
             <button
               className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
@@ -445,7 +486,9 @@ function EditSector() {
           <p className="text-center text-[#334155] mb-3">
             level values you have inputted.
           </p>
-          <p className="text-center text-sm text-[#334155] mt-5">Type the phrase “delete all” to delete the sectors.</p>
+          <p className="text-center text-sm text-[#334155] mt-5">
+            Type the phrase “delete all” to delete the sectors.
+          </p>
           <div className="px-7">
             <TextInput
               type="text"
@@ -464,8 +507,10 @@ function EditSector() {
             </button>
             <button
               onClick={handleDeleteAll}
-              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${inputValue === 'delete all' ? 'bg-primary-red' : 'bg-red-300'} ${inputValue !== 'delete all' ? 'cursor-not-allowed' : ''}`}
-              disabled={inputValue !== 'delete all'}
+              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${
+                inputValue === "delete all" ? "bg-primary-red" : "bg-red-300"
+              } ${inputValue !== "delete all" ? "cursor-not-allowed" : ""}`}
+              disabled={inputValue !== "delete all"}
             >
               Yes,delete all
             </button>

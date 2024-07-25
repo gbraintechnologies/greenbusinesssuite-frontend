@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 // icons
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
@@ -20,9 +20,8 @@ import ResponseDataTable from "../components/ResponseTable/ResponseDataTable";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import PublishFormButton from "@/app/(admin)/(pages)/forms/builder/PublishFormButton";
 import Analytics from "./_analytics/Analytics";
-import { useQueryState } from 'nuqs';
+import { useQueryState } from "nuqs";
 import { IFilter } from "@/types";
-
 
 function SingleFormCompany({ params }: any) {
   const [filters, setFilters] = useState([
@@ -30,21 +29,20 @@ function SingleFormCompany({ params }: any) {
     { id: 1, name: "Responses", value: "responses" },
   ]);
 
-  
-  const [activeFilterId, setActiveFilterId] = useQueryState('tab', {
+  const [activeFilterId, setActiveFilterId] = useQueryState("tab", {
     parse: Number,
     serialize: String,
-    defaultValue: 0
+    defaultValue: 0,
   });
 
-  const [activeFilter, setActiveFilter] = useState(filters.find(filter => filter.id === activeFilterId) || filters[0]);
+  const [activeFilter, setActiveFilter] = useState(
+    filters.find((filter) => filter.id === activeFilterId) || filters[0]
+  );
 
   const handleTabChange = (filter: IFilter) => {
     setActiveFilter(filter);
     setActiveFilterId(filter.id);
-  }
-
-  
+  };
 
   //
 

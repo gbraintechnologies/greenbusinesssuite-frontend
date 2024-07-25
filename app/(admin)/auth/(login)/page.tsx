@@ -17,7 +17,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 // hooks
 import useAdmin from "@/hooks/useAdmin";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
 import useUser from "@/hooks/useUser";
 import useCompany from "@/hooks/useCompany";

@@ -10,7 +10,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { changePassword, updateUser } from "@/services/features/authService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SuccessIcon from "@/public/icons/SuccessIcon";

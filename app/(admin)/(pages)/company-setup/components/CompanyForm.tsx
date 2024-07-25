@@ -18,7 +18,7 @@ import { Button } from "@nextui-org/button";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { Countrie } from "../../country-setup/components/Countries";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 export interface ICompany {
   companyName: string;
@@ -199,8 +199,8 @@ const CompanyForm: React.FC<Props> = ({
       console.log("response ", response);
       let industryId = response[0]?.id;
 
-      if(industryId){
-        const sectorsResponse = await services.getSectorByIDRaw(industryId); 
+      if (industryId) {
+        const sectorsResponse = await services.getSectorByIDRaw(industryId);
         setIndustries(sectorsResponse);
       } else {
         setIndustries([]);
@@ -267,7 +267,7 @@ const CompanyForm: React.FC<Props> = ({
     if (selectedJurisdiction?.label) {
       fetchIndustries(selectedJurisdiction?.label);
       getJurisdictionEntries(Number(selectedJurisdiction?.value));
-    } 
+    }
   }, [selectedJurisdiction]);
 
   useLayoutEffect(() => {
@@ -277,10 +277,10 @@ const CompanyForm: React.FC<Props> = ({
   }, [selectedSubJurisdiction]);
 
   useLayoutEffect(() => {
-    if(!initialLoad) {
+    if (!initialLoad) {
       setSelectedSubSector(undefined);
     }
-  }, [selectedIndustry])
+  }, [selectedIndustry]);
 
   // useLayoutEffect(() => {
   //   if (selectedIndustry?.value && sectorId) {
@@ -367,9 +367,7 @@ const CompanyForm: React.FC<Props> = ({
                   <label>Company jurisdiction</label>
                   <Dropdown>
                     <DropdownTrigger>
-                      <Button
-                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                      >
+                      <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
                         <div className="flex gap-4 items-center">
                           {typeof selectedJurisdiction !== "undefined" && (
                             <img
@@ -431,13 +429,12 @@ const CompanyForm: React.FC<Props> = ({
                       {/* SUB JURISDICTION */}
                       <div className="input-holder half">
                         <label>
-                          {subJurisdiction?.parentAddressScheme?.name || "Sub Jurisdiction"}
+                          {subJurisdiction?.parentAddressScheme?.name ||
+                            "Sub Jurisdiction"}
                         </label>
                         <Dropdown>
                           <DropdownTrigger>
-                          <Button
-                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                      >
+                            <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
                               {selectedSubJurisdiction?.label || `Select`}
                             </Button>
                           </DropdownTrigger>
@@ -474,9 +471,7 @@ const CompanyForm: React.FC<Props> = ({
                           <label>Sub Level</label>
                           <Dropdown>
                             <DropdownTrigger>
-                            <Button
-                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                      >
+                              <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
                                 {selectedSubLevel?.label || `Select Sub Level`}
                               </Button>
                             </DropdownTrigger>
@@ -521,9 +516,7 @@ const CompanyForm: React.FC<Props> = ({
                       <label>Industry</label>
                       <Dropdown>
                         <DropdownTrigger>
-                        <Button
-                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                      >
+                          <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
                             {selectedIndustry?.label || "Select Industry"}
                           </Button>
                         </DropdownTrigger>
@@ -543,7 +536,7 @@ const CompanyForm: React.FC<Props> = ({
                                   value: industry?.id,
                                 });
                                 setSectorId(industries.id);
-                                                                setInitialLoad(false);
+                                setInitialLoad(false);
                               }}
                             >
                               {industry?.parentSector}
@@ -559,9 +552,7 @@ const CompanyForm: React.FC<Props> = ({
                         <label>Sub Sector</label>
                         <Dropdown>
                           <DropdownTrigger>
-                          <Button
-                        className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start"
-                      >
+                            <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
                               {selectedSubSector?.label || "Select Sub Sector"}
                             </Button>
                           </DropdownTrigger>
@@ -571,21 +562,27 @@ const CompanyForm: React.FC<Props> = ({
                             variant="flat"
                             selectionMode="single"
                           >
-                            {industries?.sectors?.find((sector: any) => sector?.parentSector == selectedIndustry?.label)?.subSector?.map((sector: any) => (
-                              <DropdownItem
-                                key="view"
-                                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                onClick={() => {
-                                  setSelectedSubSector({
-                                    label: sector,
-                                    value: sector,
-                                  });
-                                  setInitialLoad(false);
-                                }}
-                              >
-                                {sector}
-                              </DropdownItem>
-                            ))}
+                            {industries?.sectors
+                              ?.find(
+                                (sector: any) =>
+                                  sector?.parentSector ==
+                                  selectedIndustry?.label
+                              )
+                              ?.subSector?.map((sector: any) => (
+                                <DropdownItem
+                                  key="view"
+                                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                  onClick={() => {
+                                    setSelectedSubSector({
+                                      label: sector,
+                                      value: sector,
+                                    });
+                                    setInitialLoad(false);
+                                  }}
+                                >
+                                  {sector}
+                                </DropdownItem>
+                              ))}
                           </DropdownMenu>
                         </Dropdown>
                         <ShowError name="industry" />

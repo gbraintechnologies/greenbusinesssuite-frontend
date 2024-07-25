@@ -9,23 +9,26 @@ export const getToken = () => {
 };
 
 export const getRefreshToken = () => {
-  // @ts-ignore
-  let auth = JSON.parse(localStorage.getItem("auth"));
-  if (auth !== null) {
-    return auth?.refresh_token;
-  } else {
-    return "";
+  if (typeof window !== "undefined") {
+    // @ts-ignore
+    let auth = JSON.parse(localStorage.getItem("auth"));
+    if (auth !== null) {
+      console.log("auth token goet", auth?.refresh_token);
+      return auth?.refresh_token;
+    } else {
+      return "";
+    }
   }
 };
 
 export const setSessionStorage = (key: any, value: any) => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     window.sessionStorage.setItem(key, JSON.stringify(value));
   }
 };
 
 export const getSessionStorage = (key: any) => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     const value = window.sessionStorage.getItem(key);
     return value ? JSON.parse(value) : null;
   }

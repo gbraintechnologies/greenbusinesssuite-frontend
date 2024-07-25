@@ -19,7 +19,7 @@ import FormSection from "../components/FormSection";
 //
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Loader from "@/components/BeatLoader/Loader";
 
 function isObjEmpty(obj: any) {

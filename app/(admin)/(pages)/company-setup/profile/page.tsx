@@ -12,7 +12,7 @@ import { CompanyInfo, CustomField } from "@/types";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { Fragment, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import UserIcon from "@/public/icons/UserIcon";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { LuPlusCircle } from "react-icons/lu";
@@ -132,7 +132,6 @@ const Page = () => {
         (entry: any) => entry?.id == companyParentAddressId
       )
     );
-    
   }, [companyData, country]);
 
   const editCompanyStatus = async (status: any) => {

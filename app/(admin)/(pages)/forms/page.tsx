@@ -13,7 +13,7 @@ import ImportFormIcon from "@/public/icons/ImportFormIcon";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 //
 import FormCard from "./components/FormCard";

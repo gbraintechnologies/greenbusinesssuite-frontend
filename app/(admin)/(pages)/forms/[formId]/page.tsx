@@ -22,7 +22,7 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import PublishFormButton from "../builder/PublishFormButton";
 
 // toast
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import Image from "next/image";
 

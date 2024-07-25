@@ -20,7 +20,7 @@ import * as yup from "yup";
 import useUser from "@/hooks/useUser";
 import useAuth from "@/hooks/useAuth";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import useAdmin from "@/hooks/useAdmin";
 import useCompany from "@/hooks/useCompany";
 

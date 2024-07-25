@@ -10,7 +10,7 @@ import SideNav from "@/components/SideNav/SideNav";
 import TopNav from "@/components/TopNav/ClientTopNav";
 
 // toast
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 // icons
 import ClientDashboardIcon from "@/public/icons/ClientDashboardIcon";

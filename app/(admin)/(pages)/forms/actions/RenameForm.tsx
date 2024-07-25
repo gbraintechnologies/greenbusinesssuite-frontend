@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 //
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 //
 import services from "@/services";

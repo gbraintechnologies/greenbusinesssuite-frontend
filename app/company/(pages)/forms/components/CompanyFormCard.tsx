@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 
 // components
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 import services from "@/services";
 

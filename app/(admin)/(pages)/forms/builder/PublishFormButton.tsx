@@ -7,7 +7,7 @@ import services from "@/services";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // toast
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 

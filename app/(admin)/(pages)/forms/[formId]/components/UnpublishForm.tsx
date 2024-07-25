@@ -3,7 +3,7 @@
 import services from "@/services";
 import { useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 // icons
 import { IoCopyOutline } from "react-icons/io5";

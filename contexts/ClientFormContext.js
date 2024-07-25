@@ -6,7 +6,7 @@ export const ClientFormContext = createContext();
 import services from "@/services";
 
 //toast
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 //
 import { useRouter } from "next/navigation";

@@ -7,7 +7,7 @@ import { Combobox, Transition } from "@headlessui/react";
 import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Image from "next/image";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 function AssignForm({ setShow, id: formId, companies, queryClient }: any) {
   const [selected, setSelected] = useState<any>();

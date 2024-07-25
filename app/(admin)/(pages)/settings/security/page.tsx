@@ -8,7 +8,7 @@ import Button from "../components/Button";
 import PasswordInput from "../components/PasswordInput";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { changePassword } from "@/services/features/authService";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import useAdmin from "@/hooks/useAdmin";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 

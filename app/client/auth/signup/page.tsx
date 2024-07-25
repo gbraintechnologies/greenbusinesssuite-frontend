@@ -11,7 +11,7 @@ import * as yup from "yup";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // components
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Dropdown from "@/components/Dropdown/Dropdown";
 
 // services
@@ -89,9 +89,9 @@ function Page() {
     };
 
     const createUserResponse = await services.userSelfSignUp(userData);
-      toast.success("Sign up success");
+    toast.success("Sign up success");
 
-      // ROLE ID: 7 for client
+    // ROLE ID: 7 for client
     // const assignRoleResponse = await services.assignRoleToUser(
     //   createUserResponse.data.id,
     //   7
@@ -197,7 +197,7 @@ function Page() {
                       backgroundColor: "rgba(248, 250, 252, 1)",
                     }}
                     name="password"
-                    type={showPassword ? "text":"password"}
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                   />
                   <button

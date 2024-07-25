@@ -16,7 +16,7 @@ import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import FormResponse from "../FormResponse/FormResponse";
 import { createRoot } from "react-dom/client";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 export interface IResponse {
   email: string;

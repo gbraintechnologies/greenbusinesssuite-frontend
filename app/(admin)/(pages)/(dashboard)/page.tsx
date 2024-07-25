@@ -8,6 +8,8 @@ import services from "@/services";
 
 // css
 import "./index.css";
+import { Button } from "@nextui-org/button";
+import { toast } from "sonner";
 
 function Dashboard() {
   // Data
@@ -74,6 +76,32 @@ function Dashboard() {
             <h4 className="stats-content">{unpublishedFormsCount}</h4>
           </div>
         </div>
+
+        {/* TEST TOAST AND REFRESHING TOKEN  */}
+        {/* <div className="my-20 flex items-center gap-10">
+          <Button
+            className="text-white bg-black px-4 py-2 rounded-xl"
+            onPress={() => {
+              //
+              toast.success("Sonner test");
+            }}
+          >
+            Sonner Test
+          </Button>
+
+          <Button
+            className="text-white bg-primary-dark px-4 py-2 rounded-xl"
+            onPress={() => {
+              toast.warning("Login to continue", {
+                description:
+                  "Your session has expired. Please login to continue",
+              });
+              services.refreshToken();
+            }}
+          >
+            Refresh TOken!
+          </Button>
+        </div> */}
       </div>
     </div>
   );

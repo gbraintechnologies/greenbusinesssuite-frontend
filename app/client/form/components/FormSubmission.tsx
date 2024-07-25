@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import formSubmitted from "@/public/icons/FormSubmitted.svg";
 
 //
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Image from "next/image";
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";

@@ -10,7 +10,7 @@ import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 //
 

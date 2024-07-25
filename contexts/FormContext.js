@@ -7,7 +7,7 @@ import services from "@/services";
 import { useQueryClient } from "@tanstack/react-query";
 
 //toast
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 const UserFromLS =
   typeof window !== "undefined"

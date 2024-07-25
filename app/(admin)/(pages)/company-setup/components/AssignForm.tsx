@@ -6,7 +6,7 @@ import SearchBox from "@/components/SearchBox/SearchBox";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 type Props = {
   companyId: string;
@@ -15,8 +15,6 @@ type Props = {
 };
 
 const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
- 
-
   const { data: allForms, isLoading: areFormsLoading } = useQuery({
     queryKey: ["get all forms"],
     queryFn: services.getUnassignedForms(),
@@ -27,22 +25,24 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [filteredForms, setFilteredForms] = React.useState([]);
 
-  React.useEffect(()=> {
-    if(searchTerm === "") {
-      setFilteredForms(allForms)
+  React.useEffect(() => {
+    if (searchTerm === "") {
+      setFilteredForms(allForms);
     } else {
-      setFilteredForms(allForms.filter((form: any) => form.name.toLowerCase()
-      .replace(/\s+/g, "")
-      .includes(searchTerm.toLowerCase().replace(/\s+/g, ""))))
+      setFilteredForms(
+        allForms.filter((form: any) =>
+          form.name
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .includes(searchTerm.toLowerCase().replace(/\s+/g, ""))
+        )
+      );
     }
-  }, [allForms, searchTerm])
+  }, [allForms, searchTerm]);
   const assignFormToCompany = async () => {
     setLoading(true);
     try {
-      await services.assignFormToCompany(
-        selected,
-        companyId
-      );
+      await services.assignFormToCompany(selected, companyId);
       // invalidate form data
       queryClient.invalidateQueries({
         queryKey: ["get assigned forms for ", Number(companyId)],
@@ -77,28 +77,32 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
           </div>
         ) : (
           <div>
-            <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} placeholder="Search by form name"/>
-          <div className="grid grid-cols-3 gap-5 h-72 mb-2 overflow-scroll mt-2">
-            {allForms &&
-              filteredForms?.map((form: any) => {
-                return (
-                  <div
-                    className={
-                      selected === form.id
-                        ? "rounded-lg border-2 border-green-400 drop-shadow-main h-fit w-auto "
-                        : " "
-                    }
-                  >
-                    <FormCard
-                      key={form.id}
-                      form={form}
-                      noMetaData={true}
-                      onClick={() => setSelected(form.id)}
-                    />
-                  </div>
-                );
-              })}
-          </div>
+            <SearchBox
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              placeholder="Search by form name"
+            />
+            <div className="grid grid-cols-3 gap-5 h-72 mb-2 overflow-scroll mt-2">
+              {allForms &&
+                filteredForms?.map((form: any) => {
+                  return (
+                    <div
+                      className={
+                        selected === form.id
+                          ? "rounded-lg border-2 border-green-400 drop-shadow-main h-fit w-auto "
+                          : " "
+                      }
+                    >
+                      <FormCard
+                        key={form.id}
+                        form={form}
+                        noMetaData={true}
+                        onClick={() => setSelected(form.id)}
+                      />
+                    </div>
+                  );
+                })}
+            </div>
           </div>
         )}
       </div>

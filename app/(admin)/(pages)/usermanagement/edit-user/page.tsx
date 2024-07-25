@@ -20,7 +20,7 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import * as Yup from "yup";
 
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 // hooks
 import useFileUpload from "@/hooks/useFileUpload";
@@ -48,8 +48,7 @@ function page() {
 
   const [showCancelModal, setShowCancelModal] = useState(false);
 
-  const [roleId, setRoleId] = useState("")
-
+  const [roleId, setRoleId] = useState("");
 
   const id = search.get("id");
 
@@ -72,17 +71,15 @@ function page() {
       .required("Email address is required"),
   });
 
-  
-  const [profilePic, setProfilePic] = useState(""); 
+  const [profilePic, setProfilePic] = useState("");
 
   const [initialValues, setInitialValues] = useState({
     email: "",
     firstname: "",
-    lastname: ""
-  })
+    lastname: "",
+  });
 
   useEffect(() => {
-
     setRoleId(data?.profiles?.length > 0 && data?.profiles[0]?.role_id);
 
     let values = {
@@ -93,17 +90,17 @@ function page() {
       status: data?.user_status,
     };
 
-
     setInitialValues(values);
 
     let phone = data?.phone_number;
     phone?.charAt(0) == "0" ? (phone = phone.replace("0", "233")) : phone;
     setPhone(phone);
 
-
-    setProfilePic(data?.custom_profile_values?.find(
-      (item: any) => item?.custom_profile_item_id === 1
-    )?.value) // For Profile Picture
+    setProfilePic(
+      data?.custom_profile_values?.find(
+        (item: any) => item?.custom_profile_item_id === 1
+      )?.value
+    ); // For Profile Picture
   }, [data]);
 
   const inputFileRef = React.useRef();
@@ -134,7 +131,7 @@ function page() {
 
     setLoading(true);
     services
-      .editUserWithCustomProfiles(id,finalData, custom_profiles)
+      .editUserWithCustomProfiles(id, finalData, custom_profiles)
       .then((res: any) => {
         setLoading(false);
 
@@ -155,7 +152,7 @@ function page() {
         setLoading(false);
         toast.dismiss(loading);
         toast.dismiss();
-        console.log('error ',e);
+        console.log("error ", e);
 
         if (Array.isArray(e?.response?.data?.detail)) {
           e?.response?.data?.detail?.map((error: any) => {
@@ -170,11 +167,11 @@ function page() {
   if (isLoading || !data) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
-      <div>
-        <LoadingIcon />
-        <p className="mt-2 text-xs text-gray-500">Fetching user details</p>
+        <div>
+          <LoadingIcon />
+          <p className="mt-2 text-xs text-gray-500">Fetching user details</p>
+        </div>
       </div>
-    </div>
     );
   }
 

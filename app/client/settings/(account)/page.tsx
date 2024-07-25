@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import TextInput from "../components/TextInput";
 
 import { updateUser } from "../../../../services/features/authService";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 import Modal from "../../../../components/Modal/Modal";
 import { useRouter } from "next/navigation";

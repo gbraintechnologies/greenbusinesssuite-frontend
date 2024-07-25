@@ -12,7 +12,7 @@ import StepsNav from "./components/StepsNav";
 
 // componetns
 import FormSection from "./formElements/FormSection";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import FormSubmission from "./components/FormSubmission";
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";

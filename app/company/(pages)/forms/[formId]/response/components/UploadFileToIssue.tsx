@@ -5,7 +5,7 @@ import formatBytes from "@/utils/FormatBytes/formatBytes";
 import { Button } from "@nextui-org/button";
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { IoCloseCircleOutline } from "react-icons/io5";

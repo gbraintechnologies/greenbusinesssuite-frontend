@@ -14,7 +14,7 @@ import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 // utils
 import FormatDate, { FormatDateShort } from "@/utils/FormatDate/FormatDate";
 
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useUser from "@/hooks/useUser";
 import services from "@/services";

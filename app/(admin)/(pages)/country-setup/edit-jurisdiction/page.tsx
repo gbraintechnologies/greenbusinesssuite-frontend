@@ -23,7 +23,7 @@ import {
 import SelectCountryEdit from "../components/selectCountryEdit";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsDot } from "react-icons/bs";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 const schema = yup.object().shape({
   id: yup.number().required(),

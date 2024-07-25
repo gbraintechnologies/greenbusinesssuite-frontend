@@ -1,6 +1,6 @@
 import React from "react";
 
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 function ConnectForm({ style = "shadow" }) {
   let key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NT";

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 // Toast Notifications
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "sonner";
 
 // RTK
 import ReactQueryProvider from "@/lib/ReactQueryProvider/ReactQueryProvider";
@@ -62,18 +62,7 @@ export default function RootLayout({
               <CompanyContextProvider>
                 <UserContextProvider>{children}</UserContextProvider>
               </CompanyContextProvider>
-              <Toaster
-                // toastOptions={{
-                //   className: "",
-                //   style: {
-                //     border: "1px solid #fff",
-                //     padding: "16px",
-                //     color: "#1d1d1d",
-                //   },
-                // }}
-                position="top-center"
-                reverseOrder={true}
-              />
+              <Toaster expand position="top-right" />
             </AdminContextProvider>
           </AuthContextProvider>
         </ReactQueryProvider>

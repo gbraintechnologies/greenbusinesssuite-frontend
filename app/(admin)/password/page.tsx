@@ -7,7 +7,7 @@ import { getStyles, ShowError } from "@/utils/FormHelpers/FormHelpers";
 import { Field, Form, Formik } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import * as yup from "yup";
 

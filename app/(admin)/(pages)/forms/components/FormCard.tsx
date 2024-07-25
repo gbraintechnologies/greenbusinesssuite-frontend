@@ -20,7 +20,7 @@ import FormatDate from "@/utils/FormatDate/FormatDate";
 // components
 import Modal from "@/components/Modal/Modal";
 import DeleteForm from "../actions/DeleteForm";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import RenameForm from "../actions/RenameForm";
 import services from "@/services";
 

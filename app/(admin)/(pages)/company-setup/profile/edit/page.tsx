@@ -9,7 +9,7 @@ import services from "@/services";
 import { CompanyInfo, CustomField } from "@/types";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { FormikHelpers } from "formik";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import useFileUpload from "@/hooks/useFileUpload";
 import { editCompanyWithCustomFields } from "@/services/features/companyService";
 import { searchUsersByEmail } from "@/services/features/userManagementService";
@@ -49,7 +49,7 @@ const Page = () => {
       (field) => field.custom_profile_item_id == 3
     )?.value ?? "";
 
-    const companySubSector =
+  const companySubSector =
     companyData?.company_custom_values?.find(
       (field: any) => field.custom_profile_item_id == 4
     )?.value ?? "";
@@ -69,25 +69,27 @@ const Page = () => {
       (field: any) => field.custom_profile_item_id == 7
     )?.value ?? "";
 
-    const { data: country, isLoading: isCountryLoading } = useQuery({
-      queryKey: ["country", companyData?.company_address],
-      queryFn: services.getJurisdictionEntriesById(Number(companyData?.company_address)),
-      enabled:
-        !!companyData?.company_address &&
-        isConvertibleToNumber(companyData?.company_address),
-    });
+  const { data: country, isLoading: isCountryLoading } = useQuery({
+    queryKey: ["country", companyData?.company_address],
+    queryFn: services.getJurisdictionEntriesById(
+      Number(companyData?.company_address)
+    ),
+    enabled:
+      !!companyData?.company_address &&
+      isConvertibleToNumber(companyData?.company_address),
+  });
 
-    const { data: industry, isLoading: isIndustryLoading } = useQuery({
-      queryKey: ["industry", companyData?.industry],
-      queryFn: services.getSubSectorByID(
-        Number(companySectorId),
-        Number(companyData?.industry)
-      ),
-      enabled:
-        !!companyData?.industry &&
-        !!companySectorId &&
-        isConvertibleToNumber(companyData?.industry),
-    });
+  const { data: industry, isLoading: isIndustryLoading } = useQuery({
+    queryKey: ["industry", companyData?.industry],
+    queryFn: services.getSubSectorByID(
+      Number(companySectorId),
+      Number(companyData?.industry)
+    ),
+    enabled:
+      !!companyData?.industry &&
+      !!companySectorId &&
+      isConvertibleToNumber(companyData?.industry),
+  });
 
   const [showCancelModal, setShowCancelModal] = useState(false);
 
@@ -107,21 +109,24 @@ const Page = () => {
     | undefined
   >();
 
-  const [selectedSubJurisdiction, setSelectedSubJurisdiction] = useState<| {
+  const [selectedSubJurisdiction, setSelectedSubJurisdiction] = useState<
+    | {
         label: string;
         value: string;
       }
     | undefined
   >();
 
-  const [selectedSubLevel, setSelectedSubLevel] = useState<| {
+  const [selectedSubLevel, setSelectedSubLevel] = useState<
+    | {
         label: string;
         value: string;
       }
     | undefined
   >();
 
-  const [selectedSubSector, setSelectedSubSector] = useState<| {
+  const [selectedSubSector, setSelectedSubSector] = useState<
+    | {
         label: string;
         value: string;
       }
@@ -141,7 +146,6 @@ const Page = () => {
   const [parentAddressScheme, setParentAddressScheme] = useState<any>();
 
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
-
 
   const router = useRouter();
 
@@ -166,7 +170,6 @@ const Page = () => {
       "companyDescription",
       "adminEmail",
       "contactEmail",
-      
     ];
     for (let field of simpleFields) {
       if (hasValueChanged(initialValues[field], values[field])) {
@@ -220,7 +223,6 @@ const Page = () => {
     values: Partial<ICompany>,
     { resetForm, setSubmitting }: FormikHelpers<Partial<ICompany>>
   ) => {
-    
     if (!(phone?.length > 4)) {
       toast.error("Phone number is required");
       setSubmitting(false);
@@ -364,7 +366,7 @@ const Page = () => {
   };
 
   useEffect(() => {
-    if(!companyData) return;
+    if (!companyData) return;
     setParentAddressScheme(
       country?.parentAddressScheme?.entries?.find(
         (entry: any) => entry?.id == companyParentAddressId
@@ -374,53 +376,55 @@ const Page = () => {
 
   useEffect(() => {
     if (companyData) {
-      {/* SETTING INITIAL VALUES*/}
+      {
+        /* SETTING INITIAL VALUES*/
+      }
       const phoneNumber = companyData?.primary_contact_phone_number;
       setPhone(phoneNumber);
-      
+
       setSelectedIndustry({
         label: isConvertibleToNumber(companyData?.industry)
-        ? industry?.sector?.parentSector
-        : companyData?.industry,
+          ? industry?.sector?.parentSector
+          : companyData?.industry,
         value: companyData?.industry,
       });
-      if(companySubSector){
-
+      if (companySubSector) {
         setSelectedSubSector({
           label: companySubSector,
           value: companySubSector,
         });
       }
 
-      if(companyParentAddressId){
-      setSelectedJurisdiction({
-        label: country?.name,
-        value: companyData?.company_address,
-      })}
-
-      if(companyParentAddressId){
-      setSelectedSubJurisdiction({
-        label: country?.parentAddressScheme?.entries?.find(
-        (entry: any) => entry?.id == companyParentAddressId
-      )?.name,
-        value: companyParentAddressId,
-      })}
-
-      if(companyChildAddressId){
-      setSelectedSubLevel({
-        label: country?.parentAddressScheme?.entries?.find(
-        (entry: any) => entry?.id == companyParentAddressId
-      )?.childEntries?.find(
-          (entry: any) => entry?.id == companyChildAddressId
-        )?.name,
-        value: companyChildAddressId
-      }) }
-
-      if(companySectorId){
-
-        setSectorId(companySectorId)
+      if (companyParentAddressId) {
+        setSelectedJurisdiction({
+          label: country?.name,
+          value: companyData?.company_address,
+        });
       }
 
+      if (companyParentAddressId) {
+        setSelectedSubJurisdiction({
+          label: country?.parentAddressScheme?.entries?.find(
+            (entry: any) => entry?.id == companyParentAddressId
+          )?.name,
+          value: companyParentAddressId,
+        });
+      }
+
+      if (companyChildAddressId) {
+        setSelectedSubLevel({
+          label: country?.parentAddressScheme?.entries
+            ?.find((entry: any) => entry?.id == companyParentAddressId)
+            ?.childEntries?.find(
+              (entry: any) => entry?.id == companyChildAddressId
+            )?.name,
+          value: companyChildAddressId,
+        });
+      }
+
+      if (companySectorId) {
+        setSectorId(companySectorId);
+      }
 
       setBackgroundImageUrl(companyData?.company_logo);
     }

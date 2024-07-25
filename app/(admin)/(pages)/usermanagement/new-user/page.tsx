@@ -21,7 +21,7 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { useRouter } from "next/navigation";
 
 // toast
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 // formik
 import { Formik, Field, Form } from "formik";
