@@ -53,14 +53,8 @@ interface SectorPayload {
 
 interface UpdatedRow {
   id: number;
-  countryName: string;
   sector: string;
   subSector: string;
-  sectors: Array<{
-    id: number;
-    parentSector: string;
-    subSectors: string[];
-  }>;
 }
 
 function EditSector() {
@@ -74,7 +68,7 @@ function EditSector() {
   });
 
   useEffect(() => {
-    // alert(JSON.stringify(data))
+   // alert(JSON.stringify(data))
   }, [data])
 
   const {
@@ -119,61 +113,58 @@ function EditSector() {
   }, [data, setValue]);
 
 
-  // Assuming UpdatedRow includes 'countryName' and 'sectorsts'
   const handleSaveEdit = () => {
     if (!editRow) return;
-
-    // Create an UpdatedRow object without countryName and sectors
+  
+    const { id, sector, subSector, } = editRow;
+  
     const updatedEditRow: UpdatedRow = {
-      id: editRow.id,
-      sector: editRow.sector,
-      subSector: editRow.subSector,
-      countryName: '', // If not needed, you can leave it empty or adjust as necessary
-      sectors: [], // If not needed, you can leave it empty or adjust as necessary
+      id,
+      sector,
+      subSector,
     };
-
-    // Update rows
+  
     const rowIndex = rows.findIndex(row => row.id === editRow.id);
-
     if (rowIndex === -1) {
       console.error("Row not found in rows array.");
       return;
     }
-
+  
     const updatedRows = [...rows];
     updatedRows[rowIndex] = {
       ...updatedRows[rowIndex],
       sector: editRow.sector,
       subSector: editRow.subSector,
     };
-
+  
     setRows(updatedRows);
-    handleParentChildrenUpdate(updatedEditRow); // Use UpdatedRow here
+    handleParentChildrenUpdate(updatedEditRow);
     setIsModalOpen(false);
   };
-
 
   const mapRowsToPayload = (updatedRow: UpdatedRow): SectorPayload => {
     const formData = getValues();
     const { id, countryName, sectors } = formData;
-
+  
     const updatedSectors = sectors.map((sector: any) => {
       if (sector.id === updatedRow.id) {
         return {
           ...sector,
           parentSector: updatedRow.sector,
-          subSectors: updatedRow.subSector.split(", ").map((sub: string) => sub.trim()),
+          subSector: updatedRow.subSector.split(",").map((sub: string) => sub.trim()),
         };
       }
       return sector;
     });
-
+  
     return {
       id,
       countryName,
       sectors: updatedSectors,
     };
   };
+  
+  
 
 
 
