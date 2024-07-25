@@ -7,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 
+import { IoIosArrowBack } from "react-icons/io";
+
 const page = () => {
   const [loading, setLoading] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -30,9 +32,7 @@ const page = () => {
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
 
-  const [profilePic, setProfilePic] = useState(
-    ""
-  ); // For Profile Picture
+  const [profilePic, setProfilePic] = useState(""); // For Profile Picture
 
   const router = useRouter();
 
@@ -41,9 +41,11 @@ const page = () => {
     phone?.charAt(0) == "0" ? (phone = phone.replace("0", "233")) : phone;
     setPhone(phone);
 
-    setProfilePic(userData?.custom_profile_values?.find(
-      (item: any) => item?.custom_profile_item_id === 1
-    )?.value)
+    setProfilePic(
+      userData?.custom_profile_values?.find(
+        (item: any) => item?.custom_profile_item_id === 1
+      )?.value
+    );
   }, [userData]);
 
   if (isLoading) {
@@ -58,6 +60,12 @@ const page = () => {
   } else {
     return (
       <div className="pb-40 px-5">
+        <button
+          className="my-3 flex text-sm items-center gap-2"
+          onClick={() => router.back()}
+        >
+          <IoIosArrowBack size={12} /> Go Back
+        </button>
         <UserForm
           initialValues={initialValues}
           submitFn={() => {}}

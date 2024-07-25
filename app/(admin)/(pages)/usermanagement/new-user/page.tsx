@@ -10,6 +10,8 @@ import services from "@/services";
 
 import Image from "next/image";
 
+import { IoIosArrowBack } from "react-icons/io";
+
 // icons
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 
@@ -204,6 +206,12 @@ function NewUser() {
           <Form>
             {/* HEADER */}
             <div className="w-full text-primary-dark  flex justify-between">
+              <button
+                className="my-3 flex text-sm items-center gap-2"
+                onClick={() => router.back()}
+              >
+                <IoIosArrowBack size={12} /> Go Back
+              </button>
               <h3 className="font-semibold text-xl">Create new user account</h3>
 
               <div className="flex gap-3">

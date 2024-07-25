@@ -65,7 +65,6 @@ const UserForm = ({
 }: Props) => {
   const inputFileRef = React.useRef();
 
-
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>();
 
   const [selectedRole, setSelectedRole] = useState<any>(null);
@@ -102,7 +101,6 @@ const UserForm = ({
 
       if (roleId && temp.length > 0) {
         setSelectedRole(temp.find((role: any) => role.id === roleId));
-      
       }
       // @ts-ignore
       setRoles(temp);

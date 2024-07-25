@@ -56,8 +56,8 @@ function UnpublishForm({ setShow, loading, setLoading, form }: any) {
     <div>
       <div className="mb-5 mx-5">
         <p className="font-light mb-5">
-          Unpublishing this form will make it unreachable to all new user who
-          may want to access the form
+          Unpublishing this form will make it inaccessible to any new clients
+          who wish to access it.
           <br />
           <br />
           Enter the name of this form to unpublish it
