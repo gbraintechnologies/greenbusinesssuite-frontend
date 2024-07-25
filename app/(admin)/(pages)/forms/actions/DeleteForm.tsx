@@ -2,7 +2,7 @@ import services from "@/services";
 import React from "react";
 
 //
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 //
 import { toast } from "sonner";
@@ -10,14 +10,29 @@ import { toast } from "sonner";
 function DeleteForm({ setShow, id }: any) {
   const queryClient = useQueryClient();
 
+  const { data: formStatusCount, isLoading } = useQuery({
+    queryKey: ["Get forms status count"],
+    queryFn: services.getFormStatusCountById(Number(id)),
+    enabled: Boolean(id),
+  });
+
   const runDelete = () => {
-    toast.loading("Deleting..");
+    setShow(false);
+
+    if (formStatusCount && formStatusCount?.totalCount > 0) {
+      toast.dismiss();
+      toast.error("Deletion reqeust denied", {
+        description: "This form has responses and cannot be deleted.",
+      });
+      return;
+    }
+
+    // NO RESPONSES SO DELETE
     services
-      .deleteForm(id)
+      .hardDeleteForm(id)
       .then((res) => {
         toast.dismiss();
         setShow(false);
-        console.log("deleting", res);
         toast.success("Form deleted");
         queryClient.invalidateQueries({
           queryKey: ["all forms"],
@@ -48,12 +63,13 @@ function DeleteForm({ setShow, id }: any) {
             Cancel
           </button>
           <button
-            className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+            disabled={isLoading}
+            className="bg-primary-red py-3 disabled:opacity-90 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
             onClick={() => {
               runDelete();
             }}
           >
-            Yes, delete form
+            {isLoading ? "Hold on..." : " Yes, delete form"}
           </button>
         </div>
       </div>
