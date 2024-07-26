@@ -57,14 +57,8 @@ interface SectorPayload {
 
 interface UpdatedRow {
   id: number;
-  countryName: string;
   sector: string;
   subSector: string;
-  sectors: Array<{
-    id: number;
-    parentSector: string;
-    subSectors: string[];
-  }>;
 }
 
 function EditSector() {
@@ -122,22 +116,18 @@ function EditSector() {
     }
   }, [data, setValue]);
 
-  // Assuming UpdatedRow includes 'countryName' and 'sectorsts'
   const handleSaveEdit = () => {
     if (!editRow) return;
 
-    // Create an UpdatedRow object without countryName and sectors
+    const { id, sector, subSector } = editRow;
+
     const updatedEditRow: UpdatedRow = {
-      id: editRow.id,
-      sector: editRow.sector,
-      subSector: editRow.subSector,
-      countryName: "", // If not needed, you can leave it empty or adjust as necessary
-      sectors: [], // If not needed, you can leave it empty or adjust as necessary
+      id,
+      sector,
+      subSector,
     };
 
-    // Update rows
     const rowIndex = rows.findIndex((row) => row.id === editRow.id);
-
     if (rowIndex === -1) {
       console.error("Row not found in rows array.");
       return;
@@ -151,7 +141,7 @@ function EditSector() {
     };
 
     setRows(updatedRows);
-    handleParentChildrenUpdate(updatedEditRow); // Use UpdatedRow here
+    handleParentChildrenUpdate(updatedEditRow);
     setIsModalOpen(false);
   };
 
@@ -164,8 +154,8 @@ function EditSector() {
         return {
           ...sector,
           parentSector: updatedRow.sector,
-          subSectors: updatedRow.subSector
-            .split(", ")
+          subSector: updatedRow.subSector
+            .split(",")
             .map((sub: string) => sub.trim()),
         };
       }
