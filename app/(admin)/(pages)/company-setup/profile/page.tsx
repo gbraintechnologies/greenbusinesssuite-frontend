@@ -433,7 +433,7 @@ const Page = () => {
                 </p>
               </header>
               {/* COMPANY SMALL LOGO */}
-              <div className="my-2">
+              <div className="mt-2 mb-4">
                 <h2 className="text-base text-primary-dark font-medium">
                   Upload small icon
                 </h2>
@@ -442,7 +442,21 @@ const Page = () => {
                   It must be squared and at at least 128px by 128px with a max
                   size of 512KB. Supported formats are JPG and PNG only.
                 </p>
-                
+                {!(companySmallLogo) && (
+                    <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
+                      <input
+                        type="file"
+                        className="hidden"
+                        onChange={(e) => {
+                          setCompanySmallLogo(
+                            e.target.files && e.target.files[0]
+                          );
+                        }}
+                        accept=".jpg, .png"
+                      />
+                      <CloudUploadIcon /> <p>Upload</p>
+                    </label>
+                  )}
                 {companySmallLogo && (
                   <div
                     className="w-32 h-32 rounded-md my-3"
