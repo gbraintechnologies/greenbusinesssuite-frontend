@@ -311,9 +311,7 @@ const CompanyForm: React.FC<Props> = ({
 
   useEffect(() => {
     if (companySmallLogo) {
-      console.log("small logo ", companySmallLogo);
       const smallUrl = URL.createObjectURL(companySmallLogo);
-      console.log("small url ", smallUrl);
       setSmallLogoUrl(smallUrl);
 
       return () => URL.revokeObjectURL(smallUrl);
@@ -661,40 +659,29 @@ const CompanyForm: React.FC<Props> = ({
                   </p>
                 </header>
                 {/* ADMIN NAME */}
-                {logoPresentOnLoad && <div className="flex gap-5">
+                {/* <div className="flex gap-5">
                   <div className="input-holder">
                     <label>First Name</label>
                     <Field
-                      style={{
-                        backgroundColor: "rgba(248 250 252,0.5)",
-                        color: "#666",
-                        cursor: "not-allowed",
-                      }}
+                      style={getStyles(errors, "adminFirstName")}
                       name="adminFirstName"
                       placeholder=""
-
-                      disabled={true}
                     />
                     <ShowError name="adminFirstName" />
                   </div>
                   <div className="input-holder">
                     <label>Last Name</label>
                     <Field
-                      style={{
-                        backgroundColor: "rgba(248 250 252,0.5)",
-                        color: "#666",
-                        cursor: "not-allowed",
-                      }}
+                      style={getStyles(errors, "adminLastName")}
                       name="adminLastName"
                       placeholder=""
-                      disabled={true}
                     />
                     <ShowError name="adminLastName" />
                   </div>
-                </div>}
+                </div> */}
 
                 {/* ADMIN EMAIL */}
-                {logoPresentOnLoad && <div className="input-holder">
+                {/* <div className="input-holder">
                   <label>Company admin email address</label>
                   <Field
                     style={
@@ -709,20 +696,20 @@ const CompanyForm: React.FC<Props> = ({
                     }
                     name="adminEmail"
                     placeholder=""
-                    disabled={true}
+                    disabled={logoPresentOnLoad}
                   />
                   <ShowError name="adminEmail" />
-                </div>}
+                </div> */}
 
                 {/* REFACTORING: SEARCH BY EMAIL AND SELECT */}
-                {!logoPresentOnLoad && <ComboSearch
+                <ComboSearch
                   search={searchAdminEmail}
                   setSearch={setSearchAdminEmail}
                   setSelected={setSelectedAdminOption}
                   selected={selectedAdminOption}
                   placeholder="Search users by email"
                   data={filteredOptions ? filteredOptions : []}
-                />}
+                />
               </div>
 
               {/* CONTACT PERSON DETAILS */}

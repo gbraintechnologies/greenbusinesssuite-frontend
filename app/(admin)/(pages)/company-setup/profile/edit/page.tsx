@@ -153,6 +153,8 @@ const Page = () => {
 
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
+  const [selectedAdminOption, setSelectedAdminOption] = useState<any>();
+
   const router = useRouter();
 
   const initialValues: Partial<ICompany> = {
@@ -476,6 +478,8 @@ const Page = () => {
             setInitialLoad={setInitialLoad}
             color={color}
             setColor={setColor}
+            selectedAdminOption={selectedAdminOption}
+            setSelectedAdminOption={setSelectedAdminOption}
           />
         )}
         {/* CANCEL MODAL: DISCARD ALL CHANGES */}
