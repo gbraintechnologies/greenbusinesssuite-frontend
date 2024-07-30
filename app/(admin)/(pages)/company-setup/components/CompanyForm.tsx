@@ -19,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { Countrie } from "../../country-setup/components/Countries";
 import { toast } from "sonner";
+import ComboSearch from "@/components/SearchBox/ComboSearch";
 
 export interface ICompany {
   companyName: string;
@@ -50,6 +51,8 @@ const companySchema = Yup.object().shape({
 
 type Props = {
   headerText: string;
+  selectedAdminOption: any;
+  setSelectedAdminOption: any;
   logoPresentOnLoad?: boolean;
   initialValues: Partial<ICompany>;
   submitFn: any;
@@ -164,6 +167,8 @@ const CompanyForm: React.FC<Props> = ({
   setSelectedSubSector,
   sectorId,
   setSectorId,
+  setSelectedAdminOption,
+  selectedAdminOption,
   initialLoad,
   setInitialLoad,
 }) => {
@@ -186,6 +191,24 @@ const CompanyForm: React.FC<Props> = ({
     queryKey: ["all jurisdictions"],
     queryFn: services.allJurisdictions(),
   });
+
+  // fetch all users
+  const { data: options, isLoading } = useQuery({
+    queryKey: ["all users"],
+    queryFn: services.allUsers(),
+  });
+
+  const [searchAdminEmail, setSearchAdminEmail] = useState("");
+
+  const filteredOptions =
+    searchAdminEmail === ""
+      ? options
+      : options?.filter((option: any) =>
+          option?.email
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .includes(searchAdminEmail.toLowerCase().replace(/\s+/g, ""))
+        );
 
   const fetchIndustries = async (jurisdiction: string) => {
     try {
@@ -656,16 +679,17 @@ const CompanyForm: React.FC<Props> = ({
 
               {/* COMPANY ADMIN */}
               <div className="max-w-2xl pt-6">
-                <header className="pb-8 ">
+                <header className="pb-3">
                   <h3 className="text-lg text-primary-dark font-semibold">
                     Company Admin
                   </h3>
                   <p className="text-sm text-[#667085]">
-                    Setup the administrator of this company{" "}
+                    Search for user using email and select the a user to be the
+                    administrator of this company
                   </p>
                 </header>
                 {/* ADMIN NAME */}
-                <div className="flex gap-5">
+                {/* <div className="flex gap-5">
                   <div className="input-holder">
                     <label>First Name</label>
                     <Field
@@ -684,10 +708,10 @@ const CompanyForm: React.FC<Props> = ({
                     />
                     <ShowError name="adminLastName" />
                   </div>
-                </div>
+                </div> */}
 
                 {/* ADMIN EMAIL */}
-                <div className="input-holder">
+                {/* <div className="input-holder">
                   <label>Company admin email address</label>
                   <Field
                     style={
@@ -705,7 +729,17 @@ const CompanyForm: React.FC<Props> = ({
                     disabled={logoPresentOnLoad}
                   />
                   <ShowError name="adminEmail" />
-                </div>
+                </div> */}
+
+                {/* REFACTORING: SEARCH BY EMAIL AND SELECT */}
+                <ComboSearch
+                  search={searchAdminEmail}
+                  setSearch={setSearchAdminEmail}
+                  setSelected={setSelectedAdminOption}
+                  selected={selectedAdminOption}
+                  placeholder="Search users by email"
+                  data={filteredOptions ? filteredOptions : []}
+                />
               </div>
 
               {/* CONTACT PERSON DETAILS */}

@@ -31,9 +31,9 @@ interface ICompany {
 const companySchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
   companyDescription: Yup.string().required("Company description is required"),
-  adminFirstName: Yup.string().required("First name is required"),
-  adminLastName: Yup.string().required("Last name is required"),
-  adminEmail: Yup.string().email("Invalid email").required("Email is required"),
+  // adminFirstName: Yup.string().required("First name is required"),
+  // adminLastName: Yup.string().required("Last name is required"),
+  // adminEmail: Yup.string().email("Invalid email").required("Email is required"),
   contactFirstName: Yup.string().required("First name is required"),
   contactLastName: Yup.string().required("Last name is required"),
   contactEmail: Yup.string()
@@ -93,15 +93,20 @@ const CreateCompany = () => {
   const initialValues: Partial<ICompany> = {
     companyName: "",
     companyDescription: "",
-    adminFirstName: "",
-    adminLastName: "",
-    adminEmail: "",
+    // adminFirstName: "",
+    // adminLastName: "",
+    // adminEmail: "",
     contactFirstName: "",
     contactLastName: "",
     contactEmail: "",
   };
 
   const { handleFileUpload } = useFileUpload();
+
+  //
+  const [selectedAdminOption, setSelectedAdminOption] = useState(null);
+
+  console.log("selected admin", selectedAdminOption);
 
   const createCompany = async (
     values: Partial<ICompany>,
@@ -166,12 +171,14 @@ const CreateCompany = () => {
       {
         //Admin Name
         custom_profile_item_id: 2,
-        value: `${values.adminFirstName} ${values.adminLastName}`,
+        // @ts-ignore
+        value: `${selectedAdminOption?.first_name} ${selectedAdminOption?.last_name}`,
       },
       {
         //Admin Email
         custom_profile_item_id: 3,
-        value: values.adminEmail as string,
+        // @ts-ignore
+        value: selectedAdminOption?.email as string,
       },
       {
         // Sub Sector ID
@@ -195,16 +202,16 @@ const CreateCompany = () => {
       },
     ];
 
-    const adminData = {
-      email: values.adminEmail as string,
-      username: ((values.adminFirstName?.toLowerCase() as string) +
-        values.adminLastName?.toLowerCase()) as string,
-      first_name: values.adminFirstName as string,
-      last_name: values.adminLastName as string,
-      phone_number: "+233",
-      mobile_phone_number: "+233",
-      user_status: "ACTIVE",
-    };
+    // const adminData = {
+    //   email: values.adminEmail as string,
+    //   username: ((values.adminFirstName?.toLowerCase() as string) +
+    //     values.adminLastName?.toLowerCase()) as string,
+    //   first_name: values.adminFirstName as string,
+    //   last_name: values.adminLastName as string,
+    //   phone_number: "+233",
+    //   mobile_phone_number: "+233",
+    //   user_status: "ACTIVE",
+    // };
 
     try {
       const createCompanyResponse = await createCompanyWithCustomFields(
@@ -214,24 +221,34 @@ const CreateCompany = () => {
 
       toast.success("Company created successfully");
 
-      const custom_profiles = [
-        {
-          custom_profile_item_id: 2,
-          value: await createCompanyResponse?.id,
-        },
-      ];
-      const createUserResponse = await services.createUserWithCustomProfiles(
-        adminData,
-        custom_profiles
-      );
-      toast.success("Admin created successfully successfully");
+      // const custom_profiles = [
+      //   {
+      //     custom_profile_item_id: 2,
+      //     value: await createCompanyResponse?.id,
+      //   },
+      // ];
+
+      // TODO: No need to create new admin
+      // const createUserResponse = await services.createUserWithCustomProfiles(
+      //   adminData,
+      //   custom_profiles
+      // );
+      // toast.success("Admin created successfully successfully");
 
       // ROLE ID: 6 for company admin
-      await services.assignRoleToUser(createUserResponse.data.id, 6);
+      // await services.assignRoleToUser(createUserResponse.data.id, 6);
 
-      await services.notifyUserTempCred(createUserResponse?.data?.id, "EMAIL");
+      // TODO: ASSIGN ADMIN TO COMPANY
+      await services.assignAdminToCompany(
+        // @ts-ignore
+        selectedAdminOption?.id,
+        createCompanyResponse?.id
+      );
 
-      toast.success(`Temporary password sent to ${adminData.email}`);
+      toast.success(
+        // @ts-ignore
+        `${selectedAdminOption?.first_name} assigned to ${createCompanyResponse?.name}`
+      );
 
       setPhone("");
       setSelectedIndustry(undefined);
@@ -260,6 +277,8 @@ const CreateCompany = () => {
           setBackgroundImageUrl={setBackgroundImageUrl}
           phone={phone}
           setPhone={setPhone}
+          selectedAdminOption={selectedAdminOption}
+          setSelectedAdminOption={setSelectedAdminOption}
           selectedIndustry={selectedIndustry}
           setSelectedIndustry={setSelectedIndustry}
           selectedJurisdiction={selectedJurisdiction}

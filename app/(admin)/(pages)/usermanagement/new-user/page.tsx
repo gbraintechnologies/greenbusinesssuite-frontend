@@ -325,11 +325,10 @@ function NewUser() {
               </div>
 
               {/* Phone */}
+
               <div className="input-holder">
-                <label>Phone number</label>
-                <div className="w-[50%]">
-                  <PhoneSelector phone={phone} setPhone={setPhone} />
-                </div>
+                <label className="pb-2">Phone number</label>
+                <PhoneSelector phone={phone} setPhone={setPhone} />
               </div>
 
               <div className="input-holder">
