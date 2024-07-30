@@ -1,8 +1,15 @@
 import axios from "axios";
 
-import { getToken, getRefreshToken } from "./localService";
+import {
+  getToken,
+  getRefreshToken,
+  getUserUUID,
+  getCompanyID,
+  getUserId,
+} from "./localService";
 
 import { toast } from "sonner";
+import { headerT } from "@/types/headerType";
 
 const multipartMeshApi = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
@@ -12,12 +19,20 @@ const multipartMeshApi = axios.create({
 multipartMeshApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
+    let headers: headerT = {
+      "Content-Type": "application/json",
+      "user-uuid": getUserUUID(),
+      Authorization: `Bearer ${getToken()}`,
+    };
+
+    // Route to admin or tenant
+    if (getCompanyID() !== 0) {
+      headers = { ...headers, tenantid: getCompanyID() };
+    }
+
     return {
       ...config,
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${getToken()}`,
-      },
+      headers: headers,
     };
   },
   (error) => Promise.reject(error)
@@ -48,12 +63,18 @@ multipartMeshApi.interceptors.response.use(
         )
         .then((res) => {
           const oldRefreshToken = getRefreshToken();
+          const uuid = getUserUUID();
+          const companyId = getCompanyID();
+          const userId = getUserId();
 
           localStorage.setItem(
             "auth",
             JSON.stringify({
               access_token: res?.data?.access_token,
+              company_id: companyId,
               refresh_token: oldRefreshToken,
+              user_id: userId,
+              user_uuid: uuid,
             })
           );
 
