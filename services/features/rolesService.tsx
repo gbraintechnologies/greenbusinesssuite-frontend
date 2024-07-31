@@ -19,10 +19,3 @@ export const assignRoleToUser = (userID: any, roleID: any) => {
     role_id: roleID,
   });
 };
-
-export const assignAdminToCompany = (adminID: number, companyID: number) => {
-  return authApi.put("/company/assign_admin_to_company", {
-    company_admin_id: adminID,
-    company_id: companyID,
-  });
-};

@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { IoIosArrowDown } from "react-icons/io";
 import Tabs from "@/components/Tabs/Tabs";
 import services from "@/services";
-import { CompanyInfo, CustomField } from "@/types";
+
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { Fragment, useEffect, useState } from "react";
@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import UserIcon from "@/public/icons/UserIcon";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { LuPlusCircle } from "react-icons/lu";
-import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
+
 import FormCard from "@/components/Form/FormCard";
 import AssignForm from "../components/AssignForm";
 import Modal from "@/components/Modal/Modal";
@@ -29,6 +29,7 @@ import UploadIcon from "@/public/icons/UploadIcon";
 import WriteIcon from "@/public/icons/WriteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
+import CompanyAdmins from "./_components/CompanyAdmins";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -38,8 +39,9 @@ const Page = () => {
 
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "Description", value: "description" },
+    { id: 5, name: "Administrators", value: "administrators" },
     { id: 2, name: "Assigned Forms", value: "assigned_forms" },
-    {id: 3, name: "Branding Settings", value: "branding_settings"}
+    { id: 3, name: "Branding Settings", value: "branding_settings" },
   ]);
 
   const [activeFilter, setActiveFilter] = useState<IFilter>({
@@ -198,7 +200,8 @@ const Page = () => {
       toast.error("Failed to update company status");
     }
   };
-  if (isLoading || areFormsLoading || isCountryLoading) {
+  if (isLoading) {
+    // if (isLoading || areFormsLoading || isCountryLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
         <div>
@@ -383,7 +386,7 @@ const Page = () => {
 
             {activeFilter.value === "assigned_forms" && (
               <>
-                <div className="">
+                <div className="min-h-[40vh]">
                   <div className="flex items-center justify-between mb-3 mt-2">
                     <div className="label w-full my-4">
                       Assigned Forms ({assignedForms?.length})
@@ -423,26 +426,26 @@ const Page = () => {
 
             {activeFilter.value === "branding_settings" && (
               <div className="max-w-2xl pt-6">
-              <header className="pb-3">
-                <h3 className="text-lg text-primary-dark font-semibold">
-                  Branding Settings
-                </h3>
-                <p className="text-sm text-[#667085]">
-                  Set your default branding elements to determine how the
-                  interface appears to customers.
-                </p>
-              </header>
-              {/* COMPANY SMALL LOGO */}
-              <div className="mt-2 mb-4">
-                <h2 className="text-base text-primary-dark font-medium">
-                  Upload small icon
-                </h2>
-                <p className="text-sm text-[#667085]">
-                  A smaller representation of your logo to be used as favicon.
-                  It must be squared and at at least 128px by 128px with a max
-                  size of 512KB. Supported formats are JPG and PNG only.
-                </p>
-                {!(companySmallLogo) && (
+                <header className="pb-3">
+                  <h3 className="text-lg text-primary-dark font-semibold">
+                    Branding Settings
+                  </h3>
+                  <p className="text-sm text-[#667085]">
+                    Set your default branding elements to determine how the
+                    interface appears to customers.
+                  </p>
+                </header>
+                {/* COMPANY SMALL LOGO */}
+                <div className="mt-2 mb-4">
+                  <h2 className="text-base text-primary-dark font-medium">
+                    Upload small icon
+                  </h2>
+                  <p className="text-sm text-[#667085]">
+                    A smaller representation of your logo to be used as favicon.
+                    It must be squared and at at least 128px by 128px with a max
+                    size of 512KB. Supported formats are JPG and PNG only.
+                  </p>
+                  {!companySmallLogo && (
                     <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
                       <input
                         type="file"
@@ -457,156 +460,160 @@ const Page = () => {
                       <CloudUploadIcon /> <p>Upload</p>
                     </label>
                   )}
-                {companySmallLogo && (
-                  <div
-                    className="w-32 h-32 rounded-md my-3"
-                    style={{
-                      backgroundImage: logoPresentOnLoad
-                        ? `url(${smallLogoUrl})`
-                        : companySmallLogo
-                        ? `url(${smallLogoUrl})`
-                        : "",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      border: "1px solid #E2E8F0",
-                      position: "relative",
-                    }}
-                  >
-                    <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
-                      <div
-                        className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
-                        onClick={() => setCompanySmallLogo(null)}
-                      >
-                        <RiDeleteBin6Line color="#0E121B" />
-                      </div>
-                      <label className="flex justify-center items-center w-8 py-2 relative cursor-pointer">
-                        <input
-                          type="file"
-                          className="hidden"
-                          onChange={(e) => {
-                            setCompanySmallLogo(
-                              e.target.files && e.target.files[0]
-                            );
-                          }}
-                          accept=".jpg, .png"
-                        />
-                        <WriteIcon />
-                      </label>
-                    </div>
-                  </div>
-                )}
-              </div>
-              {/* COMPANY LOGO */}
-              <div className="my-2">
-                <h2 className="text-base text-primary-dark font-medium">
-                  Upload full sized logo
-                </h2>
-                <p className="text-sm text-[#667085]">
-                  The full sized version of your logo. It must be at least
-                  128px by 128px with a max size of 512KB. Supported formats
-                  are JPG and PNG only.
-                </p>
-                <div className="flex justify-center items-center w-full relative my-2">
-                  <label
-                    className="flex justify-center items-center bg-slate-50 rounded-lg border-2 border-dashed w-full h-64 group-item text-center"
-                    style={{
-                      backgroundImage: logoPresentOnLoad
-                        ? `url(${backgroundImageUrl})`
-                        : companyLogo
-                        ? `url(${backgroundImageUrl})`
-                        : "",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  >
-                    {(companyLogo || logoPresentOnLoad) && (
-                      <div className="absolute inset-0 bg-black bg-opacity-50 h-64"></div>
-                    )}
-
-                    <div className="flex flex-col gap-3 z-10 relative">
-                      <div className="flex w-full items-center justify-center">
-                        <div className="flex  items-center justify-center rounded-full w-12 h-12 bg-[#F1F5F9]">
-                          <UploadIcon />
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <p
-                          className={
-                            "font-medium text-base " +
-                            (companyLogo || logoPresentOnLoad
-                              ? " text-white "
-                              : "")
-                          }
-                        >
-                          Upload company logo file here
-                        </p>
-                        <p
-                          className={
-                            " text-xs" +
-                            (companyLogo || logoPresentOnLoad
-                              ? " text-white "
-                              : " text-[#64748B]")
-                          }
-                        >
-                          Supported formats: JPG, PNG (2MB max file size)
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-center">
-                        <div className="w-20 h-8 border-1 border-[#E2E8F0] text-sm bg-white flex items-center justify-center rounded-lg shadow-[0px_2px_2px_0px_rgba(0,0,0,0.04)]">
-                          Browse
-                        </div>
-                      </div>
-                    </div>
-                    <input
-                      type="file"
-                      className="hidden"
-                      onChange={(e) => {
-                        setCompanyLogo(e.target.files && e.target.files[0]);
+                  {companySmallLogo && (
+                    <div
+                      className="w-32 h-32 rounded-md my-3"
+                      style={{
+                        backgroundImage: logoPresentOnLoad
+                          ? `url(${smallLogoUrl})`
+                          : companySmallLogo
+                          ? `url(${smallLogoUrl})`
+                          : "",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        border: "1px solid #E2E8F0",
+                        position: "relative",
                       }}
-                      accept=".jpg, .png"
+                    >
+                      <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
+                        <div
+                          className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
+                          onClick={() => setCompanySmallLogo(null)}
+                        >
+                          <RiDeleteBin6Line color="#0E121B" />
+                        </div>
+                        <label className="flex justify-center items-center w-8 py-2 relative cursor-pointer">
+                          <input
+                            type="file"
+                            className="hidden"
+                            onChange={(e) => {
+                              setCompanySmallLogo(
+                                e.target.files && e.target.files[0]
+                              );
+                            }}
+                            accept=".jpg, .png"
+                          />
+                          <WriteIcon />
+                        </label>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {/* COMPANY LOGO */}
+                <div className="my-2">
+                  <h2 className="text-base text-primary-dark font-medium">
+                    Upload full sized logo
+                  </h2>
+                  <p className="text-sm text-[#667085]">
+                    The full sized version of your logo. It must be at least
+                    128px by 128px with a max size of 512KB. Supported formats
+                    are JPG and PNG only.
+                  </p>
+                  <div className="flex justify-center items-center w-full relative my-2">
+                    <label
+                      className="flex justify-center items-center bg-slate-50 rounded-lg border-2 border-dashed w-full h-64 group-item text-center"
+                      style={{
+                        backgroundImage: logoPresentOnLoad
+                          ? `url(${backgroundImageUrl})`
+                          : companyLogo
+                          ? `url(${backgroundImageUrl})`
+                          : "",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                    >
+                      {(companyLogo || logoPresentOnLoad) && (
+                        <div className="absolute inset-0 bg-black bg-opacity-50 h-64"></div>
+                      )}
+
+                      <div className="flex flex-col gap-3 z-10 relative">
+                        <div className="flex w-full items-center justify-center">
+                          <div className="flex  items-center justify-center rounded-full w-12 h-12 bg-[#F1F5F9]">
+                            <UploadIcon />
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <p
+                            className={
+                              "font-medium text-base " +
+                              (companyLogo || logoPresentOnLoad
+                                ? " text-white "
+                                : "")
+                            }
+                          >
+                            Upload company logo file here
+                          </p>
+                          <p
+                            className={
+                              " text-xs" +
+                              (companyLogo || logoPresentOnLoad
+                                ? " text-white "
+                                : " text-[#64748B]")
+                            }
+                          >
+                            Supported formats: JPG, PNG (2MB max file size)
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-center">
+                          <div className="w-20 h-8 border-1 border-[#E2E8F0] text-sm bg-white flex items-center justify-center rounded-lg shadow-[0px_2px_2px_0px_rgba(0,0,0,0.04)]">
+                            Browse
+                          </div>
+                        </div>
+                      </div>
+                      <input
+                        type="file"
+                        className="hidden"
+                        onChange={(e) => {
+                          setCompanyLogo(e.target.files && e.target.files[0]);
+                        }}
+                        accept=".jpg, .png"
+                      />
+                    </label>
+                  </div>
+                </div>
+                {/* COMPANY COLOR */}
+                <div className="input-holder">
+                  <h2 className="text-base text-primary-dark font-medium">
+                    Company Color
+                  </h2>
+                  <p className="text-sm text-[#667085]">
+                    Add a splash of colour to your pages
+                  </p>
+                  {!color && (
+                    <button
+                      className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border py-2 px-4 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
+                      type="button"
+                      onClick={() => setShowColorPicker(!showColorPicker)}
+                    >
+                      Select
+                    </button>
+                  )}
+                  {color && (
+                    <button
+                      className=" mt-2 flex items-center my-2  bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
+                      type="button"
+                      onClick={() => setShowColorPicker(!showColorPicker)}
+                    >
+                      <div
+                        className={`w-5 h-8 rounded-tl-md rounded-bl-md`}
+                        style={{ backgroundColor: color }}
+                      ></div>
+                      <p className="p-2">{color}</p>
+                    </button>
+                  )}
+                  {showColorPicker && (
+                    <SketchPicker
+                      color={color}
+                      onChangeComplete={handleChangeComplete}
                     />
-                  </label>
+                  )}
                 </div>
               </div>
-              {/* COMPANY COLOR */}
-              <div className="input-holder">
-                <h2 className="text-base text-primary-dark font-medium">
-                  Company Color
-                </h2>
-                <p className="text-sm text-[#667085]">
-                  Add a splash of colour to your pages
-                </p>
-                {!color && (
-                  <button
-                    className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border py-2 px-4 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
-                    type="button"
-                    onClick={() => setShowColorPicker(!showColorPicker)}
-                  >
-                    Select
-                  </button>
-                )}
-                {color && (
-                  <button
-                    className=" mt-2 flex items-center my-2  bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
-                    type="button"
-                    onClick={() => setShowColorPicker(!showColorPicker)}
-                  >
-                    <div
-                      className={`w-5 h-8 rounded-tl-md rounded-bl-md`}
-                      style={{ backgroundColor: color }}
-                    ></div>
-                    <p className="p-2">{color}</p>
-                  </button>
-                )}
-                {showColorPicker && (
-                  <SketchPicker
-                    color={color}
-                    onChangeComplete={handleChangeComplete}
-                  />
-                )}
-              </div>
-            </div>
-              )}
+            )}
+
+            {activeFilter.value === "administrators" && (
+              <CompanyAdmins companyId={id} />
+            )}
           </div>
         </div>
       </div>

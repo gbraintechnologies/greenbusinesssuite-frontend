@@ -40,3 +40,15 @@ export const searchCompany = (searchTerm: string) => {
   return () =>
     authApi.get(`/companies-by-filter/${searchTerm}`).then((res) => res.data);
 };
+
+// company Administration
+export const assignAdminToCompany = (adminID: number, companyID: number) => {
+  return authApi.put("/company/assign_admin_to_company", {
+    company_admin_id: adminID,
+    company_id: companyID,
+  });
+};
+
+export const getSupportStaffAssignedCompanies = (userId: any) => {
+  return authApi.get(`/company/get_support_staff_assigned_companies/${userId}`);
+};

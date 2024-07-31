@@ -99,20 +99,12 @@ const CreateCompany = () => {
   const initialValues: Partial<ICompany> = {
     companyName: "",
     companyDescription: "",
-    // adminFirstName: "",
-    // adminLastName: "",
-    // adminEmail: "",
     contactFirstName: "",
     contactLastName: "",
     contactEmail: "",
   };
 
   const { handleFileUpload } = useFileUpload();
-
-  //
-  const [selectedAdminOption, setSelectedAdminOption] = useState(null);
-
-  console.log("selected admin", selectedAdminOption);
 
   const createCompany = async (
     values: Partial<ICompany>,
@@ -178,13 +170,15 @@ const CreateCompany = () => {
         //Admin Name
         custom_profile_item_id: 2,
         // @ts-ignore
-        value: `${selectedAdminOption?.first_name} ${selectedAdminOption?.last_name}`,
+        // value: `${selectedAdminOption?.first_name} ${selectedAdminOption?.last_name}`,
+        value: "",
       },
       {
         //Admin Email
         custom_profile_item_id: 3,
         // @ts-ignore
-        value: selectedAdminOption?.email as string,
+        // value: selectedAdminOption?.email as string,
+        value: "",
       },
       {
         // Sub Sector ID
@@ -244,24 +238,14 @@ const CreateCompany = () => {
       // ROLE ID: 6 for company admin
       // await services.assignRoleToUser(createUserResponse.data.id, 6);
 
-      // TODO: ASSIGN ADMIN TO COMPANY
-      await services.assignAdminToCompany(
-        // @ts-ignore
-        selectedAdminOption?.id,
-        createCompanyResponse?.id
-      );
-
-      toast.success(
-        // @ts-ignore
-        `${selectedAdminOption?.first_name} assigned to ${createCompanyResponse?.name}`
-      );
-
       setPhone("");
       setSelectedIndustry(undefined);
       setSelectedJurisdiction(undefined);
       setCompanyLogo(null);
       setBackgroundImageUrl("");
       resetForm();
+
+      router.push("/company-set-up");
     } catch (error) {
       toast.error("An error occurred");
     } finally {
@@ -287,8 +271,6 @@ const CreateCompany = () => {
           setBackgroundImageUrl={setBackgroundImageUrl}
           phone={phone}
           setPhone={setPhone}
-          selectedAdminOption={selectedAdminOption}
-          setSelectedAdminOption={setSelectedAdminOption}
           selectedIndustry={selectedIndustry}
           setSelectedIndustry={setSelectedIndustry}
           selectedJurisdiction={selectedJurisdiction}

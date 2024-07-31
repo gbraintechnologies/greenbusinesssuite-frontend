@@ -6,6 +6,10 @@ import { Field, Form, Formik } from "formik";
 import Image from "next/image";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
+
+// icons
+import { CiCircleInfo } from "react-icons/ci";
+
 import * as Yup from "yup";
 import UploadIcon from "@/public/svg/upload.svg";
 import {
@@ -182,8 +186,7 @@ const CompanyForm: React.FC<Props> = ({
   setSelectedSubSector,
   sectorId,
   setSectorId,
-  setSelectedAdminOption,
-  selectedAdminOption,
+
   initialLoad,
   setInitialLoad,
   color,
@@ -210,24 +213,6 @@ const CompanyForm: React.FC<Props> = ({
     queryKey: ["all jurisdictions"],
     queryFn: services.allJurisdictions(),
   });
-
-  // fetch all users
-  const { data: options, isLoading } = useQuery({
-    queryKey: ["all users"],
-    queryFn: services.allUsers(),
-  });
-
-  const [searchAdminEmail, setSearchAdminEmail] = useState("");
-
-  const filteredOptions =
-    searchAdminEmail === ""
-      ? options
-      : options?.filter((option: any) =>
-          option?.email
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(searchAdminEmail.toLowerCase().replace(/\s+/g, ""))
-        );
 
   const fetchIndustries = async (jurisdiction: string) => {
     try {
@@ -650,66 +635,19 @@ const CompanyForm: React.FC<Props> = ({
               {/* COMPANY ADMIN */}
               <div className="max-w-2xl pt-6">
                 <header className="pb-3">
-                  <h3 className="text-lg text-primary-dark font-semibold">
-                    Company Admin
+                  <h3 className="text-lg text-primary-dark font-semibold pb-4">
+                    Company Administrator
                   </h3>
-                  <p className="text-sm text-[#667085]">
-                    Search for user using email and select the a user to be the
-                    administrator of this company
-                  </p>
+
+                  <div className="bg-blue-50 px-3 py-3 rounded-lg text-lg flex justify-center items-center text-blue-900 flex-row gap-2">
+                    <CiCircleInfo size={20} />{" "}
+                    <p className="text-sm">
+                      Company Administrators can only be assigned after the
+                      company is created and can be set up in Administrators tab
+                      when viewing a single company
+                    </p>
+                  </div>
                 </header>
-                {/* ADMIN NAME */}
-                {/* <div className="flex gap-5">
-                  <div className="input-holder">
-                    <label>First Name</label>
-                    <Field
-                      style={getStyles(errors, "adminFirstName")}
-                      name="adminFirstName"
-                      placeholder=""
-                    />
-                    <ShowError name="adminFirstName" />
-                  </div>
-                  <div className="input-holder">
-                    <label>Last Name</label>
-                    <Field
-                      style={getStyles(errors, "adminLastName")}
-                      name="adminLastName"
-                      placeholder=""
-                    />
-                    <ShowError name="adminLastName" />
-                  </div>
-                </div> */}
-
-                {/* ADMIN EMAIL */}
-                {/* <div className="input-holder">
-                  <label>Company admin email address</label>
-                  <Field
-                    style={
-                      logoPresentOnLoad
-                        ? {
-                            ...getStyles(errors, "adminEmail"),
-                            backgroundColor: "rgba(248 250 252,0.5)",
-                            color: "#666",
-                            cursor: "not-allowed",
-                          }
-                        : getStyles(errors, "adminEmail")
-                    }
-                    name="adminEmail"
-                    placeholder=""
-                    disabled={logoPresentOnLoad}
-                  />
-                  <ShowError name="adminEmail" />
-                </div> */}
-
-                {/* REFACTORING: SEARCH BY EMAIL AND SELECT */}
-                <ComboSearch
-                  search={searchAdminEmail}
-                  setSearch={setSearchAdminEmail}
-                  setSelected={setSelectedAdminOption}
-                  selected={selectedAdminOption}
-                  placeholder="Search users by email"
-                  data={filteredOptions ? filteredOptions : []}
-                />
               </div>
 
               {/* CONTACT PERSON DETAILS */}
