@@ -17,28 +17,11 @@ import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 import useCompany from "@/hooks/useCompany";
 
 function CompanyForms() {
-  const { companyAdmin: admin } = useCompany();
-
-  // COMPANY OF CURRENT ADMIN CAN BE RETRIEVED FROM useAdmin()
-  const { data: companyData } = useQuery({
-    queryKey: ["get company"],
-    queryFn: services.getCompanyById(
-      Number(
-        admin?.custom_profile_values.find(
-          (item: any) => item.custom_profile_item_id === 2
-        )?.value
-      )
-    ),
-  });
+  const { companyAdmin: admin, companyBranding: companyData } = useCompany();
 
   const { data: forms, isLoading: isFormsLoading } = useQuery({
-    queryKey: [
-      "get company forms for ",
-      Number(companyData?.id),
-    ],
-    queryFn: services.getFormsByCompanyId(
-      companyData?.id
-    ),
+    queryKey: ["get company forms for ", Number(companyData?.id)],
+    queryFn: services.getFormsByCompanyId(companyData?.id),
     enabled: !!companyData?.id,
   });
 

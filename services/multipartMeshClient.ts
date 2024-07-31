@@ -54,13 +54,22 @@ multipartMeshApi.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
+      let headers: headerT = {
+        "Content-Type": "application/json",
+        "user-uuid": getUserUUID(),
+        Authorization: `Bearer ${getToken()}`,
+      };
+
+      // Route to admin or tenant
+      if (getCompanyID() !== 0) {
+        headers = { ...headers, tenantid: getTenantID() };
+      }
+
       //  GET REFRESH TOKEN AND RETRY REQUEST
       axios
         .post(
           `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
-          {
-            "Content-Type": "application/json",
-          }
+          headers
         )
         .then((res) => {
           const oldRefreshToken = getRefreshToken();
@@ -97,7 +106,11 @@ multipartMeshApi.interceptors.response.use(
           });
           // @ts-ignore
           localStorage.clear();
-          window.location.replace("/");
+          if (Boolean(getTenantID())) {
+            window.location.replace(`/${getTenantID()}`);
+          } else {
+            window.location.replace("/");
+          }
           window.location.reload();
         });
     }

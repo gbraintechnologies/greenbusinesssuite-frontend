@@ -11,7 +11,7 @@ import useCompany from "@/hooks/useCompany";
 
 function CompanyDashboard() {
   //
-  const { company } = useCompany();
+  const { companyBranding: company } = useCompany();
 
   // reports
   const { data: uniqueUsersCount } = useQuery({

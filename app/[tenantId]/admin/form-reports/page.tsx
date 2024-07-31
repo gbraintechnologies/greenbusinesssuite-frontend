@@ -11,7 +11,7 @@ import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import useCompany from "@/hooks/useCompany";
 
 function CompanyFormReports() {
-  const { company } = useCompany();
+  const { companyBranding: company } = useCompany();
 
   // reports
   const { data: uniqueUsersCount, isLoading } = useQuery({

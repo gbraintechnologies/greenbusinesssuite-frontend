@@ -24,34 +24,34 @@ export const CompanyProvider = ({ children }) => {
     company_identifier: "adidas84758",
   });
 
-  const {
-    data: companyData,
-    isLoading,
-    refetch,
-  } = useQuery({
-    // @ts-ignore
-    queryKey: [
-      "company",
-      parseInt(companyAdmin?.custom_profile_values[0]?.value),
-    ],
-    queryFn: services.getCompanyById(
-      Number(companyAdmin?.custom_profile_values[0]?.value)
-    ),
-    enabled: Boolean(companyAdmin?.custom_profile_values[0]?.value),
-  });
+  // const {
+  //   data: companyData,
+  //   isLoading,
+  //   refetch,
+  // } = useQuery({
+  //   // @ts-ignore
+  //   queryKey: [
+  //     "company",
+  //     parseInt(companyAdmin?.custom_profile_values[0]?.value),
+  //   ],
+  //   queryFn: services.getCompanyById(
+  //     Number(companyAdmin?.custom_profile_values[0]?.value)
+  //   ),
+  //   enabled: Boolean(companyAdmin?.custom_profile_values[0]?.value),
+  // });
 
-  useEffect(() => {
-    if (Boolean(companyData)) {
-      setCompany(companyData);
-    } else {
-      if (
-        Boolean(companyAdmin?.custom_profile_values[0]?.id) &&
-        !Boolean(company)
-      ) {
-        refetch();
-      }
-    }
-  }, [companyAdmin, companyData, isLoading]);
+  // useEffect(() => {
+  //   if (Boolean(companyData)) {
+  //     setCompany(companyData);
+  //   } else {
+  //     if (
+  //       Boolean(companyAdmin?.custom_profile_values[0]?.id) &&
+  //       !Boolean(company)
+  //     ) {
+  //       refetch();
+  //     }
+  //   }
+  // }, [companyAdmin, companyData, isLoading]);
 
   const addCompanyAdminData = (data) => {
     setCompanyAdmin((prev) => ({ ...prev, ...data }));

@@ -39,6 +39,8 @@ function CompanyAdminAuth({ params }: any) {
     companyBranding,
     removeCompanyAdmin,
   } = useCompany();
+
+  //
   const { addUserData, removeUser } = useUser();
   const { auth, addAuthData, removeAuth } = useAuth();
   const { removeAdmin } = useAdmin();
@@ -46,6 +48,8 @@ function CompanyAdminAuth({ params }: any) {
   const router = useRouter();
 
   const [loginError, setLoginError] = useState<string | null>(null);
+
+  const tenantId = params?.tenantId;
 
   const schema = yup.object({
     username: yup.string().required("Email/Username is required"),
@@ -68,14 +72,14 @@ function CompanyAdminAuth({ params }: any) {
         companyAdmin?.user_status !== "TEMP_CREDENTIALS"
       ) {
         toast.success("Logged in");
-        router.push("/company");
+        router.push(`/${tenantId}/admin`);
       }
     } else {
       removeAdmin();
       removeAuth();
       removeCompanyAdmin();
       removeUser();
-      addAuthData({ tenantId: params?.tenantId });
+      addAuthData({ tenantId: tenantId });
     }
   }, []);
 
@@ -110,32 +114,27 @@ function CompanyAdminAuth({ params }: any) {
           user?.data?.user_status === "NEWLY_CREATED" ||
           user?.data?.user_status === "TEMP_CREDENTIALS"
         ) {
-          addCompanyAdminData(user?.data);
           toast("Create your password");
-          router.push(`/company/auth/create-password?temp=${data.password}`);
+          router.push(
+            `/${tenantId}/auth/create-password?temp=${data.password}`
+          );
           return;
         }
+        // ROLE 6 - CLIENT ONLY
+        else if (user?.data?.profiles[0]?.role_id !== 6) {
+          addCompanyAdminData(user?.data);
+          toast.success("Logged in");
+          router.push(`/${tenantId}/admin`);
+        } else {
+          addUserData(user?.data);
+          toast.success("Logged in");
 
-        console.log("user data", user?.data);
-        // ROLE 6 - COMPANY ADMIN
-        // else if (user?.data?.profiles[0]?.role_id === 6) {
-        //   addCompanyAdminData(user?.data);
-        //   toast.success("Logged in");
-
-        //   // TODO: UPDATE TO NAME AND ID OF COMPANY
-        //   router.push("/company/admin");
-        // }
-        // // USER
-        // {
-        //   addUserData(user?.data);
-        //   toast.success("Logged in");
-
-        //   router.push("/company/client");
-        //   // removeAuth();
-        //   // toast.error("Access denied. Contact your administrator");
-        // }
+          router.push(`/${tenantId}/client`);
+        }
       }
     } catch (error) {
+      console.log("error logging in", error);
+      toast.error("Error logging in. Contact your administrator");
       setLoginError("Incorrect username and password");
     }
   };

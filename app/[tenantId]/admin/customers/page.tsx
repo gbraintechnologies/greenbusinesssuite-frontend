@@ -25,7 +25,7 @@ import services from "@/services";
 import useCompany from "@/hooks/useCompany";
 
 function Customers() {
-  const { company } = useCompany();
+  const { companyBranding: company } = useCompany();
 
   const [searchTerm, setSearchTerm] = useState("");
 

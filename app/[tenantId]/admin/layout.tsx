@@ -25,11 +25,12 @@ import useAuth from "@/hooks/useAuth";
 import FormsNavIcon from "@/public/icons/FormsNavIcon";
 import useCompany from "@/hooks/useCompany";
 
-export default function CompanyLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function CompanyLayout({ children, params }: any) {
+  // {
+
+  //  children: React.ReactNode;
+  // }
+
   const pathname = usePathname();
   const router = useRouter();
 
@@ -43,22 +44,11 @@ export default function CompanyLayout({
   useEffect(() => {
     setLoading(true);
     if (!Boolean(auth) || !Boolean(companyAdmin)) {
-      router.push("/company/auth");
+      router.push(`${params?.tenantId}/auth`);
     } else {
       // CHECK COMPANY ADMIN ROLE: 6
       let role = companyAdmin?.profiles[0]?.role_id;
-
-      // COMPANY ADMIN ROLE ID: 6
-      if (role !== 6) {
-        router.push("/company/auth");
-        toast.dismiss();
-        toast.error("Access not granted. Check with your administrator");
-      }
-
-      // Only allow view if role is 6
-      if (role === 6) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   }, [companyAdmin, auth, pathname]);
 

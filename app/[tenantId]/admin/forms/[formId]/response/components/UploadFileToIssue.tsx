@@ -13,7 +13,7 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 function UploadFileToIssue({ formId, userId, onClose, refetch }: any) {
   const [selectedFiles, setSelectedFiles] = useState([]);
 
-  const { company } = useCompany();
+  const { companyBranding: company } = useCompany();
 
   const onDrop = useCallback((acceptedFiles: any, fileRejections: any) => {
     // @ts-ignore

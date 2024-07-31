@@ -9,7 +9,7 @@ import useCompany from "@/hooks/useCompany";
 
 function TopNav({ settingsLink }: { settingsLink?: string }) {
   //
-  const { companyAdmin, company } = useCompany();
+  const { companyAdmin, companyBranding: company } = useCompany();
 
   const [isClient, setIsClient] = useState(false);
 
@@ -18,17 +18,20 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
   }, []);
 
   return (
-    <nav className="h-[3.5rem] z-[100] fixed top-0 bg-black w-full flex justify-between items-center px-5">
+    <nav
+      style={{ backgroundColor: company?.color }}
+      className="h-[3.5rem] z-[100] fixed top-0  w-full flex justify-between items-center px-5"
+    >
       <div className="flex items-center gap-3">
         <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
           <Link href="/company/admin">
-            {company?.company_logo ? (
+            {company?.logo ? (
               <Image
                 width={300}
                 height={300}
                 className="p-1 h-8 object-contain rounded-xl"
-                alt={company?.company_name}
-                src={company?.company_logo}
+                alt={company?.name}
+                src={company?.logo}
               />
             ) : (
               <svg
@@ -49,7 +52,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
           </Link>
         </div>
         <p className="text-white font-semibold">
-          {company ? company?.company_name : "No Company"}
+          {company ? company?.name : ""}
         </p>
       </div>
 

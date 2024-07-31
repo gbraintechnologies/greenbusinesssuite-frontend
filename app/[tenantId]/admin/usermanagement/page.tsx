@@ -17,7 +17,7 @@ import RoleFilter from "./components/RoleFilter";
 import useCompany from "@/hooks/useCompany";
 
 function UserManagement() {
-  const { company } = useCompany();
+  const { companyBranding: company } = useCompany();
 
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "All", value: "all" },

@@ -6,15 +6,12 @@ import useCompany from "@/hooks/useCompany";
 import AnalyticsGrid from "../../components/Analytics/AnalyticsGrid";
 
 function Analytics({ formID }: { formID: number }) {
-  const { company } = useCompany();
+  const { companyBranding: company } = useCompany();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["form analytics", formID, company],
-    queryFn: services.formResponseAnalytics(
-      Number(formID),
-      company?.id
-    ),
-    enabled: Boolean(Boolean(formID) && Boolean(company?.company_name)),
+    queryKey: ["form analytics", formID, company?.name],
+    queryFn: services.formResponseAnalytics(Number(formID), company?.id),
+    enabled: Boolean(Boolean(formID) && Boolean(company?.name)),
   });
 
   return (

@@ -26,7 +26,7 @@ import useCompany from "@/hooks/useCompany";
 function Issued({ user, form }: any) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const { company } = useCompany();
+  const { companyBranding: company } = useCompany();
 
   const {
     data: issuedFiles,
