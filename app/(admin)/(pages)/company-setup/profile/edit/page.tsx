@@ -143,9 +143,17 @@ const Page = () => {
     companyData?.company_logo
   );
 
+  const [companySmallLogo, setCompanySmallLogo] = useState<File | null>(null);
+
+  const [smallLogoUrl, setSmallLogoUrl] = useState("");
+
   const [parentAddressScheme, setParentAddressScheme] = useState<any>();
 
+  const [color, setColor] = useState<string>("");
+
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
+
+  const [selectedAdminOption, setSelectedAdminOption] = useState<any>();
 
   const router = useRouter();
 
@@ -446,6 +454,10 @@ const Page = () => {
             setShowCancelModal={setShowCancelModal}
             companyLogo={companyLogo}
             setCompanyLogo={setCompanyLogo}
+            companySmallLogo={companySmallLogo}
+            setCompanySmallLogo={setCompanySmallLogo}
+            smallLogoUrl={smallLogoUrl}
+            setSmallLogoUrl={setSmallLogoUrl}
             backgroundImageUrl={backgroundImageUrl}
             setBackgroundImageUrl={setBackgroundImageUrl}
             phone={phone}
@@ -464,6 +476,10 @@ const Page = () => {
             setSectorId={setSectorId}
             initialLoad={initialLoad}
             setInitialLoad={setInitialLoad}
+            color={color}
+            setColor={setColor}
+            selectedAdminOption={selectedAdminOption}
+            setSelectedAdminOption={setSelectedAdminOption}
           />
         )}
         {/* CANCEL MODAL: DISCARD ALL CHANGES */}

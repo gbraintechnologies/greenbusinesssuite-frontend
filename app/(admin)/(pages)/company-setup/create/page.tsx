@@ -77,6 +77,12 @@ const CreateCompany = () => {
 
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
 
+  const [companySmallLogo, setCompanySmallLogo] = useState<File | null>(null);
+
+  const [smallLogoUrl, setSmallLogoUrl] = useState("");
+
+  const [color, setColor] = useState<string>("");
+
   const [initialLoad, setInitialLoad] = useState<boolean>(false);
 
   const {
@@ -273,6 +279,10 @@ const CreateCompany = () => {
           setShowCancelModal={setShowCancelModal}
           companyLogo={companyLogo}
           setCompanyLogo={setCompanyLogo}
+          companySmallLogo={companySmallLogo}
+          setCompanySmallLogo={setCompanySmallLogo}
+          smallLogoUrl={smallLogoUrl}
+          setSmallLogoUrl={setSmallLogoUrl}
           backgroundImageUrl={backgroundImageUrl}
           setBackgroundImageUrl={setBackgroundImageUrl}
           phone={phone}
@@ -293,6 +303,8 @@ const CreateCompany = () => {
           setSectorId={setSectorId}
           initialLoad={initialLoad}
           setInitialLoad={setInitialLoad}
+          color={color}
+          setColor={setColor}
         />
         {/* CANCEL MODAL: DISCARD ALL CHANGES */}
         <Modal
