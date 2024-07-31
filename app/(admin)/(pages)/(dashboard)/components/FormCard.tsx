@@ -19,9 +19,9 @@ import FormatDate from "@/utils/FormatDate/FormatDate";
 
 // components
 import Modal from "@/components/Modal/Modal";
-import DeleteForm from "@/app/[company]/client/(dashboard)/actions/DeleteForm";
+import DeleteForm from "@/app/[tenantId]/client/(dashboard)/actions/DeleteForm";
 import { toast } from "sonner";
-import RenameForm from "@/app/[company]/client/(dashboard)/actions/RenameForm";
+import RenameForm from "@/app/[tenantId]/client/(dashboard)/actions/RenameForm";
 import services from "@/services";
 
 type Props = {

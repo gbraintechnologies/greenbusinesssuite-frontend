@@ -16,7 +16,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import TextInput from "@/app/(admin)/auth/(login)/components/TextInput";
 import PasswordInput from "@/app/(admin)/auth/(login)/components/PasswordInput";
-import Button from "@/app/(admin)/auth/(login)/components/Button";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -28,12 +27,18 @@ import MeshSuiteLogo from "@/public/icons/MeshSuitLogoGray";
 // hooks
 import useAdmin from "@/hooks/useAdmin";
 import useUser from "@/hooks/useUser";
+import { Button } from "@nextui-org/button";
+import Image from "next/image";
 
 //
 
-function CompanyAdminAuth() {
-  const { addCompanyAdminData, companyAdmin, setCompany, removeCompanyAdmin } =
-    useCompany();
+function CompanyAdminAuth({ params }: any) {
+  const {
+    addCompanyAdminData,
+    companyAdmin,
+    companyBranding,
+    removeCompanyAdmin,
+  } = useCompany();
   const { addUserData, removeUser } = useUser();
   const { auth, addAuthData, removeAuth } = useAuth();
   const { removeAdmin } = useAdmin();
@@ -70,6 +75,7 @@ function CompanyAdminAuth() {
       removeAuth();
       removeCompanyAdmin();
       removeUser();
+      addAuthData({ tenantId: params?.tenantId });
     }
   }, []);
 
@@ -109,33 +115,32 @@ function CompanyAdminAuth() {
           router.push(`/company/auth/create-password?temp=${data.password}`);
           return;
         }
+
+        console.log("user data", user?.data);
         // ROLE 6 - COMPANY ADMIN
-        else if (user?.data?.profiles[0]?.role_id === 6) {
-          addCompanyAdminData(user?.data);
-          toast.success("Logged in");
+        // else if (user?.data?.profiles[0]?.role_id === 6) {
+        //   addCompanyAdminData(user?.data);
+        //   toast.success("Logged in");
 
-          // TODO: UPDATE TO NAME AND ID OF COMPANY
-          router.push("/company/admin");
-        }
-        // else  if (user?.data?.profiles[0]?.role_id === 6) {
-        //     addCompanyAdminData(user?.data);
-        //     toast.success("Logged in");
+        //   // TODO: UPDATE TO NAME AND ID OF COMPANY
+        //   router.push("/company/admin");
+        // }
+        // // USER
+        // {
+        //   addUserData(user?.data);
+        //   toast.success("Logged in");
 
-        //     router.push("/company");
-        //   }
-        else {
-          addUserData(user?.data);
-          toast.success("Logged in");
-
-          router.push("/company/client");
-          // removeAuth();
-          // toast.error("Access denied. Contact your administrator");
-        }
+        //   router.push("/company/client");
+        //   // removeAuth();
+        //   // toast.error("Access denied. Contact your administrator");
+        // }
       }
     } catch (error) {
       setLoginError("Incorrect username and password");
     }
   };
+
+  // console.log("branding info", companyBranding);
 
   return (
     <div className="bg-[#F5F7FA] w-full flex items-center justify-center h-screen">
@@ -145,11 +150,19 @@ function CompanyAdminAuth() {
           className="flex flex-col w-[90%] md:max-w-[25rem] md:w-[30vw] min-w-[25rem] gap-5 shadow-md bg-white p-6 rounded-xl"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="text-center text-sm text-gray-600">
-            [Company Logo]
+          <div className="mx-auto flex items-center justify-center w-full">
+            {companyBranding?.logo && (
+              <Image
+                src={companyBranding?.logo}
+                width={60}
+                height={60}
+                className=""
+                alt="company"
+              />
+            )}
           </div>
           <h2 className="font-bold text-center text-xl">
-            Sign in to [My Company]
+            Sign in to Company Name
           </h2>
           <p className="mb-2 text-center text-sm text-gray-500 -mt-3">
             Welcome back! Please sign in to continue
@@ -186,7 +199,14 @@ function CompanyAdminAuth() {
           <p className="text-gray-700 font-bold text-sm underline">
             <Link href="/company/auth/forgot-password"> Forgot Password? </Link>
           </p>
-          <Button type="submit" isValid={isValid} disabled={isSubmitting}>
+          <Button
+            style={{
+              backgroundColor: companyBranding.color,
+            }}
+            className="text-white rounded-lg"
+            type="submit"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
                 {" "}

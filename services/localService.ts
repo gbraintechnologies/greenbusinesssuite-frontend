@@ -32,6 +32,14 @@ export const getCompanyID = () => {
   return null;
 };
 
+export const getTenantID = () => {
+  if (typeof window !== "undefined") {
+    const auth = window.localStorage.getItem("auth");
+    return auth ? JSON.parse(auth)?.tenantId : null;
+  }
+  return null;
+};
+
 export const getUserUUID = () => {
   if (typeof window !== "undefined") {
     const auth = window.localStorage.getItem("auth");

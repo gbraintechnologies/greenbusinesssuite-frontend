@@ -6,6 +6,7 @@ import {
   getUserUUID,
   getCompanyID,
   getUserId,
+  getTenantID,
 } from "./localService";
 
 import { toast } from "sonner";
@@ -27,7 +28,7 @@ multipartMeshApi.interceptors.request.use(
 
     // Route to admin or tenant
     if (getCompanyID() !== 0) {
-      headers = { ...headers, tenantid: getCompanyID() };
+      headers = { ...headers, tenantid: getTenantID() };
     }
 
     return {
