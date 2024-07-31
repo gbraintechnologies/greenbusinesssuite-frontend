@@ -389,7 +389,7 @@ const Page = () => {
                 <div className="min-h-[40vh]">
                   <div className="flex items-center justify-between mb-3 mt-2">
                     <div className="label w-full my-4">
-                      Assigned Forms ({assignedForms?.length})
+                      Assigned Forms ({assignedForms?.content?.length})
                     </div>
                     {/* ASSIGN NEW FORM */}
                     <button
@@ -401,7 +401,7 @@ const Page = () => {
                   </div>
 
                   {/* NO ASSIGNED FORM */}
-                  {assignedForms?.length === 0 && (
+                  {assignedForms?.content?.length === 0 && (
                     <div className="flex items-center justify-center py-5 w-full ">
                       <EmptyList text="No forms assigned to company" />
                     </div>
@@ -410,7 +410,7 @@ const Page = () => {
                   {/**DISPLAYING ASSIGNED FORMS*/}
                   <div className="grid grid-cols-4 gap-10 ">
                     {assignedForms &&
-                      assignedForms?.map((form: any) => {
+                      assignedForms?.content?.map((form: any) => {
                         return (
                           <FormCard
                             key={form.id}
