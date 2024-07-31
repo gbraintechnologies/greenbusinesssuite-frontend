@@ -3,18 +3,20 @@ import authApi from "../meshAuthClient";
 export const allForms = (pageNumber: number, pageSize: number) => {
   return () =>
     authApi
-      .get(`/forms/builder/all/${pageNumber}/${pageSize}`)
+      .get(`/forms/builder/all/${pageNumber}/${pageSize}/ALL`)
       .then((res) => res.data);
 };
 
 export const recentForms = (count: number) => {
   return () =>
-    authApi.get(`/forms/builder/recent/${count}`).then((res) => res.data);
+    authApi.get(`/forms/builder/recent/1/10/ALL`).then((res) => res.data);
 };
 
 export const allFormTemplates = () => {
   return () =>
-    authApi.get("/forms/builder/list-templates").then((res) => res.data);
+    authApi
+      .get("/forms/builder/list-templates/1/20/ALL")
+      .then((res) => res.data);
 };
 
 export const companyCustomersWithFormCount = (companyId: number) => {
@@ -42,7 +44,7 @@ export const getFormByIdRaw = (id: any) => {
 export const getFormsByCompanyId = (companyId: string) => {
   return () =>
     authApi
-      .get(`/forms/builder/company/${companyId}/1/10/ALL`)
+      .get(`/forms/builder/company/${companyId}/1/20/ALL`)
       .then((res) => res.data);
 };
 
