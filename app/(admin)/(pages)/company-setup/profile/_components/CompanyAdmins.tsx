@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 import { MdOutlineSettingsSuggest } from "react-icons/md";
 
-function CompanyAdmins({ companyId }: { companyId: number }) {
+function CompanyAdmins({ companyId }: any) {
   // fetch all users
   const { data: options, isLoading } = useQuery({
     queryKey: ["all users"],

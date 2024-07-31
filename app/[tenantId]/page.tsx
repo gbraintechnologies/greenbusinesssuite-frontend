@@ -1,6 +1,6 @@
 import React from "react";
 
-import Checks from "./_components/checks";
+import Checks from "./_components/Checks";
 
 function page() {
   return (

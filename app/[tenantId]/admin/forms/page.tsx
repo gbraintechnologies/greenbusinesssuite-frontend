@@ -42,15 +42,16 @@ function CompanyForms() {
         ) : (
           // ALL COMPANY FORMS
           <>
-            {forms?.length === 0 ? (
+            {forms?.content?.length === 0 ? (
               <div className="">
                 <EmptyList />
               </div>
             ) : (
               <div className="grid grid-cols-4 gap-5">
-                {forms?.map((form: any) => {
-                  return <FormCard key={form.id} form={form} />;
-                })}
+                {forms &&
+                  forms?.content?.map((form: any) => {
+                    return <FormCard key={form.id} form={form} />;
+                  })}
               </div>
             )}
           </>

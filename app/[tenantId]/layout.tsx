@@ -7,8 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 // Next & React imports
 import React, { Suspense, useEffect, useState } from "react";
 
-import { AiOutlineLoading } from "react-icons/ai";
-import Checks from "./_components/checks";
+import Checks from "./_components/Checks";
 
 interface layoutProps {
   children: React.ReactNode;
