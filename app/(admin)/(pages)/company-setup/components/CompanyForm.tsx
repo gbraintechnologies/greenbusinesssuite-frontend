@@ -44,9 +44,9 @@ export interface ICompany {
 const companySchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
   companyDescription: Yup.string().required("Company description is required"),
-  adminFirstName: Yup.string().required("First name is required"),
-  adminLastName: Yup.string().required("Last name is required"),
-  adminEmail: Yup.string().email("Invalid email").required("Email is required"),
+  // adminFirstName: Yup.string().required("First name is required"),
+  // adminLastName: Yup.string().required("Last name is required"),
+  // adminEmail: Yup.string().email("Invalid email").required("Email is required"),
   contactFirstName: Yup.string().required("First name is required"),
   contactLastName: Yup.string().required("Last name is required"),
   contactEmail: Yup.string()
