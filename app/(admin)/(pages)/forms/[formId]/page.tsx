@@ -130,6 +130,7 @@ function FormDetail({ params }: any) {
             </button>
 
             <PublishFormButton
+              tenantId={companyData?.company_identifier}
               showUnpublishModal={showUnpublishModal}
               setShowUnpublishModal={setShowUnpublishModal}
               formID={form?.id}
