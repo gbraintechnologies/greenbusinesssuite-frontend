@@ -147,7 +147,7 @@ const Page = () => {
       (field: any) => field.custom_profile_item_id == 7
     )?.value ?? "";
 
-  const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
+  const { data: assignedForms, isLoading: areFormsLoading, refetch } = useQuery({
     queryKey: ["get assigned forms for ", Number(companyData?.id)],
     queryFn: services.getFormsByCompanyId(
       companyData?.id,
@@ -179,6 +179,10 @@ const Page = () => {
   });
 
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    refetch();
+  }, [page, selectedTimeline])
 
   useEffect(() => {
     if (!companyData) return;
@@ -415,7 +419,7 @@ const Page = () => {
                       <LuPlusCircle /> Assign New Form
                     </button>
                   </div>
-
+                  
                   {/* NO ASSIGNED FORM */}
                   {assignedForms?.content?.length === 0 && (
                     <div className="flex items-center justify-center py-5 w-full ">
@@ -423,6 +427,7 @@ const Page = () => {
                     </div>
                   )}
 
+                    
                   {/**DISPLAYING ASSIGNED FORMS*/}
                   {assignedForms && assignedForms?.length > 0 && <><div className="flex justify-between">
                     <DatePicker

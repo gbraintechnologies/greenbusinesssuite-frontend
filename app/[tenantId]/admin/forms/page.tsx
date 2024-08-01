@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Nav from "./components/Nav";
 
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +30,7 @@ function CompanyForms() {
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
-  const { data: forms, isLoading: isFormsLoading } = useQuery({
+  const { data: forms, isLoading: isFormsLoading, refetch } = useQuery({
     queryKey: ["get company forms for ", Number(companyData?.id)],
     queryFn: services.getFormsByCompanyId(
       companyData?.id,
@@ -40,6 +40,10 @@ function CompanyForms() {
     ),
     enabled: !!companyData?.id,
   });
+
+  useEffect(() => {
+    refetch()
+  }, [page, selectedTimeline])
 
   return (
     <div className="px-5 pb-20 mt-4 py-2 min-h-screen">
