@@ -45,7 +45,7 @@ export const getFormByIdRaw = (id: any) => {
 export const getFormsByCompanyId = (companyId: string, page: string | number = 1, size: string | number = 20, timeLine: TimelineType = "ALL"  ) => {
   return () =>
     authApi
-      .get(`/forms/builder/company/${companyId}/${page}/${size}/${timeLine}`)
+      .get(`/forms/builder/search-assign-forms/${companyId}/${page}/${size}/${timeLine}`)
       .then((res) => res.data);
 };
 
