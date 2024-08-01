@@ -31,6 +31,8 @@ function AuditTrail() {
     company_name: "All Companies",
   });
 
+  const [selectedTimeline, setSelectedTimeline] = React.useState<any>()
+
   const [rows, setRows] = React.useState([]);
 
   const { data, isLoading: usersLoading } = useQuery({
@@ -201,7 +203,7 @@ function AuditTrail() {
               labelName={"company_name"}
             />
 
-            <DatePicker />
+            <DatePicker selectedTimeline={selectedTimeline} setSelectedTimeline={setSelectedTimeline} />
           </div>
         </div>
       </div>

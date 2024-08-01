@@ -1,9 +1,12 @@
 "use client";
+import DatePicker from "@/components/DatePicker/DatePicker";
 import EmptyList from "@/components/Form/EmptyList";
 import FormCard from "@/components/Form/FormCard";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import services from "@/services";
+import { TimelineType, TimelineValues } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
@@ -15,30 +18,38 @@ type Props = {
 };
 
 const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
-  const { data: allForms, isLoading: areFormsLoading } = useQuery({
-    queryKey: ["get all forms"],
-    queryFn: services.getUnassignedForms(),
-  });
-
   const [selected, setSelected] = React.useState<any>();
   const [isLoading, setLoading] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [filteredForms, setFilteredForms] = React.useState([]);
+  //pagination
+  const [page, setPage] = React.useState(1);
+  const [limit, setLimit] = React.useState(12);
 
-  React.useEffect(() => {
-    if (searchTerm === "") {
-      setFilteredForms(allForms);
-    } else {
-      setFilteredForms(
-        allForms.filter((form: any) =>
-          form.name
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(searchTerm.toLowerCase().replace(/\s+/g, ""))
-        )
-      );
-    }
-  }, [allForms, searchTerm]);
+  //timeline
+  const [selectedTimeline, setSelectedTimeline] = React.useState<
+    { label: TimelineValues; value: TimelineType } | undefined
+  >();
+
+  const { data: allForms, isLoading: areFormsLoading } = useQuery({
+    queryKey: ["get all forms"],
+    queryFn: services.getUnassignedForms(page, limit, selectedTimeline?.value),
+  });
+
+  // React.useEffect(() => {
+  //   if (searchTerm === "") {
+  //     setFilteredForms(allForms);
+  //   } else {
+  //     setFilteredForms(
+  //       allForms.filter((form: any) =>
+  //         form.name
+  //           .toLowerCase()
+  //           .replace(/\s+/g, "")
+  //           .includes(searchTerm.toLowerCase().replace(/\s+/g, ""))
+  //       )
+  //     );
+  //   }
+  // }, [allForms, searchTerm]);
   const assignFormToCompany = async () => {
     setLoading(true);
     try {
@@ -71,20 +82,33 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   return (
     <div className="bg-white px-5 py-2">
       <div className="px-2">
-        {allForms?.length === 0 ? (
+        {allForms?.content?.length === 0 ? (
           <div className="mb-2">
             <EmptyList text="You do not have any unassigned forms." />
           </div>
         ) : (
           <div>
-            <SearchBox
+            {/* <SearchBox
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
               placeholder="Search by form name"
+            /> */}
+            <div className="flex justify-between items-center">
+            <DatePicker
+              selectedTimeline={selectedTimeline}
+              setSelectedTimeline={setSelectedTimeline}
             />
+            <Pagination
+              limit={limit}
+              variant="no-text"
+              page={page}
+              currentData={allForms?.content}
+              setPage={setPage}
+            />
+            </div>
             <div className="grid grid-cols-3 gap-5 h-72 mb-2 overflow-scroll mt-2">
-              {allForms &&
-                filteredForms?.map((form: any) => {
+              {allForms?.content &&
+                allForms?.content?.map((form: any) => {
                   return (
                     <div
                       className={

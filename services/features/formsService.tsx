@@ -1,3 +1,4 @@
+import { TimelineType } from "@/types";
 import authApi from "../meshAuthClient";
 
 export const allForms = (pageNumber: number, pageSize: number) => {
@@ -41,10 +42,10 @@ export const getFormByIdRaw = (id: any) => {
   return authApi.get(`/forms/builder/${id}`);
 };
 
-export const getFormsByCompanyId = (companyId: string) => {
+export const getFormsByCompanyId = (companyId: string, page: string | number = 1, size: string | number = 20, timeLine: TimelineType = "ALL"  ) => {
   return () =>
     authApi
-      .get(`/forms/builder/company/${companyId}/1/20/ALL`)
+      .get(`/forms/builder/search-assign-forms/${companyId}/${page}/${size}/${timeLine}`)
       .then((res) => res.data);
 };
 
@@ -65,9 +66,9 @@ export const getCompletedFormsByUserId = (userId: string) => {
       .then((res) => res.data);
 };
 
-export const getUnassignedForms = () => {
+export const getUnassignedForms = (page: string | number = 1, size: string | number = 12, timeline: TimelineType="ALL" ) => {
   return () =>
-    authApi.get(`/forms/builder/unassigned-forms`).then((res) => res.data);
+    authApi.get(`/forms/builder/unassigned-forms/${page}/${size}/${timeline}`).then((res) => res.data);
 };
 
 export const getUncompletedFormsByUserId = (userId: string) => {

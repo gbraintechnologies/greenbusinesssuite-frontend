@@ -21,7 +21,7 @@ import FormCard from "@/components/Form/FormCard";
 import AssignForm from "../components/AssignForm";
 import Modal from "@/components/Modal/Modal";
 
-import { IFilter } from "@/types";
+import { IFilter, TimelineType, TimelineValues } from "@/types";
 import EmptyList from "@/components/Form/EmptyList";
 import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
 import { SketchPicker } from "react-color";
@@ -30,6 +30,8 @@ import WriteIcon from "@/public/icons/WriteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import CompanyAdmins from "./_components/CompanyAdmins";
+import DatePicker from "@/components/DatePicker/DatePicker";
+import Pagination from "@/components/Pagination/Pagination";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -67,6 +69,15 @@ const Page = () => {
   const [color, setColor] = useState<string>("");
 
   const [showColorPicker, setShowColorPicker] = useState<boolean>(true);
+
+  //pagination
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+
+  //timeline
+  const [selectedTimeline, setSelectedTimeline] = useState<
+    { label: TimelineValues; value: TimelineType } | undefined
+  >();
 
   const handleChangeComplete = (newColor: any) => {
     setColor(newColor.hex);
@@ -138,7 +149,12 @@ const Page = () => {
 
   const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
     queryKey: ["get assigned forms for ", Number(companyData?.id)],
-    queryFn: services.getFormsByCompanyId(companyData?.id),
+    queryFn: services.getFormsByCompanyId(
+      companyData?.id,
+      page,
+      limit,
+      selectedTimeline?.value
+    ),
     enabled: !!companyData?.id,
   });
 
@@ -189,7 +205,7 @@ const Page = () => {
     delete companyDataInfo[keyToDelete];
 
     try {
-      const response = services.editCompanyWithCustomFields(
+      await services.editCompanyWithCustomFields(
         companyData.id,
         companyDataInfo,
         customFields
@@ -408,6 +424,19 @@ const Page = () => {
                   )}
 
                   {/**DISPLAYING ASSIGNED FORMS*/}
+                  {assignedForms && assignedForms?.length > 0 && <><div className="flex justify-between">
+                    <DatePicker
+                      selectedTimeline={selectedTimeline}
+                      setSelectedTimeline={setSelectedTimeline}
+                    />
+                    <Pagination
+                      limit={limit}
+                      variant="no-text"
+                      page={page}
+                      currentData={assignedForms?.content}
+                      setPage={setPage}
+                    />
+                  </div>
                   <div className="grid grid-cols-4 gap-10 ">
                     {assignedForms &&
                       assignedForms?.content?.map((form: any) => {
@@ -419,10 +448,11 @@ const Page = () => {
                           />
                         );
                       })}
-                  </div>
+                  </div></>}
                 </div>
               </>
             )}
+
 
             {activeFilter.value === "branding_settings" && (
               <div className="max-w-2xl pt-6">
