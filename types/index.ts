@@ -62,3 +62,7 @@ export interface IModal {
   hideClose?: boolean;
   size?: "small" | "big";
 }
+
+export type TimelineType =  "ALL" | "TODAY" | "THIS_WEEK" | "THIS_MONTH" | "THIS_YEAR"
+
+export type TimelineValues = "All" | "Today" | "This week" | "This month" | "This year" 

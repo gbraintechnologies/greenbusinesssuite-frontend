@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Nav from "./components/Nav";
 
 import { useQuery } from "@tanstack/react-query";
@@ -12,16 +12,25 @@ import EmptyList from "@/app/(admin)/(pages)/forms/components/EmptyList";
 
 //
 import FormCard from "./components/CompanyFormCard";
-import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 
 import useCompany from "@/hooks/useCompany";
+import Pagination from "@/components/Pagination/Pagination";
+import { TimelineType, TimelineValues } from "@/types";
+import DatePicker from "@/components/DatePicker/DatePicker";
 
 function CompanyForms() {
   const { companyAdmin: admin, companyBranding: companyData } = useCompany();
 
+  //pagination
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+
+  //timeline
+  const [selectedTimeline, setSelectedTimeline] = useState<  { label: TimelineValues; value: TimelineType } | undefined>()
+
   const { data: forms, isLoading: isFormsLoading } = useQuery({
     queryKey: ["get company forms for ", Number(companyData?.id)],
-    queryFn: services.getFormsByCompanyId(companyData?.id),
+    queryFn: services.getFormsByCompanyId(companyData?.id, page, limit, selectedTimeline?.value),
     enabled: !!companyData?.id,
   });
 
@@ -47,12 +56,24 @@ function CompanyForms() {
                 <EmptyList />
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-5">
-                {forms &&
-                  forms?.content?.map((form: any) => {
-                    return <FormCard key={form.id} form={form} />;
-                  })}
-              </div>
+              <>
+                <div className="flex justify-between">
+                <DatePicker selectedTimeline={selectedTimeline} setSelectedTimeline={setSelectedTimeline}/>
+                  <Pagination
+                    limit={limit}
+                    variant="no-text"
+                    page={page}
+                    currentData={forms?.content}
+                    setPage={setPage}
+                  />
+                </div>
+                <div className="grid grid-cols-4 gap-5">
+                  {forms &&
+                    forms?.content?.map((form: any) => {
+                      return <FormCard key={form.id} form={form} />;
+                    })}
+                </div>
+              </>
             )}
           </>
         )}
