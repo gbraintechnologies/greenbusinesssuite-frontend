@@ -16,7 +16,7 @@ import Image from "next/image";
 import useAuth from "@/hooks/useAuth";
 import useCompany from "@/hooks/useCompany";
 
-function SettingsSideNav() {
+function SettingsSideNav({ tenantId }: any) {
   const { companyAdmin, removeCompanyAdmin } = useCompany();
   const { removeAuth } = useAuth();
 
@@ -26,12 +26,12 @@ function SettingsSideNav() {
     {
       name: "Account",
       icon: <HiOutlineUser size={20} />,
-      link: "/company/settings",
+      link: `${tenantId}/settings`,
     },
     {
       name: "Security",
       icon: <GoShieldLock size={20} />,
-      link: "/company/settings/security",
+      link: `/${tenantId}/settings/security`,
     },
   ];
   const pathname = usePathname();
@@ -125,7 +125,7 @@ function SettingsSideNav() {
               className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               onClick={() => {
                 setShowLogOutModal(false);
-                router.push("/company/auth");
+                router.push(`/${tenantId}/auth`);
                 removeCompanyAdmin();
                 removeAuth();
                 toast.success("Logged out");
