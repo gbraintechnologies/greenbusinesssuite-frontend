@@ -15,6 +15,9 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { toast } from "sonner";
 
+// types
+import { TimelineType, TimelineValues } from "@/types";
+
 //
 import FormCard from "./components/FormCard";
 import useForm from "@/hooks/useForm";
@@ -22,6 +25,7 @@ import Modal from "@/components/Modal/Modal";
 import UsingTemplate from "./components/UsingTemplate";
 import Pagination from "@/components/Pagination/Pagination";
 import FormGridLoader from "./components/FormGridLoader";
+import DatePicker from "@/components/DatePicker/DatePicker";
 
 function Forms() {
   const router = useRouter();
@@ -33,6 +37,11 @@ function Forms() {
   const [loading, setLoading] = useState(false);
 
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+
+  //timeline
+  const [selectedTimeline, setSelectedTimeline] = useState<
+    { label: TimelineValues; value: TimelineType } | undefined
+  >();
 
   // ACTIONS
   const actions = [
@@ -127,7 +136,10 @@ function Forms() {
       <div className="flex items-center justify-between">
         <h3 className="font-semibold mb-8 mt-10 text-lg">Recent Forms</h3>
         <div className="flex gap-2 items-center">
-          <div> Filter by time</div>
+          <DatePicker
+            selectedTimeline={selectedTimeline}
+            setSelectedTimeline={setSelectedTimeline}
+          />
           <Pagination
             limit={limit}
             variant="no-text"

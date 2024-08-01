@@ -26,11 +26,18 @@ function CompanyForms() {
   const [limit, setLimit] = useState(12);
 
   //timeline
-  const [selectedTimeline, setSelectedTimeline] = useState<  { label: TimelineValues; value: TimelineType } | undefined>()
+  const [selectedTimeline, setSelectedTimeline] = useState<
+    { label: TimelineValues; value: TimelineType } | undefined
+  >();
 
   const { data: forms, isLoading: isFormsLoading } = useQuery({
     queryKey: ["get company forms for ", Number(companyData?.id)],
-    queryFn: services.getFormsByCompanyId(companyData?.id, page, limit, selectedTimeline?.value),
+    queryFn: services.getFormsByCompanyId(
+      companyData?.id,
+      page,
+      limit,
+      selectedTimeline?.value
+    ),
     enabled: !!companyData?.id,
   });
 
@@ -58,7 +65,10 @@ function CompanyForms() {
             ) : (
               <>
                 <div className="flex justify-between">
-                <DatePicker selectedTimeline={selectedTimeline} setSelectedTimeline={setSelectedTimeline}/>
+                  <DatePicker
+                    selectedTimeline={selectedTimeline}
+                    setSelectedTimeline={setSelectedTimeline}
+                  />
                   <Pagination
                     limit={limit}
                     variant="no-text"
