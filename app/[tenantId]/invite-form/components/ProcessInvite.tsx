@@ -17,19 +17,24 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 // navigation
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import useCompany from "@/hooks/useCompany";
+import Image from "next/image";
+import { Button } from "@nextui-org/button";
+import { toast } from "sonner";
 
-function ProcessInvite() {
+function ProcessInvite({ tenantId }: any) {
   // hooks
   const { user } = useUser();
   const { auth } = useAuth();
+  const { companyBranding } = useCompany();
 
   // params
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // form details
   const formId = searchParams.get("f");
   let companyId = searchParams.get("c");
-
-  const [loading, setLoading] = useState(true);
 
   // SAVE FORM ID AND COMPANY NAME IN SESSION STORAGE
   useEffect(() => {
@@ -39,14 +44,42 @@ function ProcessInvite() {
     );
   }, [formId, companyId]);
 
+  // loading
+  const [loading, setLoading] = useState(true);
+
+  // GET AND FORM IF AUTHENTICATED
+  const { data, error } = useQuery({
+    queryKey: ["form", formId],
+    queryFn: services.getFormById(formId),
+    enabled: Boolean(formId) && Boolean(auth?.access_token),
+  });
+
+  // if(Boolean(error)){
+  // // @ts-ignore
+  //   toast.error("Error occured", {description: error?.response?.error})
+  // }
+
   // PROMPT TO LOGIN / CREATE ACCOUNT TO FILL FORM IF NOT AUTHENTICATED
-  if (!Boolean(auth) && !Boolean(user)) {
+  if (!Boolean(auth?.access_token) && !Boolean(user)) {
     return (
       <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
-        <div className="flex -mt-[30vh] items-center text-center justify-center flex-col gap-2">
-          <MeshSuiteLogo />
+        <div className="flex -mt-[20vh] items-center text-center justify-center flex-col gap-2">
+          {/* <MeshSuiteLogo /> */}
 
-          <h3 className="mt-10 font-bold text-2xl text-primary-dark">
+          {companyBranding?.logo && (
+            <Image
+              src={companyBranding?.logo}
+              width={100}
+              height={100}
+              className="rounded-full p-1 bg-white"
+              alt="company"
+            />
+          )}
+          <h1 className="mt-5 text-3xl text-primary-dark font-semibold">
+            {companyBranding?.name}
+          </h1>
+
+          <h3 className="mt-5  text-xl font-semibold text-primary-dark">
             Create an account / log in
           </h3>
 
@@ -54,29 +87,24 @@ function ProcessInvite() {
             To access this form you need to login or create your account
           </p>
 
-          <button
+          <Button
+            style={{
+              backgroundColor: companyBranding.color,
+            }}
             onClick={() =>
               router.push(
-                `/client/auth?redirect=invitiation&f=${formId}&c=${companyId}`
+                `/${tenantId}/auth?redirect=invitiation&f=${formId}&c=${companyId}`
               )
             }
-            className="bg-[#16A34A] mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
+            className=" mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
             type="submit"
           >
             Go to authentication
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
-
-  // GET AND FORM IF AUTHENTICATED
-
-  const { data } = useQuery({
-    queryKey: ["form", formId],
-    queryFn: services.getFormById(formId),
-    enabled: Boolean(formId) && Boolean(auth),
-  });
 
   // GET RIGHT COMPANY NAME FROM COMPANIES ENDPOINT
 
@@ -85,6 +113,7 @@ function ProcessInvite() {
   useEffect(() => {
     //
     if (data) {
+      console.log("data", data);
       // CHECK PUBLISH STATUS: PUBLISH | UNPUBLISHED
       if (data?.publishStatus !== "PUBLISHED") {
         setLoading(false);
@@ -160,7 +189,15 @@ function ProcessInvite() {
       {loading ? (
         <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
           <div className="flex -mt-[30vh] items-center text-center justify-center flex-col gap-2">
-            <MeshSuiteLogo />
+            {companyBranding?.logo && (
+              <Image
+                src={companyBranding?.logo}
+                width={100}
+                height={100}
+                className="rounded-full p-1 bg-white"
+                alt="company"
+              />
+            )}
 
             <h3 className="mt-10 font-bold text-2xl text-primary-dark">
               Processing form invite
@@ -172,7 +209,7 @@ function ProcessInvite() {
 
             <AiOutlineLoading3Quarters
               size={24}
-              className="animate-spin mt-10"
+              className="animate-spin text-gray-500 mt-10"
             />
           </div>
         </div>

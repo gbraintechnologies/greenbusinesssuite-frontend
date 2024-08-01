@@ -13,7 +13,7 @@ import Link from "next/link";
 
 import { login, currentLoggedIn } from "@/services/features/authService";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import TextInput from "@/app/(admin)/auth/(login)/components/TextInput";
 import PasswordInput from "@/app/(admin)/auth/(login)/components/PasswordInput";
 
@@ -39,6 +39,13 @@ function CompanyAdminAuth({ params }: any) {
     companyBranding,
     removeCompanyAdmin,
   } = useCompany();
+
+  const search = useSearchParams();
+
+  // Information for user sign up redirects
+  const redirectTo = search.get("redirect");
+  const formId = search.get("f");
+  const companyName = search.get("c");
 
   //
   const { addUserData, removeUser } = useUser();
@@ -121,20 +128,31 @@ function CompanyAdminAuth({ params }: any) {
           return;
         }
         // ROLE 6 - CLIENT ONLY
-        else if (user?.data?.profiles[0]?.role_id !== 6) {
+        else if (user?.data?.profiles[0]?.role_id === 6) {
           addCompanyAdminData(user?.data);
           toast.success("Logged in");
           router.push(`/${tenantId}/admin`);
         } else {
           addUserData(user?.data);
           toast.success("Logged in");
+          // Generally route to client dashboard
+          // if redirectTo is available, route to invitation
+          if (Boolean(redirectTo)) {
+            router.push(
+              `/${tenantId}/invite-form?f=${formId}&c=${companyName}`
+            );
+            return;
+          }
 
+          // normal authentication
           router.push(`/${tenantId}/client`);
         }
       }
     } catch (error) {
       console.log("error logging in", error);
-      toast.error("Error logging in. Contact your administrator");
+      // toast.error("Error logging in.", {
+      //   description: "Contact your administrator",
+      // });
       setLoginError("Incorrect username and password");
     }
   };
@@ -161,7 +179,7 @@ function CompanyAdminAuth({ params }: any) {
             )}
           </div>
           <h2 className="font-bold text-center text-xl">
-            Sign in to Company Name
+            Sign in to {companyBranding?.name}
           </h2>
           <p className="mb-2 text-center text-sm text-gray-500 -mt-3">
             Welcome back! Please sign in to continue

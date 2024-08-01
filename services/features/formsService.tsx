@@ -1,5 +1,6 @@
 import { TimelineType } from "@/types";
 import authApi from "../meshAuthClient";
+import defaultAuthApi from "../defaultAuthClient";
 
 export const allForms = (
   pageNumber: number,
@@ -45,7 +46,8 @@ export const assignFormToCompany = (
 };
 
 export const getFormById = (id: any) => {
-  return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
+  return () =>
+    defaultAuthApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
 
 export const getFormByIdRaw = (id: any) => {

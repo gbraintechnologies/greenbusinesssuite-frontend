@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 function InviteToForm({ params }: any) {
   return (
     <div>
-      <ProcessInvite />
+      <ProcessInvite tenantId={params.tenantId} />
     </div>
   );
 }
