@@ -1,4 +1,3 @@
-import DatePickerIcon from "@/public/icons/DatePickerIcon";
 import { TimelineType, TimelineValues } from "@/types";
 import {
   Dropdown,
@@ -7,8 +6,12 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import React, { useEffect } from "react";
+
+// icons
+import { LuCalendar } from "react-icons/lu";
 import { BsChevronDown } from "react-icons/bs";
 import { FaCheck } from "react-icons/fa6";
+import DatePickerIcon from "@/public/icons/DatePickerIcon";
 
 type Props = {
   selectedTimeline: { label: TimelineValues; value: TimelineType } | undefined;
@@ -23,7 +26,6 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
     label: TimelineValues;
     value: TimelineType;
   }[] = [
-    
     {
       label: "Today",
       value: "TODAY",
@@ -44,7 +46,6 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
       label: "This year",
       value: "THIS_YEAR",
     },
-    
   ];
 
   useEffect(() => {
@@ -57,6 +58,7 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
       <Dropdown>
         <DropdownTrigger>
           <button className="flex justify-between outline-none items-center px-3 py-1 border-r border-[#E2E8F0] gap-2">
+            <LuCalendar size={18} />
             <div className="text-sm">{selectedTimeline?.label}</div>
             <BsChevronDown color="#94A3B8" />
           </button>
@@ -83,13 +85,13 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
           ))}
         </DropdownMenu>
       </Dropdown>
-      <button className="flex gap-3 items-center px-3 py-1">
+      {/* <button className="flex gap-3 items-center px-3 py-1">
         <div>
           <DatePickerIcon />
         </div>
         <div className="text-sm">All Time</div>
         <BsChevronDown color="#94A3B8" />
-      </button>
+      </button> */}
     </div>
   );
 };
