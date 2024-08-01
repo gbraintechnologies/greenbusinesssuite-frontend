@@ -19,6 +19,7 @@ function PublishFormButton({
   formID,
   setShowUnpublishModal,
   showUnpublishModal,
+  tenantId,
 }: any) {
   const queryClient = useQueryClient();
 
@@ -37,12 +38,14 @@ function PublishFormButton({
     // checking for company assignment
     if (!Boolean(form?.companyId)) {
       toast.dismiss();
-      toast.error("Assign company to form before publishing");
+      toast.error("Form Unassigned.", {
+        description: "Assign company to form before publishing",
+      });
       return;
     }
 
     // assigning to company
-    let url = `${window.location.origin}/invite?f=${form?.id}&c=${form?.companyId}`;
+    let url = `${window.location.origin}/${tenantId}/invite-form?f=${form?.id}&c=${form?.companyId}`;
 
     // update form with url then publish
     services
@@ -72,7 +75,7 @@ function PublishFormButton({
             setLoading(false);
             toast.dismiss();
             console.log("error publishing form", e);
-            // toast.error("Error publishing form");
+            toast.error("Error publishing form");
           });
       })
       .catch((e) => {
