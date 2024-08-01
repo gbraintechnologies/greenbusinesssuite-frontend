@@ -31,7 +31,7 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
-  const { data: allForms, isLoading: areFormsLoading } = useQuery({
+  const { data: allForms, isLoading: areFormsLoading, refetch } = useQuery({
     queryKey: ["get all forms"],
     queryFn: services.getUnassignedForms(page, limit, selectedTimeline?.value),
   });
@@ -50,6 +50,12 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   //     );
   //   }
   // }, [allForms, searchTerm]);
+
+  React.useEffect(() => {
+    refetch();
+  }, [page, selectedTimeline]);
+
+  
   const assignFormToCompany = async () => {
     setLoading(true);
     try {

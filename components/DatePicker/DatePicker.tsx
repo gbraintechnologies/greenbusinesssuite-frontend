@@ -25,12 +25,12 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
   }[] = [
     
     {
-      label: "All time",
-      value: "ALL",
-    },
-    {
       label: "Today",
       value: "TODAY",
+    },
+    {
+      label: "All time",
+      value: "ALL",
     },
     {
       label: "This week",
