@@ -22,7 +22,7 @@ function CompanyForms() {
   const { companyAdmin: admin, companyBranding: companyData } = useCompany();
 
   //pagination
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(12);
 
   //timeline
@@ -61,7 +61,7 @@ function CompanyForms() {
               </div>
             ) : (
               <>
-                <div className="flex justify-between">
+                <div className="flex justify-between mb-3">
                 <DatePicker selectedTimeline={selectedTimeline} setSelectedTimeline={setSelectedTimeline}/>
                   <Pagination
                     limit={limit}

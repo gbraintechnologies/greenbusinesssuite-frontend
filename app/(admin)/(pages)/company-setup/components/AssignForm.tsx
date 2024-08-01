@@ -20,10 +20,9 @@ type Props = {
 const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   const [selected, setSelected] = React.useState<any>();
   const [isLoading, setLoading] = React.useState(false);
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [filteredForms, setFilteredForms] = React.useState([]);
+
   //pagination
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = React.useState(0);
   const [limit, setLimit] = React.useState(12);
 
   //timeline
@@ -55,7 +54,7 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
     refetch();
   }, [page, selectedTimeline]);
 
-  
+
   const assignFormToCompany = async () => {
     setLoading(true);
     try {
