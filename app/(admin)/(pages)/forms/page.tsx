@@ -126,6 +126,7 @@ function Forms() {
       {/* recent forms  */}
       <div className="flex items-center justify-between">
         <h3 className="font-semibold mb-8 mt-10 text-lg">Recent Forms</h3>
+        <div> Filter by time</div>
         <Pagination
           limit={limit}
           variant="no-text"
