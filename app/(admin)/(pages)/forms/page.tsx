@@ -98,8 +98,8 @@ function Forms() {
 
   // fetch all forms
   const { data: forms, isLoading } = useQuery({
-    queryKey: ["all forms", page, limit],
-    queryFn: services.allForms(page, limit),
+    queryKey: ["all forms", page, limit, selectedTimeline?.value],
+    queryFn: services.allForms(page, limit, selectedTimeline?.value),
   });
 
   // unselecting any previous form
@@ -157,7 +157,7 @@ function Forms() {
         <>
           {forms?.totalElements === 0 ? (
             <div className="">
-              <EmptyList />
+              <EmptyList text="No forms have been created" />
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-5">
@@ -179,7 +179,7 @@ function Forms() {
         setIsOpen={setShowTemplateModal}
         title="Select an existing template to build from"
       >
-        <UsingTemplate />
+        <UsingTemplate setShowTemplateModal={setShowTemplateModal} />
       </Modal>
     </div>
   );
