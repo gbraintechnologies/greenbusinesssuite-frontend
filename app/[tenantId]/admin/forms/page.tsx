@@ -26,11 +26,18 @@ function CompanyForms() {
   const [limit, setLimit] = useState(12);
 
   //timeline
-  const [selectedTimeline, setSelectedTimeline] = useState<  { label: TimelineValues; value: TimelineType } | undefined>()
+  const [selectedTimeline, setSelectedTimeline] = useState<
+    { label: TimelineValues; value: TimelineType } | undefined
+  >();
 
   const { data: forms, isLoading: isFormsLoading, refetch } = useQuery({
     queryKey: ["get company forms for ", Number(companyData?.id)],
-    queryFn: services.getFormsByCompanyId(companyData?.id, page, limit, selectedTimeline?.value),
+    queryFn: services.getFormsByCompanyId(
+      companyData?.id,
+      page,
+      limit,
+      selectedTimeline?.value
+    ),
     enabled: !!companyData?.id,
   });
 

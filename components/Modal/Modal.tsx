@@ -53,7 +53,7 @@ export default function Modal({
             >
               <Dialog.Panel
                 className={`${
-                  size === "big" ? "max-w-3xl" : "max-w-xl"
+                  size === "big" ? "max-w-7xl" : "max-w-xl"
                 } w-full border dark:border-accent-dark  transform overflow-hidden rounded-md bg-white  text-primary-dark pt-5  text-left align-bottom md:align-middle shadow-xl transition-all`}
               >
                 <div className=" flex flex-row justify-between px-5 py-2 pb-4">

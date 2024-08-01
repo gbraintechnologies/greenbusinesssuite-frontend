@@ -1,22 +1,32 @@
 import { TimelineType } from "@/types";
 import authApi from "../meshAuthClient";
 
-export const allForms = (pageNumber: number, pageSize: number) => {
+export const allForms = (
+  pageNumber: number,
+  pageSize: number,
+  timeLine: TimelineType = "ALL"
+) => {
   return () =>
     authApi
-      .get(`/forms/builder/all/${pageNumber}/${pageSize}/ALL`)
+      .get(`/forms/builder/all/${pageNumber}/${pageSize}/${timeLine}`)
       .then((res) => res.data);
 };
 
-export const recentForms = (count: number) => {
-  return () =>
-    authApi.get(`/forms/builder/recent/1/10/ALL`).then((res) => res.data);
-};
+// export const recentForms = (count: number) => {
+//   return () =>
+//     authApi.get(`/forms/builder/recent/1/10/ALL`).then((res) => res.data);
+// };
 
-export const allFormTemplates = () => {
+export const allFormTemplates = (
+  pageNumber: number,
+  pageSize: number,
+  timeLine: TimelineType = "ALL"
+) => {
   return () =>
     authApi
-      .get("/forms/builder/list-templates/1/20/ALL")
+      .get(
+        `/forms/builder/list-templates/${pageNumber}/${pageSize}/${timeLine}`
+      )
       .then((res) => res.data);
 };
 
@@ -42,10 +52,17 @@ export const getFormByIdRaw = (id: any) => {
   return authApi.get(`/forms/builder/${id}`);
 };
 
-export const getFormsByCompanyId = (companyId: string, page: string | number = 1, size: string | number = 20, timeLine: TimelineType = "ALL"  ) => {
+export const getFormsByCompanyId = (
+  companyId: string,
+  page: string | number = 1,
+  size: string | number = 20,
+  timeLine: TimelineType = "ALL"
+) => {
   return () =>
     authApi
-      .get(`/forms/builder/search-assign-forms/${companyId}/${page}/${size}/${timeLine}`)
+      .get(
+        `/forms/builder/search-assign-forms/${companyId}/${page}/${size}/${timeLine}`
+      )
       .then((res) => res.data);
 };
 
@@ -66,9 +83,15 @@ export const getCompletedFormsByUserId = (userId: string) => {
       .then((res) => res.data);
 };
 
-export const getUnassignedForms = (page: string | number = 1, size: string | number = 12, timeline: TimelineType="ALL" ) => {
+export const getUnassignedForms = (
+  page: string | number = 1,
+  size: string | number = 12,
+  timeline: TimelineType = "ALL"
+) => {
   return () =>
-    authApi.get(`/forms/builder/unassigned-forms/${page}/${size}/${timeline}`).then((res) => res.data);
+    authApi
+      .get(`/forms/builder/unassigned-forms/${page}/${size}/${timeline}`)
+      .then((res) => res.data);
 };
 
 export const getUncompletedFormsByUserId = (userId: string) => {

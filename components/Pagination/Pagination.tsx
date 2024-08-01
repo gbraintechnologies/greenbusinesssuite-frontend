@@ -27,6 +27,7 @@ export default function Pagination({
           <div className="flex items-center">
             <Button
               isDisabled={page <= 1}
+              disabled={page <= 1}
               onPress={() => setPage(page - 1)}
               className="rounded-l-full test-sm w-24 disabled:cursor-not-allowed"
               isIconOnly
@@ -37,6 +38,7 @@ export default function Pagination({
             <Button
               onPress={() => setPage(page + 1)}
               isDisabled={currentData.length < limit}
+              disabled={currentData.length <= limit}
               className="rounded-r-full w-24 text-sm border-l-0 disabled:cursor-not-allowed"
               isIconOnly
               variant="bordered"
