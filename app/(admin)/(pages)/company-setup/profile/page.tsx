@@ -71,7 +71,7 @@ const Page = () => {
   const [showColorPicker, setShowColorPicker] = useState<boolean>(true);
 
   //pagination
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(12);
 
   //timeline
@@ -407,9 +407,9 @@ const Page = () => {
             {activeFilter.value === "assigned_forms" && (
               <>
                 <div className="min-h-[40vh]">
-                  <div className="flex items-center justify-between mb-3 mt-2">
-                    <div className="label w-full my-4">
-                      Assigned Forms ({assignedForms?.content?.length})
+                  <div className="flex items-center justify-between mb-2 mt-2">
+                    <div className=" w-full text-[#475569] font-medium my-4 text-base">
+                      Assigned Forms
                     </div>
                     {/* ASSIGN NEW FORM */}
                     <button
@@ -429,7 +429,7 @@ const Page = () => {
 
                     
                   {/**DISPLAYING ASSIGNED FORMS*/}
-                  {assignedForms && assignedForms?.length > 0 && <><div className="flex justify-between">
+                  {assignedForms && assignedForms?.content?.length > 0 && <><div className="flex justify-between mb-3">
                     <DatePicker
                       selectedTimeline={selectedTimeline}
                       setSelectedTimeline={setSelectedTimeline}
