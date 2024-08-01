@@ -28,6 +28,8 @@ function PublishFormButton({
     enabled: Boolean(formID),
   });
 
+  console.log("form", form);
+
   const [loading, setLoading] = useState(false);
 
   const publishForm = () => {
