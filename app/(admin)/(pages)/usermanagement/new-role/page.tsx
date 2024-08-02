@@ -3,9 +3,10 @@
 import "./index.css";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 
 //
 //
@@ -15,16 +16,17 @@ import { useRouter } from "next/navigation";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { CustomCheckbox } from "../components/Customcheckbox";
-import toCamelCase from "@/utils/CamelCase/CamelCase";
 
 // components
 import Modal from "@/components/Modal/Modal";
 import services from "@/services";
+import toSpace from "@/utils/UnderScore/UnderScore";
 
 interface Permission {
+  app_id: number;
+  permission_name: string;
+  description: string;
   id: number;
-  header: string;
-  subtext: string;
 }
 
 interface FormValues {
@@ -33,77 +35,36 @@ interface FormValues {
   permissions?: { [key: string]: boolean };
 }
 
-const permissionsData: Permission[] = [
-  {
-    id: 1,
-    header: "Dashboard",
-    subtext: "User can view the main application dashboard",
-  },
-  {
-    id: 2,
-    header: "Order management",
-    subtext: "User can view the main application dashboard",
-  },
-  {
-    id: 3,
-    header: "Product management",
-    subtext: "User can view the main application dashboard",
-  },
-  {
-    id: 4,
-    header: "Inventory management",
-    subtext: "User can view the main application dashboard",
-  },
-  {
-    id: 5,
-    header: "Shipment management",
-    subtext: "User can view the main application dashboard",
-  },
-  {
-    id: 6,
-    header: "User management",
-    subtext: "User can view the main application dashboard",
-  },
-  {
-    id: 7,
-    header: "Customer management",
-    subtext: "User can view the main application dashboard",
-  },
-  {
-    id: 8,
-    header: "Finance management",
-    subtext: "User can view the main application dashboard",
-  },
-];
-
-const permissionsSchema = permissionsData.reduce((acc, curr) => {
-  acc[curr.header] = Yup.boolean().required(
-    `The ${curr.header} permission is required`
-  );
-  return acc;
-}, {} as { [key: string]: Yup.BooleanSchema });
+// const permissionsSchema = permissionsData.reduce((acc, curr) => {
+//   acc[curr.header] = Yup.boolean().required(
+//     `The ${curr.header} permission is required`
+//   );
+//   return acc;
+// }, {} as { [key: string]: Yup.BooleanSchema });
 
 const RoleSchema = Yup.object().shape({
   roleName: Yup.string().required("Required"),
   roleDescription: Yup.string(),
-  permissions: Yup.object().shape(permissionsSchema),
+  // permissions: Yup.object().shape(permissionsSchema),
 });
 
 function NewRole() {
-  // states
   const [showCancelModal, setShowCancelModal] = useState(false);
-
-  //
   const router = useRouter();
+
+  const { data: permissions } = useQuery({
+    queryKey: ["all permissions"],
+    queryFn: services.allPermissions(),
+  });
 
   //initial values
   const initialValues: FormValues = {
     roleName: "",
     roleDescription: "",
-    permissions: permissionsData.reduce((acc, curr) => {
-      acc[curr.header] = false;
-      return acc;
-    }, {} as { [key: string]: boolean }),
+    // permissions: permissionsData.reduce((acc, curr) => {
+    //   acc[curr.header] = false;
+    //   return acc;
+    // }, {} as { [key: string]: boolean }),
   };
 
   const handleSubmit = async (
@@ -212,14 +173,18 @@ function NewRole() {
                   </span>
                 )}
                 <div className="flex flex-col gap-2 pt-2 pb-5">
-                  {permissionsData.map((permission, index) => (
-                    <CustomCheckbox
-                      key={permission.id}
-                      name={`permissions.${toCamelCase(permission.header)}`}
-                      label={permission.header}
-                      subtext={permission.subtext}
-                    />
-                  ))}
+                  {permissions && permissions.length > 0 ? (
+                    permissions.map(({ permission_name, description, id }: Permission) => (
+                      <CustomCheckbox
+                        key={id}
+                        name={description}
+                        label={toSpace(permission_name)}
+                        subtext={description}
+                      />
+                    ))
+                  ) : (
+                    <p>No permissions available</p>
+                  )}
                 </div>
               </div>
             </Form>
