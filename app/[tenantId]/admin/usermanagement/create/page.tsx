@@ -149,6 +149,8 @@ function NewUser() {
           });
       })
       .catch((e) => {
+        resetForm();
+        toast.error("Error creating user");
         setLoading(false);
         toast.dismiss(loading);
         toast.dismiss();
@@ -210,12 +212,12 @@ function NewUser() {
             {/* HEADER */}
             <div className="w-full text-primary-dark  flex justify-between">
               <div className="flex items-center gap-5">
-                <button
-                  className="my-3 flex text-sm items-center gap-2"
+                <div
+                  className="my-3 cursor-pointer flex text-sm items-center gap-2"
                   onClick={() => router.back()}
                 >
                   <IoIosArrowBack size={12} />
-                </button>
+                </div>
                 <h3 className="font-semibold text-xl">
                   Create new user account
                 </h3>

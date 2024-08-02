@@ -41,7 +41,7 @@ export default function ClientLayout({
     // Redirect to login if not authenticated
     // if on a an authenticated page and isn't logged in
     if (!Boolean(user) && !pathname.includes("auth")) {
-      router.push("/client/auth");
+      router.push(`/${company?.company_identifier}/auth`);
 
       toast.error("Please login to continue");
     } else {

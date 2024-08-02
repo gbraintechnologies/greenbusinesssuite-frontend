@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 import { AiOutlineLoading } from "react-icons/ai";
 
-function Checks() {
+function SetupLoader() {
   //
   const statusText = [
     { id: 0, text: "Setting up your organization" },
@@ -48,4 +48,4 @@ function Checks() {
   );
 }
 
-export default Checks;
+export default SetupLoader;

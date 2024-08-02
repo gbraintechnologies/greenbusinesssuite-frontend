@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // componetns
-import Checks from "./_components/Checks";
+import SetupLoader from "@/components/SetupLoader/SetupLoader";
 
 // hooks
 import useUser from "@/hooks/useUser";
@@ -32,7 +32,7 @@ function page({ params }: any) {
 
   return (
     <div className="w-screen h-screen bg-gradient-to-r from-[#64748B1A] via-[#fff] to-[#F8FAFC] background-animate flex items-center justify-center">
-      <Checks />
+      <SetupLoader />
     </div>
   );
 }
