@@ -68,7 +68,7 @@ const Page = () => {
 
   const [color, setColor] = useState<string>("");
 
-  const [showColorPicker, setShowColorPicker] = useState<boolean>(true);
+  const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
 
   //pagination
   const [page, setPage] = useState(0);
@@ -434,7 +434,7 @@ const Page = () => {
                       setPage={setPage}
                     />
                   </div>
-                  
+
                   {/* NO ASSIGNED FORM */}
                   {assignedForms?.content?.length === 0 && (
                     <div className="flex items-center justify-center py-5 w-full ">
