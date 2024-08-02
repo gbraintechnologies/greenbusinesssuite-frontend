@@ -46,8 +46,7 @@ export const assignFormToCompany = (
 };
 
 export const getFormById = (id: any) => {
-  return () =>
-    defaultAuthApi.get(`/forms/builder/${id}`).then((res) => res.data);
+  return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
 
 export const getFormByIdRaw = (id: any) => {

@@ -50,7 +50,8 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
 
   useEffect(() => {
     if (setSelectedTimeline) {
-      setSelectedTimeline(timelines[0]);
+      // DEFAULT SHOULD BE ALL
+      setSelectedTimeline(timelines[1]);
     }
   }, []);
   return (
