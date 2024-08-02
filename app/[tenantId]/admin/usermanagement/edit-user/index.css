@@ -1,0 +1,37 @@
+.input-holder {
+  @apply flex flex-col w-full mb-5;
+}
+
+.input-holder.half {
+  @apply w-1/2 !important;
+}
+
+.input-holder input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  @apply border py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm;
+}
+
+.input-holder label {
+  @apply text-sm mb-1 font-normal text-slate-700;
+}
+
+.css-13cymwt-control {
+  background-color: #f8fafc !important;
+}
+
+.react-international-phone-input-container
+  .react-international-phone-country-selector-button,
+.react-international-phone-input-container .react-international-phone-input {
+  background-color: #f8fafc !important;
+  height: 42px !important;
+  margin: 0 !important;
+}
+
+.input-holder
+  .react-international-phone-input-container
+  .react-international-phone-input {
+  background-color: #f8fafc !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}

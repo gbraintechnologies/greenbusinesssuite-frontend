@@ -44,7 +44,7 @@ export default function CompanyLayout({ children, params }: any) {
   useEffect(() => {
     setLoading(true);
     if (!Boolean(auth) || !Boolean(companyAdmin)) {
-      router.push(`${params?.tenantId}/auth`);
+      router.push(`/${params?.tenantId}/auth`);
     } else {
       // CHECK COMPANY ADMIN ROLE: 6
       let role = companyAdmin?.profiles[0]?.role_id;
@@ -67,7 +67,7 @@ export default function CompanyLayout({ children, params }: any) {
     {
       name: "Customers",
       icon: <MdOutlineSupervisedUserCircle size={20} />,
-      link: `/${company?.company_identifier}/admin/customer`,
+      link: `/${company?.company_identifier}/admin/customers`,
     },
 
     {

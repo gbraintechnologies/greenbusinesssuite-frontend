@@ -5,6 +5,16 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
+// formik
+import { Formik, Field, Form } from "formik";
+
+import BigUserIcon from "@/public/icons/BigUserIcon";
+//
+import { MdOutlineEdit } from "react-icons/md";
+
+// icons
+import { HiOutlineInboxArrowDown } from "react-icons/hi2";
+
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 
 import * as Yup from "yup";
@@ -14,6 +24,7 @@ import { toast } from "sonner";
 
 // hooks
 import useFileUpload from "@/hooks/useFileUpload";
+import Image from "next/image";
 
 import UserForm from "../components/UserForm";
 import Modal from "@/components/Modal/Modal";
