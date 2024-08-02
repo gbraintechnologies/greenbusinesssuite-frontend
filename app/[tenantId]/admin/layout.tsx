@@ -34,7 +34,7 @@ export default function CompanyLayout({ children, params }: any) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const { companyAdmin } = useCompany();
+  const { companyAdmin, companyBranding: company } = useCompany();
 
   const { auth } = useAuth();
 
@@ -57,17 +57,17 @@ export default function CompanyLayout({ children, params }: any) {
     {
       name: "Dashboard",
       icon: <MdOutlineDashboard size={20} />,
-      link: "/company/admin",
+      link: `/${company?.company_identifier}/admin`,
     },
     {
       name: "Forms",
       icon: <FormsNavIcon />,
-      link: "/company/admin/forms",
+      link: `/${company?.company_identifier}/admin/forms`,
     },
     {
       name: "Customers",
       icon: <MdOutlineSupervisedUserCircle size={20} />,
-      link: "/company/admin/customers",
+      link: `/${company?.company_identifier}/admin/customer`,
     },
 
     {
@@ -78,7 +78,7 @@ export default function CompanyLayout({ children, params }: any) {
         {
           name: "Form Reports",
           icon: null,
-          link: "/company/admin/form-reports",
+          link: `/${company?.company_identifier}/admin/form-reports`,
         },
       ],
     },
@@ -86,7 +86,7 @@ export default function CompanyLayout({ children, params }: any) {
     {
       name: "User management",
       icon: <FaUsers size={20} />,
-      link: "/company/admin/usermanagement",
+      link: `/${company?.company_identifier}/admin/usermanagement`,
     },
 
     // {
