@@ -68,7 +68,7 @@ const Page = () => {
 
   const [color, setColor] = useState<string>("");
 
-  const [showColorPicker, setShowColorPicker] = useState<boolean>(true);
+  const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
 
   //pagination
   const [page, setPage] = useState(0);
@@ -220,7 +220,7 @@ const Page = () => {
       toast.error("Failed to update company status");
     }
   };
-  if (isLoading) {
+  if (isLoading || areFormsLoading ) {
     // if (isLoading || areFormsLoading || isCountryLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
@@ -420,16 +420,8 @@ const Page = () => {
                     </button>
                   </div>
                   
-                  {/* NO ASSIGNED FORM */}
-                  {assignedForms?.content?.length === 0 && (
-                    <div className="flex items-center justify-center py-5 w-full ">
-                      <EmptyList text="No forms assigned to company" />
-                    </div>
-                  )}
-
-                    
-                  {/**DISPLAYING ASSIGNED FORMS*/}
-                  {assignedForms && assignedForms?.content?.length > 0 && <><div className="flex justify-between mb-3">
+                  {/* PAGINATION AND TIMELINE FILTER*/}
+                  <div className="flex justify-between mb-3">
                     <DatePicker
                       selectedTimeline={selectedTimeline}
                       setSelectedTimeline={setSelectedTimeline}
@@ -442,6 +434,17 @@ const Page = () => {
                       setPage={setPage}
                     />
                   </div>
+
+                  {/* NO ASSIGNED FORM */}
+                  {assignedForms?.content?.length === 0 && (
+                    <div className="flex items-center justify-center py-5 w-full ">
+                      <EmptyList text="No forms assigned to company" />
+                    </div>
+                  )}
+
+                    
+                  {/**DISPLAYING ASSIGNED FORMS*/}
+                  {assignedForms && assignedForms?.content?.length > 0 && <>
                   <div className="grid grid-cols-4 gap-10 ">
                     {assignedForms &&
                       assignedForms?.content?.map((form: any) => {

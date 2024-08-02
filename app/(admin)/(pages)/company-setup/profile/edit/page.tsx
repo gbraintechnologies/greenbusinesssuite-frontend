@@ -22,31 +22,35 @@ const Page = () => {
   const id = searchParams.get("id");
 
   const {
-    data: companies,
+    data: companyData,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(),
+    queryKey: ["company ", id],
+    queryFn: services.getCompanyById(Number(id)),
   });
 
-  const companyData: CompanyInfo = companies?.find(
-    (company: CompanyInfo) => company.id === Number(id)
-  );
+  // const {data: brandingInfo, isLoading: brandingInfoLoading} = useQuery({
+  //   queryKey: ["branding info for ", id],
+  //   queryFn: services.getCompanyBranding(companyData?.company_identifier),
+  //   enabled: !!companyData
+  // })
+
+  
 
   const companyDescription =
     companyData?.company_custom_values?.find(
-      (field) => field.custom_profile_item_id == 1
+      (field: any) => field.custom_profile_item_id == 1
     )?.value ?? "";
 
   const companyAdminName =
     companyData?.company_custom_values?.find(
-      (field) => field.custom_profile_item_id == 2
+      (field: any) => field.custom_profile_item_id == 2
     )?.value ?? "";
 
   const companyAdminEmail =
     companyData?.company_custom_values?.find(
-      (field) => field.custom_profile_item_id == 3
+      (field: any) => field.custom_profile_item_id == 3
     )?.value ?? "";
 
   const companySubSector =
@@ -171,45 +175,6 @@ const Page = () => {
   const hasValueChanged = (initialValue: any, newValue: any) =>
     initialValue !== newValue;
 
-  const hasAnyValueChanged = (initialValues: any, values: any) => {
-    // Check for simple fields
-    const simpleFields = [
-      "companyName",
-      "companyDescription",
-      "adminEmail",
-      "contactEmail",
-    ];
-    for (let field of simpleFields) {
-      if (hasValueChanged(initialValues[field], values[field])) {
-        return true;
-      }
-    }
-
-    if (
-      hasValueChanged(
-        `${initialValues.adminFirstName} ${initialValues.adminLastName}`,
-        `${values.adminFirstName} ${values.adminLastName}`
-      )
-    ) {
-      return true;
-    }
-
-    if (
-      hasValueChanged(
-        `${initialValues.contactFirstName} ${initialValues.contactLastName}`,
-        `${values.contactFirstName} ${values.contactLastName}`
-      )
-    ) {
-      return true;
-    }
-
-    if (hasValueChanged(companyData?.primary_contact_phone_number, phone)) {
-      return true;
-    }
-
-    return false;
-  };
-
   const hasAdminInfoChanged = (initialValues: any, values: any) => {
     if (
       hasValueChanged(
@@ -325,47 +290,58 @@ const Page = () => {
     try {
       await editCompanyWithCustomFields(companyData?.id, data, custom_fields);
 
-      if (hasAdminInfoChanged(initialValues, values)) {
-        const userResponse = await searchUsersByEmail(
-          values.adminEmail as string
-        );
-        const userData = userResponse?.data[0];
+      // if (hasAdminInfoChanged(initialValues, values)) {
+      //   const userResponse = await searchUsersByEmail(
+      //     values.adminEmail as string
+      //   );
+      //   const userData = userResponse?.data[0];
 
-        const editedUserData = {
-          first_name: values.adminFirstName as string,
-          last_name: values.adminLastName as string,
-          email: userData?.email,
-          username: userData?.username,
-          phone_number: userData?.phone_number,
-          mobile_phone_number: userData?.mobile_phone_number,
-          user_status: userData?.user_status,
-        };
+      //   const editedUserData = {
+      //     first_name: values.adminFirstName as string,
+      //     last_name: values.adminLastName as string,
+      //     email: userData?.email,
+      //     username: userData?.username,
+      //     phone_number: userData?.phone_number,
+      //     mobile_phone_number: userData?.mobile_phone_number,
+      //     user_status: userData?.user_status,
+      //   };
 
-        const custom_profiles = [
-          {
-            custom_profile_item_id: 1,
-            value:
-              userData?.custom_profile_values?.find(
-                (profile: any) => profile.custom_profile_item_id === 1
-              )?.value ?? "",
-          },
-          {
-            custom_profile_item_id: 2,
-            value: userData?.custom_profile_values?.find(
-              (profile: any) => profile.custom_profile_item_id === 2
-            )?.value,
-          },
-        ];
+      //   const custom_profiles = [
+      //     {
+      //       custom_profile_item_id: 1,
+      //       value:
+      //         userData?.custom_profile_values?.find(
+      //           (profile: any) => profile.custom_profile_item_id === 1
+      //         )?.value ?? "",
+      //     },
+      //     {
+      //       custom_profile_item_id: 2,
+      //       value: userData?.custom_profile_values?.find(
+      //         (profile: any) => profile.custom_profile_item_id === 2
+      //       )?.value,
+      //     },
+      //   ];
 
-        await services.editUserWithCustomFields(
-          editedUserData,
-          custom_profiles,
-          userData?.id
-        );
-      }
+      //   await services.editUserWithCustomFields(
+      //     editedUserData,
+      //     custom_profiles,
+      //     userData?.id
+      //   );
 
-      toast.success("Company edited successfully");
-      router.back();
+
+      // }
+
+    //   const companySmallLogoURL =
+    // companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+
+
+    //    await services.createCompanyBranding(
+    //     companyData.id,
+    //     companyData.company_identifier, companySmallLogoURL?.file_url, color)
+
+
+      toast.success("Company Adidas edited successfully");
+      // router.back();
     } catch (error) {
       toast.error("An error occurred");
     } finally {

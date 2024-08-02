@@ -62,13 +62,7 @@ function CompanyForms() {
         ) : (
           // ALL COMPANY FORMS
           <>
-            {forms?.content?.length === 0 ? (
-              <div className="">
-                <EmptyList />
-              </div>
-            ) : (
-              <>
-                <div className="flex justify-between mb-3">
+          <div className="flex justify-between mb-3">
                 <DatePicker selectedTimeline={selectedTimeline} setSelectedTimeline={setSelectedTimeline}/>
                   <Pagination
                     limit={limit}
@@ -78,6 +72,13 @@ function CompanyForms() {
                     setPage={setPage}
                   />
                 </div>
+            {forms?.content?.length === 0 ? (
+              <div className="">
+                <EmptyList />
+              </div>
+            ) : (
+              <>
+                
                 <div className="grid grid-cols-4 gap-5">
                   {forms &&
                     forms?.content?.map((form: any) => {

@@ -1,5 +1,8 @@
 import { CompanyInfo, CompanyObject, CustomField } from "@/types";
 import authApi from "../axiosAuthClient";
+import meshApi from "../meshAuthClient";
+import meshNoAuthApi from "../meshNoAuthClient"; 
+
 
 export const getAllCompanies = () => {
   return () => authApi.get("/companies/all_companies").then((res) => res.data);
@@ -52,3 +55,32 @@ export const assignAdminToCompany = (adminID: number, companyID: number) => {
 export const getSupportStaffAssignedCompanies = (userId: any) => {
   return authApi.get(`/company/get_support_staff_assigned_companies/${userId}`);
 };
+
+
+// Company Branding
+// create company branding
+export const createCompanyBranding = (companyId: string| number, tenantId: string, logo: string, color: string) => {
+  return meshApi.post("/company-branding/create", {
+    tenancyId: tenantId,
+    companyId: companyId,
+    logo: logo,
+    color: color,
+  })
+}
+
+//edit company branding by id
+export const editCompanyBranding = (id: string| number, companyId:string | number, tenantId: string, logo: string, color: string) => {
+  return meshApi.put(`/company-branding/edit/${id}`, {
+    tenancyId: tenantId,
+    companyId: companyId,
+    logo: logo,
+    color: color,
+  })
+}
+
+//get company branding by tenant id
+export const getCompanyBranding = (tenantId: string) => {
+  // return () => meshNoAuthApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`)
+  return () => meshApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`)
+
+}
