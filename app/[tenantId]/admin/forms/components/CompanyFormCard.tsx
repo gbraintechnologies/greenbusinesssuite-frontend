@@ -15,6 +15,7 @@ import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 import { toast } from "sonner";
 
 import services from "@/services";
+import useCompany from "@/hooks/useCompany";
 
 type Props = {
   form: any;
@@ -26,19 +27,23 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
 
   const router = useRouter();
 
+  const { companyBranding: company } = useCompany();
+
   const [formResponsesCount, setFormResponsesCount] = useState(0);
 
   const options = [
     {
       title: "Preview",
       func: () => {
-        router.push(`/company/forms/preview/${id}`);
+        router.push(
+          `/${company?.company_identifier}/admin/forms/preview/${id}`
+        );
       },
     },
     {
       title: "Details",
       func: () => {
-        router.push(`/company/forms/${id}`);
+        router.push(`/${company?.company_identifier}/admin/forms/${id}`);
       },
     },
     {
@@ -83,7 +88,9 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
         <button
-          onClick={() => router.push(`/company/forms/${id}`)}
+          onClick={() =>
+            router.push(`/${company?.company_identifier}/admin/forms/${id}`)
+          }
           style={
             {
               // backgroundColor: color?.a,
@@ -97,7 +104,7 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
         <div className="p-3">
           <button
             onClick={() => {
-              router.push(`/company/forms/${id}`);
+              router.push(`/${company?.company_identifier}/admin/forms/${id}`);
             }}
             className="text-lg w-full text-left font-medium"
           >

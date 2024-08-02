@@ -16,7 +16,7 @@ function PreviewForm({ params }: any) {
 
   const { data: formData, isLoading } = useQuery({
     queryKey: ["form", formId],
-    queryFn: services.getFormById(formId),
+    queryFn: services.getFormByIdDefault(formId),
     enabled: Boolean(formId),
   });
 
