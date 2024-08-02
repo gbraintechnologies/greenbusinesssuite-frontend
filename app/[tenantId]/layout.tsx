@@ -5,9 +5,9 @@ import useCompany from "@/hooks/useCompany";
 import { usePathname, useRouter } from "next/navigation";
 
 // Next & React imports
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect } from "react";
 
-import Checks from "./_components/Checks";
+import Checks from "./components/Checks";
 
 interface layoutProps {
   children: React.ReactNode;

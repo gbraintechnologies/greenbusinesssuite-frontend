@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // componetns
-import Checks from "./_components/Checks";
+import Checks from "./components/Checks";
 
 // hooks
 import useUser from "@/hooks/useUser";
