@@ -21,6 +21,7 @@ import { HiOutlineDocumentText } from "react-icons/hi";
 // hooks
 import useUser from "@/hooks/useUser";
 import { ClientFormProvider } from "@/contexts/ClientFormContext";
+import useCompany from "@/hooks/useCompany";
 
 export default function ClientLayout({
   children,
@@ -33,6 +34,8 @@ export default function ClientLayout({
   const { user } = useUser();
 
   const [loading, setLoading] = useState(true);
+
+  const { companyBranding: company } = useCompany();
 
   useEffect(() => {
     // Redirect to login if not authenticated
@@ -51,17 +54,17 @@ export default function ClientLayout({
     {
       name: "Dashboard",
       icon: <ClientDashboardIcon />,
-      link: "/company/client",
+      link: `/${company?.company_identifier}/client`,
     },
     {
       name: "Documents",
       icon: <HiOutlineDocumentText />,
-      link: "/company/client/documents",
+      link: `/${company?.company_identifier}/client/documents`,
     },
     {
       name: "Settings",
       icon: <TbCurrentLocation size={20} />,
-      link: "/company/client/settings",
+      link: `/${company?.company_identifier}/client/settings`,
     },
   ];
 

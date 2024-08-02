@@ -72,14 +72,14 @@ export const getFormStatisticsForUser = (userId: string | null) => {
     throw new Error("No User Id");
   }
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/forms/builder/user/form-statistics/${userId}`)
       .then((res) => res.data);
 };
 
 export const getCompletedFormsByUserId = (userId: string) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/forms/builder/user/completed-forms/${userId}`)
       .then((res) => res.data);
 };
@@ -97,14 +97,16 @@ export const getUnassignedForms = (
 
 export const getUncompletedFormsByUserId = (userId: string) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/forms/builder/user/uncompleted-forms/${userId}`)
       .then((res) => res.data);
 };
 
 export const getAllFormsByUserId = (userId: string) => {
   return () =>
-    authApi.get(`/forms/builder/user-forms/${userId}`).then((res) => res.data);
+    defaultMeshApi
+      .get(`/forms/builder/user-forms/${userId}`)
+      .then((res) => res.data);
 };
 
 export const getFormsByUserId = (userId: string | null) => {

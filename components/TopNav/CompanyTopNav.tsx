@@ -24,7 +24,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
     >
       <div className="flex items-center gap-3">
         <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
-          <Link href="/company/admin">
+          <Link href={`/${company?.company_identifier}/admin`}>
             {company?.logo ? (
               <Image
                 width={300}

@@ -17,10 +17,13 @@ import Image from "next/image";
 import useUser from "@/hooks/useUser";
 import useAdmin from "@/hooks/useAdmin";
 import useAuth from "@/hooks/useAuth";
+import useCompany from "@/hooks/useCompany";
 
 function SettingsSideNav() {
   const { user, setUser, removeUser } = useUser();
   const { removeAuth } = useAuth();
+
+  const { companyBranding: company } = useCompany();
 
   const router = useRouter();
 
@@ -131,7 +134,7 @@ function SettingsSideNav() {
               className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               onClick={() => {
                 setShowLogOutModal(false);
-                router.push("/client/auth");
+                router.push(`/${company?.company_identifier}/auth`);
                 removeUser();
                 removeAuth();
                 setUser(null);

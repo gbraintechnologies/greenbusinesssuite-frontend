@@ -219,7 +219,15 @@ function ProcessInvite({ tenantId }: any) {
         // DISPLAY MESSAGE
         <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
           <div className="flex -mt-[30vh] items-center text-center justify-center flex-col gap-2">
-            <MeshSuiteLogo />
+            {companyBranding?.logo && (
+              <Image
+                src={companyBranding?.logo}
+                width={100}
+                height={100}
+                className="rounded-full p-1 bg-white"
+                alt="company"
+              />
+            )}
 
             <h3 className="mt-10 font-bold text-2xl text-primary-dark">
               {data?.name} form
@@ -227,13 +235,16 @@ function ProcessInvite({ tenantId }: any) {
 
             <p className="max-w-sm text-lg text-primary-dark">{message}</p>
 
-            <button
-              onClick={() => router.push("/client")}
-              className="bg-[#16A34A] mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
+            <Button
+              style={{
+                backgroundColor: companyBranding.color,
+              }}
+              onClick={() => router.push(`/${tenantId}/client`)}
+              className="mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
               type="submit"
             >
               Continue to dashboard
-            </button>
+            </Button>
           </div>
         </div>
       )}
