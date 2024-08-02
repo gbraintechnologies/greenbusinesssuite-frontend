@@ -14,11 +14,8 @@ import services from "@/services";
 import { IFilter } from "@/types";
 
 import RoleFilter from "./components/RoleFilter";
-import useCompany from "@/hooks/useCompany";
 
 function UserManagement() {
-  const { companyBranding: company } = useCompany();
-
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "All", value: "all" },
     { id: 2, name: "Active", value: "active" },
@@ -40,47 +37,21 @@ function UserManagement() {
 
   const [rows, setRows] = useState<{ id: number | undefined; data: any }[]>([]);
 
-  //Filter users by role id
-  const filterUsersByCompanyId = useCallback<any>(
-    (users: any) => {
-      const companyId = company?.id;
-
-      const filteredUsers = users?.filter((user: any) => {
-        return (
-          user.custom_profile_values.find(
-            (item: any) => item.custom_profile_item_id === 2
-          )?.value == companyId
-        );
-      });
-
-      return filteredUsers;
-    },
-    [company]
-  );
-
-  const filterRoles = useCallback<any>((roles: any) => {
-    //Filter for just Company Admin and Client roles
-    return roles?.filter((role: any) => role.id === 6 || role.id === 7);
-  }, []);
-
   const { data: users, isLoading } = useQuery({
     queryKey: ["all users"],
     queryFn: services.allUsers(),
-    select: filterUsersByCompanyId,
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
     queryKey: ["search data", searchTerm],
     queryFn: services.searchUsers(searchTerm),
     enabled: Boolean(searchTerm),
-    select: filterUsersByCompanyId,
   });
 
   const { data: roles, isLoading: rolesLoading } = useQuery({
     queryKey: ["mesh roles"],
     // ID OF MESH APP IS 1 IN DB
     queryFn: services.getMeshBusinessSuiteRoles(1),
-    select: filterRoles,
   });
 
   //Status Filter

@@ -29,6 +29,7 @@ import useAdmin from "@/hooks/useAdmin";
 import useUser from "@/hooks/useUser";
 import { Button } from "@nextui-org/button";
 import Image from "next/image";
+import CompanyLogo from "@/components/ThemeLogo/CompanyLogo";
 
 //
 
@@ -169,15 +170,7 @@ function CompanyAdminAuth({ params }: any) {
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="mx-auto flex items-center justify-center w-full">
-            {companyBranding?.logo && (
-              <Image
-                src={companyBranding?.logo}
-                width={60}
-                height={60}
-                className=""
-                alt="company"
-              />
-            )}
+            <CompanyLogo />
           </div>
           <h2 className="font-bold text-center text-xl">
             Sign in to {companyBranding?.name}

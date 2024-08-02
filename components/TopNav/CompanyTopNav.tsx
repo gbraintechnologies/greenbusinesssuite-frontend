@@ -58,7 +58,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
 
       <div className="flex items-center gap-3">
         <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20"></div>
-        <Link href={settingsLink ?? "/company/admin/settings"}>
+        <Link href={`/${company?.company_identifier}/admin/settings`}>
           {companyAdmin?.custom_profile_values &&
           companyAdmin?.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1

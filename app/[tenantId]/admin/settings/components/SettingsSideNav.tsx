@@ -26,12 +26,12 @@ function SettingsSideNav({ tenantId }: any) {
     {
       name: "Account",
       icon: <HiOutlineUser size={20} />,
-      link: `${tenantId}/settings`,
+      link: `/${tenantId}/admin/settings`,
     },
     {
       name: "Security",
       icon: <GoShieldLock size={20} />,
-      link: `/${tenantId}/settings/security`,
+      link: `/${tenantId}/admin/settings/security`,
     },
   ];
   const pathname = usePathname();
@@ -125,10 +125,11 @@ function SettingsSideNav({ tenantId }: any) {
               className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               onClick={() => {
                 setShowLogOutModal(false);
-                router.push(`/${tenantId}/auth`);
+
                 removeCompanyAdmin();
                 removeAuth();
                 toast.success("Logged out");
+                router.push(`/${tenantId}/auth`);
               }}
             >
               Yes, log out

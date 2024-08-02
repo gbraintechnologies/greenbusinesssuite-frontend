@@ -21,9 +21,9 @@ function page({ params }: any) {
   const router = useRouter();
 
   useEffect(() => {
-    if (auth.access_token && companyAdmin) {
+    if (auth?.access_token && companyAdmin) {
       router.push(`${tenantId}/admin`);
-    } else if (auth.access_token && user) {
+    } else if (auth?.access_token && user) {
       router.push(`${tenantId}/client`);
     } else {
       router.push(`${tenantId}/auth`);
