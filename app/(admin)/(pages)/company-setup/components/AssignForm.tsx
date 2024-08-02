@@ -87,18 +87,7 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   return (
     <div className="bg-white px-5 py-2">
       <div className="px-2">
-        {allForms?.content?.length === 0 ? (
-          <div className="mb-2">
-            <EmptyList text="You do not have any unassigned forms." />
-          </div>
-        ) : (
-          <div>
-            {/* <SearchBox
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              placeholder="Search by form name"
-            /> */}
-            <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center">
             <DatePicker
               selectedTimeline={selectedTimeline}
               setSelectedTimeline={setSelectedTimeline}
@@ -111,6 +100,18 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
               setPage={setPage}
             />
             </div>
+        {allForms?.content?.length === 0 ? (
+          <div className="mb-2">
+            <EmptyList text="You do not have any unassigned forms." />
+          </div>
+        ) : (
+          <div>
+            {/* <SearchBox
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              placeholder="Search by form name"
+            /> */}
+            
             <div className="grid grid-cols-3 gap-5 h-72 mb-2 overflow-scroll mt-2">
               {allForms?.content &&
                 allForms?.content?.map((form: any) => {

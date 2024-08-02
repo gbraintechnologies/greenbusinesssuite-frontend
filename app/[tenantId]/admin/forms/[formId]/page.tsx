@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { VscLink } from "react-icons/vsc";
 import Tabs from "@/components/Tabs/Tabs";
-import DatePicker from "../components/DatePicker";
 
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -22,6 +21,8 @@ import PublishFormButton from "@/app/(admin)/(pages)/forms/builder/PublishFormBu
 import Analytics from "./_analytics/Analytics";
 import { useQueryState } from "nuqs";
 import { IFilter } from "@/types";
+import DatePicker from "@/components/DatePicker/DatePicker";
+import Pagination from "@/components/Pagination/Pagination";
 
 function SingleFormCompany({ params }: any) {
   const [filters, setFilters] = useState([
@@ -38,6 +39,14 @@ function SingleFormCompany({ params }: any) {
   const [activeFilter, setActiveFilter] = useState(
     filters.find((filter) => filter.id === activeFilterId) || filters[0]
   );
+
+  const [responseData, setResponseData] = useState<any>([]);
+
+  const [selectedTimeline, setSelectedTimeline] = useState<any>();
+
+  const [page, setPage] = useState(0);
+
+  const limit = 10;
 
   const handleTabChange = (filter: IFilter) => {
     setActiveFilter(filter);
@@ -62,9 +71,9 @@ function SingleFormCompany({ params }: any) {
     queryFn: services.getAllCompanies(),
   });
 
-  const { data: formResponseData, isLoading: isResponseLoading } = useQuery({
+  const { data: formResponseData, isLoading: isResponseLoading, refetch } = useQuery({
     queryKey: ["get form response by ", Number(formID)],
-    queryFn: services.getFormResponseById(Number(formID)),
+    queryFn: services.getFormResponseById(Number(formID), page, limit, selectedTimeline?.value),
   });
 
   const { data: formStatusCount } = useQuery({
@@ -87,6 +96,10 @@ function SingleFormCompany({ params }: any) {
 
     saveAs(blob, "responses.xlsx");
   };
+
+  useEffect(()=> {
+    refetch()
+  }, [page, selectedTimeline])
 
   if (isLoading) {
     return (
@@ -164,7 +177,13 @@ function SingleFormCompany({ params }: any) {
                 <DownloadIcon />
                 <div className="text-sm">Download </div>
               </button> */}
-              <DatePicker />
+              <DatePicker selectedTimeline={selectedTimeline} setSelectedTimeline={setSelectedTimeline}/>
+              <Pagination
+                page={page}
+                setPage={setPage}
+                limit={limit}
+                currentData={formResponseData?.content}
+                />
             </div>
           ) : (
             <></>
@@ -195,7 +214,7 @@ function SingleFormCompany({ params }: any) {
         {activeFilter.id == 1 && (
           <div className="mt-4">
             <ResponseDataTable
-              responseData={formResponseData}
+              responseData={formResponseData?.content}
               isResponseLoading={isResponseLoading}
               exportToExcel={exportToExcel}
               form={form}

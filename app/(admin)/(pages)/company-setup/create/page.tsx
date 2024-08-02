@@ -214,11 +214,21 @@ const CreateCompany = () => {
     // };
 
     try {
-      const createCompanyResponse = await createCompanyWithCustomFields(
+      const companyData = await createCompanyWithCustomFields(
         data,
         custom_fields
       );
 
+
+      const companySmallLogoURL =
+      companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+  
+  
+         await services.createCompanyBranding(
+          companyData?.id,
+          companyData?.company_identifier, companySmallLogoURL?.file_url, color)
+
+      
       toast.success("Company created successfully");
 
       // const custom_profiles = [

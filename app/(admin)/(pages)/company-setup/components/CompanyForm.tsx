@@ -434,7 +434,7 @@ const CompanyForm: React.FC<Props> = ({
                       variant="flat"
                       selectionMode="single"
                     >
-                      {jurisdictions?.map((jurisdiction: any) => (
+                      {jurisdictions?.content?.map((jurisdiction: any) => (
                         <DropdownItem
                           key="view"
                           className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
@@ -720,7 +720,7 @@ const CompanyForm: React.FC<Props> = ({
                     It must be squared and at at least 128px by 128px with a max
                     size of 512KB. Supported formats are JPG and PNG only.
                   </p>
-                  {!(logoPresentOnLoad || companySmallLogo) && (
+                  {!(companySmallLogo) && (
                     <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
                       <input
                         type="file"

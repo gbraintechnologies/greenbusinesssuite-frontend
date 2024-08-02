@@ -117,9 +117,11 @@ export const getFormsByUserId = (userId: string | null) => {
     authApi.get(`/forms/builder/user-forms/${userId}`).then((res) => res.data);
 };
 
-export const getFormResponseById = (id: number) => {
+export const getFormResponseById = (id: number,page: string | number = 0,
+  size: string | number = 20,
+  timeLine: TimelineType = "ALL") => {
   return () =>
-    defaultMeshApi.get(`/forms/response/data/${id}`).then((res) => res.data);
+    defaultMeshApi.get(`/forms/response/data/${id}/${page}/${size}/${timeLine}`).then((res) => res.data);
 };
 
 export const getFormResponsesById = (id: number) => {

@@ -58,7 +58,7 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
     <div className="flex shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] bg-white border border-[#E2E8F0] w-fit rounded-lg">
       <Dropdown>
         <DropdownTrigger>
-          <button className="flex justify-between outline-none items-center px-3 py-1 border-r border-[#E2E8F0] gap-2">
+          <button className="flex justify-between outline-none items-center px-3 py-1 gap-2">
             <LuCalendar size={18} />
             <div className="text-sm">{selectedTimeline?.label}</div>
             <BsChevronDown color="#94A3B8" />
