@@ -23,7 +23,7 @@ type Props = {
   onClick?: () => void;
 };
 function FormCard({ form, onClick, addFormResponses = true }: Props) {
-  let { id, name, url } = form;
+  let { id, name, url, publishStatus } = form;
 
   const router = useRouter();
 
@@ -49,6 +49,12 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
     {
       title: "Copy link",
       func: () => {
+        if (publishStatus !== "PUBLISHED") {
+          toast.error("Error. Form Unpublished", {
+            description: "Publish the form to generate a link",
+          });
+          return;
+        }
         navigator.clipboard.writeText(url ?? "").then(() => {
           toast.success("Link copied!");
         });

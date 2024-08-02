@@ -119,7 +119,7 @@ export const getFormsByUserId = (userId: string | null) => {
 
 export const getFormResponseById = (id: number) => {
   return () =>
-    authApi.get(`/forms/response/data/${id}`).then((res) => res.data);
+    defaultMeshApi.get(`/forms/response/data/${id}`).then((res) => res.data);
 };
 
 export const getFormResponsesById = (id: number) => {
@@ -128,14 +128,14 @@ export const getFormResponsesById = (id: number) => {
 
 export const formResponseAnalytics = (id: number, companyId: string) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/forms/response/analytics/${id}/${companyId}`)
       .then((res) => res.data);
 };
 
 export const getFormStatusCountById = (id: number) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/forms/response/forms-status/count/${id}`)
       .then((res) => res.data);
 };

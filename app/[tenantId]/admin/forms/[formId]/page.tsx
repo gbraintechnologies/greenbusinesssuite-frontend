@@ -53,7 +53,7 @@ function SingleFormCompany({ params }: any) {
 
   const { data: form, isLoading } = useQuery({
     queryKey: ["form", parseInt(formID)],
-    queryFn: services.getFormById(formID),
+    queryFn: services.getFormByIdDefault(formID),
     enabled: Boolean(formID),
   });
 
