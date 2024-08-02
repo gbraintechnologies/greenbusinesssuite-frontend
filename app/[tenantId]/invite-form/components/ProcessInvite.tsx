@@ -50,7 +50,7 @@ function ProcessInvite({ tenantId }: any) {
   // GET AND FORM IF AUTHENTICATED
   const { data, error } = useQuery({
     queryKey: ["form", formId],
-    queryFn: services.getFormById(formId),
+    queryFn: services.getFormByIdDefault(formId),
     enabled: Boolean(formId) && Boolean(auth?.access_token),
   });
 
@@ -60,7 +60,7 @@ function ProcessInvite({ tenantId }: any) {
   // }
 
   // PROMPT TO LOGIN / CREATE ACCOUNT TO FILL FORM IF NOT AUTHENTICATED
-  if (!Boolean(auth?.access_token) && !Boolean(user)) {
+  if (!Boolean(auth?.access_token) && !Boolean(user?.id)) {
     return (
       <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
         <div className="flex -mt-[20vh] items-center text-center justify-center flex-col gap-2">
@@ -112,15 +112,17 @@ function ProcessInvite({ tenantId }: any) {
 
   useEffect(() => {
     //
-    if (data) {
+    if (data && user) {
       console.log("data", data);
       // CHECK PUBLISH STATUS: PUBLISH | UNPUBLISHED
+
       if (data?.publishStatus !== "PUBLISHED") {
         setLoading(false);
         setMessage("Sorry! This form is no longer accessible");
         return;
       }
       // CHECK IF DEADLINE OR DATE IS OVER
+      // TODO: CHECK DEADLINE
       if (data?.deadline !== null) {
         if (new Date() > new Date(data?.deadline)) {
           setLoading(false);
@@ -167,7 +169,7 @@ function ProcessInvite({ tenantId }: any) {
 
       // ASSIGN TO USER UPON LOGIN THEN CLEAR SESSION STORAGE
       services
-        .acceptInvite(formId, user?.id, companyId, inputData)
+        .acceptInvite(formId, user?.id, Number(companyId), inputData)
         .then((res) => {
           setLoading(false);
           setMessage(

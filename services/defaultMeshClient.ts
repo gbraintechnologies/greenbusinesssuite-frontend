@@ -12,12 +12,12 @@ import {
 import { toast } from "sonner";
 import { headerT } from "@/types/headerType";
 
-const defaultAuthApi = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/userapps/v1.0`,
+const defaultMeshApi = axios.create({
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
 });
 
 // REQUEST INTERCEPTOR
-defaultAuthApi.interceptors.request.use(
+defaultMeshApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
     let headers: headerT = {
@@ -35,7 +35,7 @@ defaultAuthApi.interceptors.request.use(
 );
 
 // RESPONSE INTERCEPTOR: listen for a 401 or 403 then refresh token
-defaultAuthApi.interceptors.response.use(
+defaultMeshApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -112,4 +112,4 @@ defaultAuthApi.interceptors.response.use(
   }
 );
 
-export default defaultAuthApi;
+export default defaultMeshApi;

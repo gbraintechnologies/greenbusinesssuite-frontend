@@ -128,7 +128,8 @@ function CompanyAdminAuth({ params }: any) {
           return;
         }
         // ROLE 6 - CLIENT ONLY
-        else if (user?.data?.profiles[0]?.role_id === 6) {
+        // change to !== 6
+        else if (user?.data?.profiles[0]?.role_id !== 6) {
           addCompanyAdminData(user?.data);
           toast.success("Logged in");
           router.push(`/${tenantId}/admin`);

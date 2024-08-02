@@ -1,6 +1,6 @@
 import { TimelineType } from "@/types";
 import authApi from "../meshAuthClient";
-import defaultAuthApi from "../defaultAuthClient";
+import defaultMeshApi from "../defaultMeshClient";
 
 export const allForms = (
   pageNumber: number,
@@ -12,11 +12,6 @@ export const allForms = (
       .get(`/forms/builder/all/${pageNumber}/${pageSize}/${timeLine}`)
       .then((res) => res.data);
 };
-
-// export const recentForms = (count: number) => {
-//   return () =>
-//     authApi.get(`/forms/builder/recent/1/10/ALL`).then((res) => res.data);
-// };
 
 export const allFormTemplates = (
   pageNumber: number,
@@ -47,6 +42,11 @@ export const assignFormToCompany = (
 
 export const getFormById = (id: any) => {
   return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
+};
+
+export const getFormByIdDefault = (id: any) => {
+  return () =>
+    defaultMeshApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
 
 export const getFormByIdRaw = (id: any) => {
@@ -225,6 +225,7 @@ export const acceptInvite = (
     formId: parseInt(formId),
     isCompleted: false,
     inputData: inputData,
+    status: "PENDING",
     companyId: companyId,
     userId: parseInt(userId),
   });
