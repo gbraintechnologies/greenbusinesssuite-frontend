@@ -40,3 +40,7 @@ export const refreshToken = () => {
       window.location.reload();
     });
 };
+
+export const allPermissions = () => {
+  return () => authApi.get("/apps/permissions/all_perms/").then((res) => res.data);
+};
