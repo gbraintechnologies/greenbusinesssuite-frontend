@@ -57,7 +57,7 @@ function TopNav() {
       </div>
       <div className="flex items-center gap-3">
         <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20"></div>
-        <Link href="/company/client/settings">
+        <Link href={`/${company?.company_identifier}/client/settings`}>
           {user?.custom_profile_values &&
           user?.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1

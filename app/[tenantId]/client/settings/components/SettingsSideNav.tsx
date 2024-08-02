@@ -31,12 +31,12 @@ function SettingsSideNav() {
     {
       name: "Account",
       icon: <HiOutlineUser size={20} />,
-      link: "/client/settings",
+      link: `/${company?.company_identifier}/client/settings`,
     },
     {
       name: "Security",
       icon: <GoShieldLock size={20} />,
-      link: "/client/settings/security",
+      link: `/${company?.company_identifier}/client/settings/security`,
     },
   ];
   const pathname = usePathname();

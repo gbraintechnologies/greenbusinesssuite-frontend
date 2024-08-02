@@ -71,10 +71,7 @@ const page = () => {
   const handleLoginRoute = () => {
     if (roleId == "1") {
       router.push("/auth");
-    } else if (roleId == "2") {
-      router.push("/company/auth");
-    } else if (roleId == "7") {
-      router.push("/client/auth");
+      return;
     }
   };
 
