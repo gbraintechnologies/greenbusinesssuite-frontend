@@ -8,10 +8,13 @@ import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import useCompany from "@/hooks/useCompany";
+import SuspendedNotice from "./components/SuspendedNotice";
 
 function CompanyDashboard() {
   //
-  const { companyBranding: company } = useCompany();
+  const { companyBranding: company, companyAdmin } = useCompany();
+
+  const [adminStatus, setAdminStatus] = React.useState("");
 
   // reports
   const { data: uniqueUsersCount } = useQuery({
@@ -29,25 +32,37 @@ function CompanyDashboard() {
     queryFn: services.companyFormStats(company?.id),
   });
 
+  React.useEffect(() => {
+    console.log("company admin ", companyAdmin);
+    setAdminStatus(companyAdmin?.user_status);
+  }, [companyAdmin]);
+
   return (
     <div className="px-5 pb-20 mt-5">
       <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
-      <StatsBlock
-        stats={[
-          {
-            label: "Number of Registrations",
-            value: totalEntries !== null ? totalEntries : "-",
-          },
-          {
-            label: "Submitted Applications",
-            value: formStats?.completedForms,
-          },
-          {
-            label: "Active Users",
-            value: uniqueUsersCount !== null ? uniqueUsersCount : "-",
-          },
-        ]}
-      />
+      {adminStatus == "INACTIVE" && (
+        <div>
+          <SuspendedNotice />
+        </div>
+      )}
+      <div className="mt-5">
+        <StatsBlock
+          stats={[
+            {
+              label: "Number of Registrations",
+              value: totalEntries !== null ? totalEntries : "-",
+            },
+            {
+              label: "Submitted Applications",
+              value: formStats?.completedForms,
+            },
+            {
+              label: "Active Users",
+              value: uniqueUsersCount !== null ? uniqueUsersCount : "-",
+            },
+          ]}
+        />
+      </div>
       {/* <div className="flex gap-5 flex-wrap">
         {data.map((item: any, index: number) => (
           <DashboardCard header={item.header} value={item.value} key={index} />

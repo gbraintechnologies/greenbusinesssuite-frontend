@@ -27,6 +27,7 @@ import {
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
+import Pagination from "@/components/Pagination/Pagination";
 
 function UserManagement() {
   const [filters, setFilters] = useState([
@@ -50,10 +51,18 @@ function UserManagement() {
 
   const queryClient = useQueryClient();
 
+  const [page, setPage] = useState(0);
+
+  const limit = 20;
+
   // fetch all users
-  const { data, isLoading } = useQuery({
+  const {
+    data,
+    isLoading,
+    refetch: refetchUsers,
+  } = useQuery({
     queryKey: ["all users"],
-    queryFn: services.allUsers(),
+    queryFn: services.allUsers(page, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
@@ -80,6 +89,10 @@ function UserManagement() {
   useEffect(() => {
     refetch();
   }, []);
+
+  useEffect(() => {
+    refetchUsers();
+  }, [page]);
 
   const blacklistUser = async (userId: string) => {
     try {
@@ -393,6 +406,16 @@ function UserManagement() {
             setSelected={setActiveRoleFilter}
           />
         </div>
+      </div>
+
+      {/* Pagination */}
+      <div className="w-full flex justify-end">
+        <Pagination
+          currentData={data}
+          limit={limit}
+          page={page}
+          setPage={setPage}
+        />
       </div>
 
       {/* Table */}

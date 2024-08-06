@@ -1,8 +1,8 @@
 import { CustomField } from "@/types";
 import authApi from "../axiosAuthClient";
 
-export const allUsers = () => {
-  return () => authApi.get("/users/all_users/").then((res) => res.data);
+export const allUsers = (offset: number = 0, limit: number = 20) => {
+  return () => authApi.get(`/users/all_users?offset=${offset}&limit=${limit}`).then((res) => res.data);
 };
 
 export const userByID = (id: any) => {

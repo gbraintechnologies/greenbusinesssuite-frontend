@@ -27,6 +27,7 @@ import {
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
+import Pagination from "@/components/Pagination/Pagination";
 
 export interface IFilter {
   id: number;
@@ -81,9 +82,17 @@ function CompanySetup() {
     { id: number | undefined; data: Partial<CompanyInfo> }[]
   >([]);
 
-  const { data: companies, isLoading } = useQuery({
+  const [page, setPage] = useState(0);
+
+  const limit = 20;
+
+  const {
+    data: companies,
+    isLoading,
+    refetch: refetchCompanies,
+  } = useQuery({
     queryKey: ["companies"],
-    queryFn: services.getAllCompanies(),
+    queryFn: services.getAllCompanies(page, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
@@ -114,6 +123,10 @@ function CompanySetup() {
       toast.error("Failed to update company status");
     }
   };
+
+  useEffect(() => {
+    refetchCompanies();
+  }, [page]);
 
   //Status Filter
   useEffect(() => {
@@ -317,6 +330,16 @@ function CompanySetup() {
         <div className="flex items-center gap-3">
           <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </div>
+      </div>
+
+      {/*PAGINATION */}
+      <div className="flex w-full justify-end">
+        <Pagination
+          currentData={companies}
+          page={page}
+          setPage={setPage}
+          limit={limit}
+        />
       </div>
 
       <DataTable
