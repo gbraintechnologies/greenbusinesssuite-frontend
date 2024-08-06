@@ -32,6 +32,27 @@ interface Country {
   name: string;
 }
 
+interface CountriesResponse {
+  content: Country[];
+  pageable: {
+    // add other properties if needed
+  };
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}
+
+
 const schema = yup.object().shape({
   id: yup.number(),
   countryName: yup.string(),
@@ -41,6 +62,9 @@ const schema = yup.object().shape({
 function AddSector() {
   type typeOfSchema = yup.InferType<typeof schema>;
   const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(15);
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [fileName, setFileName] = useState<{
@@ -64,12 +88,9 @@ function AddSector() {
     },
   });
   const [parentsectorItems, setParentSectorItems] = useState("");
-  const { data: countriesData, isLoading: countriesLoading } = useQuery<
-    Country[],
-    Error
-  >({
-    queryKey: ["all_countries"],
-    queryFn: services.allJurisdictions(),
+  const { data: countriesData } = useQuery<CountriesResponse, Error>({
+    queryKey: ["all_countries", page, limit, searchTerm],
+    queryFn: services.allJurisdictions(page, limit, searchTerm),
   });
 
   useEffect(() => {
@@ -237,7 +258,7 @@ function AddSector() {
             <div className="mb-3 relative">
               <SelectCountryInput
                 key={selectedCountry}
-                listdata={countriesData ?? []}
+                listdata={countriesData?.content ?? []}
                 label="Country"
                 autoComplete="off"
                 {...register("countryName")}

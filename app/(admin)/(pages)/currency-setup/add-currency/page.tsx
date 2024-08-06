@@ -44,6 +44,26 @@ interface Country {
   name: string;
 }
 
+interface CountriesResponse {
+  content: Country[];
+  pageable: {
+    // add other properties if needed
+  };
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}
+
 function AddCurrency() {
   const [denominations, setDenominations] = useState<Denomination[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
@@ -55,9 +75,12 @@ function AddCurrency() {
   });
   type typeOfSchema = yup.InferType<typeof schema>;
   const router = useRouter();
-  const { data: countriesData } = useQuery<Country[], Error>({
-    queryKey: ["all_countries"],
-    queryFn: services.allJurisdictions(),
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(15);
+  const { data: countriesData } = useQuery<CountriesResponse, Error>({
+    queryKey: ["all_countries", page, limit, searchTerm],
+    queryFn: services.allJurisdictions(page, limit, searchTerm),
   });
 
   const handleAddLevel = () => {
@@ -197,7 +220,7 @@ function AddCurrency() {
             <div className="mb-3 relative">
               <SelectCountryInput
                 key={selectedCountry}
-                listdata={countriesData ?? []}
+                listdata={countriesData?.content ?? []}
                 label="Country"
                 autoComplete="off"
                 {...register("countryName")}
