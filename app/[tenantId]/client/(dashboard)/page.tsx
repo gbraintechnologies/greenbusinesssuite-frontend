@@ -18,6 +18,7 @@ import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
+import SuspendedNotice from "./components/SuspendedNotice";
 
 const Page = () => {
   const [filters] = useState([
@@ -43,6 +44,8 @@ const Page = () => {
 
   // current client
   const { user } = useUser();
+
+  const [userStatus, setUserStatus] = useState("");
 
   const [activeFilter, setActiveFilter] = useState({
     id: 1,
@@ -81,13 +84,24 @@ const Page = () => {
     removeClientForm();
   }, []);
 
+  useEffect(() => {
+    setUserStatus(user?.user_status);
+  }, [user])
+
   return areStatsLoading ? (
     <div className="flex justify-center items-center h-screen w-screen">
       <LoadingIcon />
     </div>
   ) : (
     <div className="px-5 pb-20 pt-5 min-h-screen bg-[#F8FAFC]">
-      <div className="text-slate-900 font-semibold text-xl mb-5">Dashboard</div>
+      <div className="text-slate-900 font-semibold text-xl mb-2">Dashboard</div>
+
+      {userStatus === "INACTIVE" && (
+        <div className="mt-4">
+          <SuspendedNotice />
+        </div>
+      )}
+
       <div className="mt-4 grid grid-col-1 gap-3">
         {uncompletedForms?.map((form: any) => {
           return <UncompletedCard key={form?.id} form={form} />;

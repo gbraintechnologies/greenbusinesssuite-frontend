@@ -26,6 +26,7 @@ import {
 import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
 import Link from "next/link";
+import Pagination from "@/components/Pagination/Pagination";
 
 function UserManagement({ params }: any) {
   const tenantId = params?.tenantId;
@@ -52,9 +53,13 @@ function UserManagement({ params }: any) {
 
   const [rows, setRows] = useState<{ id: number | undefined; data: any }[]>([]);
 
-  const { data: users, isLoading } = useQuery({
+  const [page, setPage] = useState(0);
+
+  const limit = 20
+
+  const { data: users, isLoading, refetch } = useQuery({
     queryKey: ["all users"],
-    queryFn: services.allUsers(),
+    queryFn: services.allUsers(page, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
@@ -68,6 +73,11 @@ function UserManagement({ params }: any) {
     // ID OF MESH APP IS 1 IN DB
     queryFn: services.getMeshBusinessSuiteRoles(1),
   });
+
+
+  useEffect(() => {
+    refetch();
+  }, [page])
 
   const blacklistUser = async (userId: string) => {
     try {
@@ -336,6 +346,16 @@ function UserManagement({ params }: any) {
             setSelected={setActiveRoleFilter}
           />
         </div>
+      </div>
+
+      {/* Pagination */}
+      <div className="w-full flex justify-end">
+        <Pagination
+          currentData={users}
+          limit={limit}
+          page={page}
+          setPage={setPage}
+        />
       </div>
       <DataTable
         isLoading={isLoading || searchLoading}
