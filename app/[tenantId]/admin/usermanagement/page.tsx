@@ -55,9 +55,13 @@ function UserManagement({ params }: any) {
 
   const [page, setPage] = useState(0);
 
-  const limit = 20
+  const limit = 20;
 
-  const { data: users, isLoading, refetch } = useQuery({
+  const {
+    data: users,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["all users"],
     queryFn: services.allUsers(page, limit),
   });
@@ -74,10 +78,9 @@ function UserManagement({ params }: any) {
     queryFn: services.getMeshBusinessSuiteRoles(1),
   });
 
-
   useEffect(() => {
     refetch();
-  }, [page])
+  }, [page]);
 
   const blacklistUser = async (userId: string) => {
     try {
@@ -348,6 +351,11 @@ function UserManagement({ params }: any) {
         </div>
       </div>
 
+      <DataTable
+        isLoading={isLoading || searchLoading}
+        rows={rows}
+        columns={columns}
+      />
       {/* Pagination */}
       <div className="w-full flex justify-end">
         <Pagination
@@ -357,11 +365,6 @@ function UserManagement({ params }: any) {
           setPage={setPage}
         />
       </div>
-      <DataTable
-        isLoading={isLoading || searchLoading}
-        rows={rows}
-        columns={columns}
-      />
     </div>
   );
 }

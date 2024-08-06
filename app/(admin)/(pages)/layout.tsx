@@ -175,8 +175,10 @@ export default function AdminLayout({
 
                     <div
                       className={`${
-                        pathname.includes("settings") ? "ml-0" : "ml-[22rem]"
-                      } w-full  pt-4`}
+                        pathname.includes("settings")
+                          ? "ml-0 w-full"
+                          : "ml-[20rem] w-[77%]"
+                      }   pt-4`}
                     >
                       {children}
                     </div>

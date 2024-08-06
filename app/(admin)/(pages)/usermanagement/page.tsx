@@ -61,7 +61,7 @@ function UserManagement() {
     isLoading,
     refetch: refetchUsers,
   } = useQuery({
-    queryKey: ["all users"],
+    queryKey: ["all users", page, limit],
     queryFn: services.allUsers(page, limit),
   });
 
@@ -128,7 +128,7 @@ function UserManagement() {
   const columns = [
     {
       field: "name",
-      headerName: "name",
+      headerName: "Name",
       type: "actions",
       align: "left",
       headerAlign: "left",
@@ -408,6 +408,12 @@ function UserManagement() {
         </div>
       </div>
 
+      {/* Table */}
+      <DataTable
+        isLoading={isLoading || searchLoading}
+        rows={rows}
+        columns={columns}
+      />
       {/* Pagination */}
       <div className="w-full flex justify-end">
         <Pagination
@@ -417,13 +423,6 @@ function UserManagement() {
           setPage={setPage}
         />
       </div>
-
-      {/* Table */}
-      <DataTable
-        isLoading={isLoading || searchLoading}
-        rows={rows}
-        columns={columns}
-      />
     </div>
   );
 }

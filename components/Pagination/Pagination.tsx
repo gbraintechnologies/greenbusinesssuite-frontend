@@ -20,9 +20,9 @@ export default function Pagination({
     <>
       {variant === "mobile-full" && (
         <div>
-          <p className="block mb-3 caption3 text-neutral-300">
+          <p className="block mb-3 text-neutral-300">
             {" "}
-            Showing results for page {page}
+            Showing results for page {page + 1}
           </p>
           <div className="flex items-center">
             <Button
@@ -39,7 +39,7 @@ export default function Pagination({
               onPress={() => setPage(page + 1)}
               isDisabled={currentData.length < limit}
               disabled={currentData.length <= limit}
-              className="rounded-r-full w-24 text-sm border-l-0 disabled:cursor-not-allowed"
+              className="rounded-r-full w-24 text-sm  disabled:cursor-not-allowed"
               isIconOnly
               variant="bordered"
             >
@@ -53,10 +53,11 @@ export default function Pagination({
         <div className="flex items-center">
           <span className="hidden md:block mr-4 caption3 text-neutral-300">
             {" "}
-            Showing results for page {page}
+            Showing results for page {page + 1}
           </span>
           <Button
             isDisabled={page <= 0}
+            disabled={page <= 0}
             onPress={() => setPage(page - 1)}
             className="rounded-l-full disabled:cursor-not-allowed"
             isIconOnly
@@ -80,6 +81,7 @@ export default function Pagination({
         <div className="flex items-center">
           <Button
             isDisabled={page <= 0}
+            disabled={page <= 0}
             onPress={() => setPage(page - 1)}
             className="rounded-l-full disabled:cursor-not-allowed"
             isIconOnly
