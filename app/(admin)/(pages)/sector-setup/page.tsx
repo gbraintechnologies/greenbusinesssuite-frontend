@@ -9,8 +9,9 @@ import DataTable from "@/components/DataTable/DataTable";
 import services from "@/services";
 import Nav from "./components/Nav";
 import { useRouter } from "next/navigation";
-import { deleteBySectorID, deleteBySubSectorID } from "@/services/features/sectorService";
+import { deleteBySectorID } from "@/services/features/sectorService";
 import { Countrieses } from "./components/Countries";
+import Pagination from "@/components/Pagination/Pagination";
 
 
 interface FlattenedRowData {
@@ -81,14 +82,17 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 const SectorSetup: React.FC = () => {
   const [rows, setRows] = useState<FlattenedRowData[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["allSectors"],
-    queryFn: services.allParentSectors(),
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+
+  const { data: sectors, isLoading, refetch } = useQuery({
+    queryKey: ["all sectors", page, limit],
+    queryFn: services.allParentSectors(page, limit),
   });
 
   useEffect(() => {
-    if (data) {
-      const flattenedData = data.map((sector: any) => ({
+    if (sectors?.content) {
+      const flattenedData = sectors.content.map((sector: any) => ({
         id: sector.id,
         rowId: sector.id,
         countryId: sector.id,
@@ -98,7 +102,7 @@ const SectorSetup: React.FC = () => {
       }));
       setRows(flattenedData);
     }
-  }, [data]);
+  }, [sectors]);
 
   const handleDeleteSuccess = async () => {
     try {
@@ -172,11 +176,6 @@ const SectorSetup: React.FC = () => {
     },
   ];
 
-  const filteredRows = rows.filter(
-    (row) =>
-      row.countryName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="w-full pb-20">
       <Nav />
@@ -193,7 +192,15 @@ const SectorSetup: React.FC = () => {
           </div>
         </div>
       </div>
-      <DataTable isLoading={isLoading} rows={filteredRows} columns={columns} />
+      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
+      <div className="flex justify-end mt-4">
+        <Pagination
+          limit={limit}
+          currentData={sectors?.totalPages}
+          page={page}
+          setPage={setPage}
+        />
+      </div>
     </div>
   );
 };

@@ -1,7 +1,10 @@
 import authApi from "../meshAuthClient";
 
-export const allCurrencies = () => {
-  return () => authApi.get("/forms/currency-setup").then((res) => res.data);
+export const allCurrencies = (pageNumber: number, pageSize: number) => {
+  return () =>
+    authApi
+      .get(`/forms/currency-setup/existing/${pageNumber}/${pageSize}`)
+      .then((res) => res.data);
 };
 
 export const createCurrency = (data: any) => {

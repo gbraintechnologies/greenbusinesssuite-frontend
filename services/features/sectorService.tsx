@@ -5,8 +5,11 @@ export const allSectors = () => {
   return () => authApi.get("/sectors").then((res) => res.data);
 };
 
-export const allParentSectors = () => {
-  return () => authApi.get("/sectors/all/info-data").then((res) => res.data);
+export const allParentSectors = (pageNumber: number, pageSize: number) => {
+  return () =>
+    authApi
+      .get(`/sectors/all/info-data/${pageNumber}/${pageSize}`)
+      .then((res) => res.data);
 };
 
 export const createSector = (data: any) => {
