@@ -5,7 +5,7 @@ import Nav from "../../../forms/components/Nav";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import Tabs from "@/components/Tabs/Tabs";
-import DatePicker from "../../../forms/components/DatePicker";
+import DatePicker from "@/components/DatePicker/DatePicker";
 import StatsBlock from "../../../forms/components/StatsBlock";
 import DownloadIcon from "@/public/icons/DownloadIcon";
 import UserShareIcon from "@/public/icons/UserShareIcon";
@@ -64,6 +64,10 @@ const Page = () => {
 
     saveAs(blob, "responses.xlsx");
   };
+
+  const [selectedTimeline, setSelectedTimeline] = useState<any>();
+  const [page, setPage] = useState(0);
+  const limit = 10;
 
   return (
     <Suspense
@@ -131,10 +135,16 @@ const Page = () => {
                 <DownloadIcon />
                 <div className="text-sm">Download </div>
               </button>
-              <DatePicker />
+              <DatePicker
+                selectedTimeline={selectedTimeline}
+                setSelectedTimeline={setSelectedTimeline}
+              />
             </div>
           ) : (
-            <DatePicker />
+            <DatePicker
+              selectedTimeline={selectedTimeline}
+              setSelectedTimeline={setSelectedTimeline}
+            />
           )}
         </div>
         {activeFilter.id == 1 && (
