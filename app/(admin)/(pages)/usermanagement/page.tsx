@@ -62,7 +62,7 @@ function UserManagement() {
     refetch: refetchUsers,
   } = useQuery({
     queryKey: ["all users", page, limit],
-    queryFn: services.allUsers(page, limit),
+    queryFn: services.allUsers(page*limit, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
@@ -97,7 +97,7 @@ function UserManagement() {
   const blacklistUser = async (userId: string) => {
     try {
       await services.blacklistUser(userId);
-      await queryClient.invalidateQueries({ queryKey: ["all users"] });
+      await queryClient.invalidateQueries({ queryKey: ["all users",page,limit] });
       toast.success("User blacklisted successfully");
     } catch (error) {
       toast.error("Failed to blacklist user");
@@ -119,7 +119,7 @@ function UserManagement() {
         userData.id
       );
       toast.success("User status updated successfully");
-      await queryClient.invalidateQueries({ queryKey: ["all users"] });
+      await queryClient.invalidateQueries({ queryKey: ["all users",page,limit] });
     } catch (error) {
       toast.error("User to update company status");
     }

@@ -91,8 +91,8 @@ function CompanySetup() {
     isLoading,
     refetch: refetchCompanies,
   } = useQuery({
-    queryKey: ["companies"],
-    queryFn: services.getAllCompanies(page, limit),
+    queryKey: ["companies",page,limit],
+    queryFn: services.getAllCompanies(page*limit, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
@@ -117,7 +117,7 @@ function CompanySetup() {
         customFields
       );
 
-      await queryClient.invalidateQueries({ queryKey: ["companies"] });
+      await queryClient.invalidateQueries({ queryKey: ["companies",page,limit] });
       toast.success("Company status updated successfully");
     } catch (error) {
       toast.error("Failed to update company status");
