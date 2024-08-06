@@ -12,6 +12,7 @@ import "./index.css";
 import { Countrie } from "./components/Countries";
 import { useRouter } from "next/navigation";
 import { deleteJurisdictionByID } from "@/services/features/jurisdictionsService";
+import Pagination from "@/components/Pagination/Pagination";
 
 interface RowData {
   id: number;
@@ -76,17 +77,17 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 function CountrySetup() {
   const [searchTerm, setSearchTerm] = useState("");
   const [rows, setRows] = useState<RowData[]>([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(15);
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["all jurisdictions"],
-    queryFn: services.allJurisdictions(),
+    queryKey: ["all jurisdictions", page, limit, searchTerm],
+    queryFn: services.allJurisdictions(page, limit, searchTerm),
   });
 
   useEffect(() => {
-    if (data) {
-      setRows(data);
-    }
-  }, [data]);
-
+    refetch();
+  }, [searchTerm, page, limit, refetch]);
+  
   const handleDeleteSuccess = async () => {
     try {
       await refetch();
@@ -137,11 +138,6 @@ function CountrySetup() {
     },
   ];
 
-  const filteredRows = rows.filter(
-    (row) =>
-      row.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="w-full pb-20 ">
       <Nav />
@@ -158,7 +154,15 @@ function CountrySetup() {
           </div>
         </div>
       </div>
-      <DataTable isLoading={isLoading} rows={filteredRows} columns={columns} />
+      <DataTable isLoading={isLoading} rows={data?.content || []} columns={columns} />
+      <div className="flex justify-end mt-4">
+        <Pagination
+          limit={limit}
+          currentData={data?.totalPages || 0}
+          page={page}
+          setPage={setPage}
+        />
+      </div>
     </div>
   );
 }

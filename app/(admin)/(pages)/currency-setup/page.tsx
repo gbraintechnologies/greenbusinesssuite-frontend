@@ -1,9 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-//import Nav from "./components/Nav";
-
-// services
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { IconButton, Menu, MenuItem } from "@mui/material";
@@ -15,7 +12,7 @@ import { deleteCurrencyByID } from "@/services/features/currencyService";
 import "./index.css";
 import Nav from "./components/Nav";
 import { Countrieses } from "./components/Countries";
-
+import Pagination from "@/components/Pagination/Pagination";
 
 interface Currency {
   id: number;
@@ -43,8 +40,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 
   const handleEdit = () => {
     handleClose();
-  //  alert(JSON.stringify(row.id))
-     router.push(`/currency-setup/edit-currency?id=${row.id}`);
+    router.push(`/currency-setup/edit-currency?id=${row.id}`);
   };
 
   const handleDelete = async () => {
@@ -79,23 +75,22 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
   );
 };
 
-
 function CurrencySetup() {
   const [rows, setRows] = useState<Currency[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
 
-  // fetch all currencies
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["all currencies"],
-    queryFn: services.allCurrencies(),
+  const { data: currencies, isLoading, refetch } = useQuery({
+    queryKey: ["all currencies", page, limit],
+    queryFn: services.allCurrencies(page, limit),
   });
 
   useEffect(() => {
-    // alert(JSON.stringify(data))
-    if (data) {
-      setRows(data);
+    if (currencies) {
+      setRows(currencies.content);
     }
-  }, [data]);
+  }, [currencies])
 
   const handleDeleteSuccess = async () => {
     try {
@@ -160,20 +155,12 @@ function CurrencySetup() {
     },
   ];
 
-  const filteredRows = rows.filter(
-    (row) =>
-      row.currency.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      row.symbol.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="w-full pb-20 ">
+    <div className="w-full pb-20">
       <Nav />
-
-      {/* Search and filters */}
       <div className="flex items-center px-5 justify-between my-4">
         <div className="flex items-center gap-3">
-          <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+          <div className="border shadow-sm border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
             <SearchIcon />
             <input
               value={searchTerm}
@@ -184,9 +171,15 @@ function CurrencySetup() {
           </div>
         </div>
       </div>
-
-      {/* Table */}
-      <DataTable isLoading={isLoading} rows={filteredRows} columns={columns} />
+      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
+      <div className="flex justify-end mt-4">
+        <Pagination
+          limit={limit}
+          currentData={currencies?.totalPages}
+          page={page}
+          setPage={setPage}
+        />
+      </div>
     </div>
   );
 }
