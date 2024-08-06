@@ -332,6 +332,11 @@ function CompanySetup() {
         </div>
       </div>
 
+      <DataTable
+        isLoading={isLoading || searchLoading}
+        rows={rows}
+        columns={columns}
+      />
       {/*PAGINATION */}
       <div className="flex w-full justify-end">
         <Pagination
@@ -341,12 +346,6 @@ function CompanySetup() {
           limit={limit}
         />
       </div>
-
-      <DataTable
-        isLoading={isLoading || searchLoading}
-        rows={rows}
-        columns={columns}
-      />
     </div>
   );
 }

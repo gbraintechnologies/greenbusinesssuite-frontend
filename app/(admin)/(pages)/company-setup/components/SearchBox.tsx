@@ -7,7 +7,8 @@ type Props = {
 };
 const SearchBox: FC<Props> = ({ searchTerm, setSearchTerm }) => {
   return (
-    <div className="border shadow-[0px_4px_8px_0px_rgba(30, 41, 59, 0.06)]  border-[#E2E8F0] rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+    // shadow-[0px_4px_8px_0px_rgba(30, 41, 59, 0.06)]
+    <div className="border   border-[#E2E8F0] rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
       <SearchIcon />
       <input
         value={searchTerm}

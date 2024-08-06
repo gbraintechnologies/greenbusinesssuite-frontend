@@ -55,7 +55,7 @@ function UserManagement({ params }: any) {
 
   const [page, setPage] = useState(0);
 
-  const limit = 20;
+  const limit = 2;
 
   const {
     data: users,
