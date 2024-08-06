@@ -62,7 +62,7 @@ function UserManagement() {
     refetch: refetchUsers,
   } = useQuery({
     queryKey: ["all users", page, limit],
-    queryFn: services.allUsers(page, limit),
+    queryFn: services.allUsers(page*limit, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({

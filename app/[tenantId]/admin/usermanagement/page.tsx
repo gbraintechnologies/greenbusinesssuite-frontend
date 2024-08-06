@@ -55,7 +55,7 @@ function UserManagement({ params }: any) {
 
   const [page, setPage] = useState(0);
 
-  const limit = 2;
+  const limit = 20;
 
   const {
     data: users,
@@ -63,7 +63,7 @@ function UserManagement({ params }: any) {
     refetch,
   } = useQuery({
     queryKey: ["all users"],
-    queryFn: services.allUsers(page, limit),
+    queryFn: services.allUsers(page*limit, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({

@@ -92,7 +92,7 @@ function CompanySetup() {
     refetch: refetchCompanies,
   } = useQuery({
     queryKey: ["companies"],
-    queryFn: services.getAllCompanies(page, limit),
+    queryFn: services.getAllCompanies(page*limit, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({

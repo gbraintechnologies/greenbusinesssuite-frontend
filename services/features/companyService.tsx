@@ -4,8 +4,8 @@ import meshApi from "../meshAuthClient";
 import meshNoAuthApi from "../meshNoAuthClient"; 
 
 
-export const getAllCompanies = (page: number = 0, limit: number = 20) => {
-  return () => authApi.get(`/companies/all_companies?offset=${page}&limit=${limit}`).then((res) => res.data);
+export const getAllCompanies = (offset: number = 0, limit: number = 20) => {
+  return () => authApi.get(`/companies/all_companies?offset=${offset}&limit=${limit}`).then((res) => res.data);
 };
 
 export const getCompanyById = (id: number) => {
