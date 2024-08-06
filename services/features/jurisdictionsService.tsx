@@ -1,9 +1,15 @@
 import authApi from "../meshAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
 
-export const allJurisdictions = (page: number, limit: number, search: string) => {
+export const allJurisdictions = (
+  page: number = 1,
+  limit: number = 100,
+  search: string = ""
+) => {
   return () =>
-    authApi.get(`/jurisdictions/all?page=${page}&size=${limit}&search=${search}`).then((res) => res.data);
+    authApi
+      .get(`/jurisdictions/all?page=${page}&size=${limit}&search=${search}`)
+      .then((res) => res.data);
 };
 
 export const csvUploads = (formData: FormData, file: string) => {

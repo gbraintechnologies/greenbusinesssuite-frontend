@@ -205,18 +205,13 @@ const CompanyForm: React.FC<Props> = ({
 
   const [showColorPicker, setShowColorPicker] = useState(false);
 
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(100);
-
   const {
     data: jurisdictions,
     isLoading: jurisdictionsLoading,
     refetch,
   } = useQuery({
     queryKey: ["all jurisdictions"],
-    queryFn: services.allJurisdictions(page, limit, searchTerm),
+    queryFn: services.allJurisdictions(),
   });
 
   const fetchIndustries = async (jurisdiction: string) => {
@@ -228,7 +223,7 @@ const CompanyForm: React.FC<Props> = ({
         setSubSectors([]);
       }
       const response = await services.getSectorByCountryRaw(jurisdiction);
-      console.log("response ", response);
+      // console.log("response ", response);
       let industryId = response[0]?.id;
 
       if (industryId) {

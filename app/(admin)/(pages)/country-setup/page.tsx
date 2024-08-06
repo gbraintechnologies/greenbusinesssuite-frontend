@@ -16,7 +16,7 @@ import Pagination from "@/components/Pagination/Pagination";
 
 interface RowData {
   id: number;
-  name: string
+  name: string;
 }
 
 interface ActionMenuProps {
@@ -87,7 +87,7 @@ function CountrySetup() {
   useEffect(() => {
     refetch();
   }, [searchTerm, page, limit, refetch]);
-  
+
   const handleDeleteSuccess = async () => {
     try {
       await refetch();
@@ -154,7 +154,11 @@ function CountrySetup() {
           </div>
         </div>
       </div>
-      <DataTable isLoading={isLoading} rows={data?.content || []} columns={columns} />
+      <DataTable
+        isLoading={isLoading}
+        rows={data?.content || []}
+        columns={columns}
+      />
       <div className="flex justify-end mt-4">
         <Pagination
           limit={limit}
