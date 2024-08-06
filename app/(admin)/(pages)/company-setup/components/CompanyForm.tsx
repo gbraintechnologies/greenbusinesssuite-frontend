@@ -205,13 +205,18 @@ const CompanyForm: React.FC<Props> = ({
 
   const [showColorPicker, setShowColorPicker] = useState(false);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(100);
+
   const {
     data: jurisdictions,
     isLoading: jurisdictionsLoading,
     refetch,
   } = useQuery({
     queryKey: ["all jurisdictions"],
-    queryFn: services.allJurisdictions(),
+    queryFn: services.allJurisdictions(page, limit, searchTerm),
   });
 
   const fetchIndustries = async (jurisdiction: string) => {
@@ -720,7 +725,7 @@ const CompanyForm: React.FC<Props> = ({
                     It must be squared and at at least 128px by 128px with a max
                     size of 512KB. Supported formats are JPG and PNG only.
                   </p>
-                  {!(companySmallLogo) && (
+                  {!companySmallLogo && (
                     <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
                       <input
                         type="file"
