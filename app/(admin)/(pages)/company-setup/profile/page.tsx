@@ -503,7 +503,7 @@ const Page = () => {
                   </div>
                   <button
                     type="button"
-                    className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                    className="bg-white disabled:bg-gray-400 py-3 text-black border w-24 flex items-center justify-center border-[rgba(226, 232, 240, 1)] text-sm hover:opacity-95 items-center gap-2 rounded-xl"
                     onClick={editCompanyBranding}
                   >
                     Save
