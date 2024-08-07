@@ -5,9 +5,11 @@ import useCompany from "@/hooks/useCompany";
 import { usePathname, useRouter } from "next/navigation";
 
 // Next & React imports
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
 import SetupLoader from "@/components/SetupLoader/SetupLoader";
+
+import Deactivated from "./deactivated/page";
 
 interface layoutProps {
   children: React.ReactNode;
@@ -18,11 +20,11 @@ export default function Layout({ children, params }: layoutProps) {
   const tenantId = params.tenantId;
 
   const { auth, addAuthData } = useAuth();
-  const { companyBranding } = useCompany();
-
-  let pathname = usePathname();
+  const { companyBranding, company } = useCompany();
 
   const router = useRouter();
+
+  let pathname = usePathname();
 
   // CHECK IF THERE'S A USER OR COMPANY ADMIN AND REDIRECT TO DASHBOARD
   // ELSE REDIRECT TO AUTH PAGE
@@ -37,12 +39,16 @@ export default function Layout({ children, params }: layoutProps) {
     addAuthData({ tenantId: tenantId });
   }, [tenantId]);
 
-  if (!Boolean(companyBranding)) {
+  if (!Boolean(companyBranding) || company == null) {
     return (
       <div className="w-screen h-screen bg-gradient-to-r from-[#64748B1A] via-[#fff] to-[#F8FAFC] background-animate flex items-center justify-center">
         <SetupLoader />
       </div>
     );
+  }
+
+  if (company && company?.status?.toLowerCase() === "inactive") {
+    return <Deactivated />;
   }
 
   return <Suspense>{children}</Suspense>;
