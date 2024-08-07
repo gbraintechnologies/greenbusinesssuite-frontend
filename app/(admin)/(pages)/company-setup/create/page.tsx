@@ -226,7 +226,7 @@ const CreateCompany = () => {
   
          await services.createCompanyBranding(
           companyData?.id,
-          companyData?.company_identifier, companySmallLogoURL?.file_url, color)
+          companyData?.company_identifier, companySmallLogoURL?.file_url, color, companyData?.company_name)
 
       
       toast.success("Company created successfully");

@@ -720,7 +720,7 @@ const CompanyForm: React.FC<Props> = ({
                     It must be squared and at at least 128px by 128px with a max
                     size of 512KB. Supported formats are JPG and PNG only.
                   </p>
-                  {!companySmallLogo && (
+                  {!(logoPresentOnLoad && smallLogoUrl) && (
                     <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
                       <input
                         type="file"
@@ -735,7 +735,7 @@ const CompanyForm: React.FC<Props> = ({
                       <CloudUploadIcon /> <p>Upload</p>
                     </label>
                   )}
-                  {companySmallLogo && (
+                  {(logoPresentOnLoad && Boolean(smallLogoUrl)) && (
                     <div
                       className="w-32 h-32 rounded-md my-3"
                       style={{
@@ -753,7 +753,9 @@ const CompanyForm: React.FC<Props> = ({
                       <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
                         <div
                           className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
-                          onClick={() => setCompanySmallLogo(null)}
+                          onClick={() => {setCompanySmallLogo(null)
+                            setSmallLogoUrl("")
+                          }}
                         >
                           <RiDeleteBin6Line color="#0E121B" />
                         </div>

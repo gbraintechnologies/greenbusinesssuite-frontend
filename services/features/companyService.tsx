@@ -59,28 +59,30 @@ export const getSupportStaffAssignedCompanies = (userId: any) => {
 
 // Company Branding
 // create company branding
-export const createCompanyBranding = (companyId: string| number, tenantId: string, logo: string, color: string) => {
+export const createCompanyBranding = (companyId: string| number, tenantId: string, logo: string, color: string, companyName: string) => {
   return meshApi.post("/company-branding/create", {
     tenancyId: tenantId,
     companyId: companyId,
     logo: logo,
     color: color,
+    companyName: companyName
   })
 }
 
 //edit company branding by id
-export const editCompanyBranding = (id: string| number, companyId:string | number, tenantId: string, logo: string, color: string) => {
-  return meshApi.put(`/company-branding/edit/${id}`, {
+export const editCompanyBranding = ( companyId:string | number, tenantId: string, logo: string, color: string, companyName: string) => {
+  return meshApi.put(`/company-branding/update/${tenantId}`, {
     tenancyId: tenantId,
     companyId: companyId,
     logo: logo,
     color: color,
+    companyName: companyName
   })
 }
 
 //get company branding by tenant id
 export const getCompanyBranding = (tenantId: string) => {
   // return () => meshNoAuthApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`)
-  return () => meshApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`)
+  return () => meshApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`).then((res) => res.data);
 
 }
