@@ -27,16 +27,16 @@ const Page = () => {
       name: "All",
       value: "all",
     },
-    {
-      id: 1,
-      name: "Completed",
-      value: "completed",
-    },
-    {
-      id: 2,
-      name: "Uncompleted",
-      value: "uncompleted",
-    },
+    // {
+    //   id: 1,
+    //   name: "Completed",
+    //   value: "completed",
+    // },
+    // {
+    //   id: 2,
+    //   name: "Uncompleted",
+    //   value: "uncompleted",
+    // },
   ]);
 
   //
@@ -48,9 +48,9 @@ const Page = () => {
   const [userStatus, setUserStatus] = useState("");
 
   const [activeFilter, setActiveFilter] = useState({
-    id: 1,
-    name: "Completed",
-    value: "completed",
+    id: 0,
+    name: "All",
+    value: "all",
   });
 
   const { data: formsStats, isLoading: areStatsLoading } = useQuery({
@@ -63,7 +63,8 @@ const Page = () => {
     useQuery({
       queryKey: ["get company forms", user?.id],
       queryFn: services.getUncompletedFormsByUserId(user?.id),
-      enabled: Boolean(user?.id),
+      // enabled: Boolean(user?.id),
+      enabled: false,
     });
 
   const { data: allUserForms, isLoading: allUserFormsLoading } = useQuery({
@@ -76,7 +77,8 @@ const Page = () => {
     useQuery({
       queryKey: ["get completed forms by user", user?.id],
       queryFn: services.getCompletedFormsByUserId(user?.id),
-      enabled: Boolean(user?.id),
+      // enabled: Boolean(user?.id),
+      enabled: false,
     });
 
   useEffect(() => {
@@ -86,7 +88,7 @@ const Page = () => {
 
   useEffect(() => {
     setUserStatus(user?.user_status);
-  }, [user])
+  }, [user]);
 
   return areStatsLoading ? (
     <div className="flex justify-center items-center h-screen w-screen">

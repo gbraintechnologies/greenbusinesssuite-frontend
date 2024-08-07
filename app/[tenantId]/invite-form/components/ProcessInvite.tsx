@@ -113,7 +113,7 @@ function ProcessInvite({ tenantId }: any) {
   useEffect(() => {
     //
     if (data && user) {
-      console.log("data", data);
+      // console.log("data", data);
       // CHECK PUBLISH STATUS: PUBLISH | UNPUBLISHED
 
       if (data?.publishStatus !== "PUBLISHED") {
