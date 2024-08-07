@@ -235,7 +235,8 @@ const Page = () => {
       toast.error("Logo is required");
       return;
     }
-    const companySmallLogoURL =
+    try {
+      const companySmallLogoURL =
       companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
     await services.editCompanyBranding(
@@ -245,6 +246,11 @@ const Page = () => {
       color,
       companyData?.company_name
     );
+    toast.success("Company branding updated successfully");
+  }
+  catch(error){
+    toast.error("Failed to update company branding");
+  }
   };
   if (isLoading) {
     // if (isLoading || areFormsLoading || isCountryLoading) {
