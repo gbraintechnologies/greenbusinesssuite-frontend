@@ -17,6 +17,7 @@ import Image from "next/image";
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import useCompany from "@/hooks/useCompany";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 const schema = yup.object({
   id: yup.number(),
@@ -183,9 +184,12 @@ function Account() {
                 </form>
               </div>
               <div className="float-right">
-                <Button type="button" onClick={() => setShowCancelModal(true)}>
+                <CompanyThemedButton
+                  type="button"
+                  onClick={() => setShowCancelModal(true)}
+                >
                   Save Changes
-                </Button>
+                </CompanyThemedButton>
               </div>
             </div>
           </div>

@@ -20,19 +20,35 @@ export default function Layout({ children, params }: layoutProps) {
   const tenantId = params.tenantId;
 
   const { auth, addAuthData } = useAuth();
-  const { companyBranding } = useCompany();
+  const { companyBranding, setCompanyBranding } = useCompany();
 
   const router = useRouter();
 
   let pathname = usePathname();
 
-  // const { data } = useQuery({
-  //   queryKey: ["get company branding info", tenantId],
-  //   queryFn: services.getCompanyBranding(tenantId),
-  //   enabled: !!tenantId,
-  // });
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["get company branding info", tenantId],
+    queryFn: services.getCompanyBranding(tenantId),
+    enabled: !!tenantId,
+  });
 
-  // console.log("company branding", data);
+  useEffect(() => {
+    if (data) {
+      const { companyName, color, companyId, logo, tenancyId } = data;
+
+      setCompanyBranding({
+        id: companyId,
+        name: companyName,
+        color: color,
+        logo: logo,
+        company_identifier: tenancyId,
+      });
+    }
+  }, [data, isLoading]);
+
+  if (error) {
+    // TODO: GO TO ERROR PAGE
+  }
 
   // CHECK IF THERE'S A USER OR COMPANY ADMIN AND REDIRECT TO DASHBOARD
   // ELSE REDIRECT TO AUTH PAGE

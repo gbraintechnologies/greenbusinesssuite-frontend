@@ -9,10 +9,6 @@ import NoDocuments from "@/components/DocumentComponents/NoDocuments";
 import DocumentCard from "@/components/DocumentComponents/DocumentCard";
 import DocumentSkeleton from "@//components/DocumentComponents/DocumentSkeleton";
 
-// nextui
-
-import { Button } from "@nextui-org/button";
-
 import {
   Modal,
   ModalContent,
@@ -22,6 +18,7 @@ import {
 } from "@nextui-org/modal";
 import UploadFileToIssue from "./UploadFileToIssue";
 import useCompany from "@/hooks/useCompany";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 function Issued({ user, form }: any) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -79,12 +76,12 @@ function Issued({ user, form }: any) {
 
       {/* Issue a new file */}
 
-      <Button
+      <CompanyThemedButton
         className="bg-black rounded-lg text-sm text-white"
         onPress={onOpen}
       >
         Issue new file (s)
-      </Button>
+      </CompanyThemedButton>
       <Modal
         size="xl"
         backdrop="opaque"

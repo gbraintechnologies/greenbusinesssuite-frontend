@@ -12,6 +12,11 @@ const CompanyFromLS =
     ? JSON.parse(localStorage.getItem("company-admin") || null)
     : null;
 
+const CompanyBrandingFromSS =
+  typeof window !== "undefined"
+    ? JSON.parse(sessionStorage.getItem("company-branding") || null)
+    : null;
+
 // @ts-ignore
 const UserFromLS =
   typeof window !== "undefined"
@@ -22,15 +27,18 @@ export const CompanyProvider = ({ children }) => {
   //
   const [auth, setAuth] = useState(UserFromLS);
   const [companyAdmin, setCompanyAdmin] = useState(CompanyFromLS);
-  const [company, setCompany] = useState(null);
+  const [company, setCompany] = useState(CompanyBrandingFromSS);
 
-  const [companyBranding, setCompanyBranding] = useState({
-    id: 2,
-    name: "Adidas",
-    color: "#E32527",
-    logo: "https://mesh-suite-pics-staging-bucket.s3.amazonaws.com/Resources/file-37f2ae99b9c11916fc9e112a54f4355090a13600939ddccc7e4902a53cfe9125.png",
-    company_identifier: "adidas84758",
-  });
+  // TODO: KEEP COMPANY BRANDING IN SESSION STORAGE TO REDUCE CALLS
+  const [companyBranding, setCompanyBranding] = useState(null);
+
+  // {
+  //   id: 2,
+  //   name: "Adidas",
+  //   color: "#E32527",
+  //   logo: "https://mesh-suite-pics-staging-bucket.s3.amazonaws.com/Resources/file-37f2ae99b9c11916fc9e112a54f4355090a13600939ddccc7e4902a53cfe9125.png",
+  //   company_identifier: "adidas84758",
+  // }
 
   // const {
   //   data: companyData,
@@ -70,6 +78,9 @@ export const CompanyProvider = ({ children }) => {
     localStorage.setItem("company-admin", JSON.stringify(companyAdmin));
   }, [companyAdmin]);
 
+  useEffect(() => {
+    sessionStorage.setItem("company-branding", JSON.stringify(companyBranding));
+  }, [companyBranding]);
   return (
     <CompanyContext.Provider
       value={{

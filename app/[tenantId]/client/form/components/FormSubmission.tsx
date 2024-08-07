@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 function FormSubmission() {
   //
@@ -96,14 +97,14 @@ function FormSubmission() {
         >
           Back
         </button>
-        <button
-          className="bg-primary-green text-white px-4 rounded-lg py-2"
+        <CompanyThemedButton
+          className="bg-black text-white px-4 rounded-lg py-2"
           onClick={() => {
             setShowConfirmationModal(true);
           }}
         >
           Submit
-        </button>
+        </CompanyThemedButton>
       </div>
       <p className="mt-10 font-light mx-auto text-center text-sm text-gray-600">
         You cannot edit this form once it has been submitted for processing
@@ -128,15 +129,15 @@ function FormSubmission() {
             >
               Cancel
             </button>
-            <button
+            <CompanyThemedButton
               disabled={savingResponses}
-              className="bg-primary-green disabled:bg-gray-700 disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              className=" disabled:bg-gray-700 disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               onClick={() => {
                 finish();
               }}
             >
               {savingResponses ? "Please wait..." : "Yes, submit form"}
-            </button>
+            </CompanyThemedButton>
           </div>
         </div>
       </Modal>
@@ -166,14 +167,14 @@ function FormSubmission() {
             </p>
           </div>
 
-          <button
-            className="bg-primary-green py-3 text-center w-[80%] mb-10  text-white px-4 hover:opacity-95 rounded-xl"
+          <CompanyThemedButton
+            className="bg-black py-3 text-center w-[80%] mb-10  text-white px-4 hover:opacity-95 rounded-xl"
             onClick={() => {
               router.back();
             }}
           >
             Done
-          </button>
+          </CompanyThemedButton>
         </div>
       </Modal>
     </div>

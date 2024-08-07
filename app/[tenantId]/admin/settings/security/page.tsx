@@ -4,13 +4,14 @@ import React from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import Button from "../components/Button";
+
 import PasswordInput from "../components/PasswordInput";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { changePassword } from "@/services/features/authService";
 import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import useCompany from "@/hooks/useCompany";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 const schema = yup.object({
   user_id: yup.number(),
@@ -125,7 +126,7 @@ function Security() {
             </form>
           </div>
           <div className="float-right">
-            <Button
+            <CompanyThemedButton
               type="submit"
               onClick={handleSubmit(onSubmit)}
               disabled={isSubmitting}
@@ -142,7 +143,7 @@ function Security() {
               ) : (
                 "Save Changes"
               )}
-            </Button>
+            </CompanyThemedButton>
           </div>
         </div>
       </div>
