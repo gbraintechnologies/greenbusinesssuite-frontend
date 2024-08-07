@@ -27,10 +27,12 @@ export const CompanyProvider = ({ children }) => {
   //
   const [auth, setAuth] = useState(UserFromLS);
   const [companyAdmin, setCompanyAdmin] = useState(CompanyFromLS);
-  const [company, setCompany] = useState(CompanyBrandingFromSS);
 
-  // TODO: KEEP COMPANY BRANDING IN SESSION STORAGE TO REDUCE CALLS
-  const [companyBranding, setCompanyBranding] = useState(null);
+  // raw company info
+  const [company, setCompany] = useState(null);
+
+  // company branding info
+  const [companyBranding, setCompanyBranding] = useState(CompanyBrandingFromSS);
 
   // {
   //   id: 2,

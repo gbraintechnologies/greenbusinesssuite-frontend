@@ -137,7 +137,10 @@ function Customers() {
               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
             >
               <Link
-                href={"/company/customers/profile?id=" + params.row.data.id}
+                href={
+                  `${company?.company_identifier}/admin/customers/profile?id=` +
+                  params.row.data.id
+                }
               >
                 View User
               </Link>

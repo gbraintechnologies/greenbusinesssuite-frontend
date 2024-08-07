@@ -33,9 +33,8 @@ export default function Layout({ children, params }: layoutProps) {
   });
 
   useEffect(() => {
-    if (data) {
+    if (Boolean(data) && !Boolean(companyBranding)) {
       const { companyName, color, companyId, logo, tenancyId } = data;
-
       setCompanyBranding({
         id: companyId,
         name: companyName,
