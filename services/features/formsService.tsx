@@ -128,7 +128,7 @@ export const getFormResponseById = (
 };
 
 export const getFormResponsesById = (id: number) => {
-  return authApi.get(`/forms/response/data/${id}`);
+  return authApi.get(`/forms/response/data/${id}/0/10000/ALL`);
 };
 
 export const formResponseAnalytics = (id: number, companyId: string) => {

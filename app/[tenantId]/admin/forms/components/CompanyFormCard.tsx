@@ -79,9 +79,10 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
 
   let color = colors[getRandomInt(0, 4)];
 
+  // TODO:  UPDATE TO FETCH VALUE FROM BACKEND DIRECTLY
   const getFormResponses = async () => {
     const responses = await services.getFormResponsesById(id);
-    setFormResponsesCount(responses.data?.length);
+    setFormResponsesCount(responses.data?.content?.length);
   };
 
   useEffect(() => {

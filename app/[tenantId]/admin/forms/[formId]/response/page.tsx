@@ -29,6 +29,7 @@ import Uploaded from "./components/Uploaded";
 import Issued from "./components/Issued";
 import { IFilter } from "@/types";
 import { useQueryState } from "nuqs";
+import useAuth from "@/hooks/useAuth";
 
 const page = ({ params }: any) => {
   let formID = params.formId;
@@ -38,6 +39,8 @@ const page = ({ params }: any) => {
   const searchParams = useSearchParams();
 
   const userId = searchParams.get("user") ? searchParams.get("user") : "";
+
+  const { auth } = useAuth();
 
   const { data: form, isLoading } = useQuery({
     queryKey: ["form", parseInt(formID)],
@@ -252,7 +255,7 @@ const page = ({ params }: any) => {
               {userData?.email}
             </p>
             <Link
-              href={`/company/customers/profile?id=${userId}`}
+              href={`/${auth?.tenantId}/admin/customers/profile?id=${userId}`}
               className="text-[#15803D] text-sm underline cursor-pointer w-auto"
             >
               Go to user profile

@@ -17,6 +17,7 @@ import FormResponse from "../FormResponse/FormResponse";
 import { createRoot } from "react-dom/client";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { toast } from "sonner";
+import useAuth from "@/hooks/useAuth";
 
 export interface IResponse {
   email: string;
@@ -42,6 +43,8 @@ const ResponseDataTable: React.FC<Props> = ({
   const [aggregatedResponses, setAggregatedResponses] = useState([]);
 
   const [activeResponseId, setActiveResponseId] = useState<any>();
+
+  const { auth } = useAuth();
 
   const [rows, setRows] = useState<any>([]);
 
@@ -304,7 +307,7 @@ const ResponseDataTable: React.FC<Props> = ({
             )}
           </button>
           <Link
-            href={`/company/forms/${form?.id}/response?user=${params.row.userData?.id}`}
+            href={`/${auth?.tenantId}/admin/forms/${form?.id}/response?user=${params.row.userData?.id}`}
           >
             <EyeIcon />
           </Link>

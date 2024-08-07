@@ -23,6 +23,7 @@ import { useQueryState } from "nuqs";
 import { IFilter } from "@/types";
 import DatePicker from "@/components/DatePicker/DatePicker";
 import Pagination from "@/components/Pagination/Pagination";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 function SingleFormCompany({ params }: any) {
   const [filters, setFilters] = useState([
@@ -46,7 +47,7 @@ function SingleFormCompany({ params }: any) {
 
   const [page, setPage] = useState(0);
 
-  const limit = 10;
+  const [limit, setLimit] = useState(20);
 
   const handleTabChange = (filter: IFilter) => {
     setActiveFilter(filter);
@@ -71,9 +72,24 @@ function SingleFormCompany({ params }: any) {
     queryFn: services.getAllCompanies(),
   });
 
-  const { data: formResponseData, isLoading: isResponseLoading, refetch } = useQuery({
-    queryKey: ["get form response by ", Number(formID)],
-    queryFn: services.getFormResponseById(Number(formID), page, limit, selectedTimeline?.value),
+  const {
+    data: formResponseData,
+    isLoading: isResponseLoading,
+    refetch,
+  } = useQuery({
+    queryKey: [
+      "get form response by ",
+      Number(formID),
+      page,
+      limit,
+      selectedTimeline?.value,
+    ],
+    queryFn: services.getFormResponseById(
+      Number(formID),
+      page,
+      limit,
+      selectedTimeline?.value
+    ),
   });
 
   const { data: formStatusCount } = useQuery({
@@ -97,9 +113,9 @@ function SingleFormCompany({ params }: any) {
     saveAs(blob, "responses.xlsx");
   };
 
-  useEffect(()=> {
-    refetch()
-  }, [page, selectedTimeline])
+  useEffect(() => {
+    refetch();
+  }, [page, selectedTimeline]);
 
   if (isLoading) {
     return (
@@ -170,20 +186,18 @@ function SingleFormCompany({ params }: any) {
           />
           {activeFilter.id == 1 ? (
             <div className="flex gap-3 items-center">
-              {/* dropped download button */}
-              {/* <button
-                className="flex justify-between items-center gap-2 border border-[#E2E8F0] p-2 rounded-lg"
-              >
-                <DownloadIcon />
-                <div className="text-sm">Download </div>
-              </button> */}
-              <DatePicker selectedTimeline={selectedTimeline} setSelectedTimeline={setSelectedTimeline}/>
+              <DatePicker
+                selectedTimeline={selectedTimeline}
+                setSelectedTimeline={setSelectedTimeline}
+              />
+              <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
               <Pagination
                 page={page}
+                variant="no-text"
                 setPage={setPage}
                 limit={limit}
                 currentData={formResponseData?.content}
-                />
+              />
             </div>
           ) : (
             <></>
