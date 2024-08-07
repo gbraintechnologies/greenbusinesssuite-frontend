@@ -9,6 +9,8 @@ export const createRole = ({ name, description }: any) => {
     role_name: name,
     app_id: 1,
     role_description: description,
+    is_support: true,
+    is_admin_role: true
   });
 };
 
