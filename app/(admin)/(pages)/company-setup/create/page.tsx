@@ -219,16 +219,17 @@ const CreateCompany = () => {
         custom_fields
       );
 
-
       const companySmallLogoURL =
-      companySmallLogo && (await handleFileUpload(companySmallLogo as File));
-  
-  
-         await services.createCompanyBranding(
-          companyData?.id,
-          companyData?.company_identifier, companySmallLogoURL?.file_url, color, companyData?.company_name)
+        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
-      
+      await services.createCompanyBranding(
+        companyData?.id,
+        companyData?.company_identifier,
+        companySmallLogoURL?.file_url,
+        color,
+        companyData?.company_name
+      );
+
       toast.success("Company created successfully");
 
       // const custom_profiles = [
@@ -255,7 +256,9 @@ const CreateCompany = () => {
       setBackgroundImageUrl("");
       resetForm();
 
-      router.push("/company-set-up");
+      // go back to companies page
+      router.back();
+      // router.push("/company-set-up");
     } catch (error) {
       toast.error("An error occurred");
     } finally {

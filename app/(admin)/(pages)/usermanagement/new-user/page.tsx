@@ -206,12 +206,12 @@ function NewUser() {
           <Form>
             {/* HEADER */}
             <div className="w-full text-primary-dark  flex justify-between">
-              <button
-                className="my-3 flex text-sm items-center gap-2"
+              <div
+                className="my-3 cursor-pointer flex text-sm items-center gap-2"
                 onClick={() => router.back()}
               >
                 <IoIosArrowBack size={12} /> Go Back
-              </button>
+              </div>
               <h3 className="font-semibold text-xl">Create new user account</h3>
 
               <div className="flex gap-3">
