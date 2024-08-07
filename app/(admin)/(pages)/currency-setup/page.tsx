@@ -13,6 +13,7 @@ import "./index.css";
 import Nav from "./components/Nav";
 import { Countrieses } from "./components/Countries";
 import Pagination from "@/components/Pagination/Pagination";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 interface Currency {
   id: number;
@@ -81,7 +82,11 @@ function CurrencySetup() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
 
-  const { data: currencies, isLoading, refetch } = useQuery({
+  const {
+    data: currencies,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["all currencies", page, limit],
     queryFn: services.allCurrencies(page, limit),
   });
@@ -90,7 +95,7 @@ function CurrencySetup() {
     if (currencies) {
       setRows(currencies.content);
     }
-  }, [currencies])
+  }, [currencies]);
 
   const handleDeleteSuccess = async () => {
     try {
@@ -172,11 +177,13 @@ function CurrencySetup() {
         </div>
       </div>
       <DataTable isLoading={isLoading} rows={rows} columns={columns} />
-      <div className="flex justify-end mt-4">
+      <div className="w-full flex justify-between">
+        <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
           limit={limit}
           currentData={currencies?.totalPages}
-          page={page}
+          // Endpoint starts from page 1 not 0
+          page={page - 1}
           setPage={setPage}
         />
       </div>

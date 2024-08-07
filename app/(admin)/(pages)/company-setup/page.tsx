@@ -28,6 +28,7 @@ import {
 import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination/Pagination";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 export interface IFilter {
   id: number;
@@ -84,15 +85,15 @@ function CompanySetup() {
 
   const [page, setPage] = useState(0);
 
-  const limit = 20;
+  const [limit, setLimit] = useState(20);
 
   const {
     data: companies,
     isLoading,
     refetch: refetchCompanies,
   } = useQuery({
-    queryKey: ["companies",page,limit],
-    queryFn: services.getAllCompanies(page*limit, limit),
+    queryKey: ["companies", page, limit],
+    queryFn: services.getAllCompanies(page * limit, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
@@ -117,7 +118,9 @@ function CompanySetup() {
         customFields
       );
 
-      await queryClient.invalidateQueries({ queryKey: ["companies",page,limit] });
+      await queryClient.invalidateQueries({
+        queryKey: ["companies", page, limit],
+      });
       toast.success("Company status updated successfully");
     } catch (error) {
       toast.error("Failed to update company status");
@@ -338,12 +341,14 @@ function CompanySetup() {
         columns={columns}
       />
       {/*PAGINATION */}
-      <div className="flex w-full justify-end">
+
+      <div className="w-full flex justify-between">
+        <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
           currentData={companies}
+          limit={limit}
           page={page}
           setPage={setPage}
-          limit={limit}
         />
       </div>
     </div>

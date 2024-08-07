@@ -177,7 +177,7 @@ export default function AdminLayout({
                       className={`${
                         pathname.includes("settings")
                           ? "ml-0 w-full"
-                          : "ml-[20rem] w-[77%]"
+                          : "ml-[20rem] w-full"
                       }   pt-4`}
                     >
                       {children}
