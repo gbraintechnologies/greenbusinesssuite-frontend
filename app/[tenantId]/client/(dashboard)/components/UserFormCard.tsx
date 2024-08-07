@@ -24,6 +24,7 @@ import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import { createRoot } from "react-dom/client";
 import FormResponse from "./FormResponse/FormResponse";
 import StatusPill from "@/components/StatusPill/StatusPillText";
+import useAuth from "@/hooks/useAuth";
 
 type Props = {
   form: any;
@@ -35,6 +36,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
   let { id, updatedOn } = form;
 
   const { user } = useUser();
+  const { auth } = useAuth();
 
   const queryClient = useQueryClient();
 
@@ -116,7 +118,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     {
       title: "View",
       func: () => {
-        router.push(`/client/form/view?id=${form?.id}`);
+        router.push(`/${auth?.tenantId}/client/form/view?id=${form?.id}`);
       },
     },
     {
@@ -154,7 +156,9 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     {
       title: "Continue editing",
       func: () => {
-        router.push(`/client/form?id=${form?.id}&company=${form?.companyId}`);
+        router.push(
+          `/${auth?.tenantId}/client/form?id=${form?.id}&company=${form?.companyId}`
+        );
       },
     },
   ];
@@ -190,7 +194,8 @@ function FormCard({ form, type = "uncompleted" }: Props) {
   const [options, setOptions] = useState(null);
 
   useEffect(() => {
-    if (type === "completed") {
+    // TODO: UPDATE THIS
+    if (type !== "completed") {
       // @ts-ignore
       setOptions(completedOptions);
     } else {

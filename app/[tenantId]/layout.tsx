@@ -5,11 +5,11 @@ import useCompany from "@/hooks/useCompany";
 import { usePathname, useRouter } from "next/navigation";
 
 // Next & React imports
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect } from "react";
 
 import SetupLoader from "@/components/SetupLoader/SetupLoader";
-
-import Deactivated from "../../components/Deactivated/Deactivated";
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
 
 interface layoutProps {
   children: React.ReactNode;
@@ -25,6 +25,14 @@ export default function Layout({ children, params }: layoutProps) {
   const router = useRouter();
 
   let pathname = usePathname();
+
+  // const { data } = useQuery({
+  //   queryKey: ["get company branding info", tenantId],
+  //   queryFn: services.getCompanyBranding(tenantId),
+  //   enabled: !!tenantId,
+  // });
+
+  // console.log("company branding", data);
 
   // CHECK IF THERE'S A USER OR COMPANY ADMIN AND REDIRECT TO DASHBOARD
   // ELSE REDIRECT TO AUTH PAGE
