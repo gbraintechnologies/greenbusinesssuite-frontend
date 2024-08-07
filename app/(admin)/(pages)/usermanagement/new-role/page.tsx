@@ -3,21 +3,14 @@
 import "./index.css";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
-
-//
-//
 import { useRouter } from "next/navigation";
-
-// utils
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { CustomCheckbox } from "../components/Customcheckbox";
-
-// components
 import Modal from "@/components/Modal/Modal";
 import services from "@/services";
 import toSpace from "@/utils/UnderScore/UnderScore";
@@ -35,17 +28,9 @@ interface FormValues {
   permissions?: { [key: string]: boolean };
 }
 
-// const permissionsSchema = permissionsData.reduce((acc, curr) => {
-//   acc[curr.header] = Yup.boolean().required(
-//     `The ${curr.header} permission is required`
-//   );
-//   return acc;
-// }, {} as { [key: string]: Yup.BooleanSchema });
-
 const RoleSchema = Yup.object().shape({
   roleName: Yup.string().required("Required"),
   roleDescription: Yup.string(),
-  // permissions: Yup.object().shape(permissionsSchema),
 });
 
 function NewRole() {
@@ -57,34 +42,49 @@ function NewRole() {
     queryFn: services.allPermissions(),
   });
 
-  //initial values
   const initialValues: FormValues = {
     roleName: "",
     roleDescription: "",
-    // permissions: permissionsData.reduce((acc, curr) => {
-    //   acc[curr.header] = false;
-    //   return acc;
-    // }, {} as { [key: string]: boolean }),
   };
 
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting }: FormikHelpers<FormValues>
   ) => {
-    const { roleName, roleDescription } = values;
+    const { roleName, roleDescription, permissions } = values;
 
     let loading = toast.loading("Creating role. Please wait...");
 
     try {
-      const response = await services.createRole({
+      console.log("Role creation payload:", {
         name: roleName,
         description: roleDescription,
       });
+
+      const createRoleResponse = await services.createRole({
+        name: roleName,
+        description: roleDescription,
+      });
+
+      const roleId = createRoleResponse.data.id;
+
+      if (permissions) {
+        const permissionIds = Object.keys(permissions)
+          .filter((key) => permissions[key])
+          .map((key) => Number(key));
+
+        const permissionsPayload = {
+          permission_ids: permissionIds,
+        };
+
+        await services.updateMultiPermissionForRole(permissionsPayload, roleId);
+      }
+
       toast.dismiss(loading);
       toast.success("Role created successfully");
+      router.push("/usermanagement");
     } catch (error) {
       toast.dismiss(loading);
-      toast.error("An error occurred. Please try again");
     } finally {
       setSubmitting(false);
     }
@@ -101,7 +101,7 @@ function NewRole() {
           return (
             <Form>
               {/* HEADER */}
-              <div className="w-full text-primary-dark  flex justify-between">
+              <div className="w-full text-primary-dark flex justify-between">
                 <h3 className="font-semibold text-xl">Create a new role</h3>
 
                 <div className="flex gap-3">
@@ -124,7 +124,6 @@ function NewRole() {
                       </>
                     ) : (
                       <>
-                        {" "}
                         <HiOutlineInboxArrowDown /> Save
                       </>
                     )}
@@ -177,7 +176,7 @@ function NewRole() {
                     permissions.map(({ permission_name, description, id }: Permission) => (
                       <CustomCheckbox
                         key={id}
-                        name={description}
+                        name={`permissions.${id}`}
                         label={toSpace(permission_name)}
                         subtext={description}
                       />
@@ -214,7 +213,7 @@ function NewRole() {
             <button
               className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
               onClick={() => {
-                router.back();
+                router.push("/usermanagement");
               }}
             >
               Yes, discard changes
