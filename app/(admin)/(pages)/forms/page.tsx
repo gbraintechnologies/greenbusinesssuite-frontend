@@ -26,6 +26,7 @@ import UsingTemplate from "./components/UsingTemplate";
 import Pagination from "@/components/Pagination/Pagination";
 import FormGridLoader from "./components/FormGridLoader";
 import DatePicker from "@/components/DatePicker/DatePicker";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 function Forms() {
   const router = useRouter();
@@ -136,6 +137,7 @@ function Forms() {
       <div className="flex items-center justify-between">
         <h3 className="font-semibold mb-8 mt-10 text-lg">Recent Forms</h3>
         <div className="flex gap-2 items-center">
+          <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
           <DatePicker
             selectedTimeline={selectedTimeline}
             setSelectedTimeline={setSelectedTimeline}

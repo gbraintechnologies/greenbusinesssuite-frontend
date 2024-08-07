@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { deleteBySectorID } from "@/services/features/sectorService";
 import { Countrieses } from "./components/Countries";
 import Pagination from "@/components/Pagination/Pagination";
-
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 interface FlattenedRowData {
   id: number;
@@ -42,9 +42,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 
   const handleEdit = () => {
     handleClose();
-    router.push(
-      `/sector-setup/edit-sector?id=${row.rowId}`
-    );
+    router.push(`/sector-setup/edit-sector?id=${row.rowId}`);
   };
 
   const handleDelete = async () => {
@@ -85,7 +83,11 @@ const SectorSetup: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
 
-  const { data: sectors, isLoading, refetch } = useQuery({
+  const {
+    data: sectors,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["all sectors", page, limit],
     queryFn: services.allParentSectors(page, limit),
   });
@@ -193,11 +195,14 @@ const SectorSetup: React.FC = () => {
         </div>
       </div>
       <DataTable isLoading={isLoading} rows={rows} columns={columns} />
-      <div className="flex justify-end mt-4">
+
+      {/* Pagination */}
+      <div className="w-full flex justify-between">
+        <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
           limit={limit}
           currentData={sectors?.totalPages}
-          page={page}
+          page={page - 1}
           setPage={setPage}
         />
       </div>

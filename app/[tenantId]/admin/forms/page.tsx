@@ -17,6 +17,7 @@ import useCompany from "@/hooks/useCompany";
 import Pagination from "@/components/Pagination/Pagination";
 import { TimelineType, TimelineValues } from "@/types";
 import DatePicker from "@/components/DatePicker/DatePicker";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 function CompanyForms() {
   const { companyAdmin: admin, companyBranding: companyData } = useCompany();
@@ -30,8 +31,12 @@ function CompanyForms() {
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
-  const { data: forms, isLoading: isFormsLoading, refetch } = useQuery({
-    queryKey: ["get company forms for ", Number(companyData?.id)],
+  const {
+    data: forms,
+    isLoading: isFormsLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["get company forms for ", Number(companyData?.id), page, limit],
     queryFn: services.getFormsByCompanyId(
       companyData?.id,
       page,
@@ -42,8 +47,8 @@ function CompanyForms() {
   });
 
   useEffect(() => {
-    refetch()
-  }, [page, selectedTimeline])
+    refetch();
+  }, [page, selectedTimeline]);
 
   return (
     <div className="px-5 pb-20 mt-4 py-2 min-h-screen">
@@ -62,23 +67,29 @@ function CompanyForms() {
         ) : (
           // ALL COMPANY FORMS
           <>
-          <div className="flex justify-between mb-3">
-                <DatePicker selectedTimeline={selectedTimeline} setSelectedTimeline={setSelectedTimeline}/>
-                  <Pagination
-                    limit={limit}
-                    variant="no-text"
-                    page={page}
-                    currentData={forms?.content}
-                    setPage={setPage}
-                  />
-                </div>
+            <div className="flex justify-between mb-3">
+              <DatePicker
+                selectedTimeline={selectedTimeline}
+                setSelectedTimeline={setSelectedTimeline}
+              />
+              <div className="flex items-center gap-2">
+                <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
+
+                <Pagination
+                  limit={limit}
+                  variant="no-text"
+                  page={page}
+                  currentData={forms?.content}
+                  setPage={setPage}
+                />
+              </div>
+            </div>
             {forms?.content?.length === 0 ? (
               <div className="">
                 <EmptyList />
               </div>
             ) : (
               <>
-                
                 <div className="grid grid-cols-4 gap-5">
                   {forms &&
                     forms?.content?.map((form: any) => {

@@ -13,6 +13,7 @@ import { Countrie } from "./components/Countries";
 import { useRouter } from "next/navigation";
 import { deleteJurisdictionByID } from "@/services/features/jurisdictionsService";
 import Pagination from "@/components/Pagination/Pagination";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 interface RowData {
   id: number;
@@ -77,7 +78,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 function CountrySetup() {
   const [searchTerm, setSearchTerm] = useState("");
   const [rows, setRows] = useState<RowData[]>([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(15);
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["all jurisdictions", page, limit, searchTerm],
@@ -159,10 +160,11 @@ function CountrySetup() {
         rows={data?.content || []}
         columns={columns}
       />
-      <div className="flex justify-end mt-4">
+      <div className="w-full flex justify-between">
+        <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
+          currentData={data}
           limit={limit}
-          currentData={data?.totalPages || 0}
           page={page}
           setPage={setPage}
         />

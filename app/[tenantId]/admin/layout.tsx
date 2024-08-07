@@ -25,6 +25,9 @@ import useAuth from "@/hooks/useAuth";
 import FormsNavIcon from "@/public/icons/FormsNavIcon";
 import useCompany from "@/hooks/useCompany";
 
+// components
+import Deactivated from "../deactivated/page";
+
 export default function CompanyLayout({ children, params }: any) {
   // {
 
@@ -34,7 +37,11 @@ export default function CompanyLayout({ children, params }: any) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const { companyAdmin, companyBranding: company } = useCompany();
+  const {
+    companyAdmin,
+    companyBranding: company,
+    company: companyInfo,
+  } = useCompany();
 
   const { auth } = useAuth();
 
@@ -97,6 +104,15 @@ export default function CompanyLayout({ children, params }: any) {
   ];
 
   const thirdPartyApps: any = [];
+
+  if (companyInfo && companyInfo?.status?.toLowerCase() === "inactive") {
+    return (
+      <Deactivated
+        title={`${company.name} Deactivated`}
+        reason={`${company.name} has been deactivated.`}
+      />
+    );
+  }
 
   return (
     <Suspense>

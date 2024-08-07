@@ -12,7 +12,15 @@ const CompanyFromLS =
     ? JSON.parse(localStorage.getItem("company-admin") || null)
     : null;
 
+// @ts-ignore
+const UserFromLS =
+  typeof window !== "undefined"
+    ? JSON.parse(localStorage.getItem("auth") || null)
+    : null;
+
 export const CompanyProvider = ({ children }) => {
+  //
+  const [auth, setAuth] = useState(UserFromLS);
   const [companyAdmin, setCompanyAdmin] = useState(CompanyFromLS);
   const [company, setCompany] = useState(null);
 
@@ -24,34 +32,31 @@ export const CompanyProvider = ({ children }) => {
     company_identifier: "adidas84758",
   });
 
-  // const {
-  //   data: companyData,
-  //   isLoading,
-  //   refetch,
-  // } = useQuery({
-  //   // @ts-ignore
-  //   queryKey: [
-  //     "company",
-  //     parseInt(companyAdmin?.custom_profile_values[0]?.value),
-  //   ],
-  //   queryFn: services.getCompanyById(
-  //     Number(companyAdmin?.custom_profile_values[0]?.value)
-  //   ),
-  //   enabled: Boolean(companyAdmin?.custom_profile_values[0]?.value),
-  // });
+  const {
+    data: companyData,
+    isLoading,
+    refetch,
+  } = useQuery({
+    // @ts-ignore
+    queryKey: ["company", parseInt(auth?.companyId)],
+    queryFn: services.getCompanyById(Number(auth?.company_id)),
+    enabled: Boolean(auth?.company_id && auth?.company_id !== 0),
+  });
 
-  // useEffect(() => {
-  //   if (Boolean(companyData)) {
-  //     setCompany(companyData);
-  //   } else {
-  //     if (
-  //       Boolean(companyAdmin?.custom_profile_values[0]?.id) &&
-  //       !Boolean(company)
-  //     ) {
-  //       refetch();
-  //     }
-  //   }
-  // }, [companyAdmin, companyData, isLoading]);
+  useEffect(() => {
+    if (Boolean(companyData)) {
+      setCompany(companyData);
+    } else {
+      if (Boolean(auth?.company_id) && !Boolean(company)) {
+        refetch();
+      }
+    }
+  }, [companyAdmin, companyData, isLoading]);
+
+  // update auth
+  useEffect(() => {
+    setAuth(UserFromLS);
+  }, [companyAdmin]);
 
   const addCompanyAdminData = (data) => {
     setCompanyAdmin((prev) => ({ ...prev, ...data }));

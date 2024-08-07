@@ -20,7 +20,7 @@ export default function Pagination({
     <>
       {variant === "mobile-full" && (
         <div>
-          <p className="block mb-3 text-neutral-300">
+          <p className="block mb-3 text-sm text-gray-500">
             {" "}
             Showing results for page {page + 1}
           </p>
@@ -51,7 +51,7 @@ export default function Pagination({
 
       {variant === "normal" && (
         <div className="flex items-center">
-          <span className="hidden md:block mr-4 caption3 text-neutral-300">
+          <span className="hidden md:block mr-4 text-sm text-gray-500">
             {" "}
             Showing results for page {page + 1}
           </span>

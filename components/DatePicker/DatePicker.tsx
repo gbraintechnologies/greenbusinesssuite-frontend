@@ -78,7 +78,7 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
                 <p>{timeline.label}</p>
                 {selectedTimeline?.label == timeline?.label && (
                   <span className="">
-                    <FaCheck className="h-5 w-5" color="black" />
+                    <FaCheck size={15} color="black" />
                   </span>
                 )}
               </div>

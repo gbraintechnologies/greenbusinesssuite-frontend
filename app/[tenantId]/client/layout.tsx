@@ -23,6 +23,9 @@ import useUser from "@/hooks/useUser";
 import { ClientFormProvider } from "@/contexts/ClientFormContext";
 import useCompany from "@/hooks/useCompany";
 
+// components
+import Deactivated from "../deactivated/page";
+
 export default function ClientLayout({
   children,
 }: {
@@ -35,7 +38,7 @@ export default function ClientLayout({
 
   const [loading, setLoading] = useState(true);
 
-  const { companyBranding: company } = useCompany();
+  const { companyBranding: company, company: companyInfo } = useCompany();
 
   useEffect(() => {
     // Redirect to login if not authenticated
@@ -67,6 +70,15 @@ export default function ClientLayout({
       link: `/${company?.company_identifier}/client/settings`,
     },
   ];
+
+  if (companyInfo && companyInfo?.status?.toLowerCase() === "inactive") {
+    return (
+      <Deactivated
+        title={`${company.name} Deactivated`}
+        reason={`${company.name} has been deactivated.`}
+      />
+    );
+  }
 
   return (
     <Suspense>
