@@ -28,6 +28,7 @@ import {
 import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination/Pagination";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 function UserManagement() {
   const [filters, setFilters] = useState([
@@ -53,7 +54,7 @@ function UserManagement() {
 
   const [page, setPage] = useState(0);
 
-  const limit = 20;
+  const [limit, setLimit] = useState(20);
 
   // fetch all users
   const {
@@ -62,7 +63,7 @@ function UserManagement() {
     refetch: refetchUsers,
   } = useQuery({
     queryKey: ["all users", page, limit],
-    queryFn: services.allUsers(page*limit, limit),
+    queryFn: services.allUsers(page * limit, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
@@ -97,7 +98,9 @@ function UserManagement() {
   const blacklistUser = async (userId: string) => {
     try {
       await services.blacklistUser(userId);
-      await queryClient.invalidateQueries({ queryKey: ["all users",page,limit] });
+      await queryClient.invalidateQueries({
+        queryKey: ["all users", page, limit],
+      });
       toast.success("User blacklisted successfully");
     } catch (error) {
       toast.error("Failed to blacklist user");
@@ -119,7 +122,9 @@ function UserManagement() {
         userData.id
       );
       toast.success("User status updated successfully");
-      await queryClient.invalidateQueries({ queryKey: ["all users",page,limit] });
+      await queryClient.invalidateQueries({
+        queryKey: ["all users", page, limit],
+      });
     } catch (error) {
       toast.error("User to update company status");
     }
@@ -415,7 +420,8 @@ function UserManagement() {
         columns={columns}
       />
       {/* Pagination */}
-      <div className="w-full flex justify-end">
+      <div className="w-full flex justify-between">
+        <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
           currentData={data}
           limit={limit}
