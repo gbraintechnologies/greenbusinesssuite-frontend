@@ -27,6 +27,7 @@ import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
 import Link from "next/link";
 import Pagination from "@/components/Pagination/Pagination";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 function UserManagement({ params }: any) {
   const tenantId = params?.tenantId;
@@ -55,15 +56,15 @@ function UserManagement({ params }: any) {
 
   const [page, setPage] = useState(0);
 
-  const limit = 20;
+  const [limit, setLimit] = useState(20);
 
   const {
     data: users,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["all users",page,limit],
-    queryFn: services.allUsers(page*limit, limit),
+    queryKey: ["all users", page, limit],
+    queryFn: services.allUsers(page * limit, limit),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
@@ -85,7 +86,9 @@ function UserManagement({ params }: any) {
   const blacklistUser = async (userId: string) => {
     try {
       await services.blacklistUser(userId);
-      await queryClient.invalidateQueries({ queryKey: ["all users",page,limit] });
+      await queryClient.invalidateQueries({
+        queryKey: ["all users", page, limit],
+      });
       toast.success("User blacklisted successfully");
     } catch (error) {
       toast.error("Failed to blacklist user");
@@ -107,7 +110,9 @@ function UserManagement({ params }: any) {
         userData.id
       );
       toast.success("User status updated successfully");
-      await queryClient.invalidateQueries({ queryKey: ["all users", page,limit] });
+      await queryClient.invalidateQueries({
+        queryKey: ["all users", page, limit],
+      });
     } catch (error) {
       toast.error("User to update company status");
     }
@@ -357,7 +362,9 @@ function UserManagement({ params }: any) {
         columns={columns}
       />
       {/* Pagination */}
-      <div className="w-full flex justify-end">
+      {/* Pagination */}
+      <div className="w-full flex justify-between">
+        <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
           currentData={users}
           limit={limit}

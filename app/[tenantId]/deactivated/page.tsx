@@ -1,10 +1,12 @@
-'use client'
+"use client";
 import Logo from "@/app/(admin)/auth/(login)/components/Logo";
 import React from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
-
-function Deactivated() {
+function Deactivated({
+  reason = "This account has been deactivated.",
+  title = "Account deactivated",
+}: any) {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex flex-1 items-center justify-center py-8 mt-16">
@@ -16,14 +18,18 @@ function Deactivated() {
               <AiOutlineClose className="w-16 h-16 text-white" />
             </div>
           </div>
-          <p className="text-2xl font-bold mb-4">Account deactivated</p>
+          <p className="text-2xl font-bold mb-4">{title}</p>
           <div className="space-y-2">
-            <p className="text-sm text-opacity-30 text-black font-medium">
-              Your account has been deactivated. Please contact the
+            <p className="text-sm text-opacity-30 w-72 text-black font-medium">
+              {reason} <br /> Please contact your administrator to restore
+              access
             </p>
-            <p className="text-sm text-opacity-30 text-black font-medium">
-              company admin at&nbsp;<span className="font-bold text-black">kpmgadmin@kmpghana.com</span>
-            </p>
+            {/* <p className="text-sm text-opacity-30 text-black font-medium">
+              company admin at&nbsp;
+              <span className="font-bold text-black">
+                kpmgadmin@kmpghana.com
+              </span>
+            </p> */}
           </div>
         </div>
       </div>

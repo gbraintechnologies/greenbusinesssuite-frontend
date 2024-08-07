@@ -20,7 +20,7 @@ export default function Layout({ children, params }: layoutProps) {
   const tenantId = params.tenantId;
 
   const { auth, addAuthData } = useAuth();
-  const { companyBranding, company } = useCompany();
+  const { companyBranding } = useCompany();
 
   const router = useRouter();
 
@@ -28,7 +28,6 @@ export default function Layout({ children, params }: layoutProps) {
 
   // CHECK IF THERE'S A USER OR COMPANY ADMIN AND REDIRECT TO DASHBOARD
   // ELSE REDIRECT TO AUTH PAGE
-
   useEffect(() => {
     if (!Boolean(auth?.access_token) && pathname === `/${tenantId}`) {
       router.push(`/${tenantId}/auth`);
@@ -39,16 +38,12 @@ export default function Layout({ children, params }: layoutProps) {
     addAuthData({ tenantId: tenantId });
   }, [tenantId]);
 
-  if (!Boolean(companyBranding) || company == null) {
+  if (!Boolean(companyBranding)) {
     return (
       <div className="w-screen h-screen bg-gradient-to-r from-[#64748B1A] via-[#fff] to-[#F8FAFC] background-animate flex items-center justify-center">
         <SetupLoader />
       </div>
     );
-  }
-
-  if (company && company?.status?.toLowerCase() === "inactive") {
-    return <Deactivated />;
   }
 
   return <Suspense>{children}</Suspense>;
