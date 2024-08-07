@@ -1,5 +1,6 @@
 import noAuthApi from "../axiosNoAuthClient";
 import authApi from "../axiosAuthClient";
+import noAuthApi2 from "../axiosNoAuthClient2";
 
 export const login = (username: any, password: any) => {
   var formData = new FormData();
@@ -74,12 +75,12 @@ export const resetPassword = (
 };
 
 export const notifyUserTempCred = (id: any, channel: string) => {
-  return noAuthApi.post("/users/noauth/notify_user_temp_cred/", {
+  return noAuthApi2.post("/users/noauth/notify_user_temp_cred/", {
     user_id: id,
     channel: channel,
   });
 };
 
 export const userSelfSignUp = (data: any) => {
-  return noAuthApi.post("/users/self_create_account/", data);
+  return noAuthApi2.post("/users/self_create_account/", data);
 };
