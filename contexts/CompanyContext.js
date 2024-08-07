@@ -32,31 +32,31 @@ export const CompanyProvider = ({ children }) => {
     company_identifier: "adidas84758",
   });
 
-  const {
-    data: companyData,
-    isLoading,
-    refetch,
-  } = useQuery({
-    // @ts-ignore
-    queryKey: ["company", parseInt(auth?.companyId)],
-    queryFn: services.getCompanyById(Number(auth?.company_id)),
-    enabled: Boolean(auth?.company_id && auth?.company_id !== 0),
-  });
+  // const {
+  //   data: companyData,
+  //   isLoading,
+  //   refetch,
+  // } = useQuery({
+  //   // @ts-ignore
+  //   queryKey: ["company", parseInt(auth?.companyId)],
+  //   queryFn: services.getCompanyById(Number(auth?.company_id)),
+  //   enabled: Boolean(auth?.company_id && auth?.company_id !== 0),
+  // });
 
-  useEffect(() => {
-    if (Boolean(companyData)) {
-      setCompany(companyData);
-    } else {
-      if (Boolean(auth?.company_id) && !Boolean(company)) {
-        refetch();
-      }
-    }
-  }, [companyAdmin, companyData, isLoading]);
+  // // update auth
+  // useEffect(() => {
+  //   setAuth(UserFromLS);
+  // }, [companyAdmin]);
 
-  // update auth
-  useEffect(() => {
-    setAuth(UserFromLS);
-  }, [companyAdmin]);
+  // useEffect(() => {
+  //   if (Boolean(companyData)) {
+  //     setCompany(companyData);
+  //   } else {
+  //     if (Boolean(auth?.company_id) && !Boolean(company)) {
+  //       refetch();
+  //     }
+  //   }
+  // }, [companyAdmin, companyData, isLoading]);
 
   const addCompanyAdminData = (data) => {
     setCompanyAdmin((prev) => ({ ...prev, ...data }));

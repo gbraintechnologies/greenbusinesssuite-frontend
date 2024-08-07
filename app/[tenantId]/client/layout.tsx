@@ -24,7 +24,7 @@ import { ClientFormProvider } from "@/contexts/ClientFormContext";
 import useCompany from "@/hooks/useCompany";
 
 // components
-import Deactivated from "../deactivated/page";
+import Deactivated from "@/components/Deactivated/Deactivated";
 
 export default function ClientLayout({
   children,

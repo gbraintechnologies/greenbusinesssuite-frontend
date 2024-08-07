@@ -67,7 +67,7 @@ function Customers() {
   const columns = [
     {
       field: "name",
-      headerName: "name",
+      headerName: "Name",
       type: "actions",
       align: "left",
       headerAlign: "left",

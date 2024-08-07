@@ -26,7 +26,7 @@ import FormsNavIcon from "@/public/icons/FormsNavIcon";
 import useCompany from "@/hooks/useCompany";
 
 // components
-import Deactivated from "../deactivated/page";
+import Deactivated from "@/components/Deactivated/Deactivated";
 
 export default function CompanyLayout({ children, params }: any) {
   // {

@@ -9,7 +9,7 @@ import React, { Suspense, useEffect, useState } from "react";
 
 import SetupLoader from "@/components/SetupLoader/SetupLoader";
 
-import Deactivated from "./deactivated/page";
+import Deactivated from "../../components/Deactivated/Deactivated";
 
 interface layoutProps {
   children: React.ReactNode;
