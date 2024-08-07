@@ -32,6 +32,7 @@ import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import CompanyAdmins from "./_components/CompanyAdmins";
 import DatePicker from "@/components/DatePicker/DatePicker";
 import Pagination from "@/components/Pagination/Pagination";
+import useFileUpload from "@/hooks/useFileUpload";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -47,9 +48,9 @@ const Page = () => {
   ]);
 
   const [activeFilter, setActiveFilter] = useState<IFilter>({
-    id: 2,
-    name: "Assigned Forms",
-    value: "assigned_forms",
+    id: 3,
+    name: "Branding Settings",
+    value: "branding_settings",
   });
 
   const [activeStatus, setActiveStatus] = useState({} as any);
@@ -82,15 +83,6 @@ const Page = () => {
   const handleChangeComplete = (newColor: any) => {
     setColor(newColor.hex);
   };
-
-  useEffect(() => {
-    if (companyLogo) {
-      const url = URL.createObjectURL(companyLogo);
-      setBackgroundImageUrl(url);
-
-      return () => URL.revokeObjectURL(url);
-    }
-  }, [companyLogo]);
 
   useEffect(() => {
     if (companySmallLogo) {
@@ -147,7 +139,11 @@ const Page = () => {
       (field: any) => field.custom_profile_item_id == 7
     )?.value ?? "";
 
-  const { data: assignedForms, isLoading: areFormsLoading, refetch } = useQuery({
+  const {
+    data: assignedForms,
+    isLoading: areFormsLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["get assigned forms for ", Number(companyData?.id)],
     queryFn: services.getFormsByCompanyId(
       companyData?.id,
@@ -178,11 +174,19 @@ const Page = () => {
       isConvertibleToNumber(companyData?.industry),
   });
 
+  const { data: companyBranding } = useQuery({
+    queryKey: ["get company branding info", companyData?.company_identifier],
+    queryFn: services.getCompanyBranding(companyData?.company_identifier),
+    enabled: !!companyData?.company_identifier,
+  });
+
   const queryClient = useQueryClient();
+
+  const { handleFileUpload } = useFileUpload();
 
   useEffect(() => {
     refetch();
-  }, [page, selectedTimeline])
+  }, [page, selectedTimeline]);
 
   useEffect(() => {
     if (!companyData) return;
@@ -197,7 +201,12 @@ const Page = () => {
       )
     );
     setBackgroundImageUrl(companyData?.company_logo);
-  }, [companyData, country]);
+
+    if (companyBranding) {
+      setColor(companyBranding?.color);
+      setSmallLogoUrl(companyBranding?.logo);
+    }
+  }, [companyData, country, companyBranding]);
 
   const editCompanyStatus = async (status: any) => {
     let companyDataInfo = { ...companyData, status: status.value };
@@ -220,7 +229,24 @@ const Page = () => {
       toast.error("Failed to update company status");
     }
   };
-  if (isLoading || areFormsLoading ) {
+
+  const editCompanyBranding = async () => {
+    if (!smallLogoUrl) {
+      toast.error("Logo is required");
+      return;
+    }
+    const companySmallLogoURL =
+      companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+
+    await services.editCompanyBranding(
+      companyData?.id,
+      companyData?.company_identifier,
+      companySmallLogo ? companySmallLogoURL?.file_url : companyBranding?.logo,
+      color,
+      companyData?.company_name
+    );
+  };
+  if (isLoading) {
     // if (isLoading || areFormsLoading || isCountryLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
@@ -419,7 +445,7 @@ const Page = () => {
                       <LuPlusCircle /> Assign New Form
                     </button>
                   </div>
-                  
+
                   {/* PAGINATION AND TIMELINE FILTER*/}
                   <div className="flex justify-between mb-3">
                     <DatePicker
@@ -442,103 +468,118 @@ const Page = () => {
                     </div>
                   )}
 
-                    
                   {/**DISPLAYING ASSIGNED FORMS*/}
-                  {assignedForms && assignedForms?.content?.length > 0 && <>
-                  <div className="grid grid-cols-4 gap-10 ">
-                    {assignedForms &&
-                      assignedForms?.content?.map((form: any) => {
-                        return (
-                          <FormCard
-                            key={form.id}
-                            form={form}
-                            noMetaData={true}
-                          />
-                        );
-                      })}
-                  </div></>}
+                  {assignedForms && assignedForms?.content?.length > 0 && (
+                    <>
+                      <div className="grid grid-cols-4 gap-10 ">
+                        {assignedForms &&
+                          assignedForms?.content?.map((form: any) => {
+                            return (
+                              <FormCard
+                                key={form.id}
+                                form={form}
+                                noMetaData={true}
+                              />
+                            );
+                          })}
+                      </div>
+                    </>
+                  )}
                 </div>
               </>
             )}
 
-
             {activeFilter.value === "branding_settings" && (
-              <div className="max-w-2xl pt-6">
-                <header className="pb-3">
-                  <h3 className="text-lg text-primary-dark font-semibold">
-                    Branding Settings
-                  </h3>
-                  <p className="text-sm text-[#667085]">
-                    Set your default branding elements to determine how the
-                    interface appears to customers.
-                  </p>
+              <div className=" pt-6">
+                <header className="pb-3 flex justify-between items-center w-full">
+                  <div>
+                    <h3 className="text-lg text-primary-dark font-semibold">
+                      Branding Settings
+                    </h3>
+                    <p className="text-sm text-[#667085]">
+                      Set your default branding elements to determine how the
+                      interface appears to customers.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                    onClick={editCompanyBranding}
+                  >
+                    Save
+                  </button>
                 </header>
-                {/* COMPANY SMALL LOGO */}
-                <div className="mt-2 mb-4">
-                  <h2 className="text-base text-primary-dark font-medium">
-                    Upload small icon
-                  </h2>
-                  <p className="text-sm text-[#667085]">
-                    A smaller representation of your logo to be used as favicon.
-                    It must be squared and at at least 128px by 128px with a max
-                    size of 512KB. Supported formats are JPG and PNG only.
-                  </p>
-                  {!companySmallLogo && (
-                    <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
-                      <input
-                        type="file"
-                        className="hidden"
-                        onChange={(e) => {
-                          setCompanySmallLogo(
-                            e.target.files && e.target.files[0]
-                          );
+                <div className="max-w-2xl">
+                  {/* COMPANY SMALL LOGO */}
+                  <div className="mt-2 mb-4">
+                    <h2 className="text-base text-primary-dark font-medium">
+                      Upload small icon
+                    </h2>
+                    <p className="text-sm text-[#667085]">
+                      A smaller representation of your logo to be used as
+                      favicon. It must be squared and at at least 128px by 128px
+                      with a max size of 512KB. Supported formats are JPG and
+                      PNG only.
+                    </p>
+                    {!(companySmallLogo || smallLogoUrl) && (
+                      <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
+                        <input
+                          type="file"
+                          className="hidden"
+                          onChange={(e) => {
+                            setCompanySmallLogo(
+                              e.target.files && e.target.files[0]
+                            );
+                          }}
+                          accept=".jpg, .png"
+                        />
+                        <CloudUploadIcon /> <p>Upload</p>
+                      </label>
+                    )}
+                    {smallLogoUrl && (
+                      <div
+                        className="w-32 h-32 rounded-md my-3"
+                        style={{
+                          backgroundImage: logoPresentOnLoad
+                            ? `url(${smallLogoUrl})`
+                            : companySmallLogo
+                            ? `url(${smallLogoUrl})`
+                            : "",
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          border: "1px solid #E2E8F0",
+                          position: "relative",
                         }}
-                        accept=".jpg, .png"
-                      />
-                      <CloudUploadIcon /> <p>Upload</p>
-                    </label>
-                  )}
-                  {companySmallLogo && (
-                    <div
-                      className="w-32 h-32 rounded-md my-3"
-                      style={{
-                        backgroundImage: logoPresentOnLoad
-                          ? `url(${smallLogoUrl})`
-                          : companySmallLogo
-                          ? `url(${smallLogoUrl})`
-                          : "",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        border: "1px solid #E2E8F0",
-                        position: "relative",
-                      }}
-                    >
-                      <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
-                        <div
-                          className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
-                          onClick={() => setCompanySmallLogo(null)}
-                        >
-                          <RiDeleteBin6Line color="#0E121B" />
-                        </div>
-                        <label className="flex justify-center items-center w-8 py-2 relative cursor-pointer">
-                          <input
-                            type="file"
-                            className="hidden"
-                            onChange={(e) => {
-                              setCompanySmallLogo(
-                                e.target.files && e.target.files[0]
-                              );
+                      >
+                        <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
+                          <div
+                            className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
+                            onClick={() => {
+                              setCompanySmallLogo(null);
+                              setSmallLogoUrl("");
                             }}
-                            accept=".jpg, .png"
-                          />
-                          <WriteIcon />
-                        </label>
+                          >
+                            <RiDeleteBin6Line color="#0E121B" />
+                          </div>
+                          <label className="flex justify-center items-center w-8 py-2 relative cursor-pointer">
+                            <input
+                              type="file"
+                              className="hidden"
+                              onChange={(e) => {
+                                setCompanySmallLogo(
+                                  e.target.files && e.target.files[0]
+                                );
+                              }}
+                              accept=".jpg, .png"
+                            />
+                            <WriteIcon />
+                          </label>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-                {/* COMPANY LOGO */}
-                <div className="my-2">
+                    )}
+                  </div>
+                  {/* COMPANY LOGO */}
+                  {/* <div className="my-2">
                   <h2 className="text-base text-primary-dark font-medium">
                     Upload full sized logo
                   </h2>
@@ -608,43 +649,44 @@ const Page = () => {
                       />
                     </label>
                   </div>
-                </div>
-                {/* COMPANY COLOR */}
-                <div className="input-holder">
-                  <h2 className="text-base text-primary-dark font-medium">
-                    Company Color
-                  </h2>
-                  <p className="text-sm text-[#667085]">
-                    Add a splash of colour to your pages
-                  </p>
-                  {!color && (
-                    <button
-                      className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border py-2 px-4 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
-                      type="button"
-                      onClick={() => setShowColorPicker(!showColorPicker)}
-                    >
-                      Select
-                    </button>
-                  )}
-                  {color && (
-                    <button
-                      className=" mt-2 flex items-center my-2  bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
-                      type="button"
-                      onClick={() => setShowColorPicker(!showColorPicker)}
-                    >
-                      <div
-                        className={`w-5 h-8 rounded-tl-md rounded-bl-md`}
-                        style={{ backgroundColor: color }}
-                      ></div>
-                      <p className="p-2">{color}</p>
-                    </button>
-                  )}
-                  {showColorPicker && (
-                    <SketchPicker
-                      color={color}
-                      onChangeComplete={handleChangeComplete}
-                    />
-                  )}
+                </div> */}
+                  {/* COMPANY COLOR */}
+                  <div className="input-holder">
+                    <h2 className="text-base text-primary-dark font-medium">
+                      Company Color
+                    </h2>
+                    <p className="text-sm text-[#667085]">
+                      Add a splash of colour to your pages
+                    </p>
+                    {!color && (
+                      <button
+                        className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border py-2 px-4 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
+                        type="button"
+                        onClick={() => setShowColorPicker(!showColorPicker)}
+                      >
+                        Select
+                      </button>
+                    )}
+                    {color && (
+                      <button
+                        className=" mt-2 flex items-center my-2  bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
+                        type="button"
+                        onClick={() => setShowColorPicker(!showColorPicker)}
+                      >
+                        <div
+                          className={`w-5 h-8 rounded-tl-md rounded-bl-md`}
+                          style={{ backgroundColor: color }}
+                        ></div>
+                        <p className="p-2">{color}</p>
+                      </button>
+                    )}
+                    {showColorPicker && (
+                      <SketchPicker
+                        color={color}
+                        onChangeComplete={handleChangeComplete}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
             )}

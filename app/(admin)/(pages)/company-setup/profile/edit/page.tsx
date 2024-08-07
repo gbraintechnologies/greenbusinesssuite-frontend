@@ -95,6 +95,12 @@ const Page = () => {
       isConvertibleToNumber(companyData?.industry),
   });
 
+  const {data: companyBranding } = useQuery({
+    queryKey: ["get company branding info", companyData?.company_identifier],
+    queryFn: services.getCompanyBranding(companyData?.company_identifier),
+    enabled: !!companyData?.company_identifier,
+  })
+
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const [selectedIndustry, setSelectedIndustry] = useState<
@@ -232,6 +238,24 @@ const Page = () => {
       return;
     }
 
+    if(!color){
+      toast.error("Color is required");
+      setSubmitting(false);
+      return;
+    }
+
+    if(!smallLogoUrl){
+      toast.error("Small Logo is required");
+      setSubmitting(false);
+      return;
+    }
+
+    if(!backgroundImageUrl){
+      toast.error("Logo is required");
+      setSubmitting(false);
+      return;
+    }
+
     const companyLogoURL =
       companyLogo && (await handleFileUpload(companyLogo as File));
 
@@ -331,14 +355,10 @@ const Page = () => {
 
       // }
 
-    //   const companySmallLogoURL =
-    // companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+      const companySmallLogoURL =
+      companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
-
-    //    await services.createCompanyBranding(
-    //     companyData.id,
-    //     companyData.company_identifier, companySmallLogoURL?.file_url, color)
-
+      await services.editCompanyBranding(companyData?.id, companyData?.company_identifier, companySmallLogo ? companySmallLogoURL?.file_url : companyBranding?.logo, color, companyData?.company_name);
 
       toast.success("Company Adidas edited successfully");
       // router.back();
@@ -410,9 +430,14 @@ const Page = () => {
         setSectorId(companySectorId);
       }
 
+      if(companyBranding){
+        setColor(companyBranding?.color);
+        setSmallLogoUrl(companyBranding?.logo);
+      }
+
       setBackgroundImageUrl(companyData?.company_logo);
     }
-  }, [companyData, country, industry]);
+  }, [companyData, country, industry, companyBranding]);
 
   return (
     <div className="px-5 pb-20">
