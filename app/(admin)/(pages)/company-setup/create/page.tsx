@@ -85,15 +85,6 @@ const CreateCompany = () => {
 
   const [initialLoad, setInitialLoad] = useState<boolean>(false);
 
-  const {
-    data: industries,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["all sectors"],
-    queryFn: services.getSectorByCountry("Ghana"),
-  });
-
   const router = useRouter();
 
   const initialValues: Partial<ICompany> = {

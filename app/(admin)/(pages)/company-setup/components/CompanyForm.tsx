@@ -720,7 +720,7 @@ const CompanyForm: React.FC<Props> = ({
                     It must be squared and at at least 128px by 128px with a max
                     size of 512KB. Supported formats are JPG and PNG only.
                   </p>
-                  {!(logoPresentOnLoad && smallLogoUrl) && (
+                  {!(smallLogoUrl) && (
                     <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
                       <input
                         type="file"
@@ -735,7 +735,7 @@ const CompanyForm: React.FC<Props> = ({
                       <CloudUploadIcon /> <p>Upload</p>
                     </label>
                   )}
-                  {(logoPresentOnLoad && Boolean(smallLogoUrl)) && (
+                  {(Boolean(smallLogoUrl)) && (
                     <div
                       className="w-32 h-32 rounded-md my-3"
                       style={{
@@ -762,7 +762,7 @@ const CompanyForm: React.FC<Props> = ({
                         <label className="flex justify-center items-center w-8 py-2 relative cursor-pointer">
                           <input
                             type="file"
-                            className="hidden"
+                            className="hidden m-0 p-0"
                             onChange={(e) => {
                               setCompanySmallLogo(
                                 e.target.files && e.target.files[0]
