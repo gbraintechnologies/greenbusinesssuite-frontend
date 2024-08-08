@@ -159,6 +159,7 @@ function SingleFormCompany({ params }: any) {
               showUnpublishModal={showUnpublishModal}
               setShowUnpublishModal={setShowUnpublishModal}
               formID={form?.id}
+              tenantId={params.tenantId}
             />
           </div>
         </div>
