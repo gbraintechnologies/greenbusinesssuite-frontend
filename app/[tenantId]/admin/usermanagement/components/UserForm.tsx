@@ -14,6 +14,8 @@ import { MdOutlineEdit } from "react-icons/md";
 import * as Yup from "yup";
 import "../edit-user/index.css";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
+import { IoIosArrowBack } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 const UserSchema = Yup.object().shape({
   firstname: Yup.string()
@@ -89,6 +91,8 @@ const UserForm = ({
 
   const [roles, setRoles] = useState([]);
 
+  const router = useRouter();
+
   useEffect(() => {
     if (data) {
       let temp = [];
@@ -122,7 +126,15 @@ const UserForm = ({
               <div className="w-full text-primary-dark  flex justify-between">
                 {setShowCancelModal && (
                   <>
-                    <h3 className="font-semibold text-xl">{title}</h3>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="my-3 cursor-pointer flex text-sm items-center gap-2"
+                        onClick={() => router.back()}
+                      >
+                        <IoIosArrowBack size={12} />
+                      </div>
+                      <h3 className="font-semibold text-xl">{title}</h3>
+                    </div>
 
                     <div className="flex gap-3">
                       <button

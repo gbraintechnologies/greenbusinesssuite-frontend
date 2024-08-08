@@ -174,9 +174,10 @@ function page() {
   }
 
   return (
-    <div className="pb-40 px-5">
+    <div className="pb-40 pt-4 px-5">
       {/* Form */}
       <UserForm
+        title="Editing User Details"
         initialValues={initialValues}
         setShowCancelModal={setShowCancelModal}
         submitFn={editUser}
