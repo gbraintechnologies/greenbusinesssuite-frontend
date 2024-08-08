@@ -1,11 +1,14 @@
 import { CompanyInfo, CompanyObject, CustomField } from "@/types";
 import authApi from "../axiosAuthClient";
 import meshApi from "../meshAuthClient";
-import meshNoAuthApi from "../meshNoAuthClient"; 
-
+import meshNoAuthApi from "../meshNoAuthClient";
+import defaultMeshApi from "../defaultMeshClient";
 
 export const getAllCompanies = (offset: number = 0, limit: number = 20) => {
-  return () => authApi.get(`/companies/all_companies?offset=${offset}&limit=${limit}`).then((res) => res.data);
+  return () =>
+    authApi
+      .get(`/companies/all_companies?offset=${offset}&limit=${limit}`)
+      .then((res) => res.data);
 };
 
 export const getCompanyById = (id: number) => {
@@ -56,33 +59,46 @@ export const getSupportStaffAssignedCompanies = (userId: any) => {
   return authApi.get(`/company/get_support_staff_assigned_companies/${userId}`);
 };
 
-
 // Company Branding
 // create company branding
-export const createCompanyBranding = (companyId: string| number, tenantId: string, logo: string, color: string, companyName: string) => {
+export const createCompanyBranding = (
+  companyId: string | number,
+  tenantId: string,
+  logo: string,
+  color: string,
+  companyName: string
+) => {
   return meshApi.post("/company-branding/create", {
     tenancyId: tenantId,
     companyId: companyId,
     logo: logo,
     color: color,
-    companyName: companyName
-  })
-}
+    companyName: companyName,
+  });
+};
 
 //edit company branding by id
-export const editCompanyBranding = ( companyId:string | number, tenantId: string, logo: string, color: string, companyName: string) => {
+export const editCompanyBranding = (
+  companyId: string | number,
+  tenantId: string,
+  logo: string,
+  color: string,
+  companyName: string
+) => {
   return meshApi.put(`/company-branding/update/${tenantId}`, {
     tenancyId: tenantId,
     companyId: companyId,
     logo: logo,
     color: color,
-    companyName: companyName
-  })
-}
+    companyName: companyName,
+  });
+};
 
 //get company branding by tenant id
 export const getCompanyBranding = (tenantId: string) => {
-  // return () => meshNoAuthApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`)
-  return () => meshApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`).then((res) => res.data);
-
-}
+  return () =>
+    defaultMeshApi
+      .get(`/company-branding/find-by-tenancy-id/${tenantId}`)
+      .then((res) => res.data);
+  // return () => meshApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`).then((res) => res.data);
+};

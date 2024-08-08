@@ -16,16 +16,20 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 
 // services
 import services from "@/services";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 // icons
 import GhanaFlag from "@/public/icons/GhanaFlag";
 import NigeriaFlag from "@/public/icons/NigeriaFlag";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 // css
 import "./index.css";
 
-function Page() {
+function Page({ params }: any) {
+  const tenantId = params.tenantId;
+
   const router = useRouter();
   const search = useSearchParams();
 
@@ -116,7 +120,7 @@ function Page() {
             <Form>
               <div className=" rounded-lg  shadow-sm h-auto w-96 text-slate-900 bg-white ">
                 <h1 className="font-semibold text-lg text-left pt-5 pb-3 px-5">
-                  Create A Mesh Account
+                  Create Your Account
                 </h1>
                 <div className="input-holder px-5">
                   <label>Country of residence</label>
@@ -227,13 +231,13 @@ function Page() {
                 </div>
 
                 <div className="py-3 px-5 mt-2  rounded-b-lg">
-                  <button
-                    className=" w-full bg-[#16A34A] text-white rounded-lg py-2 text-sm"
+                  <CompanyThemedButton
+                    className=" w-full bg-black text-white rounded-lg py-2 text-sm"
                     type="submit"
                     disabled={isSubmitting}
                   >
                     Create an account
-                  </button>
+                  </CompanyThemedButton>
                 </div>
               </div>
             </Form>
@@ -249,12 +253,12 @@ function Page() {
             );
             return;
           }
-          router.push("/client/auth");
+          router.push(`/${tenantId}/auth`);
         }}
         className="mt-5 text-sm text-center w-96"
       >
         Already have an account?{" "}
-        <span className="font-medium text-[#15803D]">Sign in</span>
+        <span className="font-medium text-black">Sign in</span>
       </button>
     </div>
   );

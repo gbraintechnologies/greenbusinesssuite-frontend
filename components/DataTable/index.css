@@ -13,3 +13,7 @@
 .MuiDataGrid-root {
   z-index: 1;
 }
+
+.MuiDataGrid-columnHeaderTitle {
+  text-transform: uppercase !important;
+}

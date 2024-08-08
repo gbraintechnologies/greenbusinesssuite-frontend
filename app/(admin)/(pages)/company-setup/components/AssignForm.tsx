@@ -30,7 +30,11 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
-  const { data: allForms, isLoading: areFormsLoading, refetch } = useQuery({
+  const {
+    data: allForms,
+    isLoading: areFormsLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["get all forms"],
     queryFn: services.getUnassignedForms(page, limit, selectedTimeline?.value),
   });
@@ -53,7 +57,6 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   React.useEffect(() => {
     refetch();
   }, [page, selectedTimeline]);
-
 
   const assignFormToCompany = async () => {
     setLoading(true);
@@ -87,19 +90,19 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   return (
     <div className="bg-white px-5 py-2">
       <div className="px-2">
-      <div className="flex justify-between items-center">
-            <DatePicker
-              selectedTimeline={selectedTimeline}
-              setSelectedTimeline={setSelectedTimeline}
-            />
-            <Pagination
-              limit={limit}
-              variant="no-text"
-              page={page}
-              currentData={allForms?.content}
-              setPage={setPage}
-            />
-            </div>
+        <div className="flex justify-between items-center">
+          <DatePicker
+            selectedTimeline={selectedTimeline}
+            setSelectedTimeline={setSelectedTimeline}
+          />
+          <Pagination
+            limit={limit}
+            variant="no-text"
+            page={page}
+            currentData={allForms?.content}
+            setPage={setPage}
+          />
+        </div>
         {allForms?.content?.length === 0 ? (
           <div className="mb-2">
             <EmptyList text="You do not have any unassigned forms." />
@@ -111,8 +114,8 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
               setSearchTerm={setSearchTerm}
               placeholder="Search by form name"
             /> */}
-            
-            <div className="grid grid-cols-3 gap-5 h-72 mb-2 overflow-scroll mt-2">
+
+            <div className="grid grid-cols-4 gap-5 h-72 mb-2 overflow-scroll mt-2">
               {allForms?.content &&
                 allForms?.content?.map((form: any) => {
                   return (

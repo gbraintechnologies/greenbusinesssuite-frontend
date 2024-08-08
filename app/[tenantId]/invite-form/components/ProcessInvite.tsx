@@ -21,6 +21,7 @@ import useCompany from "@/hooks/useCompany";
 import Image from "next/image";
 import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 function ProcessInvite({ tenantId }: any) {
   // hooks
@@ -87,10 +88,7 @@ function ProcessInvite({ tenantId }: any) {
             To access this form you need to login or create your account
           </p>
 
-          <Button
-            style={{
-              backgroundColor: companyBranding.color,
-            }}
+          <CompanyThemedButton
             onClick={() =>
               router.push(
                 `/${tenantId}/auth?redirect=invitiation&f=${formId}&c=${companyId}`
@@ -100,7 +98,7 @@ function ProcessInvite({ tenantId }: any) {
             type="submit"
           >
             Go to authentication
-          </Button>
+          </CompanyThemedButton>
         </div>
       </div>
     );

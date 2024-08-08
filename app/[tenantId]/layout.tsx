@@ -8,6 +8,8 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { Suspense, useEffect } from "react";
 
 import SetupLoader from "@/components/SetupLoader/SetupLoader";
+
+import { notFound } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
@@ -33,7 +35,7 @@ export default function Layout({ children, params }: layoutProps) {
   });
 
   useEffect(() => {
-    if (Boolean(data) && !Boolean(companyBranding)) {
+    if (Boolean(data) && companyBranding?.company_identifier !== tenantId) {
       const { companyName, color, companyId, logo, tenancyId } = data;
       setCompanyBranding({
         id: companyId,
@@ -46,7 +48,8 @@ export default function Layout({ children, params }: layoutProps) {
   }, [data, isLoading]);
 
   if (error) {
-    // TODO: GO TO ERROR PAGE
+    console.log("error", error);
+    notFound();
   }
 
   // CHECK IF THERE'S A USER OR COMPANY ADMIN AND REDIRECT TO DASHBOARD

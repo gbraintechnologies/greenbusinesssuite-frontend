@@ -1,3 +1,6 @@
+"use client";
+
+import CompanyLogo from "@/components/ThemeLogo/CompanyLogo";
 import MeshSuiteLogo from "@/public/icons/MeshSuiteLogo";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -22,7 +25,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen bg-[#F1F5F9]">
       <div className="flex-1  w-full bg-[#F8FAFC] md:flex flex-col items-start justify-center relative hidden">
         <div className="pl-[30%] absolute top-16 left-0">
-          <MeshSuiteLogo />
+          {/* <MeshSuiteLogo /> */}
+          <CompanyLogo />
         </div>
         <div className="flex flex-col gap-4 pl-[30%] pr-[15%] ">
           {landingInfo.map((info, index) => (

@@ -26,7 +26,11 @@ function CompanyAdmins({ companyId }: any) {
   });
 
   useEffect(() => {
-    // TODO: poll company data every 15 seconds
+    if (companyData?.status !== "ACTIVE") {
+      setTimeout(() => {
+        refetch();
+      }, 5000);
+    }
   }, [companyData]);
 
   const [searchAdminEmail, setSearchAdminEmail] = useState("");
@@ -80,7 +84,7 @@ function CompanyAdmins({ companyId }: any) {
       {/* Check if company is done building: DB CREATED AND PROVISIONED FOR IT  */}
       {!companyDataLoading &&
       companyData &&
-      companyData?.build_status !== "DONE" ? (
+      companyData?.status !== "ACTIVE" ? (
         <div className="h-40 flex items-center justify-center">
           <div className="flex flex-col text-gray-700 items-center justify-center gap-2">
             <MdOutlineSettingsSuggest className="" size={40} />

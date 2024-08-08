@@ -22,7 +22,6 @@ defaultMeshApi.interceptors.request.use(
   (config) => {
     let headers: headerT = {
       "Content-Type": "application/json",
-      // "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
     };
 

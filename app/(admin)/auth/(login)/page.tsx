@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import TextInput from "./components/TextInput";
 import PasswordInput from "./components/PasswordInput";
-import Button from "./components/Button";
+
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
 import useUser from "@/hooks/useUser";
 import useCompany from "@/hooks/useCompany";
+import { Button } from "@nextui-org/button";
 
 const schema = yup.object({
   username: yup.string().required("Email/Username is required"),
@@ -178,7 +179,11 @@ function LogIn() {
             <p className="text-green-500 font-bold text-sm underline">
               <Link href="/auth/forgot-password"> Forgot Password? </Link>
             </p>
-            <Button type="submit" isValid={isValid} disabled={isSubmitting}>
+            <Button
+              className="bg-primary-green text-white rounded-lg"
+              type="submit"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
                   {" "}

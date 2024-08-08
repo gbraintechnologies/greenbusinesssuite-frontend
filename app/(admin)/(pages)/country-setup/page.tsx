@@ -100,7 +100,7 @@ function CountrySetup() {
   const columns = [
     {
       field: "country",
-      headerName: "country",
+      headerName: "Country",
       type: "actions",
       align: "left",
       headerAlign: "left",

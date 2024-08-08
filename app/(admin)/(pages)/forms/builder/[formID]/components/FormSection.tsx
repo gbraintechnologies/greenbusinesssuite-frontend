@@ -116,7 +116,7 @@ function FormSection({ section, refetch }: any) {
         {formStatusCount && formStatusCount?.totalCount > 0 ? (
           <div className="bg-red-50 px-3 py-1 rounded-lg text-lg flex justify-center items-center flex-row gap-2">
             <CiCircleInfo size={20} />{" "}
-            <p className="text-xs font-light italic">
+            <p className="text-xs mt-1 font-light italic">
               No new fields can be added to this form once it has started
               accepting responses.{" "}
             </p>

@@ -13,7 +13,7 @@ function CompanyLogo() {
             src={companyBranding?.logo}
             width={60}
             height={60}
-            className=""
+            className="rounded-xl w-full h-full"
             alt="company"
           />
         )}
