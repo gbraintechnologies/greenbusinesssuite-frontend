@@ -21,7 +21,7 @@ multipartDefaultMeshApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
     let headers: headerT = {
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
       // "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
     };

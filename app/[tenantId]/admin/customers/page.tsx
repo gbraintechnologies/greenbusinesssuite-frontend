@@ -138,7 +138,7 @@ function Customers() {
             >
               <Link
                 href={
-                  `${company?.company_identifier}/admin/customers/profile?id=` +
+                  `/${company?.company_identifier}/admin/customers/profile?id=` +
                   params.row.data.id
                 }
               >

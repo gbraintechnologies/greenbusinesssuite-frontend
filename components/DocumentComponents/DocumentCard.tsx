@@ -49,7 +49,7 @@ function DocumentCard({ document }: any) {
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
         <button
-          className={`flex items-center bg-gradient-to-br from-[#FFCAD4] to bg-[#FEA7B7] justify-center w-full  rounded-tl-lg rounded-tr-lg`}
+          className={`flex items-center bg-gradient-to-br from-gray-600 to bg-gray-500 justify-center w-full  rounded-tl-lg rounded-tr-lg`}
         >
           <div className="m-2 my-10 px-4 py-2 flex items-center justify-center  rounded-lg bg-white">
             {/* ADD TYPE OF FILE: UPLOAD / ISSUE */}
