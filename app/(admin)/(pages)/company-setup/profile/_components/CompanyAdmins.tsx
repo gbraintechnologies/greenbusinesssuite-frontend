@@ -29,7 +29,7 @@ function CompanyAdmins({ companyId }: any) {
     if (companyData?.status !== "ACTIVE") {
       setInterval(() => {
         refetch();
-      }, 5000);
+      }, 25000);
     }
   }, [companyData]);
 
