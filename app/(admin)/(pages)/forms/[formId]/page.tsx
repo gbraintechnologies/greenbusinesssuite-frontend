@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { VscEmptyWindow } from "react-icons/vsc";
+import { RiImageCircleLine } from "react-icons/ri";
 
 // icons
 import { FiEdit2 } from "react-icons/fi";
@@ -169,14 +170,20 @@ function FormDetail({ params }: any) {
               ) : (
                 <div>
                   <div className="flex items-center gap-5">
-                    <Image
-                      // @ts-ignore
-                      src={companyData?.company_logo}
-                      width={144}
-                      height={144}
-                      className="rounded-full w-20 h-20 object-cover border border-[rgba(226, 232, 240, 1)]"
-                      alt="Company Logo"
-                    />
+                    {companyData?.company_logo?.length < 10 ? (
+                      <div className="rounded-full w-20 h-20 flex items-center justify-center object-cover border bg-gray-50 border-[rgba(226, 232, 240, 1)]">
+                        <RiImageCircleLine size={40} />
+                      </div>
+                    ) : (
+                      <Image
+                        // @ts-ignore
+                        src={companyData?.company_logo}
+                        width={144}
+                        height={144}
+                        className="rounded-full w-20 h-20 object-cover border border-[rgba(226, 232, 240, 1)]"
+                        alt="Company Logo"
+                      />
+                    )}
                     {/* @ts-ignore */}
                     {companyData?.company_name && (
                       <div className="flex flex-col gap-0">

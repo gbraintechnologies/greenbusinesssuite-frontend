@@ -29,6 +29,7 @@ import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import { RiImageCircleLine } from "react-icons/ri";
 
 export interface IFilter {
   id: number;
@@ -206,7 +207,7 @@ function CompanySetup() {
           ) : (
             <Link href={`/company-setup/profile?id=${params.row.data?.id}`}>
               <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
-                <UserIcon />
+                <RiImageCircleLine size={20} />
               </div>
             </Link>
           )}
