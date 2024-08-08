@@ -13,6 +13,7 @@ import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { MdOutlineEdit } from "react-icons/md";
 import * as Yup from "yup";
 import "../edit-user/index.css";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 const UserSchema = Yup.object().shape({
   firstname: Yup.string()
@@ -131,10 +132,10 @@ const UserForm = ({
                       >
                         Discard
                       </button>
-                      <button
+                      <CompanyThemedButton
                         type="submit"
                         disabled={loading}
-                        className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                        className="bg-black disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
                       >
                         {loading ? (
                           <>
@@ -147,7 +148,7 @@ const UserForm = ({
                             <HiOutlineInboxArrowDown /> Save
                           </>
                         )}
-                      </button>
+                      </CompanyThemedButton>
                     </div>
                   </>
                 )}
