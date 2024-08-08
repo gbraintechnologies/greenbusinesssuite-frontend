@@ -40,10 +40,15 @@ function EditRole() {
     const roleId = searchParams.get("roleId");
     const router = useRouter();
 
-    const { data, isLoading, refetch } = useQuery({
-        queryKey: ["all roleByid", roleId],
+    const { data: roleData, isLoading: isRoleLoading, refetch } = useQuery({
+        queryKey: ["roleById", roleId],
         queryFn:  services.RoleByID(Number(roleId)),
         enabled: !!roleId,
+    });
+
+    const { data: allPermissionsData, isLoading: isPermissionsLoading } = useQuery({
+        queryKey: ["allPermissions"],
+        queryFn: services.allPermissions(),
     });
 
     const [initialValues, setInitialValues] = useState<FormValues>({
@@ -53,19 +58,25 @@ function EditRole() {
     });
 
     useEffect(() => {
-        if (data) {
-            const { role_name, role_description, permissions } = data;
-            const permissionsObject = permissions.reduce((acc: any, permission: Permission) => {
+        if (roleData && allPermissionsData) {
+            const { role_name, role_description, permissions } = roleData;
+            const assignedPermissions = permissions.reduce((acc: any, permission: Permission) => {
                 acc[permission.id] = true;
                 return acc;
             }, {});
+
+            const allPermissionsObject = allPermissionsData.reduce((acc: any, permission: Permission) => {
+                acc[permission.id] = !!assignedPermissions[permission.id];
+                return acc;
+            }, {});
+
             setInitialValues({
                 roleName: role_name,
                 roleDescription: role_description,
-                permissions: permissionsObject,
+                permissions: allPermissionsObject,
             });
         }
-    }, [data]);
+    }, [roleData, allPermissionsData]);
 
     const handleSubmit = async (
         values: FormValues,
@@ -194,8 +205,10 @@ function EditRole() {
                                     </span>
                                 )}
                                 <div className="flex flex-col gap-2 pt-2 pb-5">
-                                    {data?.permissions && data.permissions.length > 0 ? (
-                                        data.permissions.map(({ permission_name, description, id }: Permission) => (
+                                    {isPermissionsLoading ? (
+                                        <p>Loading permissions...</p>
+                                    ) : allPermissionsData && allPermissionsData.length > 0 ? (
+                                        allPermissionsData.map(({ permission_name, description, id }: Permission) => (
                                             <CustomCheckbox
                                                 key={id}
                                                 name={`permissions.${id}`}
