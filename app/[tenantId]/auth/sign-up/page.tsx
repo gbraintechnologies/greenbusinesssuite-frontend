@@ -278,7 +278,7 @@ function Page({ params }: any) {
               );
               return;
             }
-            router.push(`/${tenantId}/auth`);
+            router.push(`/${tenantId}/auth/login`);
           }}
           className="mt-5 text-sm text-center w-96"
         >

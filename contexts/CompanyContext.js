@@ -34,40 +34,6 @@ export const CompanyProvider = ({ children }) => {
   // company branding info
   const [companyBranding, setCompanyBranding] = useState(CompanyBrandingFromSS);
 
-  // {
-  //   id: 2,
-  //   name: "Adidas",
-  //   color: "#E32527",
-  //   logo: "https://mesh-suite-pics-staging-bucket.s3.amazonaws.com/Resources/file-37f2ae99b9c11916fc9e112a54f4355090a13600939ddccc7e4902a53cfe9125.png",
-  //   company_identifier: "adidas84758",
-  // }
-
-  // const {
-  //   data: companyData,
-  //   isLoading,
-  //   refetch,
-  // } = useQuery({
-  //   // @ts-ignore
-  //   queryKey: ["company", parseInt(auth?.companyId)],
-  //   queryFn: services.getCompanyById(Number(auth?.company_id)),
-  //   enabled: Boolean(auth?.company_id && auth?.company_id !== 0),
-  // });
-
-  // // update auth
-  // useEffect(() => {
-  //   setAuth(UserFromLS);
-  // }, [companyAdmin]);
-
-  // useEffect(() => {
-  //   if (Boolean(companyData)) {
-  //     setCompany(companyData);
-  //   } else {
-  //     if (Boolean(auth?.company_id) && !Boolean(company)) {
-  //       refetch();
-  //     }
-  //   }
-  // }, [companyAdmin, companyData, isLoading]);
-
   const addCompanyAdminData = (data) => {
     setCompanyAdmin((prev) => ({ ...prev, ...data }));
   };

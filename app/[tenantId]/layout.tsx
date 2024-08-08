@@ -59,7 +59,6 @@ export default function Layout({ children, params }: layoutProps) {
   }, [data, isLoading]);
 
   if (error) {
-    console.log("error", error);
     notFound();
   }
 

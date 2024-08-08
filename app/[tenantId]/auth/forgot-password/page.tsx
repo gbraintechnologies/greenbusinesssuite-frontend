@@ -1,11 +1,13 @@
 "use client";
 
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import EmailIcon from "@/public/icons/EmailIcon";
 
 //
 import services from "@/services";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 //
 import React, { useState } from "react";
@@ -18,6 +20,7 @@ function ForgotPassword() {
 
   const [status, setStatus] = useState("forgot");
 
+  const router = useRouter();
   const runAttempt = () => {
     //
     setLoading(true);
@@ -60,22 +63,25 @@ function ForgotPassword() {
                 value={email}
                 required
                 type="email"
-                className="block focus:outline-[#16A34A] border border-gray-300 px-3 py-2 rounded-lg w-full"
+                className="block border border-gray-300 px-3 py-2 rounded-lg w-full"
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
               />
             </div>
 
-            <Link className=" text-[#16A34A] text-sm" href="/company/auth">
-              Wait, I remember my password
-            </Link>
             <button
+              onClick={() => router.back()}
+              className=" text-gray-700 text-left text-sm"
+            >
+              Wait, I remember my password
+            </button>
+            <CompanyThemedButton
               disabled={loading}
-              className="w-full disabled:cursor-not-allowed disabled:opacity-80 px-4 py-3 hover:bg-opacity-80 rounded-lg bg-[#16A34A] text-white"
+              className="w-full disabled:cursor-not-allowed disabled:opacity-80 px-4 py-3 hover:bg-opacity-80 rounded-lg bg-black text-white"
               type="submit"
             >
               {loading ? <LoadingIcon /> : "Send reset instructions"}
-            </button>
+            </CompanyThemedButton>
           </form>
         </div>
       )}

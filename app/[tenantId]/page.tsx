@@ -15,12 +15,16 @@ function page({ params }: any) {
   const tenantId = params.tenantId;
 
   const { user } = useUser();
-  const { companyAdmin } = useCompany();
+  const { companyAdmin, setCompanyBranding } = useCompany();
+
   const { auth } = useAuth();
 
   const router = useRouter();
 
   useEffect(() => {
+    // clear company branding
+    setCompanyBranding(null);
+
     if (auth?.access_token && companyAdmin) {
       router.push(`${tenantId}/admin`);
     } else if (auth?.access_token && user) {

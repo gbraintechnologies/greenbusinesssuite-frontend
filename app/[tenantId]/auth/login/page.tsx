@@ -151,7 +151,6 @@ function CompanyAdminAuth({ params }: any) {
         }
       }
     } catch (error) {
-      console.log("error logging in", error);
       // toast.error("Error logging in.", {
       //   description: "Contact your administrator",
       // });
@@ -208,7 +207,10 @@ function CompanyAdminAuth({ params }: any) {
             )}
           </div>
           <p className="text-gray-700 font-bold text-sm underline">
-            <Link href="/company/auth/forgot-password"> Forgot Password? </Link>
+            <Link href={`/${tenantId}/auth/forgot-password`}>
+              {" "}
+              Forgot Password?{" "}
+            </Link>
           </p>
           <Button
             style={{
@@ -235,7 +237,7 @@ function CompanyAdminAuth({ params }: any) {
         <div className="text-center  text-gray-400 text-sm py-4">
           <p className="mb-3">
             Don't have an account{" "}
-            <Link href="auth/sign-up">
+            <Link href="sign-up">
               {" "}
               <span className="font-semibold text-black">Sign Up</span>
             </Link>
