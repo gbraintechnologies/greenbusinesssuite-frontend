@@ -29,8 +29,24 @@ interface ISelectInput extends React.SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 const SelectInput = React.forwardRef<HTMLSelectElement, ISelectInput>(
-  ({ label, error, helperText, required, disabled, PrependIcon, PostpendIcon, id, extraClasses, optional, listdata, btnSize = "normal", ...rest }: ISelectInput, forwardedRef) => {
-
+  (
+    {
+      label,
+      error,
+      helperText,
+      required,
+      disabled,
+      PrependIcon,
+      PostpendIcon,
+      id,
+      extraClasses,
+      optional,
+      listdata,
+      btnSize = "normal",
+      ...rest
+    }: ISelectInput,
+    forwardedRef
+  ) => {
     return (
       <div className="flex flex-col w-full">
         {label && (
@@ -56,12 +72,12 @@ const SelectInput = React.forwardRef<HTMLSelectElement, ISelectInput>(
               PostpendIcon ? "pr-10" : "",
               PrependIcon ? "pl-20" : "",
               btnSize === "normal" ? "h-[46px]" : "h-[40px]",
-              "focus:ring-0 border border-slate-300 focus:border focus:border-teal-600 rounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900",
+              "focus:ring-0 border border-slate-300 focus:border focus:border-blackrounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900",
               extraClasses
             )}
           >
             <option value="">Select Country</option>
-            {listdata.map(country => (
+            {listdata.map((country) => (
               <option key={country.cca2} value={country.name.common}>
                 {country.name.common}
               </option>

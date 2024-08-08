@@ -14,8 +14,6 @@ interface Country {
   };
 }
 
-
-
 interface ISelectInput extends React.InputHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
@@ -62,7 +60,6 @@ const SelectInput = React.forwardRef<HTMLSelectElement, ISelectInput>(
           </label>
         )}
         <div className="relative">
-
           {PrependIcon && (
             <div className="inset-y-0 mt-1 left-0 flex items-center justify-center pl-3 pr-3 pointer-events-none">
               {PrependIcon}
@@ -79,13 +76,15 @@ const SelectInput = React.forwardRef<HTMLSelectElement, ISelectInput>(
               PostpendIcon ? "pr-10" : "",
               PrependIcon ? "pl-20" : "",
               btnSize === "normal" ? "h-[46px]" : "h-[40px]",
-              `focus:ring-0 border border-slate-300 focus:border focus:border-teal-600 rounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${extraClasses}`
+              `focus:ring-0 border border-slate-300 focus:border focus:border-blackrounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${extraClasses}`
             )}
           >
-             <option value="">Select Country</option>
-            {listdata.map(country =>
-              <option value={country?.name.common}>{country?.name.common}</option>
-            )}
+            <option value="">Select Country</option>
+            {listdata.map((country) => (
+              <option value={country?.name.common}>
+                {country?.name.common}
+              </option>
+            ))}
           </select>
 
           {PostpendIcon && (

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import clsx from "clsx";
 import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -58,7 +58,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, IPasswordInput>(
             className={clsx(
               error ? "border border-red-500" : "",
               btnSize === "normal" ? "h-[46px]" : "h-[40px]",
-              `focus:ring-0 pr-10 border border-slate-300 focus:border focus:border-teal-600 rounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${extraClasses}`
+              `focus:ring-0 pr-10 border border-slate-300 focus:border focus:border-blackrounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${extraClasses}`
             )}
           />
           <div

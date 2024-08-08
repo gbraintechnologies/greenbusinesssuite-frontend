@@ -1,7 +1,8 @@
-import React from 'react';
+import React from "react";
 import { Countrie } from "../components/Countries"; // Ensure Countrie import is correct
 
-interface ISelectCountryEdit extends React.SelectHTMLAttributes<HTMLSelectElement> {
+interface ISelectCountryEdit
+  extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
   helperText?: string;
@@ -33,16 +34,16 @@ const SelectCountryEdit: React.FC<ISelectCountryEdit> = ({
       <select
         {...rest}
         disabled={readOnly}
-        className={`focus:ring-0 border border-slate-300 focus:border focus:border-teal-600 rounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${
-          error ? 'border-red-500' : ''
+        className={`focus:ring-0 border border-slate-300 focus:border focus:border-blackrounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${
+          error ? "border-red-500" : ""
         } ${
-          readOnly ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : '' // Adding gray color for readonly mode
+          readOnly ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "" // Adding gray color for readonly mode
         }`}
       >
         <option value="">Select Country</option>
         {options.map((option) => (
           <option key={option} value={option}>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {option}
           </option>
         ))}

@@ -44,8 +44,7 @@ const TextInput = React.forwardRef<HTMLInputElement, ITextInput>(
       <div className="flex flex-col w-full">
         {label && (
           <label htmlFor={id} className="font-medium text-slate-700 text-sm">
-            {label}{" "}
-            {required && <span className="text-red-500">*</span>}
+            {label} {required && <span className="text-red-500">*</span>}
           </label>
         )}
         <div className="relative">
@@ -68,7 +67,7 @@ const TextInput = React.forwardRef<HTMLInputElement, ITextInput>(
               PrependIcon ? "pl-10" : "",
               btnSize === "normal" ? "h-[46px]" : "h-[40px]",
               readOnly ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "", // Conditional readOnly styles
-              "focus:ring-0 border border-slate-300 focus:border focus:border-teal-600 rounded-[6px]",
+              "focus:ring-0 border border-slate-300 focus:border focus:border-blackrounded-[6px]",
               `mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium ${extraClasses}`
             )}
           />
