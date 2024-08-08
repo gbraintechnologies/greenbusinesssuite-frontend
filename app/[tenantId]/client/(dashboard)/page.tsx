@@ -66,13 +66,6 @@ const Page = () => {
   //   enabled: Boolean(user?.id),
   // });
 
-  const { data: completedFormsIds, isLoading: areCompletedFormsIdLoading } =
-    useQuery({
-      queryKey: ["get completed forms by user", user?.id],
-      queryFn: services.getCompletedFormIdsByUserId(user?.id),
-      enabled: Boolean(user?.id),
-    });
-
   const {
     data: uncompletedFormsIds,
     isLoading: areUncompletedFormsIdsLoading,
@@ -82,6 +75,13 @@ const Page = () => {
     enabled: Boolean(user?.id),
   });
 
+  const { data: completedFormsIds, isLoading: areCompletedFormsIdLoading } =
+    useQuery({
+      queryKey: ["get completed forms by user", user?.id],
+      queryFn: services.getCompletedFormIdsByUserId(user?.id),
+      enabled: Boolean(user?.id),
+    });
+
   const [completedForms, setCompletedForms] = useState([]);
   const [uncompletedForms, setUncompletedForms] = useState([]);
 
@@ -89,7 +89,7 @@ const Page = () => {
 
   const [uncompletedFormsLoading, setUncompletedFormsLoading] = useState(false);
 
-  async function getResponseForForm(id: any, type: string) {
+  async function getResponseForForm(id: number, type: string) {
     let form = await services.getFormByIdRawForUser(id);
     let response = await services.retrieveFormUserResponseRaw(user?.id, id);
 
@@ -100,59 +100,52 @@ const Page = () => {
     );
 
     if (type === "completed") {
-      if (
-        completedForms.some((f) => f === newForm) ||
-        completedForms?.length === 0
-      ) {
-        // @ts-ignore
-        setCompletedForms((prev) => [...prev, newForm]);
-      }
+      setCompletedForms((prev: any) => {
+        if (!prev.some((f: any) => f.id === newForm.id)) {
+          return [...prev, newForm];
+        }
+        return prev;
+      });
     } else {
-      if (
-        uncompletedForms.some((f) => f === newForm) ||
-        uncompletedForms?.length === 0
-      ) {
-        // @ts-ignore
-        setUncompletedForms((prev) => [...prev, newForm]);
-      }
+      setUncompletedForms((prev: any) => {
+        if (!prev.some((f: any) => f.id === newForm.id)) {
+          return [...prev, newForm];
+        }
+        return prev;
+      });
     }
   }
 
   // completed forms ids processing
   useEffect(() => {
-    // clear
-    setCompletedForms([]);
-
-    //
-    if (completedFormsIds && completedForms.length == 0) {
+    if (completedFormsIds) {
       setCompletedFormsLoading(true);
-      setCompletedForms([]);
-      //
-      completedFormsIds.forEach((id: any) => {
-        getResponseForForm(id, "completed");
-      });
 
-      setCompletedFormsLoading(false);
+      // Create a new array for completed forms
+      const formsPromises = completedFormsIds.map((id: any) =>
+        getResponseForForm(id, "completed")
+      );
+
+      Promise.all(formsPromises).finally(() => {
+        setCompletedFormsLoading(false);
+      });
     }
   }, [completedFormsIds]);
 
-  // uncompleted
   useEffect(() => {
-    // clear
-    setUncompletedForms([]);
-
-    //
-    if (uncompletedFormsIds && uncompletedForms.length == 0) {
+    if (uncompletedFormsIds) {
       setUncompletedFormsLoading(true);
-      setUncompletedForms([]);
-      //
-      uncompletedFormsIds.forEach((id: any) => {
-        getResponseForForm(id, "uncompleted");
-      });
 
-      setUncompletedFormsLoading(false);
+      // Create a new array for completed forms
+      const formsPromises = uncompletedFormsIds.map((id: any) =>
+        getResponseForForm(id, "uncompleted")
+      );
+
+      Promise.all(formsPromises).finally(() => {
+        setUncompletedFormsLoading(false);
+      });
     }
-  }, [uncompletedFormsIds]);
+  }, [completedFormsIds]);
 
   useEffect(() => {
     // Deselect any active form
@@ -162,31 +155,6 @@ const Page = () => {
   useEffect(() => {
     setUserStatus(user?.user_status);
   }, [user]);
-
-  // remove duplicates
-  // useEffect(() => {
-  //   if (completedForms) {
-  //     setCompletedForms((prevCompletedForms: any) => {
-  //       if (prevCompletedForms) {
-  //         return Array.from(
-  //           new Set(prevCompletedForms.map((item: any) => JSON.stringify(item)))
-  //         ).map((item: any) => JSON.parse(item));
-  //       }
-  //       return prevCompletedForms;
-  //     });
-  //   }
-
-  //   if (uncompletedForms) {
-  //     setUncompletedForms((prevCompletedForms: any) => {
-  //       if (prevCompletedForms) {
-  //         return Array.from(
-  //           new Set(prevCompletedForms.map((item: any) => JSON.stringify(item)))
-  //         ).map((item: any) => JSON.parse(item));
-  //       }
-  //       return prevCompletedForms;
-  //     });
-  //   }
-  // }, [completedForms, uncompletedForms]);
 
   return areStatsLoading ? (
     <div className="flex justify-center items-center h-screen w-screen">
