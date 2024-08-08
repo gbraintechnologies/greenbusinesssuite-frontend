@@ -27,7 +27,7 @@ function CompanyAdmins({ companyId }: any) {
 
   useEffect(() => {
     if (companyData?.status !== "ACTIVE") {
-      setTimeout(() => {
+      setInterval(() => {
         refetch();
       }, 5000);
     }
