@@ -6,9 +6,13 @@ import React from "react";
 
 // icons
 import ErrorIcon from "@/public/icons/ErrorIcon";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
+import useAuth from "@/hooks/useAuth";
 
 const UncompletedCard = ({ form }: any) => {
   const router = useRouter();
+
+  const { auth } = useAuth();
   return (
     <div className="flex justify-between items-center p-5 shadow-sm rounded-md bg-white">
       <div className="flex  gap-4 items-center">
@@ -24,14 +28,16 @@ const UncompletedCard = ({ form }: any) => {
           </p>
         </div>
       </div>
-      <button
+      <CompanyThemedButton
         onClick={() => {
-          router.push(`/client/form?id=${form?.id}&company=${form?.companyId}`);
+          router.push(
+            `/${auth?.tenantId}/client/form?id=${form?.id}&company=${form?.companyId}`
+          );
         }}
-        className="bg-primary-green flex text-white text-xs md:text-sm px-4 py-2 hover:opacity-95 items-center gap-2 rounded-lg"
+        className="bg-black flex text-white text-xs md:text-sm px-4 py-2 hover:opacity-95 items-center gap-2 rounded-lg"
       >
         Continue filling form
-      </button>
+      </CompanyThemedButton>
     </div>
   );
 };

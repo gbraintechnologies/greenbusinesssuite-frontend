@@ -60,11 +60,11 @@ const Page = () => {
     enabled: Boolean(user?.id),
   });
 
-  // const { data: allUserForms, isLoading: allUserFormsLoading } = useQuery({
-  //   queryKey: ["all user forms", user?.id],
-  //   queryFn: services.getAllFormsByUserId(user?.id),
-  //   enabled: Boolean(user?.id),
-  // });
+  const { data: allUserForms, isLoading: allUserFormsLoading } = useQuery({
+    queryKey: ["all user forms", user?.id],
+    queryFn: services.getAllFormsByUserId(user?.id),
+    enabled: Boolean(user?.id),
+  });
 
   const { data: completedFormsIds, isLoading: areCompletedFormsIdLoading } =
     useQuery({
@@ -168,11 +168,11 @@ const Page = () => {
         </div>
       )}
 
-      {/* <div className="mt-4 grid grid-col-1 gap-3">
+      <div className="mt-4 grid grid-col-1 gap-3">
         {uncompletedForms?.map((form: any) => {
           return <UncompletedCard key={form?.id} form={form} />;
         })}
-      </div> */}
+      </div>
       <div className="mt-6">
         <StatsBlock
           stats={[
