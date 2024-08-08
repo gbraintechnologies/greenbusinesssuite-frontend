@@ -26,12 +26,8 @@ function CompanyAdmins({ companyId }: any) {
   });
 
   useEffect(() => {
-    if (companyData?.status !== "ACTIVE") {
-      setInterval(() => {
-        refetch();
-      }, 25000);
-    }
-  }, [companyData]);
+    refetch();
+  }, []);
 
   const [searchAdminEmail, setSearchAdminEmail] = useState("");
 
