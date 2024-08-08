@@ -331,8 +331,10 @@ function NewUser() {
 
               {/* Phone */}
 
-              <div className="input-holder">
-                <label className="pb-2">Phone number</label>
+              <div className="mb-4">
+                <label className="mb-3 text-sm font-light text-gray-900">
+                  Phone number
+                </label>
                 <PhoneSelector phone={phone} setPhone={setPhone} />
               </div>
 
