@@ -28,8 +28,13 @@ import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import "./index.css";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 
+import Image from "next/image";
+import useCompany from "@/hooks/useCompany";
+
 function Page({ params }: any) {
   const tenantId = params.tenantId;
+
+  const { companyBranding } = useCompany();
 
   const router = useRouter();
   const search = useSearchParams();
@@ -98,7 +103,7 @@ function Page({ params }: any) {
 
     const createUserResponse = await services.userSelfSignUp(userData);
 
-    console.log("create user response", createUserResponse);
+    // console.log("create user response", createUserResponse);
     toast.success("Account created successfully", {
       description: "Confirm your email using the link sent to your email",
     });
@@ -106,20 +111,35 @@ function Page({ params }: any) {
     setPhone("");
   };
   return (
-    <div className="flex flex-col justify-center h-screen">
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        validationSchema={schema}
-      >
-        {({ errors, isSubmitting }) => {
-          return (
-            <Form>
-              <div className=" rounded-lg py-6  shadow-sm h-auto w-96 text-slate-900 bg-white ">
-                <h1 className="font-semibold text-lg text-left pt-5 pb-3 px-5">
-                  Create Your Account
-                </h1>
-                {/* <div className="input-holder px-5">
+    <div className="bg-white flex w-screen h-screen">
+      <div className="bg-[#F1F5F9] hidden md:flex items-center justify-center md:flex-1">
+        <div>
+          {companyBranding?.logo && (
+            <Image
+              priority
+              src={companyBranding?.logo}
+              width={200}
+              height={200}
+              className="rounded-xl w-full h-full"
+              alt="company"
+            />
+          )}
+        </div>
+      </div>
+      <div className="md:flex-1 flex w-full flex-col items-center justify-center h-screen">
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={schema}
+        >
+          {({ errors, isSubmitting }) => {
+            return (
+              <Form>
+                <div className=" rounded-lg py-6  shadow-sm h-auto w-96 text-slate-900 bg-white ">
+                  <h1 className="font-semibold text-lg text-left pt-5 pb-3 px-5">
+                    Create Your Account
+                  </h1>
+                  {/* <div className="input-holder px-5">
                   <label>Country of residence</label>
                   <Dropdown
                     options={[
@@ -146,81 +166,81 @@ function Page({ params }: any) {
                   />
                   <ShowError name="industry" />
                 </div> */}
-                <div className="input-holder px-5">
-                  <label htmlFor="email" className="text-xs">
-                    Email Address
-                  </label>
-                  <Field
-                    style={{
-                      ...getStyles(errors, "email"),
-                      backgroundColor: "rgba(248, 250, 252, 1)",
-                    }}
-                    name="email"
-                    placeholder=""
-                  />
-                  <ShowError name="email" />
-                </div>
-                <div className="flex gap-2">
-                  <div className="input-holder pl-5">
-                    <label htmlFor="firstName" className="text-xs">
-                      First name
+                  <div className="input-holder px-5">
+                    <label htmlFor="email" className="text-xs">
+                      Email Address
                     </label>
                     <Field
                       style={{
-                        ...getStyles(errors, "firstName"),
+                        ...getStyles(errors, "email"),
                         backgroundColor: "rgba(248, 250, 252, 1)",
                       }}
-                      name="firstName"
+                      name="email"
                       placeholder=""
                     />
-                    <ShowError name="firstName" />
+                    <ShowError name="email" />
                   </div>
-                  <div className="input-holder pr-5">
-                    <label htmlFor="lastName" className="text-xs">
-                      Last name
+                  <div className="flex gap-2">
+                    <div className="input-holder pl-5">
+                      <label htmlFor="firstName" className="text-xs">
+                        First name
+                      </label>
+                      <Field
+                        style={{
+                          ...getStyles(errors, "firstName"),
+                          backgroundColor: "rgba(248, 250, 252, 1)",
+                        }}
+                        name="firstName"
+                        placeholder=""
+                      />
+                      <ShowError name="firstName" />
+                    </div>
+                    <div className="input-holder pr-5">
+                      <label htmlFor="lastName" className="text-xs">
+                        Last name
+                      </label>
+                      <Field
+                        style={{
+                          ...getStyles(errors, "lastName"),
+                          backgroundColor: "rgba(248, 250, 252, 1)",
+                        }}
+                        name="lastName"
+                        placeholder=""
+                      />
+                      <ShowError name="lastName" />
+                    </div>
+                  </div>
+                  <div className="px-5 mb-3">
+                    <label htmlFor="number" className="input-holder-label mb-2">
+                      Phone Number
                     </label>
+                    <PhoneSelector phone={phone} setPhone={setPhone} />
+                  </div>
+                  <div className=" input-holder px-5 relative">
+                    <label htmlFor="password">Password</label>
                     <Field
                       style={{
-                        ...getStyles(errors, "lastName"),
+                        ...getStyles(errors, "password"),
                         backgroundColor: "rgba(248, 250, 252, 1)",
                       }}
-                      name="lastName"
-                      placeholder=""
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
                     />
-                    <ShowError name="lastName" />
+                    <button
+                      className="absolute right-10 top-9"
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <AiOutlineEyeInvisible size={18} />
+                      ) : (
+                        <AiOutlineEye size={18} />
+                      )}
+                    </button>
+                    <ShowError name="password" />
                   </div>
-                </div>
-                <div className="px-5 mb-3">
-                  <label htmlFor="number" className="input-holder-label mb-2">
-                    Phone Number
-                  </label>
-                  <PhoneSelector phone={phone} setPhone={setPhone} />
-                </div>
-                <div className=" input-holder px-5 relative">
-                  <label htmlFor="password">Password</label>
-                  <Field
-                    style={{
-                      ...getStyles(errors, "password"),
-                      backgroundColor: "rgba(248, 250, 252, 1)",
-                    }}
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                  />
-                  <button
-                    className="absolute right-10 top-9"
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <AiOutlineEyeInvisible size={18} />
-                    ) : (
-                      <AiOutlineEye size={18} />
-                    )}
-                  </button>
-                  <ShowError name="password" />
-                </div>
-                {/* <div className="flex gap-2 justify-start px-5">
+                  {/* <div className="flex gap-2 justify-start px-5">
                   <input
                     type="checkbox"
                     className="form-check-input "
@@ -233,36 +253,39 @@ function Page({ params }: any) {
                   </label>
                 </div> */}
 
-                <div className="py-3 px-5 mt-2  rounded-b-lg">
-                  <CompanyThemedButton
-                    className=" w-full bg-black text-white disabled:bg-gray-600 rounded-lg py-2 text-sm"
-                    type="submit"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Creating account..." : "Create an account"}
-                  </CompanyThemedButton>
+                  <div className="py-3 px-5 mt-2  rounded-b-lg">
+                    <CompanyThemedButton
+                      className=" w-full bg-black text-white disabled:bg-gray-600 rounded-lg py-2 text-sm"
+                      type="submit"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting
+                        ? "Creating account..."
+                        : "Create an account"}
+                    </CompanyThemedButton>
+                  </div>
                 </div>
-              </div>
-            </Form>
-          );
-        }}
-      </Formik>
-      <button
-        onClick={() => {
-          // add search params if redirectTo exists
-          if (Boolean(redirectTo)) {
-            router.push(
-              `/client/auth?redirect=${redirectTo}&f=${formId}&c=${companyName}`
+              </Form>
             );
-            return;
-          }
-          router.push(`/${tenantId}/auth`);
-        }}
-        className="mt-5 text-sm text-center w-96"
-      >
-        Already have an account?{" "}
-        <span className="font-medium text-black">Sign in</span>
-      </button>
+          }}
+        </Formik>
+        <button
+          onClick={() => {
+            // add search params if redirectTo exists
+            if (Boolean(redirectTo)) {
+              router.push(
+                `/client/auth?redirect=${redirectTo}&f=${formId}&c=${companyName}`
+              );
+              return;
+            }
+            router.push(`/${tenantId}/auth`);
+          }}
+          className="mt-5 text-sm text-center w-96"
+        >
+          Already have an account?{" "}
+          <span className="font-medium text-black">Sign in</span>
+        </button>
+      </div>
     </div>
   );
 }

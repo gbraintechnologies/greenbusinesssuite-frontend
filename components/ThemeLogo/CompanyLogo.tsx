@@ -6,7 +6,6 @@ import React from "react";
 function CompanyLogo({ showName = false }: { showName?: boolean }) {
   const { companyBranding } = useCompany();
 
-  console.log("showc", showName, companyBranding);
   return (
     <div className="flex items-center justify-center text-center gap-3 flex-col">
       {showName ? (
