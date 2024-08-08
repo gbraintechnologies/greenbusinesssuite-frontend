@@ -26,6 +26,7 @@ import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 // css
 import "./index.css";
+import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 
 function Page({ params }: any) {
   const tenantId = params.tenantId;
@@ -53,6 +54,8 @@ function Page({ params }: any) {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const [phone, setPhone] = useState("");
 
   const initialValues = {
     email: "",
@@ -87,26 +90,20 @@ function Page({ params }: any) {
       password: values.password as string,
       first_name: values.firstName as string,
       last_name: values.lastName as string,
-      phone_number: "233",
-      mobile_phone_number: "233",
+      phone_number: phone,
+      mobile_phone_number: phone,
+
       user_status: "ACTIVE",
     };
 
     const createUserResponse = await services.userSelfSignUp(userData);
-    toast.success("Sign up success");
 
-    // ROLE ID: 7 for client
-    // const assignRoleResponse = await services.assignRoleToUser(
-    //   createUserResponse.data.id,
-    //   7
-    // );
-
-    // const notifyUserResponse = await services.notifyUserTempCred(
-    //   createUserResponse?.data?.id,
-    //   "EMAIL"
-    // );
-
-    toast.success(`Temporary password sent to ${userData.email}`);
+    console.log("create user response", createUserResponse);
+    toast.success("Account created successfully", {
+      description: "Confirm your email using the link sent to your email",
+    });
+    resetForm();
+    setPhone("");
   };
   return (
     <div className="flex flex-col justify-center h-screen">
@@ -118,11 +115,11 @@ function Page({ params }: any) {
         {({ errors, isSubmitting }) => {
           return (
             <Form>
-              <div className=" rounded-lg  shadow-sm h-auto w-96 text-slate-900 bg-white ">
+              <div className=" rounded-lg py-6  shadow-sm h-auto w-96 text-slate-900 bg-white ">
                 <h1 className="font-semibold text-lg text-left pt-5 pb-3 px-5">
                   Create Your Account
                 </h1>
-                <div className="input-holder px-5">
+                {/* <div className="input-holder px-5">
                   <label>Country of residence</label>
                   <Dropdown
                     options={[
@@ -148,7 +145,7 @@ function Page({ params }: any) {
                     bgColor="bg-slate-50"
                   />
                   <ShowError name="industry" />
-                </div>
+                </div> */}
                 <div className="input-holder px-5">
                   <label htmlFor="email" className="text-xs">
                     Email Address
@@ -193,6 +190,12 @@ function Page({ params }: any) {
                     <ShowError name="lastName" />
                   </div>
                 </div>
+                <div className="px-5 mb-3">
+                  <label htmlFor="number" className="input-holder-label mb-2">
+                    Phone Number
+                  </label>
+                  <PhoneSelector phone={phone} setPhone={setPhone} />
+                </div>
                 <div className=" input-holder px-5 relative">
                   <label htmlFor="password">Password</label>
                   <Field
@@ -217,7 +220,7 @@ function Page({ params }: any) {
                   </button>
                   <ShowError name="password" />
                 </div>
-                <div className="flex gap-2 justify-start px-5">
+                {/* <div className="flex gap-2 justify-start px-5">
                   <input
                     type="checkbox"
                     className="form-check-input "
@@ -228,15 +231,15 @@ function Page({ params }: any) {
                     and events. If you change your mind, you can unsubscribe at
                     any time.
                   </label>
-                </div>
+                </div> */}
 
                 <div className="py-3 px-5 mt-2  rounded-b-lg">
                   <CompanyThemedButton
-                    className=" w-full bg-black text-white rounded-lg py-2 text-sm"
+                    className=" w-full bg-black text-white disabled:bg-gray-600 rounded-lg py-2 text-sm"
                     type="submit"
                     disabled={isSubmitting}
                   >
-                    Create an account
+                    {isSubmitting ? "Creating account..." : "Create an account"}
                   </CompanyThemedButton>
                 </div>
               </div>

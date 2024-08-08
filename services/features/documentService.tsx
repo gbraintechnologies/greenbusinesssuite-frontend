@@ -1,6 +1,7 @@
 import authApi from "../meshAuthClient";
 import defaultMeshApi from "../defaultMeshClient";
-import multipartMeshApi from "../multipartMeshClient";
+
+import multipartDefaultMeshApi from "../multipartDefaultMeshClient";
 
 export const getAllUserUploads = (userId: any) => {
   return () =>
@@ -17,7 +18,9 @@ export const getAllIssuedDocs = (userId: any, companyId: any) => {
 };
 
 export const getAllIssuedDocsRaw = (userId: any, companyId: any) => {
-  return authApi.get(`/s3/resource/all-issued-docs/${userId}/${companyId}`);
+  return defaultMeshApi.get(
+    `/s3/resource/all-issued-docs/${userId}/${companyId}`
+  );
 };
 
 export const uploadUserFile = (
@@ -27,7 +30,7 @@ export const uploadUserFile = (
   formData: FormData,
   fileName: string
 ) => {
-  return multipartMeshApi.post(
+  return multipartDefaultMeshApi.post(
     `s3/resource/file/${userId}/${companyId}/${formId}/${fileName}`,
     formData
   );
@@ -35,7 +38,7 @@ export const uploadUserFile = (
 
 export const getUserUploadedDocsByFormId = (userId: any, formId: any) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/s3/resource/user-files/${userId}/${formId}`)
       .then((res) => res.data);
 };
@@ -46,7 +49,7 @@ export const getUserIssuedDocsByFormIdAndCompanyId = (
   userId: any
 ) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/s3/resource/issued-docs/${formId}/${companyId}/${userId}`)
       .then((res) => res.data);
 };
@@ -58,7 +61,7 @@ export const issueFileToUserWithFormId = (
   formData: FormData,
   fileName: string
 ) => {
-  return multipartMeshApi.post(
+  return multipartDefaultMeshApi.post(
     `/s3/resource/issued/${userId}/${companyId}/${formId}/${fileName}`,
     formData
   );

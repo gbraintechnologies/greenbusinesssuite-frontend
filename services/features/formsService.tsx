@@ -41,7 +41,8 @@ export const assignFormToCompany = (
 };
 
 export const getFormById = (id: any) => {
-  return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
+  return () =>
+    defaultMeshApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
 
 export const getFormByIdDefault = (id: any) => {
@@ -146,7 +147,7 @@ export const getFormResponseById = (
 };
 
 export const getFormResponsesById = (id: number) => {
-  return authApi.get(`/forms/response/data/${id}/0/10000/ALL`);
+  return defaultMeshApi.get(`/forms/response/data/${id}/0/10000/ALL`);
 };
 
 export const formResponseAnalytics = (id: number, companyId: string) => {

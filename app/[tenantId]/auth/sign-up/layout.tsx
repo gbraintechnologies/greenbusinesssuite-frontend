@@ -26,9 +26,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="flex-1  w-full bg-[#F8FAFC] md:flex flex-col items-start justify-center relative hidden">
         <div className="pl-[30%] absolute top-16 left-0">
           {/* <MeshSuiteLogo /> */}
-          <CompanyLogo />
+          {/* <CompanyLogo /> */}
         </div>
-        <div className="flex flex-col gap-4 pl-[30%] pr-[15%] ">
+        {/* <div className="flex flex-col gap-4 pl-[30%] pr-[15%] ">
           {landingInfo.map((info, index) => (
             <div key={index} className="flex flex-col gap-2">
               <div className="text-[#0F172A] font-bold text-lg">
@@ -39,11 +39,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           ))}
+        </div> */}
+        <div className="pl-[30%] pr-[15%] flex items-center justify-center">
+          <CompanyLogo showName />
         </div>
         <div className="absolute bottom-0 left-0  w-full flex justify-center items-center gap-4 pb-4 text-[#64748B] text-xs">
-          <p className="font-xs">&copy;&nbsp;Mesh Business Suite</p>
-          <p>&bull;&nbsp;Contact</p>
-          <p>&bull;&nbsp;Privacy policy</p>{" "}
+          <p className="font-xs">Powered by &copy;&nbsp;Mesh Business Suite</p>
+          {/* <p>&bull;&nbsp;Contact</p>
+          <p>&bull;&nbsp;Privacy policy</p>{" "} */}
         </div>
       </div>
       <div className="flex-1 w-full">

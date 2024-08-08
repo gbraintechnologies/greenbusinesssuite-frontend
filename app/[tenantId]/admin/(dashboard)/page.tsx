@@ -33,7 +33,6 @@ function CompanyDashboard() {
   });
 
   React.useEffect(() => {
-    console.log("company admin ", companyAdmin);
     setAdminStatus(companyAdmin?.user_status);
   }, [companyAdmin]);
 

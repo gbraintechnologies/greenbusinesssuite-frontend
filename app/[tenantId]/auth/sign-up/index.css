@@ -1,27 +1,43 @@
 .form-check-input:checked {
-    background-color: #16a34a !important;
-    border: 0;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 11' width='13' height='11' fill='none'%3e%3cpath d='M11.0426 1.02893C11.3258 0.695792 11.8254 0.655283 12.1585 0.938451C12.4917 1.22162 12.5322 1.72124 12.249 2.05437L5.51985 9.97104C5.23224 10.3094 4.72261 10.3451 4.3907 10.05L0.828197 6.88335C0.50141 6.59288 0.471975 6.09249 0.762452 5.7657C1.05293 5.43891 1.55332 5.40948 1.88011 5.69995L4.83765 8.32889L11.0426 1.02893Z' fill='%23ffffff'/%3e%3c/svg%3e");
-  }
-  
-  .form-check-input {
-    cursor: pointer;
-    background-size: 60% 60%;
-    border: 1.1px solid #94A3B8;
-    border-radius: 3px;
-    background-color: transparent;
-    fill: none;
-    width: 15px;
-    height: 15px;
-    margin: 0;
-    float: none;
-    flex-shrink: 0;
-    appearance: none;
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-  
-  .form-check-input:focus {
-    filter: none;
-    background-color: transparent;
-  }
+  background-color: #16a34a !important;
+  border: 0;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 11' width='13' height='11' fill='none'%3e%3cpath d='M11.0426 1.02893C11.3258 0.695792 11.8254 0.655283 12.1585 0.938451C12.4917 1.22162 12.5322 1.72124 12.249 2.05437L5.51985 9.97104C5.23224 10.3094 4.72261 10.3451 4.3907 10.05L0.828197 6.88335C0.50141 6.59288 0.471975 6.09249 0.762452 5.7657C1.05293 5.43891 1.55332 5.40948 1.88011 5.69995L4.83765 8.32889L11.0426 1.02893Z' fill='%23ffffff'/%3e%3c/svg%3e");
+}
+
+.form-check-input {
+  cursor: pointer;
+  background-size: 60% 60%;
+  border: 1.1px solid #94a3b8;
+  border-radius: 3px;
+  background-color: transparent;
+  fill: none;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  float: none;
+  flex-shrink: 0;
+  appearance: none;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.form-check-input:focus {
+  filter: none;
+  background-color: transparent;
+}
+
+.input-holder {
+  @apply flex flex-col w-full mb-5;
+}
+
+.input-holder input:not([type="checkbox"]):not([type="radio"]) {
+  @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff]  focus:outline-[0.2px] rounded-lg my-0.5 shadow-sm;
+}
+
+.input-holder label {
+  @apply text-sm mb-1 font-light text-gray-900;
+}
+
+.input-holder-label {
+  @apply text-sm mb-1 font-light text-gray-900;
+}
