@@ -9,6 +9,7 @@ import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 
 // icons
 import { CiCircleInfo } from "react-icons/ci";
+import { IoIosArrowBack } from "react-icons/io";
 
 import * as Yup from "yup";
 import UploadIcon from "@/public/svg/upload.svg";
@@ -29,6 +30,7 @@ import WriteIcon from "@/public/icons/WriteIcon";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { SketchPicker } from "react-color";
+import { useRouter } from "next/navigation";
 
 export interface ICompany {
   companyName: string;
@@ -260,6 +262,8 @@ const CompanyForm: React.FC<Props> = ({
   //   }
   // };
 
+  const router = useRouter();
+
   const handleChangeComplete = (newColor: any) => {
     setColor(newColor.hex);
   };
@@ -340,7 +344,15 @@ const CompanyForm: React.FC<Props> = ({
             <Form>
               {/* HEADER */}
               <div className="w-full text-primary-dark  flex justify-between">
-                <h3 className="font-semibold text-xl">{headerText}</h3>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="my-3 cursor-pointer flex text-sm items-center gap-2"
+                    onClick={() => router.back()}
+                  >
+                    <IoIosArrowBack size={12} />
+                  </div>
+                  <h3 className="font-semibold text-xl">{headerText}</h3>
+                </div>
 
                 <div className="flex gap-3">
                   <button
@@ -720,7 +732,7 @@ const CompanyForm: React.FC<Props> = ({
                     It must be squared and at at least 128px by 128px with a max
                     size of 512KB. Supported formats are JPG and PNG only.
                   </p>
-                  {!(smallLogoUrl) && (
+                  {!smallLogoUrl && (
                     <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
                       <input
                         type="file"
@@ -735,7 +747,7 @@ const CompanyForm: React.FC<Props> = ({
                       <CloudUploadIcon /> <p>Upload</p>
                     </label>
                   )}
-                  {(Boolean(smallLogoUrl)) && (
+                  {Boolean(smallLogoUrl) && (
                     <div
                       className="w-32 h-32 rounded-md my-3"
                       style={{
@@ -753,8 +765,9 @@ const CompanyForm: React.FC<Props> = ({
                       <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
                         <div
                           className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
-                          onClick={() => {setCompanySmallLogo(null)
-                            setSmallLogoUrl("")
+                          onClick={() => {
+                            setCompanySmallLogo(null);
+                            setSmallLogoUrl("");
                           }}
                         >
                           <RiDeleteBin6Line color="#0E121B" />
