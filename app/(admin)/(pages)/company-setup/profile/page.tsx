@@ -33,6 +33,7 @@ import CompanyAdmins from "./_components/CompanyAdmins";
 import DatePicker from "@/components/DatePicker/DatePicker";
 import Pagination from "@/components/Pagination/Pagination";
 import useFileUpload from "@/hooks/useFileUpload";
+import { VscLink } from "react-icons/vsc";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -237,20 +238,21 @@ const Page = () => {
     }
     try {
       const companySmallLogoURL =
-      companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
-    await services.editCompanyBranding(
-      companyData?.id,
-      companyData?.company_identifier,
-      companySmallLogo ? companySmallLogoURL?.file_url : companyBranding?.logo,
-      color,
-      companyData?.company_name
-    );
-    toast.success("Company branding updated successfully");
-  }
-  catch(error){
-    toast.error("Failed to update company branding");
-  }
+      await services.editCompanyBranding(
+        companyData?.id,
+        companyData?.company_identifier,
+        companySmallLogo
+          ? companySmallLogoURL?.file_url
+          : companyBranding?.logo,
+        color,
+        companyData?.company_name
+      );
+      toast.success("Company branding updated successfully");
+    } catch (error) {
+      toast.error("Failed to update company branding");
+    }
   };
   if (isLoading) {
     // if (isLoading || areFormsLoading || isCountryLoading) {
@@ -303,43 +305,63 @@ const Page = () => {
               </div>
             )}
           </div>
-          {companyData?.status && (
-            <div className="flex flex-col gap-3">
-              <div className="label">Status</div>
-              <Menu as={"div"} className={"z-20 relative inline-block"}>
-                <Menu.Button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
-                  {activeStatus?.name}
-                  <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
-                  <IoIosArrowDown />
-                </Menu.Button>
+          <div className="flex gap-6 items-center">
+            {companyData?.company_identifier && (
+              <div className="flex flex-col gap-3">
+                <div className="label">Company Dashboard</div>
 
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="z-50 absolute right-0 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] ring-1 ring-black/5 focus:outline-none">
-                    {statuses
-                      .filter((status) => status.id !== activeStatus?.id)
-                      .map((status) => (
-                        <Menu.Item key={status.id}>
-                          <button
-                            className="flex hover:text-primary-dark w-24 hover:bg-gray-50 border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg px-3 py-2"
-                            onClick={() => editCompanyStatus(status)}
-                          >
-                            {status.name}
-                          </button>
-                        </Menu.Item>
-                      ))}
-                  </Menu.Items>
-                </Transition>
-              </Menu>
-            </div>
-          )}
+                <button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center justify-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2" 
+                onClick={() => {
+                  const currentHost = window.location.origin;
+                  const url = currentHost + `/${companyData?.company_identifier}/auth`;
+
+                    navigator.clipboard.writeText(url).then(() => {
+                      toast.dismiss();
+                      toast.success(`${companyData?.company_name} dashboard link copied!`);
+                    });
+                  }}>
+                  <VscLink /> Copy Link{" "}
+                </button>
+              </div>
+            )}
+            {companyData?.status && (
+              <div className="flex flex-col gap-3">
+                <div className="label">Status</div>
+                <Menu as={"div"} className={"z-20 relative inline-block"}>
+                  <Menu.Button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
+                    {activeStatus?.name}
+                    <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
+                    <IoIosArrowDown />
+                  </Menu.Button>
+
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="z-50 absolute right-0 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] ring-1 ring-black/5 focus:outline-none">
+                      {statuses
+                        .filter((status) => status.id !== activeStatus?.id)
+                        .map((status) => (
+                          <Menu.Item key={status.id}>
+                            <button
+                              className="flex hover:text-primary-dark w-24 hover:bg-gray-50 border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg px-3 py-2"
+                              onClick={() => editCompanyStatus(status)}
+                            >
+                              {status.name}
+                            </button>
+                          </Menu.Item>
+                        ))}
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* TABS FOR DESCRIPTION  / ASSIGNED FORMS */}
