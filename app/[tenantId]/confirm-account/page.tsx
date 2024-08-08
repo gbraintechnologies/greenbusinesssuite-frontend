@@ -17,7 +17,6 @@ function ConfirmAccount({ params }: any) {
 
   useEffect(() => {
     if (token) {
-      // make call to confirm account
       services
         .confirmAccount(token)
         .then((res) => {
@@ -32,6 +31,7 @@ function ConfirmAccount({ params }: any) {
           console.log("e", e);
           toast.dismiss();
           toast.error("Error confirming account");
+          router.push(`/${tenantId}/auth`);
         });
     }
   }, [token]);
