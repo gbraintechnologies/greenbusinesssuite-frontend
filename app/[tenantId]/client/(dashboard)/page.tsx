@@ -99,6 +99,13 @@ const Page = () => {
       response[0]?.inputData
     );
 
+    console.log(
+      "to merge",
+      response[0]?.id,
+      form?.data,
+      response[0]?.inputData
+    );
+
     if (type === "completed") {
       if (!completedForms.some((f) => f === newForm)) {
         // @ts-ignore

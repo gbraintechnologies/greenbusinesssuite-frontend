@@ -28,7 +28,7 @@ export const allFormTemplates = (
 
 export const companyCustomersWithFormCount = (companyId: number) => {
   return () =>
-    defaultMeshApi
+    authApi
       .get(`/forms/response/completed-forms-count/${companyId}`)
       .then((res) => res.data);
 };
@@ -51,7 +51,7 @@ export const getFormByIdDefault = (id: any) => {
 };
 
 export const getFormByIdRaw = (id: any) => {
-  return authApi.get(`/forms/builder/${id}`);
+  return defaultMeshApi.get(`/forms/builder/${id}`);
 };
 
 export const getFormByIdRawForUser = (id: any) => {
@@ -77,7 +77,7 @@ export const getFormStatisticsForUser = (userId: string | null) => {
     throw new Error("No User Id");
   }
   return () =>
-    defaultMeshApi
+    authApi
       .get(`/forms/builder/user/form-statistics/${userId}`)
       .then((res) => res.data);
 };
@@ -91,14 +91,14 @@ export const getCompletedFormsByUserId = (userId: string) => {
 
 export const getCompletedFormIdsByUserId = (userId: string) => {
   return () =>
-    defaultMeshApi
+    authApi
       .get(`/forms/response/completed-form-ids/${userId}`)
       .then((res) => res.data);
 };
 
 export const getUncompletedFormIdsByUserId = (userId: string) => {
   return () =>
-    defaultMeshApi
+    authApi
       .get(`/forms/response/uncompleted-form-ids/${userId}`)
       .then((res) => res.data);
 };
@@ -141,25 +141,25 @@ export const getFormResponseById = (
   timeLine: TimelineType = "ALL"
 ) => {
   return () =>
-    defaultMeshApi
+    authApi
       .get(`/forms/response/data/${id}/${page}/${size}/${timeLine}`)
       .then((res) => res.data);
 };
 
 export const getFormResponsesById = (id: number) => {
-  return defaultMeshApi.get(`/forms/response/data/${id}/0/10000/ALL`);
+  return authApi.get(`/forms/response/data/${id}/0/10000/ALL`);
 };
 
 export const formResponseAnalytics = (id: number, companyId: string) => {
   return () =>
-    defaultMeshApi
+    authApi
       .get(`/forms/response/analytics/${id}/${companyId}`)
       .then((res) => res.data);
 };
 
 export const getFormStatusCountById = (id: number) => {
   return () =>
-    defaultMeshApi
+    authApi
       .get(`/forms/response/forms-status/count/${id}`)
       .then((res) => res.data);
 };
@@ -290,7 +290,7 @@ export const retrieveFormUserResponses = (
     throw new Error("No User Id");
   }
   return () =>
-    defaultMeshApi
+    authApi
       .get(`forms/response/data/user-form/${userId}/${formId}`)
       .then((res) => res.data);
 };
@@ -302,7 +302,7 @@ export const retrieveFormUserResponseRaw = (
   if (formId === undefined) {
     throw new Error("No Form Id");
   }
-  return defaultMeshApi
+  return authApi
     .get(`forms/response/data/user-form/${userId}/${formId}`)
     .then((res) => res.data);
 };
