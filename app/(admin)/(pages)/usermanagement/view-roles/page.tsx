@@ -10,6 +10,9 @@ import EditIconSetup from "@/public/icons/EditIconSetup";
 import { useRouter } from "next/navigation";
 import toSpace from "@/utils/UnderScore/UnderScore";
 
+import { IoIosArrowBack } from "react-icons/io";
+import { Button } from "@nextui-org/button";
+
 interface Permission {
   app_id: number;
   permission_name: string;
@@ -129,17 +132,23 @@ function ViewRoles() {
     <div className="w-full p-5">
       <div className="w-full">
         <div className="w-full text-primary-dark flex justify-between">
-          <div>
-            <h3 className="font-semibold text-xl">View all roles</h3>
+          <div className="flex items-center gap-2">
+            <div
+              className="my-3 cursor-pointer flex text-sm items-center gap-2"
+              onClick={() => router.back()}
+            >
+              <IoIosArrowBack size={12} />
+            </div>
+            <h3 className="font-semibold text-xl">All Roles</h3>
           </div>
           <div className="flex gap-3 items-center justify-end">
             <Link href="/usermanagement/new-role">
-              <button
+              <Button
                 type="button"
                 className="button bg-primary-green border border-gray-200 shadow-sm py-3 px-4 flex text-white text-sm hover:opacity-95 items-center gap-2 rounded-xl"
               >
-                <IoIosAddCircleOutline /> Add new Roles
-              </button>
+                <IoIosAddCircleOutline /> Add new role
+              </Button>
             </Link>
           </div>
         </div>

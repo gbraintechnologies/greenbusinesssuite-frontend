@@ -67,7 +67,7 @@ function Page({ params }: any) {
     lastName: yup.string().required("Last name is required"),
     password: yup
       .string()
-      .min(6, "Password must be at least 8 characters")
+      .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
   });
 

@@ -32,12 +32,13 @@ import * as Yup from "yup";
 
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 
-// css
-import "./index.css";
 import BigUserIcon from "@/public/icons/BigUserIcon";
 
 // hooks
 import useFileUpload from "@/hooks/useFileUpload";
+
+// css
+import "./index.css";
 
 //
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";

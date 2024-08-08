@@ -7,6 +7,7 @@ import { Fragment } from "react";
 import { LuPlusCircle } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
+import { Button } from "@nextui-org/button";
 
 function Nav() {
   return (
@@ -18,9 +19,9 @@ function Nav() {
 
       <div className="flex items-center gap-2">
         <Link href="/usermanagement/view-roles">
-          <button className="bg-white border border-gray-600 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100">
+          <Button className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl">
             View roles
-          </button>
+          </Button>
         </Link>
         <Menu as="div" className="relative inline-block text-left">
           <div>

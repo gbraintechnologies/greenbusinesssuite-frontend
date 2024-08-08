@@ -14,6 +14,7 @@ import { CustomCheckbox } from "../components/Customcheckbox";
 import Modal from "@/components/Modal/Modal";
 import services from "@/services";
 import toSpace from "@/utils/UnderScore/UnderScore";
+import { IoIosArrowBack } from "react-icons/io";
 
 interface Permission {
   app_id: number;
@@ -102,7 +103,15 @@ function NewRole() {
             <Form>
               {/* HEADER */}
               <div className="w-full text-primary-dark flex justify-between">
-                <h3 className="font-semibold text-xl">Create a new role</h3>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="my-3 cursor-pointer flex text-sm items-center gap-2"
+                    onClick={() => router.back()}
+                  >
+                    <IoIosArrowBack size={12} />
+                  </div>
+                  <h3 className="font-semibold text-xl">All Roles</h3>
+                </div>
 
                 <div className="flex gap-3">
                   <button
@@ -173,14 +182,16 @@ function NewRole() {
                 )}
                 <div className="flex flex-col gap-2 pt-2 pb-5">
                   {permissions && permissions.length > 0 ? (
-                    permissions.map(({ permission_name, description, id }: Permission) => (
-                      <CustomCheckbox
-                        key={id}
-                        name={`permissions.${id}`}
-                        label={toSpace(permission_name)}
-                        subtext={description}
-                      />
-                    ))
+                    permissions.map(
+                      ({ permission_name, description, id }: Permission) => (
+                        <CustomCheckbox
+                          key={id}
+                          name={`permissions.${id}`}
+                          label={toSpace(permission_name)}
+                          subtext={description}
+                        />
+                      )
+                    )
                   ) : (
                     <p>No permissions available</p>
                   )}

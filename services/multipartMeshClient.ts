@@ -95,8 +95,6 @@ multipartMeshApi.interceptors.response.use(
           });
         })
         .catch((e) => {
-          // TODO: HANDLE LOGIC HERE TO GO TO RIGHT LOGIN SCREEN
-          // TO COMPANY OR TO LOGICIEL ADMIN
           toast.dismiss();
           toast.warning("Login to continue", {
             description: "Your session has expired. Please login to continue",
