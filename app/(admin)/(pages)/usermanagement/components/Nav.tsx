@@ -18,8 +18,8 @@ function Nav() {
 
       <div className="flex items-center gap-2">
         <Link href="/usermanagement/view-roles">
-          <button className="bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100">
-             View roles
+          <button className="bg-white border border-gray-600 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100">
+            View roles
           </button>
         </Link>
         <Menu as="div" className="relative inline-block text-left">

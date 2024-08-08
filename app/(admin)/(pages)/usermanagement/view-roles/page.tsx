@@ -51,7 +51,7 @@ function ViewRoles() {
         id: role.id,
         roleName: role.role_name,
         roleDescription: role.role_description,
-        permissions: role.permissions.map(p => p.permission_name).join(", "),
+        permissions: role.permissions.map((p) => p.permission_name).join(", "),
       }));
       setRows(transformedData);
     }
@@ -64,8 +64,8 @@ function ViewRoles() {
       headerName: "Name of Role",
       flex: 1,
       renderCell: (params: any) => (
-        <div className="flex py-3 gap-4 my-3 items-center h-12"> 
-          <div className="h-10 flex items-center justify-center">
+        <div className="flex py-3 gap-4 my-3 items-center h-12">
+          <div className="h-10 capitalize flex items-center justify-center">
             {params.value}
           </div>
         </div>
@@ -77,7 +77,7 @@ function ViewRoles() {
       flex: 1,
       renderCell: (params: any) => (
         <div
-          className="flex flex-col gap-2 my-2 h-12" 
+          className="flex flex-col gap-2 my-2 h-12"
           style={{ whiteSpace: "normal", wordBreak: "break-word" }}
         >
           <p className="font-medium text-sm">{params.value}</p>
@@ -90,7 +90,7 @@ function ViewRoles() {
       flex: 4,
       renderCell: (params: any) => (
         <div
-          className="flex flex-col gap-2 my-2 h-12"  
+          className="flex flex-col gap-2 my-2 h-12"
           style={{ whiteSpace: "normal", wordBreak: "break-word" }}
         >
           <p className="font-medium text-sm">{toSpace(params.value)}</p>
@@ -107,7 +107,9 @@ function ViewRoles() {
             type="button"
             className="rounded-full"
             style={{ right: "-10px" }}
-            onClick={() => router.push(`/usermanagement/edit-role?roleId=${params.row.id}`)}
+            onClick={() =>
+              router.push(`/usermanagement/edit-role?roleId=${params.row.id}`)
+            }
           >
             <EditIconSetup />
           </button>
