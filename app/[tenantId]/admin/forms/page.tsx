@@ -36,7 +36,13 @@ function CompanyForms() {
     isLoading: isFormsLoading,
     refetch,
   } = useQuery({
-    queryKey: ["get company forms for ", Number(companyData?.id), page, limit],
+    queryKey: [
+      "get company forms for ",
+      Number(companyData?.id),
+      page,
+      limit,
+      selectedTimeline?.value,
+    ],
     queryFn: services.getFormsByCompanyId(
       companyData?.id,
       page,
