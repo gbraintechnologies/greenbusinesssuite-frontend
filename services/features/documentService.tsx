@@ -1,14 +1,17 @@
 import authApi from "../meshAuthClient";
+import defaultMeshApi from "../defaultMeshClient";
 import multipartMeshApi from "../multipartMeshClient";
 
 export const getAllUserUploads = (userId: any) => {
   return () =>
-    authApi.get(`/s3/resource/user-files/${userId}`).then((res) => res.data);
+    defaultMeshApi
+      .get(`/s3/resource/user-files/${userId}`)
+      .then((res) => res.data);
 };
 
 export const getAllIssuedDocs = (userId: any, companyId: any) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/s3/resource/all-issued-docs/${userId}/${companyId}`)
       .then((res) => res.data);
 };

@@ -194,8 +194,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
   const [options, setOptions] = useState(null);
 
   useEffect(() => {
-    // TODO: UPDATE THIS
-    if (type !== "completed") {
+    if (type === "completed") {
       // @ts-ignore
       setOptions(completedOptions);
     } else {

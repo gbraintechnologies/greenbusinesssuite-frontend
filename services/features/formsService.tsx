@@ -53,6 +53,10 @@ export const getFormByIdRaw = (id: any) => {
   return authApi.get(`/forms/builder/${id}`);
 };
 
+export const getFormByIdRawForUser = (id: any) => {
+  return defaultMeshApi.get(`/forms/builder/${id}`);
+};
+
 export const getFormsByCompanyId = (
   companyId: string,
   page: string | number = 1,
@@ -79,8 +83,22 @@ export const getFormStatisticsForUser = (userId: string | null) => {
 
 export const getCompletedFormsByUserId = (userId: string) => {
   return () =>
-    defaultMeshApi
+    authApi
       .get(`/forms/builder/user/completed-forms/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getCompletedFormIdsByUserId = (userId: string) => {
+  return () =>
+    defaultMeshApi
+      .get(`/forms/response/completed-form-ids/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getUncompletedFormIdsByUserId = (userId: string) => {
+  return () =>
+    defaultMeshApi
+      .get(`/forms/response/uncompleted-form-ids/${userId}`)
       .then((res) => res.data);
 };
 
@@ -270,9 +288,8 @@ export const retrieveFormUserResponses = (
   if (userId === null) {
     throw new Error("No User Id");
   }
-
   return () =>
-    authApi
+    defaultMeshApi
       .get(`forms/response/data/user-form/${userId}/${formId}`)
       .then((res) => res.data);
 };
@@ -284,7 +301,7 @@ export const retrieveFormUserResponseRaw = (
   if (formId === undefined) {
     throw new Error("No Form Id");
   }
-  return authApi
+  return defaultMeshApi
     .get(`forms/response/data/user-form/${userId}/${formId}`)
     .then((res) => res.data);
 };

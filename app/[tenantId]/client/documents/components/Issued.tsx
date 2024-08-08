@@ -6,16 +6,19 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 
 // components
-
-//
 import NoDocuments from "@/components/DocumentComponents/NoDocuments";
 import DocumentCard from "@/components/DocumentComponents/DocumentCard";
 import DocumentSkeleton from "@/components/DocumentComponents/DocumentSkeleton";
+
+// hooks
+import useAuth from "@/hooks/useAuth";
 
 function Issued() {
   // GET ALL FORM DETAILS
 
   const { user } = useUser();
+
+  const { auth } = useAuth();
 
   const [issued, setIssued] = useState([]);
 
@@ -40,33 +43,33 @@ function Issued() {
     setLoading(false);
   };
 
-  // TODO: Get company id from user profile after major changes
+  // // TODO: Get company id from user profile after major changes
 
-  // completed forms
-  const { data: completedForms, isLoading: areCompletedFormsLoading } =
-    useQuery({
-      queryKey: ["get completed forms by user", user?.id],
-      queryFn: services.getCompletedFormsByUserId(user?.id),
-      enabled: Boolean(user?.id),
-    });
+  // // completed forms
+  // const { data: completedForms, isLoading: areCompletedFormsLoading } =
+  //   useQuery({
+  //     queryKey: ["get completed forms by user", user?.id],
+  //     queryFn: services.getCompletedFormsByUserId(user?.id),
+  //     enabled: Boolean(user?.id),
+  //   });
 
-  // TODO: TEMPORAL WAY OF FETCHING TO GET ALL ISSUED FROM ALL COMPANIES - AFTER MULTITENANCY CHANGE
-  useEffect(() => {
-    //
-    if (completedForms?.length > 0) {
-      setIssued([]);
+  // // TODO: TEMPORAL WAY OF FETCHING TO GET ALL ISSUED FROM ALL COMPANIES - AFTER MULTITENANCY CHANGE
+  // useEffect(() => {
+  //   //
+  //   if (completedForms?.length > 0) {
+  //     setIssued([]);
 
-      const uniqueCompanyIds = [
-        // @ts-ignore
-        ...new Set(completedForms.map((item: any) => item.companyId)),
-      ];
+  //     const uniqueCompanyIds = [
+  //       // @ts-ignore
+  //       ...new Set(completedForms.map((item: any) => item.companyId)),
+  //     ];
 
-      fetchIssued(uniqueCompanyIds);
-    }
-  }, [completedForms, areCompletedFormsLoading]);
+  //     fetchIssued(uniqueCompanyIds);
+  //   }
+  // }, [completedForms, areCompletedFormsLoading]);
 
-  // TODO: Get companies from user form responses
-  let companyId = 7;
+  // // TODO: Get companies from user form responses
+  // let companyId = 7;
 
   //
   const {
@@ -74,8 +77,8 @@ function Issued() {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["all user issued docs for client", user?.id, companyId],
-    queryFn: services.getAllIssuedDocs(user?.id, companyId),
+    queryKey: ["all user issued docs for client", user?.id, auth?.company_id],
+    queryFn: services.getAllIssuedDocs(user?.id, auth?.company_id),
     enabled: Boolean(user?.id),
   });
 

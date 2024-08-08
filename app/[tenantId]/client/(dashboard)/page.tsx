@@ -19,24 +19,25 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
 import SuspendedNotice from "./components/SuspendedNotice";
+import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 
 const Page = () => {
   const [filters] = useState([
+    // {
+    //   id: 0,
+    //   name: "All",
+    //   value: "all",
+    // },
     {
-      id: 0,
-      name: "All",
-      value: "all",
+      id: 1,
+      name: "Completed",
+      value: "completed",
     },
-    // {
-    //   id: 1,
-    //   name: "Completed",
-    //   value: "completed",
-    // },
-    // {
-    //   id: 2,
-    //   name: "Uncompleted",
-    //   value: "uncompleted",
-    // },
+    {
+      id: 2,
+      name: "Uncompleted",
+      value: "uncompleted",
+    },
   ]);
 
   //
@@ -48,9 +49,9 @@ const Page = () => {
   const [userStatus, setUserStatus] = useState("");
 
   const [activeFilter, setActiveFilter] = useState({
-    id: 0,
-    name: "All",
-    value: "all",
+    id: 1,
+    name: "Completed",
+    value: "completed",
   });
 
   const { data: formsStats, isLoading: areStatsLoading } = useQuery({
@@ -59,27 +60,83 @@ const Page = () => {
     enabled: Boolean(user?.id),
   });
 
-  const { data: uncompletedForms, isLoading: areUncompletedFormsLoading } =
+  // const { data: allUserForms, isLoading: allUserFormsLoading } = useQuery({
+  //   queryKey: ["all user forms", user?.id],
+  //   queryFn: services.getAllFormsByUserId(user?.id),
+  //   enabled: Boolean(user?.id),
+  // });
+
+  const { data: completedFormsIds, isLoading: areCompletedFormsIdLoading } =
     useQuery({
-      queryKey: ["get company forms", user?.id],
-      queryFn: services.getUncompletedFormsByUserId(user?.id),
-      // enabled: Boolean(user?.id),
-      enabled: false,
+      queryKey: ["get completed forms by user", user?.id],
+      queryFn: services.getCompletedFormIdsByUserId(user?.id),
+      enabled: Boolean(user?.id),
     });
 
-  const { data: allUserForms, isLoading: allUserFormsLoading } = useQuery({
-    queryKey: ["all user forms", user?.id],
-    queryFn: services.getAllFormsByUserId(user?.id),
+  const {
+    data: uncompletedFormsIds,
+    isLoading: areUncompletedFormsIdsLoading,
+  } = useQuery({
+    queryKey: ["get uncompleted forms id", user?.id],
+    queryFn: services.getUncompletedFormIdsByUserId(user?.id),
     enabled: Boolean(user?.id),
   });
 
-  const { data: completedForms, isLoading: areCompletedFormsLoading } =
-    useQuery({
-      queryKey: ["get completed forms by user", user?.id],
-      queryFn: services.getCompletedFormsByUserId(user?.id),
-      // enabled: Boolean(user?.id),
-      enabled: false,
-    });
+  const [completedForms, setCompletedForms] = useState([]);
+  const [uncompletedForms, setUncompletedForms] = useState([]);
+
+  const [completedFormsLoading, setCompletedFormsLoading] = useState(false);
+
+  const [uncompletedFormsLoading, setUncompletedFormsLoading] = useState(false);
+
+  async function getResponseForForm(id: any, type: string) {
+    let form = await services.getFormByIdRawForUser(id);
+    let response = await services.retrieveFormUserResponseRaw(user?.id, id);
+
+    let newForm = mergeForm(
+      response[0]?.id,
+      form?.data,
+      response[0]?.inputData
+    );
+
+    if (type === "completed") {
+      if (!completedForms.some((f) => f === newForm)) {
+        // @ts-ignore
+        setCompletedForms((prev) => [...prev, newForm]);
+      }
+    } else {
+      if (!uncompletedForms.some((f) => f === newForm)) {
+        // @ts-ignore
+        setUncompletedForms((prev) => [...prev, newForm]);
+      }
+    }
+  }
+
+  // completed forms ids processing
+  useEffect(() => {
+    if (completedFormsIds) {
+      setCompletedFormsLoading(true);
+      setCompletedForms([]);
+      completedFormsIds.forEach((id: any) => {
+        getResponseForForm(id, "completed");
+      });
+
+      setCompletedFormsLoading(false);
+    }
+  }, [completedFormsIds]);
+
+  // uncompleted
+  useEffect(() => {
+    if (uncompletedFormsIds) {
+      setUncompletedFormsLoading(true);
+      setUncompletedForms([]);
+      uncompletedFormsIds.forEach((id: any) => {
+        getResponseForForm(id, "uncompleted");
+      });
+
+      setUncompletedFormsLoading(false);
+    }
+  }, [uncompletedFormsIds]);
 
   useEffect(() => {
     // Deselect any active form
@@ -104,11 +161,11 @@ const Page = () => {
         </div>
       )}
 
-      <div className="mt-4 grid grid-col-1 gap-3">
+      {/* <div className="mt-4 grid grid-col-1 gap-3">
         {uncompletedForms?.map((form: any) => {
           return <UncompletedCard key={form?.id} form={form} />;
         })}
-      </div>
+      </div> */}
       <div className="mt-6">
         <StatsBlock
           stats={[
@@ -137,22 +194,26 @@ const Page = () => {
           />
         </div>
         <div className="mt-4">
-          {activeFilter.id === 0 && (
+          {/* {activeFilter.id === 0 && (
             <CompletedForms
               forms={allUserForms}
               isFormsLoading={allUserFormsLoading}
             />
-          )}
+          )} */}
           {activeFilter.id === 1 && (
             <CompletedForms
               forms={completedForms}
-              isFormsLoading={areCompletedFormsLoading}
+              isFormsLoading={
+                areCompletedFormsIdLoading || completedFormsLoading
+              }
             />
           )}
           {activeFilter.id === 2 && (
             <UnCompletedForms
               forms={uncompletedForms}
-              isFormsLoading={areUncompletedFormsLoading}
+              isFormsLoading={
+                areUncompletedFormsIdsLoading || uncompletedFormsLoading
+              }
             />
           )}
         </div>
