@@ -79,18 +79,18 @@ function Nav() {
             <Menu.Item>
               <Link href="/country-setup/new-individual">
                 <div className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2 mb-1">
-                  Add Individual
+                  Add New Country
                 </div>
               </Link>
             </Menu.Item>
-            <Menu.Item>
+            {/* <Menu.Item>
               <button
                 onClick={handleImportButtonClick}
                 className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2 mb-1"
               >
                 Import via CSV and xls
               </button>
-            </Menu.Item>
+            </Menu.Item> */}
           </Menu.Items>
         </Transition>
       </Menu>

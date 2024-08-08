@@ -2,7 +2,7 @@ import Country from './Country';
 
 
 const Countries = () => {
-    return Country;
+    return Country.sort((a, b) => a.name.common.localeCompare(b.name.common));
 };
 
 const Countrie = (itm: string) => {
