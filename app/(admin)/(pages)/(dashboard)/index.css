@@ -11,5 +11,5 @@
 }
 
 .stats-holder {
-  @apply grid grid-cols-1 md:grid-cols-3 gap-10 divide-x mt-5 bg-gray-50 rounded-xl border-gray-100 p-5;
+  @apply grid grid-cols-1 md:grid-cols-4 gap-10 divide-x mt-5 bg-gray-50 rounded-xl border-gray-100 p-5;
 }

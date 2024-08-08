@@ -40,27 +40,36 @@ function Dashboard() {
 
         <div className="stats-holder">
           <div className="stats-section">
-            <p>Number of companies</p>
+            <p>All Companies</p>
             <h4 className="stats-content">{companies?.length}</h4>
           </div>
 
           {/*  */}
           {/* <div className="border-r border-gray-700 w-2" /> */}
           <div className="stats-section">
-            <p>Total number of users</p>
+            <p>All Users</p>
             <h4 className="stats-content">{users?.length}</h4>
+          </div>
+          <div className="stats-section">
+            <p>Published Forms</p>
+            <h4 className="stats-content">{publishedFormsCount}</h4>
+          </div>
+
+          <div className="stats-section">
+            <p>Unpublished Forms</p>
+            <h4 className="stats-content">{unpublishedFormsCount}</h4>
           </div>
 
           {/*  */}
           {/* <div className="border-r border-gray-700 w-2" /> */}
-          <div className="stats-section">
+          {/* <div className="stats-section">
             <p>Number of active users</p>
             <h4 className="stats-content">-</h4>
-          </div>
+          </div> */}
         </div>
 
         {/*  */}
-        <div className="stats-holder">
+        {/* <div className="stats-holder">
           <div className="stats-section">
             <p>Number of inactive users</p>
             <h4 className="stats-content">-</h4>
@@ -75,7 +84,7 @@ function Dashboard() {
             <p>Number of unpublished forms</p>
             <h4 className="stats-content">{unpublishedFormsCount}</h4>
           </div>
-        </div>
+        </div> */}
 
         {/* TEST TOAST AND REFRESHING TOKEN  */}
         {/* <div className="my-20 flex items-center gap-10">
