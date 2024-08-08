@@ -28,7 +28,7 @@ export const allFormTemplates = (
 
 export const companyCustomersWithFormCount = (companyId: number) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/forms/response/completed-forms-count/${companyId}`)
       .then((res) => res.data);
 };

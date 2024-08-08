@@ -20,10 +20,16 @@ function PublishFormButton({
   setShowUnpublishModal,
   showUnpublishModal,
   tenantId,
-}: any) {
+}: {
+  formID: number | string;
+  setShowUnpublishModal: any;
+  showUnpublishModal: boolean;
+  tenantId: number | string;
+}) {
   const queryClient = useQueryClient();
 
   const { data: form } = useQuery({
+    // @ts-ignore
     queryKey: ["form", parseInt(formID)],
     queryFn: services.getFormById(formID),
     enabled: Boolean(formID),

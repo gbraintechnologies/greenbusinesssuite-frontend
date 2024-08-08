@@ -67,11 +67,6 @@ function SingleFormCompany({ params }: any) {
     enabled: Boolean(formID),
   });
 
-  const { data: companies } = useQuery({
-    queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(),
-  });
-
   const {
     data: formResponseData,
     isLoading: isResponseLoading,
@@ -163,7 +158,6 @@ function SingleFormCompany({ params }: any) {
             <PublishFormButton
               showUnpublishModal={showUnpublishModal}
               setShowUnpublishModal={setShowUnpublishModal}
-              companies={companies}
               formID={form?.id}
             />
           </div>

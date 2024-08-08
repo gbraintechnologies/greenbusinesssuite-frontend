@@ -35,15 +35,26 @@ export default function Layout({ children, params }: layoutProps) {
   });
 
   useEffect(() => {
-    if (Boolean(data) && companyBranding?.company_identifier !== tenantId) {
+    if (Boolean(data)) {
       const { companyName, color, companyId, logo, tenancyId } = data;
-      setCompanyBranding({
-        id: companyId,
-        name: companyName,
+
+      let newBranding = {
         color: color,
-        logo: logo,
         company_identifier: tenancyId,
-      });
+        id: companyId,
+        logo: logo,
+        name: companyName,
+      };
+
+      // if company branding is null, assign
+      if (!!companyBranding) {
+        setCompanyBranding(newBranding);
+      } else {
+        // assign if elements are different (i/e have been changed / updated)
+        if (JSON.stringify(companyBranding) !== JSON.stringify(newBranding)) {
+          setCompanyBranding(newBranding);
+        }
+      }
     }
   }, [data, isLoading]);
 

@@ -58,7 +58,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, IPasswordInput>(
               "border",
               error ? "border-red-500" : "border-gray-300",
               btnSize === "normal" ? "h-[46px]" : "h-[40px]",
-              `focus:ring-0 pr-10 border border-slate-300 focus:border focus:border-blackrounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${extraClasses}`
+              `focus:ring-0 pr-10 border border-slate-300 focus:border focus:border-black rounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${extraClasses}`
             )}
           />
           <div

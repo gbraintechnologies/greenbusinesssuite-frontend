@@ -24,7 +24,7 @@ const RadioInput = React.forwardRef<HTMLInputElement, IRadioInput>(
       <div className="flex items-center">
         <div
           className={clsx(
-            `focus:ring-0 border focus:border focus:border-blackrounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-black-100 ${extraClasses}`
+            `focus:ring-0 border focus:border focus:border-black rounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-black-100 ${extraClasses}`
           )}
         >
           <label htmlFor={id} className="font-medium text-sm">

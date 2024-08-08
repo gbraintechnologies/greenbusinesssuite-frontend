@@ -48,10 +48,7 @@ multipartMeshApi.interceptors.response.use(
     // If the error status is 401 and there is no originalRequest._retry flag,
     // it means the token has expired and we need to refresh it
     // 403 error means the server understands but refuses to authorize because token is expired
-    if (
-      (error.response.status === 401 || error.response.status === 403) &&
-      !originalRequest._retry
-    ) {
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       let headers: headerT = {
