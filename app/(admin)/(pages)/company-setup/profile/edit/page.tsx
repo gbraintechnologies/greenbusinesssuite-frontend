@@ -30,14 +30,6 @@ const Page = () => {
     queryFn: services.getCompanyById(Number(id)),
   });
 
-  // const {data: brandingInfo, isLoading: brandingInfoLoading} = useQuery({
-  //   queryKey: ["branding info for ", id],
-  //   queryFn: services.getCompanyBranding(companyData?.company_identifier),
-  //   enabled: !!companyData
-  // })
-
-  
-
   const companyDescription =
     companyData?.company_custom_values?.find(
       (field: any) => field.custom_profile_item_id == 1
@@ -95,11 +87,11 @@ const Page = () => {
       isConvertibleToNumber(companyData?.industry),
   });
 
-  const {data: companyBranding } = useQuery({
+  const { data: companyBranding } = useQuery({
     queryKey: ["get company branding info", companyData?.company_identifier],
     queryFn: services.getCompanyBranding(companyData?.company_identifier),
     enabled: !!companyData?.company_identifier,
-  })
+  });
 
   const [showCancelModal, setShowCancelModal] = useState(false);
 
@@ -238,19 +230,19 @@ const Page = () => {
       return;
     }
 
-    if(!color){
+    if (!color) {
       toast.error("Color is required");
       setSubmitting(false);
       return;
     }
 
-    if(!smallLogoUrl){
+    if (!smallLogoUrl) {
       toast.error("Small Logo is required");
       setSubmitting(false);
       return;
     }
 
-    if(!backgroundImageUrl){
+    if (!backgroundImageUrl) {
       toast.error("Logo is required");
       setSubmitting(false);
       return;
@@ -352,15 +344,22 @@ const Page = () => {
       //     userData?.id
       //   );
 
-
       // }
 
       const companySmallLogoURL =
-      companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
-      await services.editCompanyBranding(companyData?.id, companyData?.company_identifier, companySmallLogo ? companySmallLogoURL?.file_url : companyBranding?.logo, color, companyData?.company_name);
+      await services.editCompanyBranding(
+        companyData?.id,
+        companyData?.company_identifier,
+        companySmallLogo
+          ? companySmallLogoURL?.file_url
+          : companyBranding?.logo,
+        color,
+        companyData?.company_name
+      );
 
-      toast.success("Company Adidas edited successfully");
+      toast.success(`Company ${companyData?.company_name} edited successfully`);
       // router.back();
     } catch (error) {
       toast.error("An error occurred");
@@ -430,7 +429,7 @@ const Page = () => {
         setSectorId(companySectorId);
       }
 
-      if(companyBranding){
+      if (companyBranding) {
         setColor(companyBranding?.color);
         setSmallLogoUrl(companyBranding?.logo);
       }
