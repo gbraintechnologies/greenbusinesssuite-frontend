@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 
 // icons
 import { BsThreeDots } from "react-icons/bs";
@@ -13,8 +13,7 @@ import { IoDocumentAttachOutline } from "react-icons/io5";
 // utils
 import FormatDate from "@/utils/FormatDate/FormatDate";
 
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   Modal,
@@ -36,33 +35,41 @@ function DocumentCard({ document }: any) {
   //
   let { fileName, createdOn, url, formId } = document;
 
+  const { data: form, isLoading } = useQuery({
+    queryKey: ["form", parseInt(formId)],
+    queryFn: services.getFormById(formId),
+    enabled: Boolean(formId),
+  });
+
   //
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  // console.log("document", document);
-
   const queryClient = useQueryClient();
-
-  // https://www.npmjs.com/package/react-use-downloader
 
   return (
     <>
       <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
         <button
-          className={`flex items-center bg-gradient-to-br from-gray-600 to bg-gray-500 justify-center w-full  rounded-tl-lg rounded-tr-lg`}
+          className={`flex relative items-center bg-gradient-to-br from-gray-600 to bg-gray-500 justify-center w-full  rounded-tl-lg rounded-tr-lg`}
         >
-          <div className="m-2 my-10 px-4 py-2 flex items-center justify-center  rounded-lg bg-white">
+          <div className="absolute top-3 left-3">
+            {form && (
+              <span className="bg-gray-500 text-xs text-white font-medium rounded-full px-3 py-1">
+                {form?.name}
+              </span>
+            )}
+          </div>
+          <div className="m-4 my-8 px-4 py-2 flex items-center justify-center  rounded-lg ">
             {/* ADD TYPE OF FILE: UPLOAD / ISSUE */}
-            <IoDocumentAttachOutline className="text-gray-600" size={30} />
+            <IoDocumentAttachOutline size={50} className="text-gray-400 mt-4" />
           </div>
         </button>
         <div className="p-3">
           <button className="text-base w-full text-left font-medium">
             {startWithCapital(fileName?.split(".")[0])}
           </button>
-          <div className="flex items-center justify-between mt-1">
-            {/* TODO: FORM NAME HERE Fetch form using formID */}
 
+          <div className="flex items-center justify-between mt-1">
             <p className="text-xs font-light pr-4">{FormatDate(createdOn)}</p>
             <Menu as="div" className="relative">
               <div className="relative">
