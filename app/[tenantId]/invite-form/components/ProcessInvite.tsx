@@ -91,10 +91,10 @@ function ProcessInvite({ tenantId }: any) {
           <CompanyThemedButton
             onClick={() =>
               router.push(
-                `/${tenantId}/auth?redirect=invitiation&f=${formId}&c=${companyId}`
+                `/${tenantId}/auth/login?redirect=invitiation&f=${formId}&c=${companyId}`
               )
             }
-            className=" mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
+            className="mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
             type="submit"
           >
             Go to authentication
