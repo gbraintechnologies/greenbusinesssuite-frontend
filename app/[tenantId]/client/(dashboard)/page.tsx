@@ -69,18 +69,22 @@ const Page = () => {
   const {
     data: uncompletedFormsIds,
     isLoading: areUncompletedFormsIdsLoading,
+    refetch: refetchUncompleted,
   } = useQuery({
     queryKey: ["get uncompleted forms id", user?.id],
     queryFn: services.getUncompletedFormIdsByUserId(user?.id),
     enabled: Boolean(user?.id),
   });
 
-  const { data: completedFormsIds, isLoading: areCompletedFormsIdLoading } =
-    useQuery({
-      queryKey: ["get completed forms by user", user?.id],
-      queryFn: services.getCompletedFormIdsByUserId(user?.id),
-      enabled: Boolean(user?.id),
-    });
+  const {
+    data: completedFormsIds,
+    isLoading: areCompletedFormsIdLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["get completed forms by user", user?.id],
+    queryFn: services.getCompletedFormIdsByUserId(user?.id),
+    enabled: Boolean(user?.id),
+  });
 
   const [completedForms, setCompletedForms] = useState([]);
   const [uncompletedForms, setUncompletedForms] = useState([]);
@@ -149,7 +153,12 @@ const Page = () => {
 
   useEffect(() => {
     // Deselect any active form
+    setCompletedForms([]);
+    setUncompletedForms([]);
     removeClientForm();
+    refetch();
+    refetchUncompleted();
+    // window.location.reload();
   }, []);
 
   useEffect(() => {
@@ -171,9 +180,10 @@ const Page = () => {
       )}
 
       <div className="mt-4 grid grid-col-1 gap-3">
-        {uncompletedForms?.map((form: any) => {
-          return <UncompletedCard key={form?.id} form={form} />;
-        })}
+        {uncompletedFormsIds &&
+          uncompletedForms?.map((form: any) => {
+            return <UncompletedCard key={form?.id} form={form} />;
+          })}
       </div>
       <div className="mt-6">
         <StatsBlock
