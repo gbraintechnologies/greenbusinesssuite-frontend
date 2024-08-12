@@ -196,7 +196,7 @@ function UserManagement({ params }: any) {
         // APP ID ===1 == MESH SUITE APP
         // @ts-ignore
         const meshRole = user?.profiles.find((item: any) => item.app_id === 1);
-        console.log("mesh role", meshRole);
+
         if (meshRole) {
           for (let i = 0; i < roles?.length; i++) {
             if (roles[i].id === meshRole?.role_id) {

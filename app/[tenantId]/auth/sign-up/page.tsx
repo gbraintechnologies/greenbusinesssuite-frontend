@@ -105,6 +105,7 @@ function Page({ params }: any) {
       .userSelfSignUp(userData)
       .then((res) => {
         // console.log("create user response", createUserResponse);
+
         toast.success("Account created successfully", {
           description: "Confirm your account using the link sent to your email",
         });

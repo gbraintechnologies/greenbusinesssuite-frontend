@@ -151,10 +151,13 @@ function CompanyAdminAuth({ params }: any) {
         }
       }
     } catch (error) {
-      // toast.error("Error logging in.", {
-      //   description: "Contact your administrator",
-      // });
-      setLoginError("Incorrect username and password");
+      // @ts-ignore
+      if (Boolean(error?.response?.data?.detail)) {
+        //  @ts-ignore
+        setLoginError(error?.response?.data?.detail);
+      } else {
+        setLoginError("Incorrect username and password");
+      }
     }
   };
 
@@ -179,6 +182,7 @@ function CompanyAdminAuth({ params }: any) {
           </p>
           <div>
             <TextInput
+              onClick={() => setLoginError(null)}
               label="Username"
               type="text"
               placeholder="Enter your username"
@@ -190,6 +194,7 @@ function CompanyAdminAuth({ params }: any) {
           </div>
           <div className="mb-4">
             <PasswordInput
+              onClick={() => setLoginError(null)}
               label="Password"
               placeholder="Enter your password"
               autoComplete="off"

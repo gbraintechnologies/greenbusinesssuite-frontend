@@ -123,6 +123,7 @@ const Page = () => {
   // completed forms ids processing
   useEffect(() => {
     if (completedFormsIds) {
+      setCompletedForms([]);
       setCompletedFormsLoading(true);
 
       // Create a new array for completed forms
@@ -138,6 +139,8 @@ const Page = () => {
 
   useEffect(() => {
     if (uncompletedFormsIds) {
+      setUncompletedForms([]);
+
       setUncompletedFormsLoading(true);
 
       // Create a new array for completed forms

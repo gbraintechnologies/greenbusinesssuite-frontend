@@ -1,5 +1,6 @@
 import authApi from "../meshAuthClient";
 
+import multipartMeshApi from "../multipartMeshClient";
 import multipartDefaultMeshApi from "../multipartDefaultMeshClient";
 
 export const getAllUserUploads = (userId: any) => {
@@ -25,7 +26,7 @@ export const uploadUserFile = (
   formData: FormData,
   fileName: string
 ) => {
-  return multipartDefaultMeshApi.post(
+  return multipartMeshApi.post(
     `s3/resource/file/${userId}/${companyId}/${formId}/${fileName}`,
     formData
   );
@@ -56,7 +57,7 @@ export const issueFileToUserWithFormId = (
   formData: FormData,
   fileName: string
 ) => {
-  return multipartDefaultMeshApi.post(
+  return multipartMeshApi.post(
     `/s3/resource/issued/${userId}/${companyId}/${formId}/${fileName}`,
     formData
   );
