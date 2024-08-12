@@ -101,14 +101,33 @@ function Page({ params }: any) {
       user_status: "ACTIVE",
     };
 
-    const createUserResponse = await services.userSelfSignUp(userData);
+    services
+      .userSelfSignUp(userData)
+      .then((res) => {
+        // console.log("create user response", createUserResponse);
+        toast.success("Account created successfully", {
+          description: "Confirm your account using the link sent to your email",
+        });
+        // push to login with invite creds
+        if (Boolean(redirectTo)) {
+          router.push(
+            `/${tenantId}/auth/login?redirect=${redirectTo}&f=${formId}&c=${companyName}`
+          );
+        } else {
+          // push to login
+          router.push(`/${tenantId}/auth/login`);
+        }
 
-    // console.log("create user response", createUserResponse);
-    toast.success("Account created successfully", {
-      description: "Confirm your email using the link sent to your email",
-    });
-    resetForm();
-    setPhone("");
+        resetForm();
+        setPhone("");
+      })
+      .catch((e) => {
+        if (Boolean(e?.response?.data?.detail)) {
+          toast.error(e?.response?.data?.detail);
+        } else {
+          toast.error("Error signing up. Please try again");
+        }
+      });
   };
   return (
     <div className="bg-white flex w-screen h-screen">
@@ -135,7 +154,7 @@ function Page({ params }: any) {
           {({ errors, isSubmitting }) => {
             return (
               <Form>
-                <div className=" rounded-lg py-6  shadow-sm h-auto w-96 text-slate-900 bg-white ">
+                <div className=" rounded-lg py-6  h-auto w-96 text-slate-900 bg-white ">
                   <h1 className="font-semibold text-lg text-left pt-5 pb-3 px-5">
                     Create Your Account
                   </h1>
@@ -274,7 +293,7 @@ function Page({ params }: any) {
             // add search params if redirectTo exists
             if (Boolean(redirectTo)) {
               router.push(
-                `/client/auth?redirect=${redirectTo}&f=${formId}&c=${companyName}`
+                `/${tenantId}/auth/login?redirect=${redirectTo}&f=${formId}&c=${companyName}`
               );
               return;
             }

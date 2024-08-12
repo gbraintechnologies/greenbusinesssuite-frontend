@@ -237,10 +237,20 @@ function CompanyAdminAuth({ params }: any) {
         <div className="text-center  text-gray-400 text-sm py-4">
           <p className="mb-3">
             Don't have an account{" "}
-            <Link href="sign-up">
-              {" "}
+            <button
+              onClick={() => {
+                // add search params if redirectTo exists
+                if (Boolean(redirectTo)) {
+                  router.push(
+                    `/${tenantId}/auth/sign-up?redirect=${redirectTo}&f=${formId}&c=${companyName}`
+                  );
+                  return;
+                }
+                router.push(`/${tenantId}/auth/sign-up`);
+              }}
+            >
               <span className="font-semibold text-black">Sign Up</span>
-            </Link>
+            </button>{" "}
           </p>
           <hr />
           <div className="mt-2 flex justify-center gap-2 items-center text-xs">

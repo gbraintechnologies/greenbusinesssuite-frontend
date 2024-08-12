@@ -82,7 +82,13 @@ export const notifyUserTempCred = (id: any, channel: string) => {
 };
 
 export const userSelfSignUp = (data: any) => {
-  return noAuthApi2.post("/users/self_create_account/", data);
+  return noAuthApi2.post("/users/self_create_account/", {
+    user_data: data,
+    role_data: {
+      app_id: 1,
+      role_id: 6,
+    },
+  });
 };
 
 export const confirmAccount = (token: any) => {
