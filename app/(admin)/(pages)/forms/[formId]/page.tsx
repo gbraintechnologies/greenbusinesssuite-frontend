@@ -200,7 +200,7 @@ function FormDetail({ params }: any) {
           )}
 
           {/* statistics */}
-          <div className="mt-10">
+          {/* <div className="mt-10">
             <p className="font-semibold mb-5">Submission Statistics</p>
             <StatsBlock
               stats={[
@@ -218,7 +218,7 @@ function FormDetail({ params }: any) {
                 },
               ]}
             />
-          </div>
+          </div> */}
         </div>
 
         {/* ASSIGN TO NEW COMPANY MODAL */}
