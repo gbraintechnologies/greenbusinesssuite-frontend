@@ -44,14 +44,14 @@ export const setPassword = ({
 
 // STEP 1
 export const attemptPasswordReset = (email: any) => {
-  return noAuthApi.post("/users/noauth/attempt_password_reset/", {
+  return noAuthApi2.post("/users/noauth/attempt_password_reset/", {
     user_email: email,
   });
 };
 
 // STEP 2
 export const verifyResetAttempt = (code: string) => {
-  return noAuthApi
+  return noAuthApi2
     .get("/users/noauth/verify_password_reset/" + code)
     .then((res) => res.data);
 };
@@ -63,7 +63,7 @@ export const resetPassword = (
   userEmail: string,
   newPassword: string
 ) => {
-  return noAuthApi
+  return noAuthApi2
     .post("/users/noauth/reset_password/", {
       user_id: userId,
       user_email: userEmail,

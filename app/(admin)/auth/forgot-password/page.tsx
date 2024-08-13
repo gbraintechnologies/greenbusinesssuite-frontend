@@ -60,7 +60,7 @@ function ForgotPassword() {
                 value={email}
                 required
                 type="email"
-                className="block focus:outline-[#16A34A] border border-gray-300 px-3 py-2 rounded-lg w-full"
+                className="block border border-gray-300 px-3 py-2 rounded-lg w-full"
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
               />
