@@ -21,11 +21,7 @@ import {
 } from "@/services/features/sectorService";
 import SelectCountryInput from "../components/selectCountryInput";
 
-interface SectorData {
-  id: number;
-  parentSector: string;
-  subSector: string[];
-}
+
 
 interface Country {
   id: number;
@@ -94,6 +90,7 @@ function AddSector() {
   });
 
   useEffect(() => {
+   // alert(JSON.stringify(countriesData))
     const countryName = getValues("countryName");
 
     if (countryName) {
@@ -138,44 +135,66 @@ function AddSector() {
   const onSubmit = async (data: typeOfSchema) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-
+  
     try {
       if (IDImage && fileName) {
         const formData = new FormData();
         formData.append("file", IDImage);
-
+  
         await csvUpload(formData, fileName.name);
-
+  
         toast.success("CSV file uploaded successfully", {
           position: "top-center",
           duration: 3000,
           style: { color: "green" },
         });
-
+  
         setIDImage(null);
         setUploadProgress(0);
         setFileName(null);
-
+  
         router.push("/sector-setup");
         return;
-      } else {
-        const payload = {
-          countryName: getValues("countryName"),
-          parentSector: parentsectorItems
-            .split(",")
-            .map((item) => item.trim())
-            .filter((item) => item),
-        };
-
-        await createorUpdateSector(payload);
-
-        toast.success("Sector created or updated successfully", {
-          position: "top-center",
-          duration: 3000,
-          style: { color: "green" },
-        });
-
-        router.push(`/sector-setup`);
+      // } else {
+      //   const countryName = getValues("countryName");
+  
+      //   // Check if countryName is defined
+      //   if (!countryName) {
+      //     toast.error("Country name is required", {
+      //       position: "top-center",
+      //       duration: 3000,
+      //       style: { color: "red" },
+      //     });
+      //     return;
+      //   }
+  
+      //   // Find the selected country from the new structure
+      //   const selectedCountry = countriesData?.content.find(
+      //     (country) => country.name.trim().toLowerCase() === countryName.trim().toLowerCase()
+      //   );
+  
+      //   // Alert to check if the ID is coming through
+      //   alert(`Selected Country ID: ${selectedCountry?.id || 'Not Found'}`);
+  
+      //   // Construct the payload
+      //   const payload = {
+      //     countryId: selectedCountry?.id || null, // Use the found country ID or null if not found
+      //     countryName,
+      //     parentSector: parentsectorItems
+      //       .split(",")
+      //       .map((item) => item.trim())
+      //       .filter((item) => item),
+      //   };
+  
+      //   await createorUpdateSector(payload);
+  
+      //   toast.success("Sector created or updated successfully", {
+      //     position: "top-center",
+      //     duration: 3000,
+      //     style: { color: "green" },
+      //   });
+  
+      //   router.push(`/sector-setup`);
       }
     } catch (error: any) {
       toast.error(
@@ -190,6 +209,10 @@ function AddSector() {
       setIsSubmitting(false);
     }
   };
+  
+  
+  
+  
 
   const saveAndContinue = async (data: typeOfSchema) => {
     const items = parentsectorItems

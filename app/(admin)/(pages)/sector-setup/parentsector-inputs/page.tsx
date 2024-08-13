@@ -49,7 +49,7 @@ function ParentSectorInputs() {
     queryKey: ["all Parent entries"],
     queryFn: services.getSectorByID(parseInt(Id || "", 10)),
     enabled: !!Id,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
   });
 
   const {
