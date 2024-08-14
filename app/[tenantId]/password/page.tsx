@@ -70,10 +70,6 @@ const page = ({ params }: any) => {
     router.push(`/${tenantId}/auth/login`);
   };
 
-  useEffect(() => {
-    router.push(`/${tenantId}/auth/login`);
-  }, []);
-
   return (
     <div className="bg-[#F1F5F9] h-screen flex items-center justify-center">
       <div>
