@@ -69,11 +69,15 @@ function ParentSectorInputs() {
   });
 
   useEffect(() => {
+    console.log("Initial Entries:", initialEntries);
     if (initialEntries) {
       setFormData(initialEntries);
       reset(initialEntries);
     }
   }, [initialEntries, reset]);
+  
+  useEffect(() => {
+  }, [formData]);
 
   const handleChange = (index: number, value: string) => {
     const updatedSectors = [...formData.sectors];

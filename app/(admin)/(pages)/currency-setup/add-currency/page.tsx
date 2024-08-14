@@ -67,7 +67,7 @@ interface CountriesResponse {
 function AddCurrency() {
   const [denominations, setDenominations] = useState<Denomination[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [denomination, setDenomination] = useState({
+  const [denomination, setDenomination] = useState<Denomination>({
     id: 0,
     amount: "",
     name: "",
@@ -90,10 +90,31 @@ function AddCurrency() {
     ) {
       return;
     }
-    setDenominations([...denominations, denomination]);
+  
+    const existingIndex = denominations.findIndex(
+      (denom) => denom.id === denomination.id
+    );
+  
+    if (existingIndex !== -1) {
+      // Update the existing denomination
+      const updatedDenominations = [...denominations];
+      updatedDenominations[existingIndex] = denomination;
+      setDenominations(updatedDenominations);
+    } else {
+      // Add a new denomination
+      const newId = denominations.length > 0 ? denominations[denominations.length - 1].id + 1 : 1;
+      const newDenomination = {
+        ...denomination,
+        id: newId,
+      };
+      setDenominations([...denominations, newDenomination]);
+    }
+  
+    // Reset the denomination input fields
     setDenomination({ id: 0, name: "", amount: "", denominationType: "" });
   };
-
+  
+  
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setDenomination((prevState) => ({ ...prevState, [name]: value }));
@@ -104,15 +125,16 @@ function AddCurrency() {
     setDenomination((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: number) => {
     const selectedDenomination = denominations.find(
-      (d) => d.id.toString() === id
+      (d) => d.id === id
     );
     if (selectedDenomination) {
       setDenomination(selectedDenomination);
-      handleDelete(parseInt(id, 10));
     }
   };
+  
+
 
   const handleDelete = (index: number) => {
     setDenominations((prevDenominations) => {
@@ -303,12 +325,11 @@ function AddCurrency() {
                 denomination.amount.trim() === "" ||
                 denomination.denominationType.trim() === ""
               }
-              className={`bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100 ${
-                denomination.amount.trim() === "" ||
+              className={`bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100 ${denomination.amount.trim() === "" ||
                 denomination.denominationType.trim() === ""
-                  ? "cursor-not-allowed opacity-50"
-                  : ""
-              }`}
+                ? "cursor-not-allowed opacity-50"
+                : ""
+                }`}
             >
               Add
             </button>
@@ -318,19 +339,20 @@ function AddCurrency() {
               Denominations
             </h2>
             <div style={{ width: "30%" }}>
-              {denominations.map((denomination, index) => (
+              {denominations.map((denom, index) => (
                 <div
-                  key={denomination.id}
+                  key={denom.id}
                   className="combined-input-container flex items-center justify-between border-b mb-1 pb-1"
                   style={{ width: "100%" }}
                 >
                   <span>
-                    {denomination.amount} &nbsp;{denomination.denominationType}
+                    {denom.amount} &nbsp;{denom.denominationType}
                   </span>
                   <div className="flex gap-1">
+                    {/* <p>ID: {denom.id}</p> */}
                     <button
                       type="button"
-                      onClick={() => handleEdit(denomination.id.toString())}
+                      onClick={() => handleEdit(denom.id)}
                       className=" text-white rounded-xl"
                     >
                       <EditIconSetup />
