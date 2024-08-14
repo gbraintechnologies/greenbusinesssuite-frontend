@@ -67,12 +67,16 @@ function Page({ params }: any) {
     password: "",
     firstName: "",
     lastName: "",
+    username: "",
   };
 
   const schema = yup.object({
     email: yup.string().email().required("Email is required"),
     firstName: yup.string().required("First name is required"),
     lastName: yup.string().required("Last name is required"),
+    username: yup
+      .string()
+      .required("Username is required and is used for logging in"),
     password: yup
       .string()
       .min(6, "Password must be at least 6 characters")
@@ -85,19 +89,20 @@ function Page({ params }: any) {
       firstName: string;
       lastName: string;
       password: string;
+      username: string;
     },
     { resetForm, setSubmitting }: FormikHelpers<any>
   ) => {
     const userData = {
       email: values.email as string,
-      username: ((values.firstName?.toLowerCase() as string) +
-        values.lastName?.toLowerCase()) as string,
+      // username: ((values.firstName?.toLowerCase() as string) +
+      //   values.lastName?.toLowerCase()) as string,
+      username: values.username as string,
       password: values.password as string,
       first_name: values.firstName as string,
       last_name: values.lastName as string,
       phone_number: phone,
       mobile_phone_number: phone,
-
       user_status: "ACTIVE",
     };
 
@@ -229,6 +234,20 @@ function Page({ params }: any) {
                       />
                       <ShowError name="lastName" />
                     </div>
+                  </div>
+                  <div className="input-holder px-5">
+                    <label htmlFor="email" className="text-xs">
+                      Username
+                    </label>
+                    <Field
+                      style={{
+                        ...getStyles(errors, "username"),
+                        backgroundColor: "rgba(248, 250, 252, 1)",
+                      }}
+                      name="username"
+                      placeholder=""
+                    />
+                    <ShowError name="username" />
                   </div>
                   <div className="px-5 mb-3">
                     <label htmlFor="number" className="input-holder-label mb-2">
