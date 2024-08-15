@@ -42,6 +42,12 @@ export const getCustomFields = () => {
   return authApi.get("/companies/get_custom_fields").then((res) => res.data);
 };
 
+export const getCustomFieldsForCompany = (companyId: number) => {
+  return () => authApi
+    .get(`/companies/custom_fields/${companyId}/`)
+    .then((res) => res.data);
+}
+
 export const searchCompany = (searchTerm: string) => {
   return () =>
     authApi.get(`/companies-by-filter/${searchTerm}`).then((res) => res.data);

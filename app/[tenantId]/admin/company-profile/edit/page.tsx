@@ -3,7 +3,6 @@ import "./index.css";
 import Modal from "@/components/Modal/Modal";
 import { useSearchParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import CompanyForm, { ICompany } from "../../components/CompanyForm";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { CompanyInfo, CustomField } from "@/types";
@@ -15,19 +14,21 @@ import { editCompanyWithCustomFields } from "@/services/features/companyService"
 import { searchUsersByEmail } from "@/services/features/userManagementService";
 import { profile } from "console";
 import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
+import CompanyForm, { ICompany } from "../components/CompanyForm";
+import useCompany from "@/hooks/useCompany";
 
 const Page = () => {
-  const searchParams = useSearchParams();
+    const {companyBranding} = useCompany();
 
-  const id = searchParams.get("id");
 
   const {
     data: companyData,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["company ", id],
-    queryFn: services.getCompanyById(Number(id)),
+    queryKey: ["company ", companyBranding?.id],
+    queryFn: services.getCompanyById(Number(companyBranding?.id)),
+    enabled: !!companyBranding?.id,
   });
 
   const companyDescription =
@@ -85,12 +86,6 @@ const Page = () => {
       !!companyData?.industry &&
       !!companySectorId &&
       isConvertibleToNumber(companyData?.industry),
-  });
-
-  const { data: companyBranding } = useQuery({
-    queryKey: ["get company branding info", companyData?.company_identifier],
-    queryFn: services.getCompanyBranding(companyData?.company_identifier),
-    enabled: !!companyData?.company_identifier,
   });
 
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -304,7 +299,7 @@ const Page = () => {
     ];
 
     try {
-      await editCompanyWithCustomFields(companyData?.id, {...companyData,data}, custom_fields);
+      await editCompanyWithCustomFields(companyData?.id, {...companyData,...data}, custom_fields);
 
       // if (hasAdminInfoChanged(initialValues, values)) {
       //   const userResponse = await searchUsersByEmail(
@@ -439,7 +434,7 @@ const Page = () => {
   }, [companyData, country, industry, companyBranding]);
 
   return (
-    <div className="px-5 pb-20">
+    <div className="px-5 pb-20 pt-5">
       <div>
         {isLoading || isCountryLoading || isIndustryLoading ? (
           <div className="w-full h-full flex justify-center items-center">

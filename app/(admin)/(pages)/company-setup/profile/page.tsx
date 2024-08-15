@@ -272,7 +272,7 @@ const Page = () => {
         <div className="w-full text-primary-dark  flex justify-between items-center">
           <h3 className="font-semibold text-xl">Company Profile</h3>
 
-          <div className="flex gap-3">
+          {/* <div className="flex gap-3">
             <Link
               href={`/company-setup/profile/edit?id=${id}`}
               className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
@@ -280,7 +280,7 @@ const Page = () => {
               <Image src={UpdateInfo} alt="Update Info" />
               Update Information
             </Link>
-          </div>
+          </div> */}
         </div>
 
         <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
@@ -529,13 +529,13 @@ const Page = () => {
                       interface appears to customers.
                     </p>
                   </div>
-                  <button
+                  {/* <button
                     type="button"
                     className="bg-white disabled:bg-gray-400 py-3 text-black border w-24 flex items-center justify-center border-[rgba(226, 232, 240, 1)] text-sm hover:opacity-95 items-center gap-2 rounded-xl"
                     onClick={editCompanyBranding}
                   >
                     Save
-                  </button>
+                  </button> */}
                 </header>
                 <div className="max-w-2xl">
                   {/* COMPANY SMALL LOGO */}
