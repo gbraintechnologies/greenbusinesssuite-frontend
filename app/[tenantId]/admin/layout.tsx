@@ -15,6 +15,7 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
 import { FaUsers } from "react-icons/fa";
 import { MdOutlineSupervisedUserCircle } from "react-icons/md";
+import { RiListSettingsFill } from "react-icons/ri";
 import { PiListMagnifyingGlassBold } from "react-icons/pi";
 
 // toast
@@ -89,7 +90,11 @@ export default function CompanyLayout({ children, params }: any) {
         },
       ],
     },
-
+    {
+      name: "Company Profile",
+      icon: <RiListSettingsFill size={20} />,
+      link: `/${company?.company_identifier}/admin/company-profile`,
+    },
     {
       name: "User management",
       icon: <FaUsers size={20} />,
