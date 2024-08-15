@@ -154,11 +154,11 @@ const ResponseDataTable: React.FC<Props> = ({
     const fetchUserData = async () => {
       if (responseData?.length > 0) {
         setFetchingUserData(true);
+        try {
         const preparedRows = await Promise.all(
           responseData.map(async (response: any, index: number) => {
             if (Boolean(response?.userId)) {
               const userRes = await services.userByIDRaw(response?.userId);
-              setFetchingUserData(false);
               return {
                 id: index,
                 data: response,
@@ -175,6 +175,12 @@ const ResponseDataTable: React.FC<Props> = ({
         );
 
         setRows(preparedRows.filter((item) => item.id !== null));
+      } catch (error){
+        setRows([]);
+      }
+      finally {
+        setFetchingUserData(false);
+      }
       } else {
         setRows([]);
       }
@@ -194,7 +200,7 @@ const ResponseDataTable: React.FC<Props> = ({
               className="form-check-input"
               defaultChecked={false}
             />
-            <div className="font-semibold">Response Id</div>
+            <div className="font-semibold uppercase">Response Id</div>
           </div>
           <ListIcon />
         </div>

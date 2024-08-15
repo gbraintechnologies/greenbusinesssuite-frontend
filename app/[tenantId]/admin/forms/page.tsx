@@ -52,9 +52,9 @@ function CompanyForms() {
     enabled: !!companyData?.id,
   });
 
-  useEffect(() => {
-    refetch();
-  }, [page, selectedTimeline]);
+  // useEffect(() => {
+  //   refetch();
+  // }, [page, limit, selectedTimeline]);
 
   return (
     <div className="px-5 pb-20 mt-4 py-2 min-h-screen">
