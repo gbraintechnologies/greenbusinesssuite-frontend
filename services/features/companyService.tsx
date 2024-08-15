@@ -43,10 +43,14 @@ export const getCustomFields = () => {
 };
 
 export const getCustomFieldsForCompany = (companyId: number) => {
-  return () => authApi
-    .get(`/companies/custom_fields/${companyId}/`)
-    .then((res) => res.data);
-}
+  return () =>
+    authApi
+      .post(`/companies/fetch_company_custom_field/`, {
+        company_id: companyId,
+        custom_profile_item_id: 0,
+      })
+      .then((res) => res.data);
+};
 
 export const searchCompany = (searchTerm: string) => {
   return () =>
