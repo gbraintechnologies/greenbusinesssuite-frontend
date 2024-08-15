@@ -23,6 +23,10 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
 import useCompany from "@/hooks/useCompany";
+import { TimelineType, TimelineValues } from "@/types";
+import DatePicker from "@/components/DatePicker/DatePicker";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import Pagination from "@/components/Pagination/Pagination";
 
 function Customers() {
   const { companyBranding: company } = useCompany();
@@ -31,38 +35,80 @@ function Customers() {
 
   const [rows, setRows] = useState<{ id: number | undefined; data: any }[]>([]);
 
-  const { data: customers, isLoading } = useQuery({
-    queryKey: ["all customers", company?.id],
-    queryFn: services.companyCustomersWithFormCount(company?.id),
-  });
+  const [page, setPage] = useState(0);
 
-  const { data: users, isLoading: loadingUsers } = useQuery({
-    queryKey: ["all users"],
-    queryFn: services.allUsers(),
+  const [limit, setLimit] = useState(10);
+
+  const [customersLoading, setCustomersLoading] = useState<boolean>(false);
+
+  const [selectedTimeline, setSelectedTimeline] = useState<
+    { label: TimelineValues; value: TimelineType } | undefined
+  >();
+
+  const {
+    data: customers,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["all customers", company?.id, page, limit, selectedTimeline?.value],
+    queryFn: services.companyCustomersWithFormCount(
+      company?.id,
+      page,
+      limit,
+      selectedTimeline?.value
+    ),
+    select: (data) => data?.userFormStatList,
   });
 
   useEffect(() => {
-    let temp: any = [];
-
-    if (customers?.customersDetail && users) {
-      for (let i = 0; i < customers?.customersDetail.length; i++) {
-        let customer = customers?.customersDetail[i];
-        // @ts-ignore
-        const userData = users?.find(
-          (item: any) => item.id === customer.userId
-        );
-
-        // @ts-ignore
-        temp.push({
-          id: customer.userId,
-          count: customer.submitFormsCount,
-          data: userData,
-        });
+    const fetchUserData = async () => {
+      if (customers) {
+        try {
+          setCustomersLoading(true);
+          const completeRows: any = await Promise.all(
+            customers?.map(async (customer: any) => {
+              const userRes = await services.userByIDRaw(customer?.userId);
+              return {
+                id: customer?.userId,
+                count: customer?.submitFormsCount,
+                data: userRes,
+              };
+            })
+          );
+          setRows(completeRows);
+        } catch (error) {
+          setRows([]);
+        } finally {
+          setCustomersLoading(false);
+        }
       }
+    };
 
-      setRows(temp);
-    }
-  }, [customers, isLoading, loadingUsers, users]);
+    fetchUserData();
+
+    // if (customers?.customersDetail && users) {
+    //   for (let i = 0; i < customers?.customersDetail.length; i++) {
+    //     let customer = customers?.customersDetail[i];
+    //     // @ts-ignore
+    //     const userData = users?.find(
+    //       (item: any) => item.id === customer.userId
+    //     );
+
+    //     // @ts-ignore
+    //     temp.push({
+    //       id: customer.userId,
+    //       count: customer.submitFormsCount,
+    //       data: userData,
+    //     });
+    //   }
+
+    //   setRows(temp);
+    // }
+  }, [customers]);
+
+  useEffect(() => {
+    refetch();
+  }, [page, limit, selectedTimeline]);
 
   const columns = [
     {
@@ -158,8 +204,22 @@ function Customers() {
         {/* <div className="flex items-center gap-3">
           <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </div> */}
+        <div className="flex gap-3  items-center">
+          <DatePicker
+            selectedTimeline={selectedTimeline}
+            setSelectedTimeline={setSelectedTimeline}
+          />
+          <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
+          <Pagination
+            page={page}
+            variant="no-text"
+            setPage={setPage}
+            limit={limit}
+            currentData={customers}
+          />
+        </div>
       </div>
-      <DataTable isLoading={isLoading} rows={rows} columns={columns} />
+      <DataTable isLoading={isLoading || customersLoading} rows={rows} columns={columns} />
     </div>
   );
 }
