@@ -24,7 +24,7 @@ function CompanyForms() {
 
   //pagination
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(10);
 
   //timeline
   const [selectedTimeline, setSelectedTimeline] = useState<
@@ -34,7 +34,6 @@ function CompanyForms() {
   const {
     data: forms,
     isLoading: isFormsLoading,
-    refetch,
   } = useQuery({
     queryKey: [
       "get company forms for ",
@@ -49,12 +48,15 @@ function CompanyForms() {
       limit,
       selectedTimeline?.value
     ),
-    enabled: !!companyData?.id,
   });
 
   // useEffect(() => {
   //   refetch();
   // }, [page, limit, selectedTimeline]);
+
+  useEffect(() => {
+    console.log('is forms loading changed to ', isFormsLoading);
+  }, [isFormsLoading]);
 
   return (
     <div className="px-5 pb-20 mt-4 py-2 min-h-screen">

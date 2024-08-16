@@ -42,6 +42,16 @@ export const getCustomFields = () => {
   return authApi.get("/companies/get_custom_fields").then((res) => res.data);
 };
 
+export const getCustomFieldsForCompany = (companyId: number) => {
+  return () =>
+    authApi
+      .post(`/companies/fetch_company_custom_field/`, {
+        company_id: companyId,
+        custom_profile_item_id: 0,
+      })
+      .then((res) => res.data);
+};
+
 export const searchCompany = (searchTerm: string) => {
   return () =>
     authApi.get(`/companies-by-filter/${searchTerm}`).then((res) => res.data);
@@ -85,7 +95,7 @@ export const editCompanyBranding = (
   color: string,
   companyName: string
 ) => {
-  return meshApi.put(`/company-branding/update/${tenantId}`, {
+  return defaultMeshApi.put(`/company-branding/update/${tenantId}`, {
     tenancyId: tenantId,
     companyId: companyId,
     logo: logo,

@@ -60,8 +60,8 @@ export const getFormByIdRawForUser = (id: any) => {
 
 export const getFormsByCompanyId = (
   companyId: string,
-  page: string | number = 1,
-  size: string | number = 20,
+  page: string | number ,
+  size: string | number ,
   timeLine: TimelineType = "ALL"
 ) => {
   return () =>

@@ -3,7 +3,6 @@ import "./index.css";
 import Modal from "@/components/Modal/Modal";
 import { useSearchParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import CompanyForm, { ICompany } from "../../components/CompanyForm";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { CompanyInfo, CustomField } from "@/types";
@@ -15,19 +14,21 @@ import { editCompanyWithCustomFields } from "@/services/features/companyService"
 import { searchUsersByEmail } from "@/services/features/userManagementService";
 import { profile } from "console";
 import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
+import CompanyForm, { ICompany } from "../components/CompanyForm";
+import useCompany from "@/hooks/useCompany";
 
 const Page = () => {
-  const searchParams = useSearchParams();
+    const {companyBranding} = useCompany();
 
-  const id = searchParams.get("id");
 
   const {
     data: companyData,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["company ", id],
-    queryFn: services.getCompanyById(Number(id)),
+    queryKey: ["company ", companyBranding?.id],
+    queryFn: services.getCompanyById(Number(companyBranding?.id)),
+    enabled: !!companyBranding?.id,
   });
 
   const companyDescription =
@@ -65,33 +66,27 @@ const Page = () => {
       (field: any) => field.custom_profile_item_id == 7
     )?.value ?? "";
 
-  const { data: country, isLoading: isCountryLoading } = useQuery({
-    queryKey: ["country", companyData?.company_address],
-    queryFn: services.getJurisdictionEntriesById(
-      Number(companyData?.company_address)
-    ),
-    enabled:
-      !!companyData?.company_address &&
-      isConvertibleToNumber(companyData?.company_address),
-  });
+  // const { data: country, isLoading: isCountryLoading } = useQuery({
+  //   queryKey: ["country", companyData?.company_address],
+  //   queryFn: services.getJurisdictionEntriesById(
+  //     Number(companyData?.company_address)
+  //   ),
+  //   enabled:
+  //     !!companyData?.company_address &&
+  //     isConvertibleToNumber(companyData?.company_address),
+  // });
 
-  const { data: industry, isLoading: isIndustryLoading } = useQuery({
-    queryKey: ["industry", companyData?.industry],
-    queryFn: services.getSubSectorByID(
-      Number(companySectorId),
-      Number(companyData?.industry)
-    ),
-    enabled:
-      !!companyData?.industry &&
-      !!companySectorId &&
-      isConvertibleToNumber(companyData?.industry),
-  });
-
-  const { data: companyBranding } = useQuery({
-    queryKey: ["get company branding info", companyData?.company_identifier],
-    queryFn: services.getCompanyBranding(companyData?.company_identifier),
-    enabled: !!companyData?.company_identifier,
-  });
+  // const { data: industry, isLoading: isIndustryLoading } = useQuery({
+  //   queryKey: ["industry", companyData?.industry],
+  //   queryFn: services.getSubSectorByID(
+  //     Number(companySectorId),
+  //     Number(companyData?.industry)
+  //   ),
+  //   enabled:
+  //     !!companyData?.industry &&
+  //     !!companySectorId &&
+  //     isConvertibleToNumber(companyData?.industry),
+  // });
 
   const [showCancelModal, setShowCancelModal] = useState(false);
 
@@ -200,35 +195,35 @@ const Page = () => {
       return;
     }
 
-    if (!selectedJurisdiction?.value) {
-      toast.error("Jurisdiction is required");
-      setSubmitting(false);
-      return;
-    }
+    // if (!selectedJurisdiction?.value) {
+    //   toast.error("Jurisdiction is required");
+    //   setSubmitting(false);
+    //   return;
+    // }
 
-    if (!selectedSubJurisdiction?.value) {
-      toast.error("Sub Jurisdiction is required");
-      setSubmitting(false);
-      return;
-    }
+    // if (!selectedSubJurisdiction?.value) {
+    //   toast.error("Sub Jurisdiction is required");
+    //   setSubmitting(false);
+    //   return;
+    // }
 
-    if (!selectedSubLevel?.value) {
-      toast.error("Sub Level is required");
-      setSubmitting(false);
-      return;
-    }
+    // if (!selectedSubLevel?.value) {
+    //   toast.error("Sub Level is required");
+    //   setSubmitting(false);
+    //   return;
+    // }
 
-    if (!selectedIndustry?.value) {
-      toast.error("Industry is required");
-      setSubmitting(false);
-      return;
-    }
+    // if (!selectedIndustry?.value) {
+    //   toast.error("Industry is required");
+    //   setSubmitting(false);
+    //   return;
+    // }
 
-    if (!selectedSubSector?.value) {
-      toast.error("Sub Sector is required");
-      setSubmitting(false);
-      return;
-    }
+    // if (!selectedSubSector?.value) {
+    //   toast.error("Sub Sector is required");
+    //   setSubmitting(false);
+    //   return;
+    // }
 
     if (!color) {
       toast.error("Color is required");
@@ -271,46 +266,56 @@ const Page = () => {
         custom_profile_item_id: 1,
         value: values.companyDescription as string,
       },
-      {
-        //Admin Name
-        custom_profile_item_id: 2,
-        value: `${values.adminFirstName} ${values.adminLastName}`,
-      },
-      {
-        //Admin Email
-        custom_profile_item_id: 3,
-        value: values.adminEmail as string,
-      },
-      {
-        // Sub Sector ID
-        custom_profile_item_id: 4,
-        value: selectedSubSector?.value as string,
-      },
-      {
-        // Parent Address Scheme ID
-        custom_profile_item_id: 5,
-        value: selectedSubJurisdiction?.value as string,
-      },
-      {
-        //Child Address Scheme ID
-        custom_profile_item_id: 6,
-        value: selectedSubLevel?.value as string,
-      },
-      {
-        // Sector ID
-        custom_profile_item_id: 7,
-        value: sectorId as string,
-      },
+      // {
+      //   //Admin Name
+      //   custom_profile_item_id: 2,
+      //   value: `${values.adminFirstName} ${values.adminLastName}`,
+      // }
+      // {
+      //   //Admin Email
+      //   custom_profile_item_id: 3,
+      //   value: values.adminEmail as string,
+      // },
+      // {
+      //   // Sub Sector ID
+      //   custom_profile_item_id: 4,
+      //   value: selectedSubSector?.value as string,
+      // },
+      // {
+      //   // Parent Address Scheme ID
+      //   custom_profile_item_id: 5,
+      //   value: selectedSubJurisdiction?.value as string,
+      // },
+      // {
+      //   //Child Address Scheme ID
+      //   custom_profile_item_id: 6,
+      //   value: selectedSubLevel?.value as string,
+      // },
+      // {
+      //   // Sector ID
+      //   custom_profile_item_id: 7,
+      //   value: sectorId as string,
+      // },
     ];
 
     try {
       const custom_values_field = "company_custom_values";
+
+      let allCustomFields = companyData[custom_values_field];
   
       delete companyData[custom_values_field];
 
+      const updatedCustomFields = allCustomFields.map((field: any) => 
+        field.custom_profile_item_id === 1 
+          ? { ...field, ...custom_fields.find(f => f.custom_profile_item_id === 1) }
+          : field
+      );
+      
+      if (!allCustomFields.some((field: any) => field.custom_profile_item_id === 1)) {
+        updatedCustomFields.push(...custom_fields);
+      }
 
-      await editCompanyWithCustomFields(companyData?.id, {...companyData,...data}, custom_fields)
-      // await editCompanyWithCustomFields(companyData?.id, {...companyData,data}, custom_fields);
+      await editCompanyWithCustomFields(companyData?.id, {...companyData,...data}, updatedCustomFields)
 
       // if (hasAdminInfoChanged(initialValues, values)) {
       //   const userResponse = await searchUsersByEmail(
@@ -374,14 +379,14 @@ const Page = () => {
     }
   };
 
-  useEffect(() => {
-    if (!companyData) return;
-    setParentAddressScheme(
-      country?.parentAddressScheme?.entries?.find(
-        (entry: any) => entry?.id == companyParentAddressId
-      )
-    );
-  }, [companyData, country]);
+  // useEffect(() => {
+  //   if (!companyData) return;
+  //   setParentAddressScheme(
+  //     country?.parentAddressScheme?.entries?.find(
+  //       (entry: any) => entry?.id == companyParentAddressId
+  //     )
+  //   );
+  // }, [companyData, country]);
 
   useEffect(() => {
     if (companyData) {
@@ -391,49 +396,49 @@ const Page = () => {
       const phoneNumber = companyData?.primary_contact_phone_number;
       setPhone(phoneNumber);
 
-      setSelectedIndustry({
-        label: isConvertibleToNumber(companyData?.industry)
-          ? industry?.sector?.parentSector
-          : companyData?.industry,
-        value: companyData?.industry,
-      });
-      if (companySubSector) {
-        setSelectedSubSector({
-          label: companySubSector,
-          value: companySubSector,
-        });
-      }
+      // setSelectedIndustry({
+      //   label: isConvertibleToNumber(companyData?.industry)
+      //     ? industry?.sector?.parentSector
+      //     : companyData?.industry,
+      //   value: companyData?.industry,
+      // });
+      // if (companySubSector) {
+      //   setSelectedSubSector({
+      //     label: companySubSector,
+      //     value: companySubSector,
+      //   });
+      // }
 
-      if (companyParentAddressId) {
-        setSelectedJurisdiction({
-          label: country?.name,
-          value: companyData?.company_address,
-        });
-      }
+      // if (companyParentAddressId) {
+      //   setSelectedJurisdiction({
+      //     label: country?.name,
+      //     value: companyData?.company_address,
+      //   });
+      // }
 
-      if (companyParentAddressId) {
-        setSelectedSubJurisdiction({
-          label: country?.parentAddressScheme?.entries?.find(
-            (entry: any) => entry?.id == companyParentAddressId
-          )?.name,
-          value: companyParentAddressId,
-        });
-      }
+      // if (companyParentAddressId) {
+      //   setSelectedSubJurisdiction({
+      //     label: country?.parentAddressScheme?.entries?.find(
+      //       (entry: any) => entry?.id == companyParentAddressId
+      //     )?.name,
+      //     value: companyParentAddressId,
+      //   });
+      // }
 
-      if (companyChildAddressId) {
-        setSelectedSubLevel({
-          label: country?.parentAddressScheme?.entries
-            ?.find((entry: any) => entry?.id == companyParentAddressId)
-            ?.childEntries?.find(
-              (entry: any) => entry?.id == companyChildAddressId
-            )?.name,
-          value: companyChildAddressId,
-        });
-      }
+      // if (companyChildAddressId) {
+      //   setSelectedSubLevel({
+      //     label: country?.parentAddressScheme?.entries
+      //       ?.find((entry: any) => entry?.id == companyParentAddressId)
+      //       ?.childEntries?.find(
+      //         (entry: any) => entry?.id == companyChildAddressId
+      //       )?.name,
+      //     value: companyChildAddressId,
+      //   });
+      // }
 
-      if (companySectorId) {
-        setSectorId(companySectorId);
-      }
+      // if (companySectorId) {
+      //   setSectorId(companySectorId);
+      // }
 
       if (companyBranding) {
         setColor(companyBranding?.color);
@@ -442,15 +447,18 @@ const Page = () => {
 
       setBackgroundImageUrl(companyData?.company_logo);
     }
-  }, [companyData, country, industry, companyBranding]);
+  }, [companyData, companyBranding]);
 
   return (
-    <div className="px-5 pb-20">
+    <div className="px-5 pb-20 pt-5">
       <div>
-        {isLoading || isCountryLoading || isIndustryLoading ? (
-          <div className="w-full h-full flex justify-center items-center">
+        {isLoading ? (
+          <div className="h-[20rem] flex items-center justify-center">
+          <div>
             <LoadingIcon />
+            <p className="mt-2 text-xs text-gray-500">Fetching company details</p>
           </div>
+        </div>
         ) : (
           <CompanyForm
             headerText={`Edit ${companyData?.company_name}`}
