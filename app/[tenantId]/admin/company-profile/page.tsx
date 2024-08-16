@@ -104,10 +104,6 @@ const Page = ({ params }: any) => {
     enabled: !!companyBranding?.id,
   });
 
-  const {data: companyCustomFields} = useQuery({
-    queryKey: ["companyCustomFields", companyBranding?.id],
-    queryFn: services.getCustomFieldsForCompany(Number(companyBranding?.id)), 
-  });
 
   const companyDescription =
     companyData?.company_custom_values?.find(
@@ -144,50 +140,48 @@ const Page = ({ params }: any) => {
       (field: any) => field.custom_profile_item_id == 7
     )?.value ?? "";
 
-  const { data: country, isLoading: isCountryLoading } = useQuery({
-    queryKey: ["country", companyData?.company_address],
-    queryFn: services.getJurisdictionEntriesById(companyData?.company_address),
-    enabled:
-      !!companyData?.company_address &&
-      isConvertibleToNumber(companyData?.company_address),
-  });
+  // const { data: country, isLoading: isCountryLoading } = useQuery({
+  //   queryKey: ["country", companyData?.company_address],
+  //   queryFn: services.getJurisdictionEntriesById(companyData?.company_address),
+  //   enabled:
+  //     !!companyData?.company_address &&
+  //     isConvertibleToNumber(companyData?.company_address),
+  // });
 
-  const { data: industry, isLoading: isIndustryLoading } = useQuery({
-    queryKey: ["industry", companyData?.industry],
-    queryFn: services.getSubSectorByID(
-      Number(companySectorId),
-      Number(companyData?.industry)
-    ),
-    enabled:
-      !!companyData?.industry &&
-      !!companySectorId &&
-      isConvertibleToNumber(companyData?.industry),
-  });
+  // const { data: industry, isLoading: isIndustryLoading } = useQuery({
+  //   queryKey: ["industry", companyData?.industry],
+  //   queryFn: services.getSubSectorByID(
+  //     Number(companySectorId),
+  //     Number(companyData?.industry)
+  //   ),
+  //   enabled:
+  //     !!companyData?.industry &&
+  //     !!companySectorId &&
+  //     isConvertibleToNumber(companyData?.industry),
+  // });
 
-  const queryClient = useQueryClient();
 
   const { handleFileUpload } = useFileUpload();
 
   useEffect(() => {
     if (!companyData) return;
-    console.log("companyBranding", companyBranding);
     const status = statuses.find(
       (status) =>
         status.value.toLowerCase() === companyData?.status?.toLowerCase()
     );
     setActiveStatus(status);
-    setParentAddressScheme(
-      country?.parentAddressScheme?.entries?.find(
-        (entry: any) => entry?.id == companyParentAddressId
-      )
-    );
+    // setParentAddressScheme(
+    //   country?.parentAddressScheme?.entries?.find(
+    //     (entry: any) => entry?.id == companyParentAddressId
+    //   )
+    // );
     setBackgroundImageUrl(companyData?.company_logo);
 
     if (companyBranding) {
       setColor(companyBranding?.color);
       setSmallLogoUrl(companyBranding?.logo);
     }
-  }, [companyData, country, companyBranding]);
+  }, [companyData, companyBranding]);
 
   const editCompanyBranding = async () => {
     if (!smallLogoUrl) {
@@ -293,8 +287,8 @@ const Page = ({ params }: any) => {
                 <div className={"z-20 relative inline-block"}>
                   <button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
                     {activeStatus?.name}
-                    <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
-                    <IoIosArrowDown />
+                    {/* <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
+                    <IoIosArrowDown /> */}
                   </button>
                 </div>
               </div>
@@ -323,34 +317,8 @@ const Page = ({ params }: any) => {
                       <div className="value">{companyDescription}</div>
                     </div>
                   )}
-                  {companyData?.company_address && (
-                    <div className="group-item">
-                      <div className="label">Jurisdiction</div>
-                      <div className="value">
-                        {country?.name}
-                        {","}
-                        {parentAddressScheme?.name}
-                        {","}
-                        {
-                          parentAddressScheme?.childEntries?.find(
-                            (entry: any) => entry?.id == companyChildAddressId
-                          )?.name
-                        }
-                      </div>
-                    </div>
-                  )}
-                  {companyData?.industry && (
-                    <div className="group-item">
-                      <div className="label">Industry</div>
-                      <div className="value">
-                        {isConvertibleToNumber(companyData?.industry)
-                          ? industry?.sector?.parentSector
-                          : companyData?.industry}
-                        {","}
-                        {companySubSector}
-                      </div>
-                    </div>
-                  )}
+                  
+                  
                   {companyData?.primary_contact_name && (
                     <div className="group-item">
                       <div className="label">Contact person</div>
@@ -375,20 +343,6 @@ const Page = ({ params }: any) => {
                         <div className="value">
                           {companyData?.primary_contact_email}
                         </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex justify-between">
-                    {companyAdminName && (
-                      <div className="group-item">
-                        <div className="label">Admin Name</div>
-                        <div className="value">{companyAdminName}</div>
-                      </div>
-                    )}
-                    {companyAdminEmail && (
-                      <div className="group-item">
-                        <div className="label">Email</div>
-                        <div className="value">{companyAdminEmail}</div>
                       </div>
                     )}
                   </div>

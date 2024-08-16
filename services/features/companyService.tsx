@@ -95,7 +95,7 @@ export const editCompanyBranding = (
   color: string,
   companyName: string
 ) => {
-  return meshApi.put(`/company-branding/update/${tenantId}`, {
+  return defaultMeshApi.put(`/company-branding/update/${tenantId}`, {
     tenancyId: tenantId,
     companyId: companyId,
     logo: logo,

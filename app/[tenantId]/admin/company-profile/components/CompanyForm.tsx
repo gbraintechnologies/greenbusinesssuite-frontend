@@ -207,37 +207,37 @@ const CompanyForm: React.FC<Props> = ({
 
   const [showColorPicker, setShowColorPicker] = useState(false);
 
-  const {
-    data: jurisdictions,
-    isLoading: jurisdictionsLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["all jurisdictions"],
-    queryFn: services.allJurisdictions(),
-  });
+  // const {
+  //   data: jurisdictions,
+  //   isLoading: jurisdictionsLoading,
+  //   refetch,
+  // } = useQuery({
+  //   queryKey: ["all jurisdictions"],
+  //   queryFn: services.allJurisdictions(),
+  // });
 
-  const fetchIndustries = async (jurisdiction: string) => {
-    try {
-      if (!initialLoad) {
-        setSelectedIndustry(undefined);
-        setSelectedSubSector(undefined);
-        setIndustries([]);
-        setSubSectors([]);
-      }
-      const response = await services.getSectorByCountryRaw(jurisdiction);
-      // console.log("response ", response);
-      let industryId = response[0]?.id;
+  // const fetchIndustries = async (jurisdiction: string) => {
+  //   try {
+  //     if (!initialLoad) {
+  //       setSelectedIndustry(undefined);
+  //       setSelectedSubSector(undefined);
+  //       setIndustries([]);
+  //       setSubSectors([]);
+  //     }
+  //     const response = await services.getSectorByCountryRaw(jurisdiction);
+  //     // console.log("response ", response);
+  //     let industryId = response[0]?.id;
 
-      if (industryId) {
-        const sectorsResponse = await services.getSectorByIDRaw(industryId);
-        setIndustries(sectorsResponse);
-      } else {
-        setIndustries([]);
-      }
-    } catch (err) {
-      toast.error("An error occurred while fetching industries");
-    }
-  };
+  //     if (industryId) {
+  //       const sectorsResponse = await services.getSectorByIDRaw(industryId);
+  //       setIndustries(sectorsResponse);
+  //     } else {
+  //       setIndustries([]);
+  //     }
+  //   } catch (err) {
+  //     toast.error("An error occurred while fetching industries");
+  //   }
+  // };
 
   // const fetchSubSectors = async (
   //   sectorSetupId: string | number,
@@ -268,26 +268,26 @@ const CompanyForm: React.FC<Props> = ({
     setColor(newColor.hex);
   };
 
-  const getJurisdictionEntries = async (jurisdictionId: number) => {
-    try {
-      if (!initialLoad) {
-        setSubJurisdictionsLoading(true);
-        setSelectedSubJurisdiction(undefined);
-        setSelectedSubLevel(undefined);
-        setSubJurisdiction([]);
-      }
-      const response = await services.getJurisdictionEntriesByIdRaw(
-        jurisdictionId
-      );
-      setSubJurisdiction(response);
-    } catch (err) {
-      console.log("error ", err);
-    } finally {
-      if (!initialLoad) {
-        setSubJurisdictionsLoading(false);
-      }
-    }
-  };
+  // const getJurisdictionEntries = async (jurisdictionId: number) => {
+  //   try {
+  //     if (!initialLoad) {
+  //       setSubJurisdictionsLoading(true);
+  //       setSelectedSubJurisdiction(undefined);
+  //       setSelectedSubLevel(undefined);
+  //       setSubJurisdiction([]);
+  //     }
+  //     const response = await services.getJurisdictionEntriesByIdRaw(
+  //       jurisdictionId
+  //     );
+  //     setSubJurisdiction(response);
+  //   } catch (err) {
+  //     console.log("error ", err);
+  //   } finally {
+  //     if (!initialLoad) {
+  //       setSubJurisdictionsLoading(false);
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     if (companyLogo) {
@@ -307,24 +307,24 @@ const CompanyForm: React.FC<Props> = ({
     }
   }, [companySmallLogo]);
 
-  useLayoutEffect(() => {
-    if (selectedJurisdiction?.label) {
-      fetchIndustries(selectedJurisdiction?.label);
-      getJurisdictionEntries(Number(selectedJurisdiction?.value));
-    }
-  }, [selectedJurisdiction]);
+  // useLayoutEffect(() => {
+  //   if (selectedJurisdiction?.label) {
+  //     fetchIndustries(selectedJurisdiction?.label);
+  //     getJurisdictionEntries(Number(selectedJurisdiction?.value));
+  //   }
+  // }, [selectedJurisdiction]);
 
-  useLayoutEffect(() => {
-    if (!initialLoad) {
-      setSelectedSubLevel(undefined);
-    }
-  }, [selectedSubJurisdiction]);
+  // useLayoutEffect(() => {
+  //   if (!initialLoad) {
+  //     setSelectedSubLevel(undefined);
+  //   }
+  // }, [selectedSubJurisdiction]);
 
-  useLayoutEffect(() => {
-    if (!initialLoad) {
-      setSelectedSubSector(undefined);
-    }
-  }, [selectedIndustry]);
+  // useLayoutEffect(() => {
+  //   if (!initialLoad) {
+  //     setSelectedSubSector(undefined);
+  //   }
+  // }, [selectedIndustry]);
 
   // useLayoutEffect(() => {
   //   if (selectedIndustry?.value && sectorId) {
@@ -415,7 +415,7 @@ const CompanyForm: React.FC<Props> = ({
                   <ShowError name="companyDescription" />
                 </div>
                 {/* JURISDICTION */}
-                <div className="input-holder half">
+                {/* <div className="input-holder half">
                   <label>Company jurisdiction</label>
                   <Dropdown>
                     <DropdownTrigger>
@@ -479,7 +479,7 @@ const CompanyForm: React.FC<Props> = ({
                   !subJurisdictionsLoading && (
                     <div className="flex gap-5">
                       {/* SUB JURISDICTION */}
-                      <div className="input-holder half">
+                      {/* <div className="input-holder half">
                         <label>
                           {subJurisdiction?.parentAddressScheme?.name ||
                             "Sub Jurisdiction"}
@@ -516,9 +516,9 @@ const CompanyForm: React.FC<Props> = ({
                           </DropdownMenu>
                         </Dropdown>
                         {subJurisdictionsLoading && <LoadingIcon />}
-                      </div>
+                      </div> */}
                       {/* SUB LEVEL */}
-                      {selectedSubJurisdiction && (
+                      {/* {selectedSubJurisdiction && (
                         <div className="input-holder half">
                           <label>Sub Level</label>
                           <Dropdown>
@@ -559,10 +559,10 @@ const CompanyForm: React.FC<Props> = ({
                         </div>
                       )}
                     </div>
-                  )}
+                  )} */}
 
                 {/* INDUSTRY */}
-                {selectedJurisdiction && (
+                {/* {selectedJurisdiction && (
                   <div className="flex gap-5">
                     <div className="input-holder half">
                       <label>Industry</label>
@@ -642,6 +642,7 @@ const CompanyForm: React.FC<Props> = ({
                     )}
                   </div>
                 )}
+               */}
               </div>
 
               {/* COMPANY ADMIN */}

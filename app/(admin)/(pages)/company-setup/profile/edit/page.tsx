@@ -304,7 +304,13 @@ const Page = () => {
     ];
 
     try {
-      await editCompanyWithCustomFields(companyData?.id, {...companyData,data}, custom_fields);
+      const custom_values_field = "company_custom_values";
+  
+      delete companyData[custom_values_field];
+
+
+      await editCompanyWithCustomFields(companyData?.id, {...companyData,...data}, custom_fields)
+      // await editCompanyWithCustomFields(companyData?.id, {...companyData,data}, custom_fields);
 
       // if (hasAdminInfoChanged(initialValues, values)) {
       //   const userResponse = await searchUsersByEmail(

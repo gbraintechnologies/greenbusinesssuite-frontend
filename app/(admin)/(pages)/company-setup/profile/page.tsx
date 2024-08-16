@@ -579,7 +579,7 @@ const Page = () => {
                           position: "relative",
                         }}
                       >
-                        <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
+                        {/* <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
                           <div
                             className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
                             onClick={() => {
@@ -602,7 +602,7 @@ const Page = () => {
                             />
                             <WriteIcon />
                           </label>
-                        </div>
+                        </div> */}
                       </div>
                     )}
                   </div>
