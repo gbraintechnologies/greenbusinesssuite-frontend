@@ -39,8 +39,8 @@ function NewRole() {
   const router = useRouter();
 
   const { data: permissions } = useQuery({
-    queryKey: ["all permissions"],
-    queryFn: services.allPermissions(),
+    queryKey: ["allPermissions", { limit: 400, offset: 0 }],
+    queryFn: services.allPermissions(400, 0),
   });
 
   const initialValues: FormValues = {

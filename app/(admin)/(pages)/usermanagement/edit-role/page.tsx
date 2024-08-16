@@ -52,8 +52,8 @@ function EditRole() {
 
   const { data: allPermissionsData, isLoading: isPermissionsLoading } =
     useQuery({
-      queryKey: ["allPermissions"],
-      queryFn: services.allPermissions(),
+      queryKey: ["allPermissions", { limit: 400, offset: 0 }],
+      queryFn: services.allPermissions(400, 0),
     });
 
   const [initialValues, setInitialValues] = useState<FormValues>({

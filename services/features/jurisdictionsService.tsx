@@ -50,6 +50,10 @@ export const createChildEntries = (data: any) => {
   );
 };
 
+export const createChildEntriesID = (id: any) => {
+  return authApi.post(`/jurisdictions/create/${id}`);
+};
+
 export const deleteJurisdictionByID = (id: any) => {
   return authApi.delete(`/jurisdictions/delete/${id}`);
 };

@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import Modal from "@/components/Modal/Modal";
 import { Countrie } from "../../country-setup/components/Countries";
 import DataTable from "@/components/DataTable/DataTable";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { RiDeleteBin6Line, RiArrowGoBackLine } from "react-icons/ri";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import EditIconSetup from "@/public/icons/EditIconSetup";
 import SelectCountryEdit from "../components/selectCountryEdit";
@@ -19,10 +19,12 @@ import TextInput from "../components/TextInput";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
-  deleteAllSectors,
   updateSector,
   deleteBySubSectorID,
+  deleteBySectorID,
 } from "@/services/features/sectorService";
+import { Button } from "@nextui-org/button";
+import { LuPlusCircle } from "react-icons/lu";
 
 const schema = yup.object().shape({
   id: yup.number().required(),
@@ -94,11 +96,15 @@ function EditSector() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteAllModalOpen, setDeleteAllModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editRow, setEditRow] = useState<Row | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
+  const [sector, setSector] = useState('');
+  const [subSectors, setSubSectors] = useState('');
 
   useEffect(() => {
+    //alert(JSON.stringify(Id))
     if (data) {
       setValue("id", data.id);
       setValue("countryName", data.countryName);
@@ -181,7 +187,7 @@ function EditSector() {
       await updateSector(payload);
 
       toast.dismiss(loadingToast);
-      toast.success(payload?.sectors[0].parentSector + " updated");
+      toast.success( "updated sucessfully");
 
       await refetch();
     } catch (error) {
@@ -216,7 +222,7 @@ function EditSector() {
         return;
       }
 
-      await deleteAllSectors(Id);
+      await deleteBySectorID(Id);
       setDeleteAllModalOpen(false);
       router.push("/sector-setup");
     } catch (error) {
@@ -288,15 +294,52 @@ function EditSector() {
     },
   ];
 
+  const handleAddButton = async () => {
+    let loadingToast = toast.loading("Adding new sector...");
+    try {
+      const formData = getValues();
+      const { id, countryName, sectors } = formData;
+
+      const newSector = {
+        parentSector: sector || "New Sector",
+        subSector: subSectors
+          .split(",")
+          .map((sub: string) => sub.trim()),
+      };
+      const updatedSectors = [...sectors, newSector];
+      const payload = {
+        id,
+        countryName,
+        sectors: updatedSectors,
+      };
+      console.log("Payload to be sent:", JSON.stringify(payload));
+      await updateSector(payload);
+
+      toast.dismiss(loadingToast);
+      toast.success("New sector added");
+
+      await refetch();
+
+      setIsAddModalOpen(false);
+      setSector('');
+      setSubSectors('');
+    } catch (error) {
+      toast.dismiss(loadingToast);
+
+      // Log the error to understand what went wrong
+      console.error("Error adding sector:", error);
+
+      toast.error("Error adding sector. Please try again");
+    }
+  };
+
+
   return (
     <div className="w-full p-5">
       <div className="w-full">
         <form
           className="flex flex-col gap-6"
-          //  onSubmit={(e) => {
-          //   e.preventDefault();
-          //   onSubmitHandler(getValues())
-          // }}
+
           style={{ display: "inline-flex", width: "100%" }}
         >
           <div className="w-full text-primary-dark flex justify-between">
@@ -312,7 +355,7 @@ function EditSector() {
                   type="button"
                   className="button bg-gray-50 border border-gray-200 shadow-sm py-3 px-4 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
                 >
-                  Go Back
+                  <RiArrowGoBackLine /> Go Back
                 </button>
               </Link>
               {/* <button
@@ -361,21 +404,29 @@ function EditSector() {
                   <p style={{ margin: 0, marginRight: "100px" }}></p>
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={() => setDeleteAllModalOpen(true)}
-                className="bg-primary-red disabled:bg-gray-400 flex text-white text-sm py-1.5 hover:opacity-95 items-center gap-2 rounded-xl ml-auto"
-                style={{
-                  minHeight: "2.5rem",
-                  height: "2.5em",
-                  lineHeight: "2.0rem",
-                  fontSize: "0.875rem",
-                  padding: "0.25rem 0.5rem",
-                }}
-              >
-                <RiDeleteBin6Line size={20} />
-                Delete all sectors
-              </button>
+              <div className="flex items-center justify-between gap-2">
+                <Button onClick={() => setIsAddModalOpen(true)} className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl">
+                  <LuPlusCircle />
+                  Add new sectors
+                </Button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDeleteAllModalOpen(true)}
+                    className="bg-primary-red disabled:bg-gray-400 flex text-white text-sm py-1.5 hover:opacity-95 items-center gap-2 rounded-xl ml-auto"
+                    style={{
+                      minHeight: "2.5rem",
+                      height: "2.5em",
+                      lineHeight: "2.0rem",
+                      fontSize: "0.875rem",
+                      padding: "0.25rem 0.5rem",
+                    }}
+                  >
+                    <RiDeleteBin6Line size={20} />
+                    Delete all Sectors &nbsp;&nbsp;
+                  </button>
+                </div>
+              </div>
             </div>
             <div className="w-full">
               <DataTable isLoading={isLoading} rows={rows} columns={columns} />
@@ -497,12 +548,56 @@ function EditSector() {
             </button>
             <button
               onClick={handleDeleteAll}
-              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${
-                inputValue === "delete all" ? "bg-primary-red" : "bg-red-300"
-              } ${inputValue !== "delete all" ? "cursor-not-allowed" : ""}`}
+              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${inputValue === "delete all" ? "bg-primary-red" : "bg-red-300"
+                } ${inputValue !== "delete all" ? "cursor-not-allowed" : ""}`}
               disabled={inputValue !== "delete all"}
             >
               Yes,delete all
+            </button>
+          </div>
+        </div>
+      </Modal>
+      {/* ADD NEW VALUES MODAL */}
+      <Modal
+        isOpen={isAddModalOpen}
+        setIsOpen={setIsAddModalOpen}
+        title="Add Values"
+      >
+        <div>
+          <div className="px-7">
+            <TextInput
+              type="text"
+              placeholder="Add Sector"
+              autoComplete="off"
+              value={sector}
+              onChange={(e) => setSector(e.target.value)}
+            />
+          </div>
+          <div className="px-7">
+            <TextInput
+              type="text"
+              placeholder="Add Sub-Sectors"
+              autoComplete="off"
+              value={subSectors}
+              onChange={(e) => setSubSectors(e.target.value)}
+              extraClasses="h-[90px]"
+            />
+          </div>
+
+          <div className="p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
+              onClick={() => {
+                setIsAddModalOpen(false);
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddButton}
+              className="bg-primary-green py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl"
+            >
+              <IoIosAddCircleOutline size={20} /> Save
             </button>
           </div>
         </div>
