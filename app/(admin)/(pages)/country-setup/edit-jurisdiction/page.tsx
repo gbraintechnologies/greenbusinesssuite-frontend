@@ -19,11 +19,14 @@ import {
   editParentSchemeChildEntriesByID,
   deleteParentAddressAndChildByID,
   deleteJurisdictionByID,
+  createChildEntriesID,
 } from "@/services/features/jurisdictionsService";
 import SelectCountryEdit from "../components/selectCountryEdit";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { RiDeleteBin6Line, RiArrowGoBackLine } from "react-icons/ri";
 import { BsDot } from "react-icons/bs";
 import { toast } from "sonner";
+import { Button } from "@nextui-org/button";
+import { LuPlusCircle } from "react-icons/lu";
 
 const schema = yup.object().shape({
   id: yup.number().required(),
@@ -53,6 +56,7 @@ function EditJurisdiction() {
   const searchParams = useSearchParams();
   const Id = searchParams.get("id");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteAllModalOpen, setDeleteAllModalOpen] = useState(false);
   const [editRow, setEditRow] = useState<Row | null>(null);
@@ -88,7 +92,6 @@ function EditJurisdiction() {
   });
 
   useEffect(() => {
-    // alert(JSON.stringify(data))
     if (data) {
       setValue("id", data.id);
       setValue("name", data.name);
@@ -262,25 +265,8 @@ function EditJurisdiction() {
             };
           }
         }
-        // return {
-        //   id: 0,
-        //   name: district.trim(),
-        //   parentAddressSchemeEntriesId: row.id,
-        // };
       }),
     };
-  };
-
-  const onSubmitHandler = async (formData: typeOfSchema) => {
-    // try {
-    //   const payload = mapRowsToPayload();
-    //   console.log("payload", payload);
-    //   await editParentSchemeChildEntriesByID(payload.id, payload);
-    //   toast.success("Update successful");
-    //   await refetch();
-    // } catch (error) {
-    //   console.error("Error submitting form:", error);
-    // }
   };
 
   const handleParentChildrenUpdate = async (data: any) => {
@@ -301,15 +287,15 @@ function EditJurisdiction() {
     }
   };
 
+  const handleAddButton = () => {
+   
+  }
+
   return (
     <div className="w-full p-5">
       <div className="w-full">
         <form
           className="flex flex-col gap-6"
-          // onSubmit={(e) => {
-          //   e.preventDefault();
-          //   onSubmitHandler(getValues());
-          // }}
           style={{ display: "inline-flex", width: "100%" }}
         >
           <div className="w-full text-primary-dark flex justify-between">
@@ -327,7 +313,7 @@ function EditJurisdiction() {
                   type="button"
                   className="button bg-gray-50 border border-gray-200 shadow-sm py-3 px-4 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
                 >
-                  Go back
+                  <RiArrowGoBackLine />Go back
                 </button>
               </Link>
               {/* <button
@@ -393,21 +379,29 @@ function EditJurisdiction() {
                   </p>
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={() => setDeleteAllModalOpen(true)}
-                className="bg-primary-red disabled:bg-gray-400 flex text-white text-sm py-1.5 hover:opacity-95 items-center gap-2 rounded-xl ml-auto"
-                style={{
-                  minHeight: "2.5rem",
-                  height: "2.5em",
-                  lineHeight: "2.0rem",
-                  fontSize: "0.875rem",
-                  padding: "0.25rem 0.5rem",
-                }}
-              >
-                <RiDeleteBin6Line size={20} />
-                Delete all {data?.parentAddressScheme.name}
-              </button>
+              <div className="flex items-center justify-between gap-2">
+                <Button onClick={() => setIsAddModalOpen(true)} className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl">
+                  <LuPlusCircle />
+                  Add new  {data?.parentAddressScheme.name}
+                </Button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDeleteAllModalOpen(true)}
+                    className="bg-primary-red disabled:bg-gray-400 flex text-white text-sm py-1.5 hover:opacity-95 items-center gap-2 rounded-xl ml-auto"
+                    style={{
+                      minHeight: "2.5rem",
+                      height: "2.5em",
+                      lineHeight: "2.0rem",
+                      fontSize: "0.875rem",
+                      padding: "0.25rem 0.5rem",
+                    }}
+                  >
+                    <RiDeleteBin6Line size={20} />
+                    Delete Setup &nbsp;&nbsp;
+                  </button>
+                </div>
+              </div>
             </div>
             <div className="w-full">
               <DataTable isLoading={isLoading} rows={rows} columns={columns} />
@@ -509,15 +503,14 @@ function EditJurisdiction() {
       >
         <div>
           <p className="px-5 text-center mt-5 text-[#334155]">
-            Deleting all {data?.parentAddressScheme.name} would delete all the{" "}
-            {data?.parentAddressScheme.name} and sub-
+            Deleting the setup will delete all set regions and
           </p>
           <p className="text-center text-[#334155] mb-3">
-            level values you have inputted.
+            sub-level values you have inputted.This action cannot be undone.
           </p>
           <p className="text-center text-sm text-[#334155] mt-5">
             Type the phrase “delete all” to delete the{" "}
-            {data?.parentAddressScheme.name}.
+            setup.
           </p>
           <div className="px-7">
             <TextInput
@@ -537,12 +530,54 @@ function EditJurisdiction() {
             </button>
             <button
               onClick={handleDeleteAll}
-              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${
-                inputValue === "delete all" ? "bg-primary-red" : "bg-red-300"
-              } ${inputValue !== "delete all" ? "cursor-not-allowed" : ""}`}
+              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${inputValue === "delete all" ? "bg-primary-red" : "bg-red-300"
+                } ${inputValue !== "delete all" ? "cursor-not-allowed" : ""}`}
               disabled={inputValue !== "delete all"}
             >
               Yes,delete all
+            </button>
+          </div>
+        </div>
+      </Modal>
+      {/* ADD NEW VALUES MODAL */}
+      <Modal
+        isOpen={isAddModalOpen}
+        setIsOpen={setIsAddModalOpen}
+        title="Add Values"
+      >
+        <div>
+          <div className="px-7">
+            <TextInput
+              type="text"
+              placeholder="Add Region"
+              autoComplete="off"
+              value=""
+            />
+          </div>
+          <div className="px-7">
+            <TextInput
+              type="text"
+              placeholder="Add Districts"
+              autoComplete="off"
+              value=""
+              extraClasses="h-[90px]"
+            />
+          </div>
+
+          <div className="p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-2xl"
+              onClick={() => {
+                setIsAddModalOpen(false);
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddButton}
+              className="bg-primary-green py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl"
+            >
+              <IoIosAddCircleOutline size={20} /> Save
             </button>
           </div>
         </div>

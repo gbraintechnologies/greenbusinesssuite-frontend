@@ -67,6 +67,10 @@ function ParentSectorInputs() {
     countryName: "",
     sectors: [],
   });
+  const [rawInputs, setRawInputs] = useState<string[]>(
+    formData.sectors.map(sector => sector.subSector.join(", "))
+  );
+
 
   useEffect(() => {
     console.log("Initial Entries:", initialEntries);
@@ -75,16 +79,29 @@ function ParentSectorInputs() {
       reset(initialEntries);
     }
   }, [initialEntries, reset]);
-  
+
   useEffect(() => {
   }, [formData]);
 
   const handleChange = (index: number, value: string) => {
     const updatedSectors = [...formData.sectors];
-    updatedSectors[index].subSector = value.split(",").map((s) => s.trim());
+    const updatedRawInputs = [...rawInputs];
+
+    // Update raw input state
+    updatedRawInputs[index] = value;
+
+    // Update sectors' subSector based on raw input
+    updatedSectors[index].subSector = value
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+
+    // Update form data and raw input state
     setFormData((prev) => ({ ...prev, sectors: updatedSectors }));
+    setRawInputs(updatedRawInputs);
     setValue(`sectors.${index}.subSector`, updatedSectors[index].subSector);
   };
+
 
   const onSubmitHandler = async (data: FormData) => {
     try {
@@ -141,10 +158,10 @@ function ParentSectorInputs() {
                     type="text"
                     autoComplete="off"
                     label={sector.parentSector}
-                    placeholder="Enter comma separated values"
+                    placeholder="Enter comma-separated values"
                     className="rounded xl"
                     style={{ width: "30%", height: "100px" }}
-                    value={sector.subSector.join(", ")}
+                    value={rawInputs[index] || ""} // Use raw input state
                     onChange={(e) => handleChange(index, e.target.value)}
                   />
                 </div>
