@@ -61,13 +61,15 @@ function EditJurisdiction() {
   const [deleteAllModalOpen, setDeleteAllModalOpen] = useState(false);
   const [editRow, setEditRow] = useState<Row | null>(null);
   const [inputValue, setInputValue] = useState("");
+  const [region, setRegion] = useState("");
+  const [districts, setDistricts] = useState("")
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["all parentSchemeEntries", Id],
     queryFn: services.getJurisdictionEntriesById(Number(Id)),
     enabled: !!Id,
   });
-
+  const parentAddressSchemeId = data?.parentAddressScheme?.id;
   const {
     register,
     handleSubmit,
@@ -235,9 +237,6 @@ function EditJurisdiction() {
 
   const mapRowsToPayload = (updatedRow: any) => {
     const row = updatedRow ? updatedRow : rows[0];
-
-    // UPDATE 1: FINDING ENTRIES USING ID NOT NAME
-    // prevents undefinied error if name of region is changed
     const entry = data?.parentAddressScheme.entries.find(
       (entry: any) => entry.id === row.id
     );
@@ -247,10 +246,7 @@ function EditJurisdiction() {
       name: row.regions,
       childEntries: row.districts.split(", ").map((district: any, idx: any) => {
         if (entry) {
-          // UPDATE 2: USING POSITION IN ARRAY TO FIND CHILDREN NOT NAMES
           const childEntry = entry.childEntries[idx];
-
-          // HANLDE CASE OF EDITING EXISTING CHILDREN : ALREADY HAVE AN ID
           if (childEntry?.id) {
             return {
               id: childEntry.id,
@@ -258,7 +254,6 @@ function EditJurisdiction() {
               parentAddressSchemeEntriesId: row.id,
             };
           } else {
-            // HANLDE CASE OF ADDING NEW CHILDREN : NO ID
             return {
               name: district.trim(),
               parentAddressSchemeEntriesId: row.id,
@@ -287,9 +282,42 @@ function EditJurisdiction() {
     }
   };
 
-  const handleAddButton = () => {
-   
-  }
+ 
+
+  const handleAddButton = async () => {
+    let loadingToast = toast.loading("Please wait...");
+  
+    if (!parentAddressSchemeId) {
+      return;
+    }
+    const payload = {
+      id: parentAddressSchemeId,
+      name: region,
+      childEntries: districts.split(",").map((d) => ({ name: d.trim() })),
+    };
+  
+    try {
+      const response = await createChildEntriesID(parentAddressSchemeId, payload);
+
+      if (response.status === 200 || response.status === 201) {
+        toast.dismiss(loadingToast);
+        toast.success("New Region added");
+
+        await refetch();
+  
+        setIsAddModalOpen(false);
+        setRegion(""); 
+        setDistricts("");
+      } else {
+        toast.dismiss(loadingToast);
+        toast.error(`Failed to create child entries: ${response.data.message || "Unknown error"}`);
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error("An error occurred");
+    }
+  };
+  
 
   return (
     <div className="w-full p-5">
@@ -551,7 +579,8 @@ function EditJurisdiction() {
               type="text"
               placeholder="Add Region"
               autoComplete="off"
-              value=""
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
             />
           </div>
           <div className="px-7">
@@ -559,8 +588,9 @@ function EditJurisdiction() {
               type="text"
               placeholder="Add Districts"
               autoComplete="off"
-              value=""
+              value={districts}
               extraClasses="h-[90px]"
+              onChange={(e) => setDistricts(e.target.value)}
             />
           </div>
 
@@ -582,7 +612,7 @@ function EditJurisdiction() {
           </div>
         </div>
       </Modal>
-    </div>
+    </div >
   );
 }
 
