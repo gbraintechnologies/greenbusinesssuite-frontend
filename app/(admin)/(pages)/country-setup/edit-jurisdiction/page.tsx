@@ -121,8 +121,8 @@ function EditJurisdiction() {
       flex: 1,
       getActions: (params: any) => [
         <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
-          <div className="h-10 flex items-center justify-center"></div>
-          <div>
+          <div className="h-10 flex items-center justify-center overflow-y-auto max-h-20"></div>
+          <div className="overflow-y-auto max-h-20">
             <p className="font-medium"></p>
             {params.row.regions}
           </div>
@@ -139,7 +139,7 @@ function EditJurisdiction() {
       getActions: (params: any) => [
         <div
           key={params.row.id}
-          className="flex flex-col gap-2 my-2"
+          className="flex flex-col gap-2 my-2 overflow-y-auto max-h-20"
           style={{ whiteSpace: "normal", wordBreak: "break-word" }}
         >
           <p className="font-medium text-sm">{params.row.districts}</p>
@@ -152,10 +152,10 @@ function EditJurisdiction() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div className="flex items-center justify-end" key={params.row.id}>
+        <div className="flex items-center justify-end overflow-y-auto max-h-20" key={params.row.id}>
           <button
             type="button"
-            className="rounded-full "
+            className="rounded-full"
             style={{ right: "-10px" }}
             onClick={() => handleEditClick(params.row)}
           >
@@ -176,6 +176,7 @@ function EditJurisdiction() {
       ],
     },
   ];
+  
 
   const handleSaveEdit = () => {
     if (!editRow) return;
