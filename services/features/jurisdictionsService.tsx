@@ -50,8 +50,8 @@ export const createChildEntries = (data: any) => {
   );
 };
 
-export const createChildEntriesID = (id: any) => {
-  return authApi.post(`/jurisdictions/create/${id}`);
+export const createChildEntriesID = (id: any, payload: any) => {
+  return authApi.post(`/jurisdictions/create/${id}`, payload);
 };
 
 export const deleteJurisdictionByID = (id: any) => {
