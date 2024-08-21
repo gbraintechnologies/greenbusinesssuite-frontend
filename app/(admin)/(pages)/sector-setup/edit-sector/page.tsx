@@ -244,7 +244,7 @@ function EditSector() {
       headerName: "Sector",
       flex: 1,
       renderCell: (params: any) => (
-        <div className="flex py-3 gap-4 my-3 items-center">
+        <div className="flex py-3 gap-4 my-3 items-center max-h-20">
           <div className="h-10 flex items-center justify-center">
             {params.value}
           </div>
@@ -257,7 +257,7 @@ function EditSector() {
       flex: 4,
       renderCell: (params: any) => (
         <div
-          className="flex flex-col gap-2 my-2"
+          className="flex flex-col gap-2 my-2 overflow-y-auto max-h-20"
           style={{ whiteSpace: "normal", wordBreak: "break-word" }}
         >
           <p className="font-medium text-sm">{params.value}</p>
@@ -269,10 +269,10 @@ function EditSector() {
       headerName: "Actions",
       flex: 1,
       renderCell: (params: any) => (
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end max-h-20">
           <button
             type="button"
-            className="rounded-full "
+            className="rounded-full"
             style={{ right: "-10px" }}
             onClick={() => handleEditClick(params.row)}
           >
@@ -293,6 +293,7 @@ function EditSector() {
       ),
     },
   ];
+  
 
   const handleAddButton = async () => {
     let loadingToast = toast.loading("Adding new sector...");
