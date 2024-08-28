@@ -19,6 +19,7 @@ import Pagination from "@/components/Pagination/Pagination";
 // types
 import { TimelineType, TimelineValues } from "@/types";
 import FormGridLoader from "./FormGridLoader";
+import removeIds from "@/utils/RemoveIds/RemoveIds";
 
 function UsingTemplate({ setShowTemplateModal }: any) {
   const router = useRouter();
@@ -39,32 +40,6 @@ function UsingTemplate({ setShowTemplateModal }: any) {
     queryKey: ["form templates", page, limit, selectedTimeline?.value],
     queryFn: services.allFormTemplates(page, limit, selectedTimeline?.value),
   });
-
-  // @ts-ignore
-  function removeIds(data: any) {
-    // If the data is an array, iterate over each item
-    if (Array.isArray(data)) {
-      // @ts-ignore
-      return data.map((item: any) => removeIds(item));
-    }
-
-    // If the data is an object, iterate over each key
-    if (typeof data === "object" && data !== null) {
-      const newData = {};
-      for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-          if (key !== "id") {
-            // @ts-ignore
-            newData[key] = removeIds(data[key]);
-          }
-        }
-      }
-      return newData;
-    }
-
-    // If the data is not an object or array, return it as is
-    return data;
-  }
 
   const useTemplate = (form: any) => {
     setShowTemplateModal(false);

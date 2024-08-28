@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 
 // icons
 import { CiCircleInfo } from "react-icons/ci";
+import { VscCopy } from "react-icons/vsc";
 
 // components
 import FormField from "./FormField";
@@ -12,9 +13,12 @@ import FormElementSelector from "./FormElementSelector";
 import useForm from "@/hooks/useForm";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
+import Border from "@/components/Border/Border";
+import removeIds from "@/utils/RemoveIds/RemoveIds";
+import { toast } from "sonner";
 
 function FormSection({ section, refetch }: any) {
-  const { form } = useForm();
+  const { form, addFormSection } = useForm();
 
   const { data: formStatusCount } = useQuery({
     queryKey: ["Get forms status count"],
@@ -42,16 +46,29 @@ function FormSection({ section, refetch }: any) {
 
   const { removeSection, updateSection } = useForm();
 
-  const [showDelete, setShowDelete] = useState(false);
+  const [showSectionActions, setShowSectionActions] = useState(false);
 
   const handleDelete = () => {
     removeSection(section);
   };
 
+  const handleSectionDuplicate = () => {
+    //
+
+    let duplicate = {
+      ...removeIds(section),
+      ordering: form?.formSections?.length,
+    };
+
+    addFormSection(duplicate);
+    toast.success("Form section duplicated");
+    console.log("section duplicate", duplicate);
+  };
+
   return (
     <div
-      onMouseEnter={() => setShowDelete(true)}
-      onMouseLeave={() => setShowDelete(false)}
+      onMouseEnter={() => setShowSectionActions(true)}
+      onMouseLeave={() => setShowSectionActions(false)}
       className="form-section"
     >
       <h5 className="font-bold text-lg">
@@ -126,51 +143,64 @@ function FormSection({ section, refetch }: any) {
         )}
       </div>
 
-      {/* DELETE ICON */}
-      {showDelete && (
-        <button
-          onClick={handleDelete}
-          onMouseEnter={() => setShowDelete(true)}
-          className="bg-white hover:bg-red-50 shadow-xl p-3 rounded-lg absolute top-10 -right-5"
+      {/* DELETE ICON && DUPLICATE BUTTON */}
+      {showSectionActions && (
+        <div
+          className="bg-white flex flex-col py-2 items-center justify-center shadow-xl p-1 rounded-lg absolute top-3 -right-5"
+          onMouseEnter={() => setShowSectionActions(true)}
+          // onMouseLeave={() => setShowSectionActions(false)}
         >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+          {" "}
+          <button
+            onClick={handleDelete}
+            className="bg-white hover:bg-red-100 p-2 rounded-xl "
           >
-            <path
-              d="M20.5001 6H3.5"
-              stroke="#DC2626"
-              stroke-width="1.5"
-              stroke-linecap="round"
-            />
-            <path
-              d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5"
-              stroke="#DC2626"
-              stroke-width="1.5"
-              stroke-linecap="round"
-            />
-            <path
-              d="M9.5 11L10 16"
-              stroke="#DC2626"
-              stroke-width="1.5"
-              stroke-linecap="round"
-            />
-            <path
-              d="M14.5 11L14 16"
-              stroke="#DC2626"
-              stroke-width="1.5"
-              stroke-linecap="round"
-            />
-            <path
-              d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
-              stroke="#DC2626"
-              stroke-width="1.5"
-            />
-          </svg>
-        </button>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M20.5001 6H3.5"
+                stroke="#DC2626"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <path
+                d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5"
+                stroke="#DC2626"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <path
+                d="M9.5 11L10 16"
+                stroke="#DC2626"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <path
+                d="M14.5 11L14 16"
+                stroke="#DC2626"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <path
+                d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
+                stroke="#DC2626"
+                stroke-width="1.5"
+              />
+            </svg>
+          </button>
+          <div className="w-full my-3 px-5 border-[0.6px] border-t-[#CFCFCF]"></div>
+          <button
+            onClick={handleSectionDuplicate}
+            className="bg-white hover:bg-blue-100  p-2 rounded-xl"
+          >
+            <VscCopy size={20} />
+          </button>
+        </div>
       )}
     </div>
   );

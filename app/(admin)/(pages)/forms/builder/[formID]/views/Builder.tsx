@@ -165,6 +165,7 @@ function Builder({ data, refetch }: any) {
           <div ref={parent} className="mt-5">
             {formSections
               ?.filter((item: any) => !item.isDeleted)
+              .sort((a: any, b: any) => a?.ordering - b?.ordering)
               ?.map((section: any, idx: any) => {
                 return (
                   <FormSection refetch={refetch} key={idx} section={section} />
