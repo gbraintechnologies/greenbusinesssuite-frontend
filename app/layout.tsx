@@ -7,7 +7,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Mesh Suite | %s",
+  title: "Mesh Suite",
   description: "Mesh Suite",
   icons: {
     icon: "/favicon.ico",
