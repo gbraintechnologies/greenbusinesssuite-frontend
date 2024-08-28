@@ -149,9 +149,9 @@ function LogIn() {
             <h6 className="font-bold text-xl">Sign in</h6>
             <div>
               <TextInput
-                label="Username"
+                label="Email address"
                 type="text"
-                placeholder="Enter your username"
+                placeholder="Enter your email address"
                 autoComplete="off"
                 {...register("username")}
                 error={errors.username?.message}

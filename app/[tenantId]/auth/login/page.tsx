@@ -181,9 +181,9 @@ function CompanyAdminAuth({ params }: any) {
           <div>
             <TextInput
               onClick={() => setLoginError(null)}
-              label="Email/Username"
+              label="Email address"
               type="text"
-              placeholder="Enter your email address or username"
+              placeholder="Enter your email address"
               autoComplete="off"
               {...register("username")}
               error={errors.username?.message}
