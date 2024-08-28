@@ -84,6 +84,7 @@ defaultMeshApi.interceptors.response.use(
             ...originalRequest,
             headers: {
               // USE NEW TOKEN IN RETRY REQUEST
+              ...headers,
               Authorization: `Bearer ${res?.data?.access_token}`,
             },
           });
@@ -91,7 +92,8 @@ defaultMeshApi.interceptors.response.use(
         .catch((e) => {
           toast.dismiss();
           toast.warning("Login to continue", {
-            description: "Your session has expired. Please login to continue",
+            description:
+              "Your session has expired. Please login to continue default mesh client",
           });
           // @ts-ignore
           // localStorage.clear();

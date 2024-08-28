@@ -3,8 +3,6 @@
 import useForm from "@/hooks/useForm";
 import React, { useEffect, useState } from "react";
 
-import { DatePicker } from "@nextui-org/date-picker";
-
 import { Switch } from "@headlessui/react";
 
 // icons
@@ -14,8 +12,7 @@ import { HiOutlineDocument } from "react-icons/hi";
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 import FieldOptions from "./FieldOptions";
 
-function GeneralFormSettings({ refetch }: any) {
-  const [activeTab, setActiveTab] = useState("general");
+function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
   const {
     formLayout,
     setFormLayout,
@@ -23,6 +20,7 @@ function GeneralFormSettings({ refetch }: any) {
     setActiveField,
     form,
     updateIsTemplate,
+    updateDeadline,
   } = useForm();
 
   useEffect(() => {
@@ -32,6 +30,7 @@ function GeneralFormSettings({ refetch }: any) {
   // if (activeField) {
   //   return <FieldOptions refetch={refetch} />;
   // }
+
   return (
     <div className="bg-white min-h-[80vh]  border-l-2 border-gray-200 p-3">
       <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
@@ -64,9 +63,9 @@ function GeneralFormSettings({ refetch }: any) {
           </div>
           <div className="flex text-sm mt-5 items-center justify-between gap-4">
             <button
-              onClick={() => setFormLayout("classic")}
+              onClick={() => setFormLayout("GENERAL")}
               className={`${
-                formLayout === "classic"
+                formLayout?.toLowerCase() === "general"
                   ? "border-2 border-primary-green bg-primary-green bg-opacity-10 font-semibold "
                   : " "
               } flex flex-col h-[10rem] items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
@@ -77,9 +76,9 @@ function GeneralFormSettings({ refetch }: any) {
             </button>
 
             <button
-              onClick={() => setFormLayout("card")}
+              onClick={() => setFormLayout("CARD")}
               className={`${
-                formLayout === "card"
+                formLayout?.toLowerCase() === "card"
                   ? "border-2 border-primary-green bg-primary-green bg-opacity-10 font-semibold"
                   : " "
               } flex flex-col h-[10rem] items-center justify-center relative gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
@@ -96,7 +95,14 @@ function GeneralFormSettings({ refetch }: any) {
               Specify a date after which form would be inaccessible to new
               clients
             </p>
-            {/* <DatePicker label="Form deadline" className="max-w-[284px]" /> */}
+            <input
+              value={
+                Boolean(form?.deadline) ? form?.deadline.split("T")[0] : null
+              }
+              onChange={(e) => updateDeadline(e.target.value)}
+              className="block mt-2 w-full border-gray-400 text-gray-500 border px-3 py-2 rounded-lg"
+              type="date"
+            />
           </div>
           {/* use as template */}
           <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">

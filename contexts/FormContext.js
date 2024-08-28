@@ -34,6 +34,8 @@ export const FormProvider = ({ children }) => {
   useEffect(() => {
     if (form) {
       setForm((prev) => ({ ...prev, layout: formLayout }));
+      // update remote form too
+      updateRemoteForm({ ...form, layout: formLayout });
     }
   }, [formLayout]);
 
@@ -89,8 +91,6 @@ export const FormProvider = ({ children }) => {
           });
 
         toast.dismiss();
-        // TODO: REMOVE AFTER TESTS
-        // toast.success("updated field");
       })
       .catch((e) => {
         toast.dismiss();
@@ -119,13 +119,14 @@ export const FormProvider = ({ children }) => {
         { ordering: form.formSections.length, ...data },
       ],
     });
-    // setForm((prev) => ({
-    //   ...prev,
-    //   formSections: [
-    //     ...form.formSections,
-    //     { ordering: form.formSections.length, ...data },
-    //   ],
-    // }));
+  };
+
+  // deadline
+  const updateDeadline = (date) => {
+    updateRemoteForm({
+      ...form,
+      deadline: new Date(date),
+    });
   };
 
   const updateFormSectionsOrdering = (sections) => {
@@ -242,6 +243,7 @@ export const FormProvider = ({ children }) => {
         formLayout,
         setFormLayout,
         updateIsTemplate,
+        updateDeadline,
       }}
     >
       {children}

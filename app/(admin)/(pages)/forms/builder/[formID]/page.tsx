@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -26,6 +26,8 @@ function FormEditing({ params }: any) {
   }, []);
 
   const { view, selectForm } = useForm();
+
+  const [activeTab, setActiveTab] = useState("general");
 
   const { formID } = params;
 
@@ -56,12 +58,23 @@ function FormEditing({ params }: any) {
   return (
     <div className="w-full min-h-[100vh] flex  justify-between">
       <div className="w-[76%] min-h-screen">
-        {view === "builder" && <Builder refetch={refetch} data={data} />}
+        {view === "builder" && (
+          <Builder
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            refetch={refetch}
+            data={data}
+          />
+        )}
         {view === "connect" && <Connect />}
       </div>
 
       <div className="w-[24%] overflow-y-scroll no-scrollbar fixed right-1">
-        <GeneralFormSettings refetch={refetch} />
+        <GeneralFormSettings
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          refetch={refetch}
+        />
       </div>
     </div>
   );

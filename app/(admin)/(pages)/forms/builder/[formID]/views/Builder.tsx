@@ -26,7 +26,7 @@ function isObjEmpty(obj: any) {
   return Object.keys(obj).length === 0;
 }
 
-function Builder({ data, refetch }: any) {
+function Builder({ data, refetch, activeTab, setActiveTab }: any) {
   // scroll to top
   useEffect(() => {
     typeof window !== "undefined" && window.scrollTo(0, 0);
@@ -102,13 +102,6 @@ function Builder({ data, refetch }: any) {
       updateNameAndDescription({ name: formName, description: formDesc });
     };
 
-    // TODO: SORT SECTIONS BY ORDER
-    // let sortByOrder = (data: any) => {
-    //   return data.sort(function (a: any, b: any) {
-    //     return a.ordering - b.ordering;
-    //   });
-    // };
-
     return (
       <div className="pt-10 pb-[20rem] relative flex px-10">
         <div className={`w-2/6`}>
@@ -168,7 +161,13 @@ function Builder({ data, refetch }: any) {
               .sort((a: any, b: any) => a?.ordering - b?.ordering)
               ?.map((section: any, idx: any) => {
                 return (
-                  <FormSection refetch={refetch} key={idx} section={section} />
+                  <FormSection
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    refetch={refetch}
+                    key={idx}
+                    section={section}
+                  />
                 );
               })}
           </div>

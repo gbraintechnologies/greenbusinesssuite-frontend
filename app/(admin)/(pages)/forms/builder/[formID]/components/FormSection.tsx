@@ -18,7 +18,7 @@ import Border from "@/components/Border/Border";
 import removeIds from "@/utils/RemoveIds/RemoveIds";
 import { toast } from "sonner";
 
-function FormSection({ section, refetch }: any) {
+function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
   const { form, addFormSection, updateFormSectionsOrdering } = useForm();
 
   const { data: formStatusCount } = useQuery({
@@ -54,10 +54,9 @@ function FormSection({ section, refetch }: any) {
   };
 
   const handleSectionDuplicate = () => {
-    //
-
     let duplicate = {
       ...removeIds(section),
+      name: section.name + " (Duplicated)",
       ordering: form?.formSections?.length,
     };
 
@@ -66,6 +65,7 @@ function FormSection({ section, refetch }: any) {
   };
 
   const moveUp = () => {
+    toast.loading("Moving section up. Please wait...");
     let sections = form?.formSections;
 
     const index = sections.findIndex(
@@ -82,6 +82,7 @@ function FormSection({ section, refetch }: any) {
   };
 
   const moveDown = () => {
+    toast.loading("Moving section down. Please wait...");
     let sections = form?.formSections;
     const index = sections.findIndex(
       (sectionL: any) => sectionL.id === section?.id
@@ -161,7 +162,14 @@ function FormSection({ section, refetch }: any) {
         {localSection?.formFields
           ?.filter((item: any) => !item.isDeleted)
           .map((field: any) => {
-            return <FormField section={section} field={field} />;
+            return (
+              <FormField
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                section={section}
+                field={field}
+              />
+            );
           })}
       </div>
 

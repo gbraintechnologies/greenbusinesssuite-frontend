@@ -7,7 +7,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
 import Border from "@/components/Border/Border";
 
-function FormField({ field, section }: any) {
+function FormField({ field, section, activeTab, setActiveTab }: any) {
   const {
     fieldDataType,
     horizontalAlign,
@@ -38,7 +38,11 @@ function FormField({ field, section }: any) {
     case "long-text":
       return (
         <div
-          onClick={() => setActiveField({ field, section })}
+          onClick={() => {
+            setActiveField({ field, section });
+
+            setActiveTab("field");
+          }}
           className={`
            ${field?.id === activeField?.field?.id && activeFieldStyle}
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
@@ -59,7 +63,11 @@ function FormField({ field, section }: any) {
     case "number":
       return (
         <div
-          onClick={() => setActiveField({ field, section })}
+          onClick={() => {
+            setActiveField({ field, section });
+
+            setActiveTab("field");
+          }}
           className={`
            ${field?.id === activeField?.field?.id && activeFieldStyle}
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
@@ -77,7 +85,11 @@ function FormField({ field, section }: any) {
     case "short-text":
       return (
         <div
-          onClick={() => setActiveField({ field, section })}
+          onClick={() => {
+            setActiveField({ field, section });
+
+            setActiveTab("field");
+          }}
           className={`
            ${field?.id === activeField?.field?.id && activeFieldStyle}
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
@@ -114,7 +126,11 @@ function FormField({ field, section }: any) {
     case "phone":
       return (
         <div
-          onClick={() => setActiveField({ field, section })}
+          onClick={() => {
+            setActiveField({ field, section });
+
+            setActiveTab("field");
+          }}
           className={`
            ${field?.id === activeField?.field?.id && activeFieldStyle}
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
@@ -132,7 +148,11 @@ function FormField({ field, section }: any) {
     case "dropdown":
       return (
         <div
-          onClick={() => setActiveField({ field, section })}
+          onClick={() => {
+            setActiveField({ field, section });
+
+            setActiveTab("field");
+          }}
           className={`
            ${field?.id === activeField?.field?.id && activeFieldStyle}
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
@@ -151,7 +171,11 @@ function FormField({ field, section }: any) {
     case "checkboxes":
       return (
         <div
-          onClick={() => setActiveField({ field, section })}
+          onClick={() => {
+            setActiveField({ field, section });
+
+            setActiveTab("field");
+          }}
           className={`
            ${field?.id === activeField?.field?.id && activeFieldStyle}
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
@@ -180,7 +204,11 @@ function FormField({ field, section }: any) {
     case "calendar":
       return (
         <div
-          onClick={() => setActiveField({ field, section })}
+          onClick={() => {
+            setActiveField({ field, section });
+
+            setActiveTab("field");
+          }}
           className={`
            ${field?.id === activeField?.field?.id && activeFieldStyle}
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
@@ -204,7 +232,11 @@ function FormField({ field, section }: any) {
     case "upload":
       return (
         <div
-          onClick={() => setActiveField({ field, section })}
+          onClick={() => {
+            setActiveField({ field, section });
+
+            setActiveTab("field");
+          }}
           className={`
            ${field?.id === activeField?.field?.id && activeFieldStyle}
           ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 

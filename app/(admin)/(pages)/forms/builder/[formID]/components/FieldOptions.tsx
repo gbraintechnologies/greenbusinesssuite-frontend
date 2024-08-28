@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 
 function FieldOptions({ refetch }: any) {
-  const { activeField, updateActiveField, form, updateIsTemplate } = useForm();
+  const { activeField, updateActiveField, form } = useForm();
 
   let [localField, setLocalField] = useState(activeField?.field);
 
@@ -65,8 +65,16 @@ function FieldOptions({ refetch }: any) {
   }, [localField]);
 
   if (localField) {
-    const { isMandatory, label, fieldDataType, placeHolder, horizontalAlign } =
-      localField;
+    const {
+      isMandatory,
+      label,
+      maxLength,
+      fieldDataType,
+      placeHolder,
+      horizontalAlign,
+    } = localField;
+
+    console.log("max length of ", maxLength, isMandatory);
 
     return (
       <div className="bg-white  pb-[25rem] h-screen no-scrollbar  overflow-y-scroll  p-3">
@@ -149,6 +157,31 @@ function FieldOptions({ refetch }: any) {
             />
           </div> */}
         </div>
+
+        {/* MAX LENGTH FOR TEXT INPUTS */}
+        {fieldDataType?.includes("text") && (
+          <div className="flex flex-col gap-3">
+            <label className={labelStyle}>Number of characters</label>
+            <input
+              value={maxLength ? maxLength : null}
+              type="number"
+              min={0}
+              placeholder="Max length"
+              className={inputStyle}
+              onChange={(e) => {
+                setLocalField((prev: any) => ({
+                  ...prev,
+                  maxLength: Number(e.target.value),
+                }));
+                updateActiveField(activeField.section, {
+                  ...localField,
+                  maxLength: Number(e.target.value),
+                });
+              }}
+              onBlur={() => updateActiveField(activeField.section, localField)}
+            />
+          </div>
+        )}
 
         {/* CHOICE VALUES EDITING FOR DROPDOWNS AND CHECKBOXES */}
         {(fieldDataType === "dropdown" || fieldDataType === "checkboxes") && (

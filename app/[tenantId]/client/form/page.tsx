@@ -151,6 +151,7 @@ function FillFormHere() {
               {/* @ts-ignore */}
               {clientForm?.formSections
                 ?.filter((item: any) => !item.isDeleted)
+                .sort((a: any, b: any) => a?.ordering - b?.ordering)
                 .map((section: any) => {
                   return (
                     <div

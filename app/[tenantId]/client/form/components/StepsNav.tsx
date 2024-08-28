@@ -17,6 +17,7 @@ function StepsNav({
       <div className="flex flex-col gap-4 mt-5">
         {sections
           ?.filter((item: any) => !item.isDeleted)
+          .sort((a: any, b: any) => a?.ordering - b?.ordering)
           .map((section: any, idx: any) => {
             return (
               <button

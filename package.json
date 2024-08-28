@@ -20,7 +20,6 @@
     "@mui/styled-engine": "^5.15.11",
     "@mui/x-data-grid": "^6.19.6",
     "@nextui-org/button": "^2.0.34",
-    "@nextui-org/date-picker": "^2.1.6",
     "@nextui-org/dropdown": "^2.1.26",
     "@nextui-org/modal": "^2.0.36",
     "@nextui-org/tabs": "^2.0.35",
