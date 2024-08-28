@@ -60,7 +60,7 @@ function CreatePassword() {
       const userStatusPayload = {
         id: admin.id,
         email: admin.email,
-        username: admin.username,
+        username: admin.email,
         first_name: admin.first_name,
         last_name: admin.last_name,
         phone_number: admin.phone_number,

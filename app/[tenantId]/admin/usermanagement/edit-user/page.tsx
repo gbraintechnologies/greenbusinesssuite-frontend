@@ -82,7 +82,7 @@ function page() {
 
     let values = {
       email: data?.email,
-      username: data?.username,
+      username: data?.email,
       firstname: data?.first_name,
       lastname: data?.last_name,
       status: data?.user_status,
@@ -106,7 +106,7 @@ function page() {
   const editUser = async (values: any, resetForm: any) => {
     let finalData = {
       email: values.email,
-      username: values.firstname.toLowerCase() + values.lastname.toLowerCase(),
+      username: values.email,
       first_name: values.firstname,
       last_name: values.lastname,
       phone_number: phone,

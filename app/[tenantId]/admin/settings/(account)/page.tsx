@@ -50,7 +50,7 @@ function Account() {
       phone: companyAdmin?.phone_number,
       status: companyAdmin?.user_status,
       email: companyAdmin?.email,
-      username: companyAdmin?.username,
+      username: companyAdmin?.email,
       mobile_phone: companyAdmin?.mobile_phone_number,
     },
   });
@@ -59,7 +59,7 @@ function Account() {
     const payload = {
       id: data.id,
       email: data.email,
-      username: data.username,
+      username: data.email,
       first_name: data.firstName,
       last_name: data.lastName,
       phone_number: data.phone,

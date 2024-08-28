@@ -47,7 +47,7 @@ function Account() {
       phone: user?.phone_number,
       status: user?.user_status,
       email: user?.email,
-      username: user?.username,
+      username: user?.email,
       mobile_phone: user?.mobile_phone_number,
     },
   });
@@ -56,7 +56,7 @@ function Account() {
     const payload = {
       id: data.id,
       email: data.email,
-      username: data.username,
+      username: data.email,
       first_name: data.firstName,
       last_name: data.lastName,
       phone_number: data.phone,
