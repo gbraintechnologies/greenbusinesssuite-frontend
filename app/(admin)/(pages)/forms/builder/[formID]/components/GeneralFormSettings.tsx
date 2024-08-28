@@ -3,7 +3,7 @@
 import useForm from "@/hooks/useForm";
 import React, { useEffect, useState } from "react";
 
-import { Tabs, Tab, useTabs } from "@nextui-org/tabs";
+import { DatePicker } from "@nextui-org/date-picker";
 
 import { Switch } from "@headlessui/react";
 
@@ -88,6 +88,15 @@ function GeneralFormSettings({ refetch }: any) {
 
               <p className="absolute bottom-4">Card layout</p>
             </button>
+          </div>
+          {/* FORM DEADLINE */}
+          <div className="mt-5 px-3">
+            <h4 className="font-semibold text-gray-700">Deadline</h4>
+            <p className="text-xs font-light text-gray-500">
+              Specify a date after which form would be inaccessible to new
+              clients
+            </p>
+            {/* <DatePicker label="Form deadline" className="max-w-[284px]" /> */}
           </div>
           {/* use as template */}
           <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">

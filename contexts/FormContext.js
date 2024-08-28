@@ -128,6 +128,14 @@ export const FormProvider = ({ children }) => {
     // }));
   };
 
+  const updateFormSectionsOrdering = (sections) => {
+    //
+    updateRemoteForm({
+      ...form,
+      formSections: [...sections],
+    });
+  };
+
   const updateSection = (data) => {
     // setLoadingField(true);
     let sections = form?.formSections;
@@ -226,6 +234,7 @@ export const FormProvider = ({ children }) => {
         updateActiveField,
         view,
         setView,
+        updateFormSectionsOrdering,
         selectForm,
         addFormSection,
         removeForm,

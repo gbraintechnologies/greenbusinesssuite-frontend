@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 // icons
 import { CiCircleInfo } from "react-icons/ci";
 import { VscCopy } from "react-icons/vsc";
+import { PiCaretDown, PiCaretUp } from "react-icons/pi";
 
 // components
 import FormField from "./FormField";
@@ -18,7 +19,7 @@ import removeIds from "@/utils/RemoveIds/RemoveIds";
 import { toast } from "sonner";
 
 function FormSection({ section, refetch }: any) {
-  const { form, addFormSection } = useForm();
+  const { form, addFormSection, updateFormSectionsOrdering } = useForm();
 
   const { data: formStatusCount } = useQuery({
     queryKey: ["Get forms status count"],
@@ -62,7 +63,38 @@ function FormSection({ section, refetch }: any) {
 
     addFormSection(duplicate);
     toast.success("Form section duplicated");
-    console.log("section duplicate", duplicate);
+  };
+
+  const moveUp = () => {
+    let sections = form?.formSections;
+
+    const index = sections.findIndex(
+      (sectionL: any) => sectionL?.id === section?.id
+    );
+    if (index > 0) {
+      [sections[index - 1].ordering, sections[index].ordering] = [
+        sections[index].ordering,
+        sections[index - 1].ordering,
+      ];
+      sections.sort((a: any, b: any) => a.ordering - b.ordering);
+    }
+    updateFormSectionsOrdering(sections);
+  };
+
+  const moveDown = () => {
+    let sections = form?.formSections;
+    const index = sections.findIndex(
+      (sectionL: any) => sectionL.id === section?.id
+    );
+    if (index < sections.length - 1) {
+      [sections[index + 1].ordering, sections[index].ordering] = [
+        sections[index].ordering,
+        sections[index + 1].ordering,
+      ];
+      sections.sort((a: any, b: any) => a.ordering - b.ordering);
+    }
+
+    updateFormSectionsOrdering(sections);
   };
 
   return (
@@ -71,36 +103,58 @@ function FormSection({ section, refetch }: any) {
       onMouseLeave={() => setShowSectionActions(false)}
       className="form-section"
     >
-      <h5 className="font-bold text-lg">
-        {" "}
-        <input
-          value={localSection?.name}
-          placeholder="Section title"
-          className="outline-none focus:outline-none w-full input-custom"
-          onBlur={runUpdates}
-          onChange={(e) => {
-            setLocalSection((prev: any) => ({
-              ...prev,
-              name: e.target.value,
-            }));
-          }}
-        />
-      </h5>
-      <p className="font-extralight text-sm mb-5">
-        {" "}
-        <input
-          value={localSection?.description}
-          placeholder="Section description"
-          className="outline-none focus:outline-none w-full input-custom"
-          onBlur={runUpdates}
-          onChange={(e) => {
-            setLocalSection((prev: any) => ({
-              ...prev,
-              description: e.target.value,
-            }));
-          }}
-        />
-      </p>
+      <div className="flex gap-2">
+        <div className="flex-1">
+          <h5 className="font-bold text-lg">
+            {" "}
+            <input
+              value={localSection?.name}
+              placeholder="Section title"
+              className="outline-none focus:outline-none w-full input-custom"
+              onBlur={runUpdates}
+              onChange={(e) => {
+                setLocalSection((prev: any) => ({
+                  ...prev,
+                  name: e.target.value,
+                }));
+              }}
+            />
+          </h5>
+          <p className="font-extralight text-sm mb-5">
+            {" "}
+            <input
+              value={localSection?.description}
+              placeholder="Section description"
+              className="outline-none focus:outline-none w-full input-custom"
+              onBlur={runUpdates}
+              onChange={(e) => {
+                setLocalSection((prev: any) => ({
+                  ...prev,
+                  description: e.target.value,
+                }));
+              }}
+            />
+          </p>
+        </div>
+        {/* <div className="flex items-center justify-center rounded-xl -mt-10  mr-5">
+          <div className="border flex  items-center justify-center w-28  h-10 pt-[29px] gap-1 border-gray-200 p-3 rounded-lg">
+            <p className="">Ordering</p>
+            <input
+              min={0}
+              type="number"
+              className="text-center outline-none focus:outline-none input-custom w-6 -mt-5 border border-b-2 0"
+              value={localSection?.ordering}
+              onBlur={runUpdates}
+              onChange={(e) => {
+                setLocalSection((prev: any) => ({
+                  ...prev,
+                  ordering: e.target.value,
+                }));
+              }}
+            />
+          </div>
+        </div> */}
+      </div>
 
       {/* FORM FIELDS */}
       <div className="grid grid-cols-2 gap-5">
@@ -199,6 +253,21 @@ function FormSection({ section, refetch }: any) {
             className="bg-white hover:bg-blue-100  p-2 rounded-xl"
           >
             <VscCopy size={20} />
+          </button>
+          <div className="w-full my-3 px-5 border-[0.6px] border-t-[#CFCFCF]"></div>
+          <button
+            disabled={section?.ordering == 0}
+            onClick={moveUp}
+            className="bg-white hover:bg-orange-100 disabled:cursor-not-allowed  p-2 rounded-xl mb-2"
+          >
+            <PiCaretUp size={20} />
+          </button>
+          <button
+            disabled={section?.ordering === form?.formSections?.length - 1}
+            onClick={moveDown}
+            className="bg-white hover:bg-orange-100 disabled:cursor-not-allowed  p-2 rounded-xl mb-2"
+          >
+            <PiCaretDown size={20} />
           </button>
         </div>
       )}
