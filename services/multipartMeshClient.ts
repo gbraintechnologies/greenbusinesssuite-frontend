@@ -99,7 +99,7 @@ multipartMeshApi.interceptors.response.use(
           toast.dismiss();
           toast.warning("Login to continue", {
             description:
-              "Your session has expired. Please login to continue multipart mesh client",
+              "Your session has expired. Please login to continue multipart.",
           });
           // @ts-ignore
           // localStorage.clear();

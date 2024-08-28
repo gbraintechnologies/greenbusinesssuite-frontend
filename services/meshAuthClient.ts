@@ -100,8 +100,7 @@ authApi.interceptors.response.use(
         .catch((e) => {
           toast.dismiss();
           toast.warning("Login to continue", {
-            description:
-              "Your session has expired. Please login to continue mesh auth client",
+            description: "Your session has expired. Please login to continue.",
           });
           // @ts-ignore
           // localStorage.clear();
