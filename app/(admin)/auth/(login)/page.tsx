@@ -24,7 +24,7 @@ import useCompany from "@/hooks/useCompany";
 import { Button } from "@nextui-org/button";
 
 const schema = yup.object({
-  username: yup.string().required("Email/Username is required"),
+  username: yup.string().required("Email is required"),
   password: yup
     .string()
     .min(6, "Password must be at least 6 characters")

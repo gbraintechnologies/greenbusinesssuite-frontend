@@ -61,7 +61,7 @@ function Page() {
 
   const schema = yup.object({
     // email: yup.string().email().required("Email is required"),
-    email: yup.string().required("Email/Username is required"),
+    email: yup.string().required("Email is required"),
     password: yup
       .string()
       .min(6, "Password must be at least 6 characters")
@@ -124,7 +124,7 @@ function Page() {
                 </h1>
                 <div className="input-holder px-5">
                   <label htmlFor="email" className="text-xs">
-                    Email Address / Username
+                    Email Address
                   </label>
                   <Field
                     style={{
