@@ -7,8 +7,11 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Mesh Suite",
+  title: "Mesh Suite | %s",
   description: "Mesh Suite",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 // Toast Notifications

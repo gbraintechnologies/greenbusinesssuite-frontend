@@ -28,10 +28,8 @@ export const AdminProvider = ({ children }) => {
 
   const checkPermission = (name) => {
     // use name to check if permissions belongs to user
-    return Boolean(permissions.some((item) => item.permission_name == name));
+    return Boolean(permissions.some((item) => item?.permission_name == name));
   };
-
-  console.log("permissions", permissions);
 
   const removeAdmin = () => {
     setAdmin(null);
