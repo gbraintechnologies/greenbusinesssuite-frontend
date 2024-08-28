@@ -88,7 +88,7 @@ function NewUser() {
   const createNewUser = async (values: any, resetForm: any) => {
     let data = {
       email: values.email,
-      username: values.firstname.toLowerCase() + values.lastname.toLowerCase(),
+      username: values.email,
       first_name: values.firstname,
       last_name: values.lastname,
       phone_number: phone,

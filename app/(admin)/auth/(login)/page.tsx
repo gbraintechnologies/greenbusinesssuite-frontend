@@ -116,7 +116,7 @@ function LogIn() {
         // }
       }
     } catch (error) {
-      setLoginError("Incorrect username and password");
+      setLoginError("Incorrect email address or password");
     }
   };
 

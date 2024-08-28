@@ -156,12 +156,10 @@ function CompanyAdminAuth({ params }: any) {
         //  @ts-ignore
         setLoginError(error?.response?.data?.detail);
       } else {
-        setLoginError("Incorrect username and password");
+        setLoginError("Incorrect email address or password");
       }
     }
   };
-
-  // console.log("branding info", companyBranding);
 
   return (
     <div className="bg-[#F5F7FA] w-full flex items-center justify-center h-screen">
@@ -183,9 +181,9 @@ function CompanyAdminAuth({ params }: any) {
           <div>
             <TextInput
               onClick={() => setLoginError(null)}
-              label="Username"
+              label="Email/Username"
               type="text"
-              placeholder="Enter your username"
+              placeholder="Enter your email address or username"
               autoComplete="off"
               {...register("username")}
               error={errors.username?.message}

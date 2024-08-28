@@ -40,7 +40,7 @@ function page() {
   const id = search.get("id");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["all users"],
+    queryKey: ["user by id ", id],
     queryFn: services.userByID(id),
   });
 
@@ -71,7 +71,7 @@ function page() {
 
     let values = {
       email: data?.email,
-      username: data?.username,
+      username: data?.email,
       firstname: data?.first_name,
       lastname: data?.last_name,
       status: data?.user_status,
@@ -95,7 +95,7 @@ function page() {
   const editUser = async (values: any, resetForm: any) => {
     let finalData = {
       email: values.email,
-      username: values.firstname.toLowerCase() + values.lastname.toLowerCase(),
+      username: values.email,
       first_name: values.firstname,
       last_name: values.lastname,
       phone_number: phone,
@@ -121,19 +121,20 @@ function page() {
       .editUserWithCustomProfiles(id, finalData, custom_profiles)
       .then((res: any) => {
         setLoading(false);
+        toast.success("Edited user successfully");
 
         // ASSIGN ROLE TO CREATED USER
-        services
-          //@ts-ignore
-          .assignRoleToUser(res.data.id, selectedRole?.value)
-          .then((res) => {
-            toast.dismiss(loading);
-            toast.success("Edited user successfully");
-          })
-          .catch((e: any) => {
-            toast.error("Error occured");
-            console.log("error asinging", e);
-          });
+        // services
+        //   //@ts-ignore
+        //   .assignRoleToUser(res.data.id, selectedRole?.value)
+        //   .then((res) => {
+        //     toast.dismiss(loading);
+        //     toast.success("Edited user successfully");
+        //   })
+        //   .catch((e: any) => {
+        //     toast.error("Error occured");
+        //     console.log("error asinging", e);
+        //   });
       })
       .catch((e) => {
         setLoading(false);
@@ -148,6 +149,8 @@ function page() {
         } else {
           toast.error(e?.response?.data?.detail);
         }
+      }).finally(() => {
+        toast.dismiss(loading);
       });
   };
 

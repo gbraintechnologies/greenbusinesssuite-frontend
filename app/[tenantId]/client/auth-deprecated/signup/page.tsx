@@ -78,8 +78,7 @@ function Page() {
   ) => {
     const userData = {
       email: values.email as string,
-      username: ((values.firstName?.toLowerCase() as string) +
-        values.lastName?.toLowerCase()) as string,
+      username: values.email as string,
       password: values.password as string,
       first_name: values.firstName as string,
       last_name: values.lastName as string,
