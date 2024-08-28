@@ -102,13 +102,13 @@ multipartMeshApi.interceptors.response.use(
               "Your session has expired. Please login to continue multipart.",
           });
           // @ts-ignore
-          // localStorage.clear();
-          // if (Boolean(getTenantID())) {
-          //   window.location.replace(`/${getTenantID()}`);
-          // } else {
-          //   window.location.replace("/");
-          // }
-          // window.location.reload();
+          localStorage.clear();
+          if (Boolean(getTenantID())) {
+            window.location.replace(`/${getTenantID()}`);
+          } else {
+            window.location.replace("/");
+          }
+          window.location.reload();
         });
     }
 
