@@ -16,6 +16,23 @@ export const AdminProvider = ({ children }) => {
     setAdmin((prev) => ({ ...prev, ...data }));
   };
 
+  const [permissions, setPermissions] = useState(
+    UserFromLS ? UserFromLS?.permissions : null
+  );
+
+  useEffect(() => {
+    if (permissions == null && admin) {
+      setPermissions(admin?.permissions);
+    }
+  }, [admin]);
+
+  const checkPermission = (name) => {
+    // use name to check if permissions belongs to user
+    return Boolean(permissions.some((item) => item.permission_name == name));
+  };
+
+  console.log("permissions", permissions);
+
   const removeAdmin = () => {
     setAdmin(null);
   };
@@ -30,8 +47,11 @@ export const AdminProvider = ({ children }) => {
       value={{
         admin,
         setAdmin,
+        permissions,
+        checkPermission,
         addAdminData,
         removeAdmin,
+        permissions,
       }}
     >
       {children}

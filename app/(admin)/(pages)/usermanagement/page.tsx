@@ -36,9 +36,9 @@ function UserManagement() {
     { id: 2, name: "Active", value: "active" },
     { id: 3, name: "Inactive", value: "inactive" },
     // { id: 7, name: "Newly Created", value: "newly_created" },
-    { id: 4, name: "Limited access", value: "limited_access" },
-    { id: 5, name: "Suspended", value: "suspended" },
-    { id: 6, name: "Deleted", value: "deleted" },
+    // { id: 4, name: "Limited access", value: "limited_access" },
+    { id: 5, name: "Blacklisted", value: "blacklisted" },
+    // { id: 6, name: "Deleted", value: "deleted" },
   ]);
 
   const [activeFilter, setActiveFilter] = useState({
