@@ -7,6 +7,8 @@ function StepsNav({
   activeSection,
   setActiveSection,
   handleClickScroll,
+  layout,
+  swiperInstance,
 }: any) {
   let sections = form?.formSections;
 
@@ -22,8 +24,14 @@ function StepsNav({
             return (
               <button
                 onClick={() => {
-                  setActiveSection(section);
-                  handleClickScroll(section?.id);
+                  if (layout.toLowerCase() === "card") {
+                    typeof window !== undefined && window.scrollTo(0, 0);
+                    setActiveSection(section);
+                    swiperInstance?.slideTo(idx, 500);
+                  } else {
+                    setActiveSection(section);
+                    handleClickScroll(section?.id);
+                  }
                 }}
                 className={`${
                   activeSection?.id === section?.id ? "bg-white" : ""

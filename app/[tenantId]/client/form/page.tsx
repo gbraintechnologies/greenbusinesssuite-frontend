@@ -110,13 +110,13 @@ function FillFormHere() {
 
   // SKELETON LOADING FOR WHEN FORM ISN'T READY
   if (clientForm && clientForm?.formSections) {
-    console.log("clientForm", clientForm?.layout);
-
-    let layout = "CARD";
+    let layout = clientForm?.layout;
     return (
       <div className="relative flex-col min-h-screen bg-[#F8FAFC] flex md:flex-row gap-5 p-2">
         <div className="hidden md:block w-[21rem] fixed bg-[#E2E8F0]  rounded-lg p-5 h-[91vh] ">
           <StepsNav
+            layout={layout}
+            swiperInstance={swiperInstance}
             activeSection={activeSection}
             setActiveSection={setActiveSection}
             handleClickScroll={handleClickScroll}
@@ -149,7 +149,7 @@ function FillFormHere() {
             {/* SAVE AND CONTINUE LATER */}
             <button
               disabled={savingResponses}
-              className=" fixed right-10 top-20 px-4 py-2 rounded-full border border-gray-600 text-gray-600"
+              className=" fixed right-10 z-50 bg-white top-20 px-4 py-2 rounded-full border border-gray-600 text-gray-600"
               onClick={() => {
                 toast.loading("Saving, please wait...");
 
@@ -158,7 +158,7 @@ function FillFormHere() {
             >
               Save and continue later
             </button>
-            {/* FORM SECTIONS FOR FILLING */}
+            {/* GENERAL LAYOUT FOR FORM SECTIONS*/}
             {layout.toLowerCase() == "general" && (
               <div className="mx-auto min-h-screen w-[60%] mt-10 ">
                 {/* @ts-ignore */}
@@ -185,6 +185,7 @@ function FillFormHere() {
               </div>
             )}
 
+            {/* CARD LAYOUT FOR FORM SECTIONS */}
             {layout.toLowerCase() == "card" && (
               <div className="mx-auto  w-[60vw] mt-10">
                 <Swiper
@@ -220,9 +221,9 @@ function FillFormHere() {
                   {clientForm?.formSections
                     ?.filter((item: any) => !item.isDeleted)
                     .sort((a: any, b: any) => a?.ordering - b?.ordering)
-                    .map((section: any) => {
+                    .map((section: any, idx: any) => {
                       return (
-                        <SwiperSlide key={section.name}>
+                        <SwiperSlide key={idx}>
                           <div
                             style={{ scrollMarginTop: "5rem" }}
                             id={section?.id}
