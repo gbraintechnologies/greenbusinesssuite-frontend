@@ -8,13 +8,10 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { MdOutlineSettingsSuggest } from "react-icons/md";
+import { PiUserCircleCheck } from "react-icons/pi";
 
 function CompanyAdmins({ companyId }: any) {
   // fetch all users
-  const { data: options, isLoading } = useQuery({
-    queryKey: ["all users"],
-    queryFn: services.allUsers(),
-  });
 
   const {
     data: companyData,
@@ -25,24 +22,24 @@ function CompanyAdmins({ companyId }: any) {
     queryFn: services.getCompanyById(Number(companyId)),
   });
 
+  console.log("comapmnyu", companyData);
+
   useEffect(() => {
     refetch();
   }, []);
 
   const [searchAdminEmail, setSearchAdminEmail] = useState("");
 
+  const { data: options, isLoading } = useQuery({
+    queryKey: ["user by email", searchAdminEmail],
+    queryFn: services.searchUsersByEmailFull(searchAdminEmail),
+    enabled: !!searchAdminEmail,
+  });
+
   //
   const [selectedAdminOption, setSelectedAdminOption] = useState(null);
 
-  const filteredOptions =
-    searchAdminEmail === ""
-      ? options
-      : options?.filter((option: any) =>
-          option?.email
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(searchAdminEmail.toLowerCase().replace(/\s+/g, ""))
-        );
+  const filteredOptions = searchAdminEmail === "" ? [] : options?.data;
 
   const [loading, setLoading] = useState(false);
 
@@ -91,29 +88,46 @@ function CompanyAdmins({ companyId }: any) {
         </div>
       ) : (
         <>
-          <h4 className="font-semibold text-lg">Assign New Administrator</h4>
-          <p className="mb-5 text-gray-600">
-            Search from the list of users by email and select a user to assign
-            to this company as an administrator
-          </p>
-          <div className="max-w-md">
-            <ComboSearch
-              search={searchAdminEmail}
-              setSearch={setSearchAdminEmail}
-              setSelected={setSelectedAdminOption}
-              selected={selectedAdminOption}
-              placeholder="Search users by email"
-              data={filteredOptions ? filteredOptions : []}
-            />
+          {!!companyData?.company_admin_id ? (
+            // display current admin
+            <div className="flex items-center gap-4 w-full justify-center mt-4 text-gray-600">
+              <PiUserCircleCheck size={40} />
+              <h4 className="w-60">
+                An administrator has successfully been assigned to {companyData?.company_name}
+              </h4>
+            </div>
+          ) : (
+            // assign
 
-            <Button
-              onClick={assignAdmin}
-              disabled={selectedAdminOption === null || loading}
-              className="bg-black text-sm disabled:cursor-not-allowed disabled:bg-gray-500 text-white mt-5 px-4 py-2 rounded-lg"
-            >
-              Assign New Admin
-            </Button>
-          </div>
+            <>
+              {" "}
+              <h4 className="font-semibold text-lg">
+                Assign New Administrator
+              </h4>
+              <p className="mb-5 text-gray-600">
+                Search from the list of users by email and select a user to
+                assign to this company as an administrator
+              </p>
+              <div className="max-w-md">
+                <ComboSearch
+                  search={searchAdminEmail}
+                  setSearch={setSearchAdminEmail}
+                  setSelected={setSelectedAdminOption}
+                  selected={selectedAdminOption}
+                  placeholder="Search users by email"
+                  data={filteredOptions ? filteredOptions : []}
+                />
+
+                <Button
+                  onClick={assignAdmin}
+                  disabled={selectedAdminOption === null || loading}
+                  className="bg-black text-sm disabled:cursor-not-allowed disabled:bg-gray-500 text-white mt-5 px-4 py-2 rounded-lg"
+                >
+                  Assign New Admin
+                </Button>
+              </div>{" "}
+            </>
+          )}
         </>
       )}
     </div>
