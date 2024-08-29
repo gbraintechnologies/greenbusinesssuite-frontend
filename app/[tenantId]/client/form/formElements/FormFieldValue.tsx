@@ -36,7 +36,8 @@ function FormFieldValue({ field, section, viewOnly }: any) {
   } = useClientForm();
 
   //
-  const { fieldDataType, horizontalAlign, placeHolder, label } = field;
+  const { fieldDataType, horizontalAlign, placeHolder, label, maxLength } =
+    field;
 
   // for file uploads
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -112,6 +113,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             {label} <MandatoryLabel field={field} />
           </label>
           <textarea
+            maxLength={field?.maxLength}
             onBlur={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
             }
@@ -124,6 +126,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             placeholder={placeHolder ? placeHolder : "Your answer here"}
             className={inputStyle}
           />
+          <MaxLengthCounter field={field} />
         </div>
       );
 
@@ -165,6 +168,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             {label} <MandatoryLabel field={field} />
           </label>
           <input
+            maxLength={field?.maxLength}
             onBlur={(e) =>
               saveSingleResponse(section?.id, field?.id, e.target.value)
             }
@@ -176,6 +180,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             placeholder={placeHolder ? placeHolder : "Your answer here"}
             className={inputStyle}
           />
+          <MaxLengthCounter field={field} />
         </div>
       );
 
@@ -444,6 +449,34 @@ function FormFieldValue({ field, section, viewOnly }: any) {
       );
   }
 }
+
+const MaxLengthCounter = ({ field }: any) => {
+  return (
+    <>
+      {!!field?.maxLength && (
+        <div className="flex justify-between items-center text-xs font-light text-gray-60 mt-1 px-2">
+          <p className="0">
+            Limit is{" "}
+            <span className="font-semibold">{field?.maxLength} characters</span>
+          </p>
+          {field?.maxLength === field?.response?.length ? (
+            <p className="text-red-600">
+              Limit reached{" "}
+              <span className="font-semibold">{field?.response?.length}</span>
+            </p>
+          ) : (
+            <>
+              <p className="">
+                Count{" "}
+                <span className="font-semibold">{field?.response?.length}</span>
+              </p>
+            </>
+          )}
+        </div>
+      )}
+    </>
+  );
+};
 
 const MandatoryLabel = ({ field }: any) => {
   return (
