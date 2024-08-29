@@ -22,8 +22,6 @@ function CompanyAdmins({ companyId }: any) {
     queryFn: services.getCompanyById(Number(companyId)),
   });
 
-  console.log("comapmnyu", companyData);
-
   useEffect(() => {
     refetch();
   }, []);
@@ -93,7 +91,8 @@ function CompanyAdmins({ companyId }: any) {
             <div className="flex items-center gap-4 w-full justify-center mt-4 text-gray-600">
               <PiUserCircleCheck size={40} />
               <h4 className="w-60">
-                An administrator has successfully been assigned to {companyData?.company_name}
+                An administrator has successfully been assigned to{" "}
+                {companyData?.company_name}
               </h4>
             </div>
           ) : (
