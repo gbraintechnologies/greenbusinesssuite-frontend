@@ -74,8 +74,6 @@ function FieldOptions({ refetch }: any) {
       horizontalAlign,
     } = localField;
 
-    console.log("max length of ", maxLength, isMandatory);
-
     return (
       <div className="bg-white  pb-[25rem] h-screen no-scrollbar  overflow-y-scroll  p-3">
         {/* REQUIRED FIELD OR NOT */}
@@ -163,7 +161,7 @@ function FieldOptions({ refetch }: any) {
           <div className="flex flex-col gap-3">
             <label className={labelStyle}>Number of characters</label>
             <input
-              value={maxLength ? maxLength : null}
+              value={!!maxLength ? maxLength : 0}
               type="number"
               min={0}
               placeholder="Max length"

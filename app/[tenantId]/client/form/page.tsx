@@ -10,6 +10,11 @@ import services from "@/services";
 // components
 import StepsNav from "./components/StepsNav";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
+import "swiper/css/pagination";
+
 // componetns
 import FormSection from "./formElements/FormSection";
 import { toast } from "sonner";
@@ -20,9 +25,13 @@ import useUser from "@/hooks/useUser";
 // utils
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import FormFillingLoader from "./components/FormFillingLoader";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 function FillFormHere() {
   const { user } = useUser();
+
+  const [swiperInstance, setSwiperInstance] = useState<any>();
+  const [swiperPosition, setSwiperPosition] = useState("first");
 
   //
   const search = useSearchParams();
@@ -100,7 +109,10 @@ function FillFormHere() {
   };
 
   // SKELETON LOADING FOR WHEN FORM ISN'T READY
-  if (clientForm) {
+  if (clientForm && clientForm?.formSections) {
+    console.log("clientForm", clientForm?.layout);
+
+    let layout = "CARD";
     return (
       <div className="relative flex-col min-h-screen bg-[#F8FAFC] flex md:flex-row gap-5 p-2">
         <div className="hidden md:block w-[21rem] fixed bg-[#E2E8F0]  rounded-lg p-5 h-[91vh] ">
@@ -147,29 +159,121 @@ function FillFormHere() {
               Save and continue later
             </button>
             {/* FORM SECTIONS FOR FILLING */}
-            <div className="mx-auto min-h-screen w-[60%] mt-10 ">
-              {/* @ts-ignore */}
-              {clientForm?.formSections
-                ?.filter((item: any) => !item.isDeleted)
-                .sort((a: any, b: any) => a?.ordering - b?.ordering)
-                .map((section: any) => {
-                  return (
-                    <div
-                      style={{ scrollMarginTop: "5rem" }}
-                      id={section?.id}
-                      key={section?.id}
-                      className="rounded-lg w-full mb-10"
-                    >
-                      <FormSection section={section} />
-                    </div>
-                  );
-                })}
+            {layout.toLowerCase() == "general" && (
+              <div className="mx-auto min-h-screen w-[60%] mt-10 ">
+                {/* @ts-ignore */}
+                {clientForm?.formSections
+                  ?.filter((item: any) => !item.isDeleted)
+                  .sort((a: any, b: any) => a?.ordering - b?.ordering)
+                  .map((section: any) => {
+                    return (
+                      <div
+                        style={{ scrollMarginTop: "5rem" }}
+                        id={section?.id}
+                        key={section?.id}
+                        className="rounded-lg w-full mb-10"
+                      >
+                        <FormSection section={section} />
+                      </div>
+                    );
+                  })}
 
-              {/* submit form */}
-              <div className="mt-10">
-                <FormSubmission />
+                {/* submit form */}
+                <div className="mt-10">
+                  <FormSubmission />
+                </div>
               </div>
-            </div>
+            )}
+
+            {layout.toLowerCase() == "card" && (
+              <div className="mx-auto  w-[60vw] mt-10">
+                <Swiper
+                  pagination={true}
+                  // @ts-ignore
+                  onSwiper={(swiper) => setSwiperInstance(swiper)}
+                  onReachBeginning={() => setSwiperPosition("first")}
+                  onReachEnd={() => setSwiperPosition("last")}
+                  onActiveIndexChange={(e) => {
+                    if (!e.isBeginning && !e.isEnd) {
+                      setSwiperPosition("");
+                    }
+                  }}
+                  breakpoints={{
+                    320: {
+                      slidesPerView: 1,
+                      spaceBetween: 10,
+                    },
+                    640: {
+                      slidesPerView: 1,
+                      spaceBetween: 10,
+                    },
+                    1080: {
+                      slidesPerView: 1,
+                      spaceBetween: 10,
+                    },
+                    1600: {
+                      slidesPerView: 1,
+                      spaceBetween: 10,
+                    },
+                  }}
+                >
+                  {clientForm?.formSections
+                    ?.filter((item: any) => !item.isDeleted)
+                    .sort((a: any, b: any) => a?.ordering - b?.ordering)
+                    .map((section: any) => {
+                      return (
+                        <SwiperSlide key={section.name}>
+                          <div
+                            style={{ scrollMarginTop: "5rem" }}
+                            id={section?.id}
+                            key={section?.id}
+                            className="rounded-lg w-full mb-10"
+                          >
+                            <FormSection section={section} />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <button
+                              disabled={swiperPosition === "first"}
+                              className={`${
+                                swiperPosition === "first"
+                                  ? "disabled"
+                                  : "block"
+                              }  border px-4 py-2 border-gray-700 rounded-lg disabled:cursor-not-allowed text-sm`}
+                              onClick={() => swiperInstance?.slidePrev()}
+                            >
+                              Back
+                            </button>
+
+                            {swiperPosition === "last" ? (
+                              <FormSubmission showOnlySubmitButton />
+                            ) : (
+                              <CompanyThemedButton
+                                disabled={swiperPosition === "last"}
+                                className={`${
+                                  swiperPosition === "last"
+                                    ? "disabled"
+                                    : "block"
+                                }  w-9 place-content-center  hover:bg-gray-50 disabled:cursor-not-allowed  ml-5`}
+                                onClick={() => swiperInstance?.slideNext()}
+                              >
+                                Next
+                              </CompanyThemedButton>
+                            )}
+                          </div>
+                          {swiperPosition === "last" && (
+                            <div>
+                              <p className="mt-10 font-light mx-auto text-center text-sm text-gray-600">
+                                You cannot edit this form once it has been
+                                submitted for processing
+                              </p>
+                            </div>
+                          )}
+                        </SwiperSlide>
+                      );
+                    })}
+                </Swiper>
+              </div>
+            )}
           </div>
         )}
       </div>

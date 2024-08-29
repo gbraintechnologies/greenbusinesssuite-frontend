@@ -53,8 +53,8 @@ multipartDefaultMeshApi.interceptors.response.use(
 
       let headers: headerT = {
         "Content-Type": "application/json",
-
-        Authorization: `Bearer ${getToken()}`,
+        "user-uuid": getUserUUID(),
+        // Authorization: `Bearer ${getToken()}`,
       };
 
       // Route to admin or tenant
@@ -62,11 +62,18 @@ multipartDefaultMeshApi.interceptors.response.use(
         headers = { ...headers, tenantid: getTenantID() };
       }
 
+      const config = {
+        headers: {
+          ...headers,
+        },
+      };
+
       //  GET REFRESH TOKEN AND RETRY REQUEST
       axios
         .post(
           `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
-          headers
+          null,
+          config
         )
         .then((res) => {
           const oldRefreshToken = getRefreshToken();
@@ -90,6 +97,7 @@ multipartDefaultMeshApi.interceptors.response.use(
             ...originalRequest,
             headers: {
               // USE NEW TOKEN IN RETRY REQUEST
+              ...headers,
               Authorization: `Bearer ${res?.data?.access_token}`,
             },
           });
@@ -97,7 +105,7 @@ multipartDefaultMeshApi.interceptors.response.use(
         .catch((e) => {
           toast.dismiss();
           toast.warning("Login to continue", {
-            description: "Your session has expired. Please login to continue",
+            description: "Your session has expired. Please login to continue.",
           });
           // @ts-ignore
           localStorage.clear();

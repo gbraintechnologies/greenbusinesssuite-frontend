@@ -54,7 +54,7 @@ multipartMeshApi.interceptors.response.use(
       let headers: headerT = {
         "Content-Type": "application/json",
         "user-uuid": getUserUUID(),
-        Authorization: `Bearer ${getToken()}`,
+        // Authorization: `Bearer ${getToken()}`,
       };
 
       // Route to admin or tenant
@@ -62,11 +62,18 @@ multipartMeshApi.interceptors.response.use(
         headers = { ...headers, tenantid: getTenantID() };
       }
 
+      const config = {
+        headers: {
+          ...headers,
+        },
+      };
+
       //  GET REFRESH TOKEN AND RETRY REQUEST
       axios
         .post(
           `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
-          headers
+          null,
+          config
         )
         .then((res) => {
           const oldRefreshToken = getRefreshToken();
@@ -98,8 +105,7 @@ multipartMeshApi.interceptors.response.use(
         .catch((e) => {
           toast.dismiss();
           toast.warning("Login to continue", {
-            description:
-              "Your session has expired. Please login to continue multipart.",
+            description: "Your session has expired. Please login to continue.",
           });
           // @ts-ignore
           localStorage.clear();

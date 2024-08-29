@@ -54,7 +54,7 @@ authApi.interceptors.response.use(
       let headers: headerT = {
         "Content-Type": "application/json",
         "user-uuid": getUserUUID(),
-        Authorization: `Bearer ${getToken()}`,
+        // Authorization: `Bearer ${getToken()}`,
       };
 
       // Route to admin or tenant
@@ -62,11 +62,18 @@ authApi.interceptors.response.use(
         headers = { ...headers, tenantid: getTenantID() };
       }
 
+      const config = {
+        headers: {
+          ...headers,
+        },
+      };
+
       //  GET REFRESH TOKEN AND RETRY REQUEST
       axios
         .post(
           `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
-          headers
+          null,
+          config
         )
         .then((res) => {
           const oldRefreshToken = getRefreshToken();
@@ -89,6 +96,7 @@ authApi.interceptors.response.use(
           return axios({
             ...originalRequest,
             headers: {
+              // USE NEW TOKEN IN RETRY REQUEST
               ...headers,
               Authorization: `Bearer ${res?.data?.access_token}`,
             },
@@ -100,13 +108,13 @@ authApi.interceptors.response.use(
             description: "Your session has expired. Please login to continue.",
           });
           // @ts-ignore
-          // localStorage.clear();
-          // if (Boolean(getTenantID())) {
-          //   window.location.replace(`/${getTenantID()}`);
-          // } else {
-          //   window.location.replace("/");
-          // }
-          // window.location.reload();
+          localStorage.clear();
+          if (Boolean(getTenantID())) {
+            window.location.replace(`/${getTenantID()}`);
+          } else {
+            window.location.replace("/");
+          }
+          window.location.reload();
         });
     }
 
