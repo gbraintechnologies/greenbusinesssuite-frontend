@@ -22,12 +22,12 @@ function Nav() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Link href="/usermanagement/view-roles">
+        {checkPermission(PermissionTypes.READ_ROLE) && <Link href="/usermanagement/view-roles">
           <Button className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl">
             View roles
           </Button>
-        </Link>
-        {checkPermission(PermissionTypes.CREATE_USER) && (
+        </Link>}
+        
           <Menu as="div" className="relative inline-block text-left">
             <div>
               <Menu.Button className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
@@ -46,6 +46,7 @@ function Nav() {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items className="z-50 absolute right-0 mt-2 px-1 py-1 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+              {checkPermission(PermissionTypes.CREATE_USER) && (
                 <Menu.Item>
                   <Link href="/usermanagement/new-user">
                     <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
@@ -53,6 +54,8 @@ function Nav() {
                     </button>
                   </Link>
                 </Menu.Item>
+              )}
+              {checkPermission(PermissionTypes.CREATE_ROLE) && (
                 <Menu.Item>
                   <Link href="/usermanagement/new-role">
                     <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
@@ -60,10 +63,10 @@ function Nav() {
                     </button>
                   </Link>
                 </Menu.Item>
+              )}
               </Menu.Items>
             </Transition>
           </Menu>
-        )}
       </div>
     </div>
   );

@@ -12,6 +12,8 @@ import toSpace from "@/utils/UnderScore/UnderScore";
 
 import { IoIosArrowBack } from "react-icons/io";
 import { Button } from "@nextui-org/button";
+import useAdmin from "@/hooks/useAdmin";
+import { PermissionTypes } from "@/types/permissionTypes";
 
 interface Permission {
   app_id: number;
@@ -42,6 +44,8 @@ function ViewRoles() {
   const router = useRouter();
   const [rows, setRows] = useState<RowData[]>([]);
   const [limit, setLimit] = useState(15);
+
+  const {checkPermission} = useAdmin()
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["all user roles", limit],
@@ -106,7 +110,7 @@ function ViewRoles() {
       flex: 1,
       renderCell: (params: any) => (
         <div className="flex items-center justify-end h-12">
-          <button
+          {checkPermission(PermissionTypes.UPDATE_ROLE) && <button
             type="button"
             className="rounded-full"
             style={{ right: "-10px" }}
@@ -115,7 +119,7 @@ function ViewRoles() {
             }
           >
             <EditIconSetup />
-          </button>
+          </button>}
           {/* <button
             type="button"
             className="rounded-full"

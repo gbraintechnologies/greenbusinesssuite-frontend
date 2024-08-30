@@ -33,6 +33,8 @@ import Pagination from "@/components/Pagination/Pagination";
 import useFileUpload from "@/hooks/useFileUpload";
 import { VscLink } from "react-icons/vsc";
 import useCompany from "@/hooks/useCompany";
+import useAdmin from "@/hooks/useAdmin";
+import { PermissionTypes } from "@/types/permissionTypes";
 
 const Page = ({ params }: any) => {
 
@@ -75,6 +77,8 @@ const Page = ({ params }: any) => {
   const [color, setColor] = useState<string>("");
 
   const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
+
+  const {checkPermission} = useAdmin()
 
   //pagination
   const [page, setPage] = useState(0);
@@ -224,7 +228,7 @@ const Page = ({ params }: any) => {
         <div className="w-full text-primary-dark  flex justify-between items-center">
           <h3 className="font-semibold text-xl">Company Profile</h3>
 
-          <div className="flex gap-3">
+          {checkPermission(PermissionTypes.EDIT_COMPANY) && <div className="flex gap-3">
             <Link
               href={`/${tenant_id}/admin/company-profile/edit`}
               className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
@@ -232,7 +236,7 @@ const Page = ({ params }: any) => {
               <Image src={UpdateInfo} alt="Update Info" />
               Update Information
             </Link>
-          </div>
+          </div>}
         </div>
 
         <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
