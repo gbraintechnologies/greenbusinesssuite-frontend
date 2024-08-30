@@ -29,6 +29,8 @@ import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import useAdmin from "@/hooks/useAdmin";
+import { PermissionTypes } from "@/types/permissionTypes";
 
 function UserManagement() {
   const [filters, setFilters] = useState([
@@ -55,6 +57,8 @@ function UserManagement() {
   const [page, setPage] = useState(0);
 
   const [limit, setLimit] = useState(20);
+
+  const { checkPermission } = useAdmin();
 
   // fetch all users
   const {
@@ -198,51 +202,56 @@ function UserManagement() {
             className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
             aria-label="Static Actions"
           >
-            <DropdownItem
-              key="view"
-              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-            >
-              <Link
-                href={"/usermanagement/profile?id=" + params.row.data.id}
-                className="w-full block"
+            {checkPermission(PermissionTypes.READ_USER) && (
+              <DropdownItem
+                key="view"
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
               >
-                View User
-              </Link>
-            </DropdownItem>
-            <DropdownItem
-              key="edit"
-              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-            >
-              <Link
-                href={"/usermanagement/edit-user?id=" + params.row.data.id}
-                className="w-full block"
-              >
-                Edit User
-              </Link>
-            </DropdownItem>
-            {params.row.data?.user_status?.toLowerCase() === "inactive" ||
-            params.row.data?.user_status?.toLowerCase() === "blacklisted" ? (
-              <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
-                <button
-                  onClick={() => editUserStatus(params.row.data, "ACTIVE")}
+                <Link
+                  href={"/usermanagement/profile?id=" + params.row.data.id}
+                  className="w-full block"
                 >
-                  Activate User
-                </button>
-              </DropdownItem>
-            ) : (
-              <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
-                <button
-                  onClick={() => editUserStatus(params.row.data, "INACTIVE")}
-                >
-                  Deactivate User
-                </button>
+                  View User
+                </Link>
               </DropdownItem>
             )}
-            <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+            {checkPermission(PermissionTypes.EDIT_USER) && (
+              <DropdownItem
+                key="edit"
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
+                <Link
+                  href={"/usermanagement/edit-user?id=" + params.row.data.id}
+                  className="w-full block"
+                >
+                  Edit User
+                </Link>
+              </DropdownItem>
+            )}
+            {checkPermission(PermissionTypes.EDIT_USER) &&
+              (params.row.data?.user_status?.toLowerCase() === "inactive" ||
+              params.row.data?.user_status?.toLowerCase() === "blacklisted" ? (
+                <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                  <button
+                    onClick={() => editUserStatus(params.row.data, "ACTIVE")}
+                  >
+                    Activate User
+                  </button>
+                </DropdownItem>
+              ) : (
+                <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                  <button
+                    onClick={() => editUserStatus(params.row.data, "INACTIVE")}
+                  >
+                    Deactivate User
+                  </button>
+                </DropdownItem>
+              ))}
+            {checkPermission(PermissionTypes.BLACKLIST_USER) && <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
               <button onClick={() => blacklistUser(params.row.data.id)}>
                 Blacklist User
               </button>
-            </DropdownItem>
+            </DropdownItem>}
           </DropdownMenu>
         </Dropdown>,
       ],
@@ -352,15 +361,17 @@ function UserManagement() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="border  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
-            <SearchIcon />
-            <input
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="outline-none text-sm focus:outline-none bg-white custom-input input-custom"
-              placeholder="Search by name only"
-            />
-          </div>
+          {checkPermission(PermissionTypes.READ_USER_SEARCH) && (
+            <div className="border  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+              <SearchIcon />
+              <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="outline-none text-sm focus:outline-none bg-white custom-input input-custom"
+                placeholder="Search by name only"
+              />
+            </div>
+          )}
           <RoleFilter
             roles={roles}
             selected={activeRoleFilter}

@@ -7,8 +7,12 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { LuPlusCircle } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
+import useAdmin from "@/hooks/useAdmin";
+import { PermissionTypes } from "@/types/permissionTypes";
 
 function Nav() {
+  const { checkPermission } = useAdmin();
+
   return (
     <div className="w-full text-[#0F172A] px-5  flex justify-between">
       <div>
@@ -18,13 +22,13 @@ function Nav() {
         </p>
       </div>
 
-      <Link href={"/company-setup/create"}>
+      {checkPermission(PermissionTypes.CREATE_COMPANY) && <Link href={"/company-setup/create"}>
         <button className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
           <LuPlusCircle /> Add New{" "}
           <div className="border-r-[0.3px] border-opacity-50 border-white h-10"></div>{" "}
           <IoIosArrowDown />
         </button>
-      </Link>
+      </Link>}
     </div>
   );
 }
