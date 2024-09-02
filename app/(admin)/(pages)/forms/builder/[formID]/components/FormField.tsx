@@ -168,6 +168,29 @@ function FormField({ field, section, activeTab, setActiveTab }: any) {
         </div>
       );
 
+    case "address":
+      return (
+        <div
+          onClick={() => {
+            setActiveField({ field, section });
+
+            setActiveTab("field");
+          }}
+          className={`
+           ${field?.id === activeField?.field?.id && activeFieldStyle}
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 
+          `}
+        >
+          <label className="font-sm text-gray-400">
+            {label ? label : "No label"}
+          </label>
+          <p className="border text-gray-400 mt-2 border-gray-200 px-3 py-2 flex justify-between rounded-lg">
+            {placeHolder ? placeHolder : "No placeholder specified"}
+            <IoIosArrowDown />
+          </p>
+        </div>
+      );
+
     case "checkboxes":
       return (
         <div

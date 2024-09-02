@@ -11,6 +11,7 @@ import { LuUser2 } from "react-icons/lu";
 import { FaRegBuilding } from "react-icons/fa";
 import { FaRegMap } from "react-icons/fa";
 import { IoCalendarOutline } from "react-icons/io5";
+import { FaRegAddressBook } from "react-icons/fa6";
 
 // general properties
 let template = {
@@ -91,7 +92,7 @@ export const defaultFormElements = [
   },
   {
     icon: <FaRegMap size={18} />,
-    name: "Address information",
+    name: "Open Address information",
     properties: {
       ...template,
       fieldDataType: "long-text",
@@ -113,6 +114,18 @@ export const defaultFormElements = [
       description: "Select date of birth",
       label: "Date of birth",
       placeHolder: "Select your date of birth",
+    },
+  },
+  {
+    icon: <FaRegAddressBook size={18} />,
+    name: "Address",
+    properties: {
+      ...template,
+      fieldDataType: "dropdown",
+      name: "Address",
+      description: "Address",
+      label: "Address",
+      placeHolder: "Select your address",
     },
   },
   {
@@ -161,6 +174,18 @@ export const defaultFormElements = [
       description: "Number",
       label: "Number",
       placeHolder: "Enter your number",
+    },
+  },
+  {
+    icon: <FaRegMap size={18} />,
+    name: "Open Address information",
+    properties: {
+      ...template,
+      fieldDataType: "long-text",
+      name: "Address information",
+      description: "Address information",
+      label: "Address information",
+      placeHolder: "Enter your address information",
     },
   },
   {

@@ -25,6 +25,7 @@ import { capitalize } from "@mui/material";
 import services from "@/services";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
+import AddressValues from "./AddressValues";
 
 function FieldOptions({ refetch }: any) {
   const { activeField, updateActiveField, form } = useForm();
@@ -36,6 +37,27 @@ function FieldOptions({ refetch }: any) {
     queryFn: services.getFormStatusCountById(Number(form?.id)),
     enabled: Boolean(form?.id),
   });
+
+  // address holding vairables
+  const [selectedCountry, setSelectedCountry] = useState<any>(null);
+  const [selectedAddressType, setSelectedAddressType] = useState(null);
+
+  const { data: jurisdictions, isLoading: jurisdictionsLoading } = useQuery({
+    queryKey: ["all jurisdictions"],
+    queryFn: services.allJurisdictions(),
+    enabled:
+      Boolean(form?.id) && Boolean(localField?.fieldDataType === "address"),
+  });
+
+  // getJurisdictionEntriesById
+  const { data: jurisdictionEntries, isLoading: jurisdictionEntriesLoading } =
+    useQuery({
+      queryKey: ["all parentSchemeEntries", selectedCountry?.id],
+      queryFn: services.getJurisdictionEntriesById(Number(selectedCountry?.id)),
+      enabled: !!selectedCountry?.id,
+    });
+
+  console.log("jurisdictionentries", jurisdictionEntries);
 
   // update local copy if changes are made
   useEffect(() => {
@@ -54,6 +76,11 @@ function FieldOptions({ refetch }: any) {
     { name: "Count", displayType: "bar-chart" },
   ];
 
+  const addressTypes = [
+    { name: "Country", value: "country" },
+    { name: "Parent Level", value: "parent-level" },
+    { name: "Sub Level", value: "sub-level" },
+  ];
   const displayTypes = [
     { name: "Bar chart", value: "bar-chart" },
     { name: "Pie chart", value: "pie-chart" },
@@ -73,6 +100,175 @@ function FieldOptions({ refetch }: any) {
       placeHolder,
       horizontalAlign,
     } = localField;
+
+    // address input
+    if (fieldDataType === "address") {
+      return (
+        <div className="bg-white  pb-[25rem] h-screen no-scrollbar  overflow-y-scroll  p-3">
+          {/* REQUIRED FIELD OR NOT */}
+          <div className="bg-[#F8FAFC] py-3 mt-8 px-5  rounded-lg flex gap-3 items-center justify-between">
+            <p className="font-medium text-base">Required field</p>{" "}
+            <Switch
+              checked={isMandatory}
+              onChange={() => {
+                setLocalField((prev: any) => ({
+                  ...prev,
+                  isMandatory: !prev.isMandatory,
+                }));
+
+                updateActiveField(activeField.section, {
+                  ...localField,
+                  isMandatory: !localField.isMandatory,
+                });
+              }}
+              className={`${isMandatory ? "bg-primary-green" : "bg-gray-500"}
+          relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
+            >
+              <span
+                aria-hidden="true"
+                className={`${isMandatory ? "translate-x-6" : "translate-x-0"}
+            pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+              />
+            </Switch>
+          </div>
+
+          {/* LABEL */}
+          <div className="flex flex-col gap-5 my-5">
+            <div className="flex flex-col gap-3">
+              <label className={labelStyle}>Field Label</label>
+              <input
+                value={label}
+                placeholder="Edit field label"
+                className={inputStyle}
+                onChange={(e) =>
+                  setLocalField((prev: any) => ({
+                    ...prev,
+                    label: e.target.value,
+                    name: e.target.value,
+                  }))
+                }
+                onBlur={() =>
+                  updateActiveField(activeField.section, localField)
+                }
+              />
+            </div>
+            {/* PLACEHOLDER */}
+            <div className="flex flex-col gap-3">
+              <label className={labelStyle}>Placeholder</label>
+              <input
+                value={placeHolder}
+                placeholder="Enter a placeholder text here"
+                className={inputStyle}
+                onChange={(e) =>
+                  setLocalField((prev: any) => ({
+                    ...prev,
+                    placeHolder: e.target.value,
+                  }))
+                }
+                onBlur={() =>
+                  updateActiveField(activeField.section, localField)
+                }
+              />
+            </div>
+          </div>
+
+          {/* ADDRESS TYPE */}
+          <div className="mt-5">
+            <p className="font-medium text-base mb-4">Address Selection Type</p>{" "}
+            <Dropdown>
+              <DropdownTrigger>
+                <button className="bg-white flex items-center justify-between border rounded-xl px-4 py-2 w-full text-left">
+                  <span className="block truncate">
+                    {selectedAddressType
+                      ? capitalize(selectedAddressType).replace("-", " ")
+                      : "No type selected"}
+                  </span>
+
+                  <IoIosArrowDown className="h-5 w-5 text-gray-600" size={20} />
+                </button>
+              </DropdownTrigger>
+              <DropdownMenu
+                className="shadow-md bg-white border border-[#F1F5F9] w-full rounded-lg flex flex-col gap-3"
+                aria-label="Static Actions"
+              >
+                {addressTypes.map((type: any) => {
+                  return (
+                    <DropdownItem
+                      key={type.id}
+                      onClick={() => {
+                        setSelectedAddressType(type?.value);
+                      }}
+                      className="items-center w-72 p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                    >
+                      {type.name}
+                    </DropdownItem>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+
+          {/* COUNTRY SELECTION FOR USER ONLY */}
+          {selectedAddressType === "country" && (
+            <div className="mt-5">
+              <AddressValues values={jurisdictions?.content} />
+            </div>
+          )}
+
+          {/* PARENT LEVEL SELECTION FOR USER  */}
+
+          {selectedAddressType == "parent-level" && (
+            <>
+              {/* COUNTRY */}
+              <div className="mt-5 mb-5">
+                <p className="font-medium text-base mb-4">Country</p>{" "}
+                <Dropdown>
+                  <DropdownTrigger>
+                    <button className="bg-white flex items-center justify-between border rounded-xl px-4 py-2 w-full text-left">
+                      <span className="block truncate">
+                        {selectedCountry
+                          ? capitalize(selectedCountry?.name)
+                          : "Select a country"}
+                      </span>
+
+                      <IoIosArrowDown
+                        className="h-5 w-5 text-gray-600"
+                        size={20}
+                      />
+                    </button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    className="shadow-md bg-white border border-[#F1F5F9] w-full rounded-lg flex flex-col gap-3"
+                    aria-label="Static Actions"
+                  >
+                    {jurisdictions?.content.map((type: any) => {
+                      return (
+                        <DropdownItem
+                          key={type.id}
+                          onClick={() => {
+                            setSelectedCountry(type);
+                          }}
+                          className="items-center w-72 p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                        >
+                          {type.name}
+                        </DropdownItem>
+                      );
+                    })}
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+
+              <AddressValues
+                loading={jurisdictionEntriesLoading}
+                values={jurisdictionEntries?.parentAddressScheme?.entries}
+              />
+            </>
+          )}
+        </div>
+      );
+    }
+
+    // other kinds of input
 
     return (
       <div className="bg-white  pb-[25rem] h-screen no-scrollbar  overflow-y-scroll  p-3">
@@ -103,6 +299,7 @@ function FieldOptions({ refetch }: any) {
           </Switch>
         </div>
 
+        {/* LABEL */}
         <div className="flex flex-col gap-5 my-5">
           {/* LABEL */}
           <div className="flex flex-col gap-3">
