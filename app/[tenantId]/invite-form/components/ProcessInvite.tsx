@@ -22,6 +22,8 @@ import Image from "next/image";
 import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
+import UnpublishedForm from "./FormAccessError";
+import FormAccessError from "./FormAccessError";
 
 function ProcessInvite({ tenantId }: any) {
   // hooks
@@ -108,6 +110,12 @@ function ProcessInvite({ tenantId }: any) {
 
   const [message, setMessage] = useState("");
 
+  //setting the status
+  const [status, setStatus] = useState("");
+
+  //form deadline
+  const [formDeadline, setFormDeadline] = useState();
+
   useEffect(() => {
     //
     if (data && user) {
@@ -116,17 +124,18 @@ function ProcessInvite({ tenantId }: any) {
 
       if (data?.publishStatus !== "PUBLISHED") {
         setLoading(false);
-        setMessage("Sorry! This form is no longer accessible");
+        setStatus("unpublished");
         return;
       }
       // CHECK IF DEADLINE OR DATE IS OVER
       // TODO: CHECK DEADLINE
       if (data?.deadline !== null) {
         if (new Date() > new Date(data?.deadline)) {
+          setFormDeadline(data?.deadline);
           setLoading(false);
-          setMessage("Sorry! This form is no longer accepting new responses");
+          setStatus("late");
+          return;
         }
-        return;
       }
 
       // STRIP DATA TO IDS AND REPONSES
@@ -184,68 +193,100 @@ function ProcessInvite({ tenantId }: any) {
     }
   }, [data]);
 
+
+  if (loading) {
+    return (
+      <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
+        <div className="flex -mt-[30vh] items-center text-center justify-center flex-col gap-2">
+          {companyBranding?.logo && (
+            <Image
+              src={companyBranding?.logo}
+              width={100}
+              height={100}
+              className="rounded-full p-1 bg-white"
+              alt="company"
+            />
+          )}
+
+          <h3 className="mt-10 font-bold text-2xl text-primary-dark">
+            Processing form invite
+          </h3>
+
+          <p className="max-w-sm text-lg text-primary-dark">
+            Hang on! We're processing your invite to this form...
+          </p>
+
+          <AiOutlineLoading3Quarters
+            size={24}
+            className="animate-spin text-gray-500 mt-10"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "late") {
+    return (
+      <FormAccessError
+        text={
+          formDeadline
+            ? `Sorry, the deadline for the form you are trying to access passed on ${new Date(
+                formDeadline
+              ).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}`
+            : "Sorry, the deadline for the form you are trying to access passed"
+        }
+        subtext="If you have any questions or require assistance, please contact your company administrator."
+        onClick={() => router.push(`/${tenantId}/client`)}
+        btnColor={companyBranding.color}
+      />
+    );
+  }
+  if (status === "unpublished") {
+    return (
+      <FormAccessError
+        text="Sorry, the form you are trying to access is unpublished"
+        subtext="If you have any questions or require assistance, please contact your company administrator."
+        onClick={() => router.push(`/${tenantId}/client`)}
+        btnColor={companyBranding.color}
+      />
+    );
+  }
   return (
     <div>
-      {loading ? (
-        <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
-          <div className="flex -mt-[30vh] items-center text-center justify-center flex-col gap-2">
-            {companyBranding?.logo && (
-              <Image
-                src={companyBranding?.logo}
-                width={100}
-                height={100}
-                className="rounded-full p-1 bg-white"
-                alt="company"
-              />
-            )}
-
-            <h3 className="mt-10 font-bold text-2xl text-primary-dark">
-              Processing form invite
-            </h3>
-
-            <p className="max-w-sm text-lg text-primary-dark">
-              Hang on! We're processing your invite to this form...
-            </p>
-
-            <AiOutlineLoading3Quarters
-              size={24}
-              className="animate-spin text-gray-500 mt-10"
+      <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
+        <div className="flex -mt-[30vh] items-center text-center justify-center flex-col gap-2">
+          {companyBranding?.logo && (
+            <Image
+              src={companyBranding?.logo}
+              width={100}
+              height={100}
+              className="rounded-full p-1 bg-white"
+              alt="company"
             />
-          </div>
+          )}
+
+          <h3 className="mt-10 font-bold text-2xl text-primary-dark">
+            {data?.name} form
+          </h3>
+
+          <p className="max-w-sm text-lg text-primary-dark">{message}</p>
+
+          <Button
+            style={{
+              backgroundColor: companyBranding.color,
+            }}
+            onClick={() => router.push(`/${tenantId}/client`)}
+            className="mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
+            type="submit"
+          >
+            Continue to dashboard
+          </Button>
         </div>
-      ) : (
-        // DISPLAY MESSAGE
-        <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
-          <div className="flex -mt-[30vh] items-center text-center justify-center flex-col gap-2">
-            {companyBranding?.logo && (
-              <Image
-                src={companyBranding?.logo}
-                width={100}
-                height={100}
-                className="rounded-full p-1 bg-white"
-                alt="company"
-              />
-            )}
-
-            <h3 className="mt-10 font-bold text-2xl text-primary-dark">
-              {data?.name} form
-            </h3>
-
-            <p className="max-w-sm text-lg text-primary-dark">{message}</p>
-
-            <Button
-              style={{
-                backgroundColor: companyBranding.color,
-              }}
-              onClick={() => router.push(`/${tenantId}/client`)}
-              className="mt-10  disabled:cursor-not-allowed text-white rounded-lg py-3 px-4"
-              type="submit"
-            >
-              Continue to dashboard
-            </Button>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

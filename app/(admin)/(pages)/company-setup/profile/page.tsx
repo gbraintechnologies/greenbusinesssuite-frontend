@@ -34,6 +34,7 @@ import DatePicker from "@/components/DatePicker/DatePicker";
 import Pagination from "@/components/Pagination/Pagination";
 import useFileUpload from "@/hooks/useFileUpload";
 import { VscLink } from "react-icons/vsc";
+import Loader from "@/components/Loader/Loader";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -181,12 +182,27 @@ const Page = () => {
     enabled: !!companyData?.company_identifier,
   });
 
+  const [formsLoading, setFormsLoading] = useState<boolean>(false);
+
   const queryClient = useQueryClient();
 
   const { handleFileUpload } = useFileUpload();
 
   useEffect(() => {
-    refetch();
+    const refetchForms = async () => {
+      try {
+        setFormsLoading(true);
+        refetch()
+      }
+      catch(error){
+        toast.error("An error occurred")
+      }
+      finally {
+        setFormsLoading(false);
+      };
+    }
+
+    refetchForms();
   }, [page, selectedTimeline]);
 
   useEffect(() => {
@@ -489,6 +505,8 @@ const Page = () => {
                     />
                   </div>
 
+                  {/* LOADING FORMS */}
+                  {formsLoading && <Loader text="Fetching forms" />}
                   {/* NO ASSIGNED FORM */}
                   {assignedForms?.content?.length === 0 && (
                     <div className="flex items-center justify-center py-5 w-full ">
@@ -606,78 +624,6 @@ const Page = () => {
                       </div>
                     )}
                   </div>
-                  {/* COMPANY LOGO */}
-                  {/* <div className="my-2">
-                  <h2 className="text-base text-primary-dark font-medium">
-                    Upload full sized logo
-                  </h2>
-                  <p className="text-sm text-[#667085]">
-                    The full sized version of your logo. It must be at least
-                    128px by 128px with a max size of 512KB. Supported formats
-                    are JPG and PNG only.
-                  </p>
-                  <div className="flex justify-center items-center w-full relative my-2">
-                    <label
-                      className="flex justify-center items-center bg-slate-50 rounded-lg border-2 border-dashed w-full h-64 group-item text-center"
-                      style={{
-                        backgroundImage: logoPresentOnLoad
-                          ? `url(${backgroundImageUrl})`
-                          : companyLogo
-                          ? `url(${backgroundImageUrl})`
-                          : "",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                      }}
-                    >
-                      {(companyLogo || logoPresentOnLoad) && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 h-64"></div>
-                      )}
-
-                      <div className="flex flex-col gap-3 z-10 relative">
-                        <div className="flex w-full items-center justify-center">
-                          <div className="flex  items-center justify-center rounded-full w-12 h-12 bg-[#F1F5F9]">
-                            <UploadIcon />
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <p
-                            className={
-                              "font-medium text-base " +
-                              (companyLogo || logoPresentOnLoad
-                                ? " text-white "
-                                : "")
-                            }
-                          >
-                            Upload company logo file here
-                          </p>
-                          <p
-                            className={
-                              " text-xs" +
-                              (companyLogo || logoPresentOnLoad
-                                ? " text-white "
-                                : " text-[#64748B]")
-                            }
-                          >
-                            Supported formats: JPG, PNG (2MB max file size)
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-center">
-                          <div className="w-20 h-8 border-1 border-[#E2E8F0] text-sm bg-white flex items-center justify-center rounded-lg shadow-[0px_2px_2px_0px_rgba(0,0,0,0.04)]">
-                            Browse
-                          </div>
-                        </div>
-                      </div>
-                      <input
-                        type="file"
-                        className="hidden"
-                        onChange={(e) => {
-                          setCompanyLogo(e.target.files && e.target.files[0]);
-                        }}
-                        accept=".jpg, .png"
-                      />
-                    </label>
-                  </div>
-                </div> */}
                   {/* COMPANY COLOR */}
                   <div className="input-holder">
                     <h2 className="text-base text-primary-dark font-medium">
