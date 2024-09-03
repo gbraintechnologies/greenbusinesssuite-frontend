@@ -90,18 +90,7 @@ export const defaultFormElements = [
       placeHolder: "Enter your email address here",
     },
   },
-  {
-    icon: <FaRegMap size={18} />,
-    name: "Open Address information",
-    properties: {
-      ...template,
-      fieldDataType: "long-text",
-      name: "Address information",
-      description: "Address information",
-      label: "Address information",
-      placeHolder: "Enter your address information",
-    },
-  },
+
   {
     icon: <IoCalendarOutline size={18} />,
     name: "Date of birth",
@@ -121,7 +110,7 @@ export const defaultFormElements = [
     name: "Address",
     properties: {
       ...template,
-      fieldDataType: "dropdown",
+      fieldDataType: "address",
       name: "Address",
       description: "Address",
       label: "Address",
@@ -200,6 +189,18 @@ export const defaultFormElements = [
       description: "Select date",
       label: "Date",
       placeHolder: "Select date",
+    },
+  },
+  {
+    icon: <FaRegMap size={18} />,
+    name: "Open Address information",
+    properties: {
+      ...template,
+      fieldDataType: "long-text",
+      name: "Address information",
+      description: "Address information",
+      label: "Address information",
+      placeHolder: "Enter your address information",
     },
   },
   {

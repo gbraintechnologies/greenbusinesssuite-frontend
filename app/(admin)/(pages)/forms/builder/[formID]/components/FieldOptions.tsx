@@ -40,7 +40,6 @@ function FieldOptions({ refetch }: any) {
 
   // address holding vairables
   const [selectedCountry, setSelectedCountry] = useState<any>(null);
-  const [selectedAddressType, setSelectedAddressType] = useState(null);
 
   const { data: jurisdictions, isLoading: jurisdictionsLoading } = useQuery({
     queryKey: ["all jurisdictions"],
@@ -52,12 +51,12 @@ function FieldOptions({ refetch }: any) {
   // getJurisdictionEntriesById
   const { data: jurisdictionEntries, isLoading: jurisdictionEntriesLoading } =
     useQuery({
-      queryKey: ["all parentSchemeEntries", selectedCountry?.id],
-      queryFn: services.getJurisdictionEntriesById(Number(selectedCountry?.id)),
-      enabled: !!selectedCountry?.id,
+      queryKey: ["all parentSchemeEntries", localField?.validPattern],
+      queryFn: services.getJurisdictionEntriesById(
+        Number(localField?.validPattern)
+      ),
+      enabled: !!localField?.validPattern,
     });
-
-  console.log("jurisdictionentries", jurisdictionEntries);
 
   // update local copy if changes are made
   useEffect(() => {
@@ -77,8 +76,8 @@ function FieldOptions({ refetch }: any) {
   ];
 
   const addressTypes = [
-    { name: "Country", value: "country" },
-    { name: "Parent & Sub Level", value: "parent-level" },
+    { name: "Country only", value: "country-only" },
+    { name: "Parent & Sub Level", value: "parent-and-sub-level" },
   ];
   const displayTypes = [
     { name: "Bar chart", value: "bar-chart" },
@@ -96,6 +95,8 @@ function FieldOptions({ refetch }: any) {
       label,
       maxLength,
       fieldDataType,
+      validPattern,
+      instruction,
       placeHolder,
       horizontalAlign,
     } = localField;
@@ -178,8 +179,8 @@ function FieldOptions({ refetch }: any) {
               <DropdownTrigger>
                 <button className="bg-white flex items-center justify-between border rounded-xl px-4 py-2 w-full text-left">
                   <span className="block truncate">
-                    {selectedAddressType
-                      ? capitalize(selectedAddressType).replace("-", " ")
+                    {instruction
+                      ? capitalize(instruction).replace("-", " ")
                       : "No type selected"}
                   </span>
 
@@ -195,7 +196,14 @@ function FieldOptions({ refetch }: any) {
                     <DropdownItem
                       key={type.id}
                       onClick={() => {
-                        setSelectedAddressType(type?.value);
+                        setLocalField((prev: any) => ({
+                          ...prev,
+                          instruction: type?.value,
+                        }));
+                        updateActiveField(activeField.section, {
+                          ...localField,
+                          instruction: type?.value,
+                        });
                       }}
                       className="items-center w-72 p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                     >
@@ -208,15 +216,22 @@ function FieldOptions({ refetch }: any) {
           </div>
 
           {/* COUNTRY SELECTION FOR USER ONLY */}
-          {selectedAddressType === "country" && (
+          {instruction === "country-only" && (
             <div className="mt-5">
-              <AddressValues values={jurisdictions?.content} />
+              {/* <AddressValues values={jurisdictions?.content} /> */}
+              <div className="flex text-sm gap-2 text-gray-600">
+                <CiCircleInfo size={30} />{" "}
+                <span>
+                  Users would be allowed to select a country only from the
+                  countries set up
+                </span>
+              </div>
             </div>
           )}
 
           {/* PARENT LEVEL SELECTION FOR USER  */}
 
-          {selectedAddressType == "parent-level" && (
+          {instruction == "parent-and-sub-level" && (
             <>
               {/* COUNTRY */}
               <div className="mt-5 mb-5">
@@ -225,9 +240,17 @@ function FieldOptions({ refetch }: any) {
                   <DropdownTrigger>
                     <button className="bg-white flex items-center justify-between border rounded-xl px-4 py-2 w-full text-left">
                       <span className="block truncate">
-                        {selectedCountry
-                          ? capitalize(selectedCountry?.name)
-                          : "Select a country"}
+                        {validPattern ? (
+                          <>
+                            {
+                              jurisdictions?.content?.find(
+                                (item: any) => item?.id == validPattern
+                              ).name
+                            }
+                          </>
+                        ) : (
+                          "No country selected"
+                        )}
                       </span>
 
                       <IoIosArrowDown
@@ -245,11 +268,18 @@ function FieldOptions({ refetch }: any) {
                         <DropdownItem
                           key={type.id}
                           onClick={() => {
-                            setSelectedCountry(type);
+                            setLocalField((prev: any) => ({
+                              ...prev,
+                              validPattern: type?.id,
+                            }));
+                            updateActiveField(activeField.section, {
+                              ...localField,
+                              validPattern: type?.id,
+                            });
                           }}
                           className="items-center w-72 p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                         >
-                          {type.name}
+                          {type?.name}
                         </DropdownItem>
                       );
                     })}
@@ -257,10 +287,20 @@ function FieldOptions({ refetch }: any) {
                 </Dropdown>
               </div>
 
-              <AddressValues
+              {selectedCountry && (
+                <div className="flex text-sm gap-2 text-gray-600">
+                  <CiCircleInfo size={30} />{" "}
+                  <span>
+                    Users would be allowed to select the parent level and sub
+                    level of {capitalize(selectedCountry?.name)}
+                  </span>
+                </div>
+              )}
+
+              {/* <AddressValues
                 loading={jurisdictionEntriesLoading}
                 values={jurisdictionEntries?.parentAddressScheme?.entries}
-              />
+              /> */}
             </>
           )}
         </div>
