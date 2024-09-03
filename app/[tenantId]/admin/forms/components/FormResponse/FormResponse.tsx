@@ -93,8 +93,14 @@ const renderFormResponse = (formField: any) => {
           disabled={true}
         />
       );
+
     case "long-text":
       return <div className="like-input big-fit">{formField?.response}</div>;
+
+    default:
+      return (
+        <input defaultValue={formField?.response} className="fit" readOnly />
+      );
   }
 };
 const FormResponse = forwardRef(function FormResponse(

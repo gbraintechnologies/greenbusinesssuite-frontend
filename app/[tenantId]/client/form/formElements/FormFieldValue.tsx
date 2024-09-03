@@ -168,7 +168,6 @@ function FormFieldValue({ field, section, viewOnly }: any) {
 
       // SELECTING PARENT AND SUB LEVEL OF A COUNTRY
       if (instruction === "parent-and-sub-level") {
-        console.log("entries", jurisdictionEntries);
         return (
           <div
             className={`
@@ -184,7 +183,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
             <Dropdown isDisabled={viewOnly} className="w-full">
               <DropdownTrigger disabled={viewOnly} className="w-full">
                 <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
-                  {field?.response ? field?.response : "No country selected"}
+                  {field?.response?.split(",")[0]
+                    ? field?.response?.split(",")[0]
+                    : "Select option"}
                   <IoIosArrowDown />
                 </p>
               </DropdownTrigger>
@@ -214,6 +215,46 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                 )}
               </DropdownMenu>
             </Dropdown>
+
+            {field?.response && (
+              <Dropdown isDisabled={viewOnly} className="w-full">
+                <DropdownTrigger disabled={viewOnly} className="w-full">
+                  <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
+                    {field?.response?.split(",")[1]
+                      ? field?.response?.split(",")[1]
+                      : "Select sub level"}
+                    <IoIosArrowDown />
+                  </p>
+                </DropdownTrigger>
+                <DropdownMenu
+                  selectionMode="single"
+                  aria-label="Dynamic Actions"
+                  className="bg-white shadow-sm rounded-lg w-60"
+                >
+                  {jurisdictionEntries?.parentAddressScheme?.entries
+                    ?.find(
+                      (item: any) => item.name == field?.response.split(",")[0]
+                    )
+                    .childEntries?.map((value: any) => {
+                      return (
+                        <DropdownItem
+                          key={value}
+                          onClick={() =>
+                            saveSingleResponse(
+                              section?.id,
+                              field?.id,
+                              field?.response + "," + value?.name
+                            )
+                          }
+                          className="flex hover:bg-gray-100 px-4  items-center flex-row gap-2"
+                        >
+                          <p className="text-base">{value?.name}</p>
+                        </DropdownItem>
+                      );
+                    })}
+                </DropdownMenu>
+              </Dropdown>
+            )}
           </div>
         );
       }
