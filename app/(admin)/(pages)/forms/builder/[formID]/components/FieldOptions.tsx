@@ -78,8 +78,7 @@ function FieldOptions({ refetch }: any) {
 
   const addressTypes = [
     { name: "Country", value: "country" },
-    { name: "Parent Level", value: "parent-level" },
-    { name: "Sub Level", value: "sub-level" },
+    { name: "Parent & Sub Level", value: "parent-level" },
   ];
   const displayTypes = [
     { name: "Bar chart", value: "bar-chart" },
