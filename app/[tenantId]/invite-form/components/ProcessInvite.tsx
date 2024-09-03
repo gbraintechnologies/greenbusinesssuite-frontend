@@ -193,9 +193,6 @@ function ProcessInvite({ tenantId }: any) {
     }
   }, [data]);
 
-  useEffect(() => {
-    console.log('is loading ', loading)
-  },[loading])
 
   if (loading) {
     return (
