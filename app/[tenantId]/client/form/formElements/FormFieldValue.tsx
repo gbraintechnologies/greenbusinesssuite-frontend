@@ -25,6 +25,8 @@ import { CiCircleInfo } from "react-icons/ci";
 //
 import { toast } from "sonner";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
 
 function FormFieldValue({ field, section, viewOnly }: any) {
   // functions
@@ -92,6 +94,20 @@ function FormFieldValue({ field, section, viewOnly }: any) {
 
   const [phone, setPhone] = useState(null);
 
+  const { data: jurisdictions, isLoading: jurisdictionsLoading } = useQuery({
+    queryKey: ["all jurisdictions"],
+    queryFn: services.allJurisdictions(),
+    enabled: Boolean(field?.instruction === "country-only"),
+  });
+
+  // getJurisdictionEntriesById
+  const { data: jurisdictionEntries, isLoading: jurisdictionEntriesLoading } =
+    useQuery({
+      queryKey: ["all parentSchemeEntries", field?.validPattern],
+      queryFn: services.getJurisdictionEntriesById(Number(field?.validPattern)),
+      enabled: !!field?.validPattern,
+    });
+
   useEffect(() => {
     if (fieldDataType === "phone") {
       saveSingleResponse(section?.id, field?.id, phone);
@@ -102,6 +118,106 @@ function FormFieldValue({ field, section, viewOnly }: any) {
   const labelStyle = `font-sm text-gray-400`;
 
   switch (fieldDataType) {
+    case "address":
+      const { instruction, validPattern } = field;
+
+      // SELECTING A COUNTRY ONLY
+      if (instruction === "country-only") {
+        return (
+          <div
+            className={`
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
+          `}
+          >
+            <label className={labelStyle}>
+              {label} <MandatoryLabel field={field} />
+            </label>
+
+            <p className="mt-2 text-sm">{placeHolder}</p>
+
+            <Dropdown isDisabled={viewOnly} className="w-full">
+              <DropdownTrigger disabled={viewOnly} className="w-full">
+                <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
+                  {field?.response ? field?.response : "No country selected"}
+                  <IoIosArrowDown />
+                </p>
+              </DropdownTrigger>
+              <DropdownMenu
+                selectionMode="single"
+                aria-label="Dynamic Actions"
+                className="bg-white shadow-sm rounded-lg w-60"
+              >
+                {jurisdictions?.content?.map((value: any) => {
+                  return (
+                    <DropdownItem
+                      key={value}
+                      onClick={() =>
+                        saveSingleResponse(section?.id, field?.id, value?.name)
+                      }
+                      className="flex hover:bg-gray-100 px-4  items-center flex-row gap-2"
+                    >
+                      <p className="text-base">{value?.name}</p>
+                    </DropdownItem>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        );
+      }
+
+      // SELECTING PARENT AND SUB LEVEL OF A COUNTRY
+      if (instruction === "parent-and-sub-level") {
+        console.log("entries", jurisdictionEntries);
+        return (
+          <div
+            className={`
+          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
+          `}
+          >
+            <label className={labelStyle}>
+              {label} <MandatoryLabel field={field} />
+            </label>
+
+            <p className="mt-2 text-sm">{placeHolder}</p>
+
+            <Dropdown isDisabled={viewOnly} className="w-full">
+              <DropdownTrigger disabled={viewOnly} className="w-full">
+                <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
+                  {field?.response ? field?.response : "No country selected"}
+                  <IoIosArrowDown />
+                </p>
+              </DropdownTrigger>
+              <DropdownMenu
+                selectionMode="single"
+                aria-label="Dynamic Actions"
+                className="bg-white shadow-sm rounded-lg w-60"
+              >
+                {jurisdictionEntries?.parentAddressScheme?.entries?.map(
+                  (value: any) => {
+                    return (
+                      <DropdownItem
+                        key={value}
+                        onClick={() =>
+                          saveSingleResponse(
+                            section?.id,
+                            field?.id,
+                            value?.name
+                          )
+                        }
+                        className="flex hover:bg-gray-100 px-4  items-center flex-row gap-2"
+                      >
+                        <p className="text-base">{value?.name}</p>
+                      </DropdownItem>
+                    );
+                  }
+                )}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        );
+      }
+
     case "long-text":
       return (
         <div

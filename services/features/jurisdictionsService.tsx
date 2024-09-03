@@ -1,3 +1,4 @@
+import defaultMeshApi from "../defaultMeshClient";
 import authApi from "../meshAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
 
@@ -7,7 +8,7 @@ export const allJurisdictions = (
   search: string = ""
 ) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/jurisdictions/all?page=${page}&size=${limit}&search=${search}`)
       .then((res) => res.data);
 };
@@ -68,7 +69,7 @@ export const deleteParentAddressAndChildByID = (
 
 export const getJurisdictionEntriesById = (id: number) => {
   return () =>
-    authApi
+    defaultMeshApi
       .get(`/jurisdictions/get-a-jurisdiction/with-entries/${id}`)
       .then((res) => res.data);
 };
