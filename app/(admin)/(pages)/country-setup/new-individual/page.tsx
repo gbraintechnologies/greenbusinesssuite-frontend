@@ -15,21 +15,15 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import {
-  createFreeInputJurisdiction,
-  createParentDropdownJurisdiction,
-  csvUploads,
-} from "@/services/features/jurisdictionsService";
+import { countryUpload, createCountry } from "@/services/features/countryService";
 
 const schema = yup.object().shape({
-  id: yup.number().required(),
-  name: yup.string().required(),
-  jurisdiction: yup.object().shape({
-    id: yup.number().required(),
-    countryId: yup.number().required(),
-    name: yup.string().required(),
-  }),
+  countryName: yup.string().required(),
+  countryId: yup.number().required(),
+  parentLevelName: yup.string().required(),
+  childLevelName: yup.string().required(),
   inputType: yup.string().required(),
+  parentNames: yup.array().of(yup.string().required()).required(),
 });
 
 function NewIndividual() {
@@ -50,28 +44,20 @@ function NewIndividual() {
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
-      id: 0,
-      name: "",
-      jurisdiction: {
-        id: 0,
-        countryId: 0,
-        name: "Ghana",
-      },
-      inputType: "free-input",
+      countryName: "Ghana",
+      countryId: 0,
+      parentLevelName: "",
+      childLevelName: "",
+      inputType: "DROP_DOWN",
+      parentNames: [],
     },
   });
 
   const [dropdownItems, setDropdownItems] = useState("");
-  const [labels, setLabels] = useState<string[]>([]);
 
   useEffect(() => {
     setValue("inputType", selectedOption.toLowerCase().replace(" ", "-"));
   }, [selectedOption, setValue]);
-
-  useEffect(() => {
-    const defaultCountry = "Ghana";
-    setValue("jurisdiction.name", defaultCountry);
-  }, [setValue]);
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
@@ -110,24 +96,16 @@ function NewIndividual() {
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const Payload = {
-        id: data.id,
-        name: data.name,
-        jurisdiction: {
-          id: data.jurisdiction.id,
-          countryId: data.jurisdiction.countryId,
-          name: data.jurisdiction.name,
-        },
-        inputType: data.inputType,
+        countryId: data.countryId,
+        countryName: data.countryName,
+        parentLevelName: data.parentLevelName,
+        childLevelName: data.childLevelName,
+        inputType: selectedOption === "Dropdown" ? "DROP_DOWN" : "FREE_INPUT",
+        parentNames: [] 
       };
-      await createFreeInputJurisdiction(Payload);
+      await createCountry(Payload);
 
-      toast.success("Jurisdiction created Successfully", {
-        position: "top-center",
-        duration: 3000,
-        style: {
-          color: "green",
-        },
-      });
+      toast.success("Jurisdiction created Successfully", { position: "top-center", duration: 3000, });
       router.push("/country-setup");
     } catch (error: any) {
       console.error("Error occurred:", error);
@@ -136,88 +114,55 @@ function NewIndividual() {
   };
 
   const handleSaveAndContinue = async () => {
-    // console.log("Button clicked, function triggered.");
-
-    if (isSubmitting) {
-      // console.log("Submission is already in progress.");
-      return;
-    }
-
+    if (isSubmitting) return;
+    
     setIsSubmitting(true);
-    // console.log("Submission started.");
-
+    
     try {
       if (IDImage && fileName) {
         const formData = new FormData();
         formData.append("file", IDImage);
-        await csvUploads(formData, fileName.name);
-
-        toast.success("CSV file uploaded Successfully", {
-          position: "top-center",
-          duration: 3000,
-          style: {
-            color: "green",
-          },
-        });
-
+        await countryUpload(formData, fileName.name);
+  
+        toast.success("CSV file uploaded Successfully", { position: "top-center", duration: 3000 });
+        
         setIDImage(null);
         setUploadProgress(0);
         setFileName({ name: "", size: 0 });
-
-        setIsSubmitting(false);
-
-        router.push("/country-setup");
-        return;
       }
-
+      
       const items = dropdownItems
         .split(",")
-        .map((item) => item.trim())
-        .filter((item) => item);
-      console.log("Dropdown items set:", items);
-
+        .map(item => item.trim())
+        .filter(item => item);
+      
       const data = getValues();
-      console.log("Form values:", data);
-
-      const Payload2 = {
-        parentAddressScheme: {
-          id: data.id,
-          name: data.name,
-          jurisdiction: {
-            id: data.jurisdiction.id,
-            countryId: data.jurisdiction.countryId,
-            name: data.jurisdiction.name,
-          },
-          inputType: data.inputType,
-        },
-        entries: items.map((label, index) => ({
-          id: index + 1,
-          name: label,
-        })),
+      
+      const Payload = {
+        countryId: data.countryId,
+        countryName: data.countryName,
+        parentLevelName: data.parentLevelName,
+        childLevelName: data.childLevelName,
+        inputType: selectedOption === "Dropdown" ? "DROP_DOWN" : "FREE_INPUT",
+        parentNames: items 
       };
-      //console.log("Payload prepared:", Payload2);
-
-      const parentId = await createParentDropdownJurisdiction(Payload2);
-      // console.log("Parent dropdown created:", parentId);
-
-      toast.success("Address Scheme saved Successfully", {
-        position: "top-center",
-        duration: 3000,
-        style: {
-          color: "green",
-        },
-      });
-
+      
+      const parentId = await createCountry(Payload);
+      
+      toast.success("Parent Level created Successfully", { position: "top-center", duration: 3000 });
       router.push(`/country-setup/region-input?id=${parentId.data}`);
-    } catch (error: any) {
-      console.error("Error occurred:", error);
-      alert(
-        `An error occurred: ${error.response?.data?.message || error.message}`
-      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`An error occurred: ${error.message}`);
+      } else {
+        toast.error(`An unknown error occurred`);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
+  
+  
 
   return (
     <div className="w-full p-5">
@@ -239,18 +184,16 @@ function NewIndividual() {
                 listdata={Countries()}
                 label="Country"
                 autoComplete="off"
-                {...register("jurisdiction.name")}
-                error={errors.jurisdiction?.name?.message}
+                {...register("countryName")}
+                error={errors.countryName?.message}
                 PrependIcon={
                   <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
                     <img
                       src={
-                        Countrie(getValues("jurisdiction.name") ?? "")?.flags
-                          .png
+                        Countrie(getValues("countryName") ?? "")?.flags.png
                       }
                       alt={
-                        Countrie(getValues("jurisdiction.name") ?? "")?.name
-                          .common
+                        Countrie(getValues("countryName") ?? "")?.name.common
                       }
                       style={{ height: "auto", width: "30px" }}
                     />
@@ -272,11 +215,23 @@ function NewIndividual() {
               type="text"
               autoComplete="off"
               label="Level name"
-              placeholder="Enter name of category"
+              placeholder="Eg: Region"
               className="rounded xl"
               style={{ width: "30%", height: "30%" }}
-              {...register("name")}
-              error={errors.name?.message}
+              {...register("parentLevelName")}
+              error={errors.parentLevelName?.message}
+            />
+          </div>
+          <div className="mb-1 relative">
+            <TextInput
+              type="text"
+              autoComplete="off"
+              label="Sub-Level name"
+              placeholder="Eg: District"
+              className="rounded xl"
+              style={{ width: "30%", height: "30%" }}
+              {...register("childLevelName")}
+              error={errors.childLevelName?.message}
             />
           </div>
           <div>
@@ -286,9 +241,8 @@ function NewIndividual() {
             <div className="flex space-x-4">
               <div
                 onClick={() => handleOptionClick("Free Input")}
-                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${
-                  selectedOption === "Free Input" ? "border-green-500" : ""
-                }`}
+                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${selectedOption === "Free Input" ? "border-green-500" : ""
+                  }`}
                 style={{
                   backgroundColor:
                     selectedOption === "Free Input" ? "#E5FFEF" : "",
@@ -313,9 +267,8 @@ function NewIndividual() {
 
               <div
                 onClick={() => handleOptionClick("Dropdown")}
-                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${
-                  selectedOption === "Dropdown" ? "border-green-500" : ""
-                }`}
+                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${selectedOption === "Dropdown" ? "border-green-500" : ""
+                  }`}
                 style={{
                   backgroundColor:
                     selectedOption === "Dropdown" ? "#E5FFEF" : "",
@@ -370,7 +323,7 @@ function NewIndividual() {
                     <TextInput
                       type="text"
                       autoComplete="off"
-                      label="Dropdown Items"
+                      label="Dropdown Items (Parents Level)"
                       placeholder="Enter a list of comma separated values"
                       className="rounded xl"
                       style={{ width: "30%", height: "30%" }}
