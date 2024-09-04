@@ -48,16 +48,6 @@ function FieldOptions({ refetch }: any) {
       Boolean(form?.id) && Boolean(localField?.fieldDataType === "address"),
   });
 
-  // getJurisdictionEntriesById
-  const { data: jurisdictionEntries, isLoading: jurisdictionEntriesLoading } =
-    useQuery({
-      queryKey: ["all parentSchemeEntries", localField?.validPattern],
-      queryFn: services.getJurisdictionEntriesById(
-        Number(localField?.validPattern)
-      ),
-      enabled: !!localField?.validPattern,
-    });
-
   // update local copy if changes are made
   useEffect(() => {
     setLocalField(activeField?.field);

@@ -19,7 +19,7 @@ function ItemsPerPageSelector({ limit = 10, setLimit }: any) {
   return (
     <div className="flex text-gray-500 text-sm px-2 items-center gap-2">
       Items per page{" "}
-      <Dropdown>
+      <Dropdown shouldBlockScroll={false}>
         <DropdownTrigger>
           <button className="flex justify-between outline-none items-center px-3 py-1 gap-2">
             <div className="text-sm">{limit}</div>
