@@ -15,33 +15,54 @@ import DataTable from "@/components/DataTable/DataTable";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import EditIconSetup from "@/public/icons/EditIconSetup";
 import { useRouter } from "next/navigation";
-import {
-  editParentSchemeChildEntriesByID,
-  deleteParentAddressAndChildByID,
-  deleteJurisdictionByID,
-  createChildEntriesID,
-} from "@/services/features/jurisdictionsService";
 import SelectCountryEdit from "../components/selectCountryEdit";
 import { RiDeleteBin6Line, RiArrowGoBackLine } from "react-icons/ri";
 import { BsDot } from "react-icons/bs";
 import { toast } from "sonner";
 import { Button } from "@nextui-org/button";
 import { LuPlusCircle } from "react-icons/lu";
+import { deletecountryWithAssoc, deleteparentLevel, updateCountry } from "@/services/features/countryService";
+import toSpace from "@/utils/UnderScore/UnderScore";
 
-const schema = yup.object().shape({
+const schema = yup.object({
   id: yup.number().required(),
-  name: yup.string().required(),
-  childEntries: yup
-    .array()
-    .of(
-      yup.object().shape({
+  countryName: yup.string().required(),
+  countryId: yup.number().required(),
+  inputType: yup.string().required(),
+  addressingScheme: yup.object({
+    id: yup.number().required(),
+    parentLevelName: yup.string().required(),
+    childLevelName: yup.string().required(),
+    parentLevels: yup.array().of(
+      yup.object({
         id: yup.number().required(),
-        name: yup.string().required(),
-        parentAddressSchemeEntriesId: yup.number().required(),
+        parentName: yup.string().required(),
+        childLevels: yup.array().of(yup.string()).required(),
       })
-    )
-    .required(),
+    ).required(),
+  }).required(),
 });
+
+type ParentLevel = {
+  id: number;
+  parentName: string;
+  childLevels: string[];
+};
+
+type AddressingScheme = {
+  id: number;
+  parentLevelName: string;
+  childLevelName: string;
+  parentLevels: ParentLevel[];
+};
+
+type CountryData = {
+  id: number;
+  countryName: string;
+  countryId: number;
+  inputType: string;
+  addressingScheme: AddressingScheme;
+};
 
 type Row = {
   id: number;
@@ -65,11 +86,10 @@ function EditJurisdiction() {
   const [districts, setDistricts] = useState("")
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["all parentSchemeEntries", Id],
-    queryFn: services.getJurisdictionEntriesById(Number(Id)),
+    queryKey: ["all countries", Id],
+    queryFn: services.getcountryByID(Number(Id)),
     enabled: !!Id,
   });
-  const parentAddressSchemeId = data?.parentAddressScheme?.id;
   const {
     register,
     handleSubmit,
@@ -82,28 +102,34 @@ function EditJurisdiction() {
     mode: "onChange",
     defaultValues: {
       id: 0,
-      name: "",
-      childEntries: [
-        {
-          id: 0,
-          name: "",
-          parentAddressSchemeEntriesId: 0,
-        },
-      ],
+      countryName: "",
+      countryId: 0,
+      inputType: "DROP_DOWN", 
+      addressingScheme: {
+        id: 0,
+        parentLevelName: "",
+        childLevelName: "",
+        parentLevels: [
+          {
+            id: 0,
+            parentName: "",
+            childLevels: [],
+          }
+        ]
+      }
     },
   });
 
   useEffect(() => {
     if (data) {
       setValue("id", data.id);
-      setValue("name", data.name);
-      const formattedRows: Row[] = data.parentAddressScheme.entries.map(
-        (entry: any, index: number) => ({
-          id: entry.id,
-          regions: entry.name,
-          districts: entry.childEntries
-            .map((childEntry: any) => childEntry.name)
-            .join(", "),
+      setValue("countryName", data.countryName);
+
+      const formattedRows: Row[] = data.addressingScheme.parentLevels.map(
+        (parentLevel: any) => ({
+          id: parentLevel.id,
+          regions: parentLevel.parentName,
+          districts: parentLevel.childLevels.join(", "),
         })
       );
 
@@ -111,10 +137,12 @@ function EditJurisdiction() {
     }
   }, [data, setValue]);
 
+
+
   const columns = [
     {
       field: "regions",
-      headerName: data?.parentAddressScheme.name,
+      headerName: data?.addressingScheme.parentLevelName,
       type: "actions",
       align: "left",
       headerAlign: "left",
@@ -123,15 +151,14 @@ function EditJurisdiction() {
         <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
           <div className="h-10 flex items-center justify-center overflow-y-auto max-h-20"></div>
           <div className="overflow-y-auto max-h-20">
-            <p className="font-medium"></p>
-            {params.row.regions}
+            <p className="font-medium">{params.row.regions}</p>
           </div>
         </div>,
       ],
     },
     {
-      field: "sub level",
-      headerName: "Sub Level",
+      field: "districts",
+      headerName: data?.addressingScheme.childLevelName,
       flex: 4,
       headerAlign: "left",
       align: "middle",
@@ -176,26 +203,34 @@ function EditJurisdiction() {
       ],
     },
   ];
-  
+
 
   const handleSaveEdit = () => {
     if (!editRow) return;
-    const rowIndex = rows.findIndex((row) => row.id === editRow.id);
 
+    // Find the index of the parent level to be updated
+    const rowIndex = rows.findIndex((row) => row.id === editRow.id);
     if (rowIndex === -1) {
       console.error("Row not found in rows array.");
       return;
     }
+
+    // Update the rows array with new values
     const updatedRows = [...rows];
     updatedRows[rowIndex] = {
       ...updatedRows[rowIndex],
-      regions: editRow.regions,
-      districts: editRow.districts,
+      regions: editRow.regions, // Update parentName
+      districts: editRow.districts, // Update childLevels
     };
+
     setRows(updatedRows);
-    handleParentChildrenUpdate(editRow);
+
+    // Update the parent and child entries
+    handleParentChildrenUpdate(updatedRows[rowIndex]);
+
     setIsModalOpen(false);
   };
+
 
   const handleDeleteRow = async (row: Row | null) => {
     try {
@@ -204,7 +239,7 @@ function EditJurisdiction() {
         return;
       }
 
-      await deleteParentAddressAndChildByID(row.id);
+      await deleteparentLevel(row.id);
       setDeleteModalOpen(false);
       await refetch();
     } catch (error) {
@@ -219,7 +254,7 @@ function EditJurisdiction() {
         return;
       }
 
-      await deleteJurisdictionByID(Id);
+      await deletecountryWithAssoc(Id);
       setDeleteAllModalOpen(false);
       router.push("/country-setup");
     } catch (error) {
@@ -238,76 +273,96 @@ function EditJurisdiction() {
 
   const mapRowsToPayload = (updatedRow: any) => {
     const row = updatedRow ? updatedRow : rows[0];
-    const entry = data?.parentAddressScheme.entries.find(
-      (entry: any) => entry.id === row.id
-    );
+    const existingParentLevels = data?.addressingScheme?.parentLevels || [];
 
     return {
-      id: row.id,
-      name: row.regions,
-      childEntries: row.districts.split(", ").map((district: any, idx: any) => {
-        if (entry) {
-          const childEntry = entry.childEntries[idx];
-          if (childEntry?.id) {
-            return {
-              id: childEntry.id,
-              name: district.trim(),
-              parentAddressSchemeEntriesId: row.id,
-            };
-          } else {
-            return {
-              name: district.trim(),
-              parentAddressSchemeEntriesId: row.id,
-            };
-          }
-        }
-      }),
+      id: data.id, // Use the existing country ID
+      countryName: data.countryName,
+      countryId: data.countryId,
+      inputType: data.inputType,
+      addressingScheme: {
+        id: data.addressingScheme.id,
+        parentLevelName: data.addressingScheme.parentLevelName,
+        childLevelName: data.addressingScheme.childLevelName,
+        parentLevels: existingParentLevels.map((level: ParentLevel) =>
+          level.id === row.id
+            ? {
+              ...level,
+              parentName: row.regions, // Update parentName
+              childLevels: row.districts.split(',').map((d: string) => d.trim()) // Update childLevels
+            }
+            : level
+        ),
+      },
     };
   };
 
   const handleParentChildrenUpdate = async (data: any) => {
     let loadingToast = toast.loading("Please wait...");
-    //
+
     try {
       const payload = mapRowsToPayload(data);
 
-      await editParentSchemeChildEntriesByID(payload.id, payload);
+      const response = await updateCountry(payload);
 
-      toast.dismiss(loadingToast);
-      toast.success(payload?.name + " updated");
+      if (response.status === 200 || response.status === 201) {
+        toast.dismiss(loadingToast);
+        toast.success(`${data.regions} updated`);
 
-      await refetch();
+        await refetch();
+      } else {
+        toast.dismiss(loadingToast);
+        toast.error(`Failed to update: ${response.data.message || "Unknown error"}`);
+      }
     } catch (error) {
       toast.dismiss(loadingToast);
       toast.error("Error updating. Please try again");
     }
   };
 
- 
+
+
 
   const handleAddButton = async () => {
     let loadingToast = toast.loading("Please wait...");
-  
-    if (!parentAddressSchemeId) {
-      return;
-    }
+
+    const existingParentLevels: ParentLevel[] = data?.addressingScheme?.parentLevels || [];
+
+    const newParentLevelId = existingParentLevels.length
+      ? Math.max(...existingParentLevels.map((p: ParentLevel) => p.id)) + 1
+      : 1;
+
     const payload = {
-      id: parentAddressSchemeId,
-      name: region,
-      childEntries: districts.split(",").map((d) => ({ name: d.trim() })),
+      id: data.id, // Use the existing country ID
+      countryName: data.countryName,
+      countryId: data.countryId,
+      inputType: data.inputType,
+      addressingScheme: {
+        id: data.addressingScheme.id,
+        parentLevelName: data.addressingScheme.parentLevelName,
+        childLevelName: data.addressingScheme.childLevelName,
+        parentLevels: [
+          ...existingParentLevels,
+          {
+            id: newParentLevelId,
+            parentName: region,
+            childLevels: districts.split(',').map(d => d.trim()) // Convert districts to array
+          }
+        ]
+      }
     };
-  
+
     try {
-      const response = await createChildEntriesID(parentAddressSchemeId, payload);
+      const response = await updateCountry(payload);
 
       if (response.status === 200 || response.status === 201) {
         toast.dismiss(loadingToast);
         toast.success("New Region added");
 
         await refetch();
-  
+
         setIsAddModalOpen(false);
-        setRegion(""); 
+        setRegion("");
         setDistricts("");
       } else {
         toast.dismiss(loadingToast);
@@ -318,7 +373,7 @@ function EditJurisdiction() {
       toast.error("An error occurred");
     }
   };
-  
+
 
   return (
     <div className="w-full p-5">
@@ -359,17 +414,17 @@ function EditJurisdiction() {
               <SelectCountryEdit
                 label="Country"
                 autoComplete="off"
-                {...register("name")}
-                value={watch("name")}
-                error={errors.name?.message}
-                options={[data?.name || ""]}
+                {...register("countryName")}
+                value={watch("countryName")}
+                error={errors.countryName?.message}
+                options={[data?.countryName || ""]}
                 readOnly
                 PrependIcon={
-                  data?.name ? (
+                  data?.countryName ? (
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <img
-                        src={Countrie(data.name)?.flags.png}
-                        alt={Countrie(data.name)?.name.common}
+                        src={Countrie(data.countryName)?.flags.png}
+                        alt={Countrie(data.countryName)?.name.common}
                         style={{
                           height: "auto",
                           width: "30px",
@@ -382,6 +437,7 @@ function EditJurisdiction() {
                 style={{ width: "30%", height: "30%" }}
               />
             </div>
+
           </div>
           <div>
             <h4 className="font-bold text-black-400">Addressing Scheme</h4>
@@ -392,9 +448,6 @@ function EditJurisdiction() {
           <div className="flex flex-col items-start" style={{ width: "100%" }}>
             <div className="flex justify-between w-full mb-4">
               <div>
-                <h4 className="font-bold text-black-400">
-                  {data?.parentAddressScheme.name}
-                </h4>
                 <span
                   style={{
                     fontSize: "0.875rem",
@@ -404,14 +457,17 @@ function EditJurisdiction() {
                 >
                   <BsDot size={30} />
                   <p style={{ margin: 0, marginRight: "100px" }}>
-                    {data?.parentAddressScheme.inputType}
+                    <strong>{data?.addressingScheme.parentLevelName}</strong>
+                    &nbsp; &nbsp;|&nbsp;&nbsp;
+                    <strong>{data?.addressingScheme.childLevelName}</strong>
+                    <p>{toSpace(data?.inputType)}</p>
                   </p>
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
                 <Button onClick={() => setIsAddModalOpen(true)} className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl">
                   <LuPlusCircle />
-                  Add new  {data?.parentAddressScheme.name}
+                  Add new {data?.addressingScheme.parentLevelName}
                 </Button>
                 <div className="flex items-center gap-2">
                   <button
@@ -432,6 +488,7 @@ function EditJurisdiction() {
                 </div>
               </div>
             </div>
+
             <div className="w-full">
               <DataTable isLoading={isLoading} rows={rows} columns={columns} />
             </div>
@@ -505,7 +562,7 @@ function EditJurisdiction() {
             Deleting this would delete all the values you have inputed
           </p>
           <p className="text-center text-[#334155]">
-            under this {data?.parentAddressScheme?.name}.
+            under this {data?.addressingScheme.parentLevelName}.
           </p>
           <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
             <button

@@ -11,11 +11,11 @@ import DataTable from "@/components/DataTable/DataTable";
 import "../index.css";
 import { Countrie } from "../components/Countries";
 import { useRouter } from "next/navigation";
-import { deleteJurisdictionByID } from "@/services/features/jurisdictionsService";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
+import { deletecountryWithAssoc } from "@/services/features/countryService";
 
 interface RowData {
     id: number;
@@ -41,7 +41,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
     };
 
     const handleEdit = () => {
-        //alert(JSON.stringify(row.id))
+       // alert(JSON.stringify(row.id))
         handleClose();
         router.push(`/country-setup/edit-jurisdiction?id=${row.id}`);
     };
@@ -49,7 +49,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
     const handleDelete = async () => {
         handleClose();
         try {
-            await deleteJurisdictionByID(row.id);
+            await deletecountryWithAssoc(row.id);
             onDeleteSuccess();
         } catch (error) {
             console.error("Error deleting row:", error);
@@ -88,13 +88,23 @@ function CountrySetup() {
     const [page, setPage] = useState(0);
     const [limit, setLimit] = useState(15);
     const { data, isLoading, refetch } = useQuery({
-        queryKey: ["all jurisdictions", page, limit, searchTerm],
-        queryFn: services.allJurisdictions(page, limit, searchTerm),
+        queryKey: ["all Countries", page, limit],
+        queryFn: services.allcountries(page, limit),
     });
 
     useEffect(() => {
+        if (data) {
+            const mappedRows = data.countries.map((country: any) => ({
+                id: country.id,
+                name: country.countryName,
+            }));
+            setRows(mappedRows);
+        }
+    }, [data]);
+
+    useEffect(() => {
         refetch();
-    }, [searchTerm, page, limit, refetch]);
+    }, [page, limit, refetch]);
 
     const handleDeleteSuccess = async () => {
         try {
@@ -145,7 +155,6 @@ function CountrySetup() {
             ),
         },
     ];
-
     return (
         <div className="w-full pb-20 ">
             <Nav />
@@ -166,7 +175,7 @@ function CountrySetup() {
             </div>
             <DataTable
                 isLoading={isLoading}
-                rows={data?.content || []}
+                rows={rows} // Pass the mapped rows to the DataTable
                 columns={columns}
             />
             <div className="w-full flex justify-between">
