@@ -15,7 +15,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
-import { deletecountryWithAssoc } from "@/services/features/countryService";
+import { deletecountryWithAssoc } from "@/services/features/jurisdictionsService";
 
 interface RowData {
     id: number;
@@ -89,7 +89,7 @@ function CountrySetup() {
     const [limit, setLimit] = useState(15);
     const { data, isLoading, refetch } = useQuery({
         queryKey: ["all Countries", page, limit],
-        queryFn: services.allcountries(page, limit),
+        queryFn: services.allJurisdictions(page, limit),
     });
 
     useEffect(() => {
