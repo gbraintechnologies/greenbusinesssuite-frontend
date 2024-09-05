@@ -44,28 +44,9 @@ interface Country {
   name: string;
 }
 
-interface CountriesResponse {
-  content: Country[];
-  pageable: {
-    // add other properties if needed
-  };
-  totalPages: number;
-  totalElements: number;
-  last: boolean;
-  size: number;
-  number: number;
-  sort: {
-    empty: boolean;
-    sorted: boolean;
-    unsorted: boolean;
-  };
-  numberOfElements: number;
-  first: boolean;
-  empty: boolean;
-}
-
 function AddCurrency() {
   const [denominations, setDenominations] = useState<Denomination[]>([]);
+  const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [denomination, setDenomination] = useState<Denomination>({
     id: 0,
@@ -75,14 +56,60 @@ function AddCurrency() {
   });
   type typeOfSchema = yup.InferType<typeof schema>;
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(15);
-  const { data: countriesData } = useQuery<CountriesResponse, Error>({
-    queryKey: ["all_countries", page, limit, searchTerm],
-    queryFn: services.allJurisdictions(page, limit, searchTerm),
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+    getValues,
+  } = useForm<typeOfSchema>({
+    resolver: yupResolver(schema),
+    mode: "onChange",
+    defaultValues: {
+      id: 0,
+      currency: "",
+      symbol: "",
+      countryName: "",
+      denominations: [],
+    },
   });
 
+  const { data: countriesData } = useQuery({
+    queryKey: ["all_countries"],
+    queryFn: services.allcountries(),
+  });
+
+  useEffect(() => {
+    if (countriesData && Array.isArray(countriesData)) {
+      const transformedCountries = countriesData.map((name, index) => ({
+        id: index + 1,
+        name,
+      }));
+      setCountries(transformedCountries);
+    } else {
+      setCountries([]);
+    }
+  }, [countriesData]);
+
+  useEffect(() => {
+    const countryName = getValues("countryName");
+    // console.log("Country name from form:", countryName);
+
+    if (countryName) {
+      const trimmedCountryName = typeof countryName === 'string' ? countryName.trim().toLowerCase() : '';
+      const country = Countrieses(trimmedCountryName);
+      console.log("Matching country found:", country);
+
+      if (country) {
+        setSelectedCountry(country.cca2);
+      } else {
+        setSelectedCountry(null);
+      }
+    } else {
+      setSelectedCountry(null);
+    }
+  }, [getValues("countryName"), countriesData]);
+
+  
   const handleAddLevel = () => {
     if (
       denomination.amount.trim() === "" ||
@@ -90,11 +117,11 @@ function AddCurrency() {
     ) {
       return;
     }
-  
+
     const existingIndex = denominations.findIndex(
       (denom) => denom.id === denomination.id
     );
-  
+
     if (existingIndex !== -1) {
       // Update the existing denomination
       const updatedDenominations = [...denominations];
@@ -109,12 +136,12 @@ function AddCurrency() {
       };
       setDenominations([...denominations, newDenomination]);
     }
-  
+
     // Reset the denomination input fields
     setDenomination({ id: 0, name: "", amount: "", denominationType: "" });
   };
-  
-  
+
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setDenomination((prevState) => ({ ...prevState, [name]: value }));
@@ -133,7 +160,7 @@ function AddCurrency() {
       setDenomination(selectedDenomination);
     }
   };
-  
+
 
 
   const handleDelete = (index: number) => {
@@ -143,36 +170,6 @@ function AddCurrency() {
       return updatedDenominations;
     });
   };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, errors },
-    getValues,
-  } = useForm<typeOfSchema>({
-    resolver: yupResolver(schema),
-    mode: "onChange",
-    defaultValues: {
-      id: 0,
-      currency: "",
-      symbol: "",
-      countryName: "",
-      denominations: [],
-    },
-  });
-
-  useEffect(() => {
-    const countryName = getValues("countryName");
-    console.log("Country name from form:", countryName);
-
-    if (countryName) {
-      const country = Countrieses(countryName);
-      console.log("Matching country found:", country);
-      if (country) {
-        setSelectedCountry(country.cca2);
-      }
-    }
-  }, [getValues("countryName"), countriesData]);
 
   const onSubmit = async (data: typeOfSchema) => {
     try {
@@ -242,7 +239,7 @@ function AddCurrency() {
             <div className="mb-3 relative">
               <SelectCountryInput
                 key={selectedCountry}
-                listdata={countriesData?.content ?? []}
+                listdata={countries}
                 label="Country"
                 autoComplete="off"
                 {...register("countryName")}

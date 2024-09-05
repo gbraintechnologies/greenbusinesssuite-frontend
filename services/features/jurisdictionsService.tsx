@@ -7,6 +7,11 @@ export const allJurisdictions = (Page: number = 0, Size: number = 100) => {
     defaultMeshApi.get(`countries/all/${Page}/${Size}`).then((res) => res.data);
 };
 
+export const allcountries = () => {
+  return () =>
+    defaultMeshApi.get(`countries/names`).then((res) => res.data);
+};
+
 export const csvUploads = (formData: FormData, file: string) => {
   return multipartMeshApi.post(`countries/csv-import/${file}`, formData);
 };

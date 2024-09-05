@@ -20,32 +20,12 @@ import {
   csvUpload,
 } from "@/services/features/sectorService";
 import SelectCountryInput from "../components/selectCountryInput";
-
+import { allcountries } from "@/services/features/jurisdictionsService";
 
 
 interface Country {
   id: number;
   name: string;
-}
-
-interface CountriesResponse {
-  content: Country[];
-  pageable: {
-    // add other properties if needed
-  };
-  totalPages: number;
-  totalElements: number;
-  last: boolean;
-  size: number;
-  number: number;
-  sort: {
-    empty: boolean;
-    sorted: boolean;
-    unsorted: boolean;
-  };
-  numberOfElements: number;
-  first: boolean;
-  empty: boolean;
 }
 
 
@@ -58,9 +38,7 @@ const schema = yup.object().shape({
 function AddSector() {
   type typeOfSchema = yup.InferType<typeof schema>;
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(15);
+  const [countries, setCountries] = useState<Country[]>([]);
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [fileName, setFileName] = useState<{
@@ -84,23 +62,42 @@ function AddSector() {
     },
   });
   const [parentsectorItems, setParentSectorItems] = useState("");
-  const { data: countriesData } = useQuery<CountriesResponse, Error>({
-    queryKey: ["all_countries", page, limit, searchTerm],
-    queryFn: services.allJurisdictions(page, limit, searchTerm),
+  const { data: countriesData } = useQuery({
+    queryKey: ["all_countries"],
+    queryFn: services.allcountries(),
   });
 
   useEffect(() => {
-   // alert(JSON.stringify(countriesData))
-    const countryName = getValues("countryName");
+    if (countriesData && Array.isArray(countriesData)) {
+      const transformedCountries = countriesData.map((name, index) => ({
+        id: index + 1,
+        name,
+      }));
+      setCountries(transformedCountries);
+    } else {
+      setCountries([]);
+    }
+  }, [countriesData]);
 
+  useEffect(() => {
+    const countryName = getValues("countryName");
+   // console.log("Country name from form:", countryName);
+  
     if (countryName) {
-      const country = Countrieses(countryName);
-      //console.log("Matching country found:", country);
+      const trimmedCountryName = typeof countryName === 'string' ? countryName.trim().toLowerCase() : '';
+      const country = Countrieses(trimmedCountryName);
+      console.log("Matching country found:", country);
+  
       if (country) {
         setSelectedCountry(country.cca2);
+      } else {
+        setSelectedCountry(null); 
       }
+    } else {
+      setSelectedCountry(null);
     }
   }, [getValues("countryName"), countriesData]);
+  
 
   const handleDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -135,24 +132,24 @@ function AddSector() {
   const onSubmit = async (data: typeOfSchema) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-  
+
     try {
       if (IDImage && fileName) {
         const formData = new FormData();
         formData.append("file", IDImage);
-  
+
         await csvUpload(formData, fileName.name);
-  
+
         toast.success("CSV file uploaded successfully", {
           position: "top-center",
           duration: 3000,
           style: { color: "green" },
         });
-  
+
         setIDImage(null);
         setUploadProgress(0);
         setFileName(null);
-  
+
         router.push("/sector-setup");
         return;
       }
@@ -169,10 +166,7 @@ function AddSector() {
       setIsSubmitting(false);
     }
   };
-  
-  
-  
-  
+
 
   const saveAndContinue = async (data: typeOfSchema) => {
     const items = parentsectorItems
@@ -241,7 +235,7 @@ function AddSector() {
             <div className="mb-3 relative">
               <SelectCountryInput
                 key={selectedCountry}
-                listdata={countriesData?.content ?? []}
+                listdata={countries}
                 label="Country"
                 autoComplete="off"
                 {...register("countryName")}
