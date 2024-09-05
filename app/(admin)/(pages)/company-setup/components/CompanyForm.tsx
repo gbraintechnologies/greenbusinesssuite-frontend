@@ -432,9 +432,6 @@ const CompanyForm: React.FC<Props> = ({
                       className="w-full"
                       placeholder={"Select Jurisdiction"}
                       selectedKey={selectedJurisdiction?.value}
-                      scrollShadowProps={{
-                        isEnabled: false
-                      }}
                       onSelectionChange={(key: any) => {
                         const countryName = jurisdictions?.content?.find((jurisdiction: any) => jurisdiction?.id == key)?.name
                         setSelectedJurisdiction({
@@ -481,9 +478,6 @@ const CompanyForm: React.FC<Props> = ({
                           <Autocomplete
                             variant="bordered"
                             className="w-full"
-                            scrollShadowProps={{
-                              isEnabled: false
-                            }}
                             placeholder={
                               subJurisdiction?.parentAddressScheme?.name ||
                               "Sub Jurisdiction"
@@ -530,9 +524,6 @@ const CompanyForm: React.FC<Props> = ({
                             <Autocomplete
                               variant="bordered"
                               className="w-full"
-                              scrollShadowProps={{
-                                isEnabled: false
-                              }}
                               placeholder={
                                 "Sub Level"
                               }
@@ -581,9 +572,6 @@ const CompanyForm: React.FC<Props> = ({
                           variant="bordered"
                           className="w-full"
                           placeholder="Select industry"
-                          scrollShadowProps={{
-                            isEnabled: false
-                          }}
                           selectedKey={selectedIndustry?.label}
                           onSelectionChange={(key: any) => {
                             setSelectedIndustry({
@@ -626,9 +614,6 @@ const CompanyForm: React.FC<Props> = ({
                           <Autocomplete
                             variant="bordered"
                             className="w-full"
-                            scrollShadowProps={{
-                              isEnabled: false
-                            }}
                             placeholder="Select sub level"
                             selectedKey={selectedSubSector?.label ?? ""}
                             onSelectionChange={(key: any) => {
