@@ -3,6 +3,8 @@ import { useRouter } from "next/navigation";
 // icons
 import { GoArrowLeft } from "react-icons/go";
 import { CiCirclePlus } from "react-icons/ci";
+import { MdContentCopy } from "react-icons/md";
+import { PiTableFill } from "react-icons/pi";
 
 // hooks
 import useForm from "@/hooks/useForm";
@@ -21,6 +23,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 import { toast } from "sonner";
 import Loader from "@/components/BeatLoader/Loader";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
+import { Button } from "@nextui-org/button";
 
 function isObjEmpty(obj: any) {
   return Object.keys(obj).length === 0;
@@ -103,8 +112,8 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
     };
 
     return (
-      <div className="pt-10 pb-[20rem] relative flex px-10">
-        <div className={`w-2/6`}>
+      <div className="pt-10 pb-[20rem] gap-10 relative flex px-10">
+        <div className={`w-1/6`}>
           <button
             className="px-4 py-2 flex items-center gap-2 text-sm rounded-lg bg-white border border-gray-200"
             onClick={() => {
@@ -112,10 +121,10 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
             }}
           >
             <GoArrowLeft />
-            Exit form builder
+            Exit Builder
           </button>
         </div>
-        <div className={`w-4/6`}>
+        <div className={`w-5/6`}>
           {/* HEADER: TITLE, DESCRIPTION & LAST UPDATED */}
           <div className="boxshadow w-full mb-10">
             <div className="p-5">
@@ -177,33 +186,76 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
             <></>
           ) : (
             <div className="flex justify-end items-end w-full">
-              <button
-                disabled={loadingSection}
-                onClick={() => {
-                  let template = {
-                    name: "",
-                    description: "",
-                    instruction: "",
-                    formFields: [],
-                    isDeleted: false,
-                    createdOn: new Date(),
-                    updatedOn: new Date(),
-                    deletedOn: null,
-                  };
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
+                    isDisabled={loadingSection}
+                    variant="bordered"
+                  >
+                    {loadingSection ? (
+                      <Loader color="#1d1d1d" />
+                    ) : (
+                      <>
+                        {" "}
+                        <CiCirclePlus size={18} /> Add section
+                      </>
+                    )}
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
+                  aria-label="Static Actions"
+                >
+                  <DropdownItem
+                    key="view"
+                    onClick={() => {
+                      let template = {
+                        name: "",
+                        description: "",
+                        instruction: "",
+                        formFields: [],
+                        isDeleted: false,
+                        createdOn: new Date(),
+                        updatedOn: new Date(),
+                        deletedOn: null,
+                      };
 
-                  addFormSection(template);
-                }}
-                className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
-              >
-                {loadingSection ? (
-                  <Loader color="#1d1d1d" />
-                ) : (
-                  <>
-                    {" "}
-                    <CiCirclePlus size={18} /> Add section
-                  </>
-                )}
-              </button>
+                      addFormSection(template);
+                    }}
+                    className="items-center flex gap-2 w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                  >
+                    <div className="flex items-center gap-2">
+                      {" "}
+                      <MdContentCopy size={20} /> Section
+                    </div>
+                  </DropdownItem>
+                  <DropdownItem
+                    key="view"
+                    onClick={() => {
+                      let template = {
+                        name: "Table Section",
+                        description: "",
+                        instruction: "",
+                        formFields: [],
+                        isTable: true,
+                        isDeleted: false,
+                        createdOn: new Date(),
+                        updatedOn: new Date(),
+                        deletedOn: null,
+                      };
+
+                      addFormSection(template);
+                    }}
+                    className="items-center flex-row flex gap-2 w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                  >
+                    <div className="flex items-center gap-2">
+                      {" "}
+                      <PiTableFill size={20} /> <p>Table</p>
+                    </div>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </div>
           )}
         </div>

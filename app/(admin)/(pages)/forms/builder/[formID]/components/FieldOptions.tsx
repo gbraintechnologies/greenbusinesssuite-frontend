@@ -162,6 +162,36 @@ function FieldOptions({ refetch }: any) {
             </div>
           </div>
 
+          {/* HORIZONTAL ALIGNMENT */}
+          <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">
+            <p className="font-medium text-base">Horizontal alignment</p>{" "}
+            <Switch
+              checked={horizontalAlign}
+              onChange={() => {
+                setLocalField((prev: any) => ({
+                  ...prev,
+                  horizontalAlign: !prev.horizontalAlign,
+                }));
+                updateActiveField(activeField.section, {
+                  ...localField,
+                  horizontalAlign: !localField.horizontalAlign,
+                });
+              }}
+              className={`${
+                horizontalAlign ? "bg-primary-green" : "bg-gray-500"
+              }
+          relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
+            >
+              <span
+                aria-hidden="true"
+                className={`${
+                  horizontalAlign ? "translate-x-6" : "translate-x-0"
+                }
+            pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+              />
+            </Switch>
+          </div>
+
           {/* ADDRESS TYPE */}
           <div className="mt-5">
             <p className="font-medium text-base mb-4">Address Selection Type</p>{" "}
@@ -220,7 +250,6 @@ function FieldOptions({ refetch }: any) {
           )}
 
           {/* PARENT LEVEL SELECTION FOR USER  */}
-
           {instruction == "parent-and-sub-level" && (
             <>
               {/* COUNTRY */}
@@ -292,6 +321,41 @@ function FieldOptions({ refetch }: any) {
                 values={jurisdictionEntries?.parentAddressScheme?.entries}
               /> */}
             </>
+          )}
+
+          {/* ONLY ALLOW DELETION IF NO RESPONSES */}
+          {formStatusCount && formStatusCount?.totalCount > 0 ? (
+            <div className="bg-red-50 p-3 rounded-lg text-lg flex flex-row gap-2">
+              <CiCircleInfo size={20} />{" "}
+              <p className="text-xs font-light italic">
+                Form fields cannot be deleted since this form has started taking
+                responses
+              </p>
+            </div>
+          ) : (
+            <div className="px-2 mt-10">
+              <button
+                onClick={() => {
+                  services
+                    .deleteFormField(localField.id)
+                    .then(() => {
+                      //
+                      toast.success("Deleted form field");
+                      refetch();
+                    })
+                    .catch((e) => {
+                      toast.error("Error deleting");
+                    });
+                }}
+                className="bg-[#DC2626] hover:bg-red-800 px-4 flex items-center gap-2 text-sm text-white py-2 rounded-lg"
+              >
+                <AiOutlineDelete
+                  size={20}
+                  className="text-white cursor-pointer"
+                />{" "}
+                Delete form element
+              </button>
+            </div>
           )}
         </div>
       );
@@ -385,7 +449,7 @@ function FieldOptions({ refetch }: any) {
         {/* MAX LENGTH FOR TEXT INPUTS */}
         {fieldDataType?.includes("text") && (
           <div className="flex flex-col gap-3">
-            <label className={labelStyle}>Number of characters</label>
+            <label className={labelStyle}>Character limit</label>
             <input
               value={!!maxLength ? maxLength : 0}
               type="number"
@@ -586,8 +650,6 @@ function FieldOptions({ refetch }: any) {
           </div>
         ) : (
           <div className="px-2 mt-10">
-            <p className="font-medium text-base mb-4">Delete Form Field</p>
-
             <button
               onClick={() => {
                 services
@@ -607,7 +669,7 @@ function FieldOptions({ refetch }: any) {
                 size={20}
                 className="text-white cursor-pointer"
               />{" "}
-              Delete
+              Delete form element
             </button>
           </div>
         )}

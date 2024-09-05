@@ -15,25 +15,45 @@ export default function FormElementSelector({ section }: any) {
 
   // add functions to form elements
   const elements = [];
-  for (let i = 0; i < defaultFormElements.length; i++) {
-    elements.push({
-      icon: defaultFormElements[i]?.icon,
-      name: defaultFormElements[i]?.name,
-      func: () => {
-        addFormField(section, {
-          ...defaultFormElements[i]?.properties,
+
+  if (!section?.isTable) {
+    for (let i = 0; i < defaultFormElements.length; i++) {
+      elements.push({
+        icon: defaultFormElements[i]?.icon,
+        name: defaultFormElements[i]?.name,
+        func: () => {
+          addFormField(section, {
+            ...defaultFormElements[i]?.properties,
+          });
+        },
+      });
+    }
+  } else {
+    for (let i = 0; i < defaultFormElements.length; i++) {
+      if (
+        defaultFormElements[i]?.name == "Short text" ||
+        defaultFormElements[i]?.name == "Number"
+      ) {
+        elements.push({
+          icon: defaultFormElements[i]?.icon,
+          name: defaultFormElements[i]?.name,
+          func: () => {
+            addFormField(section, {
+              ...defaultFormElements[i]?.properties,
+            });
+          },
         });
-      },
-    });
+      }
+    }
   }
 
   return (
-    <div className="w-72 z-[100] mx-auto text-center">
+    <div className="w-72 mx-auto text-center">
       <Menu as="div" className="relative inline-block text-center">
         <div>
           <Menu.Button
             disabled={loadingField}
-            className="bg-white border text-sm shadow-sm hover:bg-black hover:text-white border-gray-200 w-40 px-3 py-2 rounded-lg flex items-center justify-center gap-2"
+            className="bg-white  z-30 text-sm shadow-sm hover:bg-black hover:text-white border border-gray-200 w-40 px-3 py-2 rounded-lg flex items-center justify-center gap-2"
           >
             {loadingField ? <Loader color="#1d1d1d" /> : "Add form element"}
           </Menu.Button>
