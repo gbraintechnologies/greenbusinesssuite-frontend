@@ -30,6 +30,11 @@ import DeleteIcon from "@/public/icons/DeleteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { SketchPicker } from "react-color";
 import { useRouter } from "next/navigation";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  AutocompleteSection,
+} from "@nextui-org/autocomplete";
 import { Countrie } from "@/app/(admin)/(pages)/country-setup/components/Countries";
 
 export interface ICompany {
@@ -207,37 +212,37 @@ const CompanyForm: React.FC<Props> = ({
 
   const [showColorPicker, setShowColorPicker] = useState(false);
 
-  // const {
-  //   data: jurisdictions,
-  //   isLoading: jurisdictionsLoading,
-  //   refetch,
-  // } = useQuery({
-  //   queryKey: ["all jurisdictions"],
-  //   queryFn: services.allJurisdictions(),
-  // });
+  const {
+    data: jurisdictions,
+    isLoading: jurisdictionsLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["all jurisdictions"],
+    queryFn: services.allJurisdictions(),
+  });
 
-  // const fetchIndustries = async (jurisdiction: string) => {
-  //   try {
-  //     if (!initialLoad) {
-  //       setSelectedIndustry(undefined);
-  //       setSelectedSubSector(undefined);
-  //       setIndustries([]);
-  //       setSubSectors([]);
-  //     }
-  //     const response = await services.getSectorByCountryRaw(jurisdiction);
-  //     // console.log("response ", response);
-  //     let industryId = response[0]?.id;
+  const fetchIndustries = async (jurisdiction: string) => {
+    try {
+      if (!initialLoad) {
+        setSelectedIndustry(undefined);
+        setSelectedSubSector(undefined);
+        setIndustries([]);
+        setSubSectors([]);
+      }
+      const response = await services.getSectorByCountryRaw(jurisdiction);
+      // console.log("response ", response);
+      let industryId = response[0]?.id;
 
-  //     if (industryId) {
-  //       const sectorsResponse = await services.getSectorByIDRaw(industryId);
-  //       setIndustries(sectorsResponse);
-  //     } else {
-  //       setIndustries([]);
-  //     }
-  //   } catch (err) {
-  //     toast.error("An error occurred while fetching industries");
-  //   }
-  // };
+      if (industryId) {
+        const sectorsResponse = await services.getSectorByIDRaw(industryId);
+        setIndustries(sectorsResponse);
+      } else {
+        setIndustries([]);
+      }
+    } catch (err) {
+      toast.error("An error occurred while fetching industries");
+    }
+  };
 
   // const fetchSubSectors = async (
   //   sectorSetupId: string | number,
@@ -268,26 +273,26 @@ const CompanyForm: React.FC<Props> = ({
     setColor(newColor.hex);
   };
 
-  // const getJurisdictionEntries = async (jurisdictionId: number) => {
-  //   try {
-  //     if (!initialLoad) {
-  //       setSubJurisdictionsLoading(true);
-  //       setSelectedSubJurisdiction(undefined);
-  //       setSelectedSubLevel(undefined);
-  //       setSubJurisdiction([]);
-  //     }
-  //     const response = await services.getJurisdictionEntriesByIdRaw(
-  //       jurisdictionId
-  //     );
-  //     setSubJurisdiction(response);
-  //   } catch (err) {
-  //     console.log("error ", err);
-  //   } finally {
-  //     if (!initialLoad) {
-  //       setSubJurisdictionsLoading(false);
-  //     }
-  //   }
-  // };
+  const getJurisdictionEntries = async (jurisdictionId: number) => {
+    try {
+      if (!initialLoad) {
+        setSubJurisdictionsLoading(true);
+        setSelectedSubJurisdiction(undefined);
+        setSelectedSubLevel(undefined);
+        setSubJurisdiction([]);
+      }
+      const response = await services.getJurisdictionEntriesByIdRaw(
+        jurisdictionId
+      );
+      setSubJurisdiction(response);
+    } catch (err) {
+      console.log("error ", err);
+    } finally {
+      if (!initialLoad) {
+        setSubJurisdictionsLoading(false);
+      }
+    }
+  };
 
   useEffect(() => {
     if (companyLogo) {
@@ -307,24 +312,28 @@ const CompanyForm: React.FC<Props> = ({
     }
   }, [companySmallLogo]);
 
-  // useLayoutEffect(() => {
-  //   if (selectedJurisdiction?.label) {
-  //     fetchIndustries(selectedJurisdiction?.label);
-  //     getJurisdictionEntries(Number(selectedJurisdiction?.value));
-  //   }
-  // }, [selectedJurisdiction]);
+  useLayoutEffect(() => {
+    if (selectedJurisdiction?.label) {
+      fetchIndustries(selectedJurisdiction?.label);
+      getJurisdictionEntries(Number(selectedJurisdiction?.value));
+    }
+  }, [selectedJurisdiction]);
 
-  // useLayoutEffect(() => {
-  //   if (!initialLoad) {
-  //     setSelectedSubLevel(undefined);
-  //   }
-  // }, [selectedSubJurisdiction]);
+  useLayoutEffect(() => {
+    if (!initialLoad) {
+      setSelectedSubLevel(undefined);
+    }
+  }, [selectedSubJurisdiction]);
 
-  // useLayoutEffect(() => {
-  //   if (!initialLoad) {
-  //     setSelectedSubSector(undefined);
-  //   }
-  // }, [selectedIndustry]);
+  useLayoutEffect(() => {
+    if (!initialLoad) {
+      setSelectedSubSector(undefined);
+    }
+  }, [selectedIndustry]);
+
+  useEffect(() => {
+    console.log("selecte ", selectedIndustry);
+  }, [selectedIndustry]);
 
   // useLayoutEffect(() => {
   //   if (selectedIndustry?.value && sectorId) {
@@ -415,234 +424,229 @@ const CompanyForm: React.FC<Props> = ({
                   <ShowError name="companyDescription" />
                 </div>
                 {/* JURISDICTION */}
-                {/* <div className="input-holder half">
+                {/* <div className="new-input half">
                   <label>Company jurisdiction</label>
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
-                        <div className="flex gap-4 items-center">
-                          {typeof selectedJurisdiction !== "undefined" && (
-                            <img
-                              src={
-                                Countrie(selectedJurisdiction?.label)?.flags.png
-                              }
-                              alt={
-                                Countrie(selectedJurisdiction?.label)?.name
-                                  .common
-                              }
-                              style={{ height: "20px", width: "25px" }}
-                            />
-                          )}
-                          <p>
-                            {selectedJurisdiction?.label ||
-                              "Select Jurisdiction"}
-                          </p>
-                        </div>
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
-                      aria-label="Static Actions"
-                      variant="flat"
-                      selectionMode="single"
+                  
+                  <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
+                    <Autocomplete
+                      variant="bordered"
+                      className="w-full"
+                      placeholder={"Select Jurisdiction"}
+                      selectedKey={selectedJurisdiction?.value}
+                      onSelectionChange={(key: any) => {
+                        const countryName = jurisdictions?.content?.find((jurisdiction: any) => jurisdiction?.id == key)?.name
+                        setSelectedJurisdiction({
+                          label: countryName,
+                          value: key,
+                        });
+                      }}
+                      aria-labelledby="Industry"
                     >
-                      {jurisdictions?.content?.map((jurisdiction: any) => (
-                        <DropdownItem
-                          key="view"
-                          className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                          onClick={() => {
-                            setSelectedJurisdiction({
-                              label: jurisdiction?.name,
-                              value: jurisdiction?.id,
-                            });
-                            setInitialLoad(false);
-                          }}
-                        >
-                          <div className="flex gap-4 items-center">
-                            <img
-                              src={Countrie(jurisdiction?.name)?.flags.png}
-                              alt={Countrie(jurisdiction?.name)?.name.common}
-                              style={{ height: "20px", width: "25px" }}
-                            />
-                            <p>{jurisdiction?.name}</p>
-                          </div>
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </Dropdown>
+                      <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
+                        {jurisdictions?.content?.map((jurisdiction: any) => (
+                          <AutocompleteItem
+                            key={jurisdiction?.id}
+                            value={jurisdiction?.name}
+                            className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
+                            startContent={
+                              <img
+                                src={Countrie(jurisdiction?.name)?.flags.png}
+                                alt={Countrie(jurisdiction?.name)?.name.common}
+                                style={{ height: "20px", width: "25px" }}
+                              />
+                            }
+                          >
+                            {jurisdiction?.name}
+                          </AutocompleteItem>
+                        ))}
+                      </AutocompleteSection>
+                    </Autocomplete>
+                  </div>
+                </div> */}
 
-                  <ShowError name="industry" />
-                </div>
-
-                {subJurisdictionsLoading && <LoadingIcon />}
+                {/* {subJurisdictionsLoading && <LoadingIcon />}
                 {!(typeof selectedJurisdiction == "undefined") &&
                   !subJurisdictionsLoading && (
                     <div className="flex gap-5">
                       {/* SUB JURISDICTION */}
-                      {/* <div className="input-holder half">
+                      {/* <div className="new-input half">
                         <label>
                           {subJurisdiction?.parentAddressScheme?.name ||
                             "Sub Jurisdiction"}
                         </label>
-                        <Dropdown>
-                          <DropdownTrigger>
-                            <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
-                              {selectedSubJurisdiction?.label || `Select`}
-                            </Button>
-                          </DropdownTrigger>
-                          <DropdownMenu
-                            className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
-                            aria-label="Static Actions"
-                            variant="flat"
-                            selectionMode="single"
+                        
+                        <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
+                          <Autocomplete
+                            variant="bordered"
+                            className="w-full"
+                            placeholder={
+                              subJurisdiction?.parentAddressScheme?.name ||
+                              "Sub Jurisdiction"
+                            }
+                            selectedKey={selectedSubJurisdiction?.label}
+                            onSelectionChange={(key: any) => {
+                              setSelectedSubJurisdiction({
+                                label: key,
+                                value: key,
+                              });
+                              console.log("changed");
+                            }}
+                            aria-labelledby="Industry"
                           >
-                            {subJurisdiction?.parentAddressScheme?.entries?.map(
-                              (subJurisdiction: any) => (
-                                <DropdownItem
-                                  key="view"
-                                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                  onClick={() => {
-                                    setSelectedSubJurisdiction({
-                                      label: subJurisdiction?.name,
-                                      value: subJurisdiction?.id,
-                                    });
-                                    setInitialLoad(false);
-                                  }}
-                                >
-                                  {subJurisdiction?.name}
-                                </DropdownItem>
-                              )
-                            )}
-                          </DropdownMenu>
-                        </Dropdown>
+                            <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
+                              {subJurisdiction?.parentAddressScheme?.entries?.map(
+                                (subJurisdiction: any) => (
+                                  <AutocompleteItem
+                                    key={subJurisdiction.id}
+                                    value={subJurisdiction.name}
+                                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                    // onClick={() => {
+                                    //   setSelectedSubJurisdiction({
+                                    //     label: subJurisdiction?.name,
+                                    //     value: subJurisdiction?.id,
+                                    //   });
+                                    //   setInitialLoad(false);
+                                    // }}
+                                  >
+                                    {subJurisdiction?.name}
+                                  </AutocompleteItem>
+                                )
+                              )}
+                            </AutocompleteSection>
+                          </Autocomplete>
+                        </div>
                         {subJurisdictionsLoading && <LoadingIcon />}
                       </div> */}
                       {/* SUB LEVEL */}
                       {/* {selectedSubJurisdiction && (
-                        <div className="input-holder half">
+                        <div className="new-input half">
                           <label>Sub Level</label>
-                          <Dropdown>
-                            <DropdownTrigger>
-                              <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
-                                {selectedSubLevel?.label || `Select Sub Level`}
-                              </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                              className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
-                              aria-label="Static Actions"
-                              variant="flat"
-                              selectionMode="single"
+                          <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
+                            <Autocomplete
+                              variant="bordered"
+                              className="w-full"
+                              placeholder={
+                                "Sub Level"
+                              }
+                              selectedKey={selectedSubLevel?.label}
+                              onSelectionChange={(key: any) => {
+                                setSelectedSubLevel({
+                                  label: key,
+                                  value: key,
+                                });
+                                setInitialLoad(false)
+                              }}
+                              aria-labelledby="Sub level"
                             >
-                              {subJurisdiction?.parentAddressScheme?.entries
-                                ?.find(
-                                  (entry: any) =>
-                                    entry?.name ==
-                                    selectedSubJurisdiction?.label
-                                )
-                                ?.childEntries?.map((subLevel: any) => (
-                                  <DropdownItem
-                                    key="view"
-                                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                    onClick={() => {
-                                      setSelectedSubLevel({
-                                        label: subLevel?.name,
-                                        value: subLevel?.id,
-                                      });
-                                      setInitialLoad(false);
-                                    }}
-                                  >
-                                    {subLevel?.name}
-                                  </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                          </Dropdown>
+                              <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
+                                {subJurisdiction?.parentAddressScheme?.entries
+                                  ?.find(
+                                    (entry: any) =>
+                                      entry?.id ==
+                                      selectedSubJurisdiction?.value
+                                  )
+                                  ?.childEntries?.map((subLevel: any) => (
+                                    <AutocompleteItem
+                                      key={subLevel?.id}
+                                      value={subLevel?.name}
+                                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                    >
+                                      {subLevel?.name}
+                                    </AutocompleteItem>
+                                  ))}
+                              </AutocompleteSection>
+                            </Autocomplete>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  )} */}
+                      )} */}
+                    {/* </div>
+                  )}  */}
 
                 {/* INDUSTRY */}
                 {/* {selectedJurisdiction && (
                   <div className="flex gap-5">
-                    <div className="input-holder half">
+                    <div className="new-input half">
                       <label>Industry</label>
-                      <Dropdown>
-                        <DropdownTrigger>
-                          <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
-                            {selectedIndustry?.label || "Select Industry"}
-                          </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                          className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
-                          aria-label="Static Actions"
-                          variant="flat"
-                          selectionMode="single"
+                      
+                      <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
+                        <Autocomplete
+                          variant="bordered"
+                          className="w-full"
+                          placeholder="Select industry"
+                          selectedKey={selectedIndustry?.label}
+                          onSelectionChange={(key: any) => {
+                            setSelectedIndustry({
+                              label: key,
+                              value: key,
+                            });
+                            setInitialLoad(false)
+                          }}
+                          aria-labelledby="Industry"
                         >
-                          {industries?.sectors?.map((industry: any) => (
-                            <DropdownItem
-                              key="view"
-                              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                              onClick={() => {
-                                setSelectedIndustry({
-                                  label: industry?.parentSector,
-                                  value: industry?.id,
-                                });
-                                setSectorId(industries.id);
-                                setInitialLoad(false);
-                              }}
-                            >
-                              {industry?.parentSector}
-                            </DropdownItem>
-                          ))}
-                        </DropdownMenu>
-                      </Dropdown>
-                      <ShowError name="industry" />
+                          <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
+                            {industries?.sectors?.map((industry: any) => (
+                              <AutocompleteItem
+                                key={industry?.id}
+                                value={industry?.parentSector}
+                                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                onClick={() => {
+                                  setSelectedIndustry({
+                                    label: industry?.parentSector,
+                                    value: industry?.id,
+                                  });
+                                  console.log("on clicked ", industry);
+                                  setSectorId(industries.id);
+                                  setInitialLoad(false);
+                                }}
+                              >
+                                {industry?.parentSector}
+                              </AutocompleteItem>
+                            ))}
+                          </AutocompleteSection>
+                        </Autocomplete>
+                      </div>
                     </div>
 
-                    {selectedIndustry && (
-                      <div className="input-holder half">
+                    {/* Sub Sector */}
+                    {/* {selectedIndustry && (
+                      <div className=" half new-input">
                         <label>Sub Sector</label>
-                        <Dropdown>
-                          <DropdownTrigger>
-                            <Button className="border min-w-72 py-2 px-5 border-[#E2E8F0] bg-slate-50  rounded-lg my-2 shadow-sm text-left flex justify-start">
-                              {selectedSubSector?.label || "Select Sub Sector"}
-                            </Button>
-                          </DropdownTrigger>
-                          <DropdownMenu
-                            className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3"
-                            aria-label="Static Actions"
-                            variant="flat"
-                            selectionMode="single"
+                        <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
+                          <Autocomplete
+                            variant="bordered"
+                            className="w-full"
+                            placeholder="Select sub level"
+                            selectedKey={selectedSubSector?.label ?? ""}
+                            onSelectionChange={(key: any) => {
+                              setSelectedSubSector({
+                                label: key,
+                                value: key,
+                              });
+                              setInitialLoad(false)
+                            }}
                           >
-                            {industries?.sectors
-                              ?.find(
-                                (sector: any) =>
-                                  sector?.parentSector ==
-                                  selectedIndustry?.label
-                              )
-                              ?.subSector?.map((sector: any) => (
-                                <DropdownItem
-                                  key="view"
-                                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                  onClick={() => {
-                                    setSelectedSubSector({
-                                      label: sector,
-                                      value: sector,
-                                    });
-                                    setInitialLoad(false);
-                                  }}
-                                >
-                                  {sector}
-                                </DropdownItem>
-                              ))}
-                          </DropdownMenu>
-                        </Dropdown>
-                        <ShowError name="industry" />
+                            <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
+                              {industries?.sectors
+                                ?.find(
+                                  (sector: any) =>
+                                    sector?.id == selectedIndustry?.value
+                                )
+                                ?.subSector?.map((sector: any) => (
+                                  <AutocompleteItem
+                                    key={sector}
+                                    value={sector}
+                                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                  >
+                                    {sector}
+                                  </AutocompleteItem>
+                                ))}
+                            </AutocompleteSection>
+                          </Autocomplete>
+                        </div>
                       </div>
                     )}
                   </div>
-                )}
-               */}
+                )}  */}
               </div>
 
               {/* COMPANY ADMIN */}
