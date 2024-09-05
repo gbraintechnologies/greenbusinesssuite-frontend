@@ -2,11 +2,9 @@ import defaultMeshApi from "../defaultMeshClient";
 import authApi from "../meshAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
 
-export const allJurisdictions = (Page: number, Size: number) => {
+export const allJurisdictions = (Page: number = 0, Size: number = 100) => {
   return () =>
-    defaultMeshApi
-      .get(`countries/all/${Page}/${Size}`)
-      .then((res) => res.data);
+    defaultMeshApi.get(`countries/all/${Page}/${Size}`).then((res) => res.data);
 };
 
 export const csvUploads = (formData: FormData, file: string) => {
