@@ -432,6 +432,9 @@ const CompanyForm: React.FC<Props> = ({
                       className="w-full"
                       placeholder={"Select Jurisdiction"}
                       selectedKey={selectedJurisdiction?.value}
+                      scrollShadowProps={{
+                        isEnabled: false
+                      }}
                       onSelectionChange={(key: any) => {
                         const countryName = jurisdictions?.content?.find((jurisdiction: any) => jurisdiction?.id == key)?.name
                         setSelectedJurisdiction({
@@ -483,6 +486,9 @@ const CompanyForm: React.FC<Props> = ({
                               "Sub Jurisdiction"
                             }
                             selectedKey={selectedSubJurisdiction?.label}
+                            scrollShadowProps={{
+                              isEnabled: false
+                            }}
                             onSelectionChange={(key: any) => {
                               setSelectedSubJurisdiction({
                                 label: key,
@@ -528,6 +534,9 @@ const CompanyForm: React.FC<Props> = ({
                                 "Sub Level"
                               }
                               selectedKey={selectedSubLevel?.label}
+                              scrollShadowProps={{
+                                isEnabled: false
+                              }}
                               onSelectionChange={(key: any) => {
                                 setSelectedSubLevel({
                                   label: key,
@@ -573,6 +582,9 @@ const CompanyForm: React.FC<Props> = ({
                           className="w-full"
                           placeholder="Select industry"
                           selectedKey={selectedIndustry?.label}
+                          scrollShadowProps={{
+                            isEnabled: false
+                          }}
                           onSelectionChange={(key: any) => {
                             setSelectedIndustry({
                               label: key,
@@ -616,6 +628,9 @@ const CompanyForm: React.FC<Props> = ({
                             className="w-full"
                             placeholder="Select sub level"
                             selectedKey={selectedSubSector?.label ?? ""}
+                            scrollShadowProps={{
+                              isEnabled: false
+                            }}
                             onSelectionChange={(key: any) => {
                               setSelectedSubSector({
                                 label: key,
