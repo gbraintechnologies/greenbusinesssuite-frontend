@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { updateCountry } from "@/services/features/countryService";
+import { updateCountry } from "@/services/features/jurisdictionsService";
 
 interface ParentLevel {
   id: number;
@@ -31,7 +31,7 @@ function RegionInput() {
 
   const { data } = useQuery({
     queryKey: ["all countries", parentId],
-    queryFn: services.getcountryByID(Number(parentId)),
+    queryFn: services.getJurisdictionById(Number(parentId)),
     enabled: !!parentId,
   });
 

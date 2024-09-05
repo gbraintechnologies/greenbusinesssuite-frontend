@@ -21,8 +21,8 @@ import { BsDot } from "react-icons/bs";
 import { toast } from "sonner";
 import { Button } from "@nextui-org/button";
 import { LuPlusCircle } from "react-icons/lu";
-import { deletecountryWithAssoc, deleteparentLevel, updateCountry } from "@/services/features/countryService";
-import toSpace from "@/utils/UnderScore/UnderScore";
+import { deletecountryWithAssoc, deleteparentLevel, updateCountry } from "@/services/features/jurisdictionsService";
+import toJoin from "@/utils/UnderScoreJoin/underScoreJoin";
 
 const schema = yup.object({
   id: yup.number().required(),
@@ -87,7 +87,7 @@ function EditJurisdiction() {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["all countries", Id],
-    queryFn: services.getcountryByID(Number(Id)),
+    queryFn: services.getJurisdictionById(Number(Id)),
     enabled: !!Id,
   });
   const {
@@ -104,7 +104,7 @@ function EditJurisdiction() {
       id: 0,
       countryName: "",
       countryId: 0,
-      inputType: "DROP_DOWN", 
+      inputType: "DROP_DOWN",
       addressingScheme: {
         id: 0,
         parentLevelName: "",
@@ -460,7 +460,7 @@ function EditJurisdiction() {
                     <strong>{data?.addressingScheme.parentLevelName}</strong>
                     &nbsp; &nbsp;|&nbsp;&nbsp;
                     <strong>{data?.addressingScheme.childLevelName}</strong>
-                    <p>{toSpace(data?.inputType)}</p>
+                    <p>{toJoin(data?.inputType)}</p>
                   </p>
                 </span>
               </div>
@@ -488,7 +488,17 @@ function EditJurisdiction() {
                 </div>
               </div>
             </div>
-
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                width: "100%",
+                margin: "10px 0",
+              }}
+            >
+              <div  style={{ flex: 1, borderBottom: "1px solid lightgray",marginBottom:"20px",marginTop:"15px" }}  >
+              </div>
+            </div>
             <div className="w-full">
               <DataTable isLoading={isLoading} rows={rows} columns={columns} />
             </div>

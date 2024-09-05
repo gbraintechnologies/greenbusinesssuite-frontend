@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { countryUpload, createCountry } from "@/services/features/countryService";
+import { createCountry, csvUploads } from "@/services/features/jurisdictionsService";
 
 const schema = yup.object().shape({
   countryName: yup.string().required(),
@@ -101,7 +101,7 @@ function NewIndividual() {
         parentLevelName: data.parentLevelName,
         childLevelName: data.childLevelName,
         inputType: selectedOption === "Dropdown" ? "DROP_DOWN" : "FREE_INPUT",
-        parentNames: [] 
+        parentNames: []
       };
       await createCountry(Payload);
 
@@ -115,40 +115,40 @@ function NewIndividual() {
 
   const handleSaveAndContinue = async () => {
     if (isSubmitting) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       if (IDImage && fileName) {
         const formData = new FormData();
         formData.append("file", IDImage);
-        await countryUpload(formData, fileName.name);
-  
+        await csvUploads(formData, fileName.name);
+
         toast.success("CSV file uploaded Successfully", { position: "top-center", duration: 3000 });
-        
+
         setIDImage(null);
         setUploadProgress(0);
         setFileName({ name: "", size: 0 });
       }
-      
+
       const items = dropdownItems
         .split(",")
         .map(item => item.trim())
         .filter(item => item);
-      
+
       const data = getValues();
-      
+
       const Payload = {
         countryId: data.countryId,
         countryName: data.countryName,
         parentLevelName: data.parentLevelName,
         childLevelName: data.childLevelName,
         inputType: selectedOption === "Dropdown" ? "DROP_DOWN" : "FREE_INPUT",
-        parentNames: items 
+        parentNames: items
       };
-      
+
       const parentId = await createCountry(Payload);
-      
+
       toast.success("Parent Level created Successfully", { position: "top-center", duration: 3000 });
       router.push(`/country-setup/region-input?id=${parentId.data}`);
     } catch (error: unknown) {
@@ -161,8 +161,8 @@ function NewIndividual() {
       setIsSubmitting(false);
     }
   };
-  
-  
+
+
 
   return (
     <div className="w-full p-5">
@@ -210,7 +210,7 @@ function NewIndividual() {
             </p>
           </div>
 
-          <div className="mb-1 relative">
+          <div className="mb-1 relative focus:border focus:border-black rounded-[6px]">
             <TextInput
               type="text"
               autoComplete="off"
@@ -228,7 +228,7 @@ function NewIndividual() {
               autoComplete="off"
               label="Sub-Level name"
               placeholder="Eg: District"
-              className="rounded xl"
+              className="rounded-xl focus:ring-2 focus:ring-black focus:border-black"
               style={{ width: "30%", height: "30%" }}
               {...register("childLevelName")}
               error={errors.childLevelName?.message}
