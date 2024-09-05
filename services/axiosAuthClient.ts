@@ -107,14 +107,15 @@ authApi.interceptors.response.use(
           toast.warning("Login to continue", {
             description: "Your session has expired. Please login to continue.",
           });
+          console.log("error refreshing", e);
           // @ts-ignore
-          localStorage.clear();
-          if (Boolean(getTenantID())) {
-            window.location.replace(`/${getTenantID()}`);
-          } else {
-            window.location.replace("/");
-          }
-          window.location.reload();
+          // localStorage.clear();
+          // if (Boolean(getTenantID())) {
+          //   window.location.replace(`/${getTenantID()}`);
+          // } else {
+          //   window.location.replace("/");
+          // }
+          // window.location.reload();
         });
     }
 

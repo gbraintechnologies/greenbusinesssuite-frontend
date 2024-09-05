@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 import { MdOutlineSettingsSuggest } from "react-icons/md";
 import { PiUserCircleCheck } from "react-icons/pi";
+import Loader from "@/components/Loader/Loader";
 
 function CompanyAdmins({ companyId }: any) {
   // fetch all users
@@ -41,8 +42,10 @@ function CompanyAdmins({ companyId }: any) {
 
   const [loading, setLoading] = useState(false);
 
+  console.log("selectded admin optino", selectedAdminOption);
+
   const assignAdmin = () => {
-    toast.loading("Assgning...", {
+    toast.loading("Assigning...", {
       description: "Assigning new administrator, please wait",
     });
     setLoading(true);
@@ -66,9 +69,19 @@ function CompanyAdmins({ companyId }: any) {
         toast.dismiss();
         setLoading(false);
         setSelectedAdminOption(null);
+
+        console.log("error assigning", e);
         toast.error("Error assigning user to company");
       });
   };
+
+  if (companyDataLoading) {
+    return (
+      <div className="min-h-[30vh] flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[40vh] py-5">

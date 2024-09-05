@@ -137,41 +137,40 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
             />
           </p>
         </div>
-        {/* <div className="flex items-center justify-center rounded-xl -mt-10  mr-5">
-          <div className="border flex  items-center justify-center w-28  h-10 pt-[29px] gap-1 border-gray-200 p-3 rounded-lg">
-            <p className="">Ordering</p>
-            <input
-              min={0}
-              type="number"
-              className="text-center outline-none focus:outline-none input-custom w-6 -mt-5 border border-b-2 0"
-              value={localSection?.ordering}
-              onBlur={runUpdates}
-              onChange={(e) => {
-                setLocalSection((prev: any) => ({
-                  ...prev,
-                  ordering: e.target.value,
-                }));
-              }}
-            />
-          </div>
-        </div> */}
       </div>
 
       {/* FORM FIELDS */}
-      <div className="grid grid-cols-2 gap-5">
-        {localSection?.formFields
-          ?.filter((item: any) => !item.isDeleted)
-          .map((field: any) => {
-            return (
-              <FormField
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                section={section}
-                field={field}
-              />
-            );
-          })}
-      </div>
+      {localSection?.isTable ? (
+        <div className="flex flex-row gap-1">
+          {localSection?.formFields
+            ?.filter((item: any) => !item.isDeleted)
+            .map((field: any) => {
+              return (
+                <FormField
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  section={section}
+                  field={field}
+                />
+              );
+            })}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-5">
+          {localSection?.formFields
+            ?.filter((item: any) => !item.isDeleted)
+            .map((field: any) => {
+              return (
+                <FormField
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  section={section}
+                  field={field}
+                />
+              );
+            })}
+        </div>
+      )}
 
       <div
         className={`${
