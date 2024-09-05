@@ -28,8 +28,12 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+input {
+  @apply !outline-none !shadow-none focus:!outline-none !ring-0 focus:!border-transparent focus:!ring-0 focus:!border-none border-white active:!border-0 active:!border-none focus:!border-0 !border-0 !border-none p-0 focus:p-0;
+}
+
 .input-custom {
-  @apply outline-none focus:outline-none ring-0 focus:border-transparent focus:ring-0 focus:border-none border-white active:border-0 active:border-none focus:border-0 border-0 border-none p-0 focus:p-0;
+  @apply !outline-none focus:!outline-none !ring-0 focus:!border-transparent focus:!ring-0 focus:!border-none border-white active:!border-0 active:!border-none focus:!border-0 !border-0 !border-none p-0 focus:p-0;
 }
 
 @layer utilities {

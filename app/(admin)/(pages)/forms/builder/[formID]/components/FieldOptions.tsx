@@ -17,6 +17,12 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 
+import {
+  Autocomplete,
+  AutocompleteItem,
+  AutocompleteSection,
+} from "@nextui-org/autocomplete";
+
 // icons
 
 import { IoIosArrowDown } from "react-icons/io";
@@ -255,7 +261,7 @@ function FieldOptions({ refetch }: any) {
               {/* COUNTRY */}
               <div className="mt-5 mb-5">
                 <p className="font-medium text-base mb-4">Country</p>{" "}
-                <Dropdown>
+                {/* <Dropdown>
                   <DropdownTrigger>
                     <button className="bg-white flex items-center justify-between border rounded-xl px-4 py-2 w-full text-left">
                       <span className="block truncate">
@@ -303,7 +309,41 @@ function FieldOptions({ refetch }: any) {
                       );
                     })}
                   </DropdownMenu>
-                </Dropdown>
+                </Dropdown> */}
+                <Autocomplete
+                  variant="flat"
+                  className="bg-white flex items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
+                  placeholder={
+                    jurisdictions?.content?.find(
+                      (item: any) => item?.id == validPattern
+                    )?.name || "No country selected"
+                  }
+                  scrollShadowProps={{
+                    isEnabled: false,
+                  }}
+                  onSelectionChange={(type: any) => {
+                    setLocalField((prev: any) => ({
+                      ...prev,
+                      validPattern: type?.id,
+                    }));
+                    updateActiveField(activeField.section, {
+                      ...localField,
+                      validPattern: type?.id,
+                    });
+                  }}
+                >
+                  <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
+                    {jurisdictions?.content.map((type: any) => (
+                      <AutocompleteItem
+                        key={type?.id}
+                        value={type?.id}
+                        className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                      >
+                        {type?.name}
+                      </AutocompleteItem>
+                    ))}
+                  </AutocompleteSection>
+                </Autocomplete>
               </div>
 
               {selectedCountry && (
