@@ -67,8 +67,8 @@ const Page = () => {
 
   const { data: country, isLoading: isCountryLoading } = useQuery({
     queryKey: ["country", companyData?.company_address],
-    queryFn: services.getJurisdictionEntriesById(
-      Number(companyData?.company_address)
+    queryFn: () => services.getCountryInfoByName(
+      companyData?.company_address as string
     ),
     enabled:
       !!companyData?.company_address &&
@@ -377,7 +377,7 @@ const Page = () => {
   useEffect(() => {
     if (!companyData) return;
     setParentAddressScheme(
-      country?.parentAddressScheme?.entries?.find(
+      country?.addressingScheme?.parentLevels?.find(
         (entry: any) => entry?.id == companyParentAddressId
       )
     );
@@ -406,27 +406,28 @@ const Page = () => {
 
       if (companyParentAddressId) {
         setSelectedJurisdiction({
-          label: country?.name,
+          label: country?.countryName,
           value: companyData?.company_address,
         });
       }
 
       if (companyParentAddressId) {
         setSelectedSubJurisdiction({
-          label: country?.parentAddressScheme?.entries?.find(
+          label: country?.addressingScheme?.parentLevels?.find(
             (entry: any) => entry?.id == companyParentAddressId
-          )?.name,
+          )?.parentName,
           value: companyParentAddressId,
         });
       }
 
       if (companyChildAddressId) {
         setSelectedSubLevel({
-          label: country?.parentAddressScheme?.entries
-            ?.find((entry: any) => entry?.id == companyParentAddressId)
-            ?.childEntries?.find(
-              (entry: any) => entry?.id == companyChildAddressId
-            )?.name,
+          label: country?.addressingScheme?.parentLevels?.find(
+            (entry: any) => entry?.id == companyParentAddressId
+          )
+            ?.childLevels?.find(
+              (entry: any) => entry == companyChildAddressId
+            ),
           value: companyChildAddressId,
         });
       }
