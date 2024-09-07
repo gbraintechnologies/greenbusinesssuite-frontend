@@ -158,7 +158,7 @@ const Page = () => {
 
   const { data: country, isLoading: isCountryLoading } = useQuery({
     queryKey: ["country", companyData?.company_address],
-    queryFn: services.getJurisdictionEntriesById(companyData?.company_address),
+    queryFn: () => services.getCountryInfoByName(companyData?.company_address),
     enabled:
       !!companyData?.company_address &&
       isConvertibleToNumber(companyData?.company_address),
@@ -213,7 +213,7 @@ const Page = () => {
     );
     setActiveStatus(status);
     setParentAddressScheme(
-      country?.parentAddressScheme?.entries?.find(
+      country?.addressingScheme?.parentLevels?.find(
         (entry: any) => entry?.id == companyParentAddressId
       )
     );
@@ -390,7 +390,7 @@ const Page = () => {
             />
           </div>
 
-          {/* RENDERING BASED ON FITER */}
+          {/* RENDERING BASED ON FILTER */}
           <div>
             {activeFilter.value === "description" && (
               <>
@@ -405,14 +405,14 @@ const Page = () => {
                     <div className="group-item">
                       <div className="label">Jurisdiction</div>
                       <div className="value">
-                        {country?.name}
+                        {country?.countryName}
                         {","}
-                        {parentAddressScheme?.name}
+                        {parentAddressScheme?.parentName}
                         {","}
                         {
-                          parentAddressScheme?.childEntries?.find(
-                            (entry: any) => entry?.id == companyChildAddressId
-                          )?.name
+                          parentAddressScheme?.childLevels?.find(
+                            (entry: any) => entry == companyChildAddressId
+                          )
                         }
                       </div>
                     </div>

@@ -215,10 +215,9 @@ const CompanyForm: React.FC<Props> = ({
   const {
     data: jurisdictions,
     isLoading: jurisdictionsLoading,
-    refetch,
   } = useQuery({
-    queryKey: ["all jurisdictions"],
-    queryFn: services.allJurisdictions(),
+    queryKey: ["all countries"],
+    queryFn: services.allcountries(),
   });
 
   const fetchIndustries = async (jurisdiction: string) => {
@@ -230,7 +229,6 @@ const CompanyForm: React.FC<Props> = ({
         setSubSectors([]);
       }
       const response = await services.getSectorByCountryRaw(jurisdiction);
-      // console.log("response ", response);
       let industryId = response[0]?.id;
 
       if (industryId) {
@@ -244,36 +242,14 @@ const CompanyForm: React.FC<Props> = ({
     }
   };
 
-  // const fetchSubSectors = async (
-  //   sectorSetupId: string | number,
-  //   sectorId: string
-  // ) => {
-  //   try {
-  //     if (!initialLoad) {
-  //       setSubSectorsLoading(true);
-  //       setSelectedSubSector(undefined);
-  //     }
-  //     const response = await services.getSubSectorByIdRaw(
-  //       Number(sectorSetupId),
-  //       Number(sectorId)
-  //     );
-  //     setSubSectors(response?.sector?.subSectors);
-  //   } catch (err) {
-  //     toast.error("An error occurred while fetching sub sectors");
-  //   } finally {
-  //     if (!initialLoad) {
-  //       setSubSectorsLoading(false);
-  //     }
-  //   }
-  // };
-
   const router = useRouter();
 
   const handleChangeComplete = (newColor: any) => {
     setColor(newColor.hex);
   };
 
-  const getJurisdictionEntries = async (jurisdictionId: number) => {
+
+  const getJurisdictionEntries = async (country: string) => {
     try {
       if (!initialLoad) {
         setSubJurisdictionsLoading(true);
@@ -281,9 +257,7 @@ const CompanyForm: React.FC<Props> = ({
         setSelectedSubLevel(undefined);
         setSubJurisdiction([]);
       }
-      const response = await services.getJurisdictionEntriesByIdRaw(
-        jurisdictionId
-      );
+      const response = await services.getCountryInfoByName(country)
       setSubJurisdiction(response);
     } catch (err) {
       console.log("error ", err);
@@ -315,7 +289,7 @@ const CompanyForm: React.FC<Props> = ({
   useLayoutEffect(() => {
     if (selectedJurisdiction?.label) {
       fetchIndustries(selectedJurisdiction?.label);
-      getJurisdictionEntries(Number(selectedJurisdiction?.value));
+      getJurisdictionEntries(selectedJurisdiction?.value);
     }
   }, [selectedJurisdiction]);
 
@@ -331,9 +305,6 @@ const CompanyForm: React.FC<Props> = ({
     }
   }, [selectedIndustry]);
 
-  useEffect(() => {
-    console.log("selecte ", selectedIndustry);
-  }, [selectedIndustry]);
 
   // useLayoutEffect(() => {
   //   if (selectedIndustry?.value && sectorId) {
@@ -436,29 +407,28 @@ const CompanyForm: React.FC<Props> = ({
                         isEnabled: false
                       }}
                       onSelectionChange={(key: any) => {
-                        const countryName = jurisdictions?.content?.find((jurisdiction: any) => jurisdiction?.id == key)?.name
                         setSelectedJurisdiction({
-                          label: countryName,
+                          label: key,
                           value: key,
                         });
                       }}
                       aria-labelledby="Industry"
                     >
                       <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
-                        {jurisdictions?.content?.map((jurisdiction: any) => (
+                        {jurisdictions?.map((country: any) => (
                           <AutocompleteItem
-                            key={jurisdiction?.id}
-                            value={jurisdiction?.name}
+                            key={country}
+                            value={country}
                             className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
                             startContent={
                               <img
-                                src={Countrie(jurisdiction?.name)?.flags.png}
-                                alt={Countrie(jurisdiction?.name)?.name.common}
-                                style={{ height: "20px", width: "25px" }}
+                                src={Countrie(country)?.flags.png}
+                                alt={Countrie(country)?.name.common}
+                                style={{ height: "24px", width: "24px", borderRadius: "50%" }}
                               />
                             }
                           >
-                            {jurisdiction?.name}
+                            {country}
                           </AutocompleteItem>
                         ))}
                       </AutocompleteSection>
@@ -473,7 +443,7 @@ const CompanyForm: React.FC<Props> = ({
                       {/* SUB JURISDICTION */}
                       <div className="new-input half">
                         <label>
-                          {subJurisdiction?.parentAddressScheme?.name ||
+                          {subJurisdiction?.addressingScheme?.parentLevelName ||
                             "Sub Jurisdiction"}
                         </label>
                         
@@ -482,7 +452,7 @@ const CompanyForm: React.FC<Props> = ({
                             variant="bordered"
                             className="w-full"
                             placeholder={
-                              subJurisdiction?.parentAddressScheme?.name ||
+                              subJurisdiction?.addressingScheme?.parentLevelName ||
                               "Sub Jurisdiction"
                             }
                             selectedKey={selectedSubJurisdiction?.label}
@@ -494,26 +464,18 @@ const CompanyForm: React.FC<Props> = ({
                                 label: key,
                                 value: key,
                               });
-                              console.log("changed");
                             }}
                             aria-labelledby="Industry"
                           >
                             <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
-                              {subJurisdiction?.parentAddressScheme?.entries?.map(
+                              {subJurisdiction?.addressingScheme?.parentLevels?.map(
                                 (subJurisdiction: any) => (
                                   <AutocompleteItem
                                     key={subJurisdiction.id}
-                                    value={subJurisdiction.name}
+                                    value={subJurisdiction.parentName}
                                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                    // onClick={() => {
-                                    //   setSelectedSubJurisdiction({
-                                    //     label: subJurisdiction?.name,
-                                    //     value: subJurisdiction?.id,
-                                    //   });
-                                    //   setInitialLoad(false);
-                                    // }}
                                   >
-                                    {subJurisdiction?.name}
+                                    {subJurisdiction?.parentName}
                                   </AutocompleteItem>
                                 )
                               )}
@@ -525,14 +487,16 @@ const CompanyForm: React.FC<Props> = ({
                       {/* SUB LEVEL */}
                       {selectedSubJurisdiction && (
                         <div className="new-input half">
-                          <label>Sub Level</label>
+                          <label>
+                          {subJurisdiction?.addressingScheme?.childLevelName ||
+                            "Sub Level"}
+                        </label>
                           <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                             <Autocomplete
                               variant="bordered"
                               className="w-full"
-                              placeholder={
-                                "Sub Level"
-                              }
+                              placeholder={subJurisdiction?.addressingScheme?.childLevelName ||
+                            "Sub Level"}
                               selectedKey={selectedSubLevel?.label}
                               scrollShadowProps={{
                                 isEnabled: false
@@ -547,19 +511,19 @@ const CompanyForm: React.FC<Props> = ({
                               aria-labelledby="Sub level"
                             >
                               <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
-                                {subJurisdiction?.parentAddressScheme?.entries
+                                {subJurisdiction?.addressingScheme?.parentLevels
                                   ?.find(
                                     (entry: any) =>
                                       entry?.id ==
                                       selectedSubJurisdiction?.value
                                   )
-                                  ?.childEntries?.map((subLevel: any) => (
+                                  ?.childLevels?.map((subLevel: any) => (
                                     <AutocompleteItem
-                                      key={subLevel?.id}
-                                      value={subLevel?.name}
+                                      key={subLevel}
+                                      value={subLevel}
                                       className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                                     >
-                                      {subLevel?.name}
+                                      {subLevel}
                                     </AutocompleteItem>
                                   ))}
                               </AutocompleteSection>

@@ -35,3 +35,11 @@ export const deleteparentLevel = (id: any) => {
 export const getJurisdictionById = (id: number) => {
   return () => authApi.get(`/countries/by-id/${id}`).then((res) => res.data);
 };
+
+export const getJurisdictionByIdRaw = (id: number) => {
+  return authApi.get(`/countries/by-id/${id}`).then((res) => res.data);
+}
+
+export const getCountryInfoByName = (countryName: string) => {
+  return authApi.get(`/countries/name/${countryName}`).then((res) => res.data);
+}
