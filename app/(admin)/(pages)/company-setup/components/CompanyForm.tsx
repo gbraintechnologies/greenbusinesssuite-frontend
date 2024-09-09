@@ -220,6 +220,8 @@ const CompanyForm: React.FC<Props> = ({
     queryFn: services.allcountries(),
   });
 
+  useEffect(() => {console.log('selected ', selectedIndustry)},[selectedIndustry])
+
   const fetchIndustries = async (jurisdiction: string) => {
     try {
       if (!initialLoad) {
@@ -411,8 +413,9 @@ const CompanyForm: React.FC<Props> = ({
                           label: key,
                           value: key,
                         });
+                        setInitialLoad(false)
                       }}
-                      aria-labelledby="Industry"
+                      aria-labelledby="Country"
                     >
                       <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
                         {jurisdictions?.map((country: any) => (
@@ -464,8 +467,9 @@ const CompanyForm: React.FC<Props> = ({
                                 label: key,
                                 value: key,
                               });
+                              setInitialLoad(false)
                             }}
-                            aria-labelledby="Industry"
+                            aria-labelledby="Parent Level"
                           >
                             <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
                               {subJurisdiction?.addressingScheme?.parentLevels?.map(
@@ -508,7 +512,7 @@ const CompanyForm: React.FC<Props> = ({
                                 });
                                 setInitialLoad(false)
                               }}
-                              aria-labelledby="Sub level"
+                              aria-labelledby="Child Level"
                             >
                               <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
                                 {subJurisdiction?.addressingScheme?.parentLevels
@@ -554,27 +558,18 @@ const CompanyForm: React.FC<Props> = ({
                               label: key,
                               value: key,
                             });
-                            setInitialLoad(false)
+                            setInitialLoad(false);
                           }}
                           aria-labelledby="Industry"
                         >
                           <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
                             {industries?.sectors?.map((industry: any) => (
                               <AutocompleteItem
-                                key={industry?.id}
-                                value={industry?.parentSector}
+                                key={industry.id}
+                                value={industry.parentSector}
                                 className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                onClick={() => {
-                                  setSelectedIndustry({
-                                    label: industry?.parentSector,
-                                    value: industry?.id,
-                                  });
-                                  console.log("on clicked ", industry);
-                                  setSectorId(industries.id);
-                                  setInitialLoad(false);
-                                }}
                               >
-                                {industry?.parentSector}
+                                {industry.parentSector}
                               </AutocompleteItem>
                             ))}
                           </AutocompleteSection>
