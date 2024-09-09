@@ -186,11 +186,26 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
             <></>
           ) : (
             <div className="flex justify-end items-end w-full">
-              <Dropdown>
+              {/* SECTION / TABLE ADDITION */}
+              {/* <Dropdown>
                 <DropdownTrigger>
                   <Button
                     className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
                     isDisabled={loadingSection}
+                    onClick={() => {
+                      let template = {
+                        name: "",
+                        description: "",
+                        instruction: "",
+                        formFields: [],
+                        isDeleted: false,
+                        createdOn: new Date(),
+                        updatedOn: new Date(),
+                        deletedOn: null,
+                      };
+
+                      addFormSection(template);
+                    }}
                     variant="bordered"
                   >
                     {loadingSection ? (
@@ -255,7 +270,37 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
                     </div>
                   </DropdownItem>
                 </DropdownMenu>
-              </Dropdown>
+              </Dropdown> */}
+
+              {/* RAW SECTION ADDITION */}
+              <Button
+                className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
+                isDisabled={loadingSection}
+                onClick={() => {
+                  let template = {
+                    name: "",
+                    description: "",
+                    instruction: "",
+                    formFields: [],
+                    isDeleted: false,
+                    createdOn: new Date(),
+                    updatedOn: new Date(),
+                    deletedOn: null,
+                  };
+
+                  addFormSection(template);
+                }}
+                variant="bordered"
+              >
+                {loadingSection ? (
+                  <Loader color="#1d1d1d" />
+                ) : (
+                  <>
+                    {" "}
+                    <CiCirclePlus size={18} /> Add section
+                  </>
+                )}
+              </Button>
             </div>
           )}
         </div>

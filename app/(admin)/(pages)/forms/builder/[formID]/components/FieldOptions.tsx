@@ -54,6 +54,8 @@ function FieldOptions({ refetch }: any) {
       Boolean(form?.id) && Boolean(localField?.fieldDataType === "address"),
   });
 
+  console.log("jurisdictions", jurisdictions);
+
   // update local copy if changes are made
   useEffect(() => {
     setLocalField(activeField?.field);
@@ -100,7 +102,7 @@ function FieldOptions({ refetch }: any) {
     // address input
     if (fieldDataType === "address") {
       return (
-        <div className="bg-white  pb-[25rem] h-screen no-scrollbar  overflow-y-scroll  p-3">
+        <div className="bg-white hide-input-borders  pb-[25rem] h-screen no-scrollbar  overflow-y-scroll  p-3">
           {/* REQUIRED FIELD OR NOT */}
           <div className="bg-[#F8FAFC] py-3 mt-8 px-5  rounded-lg flex gap-3 items-center justify-between">
             <p className="font-medium text-base">Required field</p>{" "}
@@ -314,9 +316,9 @@ function FieldOptions({ refetch }: any) {
                   variant="flat"
                   className="bg-white flex items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
                   placeholder={
-                    jurisdictions?.content?.find(
-                      (item: any) => item?.id == validPattern
-                    )?.name || "No country selected"
+                    jurisdictions?.countries?.find(
+                      (item: any) => item?.countryId == validPattern
+                    )?.countryName || "No country selected"
                   }
                   scrollShadowProps={{
                     isEnabled: false,
@@ -324,22 +326,22 @@ function FieldOptions({ refetch }: any) {
                   onSelectionChange={(type: any) => {
                     setLocalField((prev: any) => ({
                       ...prev,
-                      validPattern: type?.id,
+                      validPattern: type?.countryId,
                     }));
                     updateActiveField(activeField.section, {
                       ...localField,
-                      validPattern: type?.id,
+                      validPattern: type?.countryId,
                     });
                   }}
                 >
                   <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
-                    {jurisdictions?.content.map((type: any) => (
+                    {jurisdictions?.countries.map((type: any) => (
                       <AutocompleteItem
-                        key={type?.id}
-                        value={type?.id}
+                        key={type?.countryId}
+                        value={type?.countryId}
                         className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                       >
-                        {type?.name}
+                        {type?.countryName}
                       </AutocompleteItem>
                     ))}
                   </AutocompleteSection>
