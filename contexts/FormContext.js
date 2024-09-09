@@ -30,7 +30,9 @@ export const FormProvider = ({ children }) => {
   const queryClient = useQueryClient();
 
   function isEmpty(obj) {
-    return Object.keys(obj).length === 0 && obj.constructor === Object;
+    if (obj !== null) {
+      return Object.keys(obj).length === 0 && obj?.constructor === Object;
+    }
   }
 
   // for syncing with the server

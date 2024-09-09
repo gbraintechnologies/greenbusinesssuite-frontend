@@ -311,7 +311,7 @@ const CompanyForm: React.FC<Props> = ({
   // }, [selectedIndustry, sectorId]);
 
   return (
-    <div className="hide-input-borders">
+    <div className="">
       <Formik
         initialValues={initialValues}
         validationSchema={companySchema}
@@ -393,7 +393,7 @@ const CompanyForm: React.FC<Props> = ({
                   <ShowError name="companyDescription" />
                 </div>
                 {/* JURISDICTION */}
-                <div className="new-input half">
+                <div className="new-input half hide-input-borders">
                   <label>Company jurisdiction</label>
                   <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                     <Autocomplete
@@ -404,6 +404,12 @@ const CompanyForm: React.FC<Props> = ({
                       scrollShadowProps={{
                         isEnabled: false,
                       }}
+                      popoverProps={{
+                        offset: 10,
+                        classNames: {
+                          content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                        },
+                      }}
                       onSelectionChange={(key: any) => {
                         setSelectedJurisdiction({
                           label: key,
@@ -413,7 +419,6 @@ const CompanyForm: React.FC<Props> = ({
                       }}
                       aria-labelledby="Country"
                     >
-                      <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
                         {jurisdictions?.map((country: any) => (
                           <AutocompleteItem
                             key={country}
@@ -434,7 +439,6 @@ const CompanyForm: React.FC<Props> = ({
                             {country}
                           </AutocompleteItem>
                         ))}
-                      </AutocompleteSection>
                     </Autocomplete>
                   </div>
                 </div>
@@ -444,7 +448,7 @@ const CompanyForm: React.FC<Props> = ({
                   !subJurisdictionsLoading && (
                     <div className="flex gap-5">
                       {/* SUB JURISDICTION */}
-                      <div className="new-input half">
+                      <div className="new-input half hide-input-borders">
                         <label>
                           {subJurisdiction?.addressingScheme?.parentLevelName ||
                             "Sub Jurisdiction"}
@@ -462,6 +466,12 @@ const CompanyForm: React.FC<Props> = ({
                             scrollShadowProps={{
                               isEnabled: false,
                             }}
+                            popoverProps={{
+                              offset: 10,
+                              classNames: {
+                                content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                              },
+                            }}
                             onSelectionChange={(key: any) => {
                               setSelectedSubJurisdiction({
                                 label: key,
@@ -471,7 +481,6 @@ const CompanyForm: React.FC<Props> = ({
                             }}
                             aria-labelledby="Parent Level"
                           >
-                            <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
                               {subJurisdiction?.addressingScheme?.parentLevels
                                 ?.filter(
                                   (item: any) => item?.parentName?.length > 1
@@ -485,14 +494,13 @@ const CompanyForm: React.FC<Props> = ({
                                     {subJurisdiction?.parentName}
                                   </AutocompleteItem>
                                 ))}
-                            </AutocompleteSection>
                           </Autocomplete>
                         </div>
                         {subJurisdictionsLoading && <LoadingIcon />}
                       </div>
                       {/* SUB LEVEL */}
                       {selectedSubJurisdiction && (
-                        <div className="new-input half">
+                        <div className="new-input half hide-input-borders">
                           <label>
                             {subJurisdiction?.addressingScheme
                               ?.childLevelName || "Sub Level"}
@@ -505,6 +513,13 @@ const CompanyForm: React.FC<Props> = ({
                                 subJurisdiction?.addressingScheme
                                   ?.childLevelName || "Sub Level"
                               }
+                              
+                              popoverProps={{
+                                offset: 10,
+                                classNames: {
+                                  content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                                },
+                              }}
                               selectedKey={selectedSubLevel?.label}
                               scrollShadowProps={{
                                 isEnabled: false,
@@ -518,7 +533,6 @@ const CompanyForm: React.FC<Props> = ({
                               }}
                               aria-labelledby="Child Level"
                             >
-                              <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
                                 {subJurisdiction?.addressingScheme?.parentLevels
                                   ?.find(
                                     (entry: any) =>
@@ -537,7 +551,6 @@ const CompanyForm: React.FC<Props> = ({
                                       {subLevel}
                                     </AutocompleteItem>
                                   ))}
-                              </AutocompleteSection>
                             </Autocomplete>
                           </div>
                         </div>
@@ -548,7 +561,7 @@ const CompanyForm: React.FC<Props> = ({
                 {/* INDUSTRY */}
                 {selectedJurisdiction && (
                   <div className="flex gap-5">
-                    <div className="new-input half">
+                    <div className="new-input half hide-input-borders">
                       <label>Industry</label>
 
                       <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
@@ -560,6 +573,12 @@ const CompanyForm: React.FC<Props> = ({
                           scrollShadowProps={{
                             isEnabled: false,
                           }}
+                          popoverProps={{
+                            offset: 10,
+                            classNames: {
+                              content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                            },
+                          }}
                           onSelectionChange={(key: any) => {
                             setSelectedIndustry({
                               label: key,
@@ -569,7 +588,6 @@ const CompanyForm: React.FC<Props> = ({
                           }}
                           aria-labelledby="Industry"
                         >
-                          <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
                             {industries?.sectors?.map((industry: any) => (
                               <AutocompleteItem
                                 key={industry.id}
@@ -579,14 +597,13 @@ const CompanyForm: React.FC<Props> = ({
                                 {industry.parentSector}
                               </AutocompleteItem>
                             ))}
-                          </AutocompleteSection>
                         </Autocomplete>
                       </div>
                     </div>
 
                     {/* Sub Sector */}
                     {selectedIndustry && (
-                      <div className=" half new-input">
+                      <div className=" half new-input hide-input-borders">
                         <label>Sub Sector</label>
                         <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                           <Autocomplete
@@ -597,6 +614,12 @@ const CompanyForm: React.FC<Props> = ({
                             scrollShadowProps={{
                               isEnabled: false,
                             }}
+                            popoverProps={{
+                              offset: 10,
+                              classNames: {
+                                content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                              },
+                            }}
                             onSelectionChange={(key: any) => {
                               setSelectedSubSector({
                                 label: key,
@@ -605,7 +628,6 @@ const CompanyForm: React.FC<Props> = ({
                               setInitialLoad(false);
                             }}
                           >
-                            <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
                               {industries?.sectors
                                 ?.find(
                                   (sector: any) =>
@@ -620,7 +642,6 @@ const CompanyForm: React.FC<Props> = ({
                                     {sector}
                                   </AutocompleteItem>
                                 ))}
-                            </AutocompleteSection>
                           </Autocomplete>
                         </div>
                       </div>
