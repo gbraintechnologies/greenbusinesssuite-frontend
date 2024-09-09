@@ -108,14 +108,14 @@ authApi.interceptors.response.use(
             description: "Your session has expired. Please login to continue.",
           });
           // @ts-ignore
-          console.log("error refreshing", e);
-          // localStorage.clear();
-          // if (Boolean(getTenantID())) {
-          //   window.location.replace(`/${getTenantID()}`);
-          // } else {
-          //   window.location.replace("/");
-          // }
-          // window.location.reload();
+
+          localStorage.clear();
+          if (Boolean(getTenantID())) {
+            window.location.replace(`/${getTenantID()}`);
+          } else {
+            window.location.replace("/");
+          }
+          window.location.reload();
         });
     }
 

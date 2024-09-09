@@ -193,7 +193,6 @@ const CompanyForm: React.FC<Props> = ({
   setSelectedSubSector,
   sectorId,
   setSectorId,
-
   initialLoad,
   setInitialLoad,
   color,
@@ -212,15 +211,14 @@ const CompanyForm: React.FC<Props> = ({
 
   const [showColorPicker, setShowColorPicker] = useState(false);
 
-  const {
-    data: jurisdictions,
-    isLoading: jurisdictionsLoading,
-  } = useQuery({
+  const { data: jurisdictions, isLoading: jurisdictionsLoading } = useQuery({
     queryKey: ["all countries"],
     queryFn: services.allcountries(),
   });
 
-  useEffect(() => {console.log('selected ', selectedIndustry)},[selectedIndustry])
+  useEffect(() => {
+    // console.log("selected ", selectedIndustry);
+  }, [selectedIndustry]);
 
   const fetchIndustries = async (jurisdiction: string) => {
     try {
@@ -250,7 +248,6 @@ const CompanyForm: React.FC<Props> = ({
     setColor(newColor.hex);
   };
 
-
   const getJurisdictionEntries = async (country: string) => {
     try {
       if (!initialLoad) {
@@ -259,7 +256,7 @@ const CompanyForm: React.FC<Props> = ({
         setSelectedSubLevel(undefined);
         setSubJurisdiction([]);
       }
-      const response = await services.getCountryInfoByName(country)
+      const response = await services.getCountryInfoByName(country);
       setSubJurisdiction(response);
     } catch (err) {
       console.log("error ", err);
@@ -307,7 +304,6 @@ const CompanyForm: React.FC<Props> = ({
     }
   }, [selectedIndustry]);
 
-
   // useLayoutEffect(() => {
   //   if (selectedIndustry?.value && sectorId) {
   //     fetchSubSectors(sectorId, selectedIndustry?.value);
@@ -315,7 +311,7 @@ const CompanyForm: React.FC<Props> = ({
   // }, [selectedIndustry, sectorId]);
 
   return (
-    <>
+    <div className="hide-input-borders">
       <Formik
         initialValues={initialValues}
         validationSchema={companySchema}
@@ -402,18 +398,18 @@ const CompanyForm: React.FC<Props> = ({
                   <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                     <Autocomplete
                       variant="bordered"
-                      className="w-full"
+                      className="w-full "
                       placeholder={"Select Jurisdiction"}
                       selectedKey={selectedJurisdiction?.value}
                       scrollShadowProps={{
-                        isEnabled: false
+                        isEnabled: false,
                       }}
                       onSelectionChange={(key: any) => {
                         setSelectedJurisdiction({
                           label: key,
                           value: key,
                         });
-                        setInitialLoad(false)
+                        setInitialLoad(false);
                       }}
                       aria-labelledby="Country"
                     >
@@ -427,7 +423,11 @@ const CompanyForm: React.FC<Props> = ({
                               <img
                                 src={Countrie(country)?.flags.png}
                                 alt={Countrie(country)?.name.common}
-                                style={{ height: "24px", width: "24px", borderRadius: "50%" }}
+                                style={{
+                                  height: "24px",
+                                  width: "24px",
+                                  borderRadius: "50%",
+                                }}
                               />
                             }
                           >
@@ -449,31 +449,34 @@ const CompanyForm: React.FC<Props> = ({
                           {subJurisdiction?.addressingScheme?.parentLevelName ||
                             "Sub Jurisdiction"}
                         </label>
-                        
+
                         <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                           <Autocomplete
                             variant="bordered"
                             className="w-full"
                             placeholder={
-                              subJurisdiction?.addressingScheme?.parentLevelName ||
-                              "Sub Jurisdiction"
+                              subJurisdiction?.addressingScheme
+                                ?.parentLevelName || "Sub Jurisdiction"
                             }
                             selectedKey={selectedSubJurisdiction?.label}
                             scrollShadowProps={{
-                              isEnabled: false
+                              isEnabled: false,
                             }}
                             onSelectionChange={(key: any) => {
                               setSelectedSubJurisdiction({
                                 label: key,
                                 value: key,
                               });
-                              setInitialLoad(false)
+                              setInitialLoad(false);
                             }}
                             aria-labelledby="Parent Level"
                           >
                             <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
-                              {subJurisdiction?.addressingScheme?.parentLevels?.map(
-                                (subJurisdiction: any) => (
+                              {subJurisdiction?.addressingScheme?.parentLevels
+                                ?.filter(
+                                  (item: any) => item?.parentName?.length > 1
+                                )
+                                ?.map((subJurisdiction: any) => (
                                   <AutocompleteItem
                                     key={subJurisdiction.id}
                                     value={subJurisdiction.parentName}
@@ -481,8 +484,7 @@ const CompanyForm: React.FC<Props> = ({
                                   >
                                     {subJurisdiction?.parentName}
                                   </AutocompleteItem>
-                                )
-                              )}
+                                ))}
                             </AutocompleteSection>
                           </Autocomplete>
                         </div>
@@ -492,25 +494,27 @@ const CompanyForm: React.FC<Props> = ({
                       {selectedSubJurisdiction && (
                         <div className="new-input half">
                           <label>
-                          {subJurisdiction?.addressingScheme?.childLevelName ||
-                            "Sub Level"}
-                        </label>
+                            {subJurisdiction?.addressingScheme
+                              ?.childLevelName || "Sub Level"}
+                          </label>
                           <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                             <Autocomplete
                               variant="bordered"
                               className="w-full"
-                              placeholder={subJurisdiction?.addressingScheme?.childLevelName ||
-                            "Sub Level"}
+                              placeholder={
+                                subJurisdiction?.addressingScheme
+                                  ?.childLevelName || "Sub Level"
+                              }
                               selectedKey={selectedSubLevel?.label}
                               scrollShadowProps={{
-                                isEnabled: false
+                                isEnabled: false,
                               }}
                               onSelectionChange={(key: any) => {
                                 setSelectedSubLevel({
                                   label: key,
                                   value: key,
                                 });
-                                setInitialLoad(false)
+                                setInitialLoad(false);
                               }}
                               aria-labelledby="Child Level"
                             >
@@ -521,7 +525,10 @@ const CompanyForm: React.FC<Props> = ({
                                       entry?.id ==
                                       selectedSubJurisdiction?.value
                                   )
-                                  ?.childLevels?.map((subLevel: any) => (
+                                  ?.childLevels?.filter(
+                                    (item: any) => item?.length > 1
+                                  )
+                                  ?.map((subLevel: any) => (
                                     <AutocompleteItem
                                       key={subLevel}
                                       value={subLevel}
@@ -543,7 +550,7 @@ const CompanyForm: React.FC<Props> = ({
                   <div className="flex gap-5">
                     <div className="new-input half">
                       <label>Industry</label>
-                      
+
                       <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                         <Autocomplete
                           variant="bordered"
@@ -551,7 +558,7 @@ const CompanyForm: React.FC<Props> = ({
                           placeholder="Select industry"
                           selectedKey={selectedIndustry?.label}
                           scrollShadowProps={{
-                            isEnabled: false
+                            isEnabled: false,
                           }}
                           onSelectionChange={(key: any) => {
                             setSelectedIndustry({
@@ -588,14 +595,14 @@ const CompanyForm: React.FC<Props> = ({
                             placeholder="Select sub level"
                             selectedKey={selectedSubSector?.label ?? ""}
                             scrollShadowProps={{
-                              isEnabled: false
+                              isEnabled: false,
                             }}
                             onSelectionChange={(key: any) => {
                               setSelectedSubSector({
                                 label: key,
                                 value: key,
                               });
-                              setInitialLoad(false)
+                              setInitialLoad(false);
                             }}
                           >
                             <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg min-w-72 flex flex-col gap-3">
@@ -882,7 +889,7 @@ const CompanyForm: React.FC<Props> = ({
         }}
       </Formik>
       {/* CANCEL MODAL: DISCARD ALL CHANGES */}
-    </>
+    </div>
   );
 };
 

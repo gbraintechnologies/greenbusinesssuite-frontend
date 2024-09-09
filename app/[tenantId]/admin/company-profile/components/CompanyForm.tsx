@@ -281,9 +281,7 @@ const CompanyForm: React.FC<Props> = ({
         setSelectedSubLevel(undefined);
         setSubJurisdiction([]);
       }
-      const response = await services.getJurisdictionEntriesByIdRaw(
-        jurisdictionId
-      );
+      const response = await services.getJurisdictionByIdRaw(jurisdictionId);
       setSubJurisdiction(response);
     } catch (err) {
       console.log("error ", err);
@@ -342,7 +340,7 @@ const CompanyForm: React.FC<Props> = ({
   // }, [selectedIndustry, sectorId]);
 
   return (
-    <>
+    <div className="hide-input-borders">
       <Formik
         initialValues={initialValues}
         validationSchema={companySchema}
@@ -469,7 +467,7 @@ const CompanyForm: React.FC<Props> = ({
                   !subJurisdictionsLoading && (
                     <div className="flex gap-5">
                       {/* SUB JURISDICTION */}
-                      {/* <div className="new-input half">
+                {/* <div className="new-input half">
                         <label>
                           {subJurisdiction?.parentAddressScheme?.name ||
                             "Sub Jurisdiction"}
@@ -517,8 +515,8 @@ const CompanyForm: React.FC<Props> = ({
                         </div>
                         {subJurisdictionsLoading && <LoadingIcon />}
                       </div> */}
-                      {/* SUB LEVEL */}
-                      {/* {selectedSubJurisdiction && (
+                {/* SUB LEVEL */}
+                {/* {selectedSubJurisdiction && (
                         <div className="new-input half">
                           <label>Sub Level</label>
                           <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
@@ -559,7 +557,7 @@ const CompanyForm: React.FC<Props> = ({
                           </div>
                         </div>
                       )} */}
-                    {/* </div>
+                {/* </div>
                   )}  */}
 
                 {/* INDUSTRY */}
@@ -608,7 +606,7 @@ const CompanyForm: React.FC<Props> = ({
                     </div>
 
                     {/* Sub Sector */}
-                    {/* {selectedIndustry && (
+                {/* {selectedIndustry && (
                       <div className=" half new-input">
                         <label>Sub Sector</label>
                         <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
@@ -909,7 +907,7 @@ const CompanyForm: React.FC<Props> = ({
         }}
       </Formik>
       {/* CANCEL MODAL: DISCARD ALL CHANGES */}
-    </>
+    </div>
   );
 };
 
