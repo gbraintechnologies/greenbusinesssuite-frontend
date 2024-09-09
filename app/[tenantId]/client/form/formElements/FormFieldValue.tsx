@@ -104,7 +104,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
   const { data: jurisdictionEntries, isLoading: jurisdictionEntriesLoading } =
     useQuery({
       queryKey: ["all parentSchemeEntries", field?.validPattern],
-      queryFn: services.getJurisdictionEntriesById(Number(field?.validPattern)),
+      queryFn: services.getJurisdictionById(Number(field?.validPattern)),
       enabled: !!field?.validPattern,
     });
 

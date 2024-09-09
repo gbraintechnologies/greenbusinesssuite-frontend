@@ -29,10 +29,14 @@ export const FormProvider = ({ children }) => {
 
   const queryClient = useQueryClient();
 
+  function isEmpty(obj) {
+    return Object.keys(obj).length === 0 && obj.constructor === Object;
+  }
+
   // for syncing with the server
 
   useEffect(() => {
-    if (form) {
+    if (!isEmpty(form)) {
       setForm((prev) => ({ ...prev, layout: formLayout }));
       // update remote form too
       updateRemoteForm({ ...form, layout: formLayout });
@@ -41,24 +45,27 @@ export const FormProvider = ({ children }) => {
 
   // UPDATE REMOTE FORM FIRST
   const updateRemoteForm = (updatedForm) => {
-    services
-      .updateForm({ ...updatedForm, updatedOn: new Date() })
-      .then((res) => {
-        setForm(res.data);
-        setLoadingField(false);
-        setLoadingSection(false);
-        queryClient.invalidateQueries({
-          queryKey: ["form", form?.id],
+    // only when there's an active form selected
+    if (!isEmpty(form)) {
+      services
+        .updateForm({ ...updatedForm, updatedOn: new Date() })
+        .then((res) => {
+          setForm(res.data);
+          setLoadingField(false);
+          setLoadingSection(false);
+          queryClient.invalidateQueries({
+            queryKey: ["form", form?.id],
+          });
+          toast.dismiss();
+          // TODO: REMOVE AFTER TESTS
+          // toast.success("updated remote");
+        })
+        .catch((e) => {
+          toast.dismiss();
+          toast.error("Error occured");
+          console.log("error updating remote form:", e);
         });
-        toast.dismiss();
-        // TODO: REMOVE AFTER TESTS
-        // toast.success("updated remote");
-      })
-      .catch((e) => {
-        toast.dismiss();
-        toast.error("Error occured");
-        console.log("error updating remote form:", e);
-      });
+    }
   };
 
   // form stuff

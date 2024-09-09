@@ -54,7 +54,7 @@ authApi.interceptors.response.use(
       let headers: headerT = {
         "Content-Type": "application/json",
         "user-uuid": getUserUUID(),
-        // Authorization: `Bearer ${getToken()}`,
+        Authorization: `Bearer ${getToken()}`,
       };
 
       // Route to admin or tenant
