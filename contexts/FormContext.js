@@ -96,7 +96,7 @@ export const FormProvider = ({ children }) => {
             });
           })
           .catch((e) => {
-            console.log("error getting updated form");
+            console.log("error getting updated form", e);
           });
 
         toast.dismiss();

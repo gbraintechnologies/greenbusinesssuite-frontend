@@ -54,8 +54,6 @@ function FieldOptions({ refetch }: any) {
       Boolean(form?.id) && Boolean(localField?.fieldDataType === "address"),
   });
 
-  console.log("jurisdictions", jurisdictions);
-
   // update local copy if changes are made
   useEffect(() => {
     setLocalField(activeField?.field);
@@ -324,13 +322,14 @@ function FieldOptions({ refetch }: any) {
                     isEnabled: false,
                   }}
                   onSelectionChange={(type: any) => {
+                    console.log("type", type);
                     setLocalField((prev: any) => ({
                       ...prev,
-                      validPattern: type?.countryId,
+                      validPattern: type,
                     }));
                     updateActiveField(activeField.section, {
                       ...localField,
-                      validPattern: type?.countryId,
+                      validPattern: type,
                     });
                   }}
                 >

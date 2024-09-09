@@ -26,10 +26,17 @@ export const allFormTemplates = (
       .then((res) => res.data);
 };
 
-export const companyCustomersWithFormCount = (companyId: number, page: number, size: number, timeline: TimelineType = "ALL") => {
+export const companyCustomersWithFormCount = (
+  companyId: number,
+  page: number,
+  size: number,
+  timeline: TimelineType = "ALL"
+) => {
   return () =>
     authApi
-      .get(`/forms/response/completed-forms-count/${companyId}/${page}/${size}/${timeline}`)
+      .get(
+        `/forms/response/completed-forms-count/${companyId}/${page}/${size}/${timeline}`
+      )
       .then((res) => res.data);
 };
 
@@ -60,8 +67,8 @@ export const getFormByIdRawForUser = (id: any) => {
 
 export const getFormsByCompanyId = (
   companyId: string,
-  page: string | number ,
-  size: string | number ,
+  page: string | number,
+  size: string | number,
   timeLine: TimelineType = "ALL"
 ) => {
   return () =>
