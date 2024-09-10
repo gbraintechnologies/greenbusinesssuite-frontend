@@ -9,11 +9,11 @@ export const allJurisdictions = (Page: number = 0, Size: number = 100) => {
 
 export const allcountries = () => {
   return () =>
-    defaultMeshApi.get(`countries/names`).then((res) => res.data);
+    defaultMeshApi.get(`/countries/names`).then((res) => res.data);
 };
 
-export const csvUploads = (formData: FormData, file: string) => {
-  return multipartMeshApi.post(`countries/csv-import/${file}`, formData);
+export const csvUploads = (formData: FormData) => {
+  return multipartMeshApi.post(`/countries/csv-import`, formData);
 };
 
 export const createCountry = (data: any) => {
