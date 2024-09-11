@@ -66,7 +66,7 @@ function NewIndividual() {
   const handleDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
 
-    const acceptedExtensions = [".csv", ".xls", ".xlsx"];
+    const acceptedExtensions = [".csv", ".xls", ".xlsx", ".txt"];
     const fileExtension = file.name
       .substring(file.name.lastIndexOf("."))
       .toLowerCase();
@@ -119,24 +119,28 @@ function NewIndividual() {
     setIsSubmitting(true);
 
     try {
+      // Case 1: If there's a CSV file (IDImage), upload the file and redirect to /country-setup
       if (IDImage && fileName) {
         const formData = new FormData();
         formData.append("file", IDImage);
-        await csvUploads(formData, fileName.name);
+        await csvUploads(formData);
 
-        toast.success("CSV file uploaded Successfully", { position: "top-center", duration: 3000 });
+        toast.success("CSV file uploaded successfully", { position: "top-center", duration: 3000 });
 
-        setIDImage(null);
-        setUploadProgress(0);
-        setFileName({ name: "", size: 0 });
+        // After CSV upload, route back to the country setup page
+        router.push("/country-setup");
+
+        // Return early to prevent further execution
+        return;
       }
 
+      // Case 2: If there's no CSV file, process form data and route to /region-input
       const items = dropdownItems
         .split(",")
         .map(item => item.trim())
-        .filter(item => item);
+        .filter(item => item); // Ensure no empty items
 
-      const data = getValues();
+      const data = getValues(); // Fetch form values using react-hook-form's getValues
 
       const Payload = {
         countryId: data.countryId,
@@ -144,24 +148,27 @@ function NewIndividual() {
         parentLevelName: data.parentLevelName,
         childLevelName: data.childLevelName,
         inputType: selectedOption === "Dropdown" ? "DROP_DOWN" : "FREE_INPUT",
-        parentNames: items
+        parentNames: items, // From dropdown items
       };
 
+      // Create country and obtain parent ID
       const parentId = await createCountry(Payload);
 
-      toast.success("Parent Level created Successfully", { position: "top-center", duration: 3000 });
+      toast.success("Parent Level created successfully", { position: "top-center", duration: 3000 });
+
+      // After creating the parent level, route to region input page
       router.push(`/country-setup/region-input?id=${parentId.data}`);
     } catch (error: unknown) {
+      // Handle errors gracefully
       if (error instanceof Error) {
         toast.error(`An error occurred: ${error.message}`);
       } else {
         toast.error(`An unknown error occurred`);
       }
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Ensure submitting state is reset
     }
   };
-
 
 
   return (
@@ -210,7 +217,7 @@ function NewIndividual() {
             </p>
           </div>
 
-          <div className="mb-1 relative focus:border focus:border-black rounded-[6px]">
+          <div className="mb-1 relative">
             <TextInput
               type="text"
               autoComplete="off"
