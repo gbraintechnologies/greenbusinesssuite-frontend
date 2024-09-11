@@ -3,7 +3,7 @@
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 function Layout({
   children,
@@ -15,6 +15,7 @@ function Layout({
   const pathname = usePathname();
 
   const { checkPermission } = useAdmin();
+
 
   return (
     <div>
