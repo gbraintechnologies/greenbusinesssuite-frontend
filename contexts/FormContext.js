@@ -64,7 +64,7 @@ export const FormProvider = ({ children }) => {
         })
         .catch((e) => {
           toast.dismiss();
-          toast.error("Error occured");
+          // toast.error("Error occured");
           console.log("error updating remote form:", e);
         });
     }
@@ -81,33 +81,33 @@ export const FormProvider = ({ children }) => {
   };
 
   const updateActiveField = (section, data) => {
-    services
-      .updateFormField({ ...data, updatedOn: new Date() })
-      .then((res) => {
-        // setForm(res.data);
-        setLoadingField(false);
-        setLoadingSection(false);
-        services
-          .getFormByIdRaw(form.id)
-          .then((res) => {
-            setForm(res.data);
-            queryClient.invalidateQueries({
-              queryKey: ["form", form?.id],
+    if (!isEmpty(form)) {
+      services
+        .updateFormField({ ...data, updatedOn: new Date() })
+        .then((res) => {
+          // setForm(res.data);
+          setLoadingField(false);
+          setLoadingSection(false);
+          services
+            .getFormByIdRaw(form.id)
+            .then((res) => {
+              setForm(res.data);
+              queryClient.invalidateQueries({
+                queryKey: ["form", form?.id],
+              });
+            })
+            .catch((e) => {
+              console.log("error getting updated form", e);
             });
-          })
-          .catch((e) => {
-            console.log("error getting updated form", e);
-          });
 
-        toast.dismiss();
-      })
-      .catch((e) => {
-        toast.dismiss();
-        toast.error("Error occured");
-        console.log("error updating remote form:", e);
-      });
-
-    // updateRemoteForm({ ...form, formSections: allSections });
+          toast.dismiss();
+        })
+        .catch((e) => {
+          toast.dismiss();
+          // toast.error("Error occured");
+          console.log("error updating remote form:", e);
+        });
+    }
   };
 
   const updateNameAndDescription = (data) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Countrie } from "../components/Countries"; // Ensure Countrie import is correct
+import { Countrie } from "./Countries"; // Ensure Countrie import is correct
 
 interface ISelectCountryEdit
   extends React.SelectHTMLAttributes<HTMLSelectElement> {

@@ -31,10 +31,7 @@ function CompanyForms() {
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
-  const {
-    data: forms,
-    isLoading: isFormsLoading,
-  } = useQuery({
+  const { data: forms, isLoading: isFormsLoading } = useQuery({
     queryKey: [
       "get company forms for ",
       Number(companyData?.id),
@@ -55,7 +52,7 @@ function CompanyForms() {
   // }, [page, limit, selectedTimeline]);
 
   useEffect(() => {
-    console.log('is forms loading changed to ', isFormsLoading);
+    console.log("is forms loading changed to ", isFormsLoading);
   }, [isFormsLoading]);
 
   return (

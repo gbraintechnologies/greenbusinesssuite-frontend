@@ -100,7 +100,7 @@ function FieldOptions({ refetch }: any) {
     // address input
     if (fieldDataType === "address") {
       return (
-        <div className="bg-white hide-input-borders  pb-[25rem] h-screen no-scrollbar  overflow-y-scroll  p-3">
+        <div className="bg-white  pb-[25rem] h-screen no-scrollbar  overflow-y-scroll  p-3">
           {/* REQUIRED FIELD OR NOT */}
           <div className="bg-[#F8FAFC] py-3 mt-8 px-5  rounded-lg flex gap-3 items-center justify-between">
             <p className="font-medium text-base">Required field</p>{" "}
@@ -259,7 +259,7 @@ function FieldOptions({ refetch }: any) {
           {instruction == "parent-and-sub-level" && (
             <>
               {/* COUNTRY */}
-              <div className="mt-5 mb-5">
+              <div className="mt-5 mb-5 hide-input-borders">
                 <p className="font-medium text-base mb-4">Country</p>{" "}
                 {/* <Dropdown>
                   <DropdownTrigger>
@@ -315,7 +315,7 @@ function FieldOptions({ refetch }: any) {
                   className="bg-white flex items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
                   placeholder={
                     jurisdictions?.countries?.find(
-                      (item: any) => item?.countryId == validPattern
+                      (item: any) => item?.id == validPattern
                     )?.countryName || "No country selected"
                   }
                   scrollShadowProps={{
@@ -336,8 +336,8 @@ function FieldOptions({ refetch }: any) {
                   <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
                     {jurisdictions?.countries.map((type: any) => (
                       <AutocompleteItem
-                        key={type?.countryId}
-                        value={type?.countryId}
+                        key={type?.id}
+                        value={type?.id}
                         className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                       >
                         {type?.countryName}

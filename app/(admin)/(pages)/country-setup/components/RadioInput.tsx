@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React from "react";
-import "../components/index.css";
+import "./index.css";
 
 interface IRadioInput extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;

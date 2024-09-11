@@ -192,15 +192,13 @@ const Page = () => {
     const refetchForms = async () => {
       try {
         setFormsLoading(true);
-        refetch()
-      }
-      catch(error){
-        toast.error("An error occurred")
-      }
-      finally {
+        refetch();
+      } catch (error) {
+        toast.error("An error occurred");
+      } finally {
         setFormsLoading(false);
-      };
-    }
+      }
+    };
 
     refetchForms();
   }, [page, selectedTimeline]);
@@ -326,16 +324,21 @@ const Page = () => {
               <div className="flex flex-col gap-3">
                 <div className="label">Company Dashboard</div>
 
-                <button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center justify-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2" 
-                onClick={() => {
-                  const currentHost = window.location.origin;
-                  const url = currentHost + `/${companyData?.company_identifier}/auth`;
+                <button
+                  className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center justify-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2"
+                  onClick={() => {
+                    const currentHost = window.location.origin;
+                    const url =
+                      currentHost + `/${companyData?.company_identifier}/auth`;
 
                     navigator.clipboard.writeText(url).then(() => {
                       toast.dismiss();
-                      toast.success(`${companyData?.company_name} dashboard link copied!`);
+                      toast.success(
+                        `${companyData?.company_name} dashboard link copied!`
+                      );
                     });
-                  }}>
+                  }}
+                >
                   <VscLink /> Copy Link{" "}
                 </button>
               </div>
@@ -409,11 +412,9 @@ const Page = () => {
                         {","}
                         {parentAddressScheme?.parentName}
                         {","}
-                        {
-                          parentAddressScheme?.childLevels?.find(
-                            (entry: any) => entry == companyChildAddressId
-                          )
-                        }
+                        {parentAddressScheme?.childLevels?.find(
+                          (entry: any) => entry == companyChildAddressId
+                        )}
                       </div>
                     </div>
                   )}
@@ -547,13 +548,13 @@ const Page = () => {
                       interface appears to customers.
                     </p>
                   </div>
-                  {/* <button
+                  <button
                     type="button"
                     className="bg-white disabled:bg-gray-400 py-3 text-black border w-24 flex items-center justify-center border-[rgba(226, 232, 240, 1)] text-sm hover:opacity-95 items-center gap-2 rounded-xl"
                     onClick={editCompanyBranding}
                   >
                     Save
-                  </button> */}
+                  </button>
                 </header>
                 <div className="max-w-2xl">
                   {/* COMPANY SMALL LOGO */}

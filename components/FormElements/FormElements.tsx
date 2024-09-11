@@ -166,18 +166,6 @@ export const defaultFormElements = [
     },
   },
   {
-    icon: <FaRegMap size={18} />,
-    name: "Open Address information",
-    properties: {
-      ...template,
-      fieldDataType: "long-text",
-      name: "Address information",
-      description: "Address information",
-      label: "Address information",
-      placeHolder: "Enter your address information",
-    },
-  },
-  {
     icon: <IoCalendarOutline size={18} />,
     name: "Date",
     properties: {
