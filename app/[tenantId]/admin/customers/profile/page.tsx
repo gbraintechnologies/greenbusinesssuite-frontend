@@ -42,10 +42,11 @@ const page = () => {
     enabled: Boolean(userId),
   });
 
-  const { data: userForms, isLoading: areFormsLoading } = useQuery({
-    queryKey: ["get forms for ", Number(userId)],
-    queryFn: services.getFormsByUserId(userId),
-  });
+  // TODO: DATA SHIFTED
+  // const { data: userForms, isLoading: areFormsLoading } = useQuery({
+  //   queryKey: ["get forms for ", Number(userId)],
+  //   queryFn: services.getFormsByUserId(userId),
+  // });
 
   const { data: formsStats, isLoading: areStatsLoading } = useQuery({
     queryKey: ["get forms statistics for user", userId],
@@ -74,17 +75,17 @@ const page = () => {
     }
   };
 
-  useEffect(() => {
-    if (userForms?.length > 0) {
-      setSelectedForm(userForms[0]);
-    }
-  }, [userForms]);
+  // useEffect(() => {
+  //   if (userForms?.length > 0) {
+  //     setSelectedForm(userForms[0]);
+  //   }
+  // }, [userForms]);
 
   useEffect(() => {
     fetchSelectedFormsResponse();
   }, [selectedForm]);
 
-  if (isUserLoading || areFormsLoading || areStatsLoading) {
+  if (isUserLoading || areStatsLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
         <div>
@@ -153,7 +154,7 @@ const page = () => {
         />
       </div>
       <div className="mt-5">
-        <Dropdown>
+        {/* <Dropdown>
           <DropdownTrigger>
             <button className="border min-w-48 outline-none shadow-md border-[#E2E8F0] bg-slate-50 py-0  rounded-lg my-2">
               <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
@@ -183,7 +184,7 @@ const page = () => {
               </DropdownItem>
             ))}
           </DropdownMenu>
-        </Dropdown>
+        </Dropdown> */}
       </div>
 
       <div className="mt-4">

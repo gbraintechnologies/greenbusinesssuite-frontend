@@ -130,7 +130,9 @@ export const getUncompletedFormsByUserId = (userId: string) => {
 
 export const getAllFormsByUserId = (userId: string) => {
   return () =>
-    authApi.get(`/forms/builder/user-forms/${userId}`).then((res) => res.data);
+    defaultMeshApi
+      .get(`/forms/builder/user-forms/${userId}`)
+      .then((res) => res.data);
 };
 
 export const getFormsByUserId = (userId: string | null) => {
@@ -138,7 +140,9 @@ export const getFormsByUserId = (userId: string | null) => {
     throw new Error("User ID is required");
   }
   return () =>
-    authApi.get(`/forms/builder/user-forms/${userId}`).then((res) => res.data);
+    defaultMeshApi
+      .get(`/forms/builder/user-forms/${userId}`)
+      .then((res) => res.data);
 };
 
 export const getFormResponseById = (
