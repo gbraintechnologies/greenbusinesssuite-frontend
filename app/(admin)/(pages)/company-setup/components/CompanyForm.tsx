@@ -584,6 +584,7 @@ const CompanyForm: React.FC<Props> = ({
                               label: key,
                               value: key,
                             });
+                            setSectorId(industries.id);
                             setInitialLoad(false);
                           }}
                           aria-labelledby="Industry"
