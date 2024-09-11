@@ -216,9 +216,6 @@ const CompanyForm: React.FC<Props> = ({
     queryFn: services.allcountries(),
   });
 
-  useEffect(() => {
-    // console.log("selected ", selectedIndustry);
-  }, [selectedIndustry]);
 
   const fetchIndustries = async (jurisdiction: string) => {
     try {
@@ -297,19 +294,10 @@ const CompanyForm: React.FC<Props> = ({
 
   useLayoutEffect(() => {
     if (!initialLoad) {
-      setSelectedSubLevel(undefined);
-      console.log("selectedSubJurisdiction ", selectedSubJurisdiction);
-      console.log('initial load ', initialLoad);
+      setSelectedSubLevel(undefined);;
     }
   }, [selectedSubJurisdiction]);
-
-  useEffect(() => {
-    console.log("selectedSubJurisdiction changed ", selectedSubLevel);
-
-  }, [selectedSubLevel]);
-
   
-
   useLayoutEffect(() => {
     if (!initialLoad) {
       setSelectedSubSector(undefined);
