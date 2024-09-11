@@ -11,10 +11,11 @@ import { useForm } from "react-hook-form";
 import useAdmin from "@/hooks/useAdmin";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { changePassword, updateUser } from "@/services/features/authService";
+
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SuccessIcon from "@/public/icons/SuccessIcon";
 import { useSearchParams } from "next/navigation";
+import services from "@/services";
 
 const schema = yup.object({
   user_id: yup.number(),
@@ -49,38 +50,40 @@ function CreatePassword() {
   });
 
   const onSubmit = async (data: typeOfSchema) => {
-    try {
-      const passwordPayload = {
-        user_id: data.user_id,
-        current_password: data.current_password,
-        new_password: data.new_password,
-      };
-      await changePassword(passwordPayload);
+    const passwordPayload = {
+      user_id: data.user_id,
+      current_password: data.current_password,
+      new_password: data.new_password,
+    };
 
-      const userStatusPayload = {
-        id: admin.id,
-        email: admin.email,
-        username: admin.email,
-        first_name: admin.first_name,
-        last_name: admin.last_name,
-        phone_number: admin.phone_number,
-        mobile_phone_number: admin.mobile_phone_number,
-        user_status: "ACTIVE",
-      };
+    services
+      .changePassword(passwordPayload)
+      .then((res) => {
+        const userStatusPayload = {
+          id: admin.id,
+          email: admin.email,
+          username: admin.email,
+          first_name: admin.first_name,
+          last_name: admin.last_name,
+          phone_number: admin.phone_number,
+          mobile_phone_number: admin.mobile_phone_number,
+          user_status: "ACTIVE",
+        };
 
-      updateUser(userStatusPayload.id, userStatusPayload).catch((error) =>
-        alert(error.message)
-      );
+        setStatus("success");
 
-      // toast.success("Password changed Successfully", {
-      //   position: "top-center",
-      //   duration: 3000,
-      // });
-
-      setStatus("success");
-    } catch (error) {
-      setLoginError("This should be the same as the password inputed above");
-    }
+        services
+          .updateUser(userStatusPayload.id, userStatusPayload)
+          .then(() => {
+            //
+          })
+          .catch((e) => {
+            // toast.error("Error updating user information");
+          });
+      })
+      .catch((e) => {
+        toast.error("Error changing password");
+      });
   };
 
   return (
@@ -96,7 +99,10 @@ function CreatePassword() {
             <div>
               <form
                 className=" loginFrame flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-10 bg-white p-6 rounded-[20px]"
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmit(onSubmit);
+                }}
               >
                 <h6 className="font-bold text-xl">Create a new password</h6>
                 <p>
