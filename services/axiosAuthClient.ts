@@ -109,13 +109,13 @@ authApi.interceptors.response.use(
           });
 
           // @ts-ignore
-          localStorage.clear();
-          if (Boolean(getTenantID())) {
-            window.location.replace(`/${getTenantID()}`);
-          } else {
-            window.location.replace("/");
-          }
-          window.location.reload();
+          // localStorage.clear();
+          // if (Boolean(getTenantID())) {
+          //   window.location.replace(`/${getTenantID()}`);
+          // } else {
+          //   window.location.replace("/");
+          // }
+          // window.location.reload();
         });
     }
 
