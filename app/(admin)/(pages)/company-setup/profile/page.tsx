@@ -144,9 +144,8 @@ const Page = () => {
   const {
     data: assignedForms,
     isLoading: areFormsLoading,
-    refetch,
   } = useQuery({
-    queryKey: ["get assigned forms for ", Number(companyData?.id)],
+    queryKey: ["get assigned forms for ", Number(companyData?.id), page, limit, selectedTimeline?.value],
     queryFn: services.getFormsByCompanyId(
       companyData?.id,
       page,
@@ -186,20 +185,6 @@ const Page = () => {
 
   const { handleFileUpload } = useFileUpload();
 
-  useEffect(() => {
-    const refetchForms = async () => {
-      try {
-        setFormsLoading(true);
-        refetch();
-      } catch (error) {
-        toast.error("An error occurred");
-      } finally {
-        setFormsLoading(false);
-      }
-    };
-
-    refetchForms();
-  }, [page, selectedTimeline]);
 
   useEffect(() => {
     if (!companyData) return;
@@ -461,7 +446,7 @@ const Page = () => {
             )}
 
             {activeFilter.value === "assigned_forms" && (
-              <>
+              <> 
                 <div className="min-h-[40vh]">
                   <div className="flex items-center justify-between mb-2 mt-2">
                     <div className=" w-full text-[#475569] font-medium my-4 text-base">
@@ -496,7 +481,7 @@ const Page = () => {
                   {/* NO ASSIGNED FORM */}
                   {assignedForms?.content?.length === 0 && (
                     <div className="flex items-center justify-center py-5 w-full ">
-                      <EmptyList text="No forms assigned to company" />
+                      <EmptyList text={selectedTimeline?.value == "ALL" ? "No forms assigned to company": ""} />
                     </div>
                   )}
 
@@ -638,7 +623,7 @@ const Page = () => {
                           <button
                             className="mt-2 flex items-center my-2 bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer"
                             type="button"
-                            onClick={() => setShowColorPicker(!showColorPicker)}
+                            // onClick={() => setShowColorPicker(!showColorPicker)}
                           >
                             <div
                               className="w-5 h-8 rounded-tl-md rounded-bl-md"

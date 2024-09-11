@@ -93,7 +93,6 @@ function CompanySetup() {
   const {
     data: companies,
     isLoading,
-    refetch: refetchCompanies,
   } = useQuery({
     queryKey: ["companies", page, limit],
     queryFn: services.getAllCompanies(page * limit, limit),
@@ -130,9 +129,6 @@ function CompanySetup() {
     }
   };
 
-  useEffect(() => {
-    refetchCompanies();
-  }, [page]);
 
   //Status Filter
   useEffect(() => {
