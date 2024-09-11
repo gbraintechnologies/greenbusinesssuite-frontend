@@ -15,6 +15,12 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 
+import {
+  Autocomplete,
+  AutocompleteItem,
+  AutocompleteSection,
+} from "@nextui-org/autocomplete";
+
 // icons
 import { IoCloseCircleOutline } from "react-icons/io5";
 
@@ -126,7 +132,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
         return (
           <div
             className={`
-          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
+          ${
+            horizontalAlign ? "col-span-1" : "col-span-2"
+          } p-2 mb-3 hide-input-borders
           `}
           >
             <label className={labelStyle}>
@@ -135,7 +143,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
 
             <p className="mt-2 text-sm">{placeHolder}</p>
 
-            <Dropdown isDisabled={viewOnly} className="w-full">
+            {/* <Dropdown isDisabled={viewOnly} className="w-full">
               <DropdownTrigger disabled={viewOnly} className="w-full">
                 <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
                   {field?.response ? field?.response : "No country selected"}
@@ -161,7 +169,34 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                   );
                 })}
               </DropdownMenu>
-            </Dropdown>
+            </Dropdown> */}
+
+            <Autocomplete
+              isDisabled={viewOnly}
+              variant="flat"
+              className="bg-white flex items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
+              placeholder={
+                field?.response ? field?.response : "No country selected"
+              }
+              scrollShadowProps={{
+                isEnabled: false,
+              }}
+              onInputChange={(value) => {
+                saveSingleResponse(section?.id, field?.id, value);
+              }}
+            >
+              <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
+                {jurisdictions?.countries.map((type: any) => (
+                  <AutocompleteItem
+                    key={type}
+                    value={type}
+                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                  >
+                    {type?.countryName}
+                  </AutocompleteItem>
+                ))}
+              </AutocompleteSection>
+            </Autocomplete>
           </div>
         );
       }
@@ -171,7 +206,9 @@ function FormFieldValue({ field, section, viewOnly }: any) {
         return (
           <div
             className={`
-          ${horizontalAlign ? "col-span-1" : "col-span-2"} p-2 mb-3
+          ${
+            horizontalAlign ? "col-span-1" : "col-span-2"
+          } p-2 mb-3 hide-input-borders
           `}
           >
             <label className={labelStyle}>
@@ -180,7 +217,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
 
             <p className="mt-2 text-sm">{placeHolder}</p>
 
-            <Dropdown isDisabled={viewOnly} className="w-full">
+            {/* <Dropdown isDisabled={viewOnly} className="w-full">
               <DropdownTrigger disabled={viewOnly} className="w-full">
                 <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
                   {field?.response?.split(",")[0]
@@ -214,46 +251,117 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                   }
                 )}
               </DropdownMenu>
-            </Dropdown>
+            </Dropdown> */}
+
+            <Autocomplete
+              isDisabled={viewOnly}
+              variant="flat"
+              className="bg-white flex items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
+              placeholder={
+                field?.response?.split(",")[0]
+                  ? field?.response?.split(",")[0]
+                  : "Select option"
+              }
+              scrollShadowProps={{
+                isEnabled: false,
+              }}
+              onInputChange={(value) => {
+                saveSingleResponse(section?.id, field?.id, value);
+              }}
+            >
+              <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
+                {jurisdictionEntries?.addressingScheme?.parentLevels?.map(
+                  (type: any) => (
+                    <AutocompleteItem
+                      key={type.id}
+                      value={type.id}
+                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                    >
+                      {type?.parentName}
+                    </AutocompleteItem>
+                  )
+                )}
+              </AutocompleteSection>
+            </Autocomplete>
 
             {field?.response && (
-              <Dropdown isDisabled={viewOnly} className="w-full">
-                <DropdownTrigger disabled={viewOnly} className="w-full">
-                  <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
-                    {field?.response?.split(",")[1]
+              <>
+                {/* <Dropdown isDisabled={viewOnly} className="w-full">
+                  <DropdownTrigger disabled={viewOnly} className="w-full">
+                    <p className="border text-black text-base mt-2 border-gray-200 px-3 py-2 flex items-center justify-between rounded-lg">
+                      {field?.response?.split(",")[1]
+                        ? field?.response?.split(",")[1]
+                        : "Select sub level"}
+                      <IoIosArrowDown />
+                    </p>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    selectionMode="single"
+                    aria-label="Dynamic Actions"
+                    className="bg-white shadow-sm rounded-lg w-60"
+                  >
+                    {jurisdictionEntries?.parentAddressScheme?.entries
+                      ?.find(
+                        (item: any) =>
+                          item.name == field?.response.split(",")[0]
+                      )
+                      .childEntries?.map((value: any) => {
+                        return (
+                          <DropdownItem
+                            key={value}
+                            onClick={() =>
+                              saveSingleResponse(
+                                section?.id,
+                                field?.id,
+                                field?.response + "," + value?.name
+                              )
+                            }
+                            className="flex hover:bg-gray-100 px-4  items-center flex-row gap-2"
+                          >
+                            <p className="text-base">{value?.name}</p>
+                          </DropdownItem>
+                        );
+                      })}
+                  </DropdownMenu>
+                </Dropdown> */}
+                <Autocomplete
+                  isDisabled={viewOnly}
+                  variant="flat"
+                  className="bg-white flex mt-3 items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
+                  placeholder={
+                    field?.response?.split(",")[1]
                       ? field?.response?.split(",")[1]
-                      : "Select sub level"}
-                    <IoIosArrowDown />
-                  </p>
-                </DropdownTrigger>
-                <DropdownMenu
-                  selectionMode="single"
-                  aria-label="Dynamic Actions"
-                  className="bg-white shadow-sm rounded-lg w-60"
+                      : placeHolder
+                  }
+                  scrollShadowProps={{
+                    isEnabled: false,
+                  }}
+                  onInputChange={(value) => {
+                    saveSingleResponse(
+                      section?.id,
+                      field?.id,
+                      field?.response + "," + value
+                    );
+                  }}
                 >
-                  {jurisdictionEntries?.parentAddressScheme?.entries
-                    ?.find(
-                      (item: any) => item.name == field?.response.split(",")[0]
-                    )
-                    .childEntries?.map((value: any) => {
-                      return (
-                        <DropdownItem
+                  <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
+                    {jurisdictionEntries?.addressingScheme?.parentLevels
+                      ?.find(
+                        (item: any) =>
+                          item?.parentName == field?.response.split(",")[0]
+                      )
+                      ?.childLevels?.map((value: any) => (
+                        <AutocompleteItem
                           key={value}
-                          onClick={() =>
-                            saveSingleResponse(
-                              section?.id,
-                              field?.id,
-                              field?.response + "," + value?.name
-                            )
-                          }
-                          className="flex hover:bg-gray-100 px-4  items-center flex-row gap-2"
+                          value={value}
+                          className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                         >
-                          <p className="text-base">{value?.name}</p>
-                        </DropdownItem>
-                      );
-                    })}
-                </DropdownMenu>
-              </Dropdown>
+                          {value}
+                        </AutocompleteItem>
+                      ))}
+                  </AutocompleteSection>
+                </Autocomplete>
+              </>
             )}
           </div>
         );
