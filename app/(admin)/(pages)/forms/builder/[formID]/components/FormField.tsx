@@ -15,7 +15,7 @@ function FormField({ field, section, activeTab, setActiveTab }: any) {
     description,
     placeHolder,
     instruction,
-    choiceValues,
+    choiceValue,
     label,
   } = field;
 
@@ -210,7 +210,7 @@ function FormField({ field, section, activeTab, setActiveTab }: any) {
           <p className="mt-2">{placeHolder}</p>
 
           <div className=" text-gray-400 px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
-            {field.choiceValues.map((value: any) => {
+            {field.choiceValue.map((value: any) => {
               return (
                 <div className="flex flex-row gap-2">
                   <div>
