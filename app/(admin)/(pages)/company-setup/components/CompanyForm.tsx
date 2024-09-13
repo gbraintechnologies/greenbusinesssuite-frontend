@@ -204,10 +204,10 @@ const CompanyForm: React.FC<Props> = ({
 
   const [subJurisdiction, setSubJurisdiction] = useState<any>([]);
 
-  const [subSectorsLoading, setSubSectorsLoading] = useState<any>([]);
-
   const [subJurisdictionsLoading, setSubJurisdictionsLoading] =
     useState<boolean>(false);
+
+  const [sectorsLoading, setSectorsLoading] = useState<boolean>(false);
 
   const [showColorPicker, setShowColorPicker] = useState(false);
 
@@ -216,9 +216,6 @@ const CompanyForm: React.FC<Props> = ({
     queryFn: services.allcountries(),
   });
 
-  useEffect(() => {
-    // console.log("selected ", selectedIndustry);
-  }, [selectedIndustry]);
 
   const fetchIndustries = async (jurisdiction: string) => {
     try {
@@ -227,6 +224,7 @@ const CompanyForm: React.FC<Props> = ({
         setSelectedSubSector(undefined);
         setIndustries([]);
         setSubSectors([]);
+        setSectorsLoading(true);
       }
       const response = await services.getSectorByCountryRaw(jurisdiction);
       let industryId = response[0]?.id;
@@ -239,6 +237,8 @@ const CompanyForm: React.FC<Props> = ({
       }
     } catch (err) {
       toast.error("An error occurred while fetching industries");
+    } finally {
+      setSectorsLoading(false);
     }
   };
 
@@ -294,10 +294,10 @@ const CompanyForm: React.FC<Props> = ({
 
   useLayoutEffect(() => {
     if (!initialLoad) {
-      setSelectedSubLevel(undefined);
+      setSelectedSubLevel(undefined);;
     }
   }, [selectedSubJurisdiction]);
-
+  
   useLayoutEffect(() => {
     if (!initialLoad) {
       setSelectedSubSector(undefined);
@@ -443,7 +443,7 @@ const CompanyForm: React.FC<Props> = ({
                   </div>
                 </div>
 
-                {subJurisdictionsLoading && <LoadingIcon />}
+                {(subJurisdictionsLoading || sectorsLoading) && <LoadingIcon />}
                 {!(typeof selectedJurisdiction == "undefined") &&
                   !subJurisdictionsLoading && (
                     <div className="flex gap-5">
@@ -496,7 +496,6 @@ const CompanyForm: React.FC<Props> = ({
                                 ))}
                           </Autocomplete>
                         </div>
-                        {subJurisdictionsLoading && <LoadingIcon />}
                       </div>
                       {/* SUB LEVEL */}
                       {selectedSubJurisdiction && (
@@ -531,7 +530,6 @@ const CompanyForm: React.FC<Props> = ({
                                 });
                                 setInitialLoad(false);
                               }}
-                              aria-labelledby="Child Level"
                             >
                                 {subJurisdiction?.addressingScheme?.parentLevels
                                   ?.find(
@@ -559,7 +557,7 @@ const CompanyForm: React.FC<Props> = ({
                   )}
 
                 {/* INDUSTRY */}
-                {selectedJurisdiction && (
+                {(selectedJurisdiction && !sectorsLoading) && (
                   <div className="flex gap-5">
                     <div className="new-input half hide-input-borders">
                       <label>Industry</label>
