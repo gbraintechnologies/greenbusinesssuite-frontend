@@ -184,7 +184,7 @@ const page = () => {
         />
       </div>
       <div className="mt-5 max-w-md hide-input-borders">
-        {/* <Dropdown>
+        <Dropdown>
           <DropdownTrigger>
             <button className="border min-w-48 outline-none shadow-md border-[#E2E8F0] bg-slate-50 py-0  rounded-lg my-2">
               <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
@@ -214,9 +214,9 @@ const page = () => {
               </DropdownItem>
             ))}
           </DropdownMenu>
-        </Dropdown> */}
+        </Dropdown>
 
-        <Autocomplete
+        {/* <Autocomplete
           variant="flat"
           className="bg-white flex mt-3 items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
           placeholder={selectedForm?.name}
@@ -224,6 +224,7 @@ const page = () => {
             isEnabled: false,
           }}
           onInputChange={(value) => {
+            console.log("value", value);
             setSelectedFormId(value);
           }}
         >
@@ -238,7 +239,7 @@ const page = () => {
               </AutocompleteItem>
             ))}
           </AutocompleteSection>
-        </Autocomplete>
+        </Autocomplete> */}
       </div>
 
       <div className="mt-4">
