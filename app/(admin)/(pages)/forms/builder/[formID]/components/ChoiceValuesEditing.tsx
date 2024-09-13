@@ -19,7 +19,7 @@ function ChoiceValuesEditing({ localField, setLocalField }: any) {
       <h4 className="labelStyle">Options</h4>
 
       <div className="mt-2 w-full flex flex-col gap-4 ">
-        {localField?.choiceValues?.map((value: any) => {
+        {localField?.choiceValue?.map((value: any) => {
           return (
             <div className="flex justify-between items-center w-full gap-2">
               <input
@@ -27,7 +27,7 @@ function ChoiceValuesEditing({ localField, setLocalField }: any) {
                 className={inputStyle}
                 onChange={(e) => {
                   // find item and replace in arary
-                  let allValues = localField?.choiceValues;
+                  let allValues = localField?.choiceValue;
 
                   let temp: any = [];
                   for (let i = 0; i < allValues.length; i++) {
@@ -40,7 +40,7 @@ function ChoiceValuesEditing({ localField, setLocalField }: any) {
                   // replace full array
                   setLocalField((prev: any) => ({
                     ...prev,
-                    choiceValues: temp,
+                    choiceValue: temp,
                   }));
                 }}
                 onBlur={() =>
@@ -52,7 +52,7 @@ function ChoiceValuesEditing({ localField, setLocalField }: any) {
                 onClick={() => {
                   setLocalField((prev: any) => ({
                     ...prev,
-                    choiceValues: localField?.choiceValues.filter(
+                    choiceValue: localField?.choiceValue.filter(
                       (item: any) => item != value
                     ),
                   }));
@@ -66,9 +66,9 @@ function ChoiceValuesEditing({ localField, setLocalField }: any) {
           onClick={() => {
             setLocalField((prev: any) => ({
               ...prev,
-              choiceValues: [
-                ...localField?.choiceValues,
-                `Option ${localField?.choiceValues?.length + 1}`,
+              choiceValue: [
+                ...localField?.choiceValue,
+                `Option ${localField?.choiceValue?.length + 1}`,
               ],
             }));
           }}

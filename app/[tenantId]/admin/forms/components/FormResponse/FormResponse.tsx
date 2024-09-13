@@ -36,7 +36,7 @@ const renderFormResponse = (formField: any) => {
         <>
           <input defaultValue={formField?.response} className="fit" readOnly />
           <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
-            {formField.choiceValues.map((value: any) => {
+            {formField.choiceValue.map((value: any) => {
               // values user selected
               let selected =
                 formField.response == null || formField.response == ""
@@ -66,7 +66,7 @@ const renderFormResponse = (formField: any) => {
         <>
           <input defaultValue={formField?.response} className="fit" readOnly />
           <div className="mt-2 flex justify-between items-center flex-wrap w-full">
-            {formField?.choiceValues?.map((option: any, index: number) => (
+            {formField?.choiceValue?.map((option: any, index: number) => (
               <div key={index} className="flex gap-2 items-center">
                 <input
                   type="radio"

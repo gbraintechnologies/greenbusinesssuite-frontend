@@ -539,7 +539,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
               aria-label="Dynamic Actions"
               className="bg-white shadow-sm rounded-lg w-60"
             >
-              {field.choiceValues.map((value: any) => {
+              {field.choiceValue.map((value: any) => {
                 return (
                   <DropdownItem
                     key={value}
@@ -570,7 +570,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           <p className="mt-2 text-sm">{placeHolder}</p>
 
           <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
-            {field.choiceValues.map((value: any) => {
+            {field.choiceValue.map((value: any) => {
               // values user selected
               let selected =
                 field.response == null || field.response == ""
