@@ -40,6 +40,13 @@ export const companyCustomersWithFormCount = (
       .then((res) => res.data);
 };
 
+export const publishedFomsOfCompany = (companyId: number) => {
+  return () =>
+    defaultMeshApi
+      .get(`/forms/builder/published-forms-ids/${companyId}`)
+      .then((res) => res.data);
+};
+
 export const assignFormToCompany = (
   formId: number | string,
   companyId: string

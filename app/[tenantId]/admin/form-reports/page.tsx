@@ -13,6 +13,14 @@ import useCompany from "@/hooks/useCompany";
 function CompanyFormReports() {
   const { companyBranding: company } = useCompany();
 
+  // published forms ids
+  const { data: publishedFormsIds } = useQuery({
+    queryKey: ["published forms ids", company?.id],
+    queryFn: services.publishedFomsOfCompany(company?.id),
+  });
+
+  console.log("published forms ids", publishedFormsIds.join(","));
+
   // reports
   const { data: uniqueUsersCount, isLoading } = useQuery({
     queryKey: ["unique users count", company?.id],
@@ -25,13 +33,23 @@ function CompanyFormReports() {
   });
 
   const { data: linksOpened } = useQuery({
-    queryKey: ["links opened per company", company?.id],
-    queryFn: services.linksOpened(company?.id),
+    queryKey: [
+      "links opened per company",
+      company?.id,
+      publishedFormsIds?.join(","),
+    ],
+    queryFn: services.linksOpened(company?.id, publishedFormsIds?.join(",")),
+    enabled: !!publishedFormsIds,
   });
 
   const { data: linksIgnored } = useQuery({
-    queryKey: ["ignored links per company", company?.id],
-    queryFn: services.ignoredLinks(company?.id),
+    queryKey: [
+      "ignored links per company",
+      company?.id,
+      publishedFormsIds?.join(","),
+    ],
+    queryFn: services.ignoredLinks(company?.id, publishedFormsIds?.join(",")),
+    enabled: !!publishedFormsIds,
   });
 
   const { data: formStats } = useQuery({
