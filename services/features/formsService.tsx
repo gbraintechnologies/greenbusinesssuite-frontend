@@ -147,8 +147,8 @@ export const getFormsByUserId = (userId: string | null) => {
     throw new Error("User ID is required");
   }
   return () =>
-    defaultMeshApi
-      .get(`/forms/builder/user-forms/${userId}`)
+    authApi
+      .get(`/forms/response/user/form-ids/${userId}`)
       .then((res) => res.data);
 };
 

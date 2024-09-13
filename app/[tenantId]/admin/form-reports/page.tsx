@@ -19,8 +19,6 @@ function CompanyFormReports() {
     queryFn: services.publishedFomsOfCompany(company?.id),
   });
 
-  console.log("published forms ids", publishedFormsIds.join(","));
-
   // reports
   const { data: uniqueUsersCount, isLoading } = useQuery({
     queryKey: ["unique users count", company?.id],
