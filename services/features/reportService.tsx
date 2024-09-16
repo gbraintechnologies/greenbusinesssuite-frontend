@@ -22,16 +22,16 @@ export const companyFormStats = (companyId: number) => {
       .then((res) => res.data);
 };
 
-export const linksOpened = (companyId: number) => {
+export const linksOpened = (companyId: number, publishedIds: string) => {
   return () =>
     authApi
-      .get(`/forms/response/links-opened/${companyId}`)
+      .get(`/forms/response/opened-links/${companyId}/${publishedIds}`)
       .then((res) => res.data);
 };
 
-export const ignoredLinks = (companyId: number) => {
+export const ignoredLinks = (companyId: number, publishedIds: string) => {
   return () =>
     authApi
-      .get(`/forms/response/ignored-links/${companyId}`)
+      .get(`/forms/response/ignored-links/${companyId}/${publishedIds}`)
       .then((res) => res.data);
 };

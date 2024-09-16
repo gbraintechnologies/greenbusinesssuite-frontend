@@ -40,6 +40,13 @@ export const companyCustomersWithFormCount = (
       .then((res) => res.data);
 };
 
+export const publishedFomsOfCompany = (companyId: number) => {
+  return () =>
+    defaultMeshApi
+      .get(`/forms/builder/published-forms-ids/${companyId}`)
+      .then((res) => res.data);
+};
+
 export const assignFormToCompany = (
   formId: number | string,
   companyId: string
@@ -140,8 +147,8 @@ export const getFormsByUserId = (userId: string | null) => {
     throw new Error("User ID is required");
   }
   return () =>
-    defaultMeshApi
-      .get(`/forms/builder/user-forms/${userId}`)
+    authApi
+      .get(`/forms/response/user/form-ids/${userId}`)
       .then((res) => res.data);
 };
 

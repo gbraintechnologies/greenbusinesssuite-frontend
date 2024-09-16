@@ -4,7 +4,12 @@ import StatsBlock from "@/components/StatsBlock/StatsBlock";
 
 import UserIcon from "@/public/icons/UserIcon";
 import services from "@/services";
-import { Button } from "@nextui-org/button";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  AutocompleteSection,
+} from "@nextui-org/autocomplete";
+
 import {
   Dropdown,
   DropdownItem,
@@ -28,7 +33,9 @@ const page = () => {
 
   const userId = searchParams.get("id") ? searchParams.get("id") : "";
 
-  const [selectedForm, setSelectedForm] = useState<any>();
+  const [selectedFormId, setSelectedFormId] = useState<any>();
+
+  const [formsList, setFormsList] = useState<any>([]);
 
   const [mergedForm, setMergedForm] = useState<any>();
 
@@ -42,11 +49,10 @@ const page = () => {
     enabled: Boolean(userId),
   });
 
-  // TODO: DATA SHIFTED
-  // const { data: userForms, isLoading: areFormsLoading } = useQuery({
-  //   queryKey: ["get forms for ", Number(userId)],
-  //   queryFn: services.getFormsByUserId(userId),
-  // });
+  const { data: userFormsIds, isLoading: areFormsLoading } = useQuery({
+    queryKey: ["get forms for ", Number(userId)],
+    queryFn: services.getFormsByUserId(userId),
+  });
 
   const { data: formsStats, isLoading: areStatsLoading } = useQuery({
     queryKey: ["get forms statistics for user", userId],
@@ -54,17 +60,41 @@ const page = () => {
     enabled: Boolean(userId),
   });
 
+  const { data: selectedForm, isLoading } = useQuery({
+    queryKey: ["form", parseInt(selectedFormId)],
+    queryFn: services.getFormById(selectedFormId),
+    enabled: Boolean(selectedFormId),
+  });
+
+  async function getFormDetails(id: number) {
+    let form = await services.getFormByIdRawForUser(id);
+
+    setFormsList((prev: any) => [...prev, form?.data]);
+  }
+
+  useEffect(() => {
+    if (userFormsIds) {
+      // initialize to 0 to prevent duplicates
+      setFormsList([]);
+
+      // populate list
+      for (let i = 0; i < userFormsIds?.length; i++) {
+        getFormDetails(userFormsIds[i]);
+      }
+    }
+  }, [userFormsIds]);
+
   const fetchSelectedFormsResponse = async () => {
     try {
       setResponsesLoading(true);
 
       const data = await services.retrieveFormUserResponseRaw(
         userId,
-        selectedForm?.id
+        selectedFormId
       );
 
       let mergedForm =
-        selectedForm &&
+        selectedFormId &&
         data &&
         mergeForm(data[0]?.id, selectedForm, data[0]?.inputData);
 
@@ -75,15 +105,15 @@ const page = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (userForms?.length > 0) {
-  //     setSelectedForm(userForms[0]);
-  //   }
-  // }, [userForms]);
+  useEffect(() => {
+    if (userFormsIds?.length > 0) {
+      setSelectedFormId(userFormsIds[0]);
+    }
+  }, [userFormsIds]);
 
   useEffect(() => {
-    fetchSelectedFormsResponse();
-  }, [selectedForm]);
+    if (!!selectedForm && !isLoading) fetchSelectedFormsResponse();
+  }, [selectedFormId, selectedForm, isLoading]);
 
   if (isUserLoading || areStatsLoading) {
     return (
@@ -153,8 +183,8 @@ const page = () => {
           ]}
         />
       </div>
-      <div className="mt-5">
-        {/* <Dropdown>
+      <div className="mt-5 max-w-md hide-input-borders">
+        <Dropdown>
           <DropdownTrigger>
             <button className="border min-w-48 outline-none shadow-md border-[#E2E8F0] bg-slate-50 py-0  rounded-lg my-2">
               <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
@@ -174,17 +204,42 @@ const page = () => {
             variant="flat"
             selectionMode="single"
           >
-            {userForms?.map((form: any) => (
+            {formsList?.map((form: any) => (
               <DropdownItem
                 key="view"
                 className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                onClick={() => setSelectedForm(form)}
+                onClick={() => setSelectedFormId(form?.id)}
               >
                 {form?.name}
               </DropdownItem>
             ))}
           </DropdownMenu>
-        </Dropdown> */}
+        </Dropdown>
+
+        {/* <Autocomplete
+          variant="flat"
+          className="bg-white flex mt-3 items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
+          placeholder={selectedForm?.name}
+          scrollShadowProps={{
+            isEnabled: false,
+          }}
+          onInputChange={(value) => {
+            console.log("value", value);
+            setSelectedFormId(value);
+          }}
+        >
+          <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
+            {formsList?.map((form: any) => (
+              <AutocompleteItem
+                key={form?.id}
+                value={form?.id}
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
+                {form?.name}
+              </AutocompleteItem>
+            ))}
+          </AutocompleteSection>
+        </Autocomplete> */}
       </div>
 
       <div className="mt-4">

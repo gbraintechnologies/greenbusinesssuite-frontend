@@ -45,22 +45,36 @@ function FormSubmission({
     let completedRequired = true;
 
     for (let i = 0; i < data?.formSections?.length; i++) {
+      // skip checks for  sections that are not required
+
       let section = data?.formSections[i];
 
+      if (section?.isDeleted) {
+        //
+        continue;
+      }
+
+      // sections that aren't deleted
       for (let j = 0; j < section?.formFields?.length; j++) {
         let field = section?.formFields[j];
-        if (
-          (field?.response === null || field?.response === "") &&
-          field?.isMandatory
-        ) {
-          if (field?.fieldDataType.toLowerCase() == "upload") {
-            // no response for uploads
-          } else {
-            setSavingResponses(false);
-            setShowConfirmationModal(false);
-            toast.error("Please fill all required fields");
-            completedRequired = false;
-            return;
+        if (field?.isDeleted) {
+          //
+          // skip checks for deleted fields
+          //
+        } else {
+          if (
+            (field?.response === null || field?.response === "") &&
+            field?.isMandatory
+          ) {
+            if (field?.fieldDataType.toLowerCase() == "upload") {
+              // no response for uploads
+            } else {
+              setSavingResponses(false);
+              setShowConfirmationModal(false);
+              toast.error("Please fill all required fields");
+              completedRequired = false;
+              return;
+            }
           }
         }
       }
