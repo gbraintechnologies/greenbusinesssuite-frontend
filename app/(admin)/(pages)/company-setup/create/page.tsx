@@ -101,17 +101,20 @@ const CreateCompany = () => {
     values: Partial<ICompany>,
     { resetForm, setSubmitting }: FormikHelpers<Partial<ICompany>>
   ) => {
+    // phone number required
     if (!(phone.length > 4)) {
       toast.error("Phone number is required");
       setSubmitting(false);
       return;
     }
 
+    // country required
     if (!selectedJurisdiction?.value) {
       toast.error("Jurisdiction is required");
       setSubmitting(false);
       return;
     }
+
 
     if (!selectedSubJurisdiction?.value) {
       toast.error("Sub Jurisdiction is required");
@@ -140,6 +143,7 @@ const CreateCompany = () => {
     const companyLogoURL =
       companyLogo && (await handleFileUpload(companyLogo as File));
 
+      // 
     const data: CompanyInfo = {
       company_name: values.companyName as string,
       primary_contact_name: `${values.contactFirstName} ${values.contactLastName}`,
@@ -149,6 +153,7 @@ const CreateCompany = () => {
       industry: selectedIndustry?.value as string,
       company_address: selectedJurisdiction?.value as string,
       primary_currency: "GHS",
+      company_code: values.companyName?.slice(0, 3).toLowerCase() + Math.floor(Math.random() * 1000).toString().padStart(3, '0')
     };
 
     const custom_fields = [
