@@ -32,6 +32,7 @@ export interface CompanyInfo {
   company_address: string;
   company_admin_id?: number;
   primary_currency: string;
+  company_code: string;
   id?: number;
   status?: string;
   company_custom_values?: CustomField[];
