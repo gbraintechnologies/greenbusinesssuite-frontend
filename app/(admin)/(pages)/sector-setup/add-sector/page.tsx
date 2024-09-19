@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { Countrie, Countrieses } from "../components/Countries";
+import { Countrieses } from "../components/Countries";
 import FormatByte from "../components/FormatByte";
 import Link from "next/link";
 import * as yup from "yup";
@@ -15,19 +15,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ExcelIcon from "@/public/icons/ExcelIcon";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import {
-  createorUpdateSector,
-  csvUpload,
-} from "@/services/features/sectorService";
-import SelectCountryInput from "../components/selectCountryInput";
-import { allcountries } from "@/services/features/jurisdictionsService";
+import { createSector, csvUpload } from "@/services/features/sectorService";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
 
-
-interface Country {
-  id: number;
-  name: string;
-}
-
+type Key = any;
 
 const schema = yup.object().shape({
   id: yup.number(),
@@ -38,7 +29,7 @@ const schema = yup.object().shape({
 function AddSector() {
   type typeOfSchema = yup.InferType<typeof schema>;
   const router = useRouter();
-  const [countries, setCountries] = useState<Country[]>([]);
+  const [countries, setCountries] = useState<string[]>([]);
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [fileName, setFileName] = useState<{
@@ -51,7 +42,8 @@ function AddSector() {
     register,
     handleSubmit,
     formState: { errors, dirtyFields },
-    getValues,
+    setValue,
+    trigger,
   } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
@@ -69,35 +61,12 @@ function AddSector() {
 
   useEffect(() => {
     if (countriesData && Array.isArray(countriesData)) {
-      const transformedCountries = countriesData.map((name, index) => ({
-        id: index + 1,
-        name,
-      }));
-      setCountries(transformedCountries);
+      setCountries(countriesData);
     } else {
       setCountries([]);
     }
   }, [countriesData]);
 
-  useEffect(() => {
-    const countryName = getValues("countryName");
-   // console.log("Country name from form:", countryName);
-  
-    if (countryName) {
-      const trimmedCountryName = typeof countryName === 'string' ? countryName.trim().toLowerCase() : '';
-      const country = Countrieses(trimmedCountryName);
-      console.log("Matching country found:", country);
-  
-      if (country) {
-        setSelectedCountry(country.cca2);
-      } else {
-        setSelectedCountry(null); 
-      }
-    } else {
-      setSelectedCountry(null);
-    }
-  }, [getValues("countryName"), countriesData]);
-  
 
   const handleDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -143,7 +112,6 @@ function AddSector() {
         toast.success("CSV file uploaded successfully", {
           position: "top-center",
           duration: 3000,
-          style: { color: "green" },
         });
 
         setIDImage(null);
@@ -167,38 +135,43 @@ function AddSector() {
     }
   };
 
-
   const saveAndContinue = async (data: typeOfSchema) => {
     const items = parentsectorItems
       .split(",")
       .map((item) => item.trim())
       .filter((item) => item);
-
+  
     const payload = {
       countryName: data.countryName,
       parentSector: items,
     };
-
+  
     try {
-      const response = await createorUpdateSector(payload);
+      const response = await createSector(payload);
       toast.success("Sector saved successfully", {
         position: "top-center",
         duration: 3000,
-        style: { color: "green" },
       });
-
+  
       router.push(`/sector-setup/parentsector-inputs?id=${response.data}`);
     } catch (error: any) {
-      toast.error(
-        `An error occurred: ${error.response?.data?.message || error.message}`,
-        {
+      if (error.response?.status === 404) {
+        toast.error("Sector already exists", {
           position: "top-center",
           duration: 3000,
-          style: { color: "red" },
-        }
-      );
+        });
+      } else {
+        toast.error(
+          `An error occurred: ${error.response?.data?.message || error.message}`,
+          {
+            position: "top-center",
+            duration: 3000,
+          }
+        );
+      }
     }
   };
+  
 
   return (
     <div className="w-full p-5">
@@ -232,37 +205,56 @@ function AddSector() {
             </div>
           </div>
           <div>
-            <div className="mb-3 relative">
-              <SelectCountryInput
-                key={selectedCountry}
-                listdata={countries}
-                label="Country"
-                autoComplete="off"
-                {...register("countryName")}
-                error={errors.countryName?.message}
-                PrependIcon={
-                  selectedCountry ? (
-                    <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
-                      <img
-                        src={
-                          selectedCountry
-                            ? Countrie(selectedCountry)?.flags.png
-                            : ""
-                        }
-                        alt={
-                          selectedCountry
-                            ? Countrie(selectedCountry)?.name.common
-                            : ""
-                        }
-                        style={{ height: "auto", width: "30px" }}
-                      />
-                    </span>
-                  ) : null
-                }
-                style={{ width: "30%", height: "30%" }}
-              />
+            <div className="new-input half hide-input-borders">
+              <label className="text-xs">Country</label>
+              <div className="mt-1 flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]" style={{ width: "30%" }}>
+                <Autocomplete
+                  variant="bordered"
+                  className="w-full "
+                  placeholder={"Select country"}
+                  selectedKey={selectedCountry}
+                  scrollShadowProps={{
+                    isEnabled: false,
+                  }}
+                  popoverProps={{
+                    offset: 10,
+                    classNames: {
+                      content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                    },
+                  }}
+                  onSelectionChange={(key: Key | null) => {
+                    const keyString = key ? String(key) : null;
+                    setSelectedCountry(keyString);
+                    setValue("countryName", keyString || "");
+                    trigger("countryName");
+                  }}
+                  aria-labelledby="Country"
+                >
+                  {countriesData?.map((country: any) => (
+                    <AutocompleteItem
+                      key={country}
+                      value={country}
+                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
+                      startContent={
+                        <img
+                          src={Countrieses(country)?.flags.png}
+                          alt={Countrieses(country)?.name.common}
+                          style={{
+                            height: "24px",
+                            width: "24px",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      }
+                    >
+                      {country}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+              </div>
             </div>
-            <label className="inline-block mr-2 text-xs font-bold text-black-300">
+
+            <label className="inline-block mr-2 mt-6 text-xs text-black-300">
               Parent Sectors
             </label>
             <div className="mb-5 relative">
