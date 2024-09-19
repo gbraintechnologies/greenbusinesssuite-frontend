@@ -11,10 +11,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-import SelectCountryInput from "../components/selectCountryInput";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Countrie, Countrieses } from "../components/Countries";
+import { Countrieses } from "../components/Countries";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
 import { createCurrency } from "@/services/features/currencyService";
 
 const schema = yup.object({
@@ -39,14 +39,11 @@ interface Denomination {
   denominationType: string;
 }
 
-interface Country {
-  id: number;
-  name: string;
-}
+type Key = any;
 
 function AddCurrency() {
   const [denominations, setDenominations] = useState<Denomination[]>([]);
-  const [countries, setCountries] = useState<Country[]>([]);
+  const [countries, setCountries] = useState<string[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [denomination, setDenomination] = useState<Denomination>({
     id: 0,
@@ -61,6 +58,8 @@ function AddCurrency() {
     handleSubmit,
     formState: { isSubmitting, errors },
     getValues,
+    setValue,
+    trigger,
   } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
@@ -80,36 +79,13 @@ function AddCurrency() {
 
   useEffect(() => {
     if (countriesData && Array.isArray(countriesData)) {
-      const transformedCountries = countriesData.map((name, index) => ({
-        id: index + 1,
-        name,
-      }));
-      setCountries(transformedCountries);
+      setCountries(countriesData);
     } else {
       setCountries([]);
     }
   }, [countriesData]);
 
-  useEffect(() => {
-    const countryName = getValues("countryName");
-    // console.log("Country name from form:", countryName);
 
-    if (countryName) {
-      const trimmedCountryName = typeof countryName === 'string' ? countryName.trim().toLowerCase() : '';
-      const country = Countrieses(trimmedCountryName);
-      console.log("Matching country found:", country);
-
-      if (country) {
-        setSelectedCountry(country.cca2);
-      } else {
-        setSelectedCountry(null);
-      }
-    } else {
-      setSelectedCountry(null);
-    }
-  }, [getValues("countryName"), countriesData]);
-
-  
   const handleAddLevel = () => {
     if (
       denomination.amount.trim() === "" ||
@@ -180,20 +156,31 @@ function AddCurrency() {
         countryName: data.countryName,
         denominations: denominations,
       };
-      //alert(JSON.stringify(currencyPayload));
+
+      // API call to create a currency
       await createCurrency(currencyPayload);
 
-      toast.success("Currency has been added Successfully", {
+      toast.success("Currency has been added successfully", {
         position: "top-center",
         duration: 3000,
-        style: {
-          color: "green",
-        },
       });
+
       router.push("/currency-setup");
     } catch (error: any) {
-      console.error("Error occurred:", error);
-      alert(error.message);
+
+      if (error.response?.status === 404) {
+        toast.error("Currency already exists", {
+          position: "top-center",
+          duration: 3000,
+        });
+      }
+      else {
+        console.error("Error occurred:", error);
+        toast.error("An unexpected error occurred", {
+          position: "top-center",
+          duration: 3000,
+        });
+      }
     }
   };
 
@@ -236,35 +223,53 @@ function AddCurrency() {
           </div>
 
           <div>
-            <div className="mb-3 relative">
-              <SelectCountryInput
-                key={selectedCountry}
-                listdata={countries}
-                label="Country"
-                autoComplete="off"
-                {...register("countryName")}
-                error={errors.countryName?.message}
-                PrependIcon={
-                  selectedCountry ? (
-                    <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
-                      <img
-                        src={
-                          selectedCountry
-                            ? Countrie(selectedCountry)?.flags.png
-                            : ""
-                        }
-                        alt={
-                          selectedCountry
-                            ? Countrie(selectedCountry)?.name.common
-                            : ""
-                        }
-                        style={{ height: "auto", width: "30px" }}
-                      />
-                    </span>
-                  ) : null
-                }
-                style={{ width: "30%", height: "30%" }}
-              />
+            <div className="new-input half hide-input-borders">
+              <label className="text-sm">Country</label>
+              <div className="mt-1 flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]" style={{ width: "30%" }}>
+                <Autocomplete
+                  variant="bordered"
+                  className="w-full "
+                  placeholder={"Select country"}
+                  selectedKey={selectedCountry}
+                  scrollShadowProps={{
+                    isEnabled: false,
+                  }}
+                  popoverProps={{
+                    offset: 10,
+                    classNames: {
+                      content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                    },
+                  }}
+                  onSelectionChange={(key: Key | null) => {
+                    const keyString = key ? String(key) : null;
+                    setSelectedCountry(keyString);
+                    setValue("countryName", keyString || "");
+                    trigger("countryName");
+                  }}
+                  aria-labelledby="Country"
+                >
+                  {countriesData?.map((country: any) => (
+                    <AutocompleteItem
+                      key={country}
+                      value={country}
+                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
+                      startContent={
+                        <img
+                          src={Countrieses(country)?.flags.png}
+                          alt={Countrieses(country)?.name.common}
+                          style={{
+                            height: "24px",
+                            width: "24px",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      }
+                    >
+                      {country}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+              </div>
             </div>
           </div>
           <div className="mb-1 relative">
