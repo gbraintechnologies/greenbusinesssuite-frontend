@@ -3,7 +3,7 @@ import "./index.css";
 import Modal from "@/components/Modal/Modal";
 import { FormikHelpers } from "formik";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as Yup from "yup";
 import useFileUpload from "@/hooks/useFileUpload";
 import { toast } from "sonner";
@@ -49,17 +49,17 @@ const CreateCompany = () => {
     value: string;
   }>();
 
-  const [selectedJurisdiction, setSelectedJurisdiction] = useState<{
+  const [selectedCountry, setSelectedCountry] = useState<{
     label: string;
     value: string;
   }>();
 
-  const [selectedSubJurisdiction, setSelectedSubJurisdiction] = useState<{
+  const [selectedParentLevel, setSelectedParentLevel] = useState<{
     label: string;
     value: string;
   }>();
 
-  const [selectedSubLevel, setSelectedSubLevel] = useState<{
+  const [selectedChildLevel, setSelectedChildLevel] = useState<{
     label: string;
     value: string;
   }>();
@@ -85,6 +85,8 @@ const CreateCompany = () => {
 
   const [initialLoad, setInitialLoad] = useState<boolean>(false);
 
+  const [currencyId, setCurrencyId] = useState<string>("");
+
   const router = useRouter();
 
   const initialValues: Partial<ICompany> = {
@@ -101,6 +103,11 @@ const CreateCompany = () => {
     values: Partial<ICompany>,
     { resetForm, setSubmitting }: FormikHelpers<Partial<ICompany>>
   ) => {
+    if(!currencyId){
+      toast.error(`Please set up the currency for ${selectedCountry?.label} to proceed`);
+      setSubmitting(false);
+      return;
+    }
     // phone number required
     if (!(phone.length > 4)) {
       toast.error("Phone number is required");
@@ -108,21 +115,35 @@ const CreateCompany = () => {
       return;
     }
 
+    // company logo is required
+    if(!companyLogo) {
+      toast.error("Company logo is required");
+      setSubmitting(false);
+      return;
+    }
+
+    // company small logo is required
+    if (!companySmallLogo) {
+      toast.error("Company small logo is required");
+      setSubmitting(false);
+      return;
+    }
+
     // country required
-    if (!selectedJurisdiction?.value) {
+    if (!selectedCountry?.value) {
       toast.error("Jurisdiction is required");
       setSubmitting(false);
       return;
     }
 
 
-    if (!selectedSubJurisdiction?.value) {
+    if (!selectedParentLevel?.value) {
       toast.error("Sub Jurisdiction is required");
       setSubmitting(false);
       return;
     }
 
-    if (!selectedSubLevel?.value) {
+    if (!selectedChildLevel?.value) {
       toast.error("Sub Level is required");
       setSubmitting(false);
       return;
@@ -151,8 +172,8 @@ const CreateCompany = () => {
       primary_contact_phone_number: phone,
       company_logo: companyLogoURL?.file_url || "",
       industry: selectedIndustry?.value as string,
-      company_address: selectedJurisdiction?.value as string,
-      primary_currency: "GHS",
+      company_address: selectedCountry?.value as string,
+      primary_currency: currencyId,
       company_code: values.companyName?.slice(0, 3).toLowerCase() + Math.floor(Math.random() * 1000).toString().padStart(3, '0')
     };
 
@@ -184,12 +205,12 @@ const CreateCompany = () => {
       {
         // Parent Address Scheme ID
         custom_profile_item_id: 5,
-        value: selectedSubJurisdiction?.value as string,
+        value: selectedParentLevel?.value as string,
       },
       {
         //Child Address Scheme ID
         custom_profile_item_id: 6,
-        value: selectedSubLevel?.value as string,
+        value: selectedChildLevel?.value as string,
       },
       {
         // Sector ID
@@ -247,14 +268,15 @@ const CreateCompany = () => {
 
       setPhone("");
       setSelectedIndustry(undefined);
-      setSelectedJurisdiction(undefined);
+      setSelectedCountry(undefined);
       setCompanyLogo(null);
+      setCompanySmallLogo(null);
+      setSmallLogoUrl("");
       setBackgroundImageUrl("");
       resetForm();
 
       // go back to companies page
       router.back();
-      // router.push("/company-set-up");
     } catch (error) {
       toast.error("An error occurred");
     } finally {
@@ -282,12 +304,12 @@ const CreateCompany = () => {
           setPhone={setPhone}
           selectedIndustry={selectedIndustry}
           setSelectedIndustry={setSelectedIndustry}
-          selectedJurisdiction={selectedJurisdiction}
-          setSelectedJurisdiction={setSelectedJurisdiction}
-          selectedSubJurisdiction={selectedSubJurisdiction}
-          setSelectedSubJurisdiction={setSelectedSubJurisdiction}
-          selectedSubLevel={selectedSubLevel}
-          setSelectedSubLevel={setSelectedSubLevel}
+          selectedCountry={selectedCountry}
+          setSelectedCountry={setSelectedCountry}
+          selectedParentLevel={selectedParentLevel}
+          setSelectedParentLevel={setSelectedParentLevel}
+          selectedChildLevel={selectedChildLevel}
+          setSelectedChildLevel={setSelectedChildLevel}
           selectedSubSector={selectedSubSector}
           setSelectedSubSector={setSelectedSubSector}
           sectorId={sectorId}
@@ -296,6 +318,8 @@ const CreateCompany = () => {
           setInitialLoad={setInitialLoad}
           color={color}
           setColor={setColor}
+          currencyId={currencyId}
+          setCurrencyId={setCurrencyId}
         />
         {/* CANCEL MODAL: DISCARD ALL CHANGES */}
         <Modal

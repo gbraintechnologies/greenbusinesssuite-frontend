@@ -145,7 +145,7 @@ function CompanySetup() {
 
   //Search Filter
   useEffect(() => {
-    if (searchTerm.length > 1 && searchData) {
+    if (searchTerm.length > 0 && searchData) {
       setAggregatedCompanies(searchData);
     }
 

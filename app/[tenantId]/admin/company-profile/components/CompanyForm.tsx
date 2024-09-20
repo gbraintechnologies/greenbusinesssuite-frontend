@@ -96,13 +96,13 @@ type Props = {
       | undefined
     >
   >;
-  selectedJurisdiction:
+  selectedCountry:
     | {
         label: string;
         value: string;
       }
     | undefined;
-  setSelectedJurisdiction: React.Dispatch<
+  setSelectedCountry: React.Dispatch<
     React.SetStateAction<
       | {
           label: string;
@@ -111,13 +111,13 @@ type Props = {
       | undefined
     >
   >;
-  selectedSubJurisdiction:
+  selectedParentLevel:
     | {
         label: string;
         value: string;
       }
     | undefined;
-  setSelectedSubJurisdiction: React.Dispatch<
+  setSelectedParentLevel: React.Dispatch<
     React.SetStateAction<
       | {
           label: string;
@@ -126,13 +126,13 @@ type Props = {
       | undefined
     >
   >;
-  selectedSubLevel:
+  selectedChildLevel:
     | {
         label: string;
         value: string;
       }
     | undefined;
-  setSelectedSubLevel: React.Dispatch<
+  setSelectedChildLevel: React.Dispatch<
     React.SetStateAction<
       | {
           label: string;
@@ -183,12 +183,12 @@ const CompanyForm: React.FC<Props> = ({
   setBackgroundImageUrl,
   selectedIndustry,
   setSelectedIndustry,
-  selectedJurisdiction,
-  setSelectedJurisdiction,
-  selectedSubJurisdiction,
-  setSelectedSubJurisdiction,
-  selectedSubLevel,
-  setSelectedSubLevel,
+  selectedCountry,
+  setSelectedCountry,
+  selectedParentLevel,
+  setSelectedParentLevel,
+  selectedChildLevel,
+  setSelectedChildLevel,
   selectedSubSector,
   setSelectedSubSector,
   sectorId,
@@ -277,8 +277,8 @@ const CompanyForm: React.FC<Props> = ({
     try {
       if (!initialLoad) {
         setSubJurisdictionsLoading(true);
-        setSelectedSubJurisdiction(undefined);
-        setSelectedSubLevel(undefined);
+        setSelectedParentLevel(undefined);
+        setSelectedChildLevel(undefined);
         setSubJurisdiction([]);
       }
       const response = await services.getJurisdictionByIdRaw(jurisdictionId);
@@ -311,17 +311,17 @@ const CompanyForm: React.FC<Props> = ({
   }, [companySmallLogo]);
 
   useLayoutEffect(() => {
-    if (selectedJurisdiction?.label) {
-      fetchIndustries(selectedJurisdiction?.label);
-      getJurisdictionEntries(Number(selectedJurisdiction?.value));
+    if (selectedCountry?.label) {
+      fetchIndustries(selectedCountry?.label);
+      getJurisdictionEntries(Number(selectedCountry?.value));
     }
-  }, [selectedJurisdiction]);
+  }, [selectedCountry]);
 
   useLayoutEffect(() => {
     if (!initialLoad) {
-      setSelectedSubLevel(undefined);
+      setSelectedChildLevel(undefined);
     }
-  }, [selectedSubJurisdiction]);
+  }, [selectedParentLevel]);
 
   useLayoutEffect(() => {
     if (!initialLoad) {
@@ -430,10 +430,10 @@ const CompanyForm: React.FC<Props> = ({
                       variant="bordered"
                       className="w-full"
                       placeholder={"Select Jurisdiction"}
-                      selectedKey={selectedJurisdiction?.value}
+                      selectedKey={selectedCountry?.value}
                       onSelectionChange={(key: any) => {
                         const countryName = jurisdictions?.content?.find((jurisdiction: any) => jurisdiction?.id == key)?.name
-                        setSelectedJurisdiction({
+                        setSelectedCountry({
                           label: countryName,
                           value: key,
                         });
@@ -463,7 +463,7 @@ const CompanyForm: React.FC<Props> = ({
                 </div> */}
 
                 {/* {subJurisdictionsLoading && <LoadingIcon />}
-                {!(typeof selectedJurisdiction == "undefined") &&
+                {!(typeof selectedCountry == "undefined") &&
                   !subJurisdictionsLoading && (
                     <div className="flex gap-5">
                       {/* SUB JURISDICTION */}
@@ -481,9 +481,9 @@ const CompanyForm: React.FC<Props> = ({
                               subJurisdiction?.parentAddressScheme?.name ||
                               "Sub Jurisdiction"
                             }
-                            selectedKey={selectedSubJurisdiction?.label}
+                            selectedKey={selectedParentLevel?.label}
                             onSelectionChange={(key: any) => {
-                              setSelectedSubJurisdiction({
+                              setSelectedParentLevel({
                                 label: key,
                                 value: key,
                               });
@@ -499,7 +499,7 @@ const CompanyForm: React.FC<Props> = ({
                                     value={subJurisdiction.name}
                                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                                     // onClick={() => {
-                                    //   setSelectedSubJurisdiction({
+                                    //   setSelectedParentLevel({
                                     //     label: subJurisdiction?.name,
                                     //     value: subJurisdiction?.id,
                                     //   });
@@ -516,7 +516,7 @@ const CompanyForm: React.FC<Props> = ({
                         {subJurisdictionsLoading && <LoadingIcon />}
                       </div> */}
                 {/* SUB LEVEL */}
-                {/* {selectedSubJurisdiction && (
+                {/* {selectedParentLevel && (
                         <div className="new-input half">
                           <label>Sub Level</label>
                           <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
@@ -526,9 +526,9 @@ const CompanyForm: React.FC<Props> = ({
                               placeholder={
                                 "Sub Level"
                               }
-                              selectedKey={selectedSubLevel?.label}
+                              selectedKey={selectedChildLevel?.label}
                               onSelectionChange={(key: any) => {
-                                setSelectedSubLevel({
+                                setSelectedChildLevel({
                                   label: key,
                                   value: key,
                                 });
@@ -541,7 +541,7 @@ const CompanyForm: React.FC<Props> = ({
                                   ?.find(
                                     (entry: any) =>
                                       entry?.id ==
-                                      selectedSubJurisdiction?.value
+                                      selectedParentLevel?.value
                                   )
                                   ?.childEntries?.map((subLevel: any) => (
                                     <AutocompleteItem
@@ -561,7 +561,7 @@ const CompanyForm: React.FC<Props> = ({
                   )}  */}
 
                 {/* INDUSTRY */}
-                {/* {selectedJurisdiction && (
+                {/* {selectedCountry && (
                   <div className="flex gap-5">
                     <div className="new-input half">
                       <label>Industry</label>
