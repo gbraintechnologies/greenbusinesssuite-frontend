@@ -12,12 +12,12 @@ export const allParentSectors = (pageNumber: number, pageSize: number) => {
       .then((res) => res.data);
 };
 
-export const createSector = (data: any) => {
-  return authApi.post("/sectors", data);
-};
+// export const createSector = (data: any) => {
+//   return authApi.post("/sectors", data);
+// };
 
-export const createorUpdateSector = (data: any) => {
-  return authApi.post("/sectors/createOrUpdate", data);
+export const createSector = (data: any) => {
+  return authApi.post("/sectors/create", data);
 };
 
 export const getSectorByCountry = (countryName: string) => {

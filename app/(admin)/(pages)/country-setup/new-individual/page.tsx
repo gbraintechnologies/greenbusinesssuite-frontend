@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import "../index.css";
 import Countries, { Countrie } from "../components/Countries";
-import SelectInput from "../components/SelectInput";
 import TextInput from "../components/TextInput";
 import UploadAreaInput from "../components/UploadAreaInput";
 import { RiDeleteBin5Line } from "react-icons/ri";
@@ -16,6 +15,8 @@ import { toast } from "sonner";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { createCountry, csvUploads } from "@/services/features/jurisdictionsService";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
+
 
 const schema = yup.object().shape({
   countryName: yup.string().required(),
@@ -37,6 +38,7 @@ function NewIndividual() {
   const {
     register,
     handleSubmit,
+    trigger,
     setValue,
     formState: { errors },
     getValues,
@@ -44,7 +46,7 @@ function NewIndividual() {
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
-      countryName: "Ghana",
+      countryName: "",
       countryId: 0,
       parentLevelName: "",
       childLevelName: "",
@@ -103,13 +105,18 @@ function NewIndividual() {
         inputType: selectedOption === "Dropdown" ? "DROP_DOWN" : "FREE_INPUT",
         parentNames: []
       };
+
       await createCountry(Payload);
 
-      toast.success("Jurisdiction created Successfully", { position: "top-center", duration: 3000, });
+      toast.success("Jurisdiction created successfully", { position: "top-center", duration: 3000 });
       router.push("/country-setup");
     } catch (error: any) {
-      console.error("Error occurred:", error);
-      alert(error.message);
+      if (error.response?.status === 404) {
+        toast.error("Country already exists", { position: "top-center", duration: 3000 });
+      } else {
+        console.error("Error occurred:", error);
+        toast.error("An unexpected error occurred", { position: "top-center", duration: 3000 });
+      }
     }
   };
 
@@ -151,24 +158,24 @@ function NewIndividual() {
         parentNames: items, // From dropdown items
       };
 
-      // Create country and obtain parent ID
       const parentId = await createCountry(Payload);
 
       toast.success("Parent Level created successfully", { position: "top-center", duration: 3000 });
 
-      // After creating the parent level, route to region input page
       router.push(`/country-setup/region-input?id=${parentId.data}`);
-    } catch (error: unknown) {
-      // Handle errors gracefully
-      if (error instanceof Error) {
-        toast.error(`An error occurred: ${error.message}`);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        toast.error("Country already exists", { position: "top-center", duration: 3000 });
+      } else if (error instanceof Error) {
+        toast.error(`An error occurred: ${error.message}`, { position: "top-center", duration: 3000 });
       } else {
-        toast.error(`An unknown error occurred`);
+        toast.error("An unexpected error occurred", { position: "top-center", duration: 3000 });
       }
     } finally {
       setIsSubmitting(false); // Ensure submitting state is reset
     }
   };
+
 
 
   return (
@@ -186,29 +193,59 @@ function NewIndividual() {
             </div>
           </div>
           <div>
-            <div className="mb-2 relative">
-              <SelectInput
-                listdata={Countries()}
-                label="Country"
-                autoComplete="off"
-                {...register("countryName")}
-                error={errors.countryName?.message}
-                PrependIcon={
-                  <span className="absolute left-0 top-2 bottom-0 flex items-center pl-2">
-                    <img
-                      src={
-                        Countrie(getValues("countryName") ?? "")?.flags.png
+            <div className="mb-2 relative new-input half hide-input-borders">
+              <label className="text-xs">Country</label>
+              <div className="mt-1 flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]" style={{ width: "30%" }}>
+                <Autocomplete
+                  variant="bordered"
+                  className="w-full"
+                  placeholder={"Select Country"}
+                  selectedKey={getValues("countryName")} // Make sure this is correct
+                  scrollShadowProps={{
+                    isEnabled: false,
+                  }}
+                  popoverProps={{
+                    offset: 10,
+                    classNames: {
+                      content:
+                        "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                    },
+                  }}
+                  onSelectionChange={(key: any) => {
+                    setValue("countryName", key); // Set the selected country in the form
+                    trigger("countryName"); // Trigger validation after selection
+                  }}
+                  aria-labelledby="Country"
+                >
+                  {Countries()?.map((country: any) => (
+                    <AutocompleteItem
+                      key={country.name.common} // Unique identifier for the key
+                      value={country.name.common} // Pass the country name as value
+                      textValue={country.name.common} // Provide plain text for accessibility
+                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
+                      startContent={
+                        <img
+                          src={country.flags.png} // Access flag directly from the country object
+                          alt={country.name.common} // Alt text for the flag image
+                          style={{
+                            height: "24px",
+                            width: "24px",
+                            borderRadius: "50%",
+                          }}
+                        />
                       }
-                      alt={
-                        Countrie(getValues("countryName") ?? "")?.name.common
-                      }
-                      style={{ height: "auto", width: "30px" }}
-                    />
-                  </span>
-                }
-                style={{ width: "30%", height: "30%" }}
-              />
+                    >
+                      {country.name.common} {/* Render the country name */}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+              </div>
+              {errors.countryName && (
+                <p className="text-red-500 text-sm mt-1">{errors.countryName.message}</p>
+              )}
             </div>
+
+
           </div>
           <div>
             <h4 className="font-bold text-black-400">Addressing Scheme</h4>

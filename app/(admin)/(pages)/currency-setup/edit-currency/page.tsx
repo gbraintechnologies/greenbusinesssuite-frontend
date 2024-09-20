@@ -134,9 +134,6 @@ function EditCurrency() {
       toast.success("Currency has been updated Successfully", {
         position: "top-center",
         duration: 3000,
-        style: {
-          color: "green",
-        },
       });
       router.push("/currency-setup");
     } catch (error: any) {
