@@ -103,7 +103,7 @@ const Page = () => {
     | undefined
   >();
 
-  const [selectedJurisdiction, setSelectedJurisdiction] = useState<
+  const [selectedCountry, setSelectedCountry] = useState<
     | {
         label: string;
         value: string;
@@ -111,7 +111,7 @@ const Page = () => {
     | undefined
   >();
 
-  const [selectedSubJurisdiction, setSelectedSubJurisdiction] = useState<
+  const [selectedParentLevel, setSelectedParentLevel] = useState<
     | {
         label: string;
         value: string;
@@ -119,7 +119,7 @@ const Page = () => {
     | undefined
   >();
 
-  const [selectedSubLevel, setSelectedSubLevel] = useState<
+  const [selectedChildLevel, setSelectedChildLevel] = useState<
     | {
         label: string;
         value: string;
@@ -200,20 +200,20 @@ const Page = () => {
       return;
     }
 
-    if (!selectedJurisdiction?.value) {
-      toast.error("Jurisdiction is required");
+    if (!selectedCountry?.value) {
+      toast.error("Country is required");
       setSubmitting(false);
       return;
     }
 
-    if (!selectedSubJurisdiction?.value) {
-      toast.error("Sub Jurisdiction is required");
+    if (!selectedParentLevel?.value) {
+      toast.error("Parent Level is required");
       setSubmitting(false);
       return;
     }
 
-    if (!selectedSubLevel?.value) {
-      toast.error("Sub Level is required");
+    if (!selectedChildLevel?.value) {
+      toast.error("Child Level is required");
       setSubmitting(false);
       return;
     }
@@ -261,7 +261,7 @@ const Page = () => {
         ? companyLogoURL?.file_url
         : companyData?.company_logo,
       industry: selectedIndustry?.value as string,
-      company_address: selectedJurisdiction?.value as string,
+      company_address: selectedCountry?.value as string,
       primary_currency: "GHS",
       company_code: values.companyName?.slice(0, 3).toLowerCase() + Math.floor(Math.random() * 1000).toString().padStart(3, '0')
     };
@@ -290,12 +290,12 @@ const Page = () => {
       {
         // Parent Address Scheme ID
         custom_profile_item_id: 5,
-        value: selectedSubJurisdiction?.value as string,
+        value: selectedParentLevel?.value as string,
       },
       {
         //Child Address Scheme ID
         custom_profile_item_id: 6,
-        value: selectedSubLevel?.value as string,
+        value: selectedChildLevel?.value as string,
       },
       {
         // Sector ID
@@ -406,14 +406,14 @@ const Page = () => {
       }
 
       if (companyParentAddressId) {
-        setSelectedJurisdiction({
+        setSelectedCountry({
           label: country?.countryName,
           value: companyData?.company_address,
         });
       }
 
       if (companyParentAddressId) {
-        setSelectedSubJurisdiction({
+        setSelectedParentLevel({
           label: country?.addressingScheme?.parentLevels?.find(
             (entry: any) => entry?.id == companyParentAddressId
           )?.parentName,
@@ -422,7 +422,7 @@ const Page = () => {
       }
 
       if (companyChildAddressId) {
-        setSelectedSubLevel({
+        setSelectedChildLevel({
           label: country?.addressingScheme?.parentLevels?.find(
             (entry: any) => entry?.id == companyParentAddressId
           )
@@ -472,12 +472,12 @@ const Page = () => {
             setPhone={setPhone}
             selectedIndustry={selectedIndustry}
             setSelectedIndustry={setSelectedIndustry}
-            selectedJurisdiction={selectedJurisdiction}
-            setSelectedJurisdiction={setSelectedJurisdiction}
-            selectedSubJurisdiction={selectedSubJurisdiction}
-            setSelectedSubJurisdiction={setSelectedSubJurisdiction}
-            selectedSubLevel={selectedSubLevel}
-            setSelectedSubLevel={setSelectedSubLevel}
+            selectedCountry={selectedCountry}
+            setSelectedCountry={setSelectedCountry}
+            selectedParentLevel={selectedParentLevel}
+            setSelectedParentLevel={setSelectedParentLevel}
+            selectedChildLevel={selectedChildLevel}
+            setSelectedChildLevel={setSelectedChildLevel}
             selectedSubSector={selectedSubSector}
             setSelectedSubSector={setSelectedSubSector}
             sectorId={sectorId}

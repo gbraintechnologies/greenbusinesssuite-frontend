@@ -96,13 +96,13 @@ type Props = {
       | undefined
     >
   >;
-  selectedJurisdiction:
+  selectedCountry:
     | {
         label: string;
         value: string;
       }
     | undefined;
-  setSelectedJurisdiction: React.Dispatch<
+  setSelectedCountry: React.Dispatch<
     React.SetStateAction<
       | {
           label: string;
@@ -111,13 +111,13 @@ type Props = {
       | undefined
     >
   >;
-  selectedSubJurisdiction:
+  selectedParentLevel:
     | {
         label: string;
         value: string;
       }
     | undefined;
-  setSelectedSubJurisdiction: React.Dispatch<
+  setSelectedParentLevel: React.Dispatch<
     React.SetStateAction<
       | {
           label: string;
@@ -126,13 +126,13 @@ type Props = {
       | undefined
     >
   >;
-  selectedSubLevel:
+  selectedChildLevel:
     | {
         label: string;
         value: string;
       }
     | undefined;
-  setSelectedSubLevel: React.Dispatch<
+  setSelectedChildLevel: React.Dispatch<
     React.SetStateAction<
       | {
           label: string;
@@ -164,6 +164,8 @@ type Props = {
   setPhone: React.Dispatch<React.SetStateAction<string>>;
   color: string;
   setColor: React.Dispatch<React.SetStateAction<string>>;
+  currencyId: string;
+  setCurrencyId: React.Dispatch<React.SetStateAction<string>>;
 };
 const CompanyForm: React.FC<Props> = ({
   headerText,
@@ -183,12 +185,12 @@ const CompanyForm: React.FC<Props> = ({
   setBackgroundImageUrl,
   selectedIndustry,
   setSelectedIndustry,
-  selectedJurisdiction,
-  setSelectedJurisdiction,
-  selectedSubJurisdiction,
-  setSelectedSubJurisdiction,
-  selectedSubLevel,
-  setSelectedSubLevel,
+  selectedCountry,
+  setSelectedCountry,
+  selectedParentLevel,
+  setSelectedParentLevel,
+  selectedChildLevel,
+  setSelectedChildLevel,
   selectedSubSector,
   setSelectedSubSector,
   sectorId,
@@ -197,6 +199,8 @@ const CompanyForm: React.FC<Props> = ({
   setInitialLoad,
   color,
   setColor,
+  currencyId,
+  setCurrencyId,
 }) => {
   const [industries, setIndustries] = useState<any>([]);
 
@@ -211,11 +215,10 @@ const CompanyForm: React.FC<Props> = ({
 
   const [showColorPicker, setShowColorPicker] = useState(false);
 
-  const { data: jurisdictions, isLoading: jurisdictionsLoading } = useQuery({
+  const { data: countries, isLoading: countriesLoading } = useQuery({
     queryKey: ["all countries"],
     queryFn: services.allcountries(),
   });
-
 
   const fetchIndustries = async (jurisdiction: string) => {
     try {
@@ -252,8 +255,8 @@ const CompanyForm: React.FC<Props> = ({
     try {
       if (!initialLoad) {
         setSubJurisdictionsLoading(true);
-        setSelectedSubJurisdiction(undefined);
-        setSelectedSubLevel(undefined);
+        setSelectedParentLevel(undefined);
+        setSelectedChildLevel(undefined);
         setSubJurisdiction([]);
       }
       const response = await services.getCountryInfoByName(country);
@@ -264,6 +267,16 @@ const CompanyForm: React.FC<Props> = ({
       if (!initialLoad) {
         setSubJurisdictionsLoading(false);
       }
+    }
+  };
+
+  const getAndSetCurrency = async (country: string) => {
+    try {
+      const response = await services.getCurrencyByCountryName(country);
+      setCurrencyId(response[0]?.id);
+    } catch (err) {
+      setCurrencyId("");
+      console.log("error ", err);
     }
   };
 
@@ -285,24 +298,34 @@ const CompanyForm: React.FC<Props> = ({
     }
   }, [companySmallLogo]);
 
-  useLayoutEffect(() => {
-    if (selectedJurisdiction?.label) {
-      fetchIndustries(selectedJurisdiction?.label);
-      getJurisdictionEntries(selectedJurisdiction?.value);
+  useEffect(() => {
+    if (selectedCountry?.label) {
+      fetchIndustries(selectedCountry?.label);
+      getJurisdictionEntries(selectedCountry?.value);
     }
-  }, [selectedJurisdiction]);
+  }, [selectedCountry]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!initialLoad) {
-      setSelectedSubLevel(undefined);;
+      setSelectedChildLevel(undefined);
     }
-  }, [selectedSubJurisdiction]);
-  
-  useLayoutEffect(() => {
+  }, [selectedParentLevel]);
+
+  useEffect(() => {
     if (!initialLoad) {
       setSelectedSubSector(undefined);
     }
   }, [selectedIndustry]);
+
+  useEffect(() => {
+    const currencyFn = async () => {
+      if (selectedCountry?.value) {
+        await getAndSetCurrency(selectedCountry?.value);
+      }
+    };
+
+    currencyFn();
+  }, [selectedCountry]);
 
   // useLayoutEffect(() => {
   //   if (selectedIndustry?.value && sectorId) {
@@ -393,25 +416,35 @@ const CompanyForm: React.FC<Props> = ({
                   <ShowError name="companyDescription" />
                 </div>
                 {/* JURISDICTION */}
+                <div className="bg-blue-50 px-3 py-3 mb-4 rounded-lg text-lg flex justify-center items-center text-blue-900 flex-row gap-2">
+                  <CiCircleInfo size={20} />{" "}
+                  <p className="text-sm">
+                    A company can only be created in a country that has a
+                    currency set up. If the selected country doesn’t have a
+                    currency yet, please ensure you set one up before
+                    proceeding.
+                  </p>
+                </div>
                 <div className="new-input half hide-input-borders">
-                  <label>Company jurisdiction</label>
+                  <label>Country</label>
                   <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                     <Autocomplete
                       variant="bordered"
                       className="w-full "
-                      placeholder={"Select Jurisdiction"}
-                      selectedKey={selectedJurisdiction?.value}
+                      placeholder={"Select Country"}
+                      selectedKey={selectedCountry?.value}
                       scrollShadowProps={{
                         isEnabled: false,
                       }}
                       popoverProps={{
                         offset: 10,
                         classNames: {
-                          content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                          content:
+                            "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
                         },
                       }}
                       onSelectionChange={(key: any) => {
-                        setSelectedJurisdiction({
+                        setSelectedCountry({
                           label: key,
                           value: key,
                         });
@@ -419,32 +452,32 @@ const CompanyForm: React.FC<Props> = ({
                       }}
                       aria-labelledby="Country"
                     >
-                        {jurisdictions?.map((country: any) => (
-                          <AutocompleteItem
-                            key={country}
-                            value={country}
-                            className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
-                            startContent={
-                              <img
-                                src={Countrie(country)?.flags.png}
-                                alt={Countrie(country)?.name.common}
-                                style={{
-                                  height: "24px",
-                                  width: "24px",
-                                  borderRadius: "50%",
-                                }}
-                              />
-                            }
-                          >
-                            {country}
-                          </AutocompleteItem>
-                        ))}
+                      {countries?.map((country: any) => (
+                        <AutocompleteItem
+                          key={country}
+                          value={country}
+                          className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
+                          startContent={
+                            <img
+                              src={Countrie(country)?.flags.png}
+                              alt={Countrie(country)?.name.common}
+                              style={{
+                                height: "24px",
+                                width: "24px",
+                                borderRadius: "50%",
+                              }}
+                            />
+                          }
+                        >
+                          {country}
+                        </AutocompleteItem>
+                      ))}
                     </Autocomplete>
                   </div>
                 </div>
 
                 {(subJurisdictionsLoading || sectorsLoading) && <LoadingIcon />}
-                {!(typeof selectedJurisdiction == "undefined") &&
+                {!(typeof selectedCountry == "undefined") &&
                   !subJurisdictionsLoading && (
                     <div className="flex gap-5">
                       {/* SUB JURISDICTION */}
@@ -462,18 +495,19 @@ const CompanyForm: React.FC<Props> = ({
                               subJurisdiction?.addressingScheme
                                 ?.parentLevelName || "Sub Jurisdiction"
                             }
-                            selectedKey={selectedSubJurisdiction?.label}
+                            selectedKey={selectedParentLevel?.label}
                             scrollShadowProps={{
                               isEnabled: false,
                             }}
                             popoverProps={{
                               offset: 10,
                               classNames: {
-                                content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                                content:
+                                  "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
                               },
                             }}
                             onSelectionChange={(key: any) => {
-                              setSelectedSubJurisdiction({
+                              setSelectedParentLevel({
                                 label: key,
                                 value: key,
                               });
@@ -481,24 +515,24 @@ const CompanyForm: React.FC<Props> = ({
                             }}
                             aria-labelledby="Parent Level"
                           >
-                              {subJurisdiction?.addressingScheme?.parentLevels
-                                ?.filter(
-                                  (item: any) => item?.parentName?.length > 1
-                                )
-                                ?.map((subJurisdiction: any) => (
-                                  <AutocompleteItem
-                                    key={subJurisdiction.id}
-                                    value={subJurisdiction.parentName}
-                                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                  >
-                                    {subJurisdiction?.parentName}
-                                  </AutocompleteItem>
-                                ))}
+                            {subJurisdiction?.addressingScheme?.parentLevels
+                              ?.filter(
+                                (item: any) => item?.parentName?.length > 1
+                              )
+                              ?.map((subJurisdiction: any) => (
+                                <AutocompleteItem
+                                  key={subJurisdiction.id}
+                                  value={subJurisdiction.parentName}
+                                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                >
+                                  {subJurisdiction?.parentName}
+                                </AutocompleteItem>
+                              ))}
                           </Autocomplete>
                         </div>
                       </div>
                       {/* SUB LEVEL */}
-                      {selectedSubJurisdiction && (
+                      {selectedParentLevel && (
                         <div className="new-input half hide-input-borders">
                           <label>
                             {subJurisdiction?.addressingScheme
@@ -512,43 +546,42 @@ const CompanyForm: React.FC<Props> = ({
                                 subJurisdiction?.addressingScheme
                                   ?.childLevelName || "Sub Level"
                               }
-                              
                               popoverProps={{
                                 offset: 10,
                                 classNames: {
-                                  content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                                  content:
+                                    "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
                                 },
                               }}
-                              selectedKey={selectedSubLevel?.label}
+                              selectedKey={selectedChildLevel?.label}
                               scrollShadowProps={{
                                 isEnabled: false,
                               }}
                               onSelectionChange={(key: any) => {
-                                setSelectedSubLevel({
+                                setSelectedChildLevel({
                                   label: key,
                                   value: key,
                                 });
                                 setInitialLoad(false);
                               }}
                             >
-                                {subJurisdiction?.addressingScheme?.parentLevels
-                                  ?.find(
-                                    (entry: any) =>
-                                      entry?.id ==
-                                      selectedSubJurisdiction?.value
-                                  )
-                                  ?.childLevels?.filter(
-                                    (item: any) => item?.length > 1
-                                  )
-                                  ?.map((subLevel: any) => (
-                                    <AutocompleteItem
-                                      key={subLevel}
-                                      value={subLevel}
-                                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                    >
-                                      {subLevel}
-                                    </AutocompleteItem>
-                                  ))}
+                              {subJurisdiction?.addressingScheme?.parentLevels
+                                ?.find(
+                                  (entry: any) =>
+                                    entry?.id == selectedParentLevel?.value
+                                )
+                                ?.childLevels?.filter(
+                                  (item: any) => item?.length > 1
+                                )
+                                ?.map((subLevel: any) => (
+                                  <AutocompleteItem
+                                    key={subLevel}
+                                    value={subLevel}
+                                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                  >
+                                    {subLevel}
+                                  </AutocompleteItem>
+                                ))}
                             </Autocomplete>
                           </div>
                         </div>
@@ -557,7 +590,7 @@ const CompanyForm: React.FC<Props> = ({
                   )}
 
                 {/* INDUSTRY */}
-                {(selectedJurisdiction && !sectorsLoading) && (
+                {selectedCountry && !sectorsLoading && (
                   <div className="flex gap-5">
                     <div className="new-input half hide-input-borders">
                       <label>Industry</label>
@@ -574,7 +607,8 @@ const CompanyForm: React.FC<Props> = ({
                           popoverProps={{
                             offset: 10,
                             classNames: {
-                              content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                              content:
+                                "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
                             },
                           }}
                           onSelectionChange={(key: any) => {
@@ -587,15 +621,15 @@ const CompanyForm: React.FC<Props> = ({
                           }}
                           aria-labelledby="Industry"
                         >
-                            {industries?.sectors?.map((industry: any) => (
-                              <AutocompleteItem
-                                key={industry.id}
-                                value={industry.parentSector}
-                                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                              >
-                                {industry.parentSector}
-                              </AutocompleteItem>
-                            ))}
+                          {industries?.sectors?.map((industry: any) => (
+                            <AutocompleteItem
+                              key={industry.id}
+                              value={industry.parentSector}
+                              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                            >
+                              {industry.parentSector}
+                            </AutocompleteItem>
+                          ))}
                         </Autocomplete>
                       </div>
                     </div>
@@ -616,7 +650,8 @@ const CompanyForm: React.FC<Props> = ({
                             popoverProps={{
                               offset: 10,
                               classNames: {
-                                content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                                content:
+                                  "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
                               },
                             }}
                             onSelectionChange={(key: any) => {
@@ -627,20 +662,20 @@ const CompanyForm: React.FC<Props> = ({
                               setInitialLoad(false);
                             }}
                           >
-                              {industries?.sectors
-                                ?.find(
-                                  (sector: any) =>
-                                    sector?.id == selectedIndustry?.value
-                                )
-                                ?.subSector?.map((sector: any) => (
-                                  <AutocompleteItem
-                                    key={sector}
-                                    value={sector}
-                                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                                  >
-                                    {sector}
-                                  </AutocompleteItem>
-                                ))}
+                            {industries?.sectors
+                              ?.find(
+                                (sector: any) =>
+                                  sector?.id == selectedIndustry?.value
+                              )
+                              ?.subSector?.map((sector: any) => (
+                                <AutocompleteItem
+                                  key={sector}
+                                  value={sector}
+                                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                                >
+                                  {sector}
+                                </AutocompleteItem>
+                              ))}
                           </Autocomplete>
                         </div>
                       </div>

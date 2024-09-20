@@ -11,6 +11,10 @@ export const createCurrency = (data: any) => {
   return authApi.post("/forms/currency-setup", data);
 };
 
+export const getCurrencyByCountryName = (countryName: string) => {
+  return authApi.get(`/forms/currency-setup/by-country/${countryName}`).then((res) => res.data);
+};
+
 export const deleteCurrencyByID = (id: any) => {
   return authApi.delete(`/forms/currency-setup/hard-delete/${id}`);
 };
