@@ -64,6 +64,16 @@ export interface IModal {
   size?: "small" | "big";
 }
 
-export type TimelineType =  "ALL" | "TODAY" | "THIS_WEEK" | "THIS_MONTH" | "THIS_YEAR"
+export type TimelineType =
+  | "ALL"
+  | "TODAY"
+  | "THIS_WEEK"
+  | "THIS_MONTH"
+  | "THIS_YEAR";
 
-export type TimelineValues = "All time" | "Today" | "This week" | "This month" | "This year" 
+export type TimelineValues =
+  | "All time"
+  | "Today"
+  | "This week"
+  | "This month"
+  | "This year";
