@@ -157,6 +157,8 @@ const Page = () => {
 
   const [selectedAdminOption, setSelectedAdminOption] = useState<any>();
 
+  const [currencyId, setCurrencyId] = useState<string>("")
+
   const router = useRouter();
 
   const initialValues: Partial<ICompany> = {
@@ -488,6 +490,8 @@ const Page = () => {
             setColor={setColor}
             selectedAdminOption={selectedAdminOption}
             setSelectedAdminOption={setSelectedAdminOption}
+            currencyId={currencyId}
+            setCurrencyId={setCurrencyId}
           />
         )}
         {/* CANCEL MODAL: DISCARD ALL CHANGES */}
