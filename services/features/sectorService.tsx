@@ -12,10 +12,6 @@ export const allParentSectors = (pageNumber: number, pageSize: number) => {
       .then((res) => res.data);
 };
 
-// export const createSector = (data: any) => {
-//   return authApi.post("/sectors", data);
-// };
-
 export const createSector = (data: any) => {
   return authApi.post("/sectors/create", data);
 };
@@ -51,6 +47,10 @@ export const deleteAllSectors = (id: any) => {
 export const getSectorByID = (sectorID: number) => {
   return () => authApi.get(`/sectors/data/${sectorID}`).then((res) => res.data);
 }
+
+export const getCountryByName = (countryName: string) => {
+  return authApi.get(`/sectors/data-by-country/${countryName}`).then((res) => res.data);
+};
 
 export const getSectorByIDRaw = (sectorID: number) => {
   return authApi.get(`/sectors/data/${sectorID}`).then((res) => res.data);

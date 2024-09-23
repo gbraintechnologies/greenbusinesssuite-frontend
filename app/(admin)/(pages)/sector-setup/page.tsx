@@ -92,19 +92,41 @@ const SectorSetup: React.FC = () => {
     queryFn: services.allParentSectors(page, limit),
   });
 
-  useEffect(() => {
-    if (sectors?.content) {
+  const { data: searchData } = useQuery({
+    queryKey: ["searchCountry", searchTerm], 
+    queryFn: () => services.getCountryByName(searchTerm),
+    enabled: !!searchTerm,
+});
+
+useEffect(() => {
+  if (searchTerm && searchData && searchData.length > 0) {
+      // Map searchData to the flattened structure
+      const mappedRows = searchData.map((country: any) => ({
+          id: country.id,
+          rowId: country.id,
+          countryId: country.id,
+          countryName: country.countryName,
+          parentSectorCount: country.sectors.length, // Count of sectors
+          subSectorCount: country.sectors.reduce(
+              (total: number, sector: any) => total + (sector.subSector ? sector.subSector.length : 0),
+              0 // Count total sub-sectors
+          ),
+      }));
+      setRows(mappedRows);
+  } else if (sectors?.content) {
+      // Flatten the original sectors data
       const flattenedData = sectors.content.map((sector: any) => ({
-        id: sector.id,
-        rowId: sector.id,
-        countryId: sector.id,
-        countryName: sector.countryName,
-        parentSectorCount: sector.parentSectorCount,
-        subSectorCount: sector.subSectorCount,
+          id: sector.id,
+          rowId: sector.id,
+          countryId: sector.id,
+          countryName: sector.countryName,
+          parentSectorCount: sector.parentSectorCount,
+          subSectorCount: sector.subSectorCount,
       }));
       setRows(flattenedData);
-    }
-  }, [sectors]);
+  }
+}, [searchData, sectors, searchTerm]);
+
 
   const handleDeleteSuccess = async () => {
     try {
