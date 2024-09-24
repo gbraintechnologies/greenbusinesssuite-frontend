@@ -66,7 +66,7 @@ function CompanyFormReports() {
               value: linksOpened !== null ? linksOpened : "-",
             },
             {
-              label: "Ignored Links",
+              label: "Ignored Forms",
               value: linksIgnored !== null ? linksIgnored : "-",
             },
             {
