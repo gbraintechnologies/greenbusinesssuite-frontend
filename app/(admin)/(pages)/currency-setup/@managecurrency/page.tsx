@@ -97,11 +97,42 @@ function CurrencySetup() {
     queryFn: services.allCurrencies(page, limit),
   });
 
+  const { data: searchData } = useQuery({
+    queryKey: ["searchCurrency", searchTerm],
+    queryFn: () => services.searchCountryByCurrency(searchTerm),
+    enabled: !!searchTerm,
+  });
+
   useEffect(() => {
-    if (currencies) {
-      setRows(currencies.content);
+    if (searchTerm && searchData?.length) {
+      // Map searchData to match the original data structure for rows
+      const mappedRows = searchData.map((item: any) => ({
+        id: item.id,
+        currency: item.currency,
+        symbol: item.symbol,
+        countryName: item.countryName,
+        denominations: item.denominations,  // You can handle the denominations if needed
+        createdOn: item.createdOn,
+        updatedOn: item.updatedOn,
+        isDeleted: item.isDeleted
+      }));
+      setRows(mappedRows);  // Update the rows with search results
+    } else if (currencies?.content?.length) {
+      // Map the original data (currencies) to the row format
+      const mappedRows = currencies.content.map((currency: any) => ({
+        id: currency.id,
+        currency: currency.currency,
+        symbol: currency.symbol,
+        countryName: currency.countryName,
+        denominations: currency.denominations,  // Include denominations if needed
+        createdOn: currency.createdOn,
+        updatedOn: currency.updatedOn,
+        isDeleted: currency.isDeleted
+      }));
+      setRows(mappedRows);  // Maintain original data structure for rows
     }
-  }, [currencies]);
+  }, [searchData, currencies, searchTerm]);
+  
 
   const handleDeleteSuccess = async () => {
     try {
@@ -170,17 +201,17 @@ function CurrencySetup() {
     <div className="w-full pb-20">
       <Nav />
       <div className="flex items-center px-5 justify-between my-4">
-          <div className="flex items-center gap-3">
-            <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
-              <SearchIcon />
-              <input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="outline-none text-sm focus:outline-none bg-white input-custom"
-                placeholder="Search by Country"
-              />
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+            <SearchIcon />
+            <input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="outline-none text-sm focus:outline-none bg-white input-custom"
+              placeholder="Search by currency"
+            />
           </div>
+        </div>
       </div>
       <DataTable isLoading={isLoading} rows={rows} columns={columns} />
       <div className="w-full flex justify-between">

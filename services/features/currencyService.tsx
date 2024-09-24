@@ -11,10 +11,6 @@ export const createCurrency = (data: any) => {
   return authApi.post("/forms/currency-setup", data);
 };
 
-export const getCurrencyByCountryName = (countryName: string) => {
-  return authApi.get(`/forms/currency-setup/by-country/${countryName}`).then((res) => res.data);
-};
-
 export const deleteCurrencyByID = (id: any) => {
   return authApi.delete(`/forms/currency-setup/hard-delete/${id}`);
 };
@@ -26,4 +22,8 @@ export const getCurrencyByID = (id: number) => {
 
 export const updateCurrency = (data: any) => {
   return authApi.put("/forms/currency-setup/update", data);
+};
+
+export const searchCountryByCurrency = (currency: string) => {
+  return authApi.get(`/forms/currency-setup/search/${currency}`).then((res) => res.data);
 };

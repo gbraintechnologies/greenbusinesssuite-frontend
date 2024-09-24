@@ -41,7 +41,6 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
     };
 
     const handleEdit = () => {
-       // alert(JSON.stringify(row.id))
         handleClose();
         router.push(`/country-setup/edit-jurisdiction?id=${row.id}`);
     };
@@ -87,21 +86,35 @@ function CountrySetup() {
     const { checkPermission } = useAdmin();
     const [page, setPage] = useState(0);
     const [limit, setLimit] = useState(15);
+
     const { data, isLoading, refetch } = useQuery({
-        queryKey: ["all Countries", page, limit],
+        queryKey: ["allCountries", page, limit],
         queryFn: services.allJurisdictions(page, limit),
     });
 
+    const { data: searchData } = useQuery({
+        queryKey: ["searchCountry", searchTerm], 
+        queryFn: () => services.getCountryInfoByName(searchTerm),
+        enabled: !!searchTerm,
+    });
+
     useEffect(() => {
-        if (data) {
+        if (searchTerm && searchData) {
+            const mappedRows = [{
+                id: searchData.id,
+                name: searchData.countryName,
+            }];
+            setRows(mappedRows);
+        } else if (data?.countries) {
             const mappedRows = data.countries.map((country: any) => ({
                 id: country.id,
                 name: country.countryName,
             }));
             setRows(mappedRows);
         }
-    }, [data]);
-
+    }, [searchData, data, searchTerm]);
+    
+    
     useEffect(() => {
         refetch();
     }, [page, limit, refetch]);
@@ -155,13 +168,14 @@ function CountrySetup() {
             ),
         },
     ];
+
     return (
-        <div className="w-full pb-20 ">
+        <div className="w-full pb-20">
             <Nav />
             <div className="flex items-center px-5 justify-between my-4">
                 {checkPermission(PermissionTypes.SEARCH_JURISDICTION) && (
                     <div className="flex items-center gap-3">
-                        <div className="border shadow-sm  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+                        <div className="border shadow-sm border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
                             <SearchIcon />
                             <input
                                 value={searchTerm}
