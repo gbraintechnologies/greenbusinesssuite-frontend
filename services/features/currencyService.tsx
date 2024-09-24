@@ -27,3 +27,8 @@ export const updateCurrency = (data: any) => {
 export const searchCountryByCurrency = (currency: string) => {
   return authApi.get(`/forms/currency-setup/search/${currency}`).then((res) => res.data);
 };
+
+export const getCurrencyByCountryName = (countryName: string) => {
+  return authApi.get(`/forms/currency-setup/by-country/${countryName}`).then((res) => res.data);
+};
+
