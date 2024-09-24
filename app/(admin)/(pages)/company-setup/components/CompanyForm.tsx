@@ -272,7 +272,7 @@ const CompanyForm: React.FC<Props> = ({
 
   const getAndSetCurrency = async (country: string) => {
     try {
-      const response = await services.getCurrencyByCountryName(country);
+      const response = await services.searchCountryByCurrency(country);
       setCurrencyId(response[0]?.id);
     } catch (err) {
       setCurrencyId("");
