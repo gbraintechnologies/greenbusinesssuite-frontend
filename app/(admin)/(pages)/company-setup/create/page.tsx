@@ -232,59 +232,58 @@ const CreateCompany = () => {
     //   user_status: "ACTIVE",
     // };
 
-    console.log("data" , data)
-    // try {
-    //   const companyData = await createCompanyWithCustomFields(
-    //     data,
-    //     custom_fields
-    //   );
+    try {
+      const companyData = await createCompanyWithCustomFields(
+        data,
+        custom_fields
+      );
 
-    //   const companySmallLogoURL =
-    //     companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+      const companySmallLogoURL =
+        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
-    //   await services.createCompanyBranding(
-    //     companyData?.id,
-    //     companyData?.company_identifier,
-    //     companySmallLogoURL?.file_url,
-    //     color,
-    //     companyData?.company_name
-    //   );
+      await services.createCompanyBranding(
+        companyData?.id,
+        companyData?.company_identifier,
+        companySmallLogoURL?.file_url,
+        color,
+        companyData?.company_name
+      );
 
-    //   toast.success("Company created successfully");
+      toast.success("Company created successfully");
 
-    //   // const custom_profiles = [
-    //   //   {
-    //   //     custom_profile_item_id: 2,
-    //   //     value: await createCompanyResponse?.id,
-    //   //   },
-    //   // ];
+      // const custom_profiles = [
+      //   {
+      //     custom_profile_item_id: 2,
+      //     value: await createCompanyResponse?.id,
+      //   },
+      // ];
 
-    //   // TODO: No need to create new admin
-    //   // const createUserResponse = await services.createUserWithCustomProfiles(
-    //   //   adminData,
-    //   //   custom_profiles
-    //   // );
-    //   // toast.success("Admin created successfully successfully");
+      // TODO: No need to create new admin
+      // const createUserResponse = await services.createUserWithCustomProfiles(
+      //   adminData,
+      //   custom_profiles
+      // );
+      // toast.success("Admin created successfully successfully");
 
-    //   // ROLE ID: 6 for company admin
-    //   // await services.assignRoleToUser(createUserResponse.data.id, 6);
+      // ROLE ID: 6 for company admin
+      // await services.assignRoleToUser(createUserResponse.data.id, 6);
 
-    //   setPhone("");
-    //   setSelectedIndustry(undefined);
-    //   setSelectedCountry(undefined);
-    //   setCompanyLogo(null);
-    //   setCompanySmallLogo(null);
-    //   setSmallLogoUrl("");
-    //   setBackgroundImageUrl("");
-    //   resetForm();
+      setPhone("");
+      setSelectedIndustry(undefined);
+      setSelectedCountry(undefined);
+      setCompanyLogo(null);
+      setCompanySmallLogo(null);
+      setSmallLogoUrl("");
+      setBackgroundImageUrl("");
+      resetForm();
 
-    //   // go back to companies page
-    //   router.back();
-    // } catch (error) {
-    //   toast.error("An error occurred");
-    // } finally {
-    //   setSubmitting(false);
-    // }
+      // go back to companies page
+      router.back();
+    } catch (error) {
+      toast.error("An error occurred");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
