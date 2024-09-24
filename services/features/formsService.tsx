@@ -282,6 +282,10 @@ export const updateResponseStatus = (
   return authApi.put(`forms/response/${status}/${formResponseId}`);
 };
 
+export const deleteResponse = (formResponseId: number) => {
+  return authApi.delete(`forms/response/${formResponseId}`);
+};
+
 export const saveResponse = ({
   formId,
   userId,

@@ -53,6 +53,8 @@ const ResponseDataTable: React.FC<Props> = ({
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const hiddenRef = React.useRef(null);
 
+  console.log("rows", rows);
+
   const captureAndGeneratePDF = (userData: any, responseId: string) => {
     const input = hiddenRef?.current;
 
@@ -150,37 +152,44 @@ const ResponseDataTable: React.FC<Props> = ({
   };
 
   useEffect(() => {
+    // console.log("in use effect", responseData, responseData?.length);
     // fetching user data for each response
     const fetchUserData = async () => {
       if (responseData?.length > 0) {
         setFetchingUserData(true);
         try {
-        const preparedRows = await Promise.all(
-          responseData.map(async (response: any, index: number) => {
-            if (Boolean(response?.userId)) {
-              const userRes = await services.userByIDRaw(response?.userId);
-              return {
-                id: index,
-                data: response,
-                userData: userRes,
-              };
-            } else {
-              return {
-                id: null,
-                data: null,
-                userData: null,
-              };
-            }
-          })
-        );
+          const preparedRows = await Promise.all(
+            responseData.map(async (response: any, index: number) => {
+              if (Boolean(response?.userId)) {
+                const userRes = await services.userByIDRaw(response?.userId);
+                return {
+                  id: index,
+                  data: response,
+                  userData: userRes,
+                };
+              } else {
+                return {
+                  id: null,
+                  data: null,
+                  userData: null,
+                };
+              }
+            })
+          );
 
-        setRows(preparedRows.filter((item) => item.id !== null));
-      } catch (error){
-        setRows([]);
-      }
-      finally {
-        setFetchingUserData(false);
-      }
+          console.log(
+            "prepared rows",
+            preparedRows,
+            preparedRows.filter((item) => item?.id !== null)
+          );
+          setRows(preparedRows.filter((item) => item?.id !== null));
+        } catch (error) {
+          toast.error("Error fetching user details for responses");
+          console.log("error occured", error);
+          setRows([]);
+        } finally {
+          setFetchingUserData(false);
+        }
       } else {
         setRows([]);
       }

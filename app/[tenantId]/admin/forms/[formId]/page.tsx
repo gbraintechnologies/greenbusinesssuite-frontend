@@ -67,6 +67,17 @@ function SingleFormCompany({ params }: any) {
     enabled: Boolean(formID),
   });
 
+  // useEffect(() => {
+  //   services
+  //     .deleteResponse(4)
+  //     .then((res) => {
+  //       console.log("res", res);
+  //     })
+  //     .catch((e) => {
+  //       console.log("error deleting", e);
+  //     });
+  // }, []);
+
   const {
     data: formResponseData,
     isLoading: isResponseLoading,
