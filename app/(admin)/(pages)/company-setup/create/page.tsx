@@ -12,6 +12,8 @@ import { CompanyInfo } from "@/types";
 import CompanyForm from "../components/CompanyForm";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
+import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
+
 
 interface ICompany {
   companyName: string;
@@ -174,7 +176,7 @@ const CreateCompany = () => {
       industry: selectedIndustry?.value as string,
       company_address: selectedCountry?.value as string,
       primary_currency: currencyId,
-      company_code: values.companyName?.slice(0, 3).toLowerCase() + Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+      company_code: lowerCaseNoSpace(values.companyName ? values.companyName : "")?.slice(0, 3).toLowerCase() + Math.floor(Math.random() * 1000).toString().padStart(3, '0')
     };
 
     const custom_fields = [
