@@ -36,6 +36,7 @@ import {
   AutocompleteSection,
 } from "@nextui-org/autocomplete";
 import { Countrie } from "@/app/(admin)/(pages)/country-setup/components/Countries";
+import useCompany from "@/hooks/useCompany";
 
 export interface ICompany {
   companyName: string;
@@ -199,6 +200,9 @@ const CompanyForm: React.FC<Props> = ({
   color,
   setColor,
 }) => {
+
+  const {companyBranding} = useCompany();
+
   const [industries, setIndustries] = useState<any>([]);
 
   const [subSectors, setSubSectors] = useState<any>([]);
@@ -340,7 +344,7 @@ const CompanyForm: React.FC<Props> = ({
   // }, [selectedIndustry, sectorId]);
 
   return (
-    <div className="hide-input-borders">
+    <div className="">
       <Formik
         initialValues={initialValues}
         validationSchema={companySchema}
@@ -372,7 +376,8 @@ const CompanyForm: React.FC<Props> = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                    style={{ backgroundColor: companyBranding?.color }}
+                    className="disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
                   >
                     {isSubmitting ? (
                       <>
@@ -648,7 +653,7 @@ const CompanyForm: React.FC<Props> = ({
               </div>
 
               {/* COMPANY ADMIN */}
-              <div className="max-w-2xl pt-6">
+              {/* <div className="max-w-2xl pt-6">
                 <header className="pb-3">
                   <h3 className="text-lg text-primary-dark font-semibold pb-4">
                     Company Administrator
@@ -663,7 +668,7 @@ const CompanyForm: React.FC<Props> = ({
                     </p>
                   </div>
                 </header>
-              </div>
+              </div> */}
 
               {/* CONTACT PERSON DETAILS */}
               <div className="max-w-2xl pt-6">

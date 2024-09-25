@@ -185,6 +185,7 @@ const Page = ({ params }: any) => {
       setColor(companyBranding?.color);
       setSmallLogoUrl(companyBranding?.logo);
     }
+
   }, [companyData, companyBranding]);
 
   const editCompanyBranding = async () => {
@@ -231,7 +232,8 @@ const Page = ({ params }: any) => {
           {checkPermission(PermissionTypes.EDIT_COMPANY) && <div className="flex gap-3">
             <Link
               href={`/${tenant_id}/admin/company-profile/edit`}
-              className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              style={{ backgroundColor: companyBranding?.color}}
+              className="disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
             >
               <Image src={UpdateInfo} alt="Update Info" />
               Update Information
