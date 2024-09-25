@@ -222,10 +222,10 @@ function FieldOptions({ refetch }: any) {
                     <DropdownItem
                       key={type.id}
                       onClick={() => {
-                        setLocalField((prev: any) => ({
-                          ...prev,
-                          instruction: type?.value,
-                        }));
+                        // setLocalField((prev: any) => ({
+                        //   ...prev,
+                        //   instruction: type?.value,
+                        // }));
                         updateActiveField(activeField.section, {
                           ...localField,
                           instruction: type?.value,
@@ -322,11 +322,11 @@ function FieldOptions({ refetch }: any) {
                     isEnabled: false,
                   }}
                   onSelectionChange={(type: any) => {
-                    console.log("type", type);
-                    setLocalField((prev: any) => ({
-                      ...prev,
-                      validPattern: type,
-                    }));
+                    // console.log("type", type);
+                    // setLocalField((prev: any) => ({
+                    //   ...prev,
+                    //   validPattern: type,
+                    // }));
                     updateActiveField(activeField.section, {
                       ...localField,
                       validPattern: type,
@@ -356,11 +356,6 @@ function FieldOptions({ refetch }: any) {
                   </span>
                 </div>
               )}
-
-              {/* <AddressValues
-                loading={jurisdictionEntriesLoading}
-                values={jurisdictionEntries?.parentAddressScheme?.entries}
-              /> */}
             </>
           )}
 
