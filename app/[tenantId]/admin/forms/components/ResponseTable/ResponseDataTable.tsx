@@ -53,8 +53,6 @@ const ResponseDataTable: React.FC<Props> = ({
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const hiddenRef = React.useRef(null);
 
-  console.log("rows", rows);
-
   const captureAndGeneratePDF = (userData: any, responseId: string) => {
     const input = hiddenRef?.current;
 
@@ -101,9 +99,7 @@ const ResponseDataTable: React.FC<Props> = ({
         .catch(() => {
           setPdfGenerating(false);
         });
-    } else {
-      // console.log("no input");
-    }
+    } 
   };
 
   const downloadPDF = async (responseId: number, userData: any) => {
@@ -160,18 +156,28 @@ const ResponseDataTable: React.FC<Props> = ({
         try {
           const preparedRows = await Promise.all(
             responseData.map(async (response: any, index: number) => {
-              if (Boolean(response?.userId)) {
-                const userRes = await services.userByIDRaw(response?.userId);
+              try {
+                if (Boolean(response?.userId)) {
+                  const userRes = await services.userByIDRaw(response?.userId);
+                  return {
+                    id: index,
+                    data: response,
+                    userData: userRes,
+                  };
+                } else {
+                  return {
+                    id: index, 
+                    data: response,
+                    userData: null, 
+                  };
+                }
+              } catch (error) {
+                toast.error(`Error fetching user data for userId: ${response?.userId}`);
+                console.error(`Error fetching user data for userId: ${response?.userId}`, error);
                 return {
                   id: index,
                   data: response,
-                  userData: userRes,
-                };
-              } else {
-                return {
-                  id: null,
-                  data: null,
-                  userData: null,
+                  userData: null, 
                 };
               }
             })

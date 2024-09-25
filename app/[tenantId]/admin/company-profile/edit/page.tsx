@@ -16,10 +16,11 @@ import { profile } from "console";
 import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
 import CompanyForm, { ICompany } from "../components/CompanyForm";
 import useCompany from "@/hooks/useCompany";
+import { PermissionTypes } from "@/types/permissionTypes";
+import useAdmin from "@/hooks/useAdmin";
 
 const Page = () => {
-    const {companyBranding} = useCompany();
-
+  const { companyBranding } = useCompany();
 
   const {
     data: companyData,
@@ -185,6 +186,9 @@ const Page = () => {
 
   const { handleFileUpload } = useFileUpload();
 
+  const {checkPermission} = useAdmin();
+
+
   const editCompany = async (
     values: Partial<ICompany>,
     { resetForm, setSubmitting }: FormikHelpers<Partial<ICompany>>
@@ -194,8 +198,6 @@ const Page = () => {
       setSubmitting(false);
       return;
     }
-
-    
 
     // if (!selectedCountry?.value) {
     //   toast.error("Jurisdiction is required");
@@ -244,6 +246,7 @@ const Page = () => {
       setSubmitting(false);
       return;
     }
+    
 
     const companyLogoURL =
       companyLogo && (await handleFileUpload(companyLogo as File));
@@ -260,7 +263,11 @@ const Page = () => {
       industry: selectedIndustry?.value as string,
       company_address: selectedCountry?.value as string,
       primary_currency: companyData?.primary_currency,
-      company_code: values.companyName?.slice(0, 3).toLowerCase() + Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+      company_code:
+        values.companyName?.slice(0, 3).toLowerCase() +
+        Math.floor(Math.random() * 1000)
+          .toString()
+          .padStart(3, "0"),
     };
 
     const custom_fields: CustomField[] = [
@@ -305,20 +312,31 @@ const Page = () => {
       const custom_values_field = "company_custom_values";
 
       let allCustomFields = companyData[custom_values_field];
-  
+
       delete companyData[custom_values_field];
 
-      const updatedCustomFields = allCustomFields.map((field: any) => 
-        field.custom_profile_item_id === 1 
-          ? { ...field, ...custom_fields.find(f => f.custom_profile_item_id === 1) }
+      const updatedCustomFields = allCustomFields.map((field: any) =>
+        field.custom_profile_item_id === 1
+          ? {
+              ...field,
+              ...custom_fields.find((f) => f.custom_profile_item_id === 1),
+            }
           : field
       );
-      
-      if (!allCustomFields.some((field: any) => field.custom_profile_item_id === 1)) {
+
+      if (
+        !allCustomFields.some(
+          (field: any) => field.custom_profile_item_id === 1
+        )
+      ) {
         updatedCustomFields.push(...custom_fields);
       }
 
-      await editCompanyWithCustomFields(companyData?.id, {...companyData,...data}, updatedCustomFields)
+      await editCompanyWithCustomFields(
+        companyData?.id,
+        { ...companyData, ...data },
+        updatedCustomFields
+      );
 
       // if (hasAdminInfoChanged(initialValues, values)) {
       //   const userResponse = await searchUsersByEmail(
@@ -370,7 +388,7 @@ const Page = () => {
           ? companySmallLogoURL?.file_url
           : companyBranding?.logo,
         color,
-        companyData?.company_name
+        values.companyName as string
       );
 
       toast.success(`Company ${companyData?.company_name} edited successfully`);
@@ -390,6 +408,8 @@ const Page = () => {
   //     )
   //   );
   // }, [companyData, country]);
+
+  
 
   useEffect(() => {
     if (companyData) {
@@ -457,11 +477,13 @@ const Page = () => {
       <div>
         {isLoading ? (
           <div className="h-[20rem] flex items-center justify-center">
-          <div>
-            <LoadingIcon />
-            <p className="mt-2 text-xs text-gray-500">Fetching company details</p>
+            <div>
+              <LoadingIcon />
+              <p className="mt-2 text-xs text-gray-500">
+                Fetching company details
+              </p>
+            </div>
           </div>
-        </div>
         ) : (
           <CompanyForm
             headerText={`Edit ${companyData?.company_name}`}

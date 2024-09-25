@@ -48,7 +48,6 @@ function Customers() {
   const {
     data: customers,
     isLoading,
-    refetch,
   } = useQuery({
     queryKey: ["all customers", company?.id, page, limit, selectedTimeline?.value],
     queryFn: services.companyCustomersWithFormCount(
@@ -105,10 +104,6 @@ function Customers() {
     //   setRows(temp);
     // }
   }, [customers]);
-
-  useEffect(() => {
-    refetch();
-  }, [page, limit, selectedTimeline]);
 
   const columns = [
     {
