@@ -15,7 +15,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 
 // utils
-import FormatDate from "@/utils/FormatDate/FormatDate";
+import FormatDate, {
+  FormatDateShort,
+  FormatDateWithDayShort,
+} from "@/utils/FormatDate/FormatDate";
 
 // components
 import Modal from "@/components/Modal/Modal";
@@ -195,7 +198,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
               </p>
             ) : (
               <p className="text-xs font-light pr-4">
-                Edited {FormatDate(updatedOn)}
+                Edited {FormatDateWithDayShort(updatedOn)}
               </p>
             )}
             <Menu as="div" className="relative">
