@@ -30,6 +30,9 @@ import Tabs from "../components/Tabs";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
+import Modal from "@/components/Modal/Modal";
+import Notifications from "@/components/Notifications/Notifications";
+import { TbMessage } from "react-icons/tb";
 
 export interface IFilter {
   id: number;
@@ -86,14 +89,14 @@ function CompanySetup() {
 
   const [page, setPage] = useState(0);
 
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(4);
+
+  const [showNotificationsModal, setShowNotificationsModal] =
+    useState<boolean>(false);
 
   const { checkPermission } = useAdmin();
 
-  const {
-    data: companies,
-    isLoading,
-  } = useQuery({
+  const { data: companies, isLoading } = useQuery({
     queryKey: ["companies", page, limit],
     queryFn: services.getAllCompanies(page * limit, limit),
   });
@@ -128,7 +131,6 @@ function CompanySetup() {
       toast.error("Failed to update company status");
     }
   };
-
 
   //Status Filter
   useEffect(() => {
@@ -327,37 +329,64 @@ function CompanySetup() {
   const roles: any = [];
 
   return (
-    <div className="w-full pb-20 ">
-      <Nav />
-      <div className="flex items-center px-5 justify-between my-4">
-        {/* FILTERS AND SEARCHBOX */}
-        <Tabs
-          filters={filters}
-          setActiveFilter={setActiveFilter}
-          activeFilter={activeFilter}
-        />
-        {checkPermission(PermissionTypes.SEARCH_COMPANY) && <div className="flex items-center gap-3">
-          <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        </div>}
-      </div>
+    <>
+      <div className="w-full pb-20 ">
+        <Nav />
+        <div className="flex items-center px-5 justify-between my-4">
+          {/* FILTERS AND SEARCHBOX */}
+          <div>
+            <Tabs
+              filters={filters}
+              setActiveFilter={setActiveFilter}
+              activeFilter={activeFilter}
+            />
+          </div>
+          <div className="flex gap-4">
+            <button
+              className=" bg-white text-[#334155] border border-[rgba(226, 232, 240, 1)] w-auto flex text-sm px-2 font-medium py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg "
+              onClick={() => setShowNotificationsModal(true)}
+            >
+              <TbMessage color={"#334155"} size={20}/>
+              Send Message
+            </button>
+            {checkPermission(PermissionTypes.SEARCH_COMPANY) && (
+              <div className="flex items-center gap-3">
+                <SearchBox
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+              </div>
+            )}
+          </div>
+        </div>
 
-      <DataTable
-        isLoading={isLoading || searchLoading}
-        rows={rows}
-        columns={columns}
-      />
-      {/*PAGINATION */}
-
-      <div className="w-full flex justify-between">
-        <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
-        <Pagination
-          currentData={companies}
-          limit={limit}
-          page={page}
-          setPage={setPage}
+        <DataTable
+          isLoading={isLoading || searchLoading}
+          rows={rows}
+          columns={columns}
         />
+        {/*PAGINATION */}
+
+        <div className="w-full flex justify-between">
+          <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
+          <Pagination
+            currentData={companies}
+            limit={limit}
+            page={page}
+            setPage={setPage}
+          />
+        </div>
       </div>
-    </div>
+      <Modal
+        isOpen={showNotificationsModal}
+        setIsOpen={setShowNotificationsModal}
+        size="small"
+        showTitle={false}
+        hideClose={true}
+      >
+        <Notifications setShow={setShowNotificationsModal}  />
+      </Modal>
+    </>
   );
 }
 

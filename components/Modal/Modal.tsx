@@ -56,7 +56,7 @@ export default function Modal({
                   size === "big" ? "max-w-7xl" : "max-w-xl"
                 } w-full border dark:border-accent-dark  transform overflow-hidden rounded-md bg-white  text-primary-dark pt-5  text-left align-bottom md:align-middle shadow-xl transition-all`}
               >
-                <div className=" flex flex-row justify-between px-5 py-2 pb-4">
+                {showTitle && <div className=" flex flex-row justify-between px-5 py-2 pb-4">
                   <Dialog.Title
                     as="h2"
                     className="text-xl font-semibold text-primary-dark leading-6"
@@ -71,7 +71,7 @@ export default function Modal({
                       onClick={() => closeModal()}
                     />
                   )}
-                </div>
+                </div>}
                 <div className="">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
