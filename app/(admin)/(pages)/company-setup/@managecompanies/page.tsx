@@ -342,13 +342,13 @@ function CompanySetup() {
             />
           </div>
           <div className="flex gap-4">
-            <button
+            {/* <button
               className=" bg-white text-[#334155] border border-[rgba(226, 232, 240, 1)] w-auto flex text-sm px-2 font-medium py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg "
               onClick={() => setShowNotificationsModal(true)}
             >
               <TbMessage color={"#334155"} size={20}/>
               Send Message
-            </button>
+            </button> */}
             {checkPermission(PermissionTypes.SEARCH_COMPANY) && (
               <div className="flex items-center gap-3">
                 <SearchBox
@@ -384,7 +384,7 @@ function CompanySetup() {
         showTitle={false}
         hideClose={true}
       >
-        <Notifications setShow={setShowNotificationsModal}  />
+        <Notifications setShow={setShowNotificationsModal} />
       </Modal>
     </>
   );
