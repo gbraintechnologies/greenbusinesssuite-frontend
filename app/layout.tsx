@@ -65,7 +65,12 @@ export default function RootLayout({
               <CompanyContextProvider>
                 <UserContextProvider>{children}</UserContextProvider>
               </CompanyContextProvider>
-              <Toaster expand position="top-right" />
+              <Toaster
+                duration={1000}
+                // closeButton
+                expand
+                position="top-right"
+              />
             </AdminContextProvider>
           </AuthContextProvider>
         </ReactQueryProvider>

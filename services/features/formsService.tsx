@@ -197,7 +197,7 @@ export const unpublishedFormsCount = () => {
 };
 
 export const updateForm = (data: any) => {
-  return authApi.put(`/forms/builder/update`, data);
+  return defaultMeshApi.put(`/forms/builder/update`, data);
 };
 
 export const updateFormField = (data: any) => {
@@ -217,11 +217,11 @@ export const duplicateForm = (id: any) => {
 };
 
 export const publishForm = (id: any) => {
-  return authApi.put(`/forms/builder/publish/${id}`);
+  return defaultMeshApi.put(`/forms/builder/publish/${id}`);
 };
 
 export const unpublishForm = (id: any) => {
-  return authApi.put(`/forms/builder/unpublish/by-id/${id}`);
+  return defaultMeshApi.put(`/forms/builder/unpublish/by-id/${id}`);
 };
 
 export const deleteForm = (id: any) => {
