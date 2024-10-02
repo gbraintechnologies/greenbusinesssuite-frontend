@@ -275,7 +275,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
 
           {/* INFO NOTICE ON HOW FILES ARE HANDLES / PROCESSED */}
           <div className="bg-red-50 p-3 rounded-lg text-lg flex flex-row gap-3 mb-10">
-            <CiCircleInfo size={40} />{" "}
+            <CiCircleInfo size={15} />{" "}
             <p className="text-xs font-light italic">
               Selected file(s){" "}
               <span className="font-bold">
