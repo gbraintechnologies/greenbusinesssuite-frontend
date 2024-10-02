@@ -72,11 +72,16 @@ function NewUser() {
     if (data) {
       let temp = [];
       for (let i = 0; i < data.length; i++) {
-        temp.push({
-          id: data[i].id,
-          value: data[i].id,
-          label: data[i].role_name,
-        });
+        if (
+          data[i]?.role_name?.toLowerCase().includes("client") ||
+          data[i]?.role_name?.toLowerCase().includes("admin")
+        ) {
+          temp.push({
+            id: data[i].id,
+            value: data[i].id,
+            label: data[i].role_name,
+          });
+        }
       }
       // @ts-ignore
       setRoles(temp);
