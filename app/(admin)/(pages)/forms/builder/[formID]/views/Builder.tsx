@@ -78,7 +78,7 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
   // update name and description
   useEffect(() => {
     if (!isObjEmpty(form)) {
-      setFormDesc(form?.description ? data?.description : "No description set");
+      setFormDesc(form?.description ? form?.description : "No description set");
       setFormName(form?.name);
     }
   }, [form]);

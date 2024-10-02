@@ -125,19 +125,19 @@ export default function AdminLayout({
       icon: <UserIcon />,
       link: "/usermanagement",
     },
-    {
-      name: "Audit trail",
-      icon: <PiListMagnifyingGlassBold size={18} />,
-      link: ["/audit-trail", "/audit-trail/profile"],
-    },
+    // {
+    //   name: "Audit trail",
+    //   icon: <PiListMagnifyingGlassBold size={18} />,
+    //   link: ["/audit-trail", "/audit-trail/profile"],
+    // },
   ];
 
-  let thirdPartyApps = [
-    {
-      name: "Business Analysis Tool",
-      icon: <UserIcon />,
-      link: "/business-analysis",
-    },
+  let thirdPartyApps: any = [
+    // {
+    //   name: "Business Analysis Tool",
+    //   icon: <UserIcon />,
+    //   link: "/business-analysis",
+    // },
   ];
 
   return (
