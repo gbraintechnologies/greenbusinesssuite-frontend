@@ -337,7 +337,7 @@ function UserManagement({ params }: any) {
   ];
 
   return (
-    <div className="w-full pb-20 mt-4 py-2 ">
+    <div className="w-full pb-60 mt-4 py-2 ">
       <Nav />
       <div className="flex items-center px-5 justify-between my-4">
         {/* FILTERS AND SEARCHBOX */}

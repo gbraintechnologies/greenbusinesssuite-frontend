@@ -73,7 +73,7 @@ const page = ({ params }: any) => {
   return (
     <div className="bg-[#F1F5F9] h-screen flex items-center justify-center">
       <div>
-        <div className="mx-5 mb-4">
+        <div className="mx-5  mb-4">
           <CompanyLogo />
         </div>
         <div className="w-96 m-auto rounded-md bg-white h-auto shadow-sm">

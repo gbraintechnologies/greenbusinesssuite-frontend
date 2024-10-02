@@ -59,7 +59,7 @@ const page = () => {
     );
   } else {
     return (
-      <div className="pb-40 px-5">
+      <div className="pb-40 mt-10 px-5">
         <button
           className="my-3 flex text-sm items-center gap-2"
           onClick={() => router.back()}

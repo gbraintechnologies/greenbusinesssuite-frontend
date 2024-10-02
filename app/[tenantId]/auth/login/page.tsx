@@ -119,7 +119,7 @@ function CompanyAdminAuth({ params }: any) {
         addAuthData(token?.data);
         const user = await fetchCurrentUser(token.data?.access_token);
         if (
-          user?.data?.user_status === "NEWLY_CREATED" ||
+          // user?.data?.user_status === "NEWLY_CREATED" ||
           user?.data?.user_status === "TEMP_CREDENTIALS"
         ) {
           toast("Create your password");
