@@ -261,17 +261,16 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
   const state = useOverlayTriggerState({});
 
   return (
-    <div className="bg-white h-auto">
-      <header className="flex justify-between items-center shadow-lg">
-        <div></div>
+    <div className="bg-white h-auto rounded-xl">
+      <header className="flex justify-center items-center shadow-lg h-12">
         <div className="text-[#475569] font-semibold text-lg">
           Send {activeFilter?.name}
         </div>
-        <IoIosCloseCircleOutline
+        {/* <IoIosCloseCircleOutline
           color="#94A3B8"
           onClick={() => setShow(false)}
           size={30}
-        />
+        /> */}
       </header>
       <div className="bg-[#F2F4F7] px-4 py-2">
         <div className="bg-white px-4 rounded-lg pt-6 pb-3">
