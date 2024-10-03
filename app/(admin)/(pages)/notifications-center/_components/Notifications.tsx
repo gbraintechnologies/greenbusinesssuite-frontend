@@ -2,7 +2,7 @@
 import { IFilter } from "@/types";
 import React, { Fragment, useEffect, useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import Tabs from "../Tabs/Tabs";
+import Tabs from "../../../../../components/Tabs/Tabs";
 import Image from "next/image";
 import { Combobox, Transition } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
@@ -60,7 +60,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
       id: 1,
       name: "Email",
       value: "email",
-    }
+    },
   ];
 
   const [activeFilter, setActiveFilter] = useState<IFilter>({
@@ -224,7 +224,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
   // setting filtered companies to companies on initial load
   useEffect(() => {
     if (companies?.length > 0) {
-      setFilteredCompanies([{company_name: "All", id: "all"},...companies]);
+      setFilteredCompanies([{ company_name: "All", id: "all" }, ...companies]);
     }
   }, [companies]);
 
@@ -241,13 +241,14 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
       );
     } else if (companies && searchTerm.length < 1) {
       setFilteredCompanies([
-        {company_name: "All", id: "all"},...companies.filter(
+        { company_name: "All", id: "all" },
+        ...companies.filter(
           (company: any) =>
             !selectedCompanies.some(
               (selected: any) => selected.id === company.id
             )
-        )]
-      );
+        ),
+      ]);
     }
   }, [searchTerm, companies, searchData, selectedCompanies]);
 
@@ -255,7 +256,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
     if (filteredCompanies?.length < 1 && searchTerm.length < 1) {
       setLimit(limit + 5);
     }
-  },[filteredCompanies])
+  }, [filteredCompanies]);
 
   const state = useOverlayTriggerState({});
 
@@ -263,7 +264,9 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
     <div className="bg-white h-auto">
       <header className="flex justify-between items-center shadow-lg">
         <div></div>
-        <div className="text-[#475569] font-semibold text-lg">Send {activeFilter?.name}</div>
+        <div className="text-[#475569] font-semibold text-lg">
+          Send {activeFilter?.name}
+        </div>
         <IoIosCloseCircleOutline
           color="#94A3B8"
           onClick={() => setShow(false)}
@@ -466,10 +469,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                {[
-                  
-                  ...filteredCompanies,
-                ]?.map((company: any) => (
+                {[...filteredCompanies]?.map((company: any) => (
                   <div
                     className="items-center cursor-pointer w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                     onClick={() => {

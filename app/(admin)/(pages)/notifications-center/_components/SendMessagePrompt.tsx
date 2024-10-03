@@ -1,6 +1,6 @@
 "use client";
 
-import Notifications from "@/components/Notifications/Notifications";
+import Notifications from "@/app/(admin)/(pages)/notifications-center/_components/Notifications";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -27,8 +27,6 @@ function SendMessage() {
           Send Message
         </button>
       </Link>
-
-      {/* <Notifications setShow={null} /> */}
     </div>
   );
 }
