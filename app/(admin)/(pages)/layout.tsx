@@ -29,6 +29,7 @@ import { PiListMagnifyingGlassBold } from "react-icons/pi";
 //
 import useAuth from "@/hooks/useAuth";
 import FormsNavIcon from "@/public/icons/FormsNavIcon";
+import { LuSend } from "react-icons/lu";
 
 export default function AdminLayout({
   children,
@@ -97,6 +98,11 @@ export default function AdminLayout({
         "/company-setup/profile",
         "/company-setup/profile/edit",
       ],
+    },
+    {
+      name: "Notifications Center",
+      icon: <LuSend size={20} />,
+      link: "/notifications-center",
     },
     {
       name: "Jurisdiction setup",
