@@ -31,7 +31,7 @@ import SearchBox from "@/components/SearchBox/SearchBox";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 import Modal from "@/components/Modal/Modal";
-import Notifications from "@/components/Notifications/Notifications";
+import Notifications from "@/app/(admin)/(pages)/notifications-center/_components/Notifications";
 import { TbMessage } from "react-icons/tb";
 
 export interface IFilter {

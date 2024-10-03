@@ -5,6 +5,7 @@ import { TbMessage } from "react-icons/tb";
 import Tabs from "../company-setup/components/Tabs";
 import DataTable from "@/components/DataTable/DataTable";
 import { IFilter, TimelineType, TimelineValues } from "@/types";
+import SendMessage from "./_components/SendMessagePrompt";
 
 function page() {
   const [rows, setRows] = useState<{ id: number | undefined; data: any }[]>([]);
@@ -96,12 +97,7 @@ function page() {
       <h3 className="font-semibold mb-8 text-xl">Notifications Center</h3>
 
       <div className="flex w-full justify-end mb-5">
-        <Link href="/notifications-center/send-message">
-          <button className=" bg-white text-[#334155] border border-[rgba(226, 232, 240, 1)] w-auto flex text-sm px-2 font-medium py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg ">
-            <TbMessage color={"#334155"} size={20} />
-            Send Message
-          </button>
-        </Link>
+        <SendMessage />
       </div>
 
       <div>

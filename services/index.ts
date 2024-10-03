@@ -22,6 +22,8 @@ import * as sectorService from "./features/sectorService";
 
 import * as documentService from "./features/documentService";
 
+import * as notificationService from "./features/notificationService";
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   ...localService,
@@ -36,4 +38,5 @@ export default {
   ...sectorService,
   ...reportService,
   ...documentService,
+  ...notificationService,
 };
