@@ -104,8 +104,8 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
 
   // state to handle selected Recipient
   const [selectedRecipient, setSelectedRecipient] = useState<any>({
-    label: "All",
-    value: "all",
+    label: "Company Admin",
+    value: "companyAdmin",
   });
 
   // state to handle selected Company
@@ -242,6 +242,16 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
     );
   };
 
+  // fetch all users
+  const {
+    data: users,
+    isLoading: usersLoading,
+    refetch: refetchUsers,
+  } = useQuery({
+    queryKey: ["all users", 10000],
+    queryFn: services.allUsers(0, 10000),
+  });
+
   // setting filtered companies to companies on initial load
   useEffect(() => {
     if (companies?.length > 0) {
@@ -279,18 +289,62 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
     }
   }, [filteredCompanies]);
 
+  // SENDING EMAIL / SMS MESSAGE
   const sendMessage = () => {
     if (inputData?.message?.length < 3) {
       toast.error("Please enter a message to send...");
       return;
     }
-    //
+    //SMS SENDING
     if (activeFilter.id == 0) {
       toast.loading("Sending sms...");
       //
-    } else {
-      // EMAIL NOTIFICATION
 
+      if (selectedCompanies?.length < 1) {
+        toast.dismiss();
+        toast.error("Select recipient companies");
+        return;
+      }
+
+      let recipients = [];
+
+      if (selectedRecipient.value == "companyAdmin") {
+        console.log("admin");
+      }
+
+      if (selectedRecipient.value == "contactPerson") {
+        for (let i = 0; i < selectedCompanies?.length; i++) {
+          recipients.push(selectedCompanies[i].primary_contact_phone_number);
+        }
+      }
+
+      let data = {
+        sender: admin.first_name,
+        recipients: recipients,
+        subject: inputData.subject,
+        body: inputData.subject,
+        isHtml: false,
+        // recurringType: "NON_RECURRING",
+        // triggerTime: "2024-10-03T15:19:30.481Z",
+        // startDate: "2024-10-03T15:19:30.481Z",
+        // endDate: "2024-10-03T15:19:30.481Z",
+      };
+      services
+        .sendSMS(data)
+        .then((res) => {
+          console.log("send", res);
+          toast.dismiss();
+          toast.success("SMS sent successfully");
+        })
+        .catch((e) => {
+          console.log("error", e?.response?.data);
+          toast.dismiss();
+          toast.error("Error sending sms");
+        });
+    }
+
+    // EMAIL NOTIFICATION
+    if (activeFilter.id == 1) {
       if (inputData.subject?.length < 2) {
         toast.error("Please enter a subject...");
         return;
@@ -304,6 +358,33 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
         toast.error("Please specify the start date");
         return;
       }
+
+      if (selectedCompanies?.length < 1) {
+        toast.dismiss();
+        toast.error("Select recipient companies");
+        return;
+      }
+
+      let recipients = [];
+
+      // TODO: update to make direct calls to get admin details based on userid
+      if (selectedRecipient.value == "companyAdmin") {
+        for (let i = 0; i < selectedCompanies?.length; i++) {
+          let adminId = selectedCompanies[i].company_admin_id;
+
+          recipients.push(
+            users.find((item: any) => item?.id == adminId)?.email
+          );
+        }
+      }
+
+      if (selectedRecipient.value == "contactPerson") {
+        for (let i = 0; i < selectedCompanies?.length; i++) {
+          recipients.push(selectedCompanies[i].primary_contact_email);
+        }
+      }
+
+      console.log("recipients", recipients);
 
       const { year, day, hour, minute, month, second, millisecond } = startDate;
       const start =
@@ -325,7 +406,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
 
       let data = {
         sender: admin?.email,
-        recipients: ["e1dwz@rustyload.com"],
+        recipients: recipients,
         subject: inputData?.subject,
         body: inputData?.message,
         isHtml: true,
@@ -333,13 +414,14 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
         triggerTime: start,
         startDate: start,
         // if there's no end date it should start and end same day
-        // endDate: start,
+        endDate: start,
       };
       console.log("data", data);
+
       services
         .sendEmail(data)
         .then((res) => {
-          console.log("send", res);
+          console.log("sent email", res);
           toast.dismiss();
           toast.success("Email sent successfully");
         })
@@ -544,7 +626,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
                   className="shadow-md bg-white border border-[#F1F5F9] w-[34rem]  -mt-4 rounded-lg flex flex-col gap-3"
                   aria-label="Static Actions"
                 >
-                  <DropdownItem
+                  {/* <DropdownItem
                     key="view"
                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                     onClick={() =>
@@ -552,7 +634,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
                     }
                   >
                     All
-                  </DropdownItem>
+                  </DropdownItem> */}
                   <DropdownItem
                     key="view"
                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
