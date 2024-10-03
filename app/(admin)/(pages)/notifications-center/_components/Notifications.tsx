@@ -1,20 +1,20 @@
 "use client";
+
 import { IFilter } from "@/types";
+
+//
+
 import React, { useEffect, useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+
+// tabs
 import Tabs from "../../../../../components/Tabs/Tabs";
-import Image from "next/image";
 
 import { useQuery } from "@tanstack/react-query";
 
 // DATE TIME HELPERS
 
-import {
-  now,
-  getLocalTimeZone,
-  parseDate,
-  parseDateTime,
-} from "@internationalized/date";
+import { now, getLocalTimeZone } from "@internationalized/date";
 
 // api
 import services from "@/services";
