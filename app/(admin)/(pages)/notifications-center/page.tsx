@@ -1,8 +1,96 @@
+"use client";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { TbMessage } from "react-icons/tb";
+import Tabs from "../company-setup/components/Tabs";
+import DataTable from "@/components/DataTable/DataTable";
+import { IFilter, TimelineType, TimelineValues } from "@/types";
 
 function page() {
+  const [rows, setRows] = useState<{ id: number | undefined; data: any }[]>([]);
+
+  const [page, setPage] = useState(0);
+
+  const [limit, setLimit] = useState(10);
+
+  const [notificationsLoading, setNotificationsLoading] =
+    useState<boolean>(false);
+
+  const [selectedTimeline, setSelectedTimeline] = useState<
+    { label: TimelineValues; value: TimelineType } | undefined
+  >();
+
+  const filters: IFilter[] = [
+    {
+      id: 0,
+      name: "Message History",
+      value: "message_history",
+    },
+    {
+      id: 1,
+      name: "Recurring Messages",
+      value: "recurring_messages",
+    },
+  ];
+
+  const [activeFilter, setActiveFilter] = useState<IFilter>({
+    id: 0,
+    name: "Message History",
+    value: "message_history",
+  });
+
+  const columns = [
+    {
+      field: "date",
+      headerName: "Date",
+      type: "actions",
+      align: "left",
+      headerAlign: "left",
+      flex: 1,
+      getActions: (params: any) => [<div>{params.row.date}</div>],
+    },
+
+    {
+      field: "Subject",
+      headerName: "Subject",
+      flex: 2,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="w-2/12">
+          {params.row.count}
+        </div>,
+      ],
+    },
+    {
+      field: "Recipients",
+      headerName: "Recipients",
+      flex: 2,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="w-2/12">
+          {params.row.count}
+        </div>,
+      ],
+    },
+    {
+      field: "Type",
+      headerName: "Type",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="w-2/12">
+          {params.row.count}
+        </div>,
+      ],
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [<div>Hello world</div>],
+    },
+  ];
   return (
     <div className="px-5 pb-10">
       <h3 className="font-semibold mb-8 text-xl">Notifications Center</h3>
@@ -17,9 +105,18 @@ function page() {
       </div>
 
       <div>
-        <div className="border border-dashed min-h-[30vh] text-gray-500 rounded-xl text-center flex items-center justify-center">
-          Tabs and message history here
+        <div className="flex justify-center my-2 mb-2  ">
+          <Tabs
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+            filters={filters}
+          />
         </div>
+        <DataTable
+          isLoading={notificationsLoading}
+          rows={rows}
+          columns={columns}
+        />
       </div>
     </div>
   );
