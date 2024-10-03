@@ -2,8 +2,7 @@ import defaultMeshApi from "../defaultMeshClient";
 
 // send notifications
 export const sendEmail = () => {
-  return () =>
-    defaultMeshApi.get(`/notifications/email/push`).then((res) => res.data);
+  return defaultMeshApi.post(`/notifications/email/push`);
 };
 
 // retrieve messages
