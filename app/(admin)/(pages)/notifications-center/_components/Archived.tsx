@@ -1,25 +1,12 @@
 "use client";
 import { IFilter } from "@/types";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import Tabs from "../../../../../components/Tabs/Tabs";
 import Image from "next/image";
-
+import { Combobox, Transition } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
-
-// DATE TIME HELPERS
-
-import {
-  now,
-  getLocalTimeZone,
-  parseDate,
-  parseDateTime,
-} from "@internationalized/date";
-
-// api
 import services from "@/services";
-
-// ui components
 import {
   Dropdown,
   DropdownItem,
@@ -27,17 +14,13 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { DatePicker } from "@nextui-org/date-picker";
-
-// ICONS
 import { BiChevronDown } from "react-icons/bi";
-
+import { MdAttachFile } from "react-icons/md";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { useOverlayTriggerState } from "@react-stately/overlays";
-
-//
 import { toast } from "sonner";
-
-// HOOKS
 import useAdmin from "@/hooks/useAdmin";
 
 type Props = {
@@ -118,7 +101,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
   const [files, setFiles] = useState<any>([]);
 
   // state to handle start date and end date
-  const [startDate, setStartDate] = useState<any>(now(getLocalTimeZone()));
+  const [startDate, setStartDate] = useState<any>();
 
   const [endDate, setEndDate] = useState<any>();
 
@@ -280,75 +263,32 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
   }, [filteredCompanies]);
 
   const sendMessage = () => {
-    if (inputData?.message?.length < 3) {
-      toast.error("Please enter a message to send...");
-      return;
-    }
     //
     if (activeFilter.id == 0) {
       toast.loading("Sending sms...");
       //
     } else {
       // EMAIL NOTIFICATION
-
-      if (inputData.subject?.length < 2) {
-        toast.error("Please enter a subject...");
-        return;
-      }
-
       toast.loading("Sending email...");
-
-      // no start date specified
-      if (!Boolean(startDate)) {
-        toast.dismiss();
-        toast.error("Please specify the start date");
-        return;
-      }
-
-      const { year, day, hour, minute, month, second, millisecond } = startDate;
-      const start =
-        year +
-        "-" +
-        month.toString().padStart(2, "0") +
-        "-" +
-        day.toString().padStart(2, "0") +
-        "T" +
-        hour.toString().padStart(2, "0") +
-        ":" +
-        minute.toString().padStart(2, "0") +
-        ":" +
-        second.toString().padStart(2, "0") +
-        "." +
-        millisecond +
-        "Z";
-      // "2024-10-03T13:47:04.492Z";
 
       let data = {
         sender: admin?.email,
-        recipients: ["e1dwz@rustyload.com"],
+        recipients: ["string"],
         subject: inputData?.subject,
         body: inputData?.message,
         isHtml: true,
         recurringType: recurringType?.value.toUpperCase(),
-        triggerTime: start,
-        startDate: start,
-        // if there's no end date it should start and end same day
-        // endDate: start,
+        triggerTime: "2024-10-03T13:47:04.492Z",
+        startDate: startDate,
+        endDate: endDate ? endDate : null,
       };
+
       console.log("data", data);
-      services
-        .sendEmail(data)
-        .then((res) => {
-          console.log("send", res);
-          toast.dismiss();
-          toast.success("Email sent successfully");
-        })
-        .catch((e) => {
-          console.log("error", e);
-          toast.dismiss();
-          toast.error("Error sending email");
-        });
     }
+
+    setTimeout(() => {
+      toast.dismiss();
+    }, 2000);
   };
 
   const state = useOverlayTriggerState({});
@@ -432,158 +372,257 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
               </div>
             </div>
           )} */}
+          <div className="mb-4 hide-input-borders input-holder">
+            <label className="text-xs mb-1 font-normal text-slate-700">
+              Company
+            </label>
+            {/* <div className="border w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm">
+                  <div className="flex flex-wrap flex-1 gap-2">
+                    {selectedCompanies?.map((company: any) => (
+                      <div
+                        className="border border-[#E2E8F0] bg-white px-2 py-1 flex gap-2 items-center rounded-lg z-[200000]"
+                        // onMouseDown={(e) => {
+                        //   e.stopPropagation();
+                        // }}
+                      >
+                        <p className="text-sm text-slate-900">
+                          {company?.company_name}{" "}
+                        </p>
+                        <div className="cursor-pointer">
+                          <IoIosCloseCircleOutline
+                            color="#DC2626"
+                            size={20}
+                            onClick={() => handleRemoveSelectedCompany(company)}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    <div className="input-holder">
+                      <input
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+                    {selectedCompanies?.length < 1 && (
+                      
+                      <div className="input-holder">
+                        <input
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          placeholder="Search Company"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="">
+                    <BiChevronDown size={21} color="#94A3B8" />
+                  </div>
+            <Autocomplete>
+              {[
+                  { company_name: "All", id: "all" },
+                  ...filteredCompanies,
+                ]?.map((company: any) => (
+                <AutocompleteItem
+                
+                  key={company?.id}
+                  value={company?.company_name}
+                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
+                  onPress={() => {
+                    console.log('pressing.... ')
+                    handleSelectionChange(company);
+                  }}
 
-          {/* RECIPIENTS & COMPANY SELECTION */}
-          <div className="grid grid-cols-2 gap-10">
-            <div className="mb-4 hide-input-borders input-holder">
-              <label className="text-xs mb-1 font-normal text-slate-700">
-                Company
-              </label>
+                  onPressStart={() => {
+                    console.log('press start')
+                  }}
+                >
+                  {company?.company_name}
+                </AutocompleteItem>
+              ))}
+            </Autocomplete>
+            </div> */}
 
-              <Popover placement="bottom" state={state}>
-                <PopoverTrigger>
-                  <div
-                    className="border w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
-                    onClick={() => state.open()}
-                  >
-                    <div className="flex flex-wrap flex-1 gap-2">
-                      {selectedCompanies?.map((company: any) => (
+            <Popover placement="bottom" state={state}>
+              <PopoverTrigger>
+                <div
+                  className="border w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
+                  onClick={() => state.open()}
+                >
+                  <div className="flex flex-wrap flex-1 gap-2">
+                    {selectedCompanies?.map((company: any) => (
+                      <div
+                        className="border border-[#E2E8F0] bg-white px-2 py-1 flex gap-2 items-center rounded-lg z-[200000]"
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <p className="text-sm text-slate-900">
+                          {company?.company_name}{" "}
+                        </p>
                         <div
-                          className="border border-[#E2E8F0] bg-white px-2 py-1 flex gap-2 items-center rounded-lg z-[200000]"
-                          onMouseDown={(e) => {
+                          className="cursor-pointer"
+                          onClick={(e) => {
                             e.stopPropagation();
                           }}
                         >
-                          <p className="text-sm text-slate-900">
-                            {company?.company_name}{" "}
-                          </p>
-                          <div
-                            className="cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                            }}
-                          >
-                            <IoIosCloseCircleOutline
-                              color="#DC2626"
-                              size={20}
-                              onClick={() =>
-                                handleRemoveSelectedCompany(company)
-                              }
-                            />
-                          </div>
+                          <IoIosCloseCircleOutline
+                            color="#DC2626"
+                            size={20}
+                            onClick={() => handleRemoveSelectedCompany(company)}
+                          />
                         </div>
-                      ))}
-                      {selectedCompanies?.length < 1 && !selectAllCompanies && (
-                        <div className="w-full px-3 flex justify-between items-center">
-                          <p className="text-sm text-slate-900">
-                            Select companies
-                          </p>{" "}
-                        </div>
-                      )}
-                      {selectAllCompanies && (
-                        <div className="w-full px-3 flex justify-between items-center">
-                          <p className="text-sm text-slate-900">All</p>{" "}
-                        </div>
-                      )}
-                    </div>
-                    <div>
+                      </div>
+                    ))}
+                    {selectedCompanies?.length < 1 && !selectAllCompanies && (
+                      <div className="w-full px-3 flex justify-between items-center">
+                        <p className="text-sm text-slate-900">
+                          Select companies
+                        </p>{" "}
+                      </div>
+                    )}
+                    {selectAllCompanies && (
+                      <div className="w-full px-3 flex justify-between items-center">
+                        <p className="text-sm text-slate-900">All</p>{" "}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <BiChevronDown size={21} color="#94A3B8" />
+                  </div>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="bg-white border rounded-lg border-[#E2E8F0] w-[28rem]">
+                <div className="input-holder">
+                  <input
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                {[...filteredCompanies]?.map((company: any) => (
+                  <div
+                    className="items-center cursor-pointer w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                    onClick={() => {
+                      handleSelectionChange(company);
+                    }}
+                  >
+                    {company?.company_name}
+                  </div>
+                ))}
+                {filteredCompanies?.length < 1 && (
+                  <p className="text-slate-900 text-sm">No results</p>
+                )}
+                {!searchTerm && (
+                  <button
+                    className=" cursor-pointer bg-gray-400 flex gap-2 py-3 text-white text-center justify-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
+                    onClick={() => setLimit(limit + 5)}
+                  >
+                    Load more...
+                  </button>
+                )}
+              </PopoverContent>
+            </Popover>
+            {/* <Autocomplete
+              variant="bordered"
+              className="w-full "
+              placeholder={"Search Company"}
+              selectedKey={selectedCompany}
+              scrollShadowProps={{
+                isEnabled: false,
+              }}
+              popoverProps={{
+                offset: 10,
+                classNames: {
+                  content:
+                    "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                },
+              }}
+              onSelectionChange={(key: any) => {
+                setSelectedCompany(key);
+              }}
+              classNames={{
+                base: "flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]",
+              }}
+            >
+              {companies?.map((company: any) => (
+                <AutocompleteItem
+                  key={company?.id}
+                  value={company?.company_name}
+                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
+                  startContent={
+                    <img
+                      src={company?.company_logo}
+                      style={{
+                        height: "24px",
+                        width: "24px",
+                        borderRadius: "50%",
+                      }}
+                    />
+                  }
+                >
+                  {company?.company_name}
+                </AutocompleteItem>
+              ))}
+            </Autocomplete> */}
+          </div>
+          <div className="mb-4 flex flex-col">
+            <label className="text-xs mb-1 font-normal text-slate-700">
+              Recipients
+            </label>
+            <Dropdown>
+              <DropdownTrigger>
+                <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
+                  <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
+                    <p className=" font-medium text-sm">
+                      {selectedRecipient?.label}
+                    </p>
+
+                    <div className="">
                       <BiChevronDown size={21} color="#94A3B8" />
                     </div>
                   </div>
-                </PopoverTrigger>
-                <PopoverContent className="bg-white border rounded-lg border-[#E2E8F0] w-[28rem]">
-                  <div className="input-holder">
-                    <input
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  {[...filteredCompanies]?.map((company: any) => (
-                    <div
-                      className="items-center cursor-pointer w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                      onClick={() => {
-                        handleSelectionChange(company);
-                      }}
-                    >
-                      {company?.company_name}
-                    </div>
-                  ))}
-                  {filteredCompanies?.length < 1 && (
-                    <p className="text-slate-900 text-sm">No results</p>
-                  )}
-                  {!searchTerm && (
-                    <button
-                      className=" cursor-pointer bg-gray-400 flex gap-2 py-3 text-white text-center justify-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
-                      onClick={() => setLimit(limit + 5)}
-                    >
-                      Load more...
-                    </button>
-                  )}
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="mb-4 flex flex-col">
-              <label className="text-xs mb-1 font-normal text-slate-700">
-                Recipients
-              </label>
-              <Dropdown>
-                <DropdownTrigger>
-                  <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
-                    <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
-                      <p className=" font-medium text-sm">
-                        {selectedRecipient?.label}
-                      </p>
-
-                      <div className="">
-                        <BiChevronDown size={21} color="#94A3B8" />
-                      </div>
-                    </div>
-                  </button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  className="shadow-md bg-white border border-[#F1F5F9] w-[34rem]  -mt-4 rounded-lg flex flex-col gap-3"
-                  aria-label="Static Actions"
+                </button>
+              </DropdownTrigger>
+              <DropdownMenu
+                className="shadow-md bg-white border border-[#F1F5F9] w-[34rem]  -mt-4 rounded-lg flex flex-col gap-3"
+                aria-label="Static Actions"
+              >
+                <DropdownItem
+                  key="view"
+                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                  onClick={() =>
+                    setSelectedRecipient({ label: "All", value: "all" })
+                  }
                 >
-                  <DropdownItem
-                    key="view"
-                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                    onClick={() =>
-                      setSelectedRecipient({ label: "All", value: "all" })
-                    }
-                  >
-                    All
-                  </DropdownItem>
-                  <DropdownItem
-                    key="view"
-                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                    onClick={() =>
-                      setSelectedRecipient({
-                        label: "Company Admin",
-                        value: "companyAdmin",
-                      })
-                    }
-                  >
-                    Company Admin
-                  </DropdownItem>
-                  <DropdownItem
-                    key="view"
-                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                    onClick={() =>
-                      setSelectedRecipient({
-                        label: "Contact Person",
-                        value: "contactPerson",
-                      })
-                    }
-                  >
-                    Contact Person
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
+                  All
+                </DropdownItem>
+                <DropdownItem
+                  key="view"
+                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                  onClick={() =>
+                    setSelectedRecipient({
+                      label: "Company Admin",
+                      value: "companyAdmin",
+                    })
+                  }
+                >
+                  Company Admin
+                </DropdownItem>
+                <DropdownItem
+                  key="view"
+                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                  onClick={() =>
+                    setSelectedRecipient({
+                      label: "Contact Person",
+                      value: "contactPerson",
+                    })
+                  }
+                >
+                  Contact Person
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
         </div>
-
-        {/* RECURRING, START DATE AND TIME */}
         <div className="bg-white px-4 rounded-lg mt-6 py-5">
           <div className="grid grid-cols-3 gap-10">
             <div className="mb-4 flex flex-col">
@@ -629,7 +668,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
                 value={startDate}
                 onChange={setStartDate}
                 hideTimeZone
-                // showMonthAndYearPickers
+                showMonthAndYearPickers
                 className="max-w-full text-[#334155] text-sm font-medium border w-full px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm "
                 variant="flat"
                 classNames={{
@@ -646,7 +685,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
                 <DatePicker
                   value={endDate}
                   hideTimeZone
-                  // showMonthAndYearPickers
+                  showMonthAndYearPickers
                   onChange={setEndDate}
                   className="max-w-full text-[#334155] text-sm font-medium border w-full px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm "
                   variant="flat"
@@ -661,7 +700,6 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
           </div>
         </div>
 
-        {/* SEND MESSAGE - EMAIL OR SMS */}
         <div className="mt-4 mb-2">
           <button
             onClick={sendMessage}
