@@ -183,11 +183,7 @@ const ResponseDataTable: React.FC<Props> = ({
             })
           );
 
-          console.log(
-            "prepared rows",
-            preparedRows,
-            preparedRows.filter((item) => item?.id !== null)
-          );
+          
           setRows(preparedRows.filter((item) => item?.id !== null));
         } catch (error) {
           toast.error("Error fetching user details for responses");
