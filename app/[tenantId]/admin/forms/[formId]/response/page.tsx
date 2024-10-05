@@ -89,7 +89,7 @@ const page = ({ params }: any) => {
     enabled: Boolean(formID && userId),
   });
 
-  const [mergedForm, setMergedForm] = useState(null);
+  const [mergedForm, setMergedForm] = useState<any>(null);
   //
   useEffect(() => {
     if (form && formUserResponse) {
