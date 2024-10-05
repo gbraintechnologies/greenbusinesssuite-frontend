@@ -30,6 +30,8 @@ import Issued from "./components/Issued";
 import { IFilter } from "@/types";
 import { useQueryState } from "nuqs";
 import useAuth from "@/hooks/useAuth";
+import html2pdf from "html2pdf.js";
+
 
 const page = ({ params }: any) => {
   let formID = params.formId;
@@ -134,28 +136,25 @@ const page = ({ params }: any) => {
 
   const pdfRef = React.useRef(null);
 
-  const downloadPDF = async () => {
-    setPdfGenerating(true);
-    const input: any = pdfRef?.current;
-
+  const downloadPDF = () => {
+    const input = pdfRef?.current;
+  
     if (input) {
-      html2canvas(input, {
-        scale: 3,
-        width: input.scrollWidth,
-        height: input.scrollHeight,
-      })
-        .then((canvas) => {
-          const imgData = canvas.toDataURL("image/png");
-          const pdf = new jsPDF("p", "mm", "a4", true);
-          console.log("pdf ", pdf);
-          const width = pdf.internal.pageSize.getWidth();
-          const height = pdf.internal.pageSize.getHeight();
-          const imgWidth = canvas.width;
-          const imgHeight = canvas.height;
-          const ratio = Math.min(width / imgWidth, height / imgHeight);
-          const imgX = (width - imgWidth * ratio) / 2;
-          const imgY = 10;
-          // meta data
+      const options = {
+        margin: 10,
+        filename: `${form?.name}-${userData?.first_name} ${userData?.last_name}-${mergedForm?.responseId}-response.pdf`,
+        image: { type: "jpeg", quality: 0.75 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+  
+      html2pdf()
+        .set(options)
+        .from(input)
+        .toPdf()
+        .get("pdf")
+        .then((pdf: any) => {
+          const totalPages = pdf.internal.getNumberOfPages();
           const date = new Date().toLocaleDateString("en-us", {
             day: "numeric",
             month: "long",
@@ -164,30 +163,22 @@ const page = ({ params }: any) => {
             minute: "2-digit",
           });
           const responseName = `${userData?.first_name} ${userData?.last_name}`;
-          pdf.setFontSize(8);
-          pdf.text(`Date Printed: ${date}`, 5, 5);
-          pdf.text("|", 60, 5);
-          pdf.text(`Response: ${responseName}`, 65, 5);
-
-          pdf.addImage(
-            imgData,
-            "PNG",
-            imgX,
-            imgY,
-            imgWidth * ratio,
-            imgHeight * ratio
-          );
-          pdf.save(
-            // @ts-ignore
-            `${form?.name}-${userData?.first_name} ${userData?.last_name}-${mergedForm?.responseId}-response`
-          );
+  
+          for (let i = 1; i <= totalPages; i++) {
+            pdf.setPage(i); 
+            pdf.setFontSize(8);
+            pdf.text(`Date Printed: ${date}`, 5, 5); 
+            pdf.text("|", 60, 5); 
+            pdf.text(`Response: ${responseName}`, 65, 5); 
+          }
+        })
+        .save()
+        .then(() => {
           setPdfGenerating(false);
         })
         .catch(() => {
           setPdfGenerating(false);
         });
-    } else {
-      setPdfGenerating(false);
     }
   };
 

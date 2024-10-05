@@ -129,7 +129,7 @@ const FormResponse = forwardRef(function FormResponse(
               if (formField?.fieldDataType !== "upload") {
                 return (
                   <div className={itemClass} key={index}>
-                    <div className={"input-holder"}>
+                    <div className={"response-input"}>
                       <div className="label">{formField?.label}</div>
                       {renderFormResponse(formField)}
                     </div>
