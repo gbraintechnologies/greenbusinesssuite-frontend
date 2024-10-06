@@ -118,8 +118,8 @@ const FormResponse = forwardRef(function FormResponse(
   const formSections = mergedForm?.formSections;
   return (
     <div className="w-full " ref={ref}>
-      {formSections?.map((section: any, index: number) => (
-        <div className="bg-white rounded-lg mb-4 w-full px-4 py-5" key={index}>
+      {formSections?.filter((section: any) => section?.isDeleted !== true)?.map((section: any, index: number) => (
+        <div className="bg-white rounded-lg mb-4 w-full px-4 py-5" key={index} id={index > 0 ? "newsection" : "firstsection"}>
           <div className=" text-slate-900 font-semibold text-lg my-2">
             {section?.name}
           </div>

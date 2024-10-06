@@ -56,6 +56,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
         image: { type: "jpeg", quality: 0.75 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: 'avoid-all', before: '#newsection' }
       };
   
       html2pdf()
@@ -77,20 +78,18 @@ function FormCard({ form, type = "uncompleted" }: Props) {
   
           // Loop through each page and add the text
           for (let i = 1; i <= totalPages; i++) {
-            pdf.setPage(i); // Set the current page
+            pdf.setPage(i); 
             pdf.setFontSize(8);
-            pdf.text(`Date Printed: ${date}`, 5, 5); // Top-left corner
-            pdf.text("|", 60, 5); // Top, between the two texts
-            pdf.text(`Response: ${responseName}`, 65, 5); // Top-right corner
+            pdf.text(`Date Printed: ${date}`, 5, 5); 
+            pdf.text("|", 60, 5); 
+            pdf.text(`Response: ${responseName}`, 65, 5); 
           }
         })
-        .save()
-        .then(() => {
-          // setPdfGenerating(false);
-        })
-        .catch(() => {
-          // setPdfGenerating(false);
-        });
+        .save().then(() => {
+
+        }).catch((error: any) => {
+          console.log(error)
+    })
     }
   };
 
@@ -104,11 +103,14 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     hiddenDiv.style.top = "-100000px";
     hiddenDiv.style.left = "-100000px";
     hiddenDiv.style.width = "210mm";
+    hiddenDiv.style.minHeight = "297mm";
     hiddenDiv.style.backgroundColor = "white";
+
     document.body.appendChild(hiddenDiv);
 
-    const root = createRoot(hiddenDiv);
+    console.log('hiddenDiv', hiddenDiv);
 
+    const root = createRoot(hiddenDiv);
     root.render(
       <FormResponse
         mergedForm={mergedForm}
@@ -136,11 +138,16 @@ function FormCard({ form, type = "uncompleted" }: Props) {
             );
 
             if (resData) {
+              console.log('response id ', resData[0]?.id);
+              console.log('form ', form);
+              console.log('res data input data', resData[0]?.inputData);
               const mergedForm = mergeForm(
                 resData[0]?.id,
                 form,
                 resData[0]?.inputData
               );
+
+              console.log('merged form ', mergedForm);
               renderToHiddenElement(mergedForm, user, resData[0]?.id);
             } else {
               throw new Error("No data found");

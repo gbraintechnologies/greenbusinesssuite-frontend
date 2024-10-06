@@ -65,6 +65,7 @@ const ResponseDataTable: React.FC<Props> = ({
         image: { type: "jpeg", quality: 0.75 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: 'avoid-all', before: '#newsection' }
       };
   
       html2pdf()
@@ -116,7 +117,12 @@ const ResponseDataTable: React.FC<Props> = ({
       );
 
       if (resData) {
+        console.log('response id ', responseId);
+        console.log('form ', form);
+        console.log('res data input data', resData[0]?.inputData);
         const mergedForm = mergeForm(responseId, form, resData[0]?.inputData);
+
+        console.log('merged form', mergedForm);
 
         renderToHiddenElement(mergedForm, userData, responseId);
       }

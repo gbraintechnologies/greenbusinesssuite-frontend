@@ -137,6 +137,8 @@ const page = ({ params }: any) => {
   const pdfRef = React.useRef(null);
 
   const downloadPDF = () => {
+
+
     const input = pdfRef?.current;
   
     if (input) {
@@ -147,6 +149,7 @@ const page = ({ params }: any) => {
         image: { type: "jpeg", quality: 0.75 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: 'avoid-all', before: '#newsection' }
       };
   
       html2pdf()

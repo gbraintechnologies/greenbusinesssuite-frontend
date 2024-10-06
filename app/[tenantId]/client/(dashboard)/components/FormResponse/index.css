@@ -63,7 +63,11 @@
 
   }
 
-
+  .react-international-phone-input-container .react-international-phone-input {
+    /* margin: auto !important; */
+    /* border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important; */
+  }
 
   .form-container {
     display: grid;
