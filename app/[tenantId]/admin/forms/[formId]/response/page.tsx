@@ -140,6 +140,7 @@ const page = ({ params }: any) => {
     const input = pdfRef?.current;
   
     if (input) {
+      setPdfGenerating(true);
       const options = {
         margin: 10,
         filename: `${form?.name}-${userData?.first_name} ${userData?.last_name}-${mergedForm?.responseId}-response.pdf`,
@@ -319,7 +320,7 @@ const page = ({ params }: any) => {
         </div>
         <div className="mt-6">
           {activeTab.id == 0 && (
-            <FormResponse mergedForm={mergedForm} ref={pdfRef} />
+            <div className="w-[80%]"><FormResponse mergedForm={mergedForm} ref={pdfRef} /></div>
           )}
           {activeTab.id == 1 && <Uploaded user={userData} form={mergedForm} />}
           {activeTab.id == 2 && (
