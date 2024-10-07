@@ -28,6 +28,7 @@ import useCompany from "@/hooks/useCompany";
 
 // components
 import Deactivated from "@/components/Deactivated/Deactivated";
+import { LuSend } from "react-icons/lu";
 
 export default function CompanyLayout({ children, params }: any) {
   // {
@@ -76,6 +77,11 @@ export default function CompanyLayout({ children, params }: any) {
       name: "Customers",
       icon: <MdOutlineSupervisedUserCircle size={20} />,
       link: `/${company?.company_identifier}/admin/customers`,
+    },
+    {
+      name: "Notifications Center",
+      icon: <LuSend size={20} />,
+      link: `/${company?.company_identifier}/admin/notifications-center`,
     },
 
     {

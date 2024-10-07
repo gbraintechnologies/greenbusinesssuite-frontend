@@ -25,6 +25,8 @@ import { createRoot } from "react-dom/client";
 import FormResponse from "./FormResponse/FormResponse";
 import StatusPill from "@/components/StatusPill/StatusPillText";
 import useAuth from "@/hooks/useAuth";
+import html2pdf from "html2pdf.js";
+
 
 type Props = {
   form: any;
@@ -46,21 +48,25 @@ function FormCard({ form, type = "uncompleted" }: Props) {
 
   const captureAndGeneratePDF = (userData: any, responseId: string) => {
     const input = hiddenRef?.current;
-
+  
     if (input) {
-      html2canvas(input, { scale: 2 })
-        .then((canvas) => {
-          const imgData = canvas.toDataURL("image/png");
-          const pdf = new jsPDF("p", "mm", "a4");
-          const width = pdf.internal.pageSize.getWidth();
-          const height = pdf.internal.pageSize.getHeight();
-          const imgWidth = canvas.width;
-          const imgHeight = canvas.height;
-          const ratio = Math.min(width / imgWidth, height / imgHeight);
-          const imgX = (width - imgWidth * ratio) / 2;
-          const imgY = 10;
-
-          // meta data
+      const options = {
+        margin: 10,
+        filename: `${form?.name}-${userData?.first_name} ${userData?.last_name}-${responseId}-response.pdf`,
+        image: { type: "jpeg", quality: 0.75 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: 'avoid-all', before: '#newsection' }
+      };
+  
+      html2pdf()
+        .set(options)
+        .from(input)
+        .toPdf()
+        .get("pdf")
+        .then((pdf: any) => {
+          // Adding the metadata text to every page
+          const totalPages = pdf.internal.getNumberOfPages();
           const date = new Date().toLocaleDateString("en-us", {
             day: "numeric",
             month: "long",
@@ -69,24 +75,21 @@ function FormCard({ form, type = "uncompleted" }: Props) {
             minute: "2-digit",
           });
           const responseName = `${userData?.first_name} ${userData?.last_name}`;
-          pdf.setFontSize(8);
-          pdf.text(`Date Printed: ${date}`, 5, 5);
-          pdf.text("|", 60, 5);
-          pdf.text(`Response: ${responseName}`, 65, 5);
-
-          pdf.addImage(
-            imgData,
-            "PNG",
-            imgX,
-            imgY,
-            imgWidth * ratio,
-            imgHeight * ratio
-          );
-          pdf.save(
-            `${form?.name}-${userData?.first_name} ${userData?.last_name}-${responseId}-response`
-          );
+  
+          // Loop through each page and add the text
+          for (let i = 1; i <= totalPages; i++) {
+            pdf.setPage(i); 
+            pdf.setFontSize(8);
+            pdf.text(`Date Printed: ${date}`, 5, 5); 
+            pdf.text("|", 60, 5); 
+            pdf.text(`Response: ${responseName}`, 65, 5); 
+          }
         })
-        .catch(() => {});
+        .save().then(() => {
+
+        }).catch((error: any) => {
+          console.log(error)
+    })
     }
   };
 
@@ -100,11 +103,14 @@ function FormCard({ form, type = "uncompleted" }: Props) {
     hiddenDiv.style.top = "-100000px";
     hiddenDiv.style.left = "-100000px";
     hiddenDiv.style.width = "210mm";
+    hiddenDiv.style.minHeight = "297mm";
     hiddenDiv.style.backgroundColor = "white";
+
     document.body.appendChild(hiddenDiv);
 
-    const root = createRoot(hiddenDiv);
+    console.log('hiddenDiv', hiddenDiv);
 
+    const root = createRoot(hiddenDiv);
     root.render(
       <FormResponse
         mergedForm={mergedForm}
@@ -132,11 +138,16 @@ function FormCard({ form, type = "uncompleted" }: Props) {
             );
 
             if (resData) {
+              console.log('response id ', resData[0]?.id);
+              console.log('form ', form);
+              console.log('res data input data', resData[0]?.inputData);
               const mergedForm = mergeForm(
                 resData[0]?.id,
                 form,
                 resData[0]?.inputData
               );
+
+              console.log('merged form ', mergedForm);
               renderToHiddenElement(mergedForm, user, resData[0]?.id);
             } else {
               throw new Error("No data found");
