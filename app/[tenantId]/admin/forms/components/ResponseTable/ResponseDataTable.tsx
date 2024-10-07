@@ -87,11 +87,11 @@ const ResponseDataTable: React.FC<Props> = ({
   
           // Loop through each page and add the text
           for (let i = 1; i <= totalPages; i++) {
-            pdf.setPage(i); // Set the current page
+            pdf.setPage(i); 
             pdf.setFontSize(8);
-            pdf.text(`Date Printed: ${date}`, 5, 5); // Top-left corner
-            pdf.text("|", 60, 5); // Top, between the two texts
-            pdf.text(`Response: ${responseName}`, 65, 5); // Top-right corner
+            pdf.text(`Date Printed: ${date}`, 5, 5); 
+            pdf.text("|", 60, 5); 
+            pdf.text(`Response: ${responseName}`, 65, 5);
           }
         })
         .save()
