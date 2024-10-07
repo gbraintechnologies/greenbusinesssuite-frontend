@@ -41,10 +41,11 @@ import { toast } from "sonner";
 import useAdmin from "@/hooks/useAdmin";
 
 type Props = {
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  // setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  onOpen: any;
 };
 
-const Notifications: React.FC<Props> = ({ setShow }) => {
+const Notifications: React.FC<Props> = ({ onOpen }) => {
   // page and limit states for pagination
   const [page, setPage] = useState(0);
 
@@ -320,9 +321,9 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
 
       let data = {
         sender: admin.first_name,
-        recipients: recipients,
+        recipients: ["+233555197105"],
         subject: inputData.subject,
-        body: inputData.subject,
+        body: inputData.message,
         isHtml: false,
         // recurringType: "NON_RECURRING",
         // triggerTime: "2024-10-03T15:19:30.481Z",
@@ -334,6 +335,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
         .then((res) => {
           console.log("send", res);
           toast.dismiss();
+          // onOpen(false);
           toast.success("SMS sent successfully");
         })
         .catch((e) => {
@@ -406,7 +408,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
 
       let data = {
         sender: admin?.email,
-        recipients: recipients,
+        recipients: ["oxqm2@rustyload.com"],
         subject: inputData?.subject,
         body: inputData?.message,
         isHtml: true,
@@ -670,7 +672,7 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
           <div className="grid grid-cols-3 gap-10">
             <div className="mb-4 flex flex-col">
               <label className="text-xs mb-1 font-normal text-slate-700">
-                Recurring Message
+                Recurring tpe
               </label>
               <Dropdown>
                 <DropdownTrigger>
@@ -703,42 +705,45 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
               </Dropdown>
             </div>
 
-            <div className="mb-4 flex flex-col">
-              <label className="text-xs mb-1 font-normal text-slate-700">
-                Start Date
-              </label>
-              <DatePicker
-                value={startDate}
-                onChange={setStartDate}
-                hideTimeZone
-                // showMonthAndYearPickers
-                className="max-w-full text-[#334155] text-sm font-medium border w-full px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm "
-                variant="flat"
-                classNames={{
-                  popoverContent: "bg-white border border-[#E2E8F0] rounded-lg",
-                }}
-                isDateUnavailable={isStartDateUnavailable}
-              />
-            </div>
             {recurringType.value !== "NON_RECURRING" && (
-              <div className="mb-4 flex flex-col">
-                <label className="text-xs mb-1 font-normal text-slate-700">
-                  End Date
-                </label>
-                <DatePicker
-                  value={endDate}
-                  hideTimeZone
-                  // showMonthAndYearPickers
-                  onChange={setEndDate}
-                  className="max-w-full text-[#334155] text-sm font-medium border w-full px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm "
-                  variant="flat"
-                  classNames={{
-                    popoverContent:
-                      "bg-white border border-[#E2E8F0] rounded-lg",
-                  }}
-                  isDateUnavailable={isEndDateUnavailable}
-                />
-              </div>
+              <>
+                <div className="mb-4 flex flex-col">
+                  <label className="text-xs mb-1 font-normal text-slate-700">
+                    Start Date
+                  </label>
+                  <DatePicker
+                    value={startDate}
+                    onChange={setStartDate}
+                    hideTimeZone
+                    // showMonthAndYearPickers
+                    className="max-w-full text-[#334155] text-sm font-medium border w-full px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm "
+                    variant="flat"
+                    classNames={{
+                      popoverContent:
+                        "bg-white border border-[#E2E8F0] rounded-lg",
+                    }}
+                    isDateUnavailable={isStartDateUnavailable}
+                  />
+                </div>
+                <div className="mb-4 flex flex-col">
+                  <label className="text-xs mb-1 font-normal text-slate-700">
+                    End Date
+                  </label>
+                  <DatePicker
+                    value={endDate}
+                    hideTimeZone
+                    // showMonthAndYearPickers
+                    onChange={setEndDate}
+                    className="max-w-full text-[#334155] text-sm font-medium border w-full px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm "
+                    variant="flat"
+                    classNames={{
+                      popoverContent:
+                        "bg-white border border-[#E2E8F0] rounded-lg",
+                    }}
+                    isDateUnavailable={isEndDateUnavailable}
+                  />
+                </div>
+              </>
             )}
           </div>
         </div>
