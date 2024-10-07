@@ -50,7 +50,7 @@ function FormSubmission({
       let section = data?.formSections[i];
 
       if (section?.isDeleted) {
-        //
+        // skip deleted form sections
         continue;
       }
 

@@ -27,7 +27,6 @@ import StatusPill from "@/components/StatusPill/StatusPillText";
 import useAuth from "@/hooks/useAuth";
 import html2pdf from "html2pdf.js";
 
-
 type Props = {
   form: any;
   onClick?: () => void;
@@ -48,7 +47,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
 
   const captureAndGeneratePDF = (userData: any, responseId: string) => {
     const input = hiddenRef?.current;
-  
+
     if (input) {
       const options = {
         margin: 10,
@@ -56,9 +55,9 @@ function FormCard({ form, type = "uncompleted" }: Props) {
         image: { type: "jpeg", quality: 0.75 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: 'avoid-all', before: '#newsection' }
+        pagebreak: { mode: "avoid-all", before: "#newsection" },
       };
-  
+
       html2pdf()
         .set(options)
         .from(input)
@@ -75,21 +74,21 @@ function FormCard({ form, type = "uncompleted" }: Props) {
             minute: "2-digit",
           });
           const responseName = `${userData?.first_name} ${userData?.last_name}`;
-  
+
           // Loop through each page and add the text
           for (let i = 1; i <= totalPages; i++) {
-            pdf.setPage(i); 
+            pdf.setPage(i);
             pdf.setFontSize(8);
-            pdf.text(`Date Printed: ${date}`, 5, 5); 
-            pdf.text("|", 60, 5); 
-            pdf.text(`Response: ${responseName}`, 65, 5); 
+            pdf.text(`Date Printed: ${date}`, 5, 5);
+            pdf.text("|", 60, 5);
+            pdf.text(`Response: ${responseName}`, 65, 5);
           }
         })
-        .save().then(() => {
-
-        }).catch((error: any) => {
-          console.log(error)
-    })
+        .save()
+        .then(() => {})
+        .catch((error: any) => {
+          console.log(error);
+        });
     }
   };
 
@@ -108,7 +107,7 @@ function FormCard({ form, type = "uncompleted" }: Props) {
 
     document.body.appendChild(hiddenDiv);
 
-    console.log('hiddenDiv', hiddenDiv);
+    console.log("hiddenDiv", hiddenDiv);
 
     const root = createRoot(hiddenDiv);
     root.render(
@@ -138,16 +137,16 @@ function FormCard({ form, type = "uncompleted" }: Props) {
             );
 
             if (resData) {
-              console.log('response id ', resData[0]?.id);
-              console.log('form ', form);
-              console.log('res data input data', resData[0]?.inputData);
+              // console.log("response id ", resData[0]?.id);
+              // console.log("form ", form);
+              // console.log("res data input data", resData[0]?.inputData);
               const mergedForm = mergeForm(
                 resData[0]?.id,
                 form,
                 resData[0]?.inputData
               );
 
-              console.log('merged form ', mergedForm);
+              // console.log("merged form ", mergedForm);
               renderToHiddenElement(mergedForm, user, resData[0]?.id);
             } else {
               throw new Error("No data found");

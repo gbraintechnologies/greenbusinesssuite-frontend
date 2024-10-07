@@ -48,8 +48,18 @@ export const ClientFormProvider = ({ children }) => {
 
     let formSections = [];
 
+    console.log("data form sections", data?.formSections);
+
     for (let i = 0; i < data?.formSections?.length; i++) {
       let section = data?.formSections[i];
+
+      // SKIP DELETED SECTIONS
+      if (section?.isDeleted) {
+        // skip deleted form sections
+        continue;
+      }
+      //
+
       let formFields = [];
       for (let j = 0; j < section?.formFields?.length; j++) {
         let field = section?.formFields[j];
@@ -117,6 +127,12 @@ export const ClientFormProvider = ({ children }) => {
 
     for (let i = 0; i < data?.formSections?.length; i++) {
       let section = data?.formSections[i];
+
+      if (section?.isDeleted) {
+        // skip deleted form sections
+        continue;
+      }
+
       let formFields = [];
       for (let j = 0; j < section?.formFields?.length; j++) {
         let field = section?.formFields[j];
@@ -187,9 +203,16 @@ export const ClientFormProvider = ({ children }) => {
   const saveSingleResponse = (sectionId, fieldId, value) => {
     // find section, find field then add up value under response
     let sections = clientForm?.formSections;
+
     //
     let tempSections = [];
     for (let i = 0; i < sections.length; i++) {
+      let section = sections[i];
+      if (section?.isDeleted) {
+        // skip deleted form sections
+        continue;
+      }
+
       if (sections[i]?.id === sectionId) {
         // FOUND SECTION SO FIND FIELD
         let tempFields = [];

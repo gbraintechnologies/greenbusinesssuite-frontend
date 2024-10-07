@@ -98,6 +98,9 @@ export default function mergeForm(responseId: number, obj1: any, obj2: any) {
   return {
     ...obj1,
     responseId,
-    formSections: mergeFormSections(obj1.formSections, obj2.formSections),
+    formSections: mergeFormSections(
+      obj1?.formSections?.filter((item: any) => !item?.isDeleted),
+      obj2.formSections
+    ),
   };
 }

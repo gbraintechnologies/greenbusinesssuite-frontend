@@ -145,28 +145,32 @@ function ProcessInvite({ tenantId }: any) {
 
       for (let i = 0; i < data?.formSections?.length; i++) {
         let section = data?.formSections[i];
-        let formFields = [];
-        for (let j = 0; j < section?.formFields?.length; j++) {
-          let field = section?.formFields[j];
-          formFields.push({
-            // id: field?.id,
-            response: field?.response ? field?.response : "",
-            formFieldId: field?.id,
-            fieldName: field?.name,
-            isStatisticalField: field?.isStatisticalField
-              ? field?.isStatisticalField
-              : false,
-            statisticalFunction: field?.statisticalFunction
-              ? field?.statisticalFunction
-              : "",
-            displayType: field?.displayType ? field?.displayType : "",
+
+        // SKIP DELETED SECTIONS
+        if (!section?.isDeleted) {
+          let formFields = [];
+          for (let j = 0; j < section?.formFields?.length; j++) {
+            let field = section?.formFields[j];
+            formFields.push({
+              // id: field?.id,
+              response: field?.response ? field?.response : "",
+              formFieldId: field?.id,
+              fieldName: field?.name,
+              isStatisticalField: field?.isStatisticalField
+                ? field?.isStatisticalField
+                : false,
+              statisticalFunction: field?.statisticalFunction
+                ? field?.statisticalFunction
+                : "",
+              displayType: field?.displayType ? field?.displayType : "",
+            });
+          }
+          formSections.push({
+            // id: section?.id,
+            formSectionId: section?.id,
+            formDataFields: formFields,
           });
         }
-        formSections.push({
-          // id: section?.id,
-          formSectionId: section?.id,
-          formDataFields: formFields,
-        });
       }
 
       // stripping out data under formsections and form fields
@@ -192,7 +196,6 @@ function ProcessInvite({ tenantId }: any) {
         });
     }
   }, [data]);
-
 
   if (loading) {
     return (
