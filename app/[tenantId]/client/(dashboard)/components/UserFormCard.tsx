@@ -107,8 +107,6 @@ function FormCard({ form, type = "uncompleted" }: Props) {
 
     document.body.appendChild(hiddenDiv);
 
-    console.log("hiddenDiv", hiddenDiv);
-
     const root = createRoot(hiddenDiv);
     root.render(
       <FormResponse
@@ -146,7 +144,6 @@ function FormCard({ form, type = "uncompleted" }: Props) {
                 resData[0]?.inputData
               );
 
-              // console.log("merged form ", mergedForm);
               renderToHiddenElement(mergedForm, user, resData[0]?.id);
             } else {
               throw new Error("No data found");

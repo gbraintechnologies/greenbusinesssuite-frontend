@@ -43,9 +43,15 @@ import useAdmin from "@/hooks/useAdmin";
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
   onOpen: any;
+  isDisplayMode?: boolean;
+  notification?: any;
 };
 
-const Notifications: React.FC<Props> = ({ onOpen }) => {
+const Notifications: React.FC<Props> = ({
+  onOpen,
+  isDisplayMode = false,
+  notification,
+}) => {
   // page and limit states for pagination
   const [page, setPage] = useState(0);
 
@@ -441,38 +447,46 @@ const Notifications: React.FC<Props> = ({ onOpen }) => {
     <div className="bg-white h-auto rounded-xl">
       <header className="flex justify-center items-center shadow-lg h-12">
         <div className="text-[#475569] font-semibold text-lg">
-          Send {activeFilter?.name}
+          {isDisplayMode
+            ? notification?.messageType
+            : `Send ${activeFilter?.name}`}
         </div>
       </header>
       <div className="bg-[#F2F4F7] px-4 py-2">
         <div className="bg-white px-4 rounded-lg pt-6 pb-3">
-          <div className="flex justify-center  ">
-            <Tabs
-              activeFilter={activeFilter}
-              setActiveFilter={setActiveFilter}
-              filters={filters}
-            />
-          </div>
+          {!isDisplayMode && (
+            <div className="flex justify-center  ">
+              <Tabs
+                activeFilter={activeFilter}
+                setActiveFilter={setActiveFilter}
+                filters={filters}
+              />
+            </div>
+          )}
 
           <div className="input-holder">
             <label>Subject</label>
             <input
               type="text"
-              value={inputData.subject}
+              value={isDisplayMode ? notification?.subject : inputData.subject}
               onChange={handleSubjectChange}
               placeholder="Type message subject here"
               className="text-sm"
+              disabled={isDisplayMode}
+              readOnly={isDisplayMode}
             />
           </div>
 
           <div className="input-holder">
             <label>Message</label>
             <textarea
-              value={inputData.message}
+              value={isDisplayMode ? notification?.body : inputData.message}
               onChange={handleMessageChange}
               placeholder="Type message here"
               rows={6}
-              className="text-sm"
+              className={`text-sm ${isDisplayMode ? "fit-content" : ""}`}
+              disabled={isDisplayMode}
+              readOnly={isDisplayMode}
             />
           </div>
           {/* TODO: ADD SUPPORT FOR EMAIL FILES */}
@@ -519,116 +533,120 @@ const Notifications: React.FC<Props> = ({ onOpen }) => {
 
           {/* RECIPIENTS & COMPANY SELECTION */}
           <div className="grid grid-cols-2 gap-10">
-            <div className="mb-4 hide-input-borders input-holder">
-              <label className="text-xs mb-1 font-normal text-slate-700">
-                Company
-              </label>
+            {!isDisplayMode && (
+              <div className="mb-4 hide-input-borders input-holder">
+                <label className="text-xs mb-1 font-normal text-slate-700">
+                  Company
+                </label>
 
-              <Popover placement="bottom" state={state}>
-                <PopoverTrigger>
-                  <div
-                    className="border w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
-                    onClick={() => state.open()}
-                  >
-                    <div className="flex flex-wrap flex-1 gap-2">
-                      {selectedCompanies?.map((company: any) => (
-                        <div
-                          className="border border-[#E2E8F0] bg-white px-2 py-1 flex gap-2 items-center rounded-lg z-[200000]"
-                          onMouseDown={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <p className="text-sm text-slate-900">
-                            {company?.company_name}{" "}
-                          </p>
+                <Popover placement="bottom" state={state}>
+                  <PopoverTrigger>
+                    <div
+                      className="border w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
+                      onClick={() => state.open()}
+                    >
+                      <div className="flex flex-wrap flex-1 gap-2">
+                        {selectedCompanies?.map((company: any) => (
                           <div
-                            className="cursor-pointer"
-                            onClick={(e) => {
+                            className="border border-[#E2E8F0] bg-white px-2 py-1 flex gap-2 items-center rounded-lg z-[200000]"
+                            onMouseDown={(e) => {
                               e.stopPropagation();
                             }}
                           >
-                            <IoIosCloseCircleOutline
-                              color="#DC2626"
-                              size={20}
-                              onClick={() =>
-                                handleRemoveSelectedCompany(company)
-                              }
-                            />
+                            <p className="text-sm text-slate-900">
+                              {company?.company_name}{" "}
+                            </p>
+                            <div
+                              className="cursor-pointer"
+                              onMouseDown={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <IoIosCloseCircleOutline
+                                color="#DC2626"
+                                size={20}
+                                onClick={() =>
+                                  handleRemoveSelectedCompany(company)
+                                }
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                      {selectedCompanies?.length < 1 && !selectAllCompanies && (
-                        <div className="w-full px-3 flex justify-between items-center">
-                          <p className="text-sm text-slate-900">
-                            Select companies
-                          </p>{" "}
-                        </div>
-                      )}
-                      {selectAllCompanies && (
-                        <div className="w-full px-3 flex justify-between items-center">
-                          <p className="text-sm text-slate-900">All</p>{" "}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <BiChevronDown size={21} color="#94A3B8" />
-                    </div>
-                  </div>
-                </PopoverTrigger>
-                <PopoverContent className="bg-white border rounded-lg border-[#E2E8F0] w-[28rem]">
-                  <div className="input-holder">
-                    <input
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  {[...filteredCompanies]?.map((company: any) => (
-                    <div
-                      className="items-center cursor-pointer w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                      onClick={() => {
-                        handleSelectionChange(company);
-                      }}
-                    >
-                      {company?.company_name}
-                    </div>
-                  ))}
-                  {filteredCompanies?.length < 1 && (
-                    <p className="text-slate-900 text-sm">No results</p>
-                  )}
-                  {!searchTerm && (
-                    <button
-                      className=" cursor-pointer bg-gray-400 flex gap-2 py-3 text-white text-center justify-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
-                      onClick={() => setLimit(limit + 5)}
-                    >
-                      Load more...
-                    </button>
-                  )}
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="mb-4 flex flex-col">
-              <label className="text-xs mb-1 font-normal text-slate-700">
-                Recipients
-              </label>
-              <Dropdown>
-                <DropdownTrigger>
-                  <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
-                    <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
-                      <p className=" font-medium text-sm">
-                        {selectedRecipient?.label}
-                      </p>
-
-                      <div className="">
+                        ))}
+                        {selectedCompanies?.length < 1 &&
+                          !selectAllCompanies && (
+                            <div className="w-full px-3 flex justify-between items-center">
+                              <p className="text-sm text-slate-900">
+                                Select companies
+                              </p>{" "}
+                            </div>
+                          )}
+                        {selectAllCompanies && (
+                          <div className="w-full px-3 flex justify-between items-center">
+                            <p className="text-sm text-slate-900">All</p>{" "}
+                          </div>
+                        )}
+                      </div>
+                      <div>
                         <BiChevronDown size={21} color="#94A3B8" />
                       </div>
                     </div>
-                  </button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  className="shadow-md bg-white border border-[#F1F5F9] w-[34rem]  -mt-4 rounded-lg flex flex-col gap-3"
-                  aria-label="Static Actions"
-                >
-                  {/* <DropdownItem
+                  </PopoverTrigger>
+                  <PopoverContent className="bg-white border rounded-lg border-[#E2E8F0] w-[28rem]">
+                    <div className="input-holder">
+                      <input
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+                    {[...filteredCompanies]?.map((company: any) => (
+                      <div
+                        className="items-center cursor-pointer w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                        onClick={() => {
+                          handleSelectionChange(company);
+                        }}
+                      >
+                        {company?.company_name}
+                      </div>
+                    ))}
+                    {filteredCompanies?.length < 1 && (
+                      <p className="text-slate-900 text-sm">No results</p>
+                    )}
+                    {!searchTerm && (
+                      <button
+                        className=" cursor-pointer bg-gray-400 flex gap-2 py-3 text-white text-center justify-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
+                        onClick={() => setLimit(limit + 5)}
+                      >
+                        Load more...
+                      </button>
+                    )}
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+            {!isDisplayMode && (
+              <div className="mb-4 flex flex-col">
+                <label className="text-xs mb-1 font-normal text-slate-700">
+                  Recipients
+                </label>
+                <Dropdown>
+                  <DropdownTrigger>
+                    <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
+                      <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
+                        <p className=" font-medium text-sm">
+                          {selectedRecipient?.label}
+                        </p>
+
+                        <div className="">
+                          <BiChevronDown size={21} color="#94A3B8" />
+                        </div>
+                      </div>
+                    </button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    className="shadow-md bg-white border border-[#F1F5F9] w-[34rem]  -mt-4 rounded-lg flex flex-col gap-3"
+                    aria-label="Static Actions"
+                  >
+                    {/* <DropdownItem
                     key="view"
                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                     onClick={() =>
@@ -637,54 +655,69 @@ const Notifications: React.FC<Props> = ({ onOpen }) => {
                   >
                     All
                   </DropdownItem> */}
-                  <DropdownItem
-                    key="view"
-                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                    onClick={() =>
-                      setSelectedRecipient({
-                        label: "Company Admin",
-                        value: "companyAdmin",
-                      })
-                    }
-                  >
-                    Company Admin
-                  </DropdownItem>
-                  <DropdownItem
-                    key="view"
-                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                    onClick={() =>
-                      setSelectedRecipient({
-                        label: "Contact Person",
-                        value: "contactPerson",
-                      })
-                    }
-                  >
-                    Contact Person
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
+                    <DropdownItem
+                      key="view"
+                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                      onClick={() =>
+                        setSelectedRecipient({
+                          label: "Company Admin",
+                          value: "companyAdmin",
+                        })
+                      }
+                    >
+                      Company Admin
+                    </DropdownItem>
+                    <DropdownItem
+                      key="view"
+                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                      onClick={() =>
+                        setSelectedRecipient({
+                          label: "Contact Person",
+                          value: "contactPerson",
+                        })
+                      }
+                    >
+                      Contact Person
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+            )}
           </div>
         </div>
 
         {/* RECURRING, START DATE AND TIME */}
         <div className="bg-white px-4 rounded-lg mt-6 py-5">
           <div className="grid grid-cols-3 gap-10">
-            <div className="mb-4 flex flex-col">
+            <div
+              className={`mb-4 flex flex-col ${
+                recurringType.value == "NON_RECURRING"
+                  ? "col-span-3"
+                  : "col-span-1"
+              }`}
+            >
               <label className="text-xs mb-1 font-normal text-slate-700">
-                Recurring tpe
+                Recurring type
               </label>
-              <Dropdown>
+              <Dropdown isDisabled={isDisplayMode}>
                 <DropdownTrigger>
                   <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
                     <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
                       <p className=" font-medium text-sm">
-                        {recurringType?.label}
+                        {isDisplayMode
+                          ? recurringTypes?.find(
+                              (recurringType: any) =>
+                                recurringType?.value ==
+                                notification?.recurringType
+                            )?.label || recurringTypes?.[0]?.label
+                          : recurringType?.label}
                       </p>
 
-                      <div className="">
-                        <BiChevronDown size={21} color="#94A3B8" />
-                      </div>
+                      {!isDisplayMode && (
+                        <div className="">
+                          <BiChevronDown size={21} color="#94A3B8" />
+                        </div>
+                      )}
                     </div>
                   </button>
                 </DropdownTrigger>
@@ -705,7 +738,7 @@ const Notifications: React.FC<Props> = ({ onOpen }) => {
               </Dropdown>
             </div>
 
-            {recurringType.value !== "NON_RECURRING" && (
+            {recurringType.value !== "NON_RECURRING" && !isDisplayMode && (
               <>
                 <div className="mb-4 flex flex-col">
                   <label className="text-xs mb-1 font-normal text-slate-700">
@@ -749,15 +782,17 @@ const Notifications: React.FC<Props> = ({ onOpen }) => {
         </div>
 
         {/* SEND MESSAGE - EMAIL OR SMS */}
-        <div className="mt-4 mb-2">
-          <button
-            onClick={sendMessage}
-            className="bg-primary-green disabled:bg-gray-400 py-3 text-white text-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
-          >
-            {" "}
-            Send {activeFilter?.name}
-          </button>
-        </div>
+        {!isDisplayMode && (
+          <div className="mt-4 mb-2">
+            <button
+              onClick={sendMessage}
+              className="bg-primary-green disabled:bg-gray-400 py-3 text-white text-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
+            >
+              {" "}
+              Send {activeFilter?.name}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

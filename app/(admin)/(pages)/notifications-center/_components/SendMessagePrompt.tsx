@@ -44,7 +44,7 @@ function SendMessage() {
         <ModalContent className="bg-white">
           {(onClose) => (
             <>
-              <Notifications setShow={onOpen} />
+              <Notifications onOpen={onOpen} />
             </>
           )}
         </ModalContent>
