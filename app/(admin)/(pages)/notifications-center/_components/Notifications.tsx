@@ -321,7 +321,7 @@ const Notifications: React.FC<Props> = ({ onOpen }) => {
 
       let data = {
         sender: admin.first_name,
-        recipients: ["+233555197105"],
+        recipients: recipients,
         subject: inputData.subject,
         body: inputData.message,
         isHtml: false,
@@ -408,7 +408,7 @@ const Notifications: React.FC<Props> = ({ onOpen }) => {
 
       let data = {
         sender: admin?.email,
-        recipients: ["oxqm2@rustyload.com"],
+        recipients: recipients,
         subject: inputData?.subject,
         body: inputData?.message,
         isHtml: true,
