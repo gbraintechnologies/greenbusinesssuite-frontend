@@ -48,6 +48,7 @@ import useAdmin from "@/hooks/useAdmin";
 import ComboSearch from "@/components/SearchBox/ComboSearch";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdAttachFile } from "react-icons/md";
+import MultiComboSearch from "@/components/SearchBox/MultiComboSearch";
 
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -115,20 +116,20 @@ const Notifications: React.FC<Props> = ({
 
   const groupFilters: IFilter[] = [
     {
-      id: 1,
-      name: "Companies",
-      value: "companies",
-    },
-    {
       id: 0,
       name: "Users",
       value: "Users",
     },
+    {
+      id: 1,
+      name: "Companies",
+      value: "companies",
+    },
   ];
   const [activeGroupFilter, setActiveGroupFilter] = useState<IFilter>({
-    id: 1,
-    name: "Companies",
-    value: "companies",
+    id: 0,
+    name: "Users",
+    value: "Users",
   });
 
   // state to handle subject and message states
@@ -356,6 +357,20 @@ const Notifications: React.FC<Props> = ({
     }
   }, [isDisplayMode]);
 
+  const [userSearchTerm, setUserSearchTerm] = useState("");
+
+  const [selectedUsers, setSelectedUsers] = useState<any>([]);
+
+  const {
+    data: users,
+    isLoading: loading,
+    isError: error,
+  } = useQuery({
+    queryKey: ["user search", userSearchTerm],
+    queryFn: services.searchUsers(userSearchTerm),
+    enabled: !!userSearchTerm,
+  });
+
   // SENDING EMAIL / SMS MESSAGE
   const sendMessage = async () => {
     if (inputData?.message?.length < 3) {
@@ -365,15 +380,29 @@ const Notifications: React.FC<Props> = ({
     //SMS SENDING
     if (activeFilter.id == 0) {
       toast.loading("Sending sms. Please wait...");
-      if (type === "super-admin" && selectedCompanies?.length < 1) {
+      if (
+        type === "super-admin" &&
+        activeGroupFilter?.id == 1 &&
+        selectedCompanies?.length < 1
+      ) {
         toast.dismiss();
         toast.error("Select recipient companies");
         return;
       }
 
+      if (activeGroupFilter.id == 0 && selectedUsers.length < 1) {
+        toast.error("Select recipients");
+        return;
+      }
+
       let recipients = [];
 
-      if (type === "super-admin" && selectedRecipient.value == "companyAdmin") {
+      // ACTIVE GROUP FILTER: COMPANY AND SUPER ADMIN TYPE
+      if (
+        type === "super-admin" &&
+        activeGroupFilter?.id == 1 &&
+        selectedRecipient.value == "companyAdmin"
+      ) {
         for (let i = 0; i < selectedCompanies?.length; i++) {
           let adminId = selectedCompanies[i].company_admin_id;
           if (adminId) {
@@ -387,10 +416,22 @@ const Notifications: React.FC<Props> = ({
 
       if (
         type === "super-admin" &&
+        activeGroupFilter?.id == 1 &&
         selectedRecipient.value == "contactPerson"
       ) {
         for (let i = 0; i < selectedCompanies?.length; i++) {
           recipients.push(selectedCompanies[i].primary_contact_phone_number);
+        }
+      }
+
+      // ACTIVE GROUP FILTER: USERS AND COMPANY ADMIN (OR SUPER ADMIN)
+      // FOR SMS
+      if (activeGroupFilter?.id == 0 && selectedUsers?.length > 0) {
+        for (let i = 0; i < selectedUsers?.length; i++) {
+          let phone = selectedUsers[i]?.phone_number;
+          if (phone?.length > 5) {
+            recipients.push(phone);
+          }
         }
       }
 
@@ -406,7 +447,7 @@ const Notifications: React.FC<Props> = ({
         // endDate: "2024-10-03T15:19:30.481Z",
       };
 
-      if (recipients?.length < 1) {
+      if (recipients?.length == 0) {
         toast.error("No recipients selected");
         return;
       }
@@ -443,16 +484,16 @@ const Notifications: React.FC<Props> = ({
       toast.loading("Sending email...");
 
       // no start date specified
-      if (
-        !Boolean(startDate) &&
-        recurringType?.value.toLowerCase() !== "non-recurring"
-      ) {
-        toast.dismiss();
-        toast.error("Please specify the start date");
-        return;
-      }
+      // if (
+      //   !Boolean(startDate) &&
+      //   recurringType?.value.toLowerCase() !== "non-recurring"
+      // ) {
+      //   toast.dismiss();
+      //   toast.error("Please specify the start date");
+      //   return;
+      // }
 
-      if (selectedCompanies?.length < 1) {
+      if (activeGroupFilter?.id === 1 && selectedCompanies?.length < 1) {
         toast.dismiss();
         toast.error("Select recipient companies");
         return;
@@ -460,7 +501,10 @@ const Notifications: React.FC<Props> = ({
 
       let recipients = [];
 
-      if (selectedRecipient.value == "companyAdmin") {
+      if (
+        activeGroupFilter?.id == 1 &&
+        selectedRecipient.value == "companyAdmin"
+      ) {
         for (let i = 0; i < selectedCompanies?.length; i++) {
           let adminId = selectedCompanies[i].company_admin_id;
           if (adminId) {
@@ -472,31 +516,42 @@ const Notifications: React.FC<Props> = ({
         }
       }
 
-      if (selectedRecipient.value == "contactPerson") {
+      if (
+        activeGroupFilter?.id == 1 &&
+        selectedRecipient.value == "contactPerson"
+      ) {
         for (let i = 0; i < selectedCompanies?.length; i++) {
           recipients.push(selectedCompanies[i].primary_contact_email);
         }
       }
 
-      const { year, day, hour, minute, month, second, millisecond } = startDate;
-      const start =
-        year +
-        "-" +
-        month.toString().padStart(2, "0") +
-        "-" +
-        day.toString().padStart(2, "0") +
-        "T" +
-        hour.toString().padStart(2, "0") +
-        ":" +
-        minute.toString().padStart(2, "0") +
-        ":" +
-        second.toString().padStart(2, "0") +
-        "." +
-        millisecond +
-        "Z";
+      // ACTIVE GROUP FILTER: USERS AND COMPANY ADMIN (OR SUPER ADMIN)
+      // FOR EMAILS
+      if (activeGroupFilter?.id == 0 && selectedUsers?.length > 0) {
+        for (let i = 0; i < selectedUsers?.length; i++) {
+          recipients.push(selectedUsers[i]?.email);
+        }
+      }
+
+      // const { year, day, hour, minute, month, second, millisecond } = startDate;
+      // const start =
+      //   year +
+      //   "-" +
+      //   month.toString().padStart(2, "0") +
+      //   "-" +
+      //   day.toString().padStart(2, "0") +
+      //   "T" +
+      //   hour.toString().padStart(2, "0") +
+      //   ":" +
+      //   minute.toString().padStart(2, "0") +
+      //   ":" +
+      //   second.toString().padStart(2, "0") +
+      //   "." +
+      //   millisecond +
+      //   "Z";
       // "2024-10-03T13:47:04.492Z";
 
-      if (recipients?.length < 1) {
+      if (recipients?.length == 0) {
         toast.dismiss();
         toast.error("Recipients could not be loaded...");
         return;
@@ -547,18 +602,6 @@ const Notifications: React.FC<Props> = ({
       }
     }
   };
-
-  const [userSearchTerm, setUserSearchTerm] = useState("");
-
-  const {
-    data: users,
-    isLoading: loading,
-    isError: error,
-  } = useQuery({
-    queryKey: ["user search", userSearchTerm],
-    queryFn: services.searchUsers(userSearchTerm),
-    enabled: !!userSearchTerm,
-  });
 
   const state = useOverlayTriggerState({});
 
@@ -638,7 +681,7 @@ const Notifications: React.FC<Props> = ({
             </div>
           )}
           {/* TODO: ADD SUPPORT FOR EMAIL FILES */}
-          {!(activeFilter?.id == 0) && (
+          {!(activeFilter?.id == 0) && !isDisplayMode && (
             <div>
               <label className="text-xs mb-1 font-normal text-slate-700">
                 Add File Attachment
@@ -851,7 +894,17 @@ const Notifications: React.FC<Props> = ({
           )}
 
           {(activeGroupFilter?.id == 0 || type === "company-admin") &&
-            !isDisplayMode && <>{/* USERS SEARCH AND ADD HERE */}</>}
+            !isDisplayMode && (
+              <>
+                <MultiComboSearch
+                  data={users}
+                  search={userSearchTerm}
+                  setSearch={setUserSearchTerm}
+                  selected={selectedUsers}
+                  setSelected={setSelectedUsers}
+                />
+              </>
+            )}
         </div>
 
         {/* RECURRING, START DATE AND TIME */}

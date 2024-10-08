@@ -12,7 +12,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 
 export default function MultiComboSearch({
   data,
-  placeholder,
+  placeholder = "Search and select users...",
   search,
   setSearch,
   selected,
@@ -20,34 +20,57 @@ export default function MultiComboSearch({
 }: any) {
   //
   return (
-    <Combobox value={selected} onChange={setSelected} nullable>
+    <Combobox
+      value={selected}
+      // onChange={setSelected}
+      nullable
+    >
       <div className="relative w-full">
-        <div className="flex px-2 cursor-pointer rounded-lg items-center bg-white link2 text-neutral-700 border min-h-12  h-full">
+        <div className="flex px-2 cursor-pointer rounded-lg text-sm items-center bg-white link2 text-neutral-700 border min-h-10  h-full">
           <FiSearch size={18} className="mr-3" />
 
           <Combobox.Input
             placeholder={placeholder}
-            className="h-full w-full outline-none focus:outline-none input-custom"
+            className="h-full w-full outline-none text-sm focus:outline-none input-custom"
             // @ts-ignore
             displayValue={(user) => user?.email}
             // @ts-ignore
             onChange={(event) => setSearch(event.target.value)}
           />
           <Combobox.Button className="absolute z-50 inset-y-0 right-0 flex items-center gap-2 pr-2">
-            {selected && (
-              <IoIosCloseCircle
-                size={8}
-                onClick={() => setSelected(null)}
-                className="h-5 w-5 text-gray-400"
-                aria-hidden="true"
-              />
-            )}
             <BsChevronDown
               className="h-4 w-4 cursor-pointer text-gray-400"
               aria-hidden="true"
             />
           </Combobox.Button>
         </div>
+        {selected?.length > 0 && (
+          <div className="text-sm mt-3">
+            <div className="font-medium text-gray-500 mb-3">
+              Selected Recipients:
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              {selected.map((single: any) => {
+                return (
+                  <span className="border border-gray-200 p-1 px-3 rounded-lg justify-between flex gap-1 items-center">
+                    {single?.first_name} {single?.last_name}
+                    <IoIosCloseCircle
+                      size={5}
+                      color="#DC2626"
+                      onClick={() => {
+                        setSelected(
+                          selected.filter((item: any) => item.id !== single.id)
+                        );
+                      }}
+                      className="h-5 w-5 text-gray-400 cursor-pointer hover:scale-105"
+                      aria-hidden="true"
+                    />
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
         <Transition
           as={Fragment}
           leave="transition ease-in duration-100"
@@ -56,7 +79,7 @@ export default function MultiComboSearch({
           // @ts-ignore
           afterLeave={() => setSearch("")}
         >
-          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md py-1  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none bg-white ">
+          <Combobox.Options className="absolute z-[999999999999999] mt-1 max-h-60 w-full overflow-auto rounded-md py-1  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none bg-white ">
             {data?.length === 0 && search !== "" ? (
               <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
                 No users found.
@@ -65,24 +88,27 @@ export default function MultiComboSearch({
               data?.map((user: any) => (
                 <Combobox.Option
                   onClick={() => {
-                    console.log("selected");
+                    console.log("selected", user);
+                    if (selected?.length > 0) {
+                      setSelected(() => [...selected, user]);
+                    } else {
+                      setSelected(() => [user]);
+                    }
                   }}
                   key={user?.id}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                      active ? "text-primary-green " : "text-gray-900"
-                    }`
+                    `relative cursor-default select-none py-2 pl-10 pr-4 text-gray-900`
                   }
                   value={user}
                 >
                   {({ selected, active }) => (
                     <button>
                       <span
-                        className={`truncate paragraph  flex gap-3 items-center ${
+                        className={`truncate paragraph text-sm  flex gap-3 items-center ${
                           selected ? "font-medium" : "font-normal"
                         }`}
                       >
-                        {user?.email}
+                        {user?.first_name} {user?.last_name}
                       </span>
                       {selected ? (
                         <span
