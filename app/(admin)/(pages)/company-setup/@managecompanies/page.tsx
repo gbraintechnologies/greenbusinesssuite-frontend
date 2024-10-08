@@ -377,7 +377,7 @@ function CompanySetup() {
           />
         </div>
       </div>
-      <Modal
+      {/* <Modal
         isOpen={showNotificationsModal}
         setIsOpen={setShowNotificationsModal}
         size="small"
@@ -385,7 +385,7 @@ function CompanySetup() {
         hideClose={true}
       >
         <Notifications setShow={setShowNotificationsModal} />
-      </Modal>
+      </Modal> */}
     </>
   );
 }

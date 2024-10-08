@@ -10,7 +10,7 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 // tabs
 import Tabs from "../../../../../components/Tabs/Tabs";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // DATE TIME HELPERS
 
@@ -42,13 +42,13 @@ import useAdmin from "@/hooks/useAdmin";
 
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  onOpen: any;
+  onClose: any;
   isDisplayMode?: boolean;
   notification?: any;
 };
 
 const Notifications: React.FC<Props> = ({
-  onOpen,
+  onClose,
   isDisplayMode = false,
   notification,
 }) => {
@@ -58,6 +58,8 @@ const Notifications: React.FC<Props> = ({
   const { admin } = useAdmin();
 
   const [limit, setLimit] = useState(4);
+
+  const queryClient = useQueryClient();
 
   //state to handle search value
   const [searchTerm, setSearchTerm] = useState("");
@@ -327,6 +329,7 @@ const Notifications: React.FC<Props> = ({
       let recipients = [];
 
       if (selectedRecipient.value == "companyAdmin") {
+        // TODO: GET NUMBER OF ADMIN FOR SMS
         console.log("admin");
       }
 
@@ -337,7 +340,7 @@ const Notifications: React.FC<Props> = ({
       }
 
       let data = {
-        sender: admin.first_name,
+        sender: admin?.first_name + " " + admin?.last_name,
         recipients: recipients,
         subject: inputData.subject,
         body: inputData.message,
@@ -347,18 +350,28 @@ const Notifications: React.FC<Props> = ({
         // startDate: "2024-10-03T15:19:30.481Z",
         // endDate: "2024-10-03T15:19:30.481Z",
       };
+
+      if (recipients?.length < 1) {
+        toast.error("No recipients selected");
+        return;
+      }
+
       services
         .sendSMS(data)
         .then((res) => {
-          console.log("send", res);
           toast.dismiss();
-          // onOpen(false);
+          // refetch messages sent
+          queryClient.invalidateQueries({
+            queryKey: ["all messages"],
+          });
+          onClose();
           toast.success("SMS sent successfully");
         })
         .catch((e) => {
           console.log("error", e?.response?.data);
           toast.dismiss();
-          toast.error("Error sending sms");
+          toast.error("Error sending SMS");
+          onClose();
         });
     }
 
@@ -372,11 +385,11 @@ const Notifications: React.FC<Props> = ({
       toast.loading("Sending email...");
 
       // no start date specified
-      if (!Boolean(startDate)) {
-        toast.dismiss();
-        toast.error("Please specify the start date");
-        return;
-      }
+      // if (!Boolean(startDate)) {
+      //   toast.dismiss();
+      //   toast.error("Please specify the start date");
+      //   return;
+      // }
 
       if (selectedCompanies?.length < 1) {
         toast.dismiss();
@@ -403,8 +416,6 @@ const Notifications: React.FC<Props> = ({
         }
       }
 
-      console.log("recipients", recipients);
-
       const { year, day, hour, minute, month, second, millisecond } = startDate;
       const start =
         year +
@@ -423,31 +434,37 @@ const Notifications: React.FC<Props> = ({
         "Z";
       // "2024-10-03T13:47:04.492Z";
 
+      if (recipients?.length < 1) {
+        toast.error("No recipients selected");
+        return;
+      }
+
       let data = {
-        sender: admin?.email,
+        sender: admin?.first_name + " " + admin?.last_name,
         recipients: recipients,
         subject: inputData?.subject,
         body: inputData?.message,
         isHtml: true,
-        recurringType: recurringType?.value.toUpperCase(),
-        triggerTime: start,
-        startDate: start,
+        // recurringType: recurringType?.value.toUpperCase(),
+        // triggerTime: start,
+        // startDate: start,
         // if there's no end date it should start and end same day
-        endDate: start,
+        // endDate: start,
       };
       console.log("data", data);
 
       services
         .sendEmail(data)
         .then((res) => {
-          console.log("sent email", res);
           toast.dismiss();
-          toast.success("Email sent successfully");
+          toast.success("Email sent successfully to ");
+          onClose();
         })
         .catch((e) => {
           console.log("error", e);
           toast.dismiss();
           toast.error("Error sending email");
+          onClose();
         });
     }
   };
@@ -710,7 +727,7 @@ const Notifications: React.FC<Props> = ({
               <label className="text-xs mb-1 font-normal text-slate-700">
                 Recurring type
               </label>
-              <Dropdown isDisabled={isDisplayMode}>
+              <Dropdown isDisabled={isDisplayMode} >
                 <DropdownTrigger>
                   <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
                     <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
