@@ -538,7 +538,7 @@ const Notifications: React.FC<Props> = ({
             />
           </div>
 
-          {isDisplayMode && (
+          {(isDisplayMode && notification?.totalRecipients > 0) && (
             <div className="input-holder">
               <label>Recipient(s)</label>
               <div className="grid grid-cols-2 gap-4">
