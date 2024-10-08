@@ -131,6 +131,23 @@ const Notifications: React.FC<Props> = ({
 
   const [endDate, setEndDate] = useState<any>();
 
+  // state to handle show all recipients or just a few
+  const [showAllRecipients, setShowAllRecipients] = useState(false);
+
+  // Function to toggle the state
+  const handleToggleViewRecipients = () => {
+    setShowAllRecipients(!showAllRecipients);
+  };
+
+  // recipients to display
+  const recipientsToDisplay = isDisplayMode ? showAllRecipients
+    ? notification?.recipients
+    : notification?.recipients.slice(0, 4) : 0;
+
+  // remaining recipients
+  const remainingRecipientsCount =
+    isDisplayMode ? notification?.recipients.length - recipientsToDisplay.length : 0;
+
   // Function to check if a date is unavailable for start date picker
   const isStartDateUnavailable = (date: any) => {
     if (endDate) {
@@ -520,6 +537,29 @@ const Notifications: React.FC<Props> = ({
               readOnly={isDisplayMode}
             />
           </div>
+
+          {(isDisplayMode && notification?.totalRecipients > 0) && (
+            <div className="input-holder">
+              <label>Recipient(s)</label>
+              <div className="grid grid-cols-2 gap-4">
+                {recipientsToDisplay?.map((recipient: any) => (
+                    <div className="border border-[#E2E8F0] px-2 py-2 flex gap-2 items-center rounded-lg z-[200000]">
+                      <p className="text-sm text-slate-900">{recipient}</p>
+                    </div>
+                  ))}
+              </div>
+              {(!showAllRecipients && remainingRecipientsCount > 0) && (
+                <button className="outline-none w-full flex justify-end text-gray-600 p-2 text-sm rounded-lg" onClick={handleToggleViewRecipients}>
+                  {`Show ${remainingRecipientsCount} more`}
+                </button>
+              )}
+              {showAllRecipients && (
+                <button className="outline-none w-full flex justify-end text-gray-600 p-2 text-sm rounded-lg" onClick={handleToggleViewRecipients}>
+                  View less
+                </button>
+              )}
+            </div>
+          )}
           {/* TODO: ADD SUPPORT FOR EMAIL FILES */}
           {/* {!(activeFilter?.id == 0) && (
             <div>
