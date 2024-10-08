@@ -140,13 +140,16 @@ const Notifications: React.FC<Props> = ({
   };
 
   // recipients to display
-  const recipientsToDisplay = isDisplayMode ? showAllRecipients
-    ? notification?.recipients
-    : notification?.recipients.slice(0, 4) : 0;
+  const recipientsToDisplay = isDisplayMode
+    ? showAllRecipients
+      ? notification?.recipients
+      : notification?.recipients.slice(0, 4)
+    : 0;
 
   // remaining recipients
-  const remainingRecipientsCount =
-    isDisplayMode ? notification?.recipients.length - recipientsToDisplay.length : 0;
+  const remainingRecipientsCount = isDisplayMode
+    ? notification?.recipients.length - recipientsToDisplay.length
+    : 0;
 
   // Function to check if a date is unavailable for start date picker
   const isStartDateUnavailable = (date: any) => {
@@ -268,16 +271,6 @@ const Notifications: React.FC<Props> = ({
     );
   };
 
-  // fetch all users
-  const {
-    data: users,
-    isLoading: usersLoading,
-    refetch: refetchUsers,
-  } = useQuery({
-    queryKey: ["all users", 10000],
-    queryFn: services.allUsers(0, 10000),
-  });
-
   // setting filtered companies to companies on initial load
   useEffect(() => {
     if (companies?.length > 0) {
@@ -327,16 +320,14 @@ const Notifications: React.FC<Props> = ({
   }, [isDisplayMode]);
 
   // SENDING EMAIL / SMS MESSAGE
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (inputData?.message?.length < 3) {
       toast.error("Please enter a message to send...");
       return;
     }
     //SMS SENDING
     if (activeFilter.id == 0) {
-      toast.loading("Sending sms...");
-      //
-
+      toast.loading("Sending sms. Please wait...");
       if (selectedCompanies?.length < 1) {
         toast.dismiss();
         toast.error("Select recipient companies");
@@ -346,8 +337,15 @@ const Notifications: React.FC<Props> = ({
       let recipients = [];
 
       if (selectedRecipient.value == "companyAdmin") {
-        // TODO: GET NUMBER OF ADMIN FOR SMS
-        console.log("admin");
+        for (let i = 0; i < selectedCompanies?.length; i++) {
+          let adminId = selectedCompanies[i].company_admin_id;
+          if (adminId) {
+            const adminDetails = await services.userByIDRaw(adminId);
+            if (adminDetails) {
+              recipients.push(adminDetails?.phone_number);
+            }
+          }
+        }
       }
 
       if (selectedRecipient.value == "contactPerson") {
@@ -373,23 +371,26 @@ const Notifications: React.FC<Props> = ({
         return;
       }
 
-      services
-        .sendSMS(data)
-        .then((res) => {
-          toast.dismiss();
-          // refetch messages sent
-          queryClient.invalidateQueries({
-            queryKey: ["all messages"],
-          });
-          onClose();
-          toast.success("SMS sent successfully");
-        })
-        .catch((e) => {
-          console.log("error", e?.response?.data);
-          toast.dismiss();
-          toast.error("Error sending SMS");
-          onClose();
-        });
+      console.log("SENDING SMS", data);
+      toast.dismiss();
+
+      // services
+      //   .sendSMS(data)
+      //   .then((res) => {
+      //     toast.dismiss();
+      //     // refetch messages sent
+      //     queryClient.invalidateQueries({
+      //       queryKey: ["all messages"],
+      //     });
+      //     onClose();
+      //     toast.success("SMS sent successfully");
+      //   })
+      //   .catch((e) => {
+      //     console.log("error", e?.response?.data);
+      //     toast.dismiss();
+      //     toast.error("Error sending SMS");
+      //     onClose();
+      //   });
     }
 
     // EMAIL NOTIFICATION
@@ -419,14 +420,15 @@ const Notifications: React.FC<Props> = ({
 
       let recipients = [];
 
-      // TODO: update to make direct calls to get admin details based on userid
       if (selectedRecipient.value == "companyAdmin") {
         for (let i = 0; i < selectedCompanies?.length; i++) {
           let adminId = selectedCompanies[i].company_admin_id;
-
-          recipients.push(
-            users.find((item: any) => item?.id == adminId)?.email
-          );
+          if (adminId) {
+            const adminDetails = await services.userByIDRaw(adminId);
+            if (adminDetails) {
+              recipients.push(adminDetails?.email);
+            }
+          }
         }
       }
 
@@ -455,7 +457,8 @@ const Notifications: React.FC<Props> = ({
       // "2024-10-03T13:47:04.492Z";
 
       if (recipients?.length < 1) {
-        toast.error("No recipients selected");
+        toast.dismiss();
+        toast.error("Recipients could not be loaded...");
         return;
       }
 
@@ -471,21 +474,21 @@ const Notifications: React.FC<Props> = ({
         // if there's no end date it should start and end same day
         // endDate: start,
       };
-      console.log("data", data);
+      console.log("SENDING EMAIL: ", data);
 
-      services
-        .sendEmail(data)
-        .then((res) => {
-          toast.dismiss();
-          toast.success("Email sent successfully");
-          onClose();
-        })
-        .catch((e) => {
-          console.log("error", e);
-          toast.dismiss();
-          toast.error("Error sending email");
-          onClose();
-        });
+      // services
+      //   .sendEmail(data)
+      //   .then((res) => {
+      //     toast.dismiss();
+      //     toast.success("Email sent successfully");
+      //     onClose();
+      //   })
+      //   .catch((e) => {
+      //     console.log("error", e);
+      //     toast.dismiss();
+      //     toast.error("Error sending email");
+      //     onClose();
+      //   });
     }
   };
 
@@ -538,23 +541,29 @@ const Notifications: React.FC<Props> = ({
             />
           </div>
 
-          {(isDisplayMode && notification?.totalRecipients > 0) && (
+          {isDisplayMode && notification?.totalRecipients > 0 && (
             <div className="input-holder">
               <label>Recipient(s)</label>
               <div className="grid grid-cols-2 gap-4">
                 {recipientsToDisplay?.map((recipient: any) => (
-                    <div className="border border-[#E2E8F0] px-2 py-2 flex gap-2 items-center rounded-lg z-[200000]">
-                      <p className="text-sm text-slate-900">{recipient}</p>
-                    </div>
-                  ))}
+                  <div className="border border-[#E2E8F0] px-2 py-2 flex gap-2 items-center rounded-lg z-[200000]">
+                    <p className="text-sm text-slate-900">{recipient}</p>
+                  </div>
+                ))}
               </div>
-              {(!showAllRecipients && remainingRecipientsCount > 0) && (
-                <button className="outline-none w-full flex justify-end text-gray-600 p-2 text-sm rounded-lg" onClick={handleToggleViewRecipients}>
+              {!showAllRecipients && remainingRecipientsCount > 0 && (
+                <button
+                  className="outline-none w-full flex justify-end text-gray-600 p-2 text-sm rounded-lg"
+                  onClick={handleToggleViewRecipients}
+                >
                   {`Show ${remainingRecipientsCount} more`}
                 </button>
               )}
               {showAllRecipients && (
-                <button className="outline-none w-full flex justify-end text-gray-600 p-2 text-sm rounded-lg" onClick={handleToggleViewRecipients}>
+                <button
+                  className="outline-none w-full flex justify-end text-gray-600 p-2 text-sm rounded-lg"
+                  onClick={handleToggleViewRecipients}
+                >
                   View less
                 </button>
               )}

@@ -4,8 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import "./index.css";
 import UpdateInfo from "@/public/svg/updateInfo.svg";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import { IoIosArrowDown } from "react-icons/io";
+import { useRouter, useSearchParams } from "next/navigation";
+import { IoIosArrowBack, IoIosArrowDown } from "react-icons/io";
 import Tabs from "@/components/Tabs/Tabs";
 import services from "@/services";
 
@@ -141,11 +141,14 @@ const Page = () => {
       (field: any) => field.custom_profile_item_id == 7
     )?.value ?? "";
 
-  const {
-    data: assignedForms,
-    isLoading: areFormsLoading,
-  } = useQuery({
-    queryKey: ["get assigned forms for ", Number(companyData?.id), page, limit, selectedTimeline?.value],
+  const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
+    queryKey: [
+      "get assigned forms for ",
+      Number(companyData?.id),
+      page,
+      limit,
+      selectedTimeline?.value,
+    ],
     queryFn: services.getFormsByCompanyId(
       companyData?.id,
       page,
@@ -185,6 +188,7 @@ const Page = () => {
 
   const { handleFileUpload } = useFileUpload();
 
+  const router = useRouter();
 
   useEffect(() => {
     if (!companyData) return;
@@ -267,7 +271,15 @@ const Page = () => {
       <div className="px-5 pb-10">
         {/* HEADER */}
         <div className="w-full text-primary-dark  flex justify-between items-center">
-          <h3 className="font-semibold text-xl">Company Profile</h3>
+          <div className="flex items-center gap-3">
+            <div
+              className="my-3 cursor-pointer flex text-sm items-center gap-2"
+              onClick={() => router.back()}
+            >
+              <IoIosArrowBack size={16} />
+            </div>
+            <h3 className="font-semibold text-xl">Company Profile</h3>
+          </div>
 
           {/* <div className="flex gap-3">
             <Link
@@ -368,7 +380,7 @@ const Page = () => {
 
         {/* TABS FOR DESCRIPTION  / ASSIGNED FORMS */}
         <div className="mt-10">
-          <div className="flex justify-center items-center">
+          <div className="flex justify-start items-center">
             <Tabs
               filters={filters}
               setActiveFilter={setActiveFilter}
@@ -440,13 +452,12 @@ const Page = () => {
                       </div>
                     )}
                   </div>
-                  
                 </div>
               </>
             )}
 
             {activeFilter.value === "assigned_forms" && (
-              <> 
+              <>
                 <div className="min-h-[40vh]">
                   <div className="flex items-center justify-between mb-2 mt-2">
                     <div className=" w-full text-[#475569] font-medium my-4 text-base">
@@ -481,7 +492,13 @@ const Page = () => {
                   {/* NO ASSIGNED FORM */}
                   {assignedForms?.content?.length === 0 && (
                     <div className="flex items-center justify-center py-5 w-full ">
-                      <EmptyList text={selectedTimeline?.value == "ALL" ? "No forms assigned to company": ""} />
+                      <EmptyList
+                        text={
+                          selectedTimeline?.value == "ALL"
+                            ? "No forms assigned to company"
+                            : ""
+                        }
+                      />
                     </div>
                   )}
 

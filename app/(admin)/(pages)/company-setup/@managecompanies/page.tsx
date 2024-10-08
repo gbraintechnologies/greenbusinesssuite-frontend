@@ -89,7 +89,7 @@ function CompanySetup() {
 
   const [page, setPage] = useState(0);
 
-  const [limit, setLimit] = useState(4);
+  const [limit, setLimit] = useState(8);
 
   const [showNotificationsModal, setShowNotificationsModal] =
     useState<boolean>(false);

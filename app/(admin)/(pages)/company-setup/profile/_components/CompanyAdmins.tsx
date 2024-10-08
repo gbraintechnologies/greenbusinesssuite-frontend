@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { MdOutlineSettingsSuggest } from "react-icons/md";
 import { PiUserCircleCheck } from "react-icons/pi";
 import Loader from "@/components/Loader/Loader";
+import Border from "@/components/Border/Border";
 
 function CompanyAdmins({ companyId }: any) {
   // fetch all users
@@ -21,6 +22,12 @@ function CompanyAdmins({ companyId }: any) {
   } = useQuery({
     queryKey: ["company", companyId],
     queryFn: services.getCompanyById(Number(companyId)),
+  });
+
+  const { data: adminDetails } = useQuery({
+    queryKey: ["admin Details", companyData?.company_admin_id],
+    queryFn: services.userByID(Number(companyData?.company_admin_id)),
+    enabled: !!companyData && !!companyData?.company_admin_id,
   });
 
   useEffect(() => {
@@ -41,8 +48,6 @@ function CompanyAdmins({ companyId }: any) {
   const filteredOptions = searchAdminEmail === "" ? [] : options?.data;
 
   const [loading, setLoading] = useState(false);
-
-  console.log("selectded admin optino", selectedAdminOption);
 
   const assignAdmin = () => {
     toast.loading("Assigning...", {
@@ -77,7 +82,7 @@ function CompanyAdmins({ companyId }: any) {
 
   if (companyDataLoading) {
     return (
-      <div className="min-h-[30vh] flex items-center justify-center">
+      <div className="min-h-[30vh] flex items-start justify-center">
         <Loader />
       </div>
     );
@@ -89,7 +94,7 @@ function CompanyAdmins({ companyId }: any) {
       {!companyDataLoading &&
       companyData &&
       companyData?.status !== "ACTIVE" ? (
-        <div className="h-40 flex items-center justify-center">
+        <div className="h-40 flex items-start justify-start">
           <div className="flex flex-col text-gray-700 items-center justify-center gap-2">
             <MdOutlineSettingsSuggest className="" size={40} />
             <p className="text-gray-400 text-sm">
@@ -101,11 +106,34 @@ function CompanyAdmins({ companyId }: any) {
         <>
           {!!companyData?.company_admin_id ? (
             // display current admin
-            <div className="flex items-center gap-4 w-full justify-center mt-4 text-gray-600">
-              <PiUserCircleCheck size={40} />
-              <h4 className="w-60">
+            <div className="flex items-start gap-5 w-full justify-start mt-4 text-gray-600">
+              <PiUserCircleCheck size={60} />
+              <h4 className="max-w-4xl">
                 An administrator has successfully been assigned to{" "}
-                {companyData?.company_name}
+                <span className="font-bold"> {companyData?.company_name}</span>
+                <Border />
+                {adminDetails && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gray-50 rounded-lg p-4 h-24 flex items justify-between flex-col">
+                      <p className="text-sm font-light">Administrator</p>
+                      <p className="text-bold text-lg text-black">
+                        {adminDetails?.first_name}, {adminDetails?.last_name}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-4 h-24 flex items justify-between flex-col">
+                      <p className="text-sm font-light">Email</p>
+                      <p className="text-bold text-lg text-black">
+                        {adminDetails?.email}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-4 h-24 flex items justify-between flex-col">
+                      <p className="text-sm font-light">Phone number</p>
+                      <p className="text-bold text-lg text-black">
+                        {adminDetails?.phone_number}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </h4>
             </div>
           ) : (

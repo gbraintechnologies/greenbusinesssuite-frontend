@@ -91,7 +91,6 @@ function page() {
       }
     }
     if (activeFilter?.id == 1) {
-      
       if (recurringMessages?.length > 0) {
         setRecurringRows(
           recurringMessages.map((message: any) => ({
@@ -177,7 +176,9 @@ function page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>{FormatDateWithSuffix(params.row.data?.startDate ?? new Date())}</div>,
+        <div>
+          {FormatDateWithSuffix(params.row.data?.startDate ?? new Date())}
+        </div>,
       ],
     },
     {
@@ -188,7 +189,9 @@ function page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>{FormatDateWithSuffix(params.row.data?.endDate ?? new Date())}</div>,
+        <div>
+          {FormatDateWithSuffix(params.row.data?.endDate ?? new Date())}
+        </div>,
       ],
     },
 
@@ -254,12 +257,13 @@ function page() {
       ],
     },
   ];
+
   return (
     <div className="px-5 pb-10">
       <h3 className="font-semibold mb-8 text-xl">Notifications Center</h3>
 
       <div>
-        <div className="flex justify-between my-2 mb-8">
+        <div className="flex justify-between items-center my-2 mb-8">
           <Tabs
             activeFilter={activeFilter}
             setActiveFilter={setActiveFilter}
@@ -274,8 +278,8 @@ function page() {
             activeFilter.id == 0 ? messageHistoryColumns : recurringColumns
           }
         />
-        {/*PAGINATION */}
 
+        {/*PAGINATION */}
         <div className="w-full flex justify-between">
           <ItemsPerPageSelector
             limit={
@@ -303,6 +307,8 @@ function page() {
           />
         </div>
       </div>
+
+      {/* MODAL */}
       <Modal
         backdrop="opaque"
         scrollBehavior="inside"
