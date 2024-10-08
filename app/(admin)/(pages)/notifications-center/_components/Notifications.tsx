@@ -140,13 +140,13 @@ const Notifications: React.FC<Props> = ({
   };
 
   // recipients to display
-  const recipientsToDisplay = showAllRecipients
+  const recipientsToDisplay = isDisplayMode ? showAllRecipients
     ? notification?.recipients
-    : notification?.recipients.slice(0, 4);
+    : notification?.recipients.slice(0, 4) : 0;
 
   // remaining recipients
   const remainingRecipientsCount =
-    notification?.recipients.length - recipientsToDisplay.length;
+    isDisplayMode ? notification?.recipients.length - recipientsToDisplay.length : 0;
 
   // Function to check if a date is unavailable for start date picker
   const isStartDateUnavailable = (date: any) => {
