@@ -540,7 +540,7 @@ const Notifications: React.FC<Props> = ({
               <label>Recipient(s)</label>
               <div className="grid grid-cols-2 gap-4">
                 {recipientsToDisplay?.map((recipient: any) => (
-                    <div className="border border-[#E2E8F0] bg-[#F8FAFC] px-2 py-2 flex gap-2 items-center rounded-lg z-[200000]">
+                    <div className="border border-[#E2E8F0] px-2 py-2 flex gap-2 items-center rounded-lg z-[200000]">
                       <p className="text-sm text-slate-900">{recipient}</p>
                     </div>
                   ))}
