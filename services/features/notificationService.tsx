@@ -1,4 +1,3 @@
-import defaultMeshApi from "../defaultMeshClient";
 import authApi from "../meshAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
 

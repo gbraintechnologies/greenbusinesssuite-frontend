@@ -379,7 +379,8 @@ const Notifications: React.FC<Props> = ({
     }
     //SMS SENDING
     if (activeFilter.id == 0) {
-      toast.loading("Sending sms. Please wait...");
+      let loadingToast = toast.loading("Sending sms. Please wait...");
+
       if (
         type === "super-admin" &&
         activeGroupFilter?.id == 1 &&
@@ -448,17 +449,18 @@ const Notifications: React.FC<Props> = ({
       };
 
       if (recipients?.length == 0) {
+        toast.dismiss(loadingToast);
         toast.error("No recipients selected");
         return;
       }
 
       // console.log("SENDING SMS", data);
-      toast.dismiss();
+      toast.dismiss(loadingToast);
 
       services
         .sendSMS(data)
         .then((res) => {
-          toast.dismiss();
+          toast.dismiss(loadingToast);
           // refetch messages sent
           queryClient.invalidateQueries({
             queryKey: ["all messages"],
@@ -481,7 +483,7 @@ const Notifications: React.FC<Props> = ({
         return;
       }
 
-      toast.loading("Sending email...");
+      let loadingToast = toast.loading("Sending email...");
 
       // no start date specified
       // if (
@@ -552,7 +554,7 @@ const Notifications: React.FC<Props> = ({
       // "2024-10-03T13:47:04.492Z";
 
       if (recipients?.length == 0) {
-        toast.dismiss();
+        toast.dismiss(loadingToast);
         toast.error("Recipients could not be loaded...");
         return;
       }
@@ -575,7 +577,7 @@ const Notifications: React.FC<Props> = ({
         services
           .sendEmailWithFile(data, files[0])
           .then((res) => {
-            toast.dismiss();
+            toast.dismiss(loadingToast);
             toast.success("Email sent successfully");
             onClose();
           })
@@ -589,7 +591,7 @@ const Notifications: React.FC<Props> = ({
         services
           .sendEmail(data)
           .then((res) => {
-            toast.dismiss();
+            toast.dismiss(loadingToast);
             toast.success("Email sent successfully");
             onClose();
           })
@@ -601,6 +603,8 @@ const Notifications: React.FC<Props> = ({
           });
       }
     }
+
+    toast.dismiss();
   };
 
   const state = useOverlayTriggerState({});
