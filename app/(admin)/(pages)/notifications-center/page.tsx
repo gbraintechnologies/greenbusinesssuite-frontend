@@ -12,7 +12,6 @@ import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import Pagination from "@/components/Pagination/Pagination";
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/modal";
 import EyeIcon from "@/public/icons/EyeIcon";
-import ViewNotification from "./_components/ViewNotification";
 import Notifications from "./_components/Notifications";
 import { FormatDateWithSuffix } from "@/utils/FormatDate/FormatDate";
 
@@ -210,7 +209,7 @@ function page() {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="w-2/12">
-          {params.row.data.recipients.length}
+          {params.row.data?.totalRecipients}
         </div>,
       ],
     },
@@ -242,7 +241,13 @@ function page() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <button className="outline-none">
+        <button
+          className="outline-none"
+          onClick={() => {
+            setActiveNotification(params.row.data);
+            onOpen();
+          }}
+        >
           <EyeIcon />
         </button>,
       ],

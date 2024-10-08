@@ -296,6 +296,17 @@ const Notifications: React.FC<Props> = ({
     }
   }, [filteredCompanies]);
 
+  useEffect(() => {
+    if (isDisplayMode) {
+      setRecurringType(
+        recurringTypes?.find(
+          (recurringType: any) =>
+            recurringType?.value == notification?.recurringType
+        ) || recurringTypes?.[0]
+      );
+    }
+  }, [isDisplayMode]);
+
   // SENDING EMAIL / SMS MESSAGE
   const sendMessage = () => {
     if (inputData?.message?.length < 3) {
@@ -704,13 +715,7 @@ const Notifications: React.FC<Props> = ({
                   <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
                     <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
                       <p className=" font-medium text-sm">
-                        {isDisplayMode
-                          ? recurringTypes?.find(
-                              (recurringType: any) =>
-                                recurringType?.value ==
-                                notification?.recurringType
-                            )?.label || recurringTypes?.[0]?.label
-                          : recurringType?.label}
+                        {recurringType?.label}
                       </p>
 
                       {!isDisplayMode && (
