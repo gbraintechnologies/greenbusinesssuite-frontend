@@ -143,7 +143,7 @@ function page() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id} className="w-2/12 uppercase">
+        <div key={params.row.id} className="w-2/12">
           {params.row.data?.messageType}
         </div>,
       ],
@@ -176,7 +176,7 @@ function page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>{FormatDateWithSuffix(params.row.data.startDate)}</div>,
+        <div>{FormatDateWithSuffix(params.row.data?.startDate)}</div>,
       ],
     },
     {
@@ -187,7 +187,7 @@ function page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>{FormatDateWithSuffix(params.row.data.endDate)}</div>,
+        <div>{FormatDateWithSuffix(params.row.data?.endDate)}</div>,
       ],
     },
 
@@ -198,7 +198,7 @@ function page() {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="w-full truncate">
-          {params.row.data.subject}
+          {params.row.data?.subject}
         </div>,
       ],
     },
@@ -219,8 +219,8 @@ function page() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id} className="">
-          {params.row.data.timesSent}
+        <div key={params.row?.id} className="">
+          {params.row.data?.timesSent}
         </div>,
       ],
     },
@@ -320,7 +320,7 @@ function page() {
           {(onClose) => (
             <>
               <Notifications
-                onOpen={onOpen}
+                onClose={onClose}
                 isDisplayMode={true}
                 notification={activeNotification}
               />
