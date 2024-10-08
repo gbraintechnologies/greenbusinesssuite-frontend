@@ -174,22 +174,43 @@ export const FormProvider = ({ children }) => {
   const removeSection = (data) => {
     setLoadingSection(true);
 
-    let tempFormSections = form?.formSections;
+    // let tempFormSections = form?.formSections;
 
-    let indexSection = tempFormSections?.indexOf(data);
+    // let indexSection = tempFormSections?.indexOf(data);
 
-    if (indexSection !== -1) {
-      tempFormSections[indexSection] = {
-        ...data,
-        isDeleted: true,
-        deletedOn: new Date(),
-      };
-    }
-
-    updateRemoteForm({
-      ...form,
-      formSections: [...tempFormSections],
-    });
+    // if (indexSection !== -1) {
+    //   tempFormSections[indexSection] = {
+    //     ...data,
+    //     isDeleted: true,
+    //     deletedOn: new Date(),
+    //   };
+    // }
+    toast.loading("Deleting section...");
+    services
+      .deleteSection(data?.id)
+      .then((res) => {
+        toast.dismiss();
+        toast.success("Section deleted");
+        setLoadingSection(false);
+        queryClient.invalidateQueries({
+          queryKey: ["form", form?.id],
+        });
+        services
+          .getFormByIdRaw(form?.id)
+          .then((res) => {
+            setForm(res?.data);
+            setLoadingSection(false);
+          })
+          .catch((e) => {
+            toast.error("Error occured retriving updated form");
+            console.log("error getting form");
+          });
+      })
+      .catch((e) => {
+        toast.error("Error deleting form section");
+        console.log("error deleting section", e);
+        setLoadingSection(false);
+      });
   };
 
   // fields

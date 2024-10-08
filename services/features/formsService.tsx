@@ -224,6 +224,10 @@ export const unpublishForm = (id: any) => {
   return defaultMeshApi.put(`/forms/builder/unpublish/by-id/${id}`);
 };
 
+export const deleteSection = (id: any) => {
+  return authApi.delete(`/forms/builder/form-section/${id}`);
+};
+
 export const deleteForm = (id: any) => {
   return authApi.delete(`/forms/builder/soft-delete/${id}`);
 };
