@@ -46,6 +46,8 @@ import { toast } from "sonner";
 // HOOKS
 import useAdmin from "@/hooks/useAdmin";
 import ComboSearch from "@/components/SearchBox/ComboSearch";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { MdAttachFile } from "react-icons/md";
 
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -409,7 +411,7 @@ const Notifications: React.FC<Props> = ({
         return;
       }
 
-      console.log("SENDING SMS", data);
+      // console.log("SENDING SMS", data);
       toast.dismiss();
 
       services
@@ -512,21 +514,37 @@ const Notifications: React.FC<Props> = ({
         // if there's no end date it should start and end same day
         // endDate: start,
       };
-      console.log("SENDING EMAIL: ", data);
 
-      // services
-      //   .sendEmail(data)
-      //   .then((res) => {
-      //     toast.dismiss();
-      //     toast.success("Email sent successfully");
-      //     onClose();
-      //   })
-      //   .catch((e) => {
-      //     console.log("error", e);
-      //     toast.dismiss();
-      //     toast.error("Error sending email");
-      //     onClose();
-      //   });
+      if (!!files?.length) {
+        console.log("SENDING EMAIL with file: ", data, files[0]);
+        services
+          .sendEmailWithFile(data, files[0])
+          .then((res) => {
+            toast.dismiss();
+            toast.success("Email sent successfully");
+            onClose();
+          })
+          .catch((e) => {
+            console.log("error", e);
+            toast.dismiss();
+            toast.error("Error sending email");
+            onClose();
+          });
+      } else {
+        services
+          .sendEmail(data)
+          .then((res) => {
+            toast.dismiss();
+            toast.success("Email sent successfully");
+            onClose();
+          })
+          .catch((e) => {
+            console.log("error", e);
+            toast.dismiss();
+            toast.error("Error sending email");
+            onClose();
+          });
+      }
     }
   };
 
@@ -620,15 +638,18 @@ const Notifications: React.FC<Props> = ({
             </div>
           )}
           {/* TODO: ADD SUPPORT FOR EMAIL FILES */}
-          {/* {!(activeFilter?.id == 0) && (
+          {!(activeFilter?.id == 0) && (
             <div>
               <label className="text-xs mb-1 font-normal text-slate-700">
-                Add Files
+                Add File Attachment
               </label>
               {files.length > 0 && (
-                <div className="flex flex-wrap gap-2 my-2">
+                <div className="grid grid-cols-2 w-full gap-2 my-2">
                   {files?.map((file: any, index: any) => (
-                    <div key={index} className="flex gap-2">
+                    <div
+                      key={index}
+                      className="flex gap-2  border border-gray-300 p-3 rounded-xl justify-between"
+                    >
                       <p className="text-sm text-[#334155]">{file?.name}</p>
                       <RiDeleteBin5Line
                         color="#DC2626"
@@ -643,27 +664,29 @@ const Notifications: React.FC<Props> = ({
               <div className="w-fit mb-4">
                 <input
                   type="file"
-                  multiple
+                  // multiple
                   onChange={handleFileChange}
-                  accept=".pdf,.docx,.doc"
+                  accept=".pdf,.docx,.doc,.png,.jpg,.jpeg"
                   style={{ display: "none" }}
                   id="file-input"
                 />
-                <label
-                  className="bg-primary-green cursor-pointer flex gap-2 py-3 text-white text-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
-                  htmlFor="file-input"
-                >
-                  {" "}
-                  Select File
-                  <MdAttachFile color="white" size={20} />
-                </label>
+                {files?.length < 1 && (
+                  <label
+                    className="bg-primary-green cursor-pointer flex gap-2 mt-2 py-3 text-white text-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
+                    htmlFor="file-input"
+                  >
+                    {" "}
+                    Add file
+                    <MdAttachFile color="white" size={20} />
+                  </label>
+                )}
               </div>
             </div>
-          )} */}
+          )}
 
           {/* RECIPIENTS & COMPANY SELECTION */}
-          {type === "super-admin" && (
-            <div className="mb-5">
+          {type === "super-admin" && !isDisplayMode && (
+            <div className="mt-10 my-5">
               <Tabs
                 activeFilter={activeGroupFilter}
                 setActiveFilter={setActiveGroupFilter}
@@ -671,6 +694,7 @@ const Notifications: React.FC<Props> = ({
               />
             </div>
           )}
+
           {type === "super-admin" && activeGroupFilter?.id == 1 && (
             <div className="grid grid-cols-2 gap-10">
               {!isDisplayMode && (
@@ -783,7 +807,7 @@ const Notifications: React.FC<Props> = ({
                       </button>
                     </DropdownTrigger>
                     <DropdownMenu
-                      className="shadow-md bg-white border border-[#F1F5F9] w-[34rem]  -mt-4 rounded-lg flex flex-col gap-3"
+                      className="shadow-md bg-white border border-[#F1F5F9] w-[28rem]  -mt-2 rounded-lg flex flex-col gap-3"
                       aria-label="Static Actions"
                     >
                       {/* <DropdownItem
@@ -826,9 +850,8 @@ const Notifications: React.FC<Props> = ({
             </div>
           )}
 
-          {(activeGroupFilter?.id == 0 || type === "company-admin") && (
-            <>{/* USERS SEARCH AND ADD HERE */}</>
-          )}
+          {(activeGroupFilter?.id == 0 || type === "company-admin") &&
+            !isDisplayMode && <>{/* USERS SEARCH AND ADD HERE */}</>}
         </div>
 
         {/* RECURRING, START DATE AND TIME */}
@@ -844,7 +867,10 @@ const Notifications: React.FC<Props> = ({
               <label className="text-xs mb-1 font-normal text-slate-700">
                 Recurring type
               </label>
-              <Dropdown isDisabled={isDisplayMode}>
+              <Dropdown
+                isDisabled={true}
+                // isDisabled={isDisplayMode}
+              >
                 <DropdownTrigger>
                   <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
                     <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
