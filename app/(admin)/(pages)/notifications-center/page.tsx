@@ -10,10 +10,13 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import Pagination from "@/components/Pagination/Pagination";
+import { Modal, ModalContent, useDisclosure } from "@nextui-org/modal";
 import EyeIcon from "@/public/icons/EyeIcon";
+import Notifications from "./_components/Notifications";
+import { FormatDateWithSuffix } from "@/utils/FormatDate/FormatDate";
 
 function page() {
-  const [nonRecurringRows, setNonRecurringRows] = useState<
+  const [messageHistoryRows, setMessageHistoryRows] = useState<
     { id: number | undefined; data: any }[]
   >([]);
 
@@ -21,16 +24,21 @@ function page() {
     { id: number | undefined; data: any }[]
   >([]);
 
-  const [page, setPage] = useState(0);
+  const [allMessagesPage, setAllMessagesPage] = useState(0);
 
-  const [limit, setLimit] = useState(10);
+  const [allMessagesLimit, setAllMessagesLimit] = useState(10);
 
-  const [notificationsLoading, setNotificationsLoading] =
-    useState<boolean>(false);
+  const [recurringMessagesPage, setRecurringMessagesPage] = useState(0);
+
+  const [recurringMessagesLimit, setRecurringMessagesLimit] = useState(10);
 
   const [selectedTimeline, setSelectedTimeline] = useState<
     { label: TimelineValues; value: TimelineType } | undefined
   >();
+
+  const [activeNotification, setActiveNotification] = useState<any>();
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const filters: IFilter[] = [
     {
@@ -53,21 +61,48 @@ function page() {
 
   // get past messages
   const { data: messages, isLoading } = useQuery({
-    queryKey: ["all messages", page, limit],
-    queryFn: services.allPastNotifications(page, limit),
+    queryKey: ["all messages", allMessagesPage, allMessagesLimit],
+    queryFn: services.allPastNotifications(allMessagesPage, allMessagesLimit),
     select: (data) => data?.content,
   });
 
+  const { data: recurringMessages, isLoading: recurringMessagesLoading } =
+    useQuery({
+      queryKey: [
+        "all recurring messages",
+        recurringMessagesPage,
+        recurringMessagesLimit,
+      ],
+      queryFn: services.allRecurringNotifications(
+        recurringMessagesPage,
+        recurringMessagesLimit
+      ),
+      select: (data) => data?.content,
+      enabled: activeFilter.id == 1,
+    });
+
   // set messages to rows
   useEffect(() => {
-    if (messages) {
-      setNonRecurringRows(
-        messages.map((message: any) => ({ id: message.id, data: message }))
-      );
+    if (activeFilter?.id == 0) {
+      if (messages) {
+        setMessageHistoryRows(
+          messages.map((message: any) => ({ id: message.id, data: message }))
+        );
+      }
     }
-  }, [messages]);
+    if (activeFilter?.id == 1) {
+      if (recurringMessages) {
+        setRecurringRows(
+          recurringMessages.map((message: any) => ({
+            id: message.id,
+            data: message,
+          }))
+        );
+      }
+    }
+  }, [messages, activeFilter, recurringMessages]);
 
-  const nonRecurringColumns = [
+  const messageHistoryColumns = [
     {
       field: "date",
       headerName: "Date",
@@ -76,13 +111,7 @@ function page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>
-          {new Date(params.row.data.triggerDate).toLocaleDateString("en-us", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
-        </div>,
+        <div>{FormatDateWithSuffix(params.row.data?.createdOn)}</div>,
       ],
     },
 
@@ -104,7 +133,7 @@ function page() {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="w-2/12">
-          {params.row.data.recipients.length}
+          {params.row.data?.totalRecipients}
         </div>,
       ],
     },
@@ -114,8 +143,8 @@ function page() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div key={params.row.id} className="w-2/12">
-          {params.row.data.type}
+        <div key={params.row.id} className="w-2/12 uppercase">
+          {params.row.data?.messageType}
         </div>,
       ],
     },
@@ -125,7 +154,13 @@ function page() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <button className="outline-none">
+        <button
+          className="outline-none"
+          onClick={() => {
+            setActiveNotification(params.row.data);
+            onOpen();
+          }}
+        >
           <EyeIcon />
         </button>,
       ],
@@ -141,13 +176,7 @@ function page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>
-          {new Date(params.row.data.startDate).toLocaleDateString("en-us", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
-        </div>,
+        <div>{FormatDateWithSuffix(params.row.data.startDate)}</div>,
       ],
     },
     {
@@ -158,13 +187,7 @@ function page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>
-          {new Date(params.row.data.endDate).toLocaleDateString("en-us", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
-        </div>,
+        <div>{FormatDateWithSuffix(params.row.data.endDate)}</div>,
       ],
     },
 
@@ -186,7 +209,7 @@ function page() {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="w-2/12">
-          {params.row.data.recipients.length}
+          {params.row.data?.totalRecipients}
         </div>,
       ],
     },
@@ -208,7 +231,7 @@ function page() {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="">
-          {params.row.data.type}
+          {params.row.data?.messageType}
         </div>,
       ],
     },
@@ -218,7 +241,13 @@ function page() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <button className="outline-none">
+        <button
+          className="outline-none"
+          onClick={() => {
+            setActiveNotification(params.row.data);
+            onOpen();
+          }}
+        >
           <EyeIcon />
         </button>,
       ],
@@ -241,24 +270,64 @@ function page() {
           />
         </div>
         <DataTable
-          isLoading={notificationsLoading}
-          rows={activeFilter.id == 0 ? nonRecurringRows : recurringRows}
+          isLoading={isLoading || recurringMessagesLoading}
+          rows={activeFilter.id == 0 ? messageHistoryRows : recurringRows}
           columns={
-            activeFilter.id == 0 ? nonRecurringColumns : recurringColumns
+            activeFilter.id == 0 ? messageHistoryColumns : recurringColumns
           }
         />
         {/*PAGINATION */}
 
         <div className="w-full flex justify-between">
-          <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
+          <ItemsPerPageSelector
+            limit={
+              activeFilter?.id == 0 ? allMessagesLimit : recurringMessagesLimit
+            }
+            setLimit={
+              activeFilter?.id == 0
+                ? setAllMessagesLimit
+                : setRecurringMessagesLimit
+            }
+          />
           <Pagination
-            currentData={messages}
-            limit={limit}
-            page={page}
-            setPage={setPage}
+            currentData={activeFilter?.id == 0 ? messages : recurringMessages}
+            limit={
+              activeFilter?.id == 0 ? allMessagesLimit : recurringMessagesLimit
+            }
+            page={
+              activeFilter?.id == 0 ? allMessagesPage : recurringMessagesPage
+            }
+            setPage={
+              activeFilter?.id == 0
+                ? setAllMessagesPage
+                : setRecurringMessagesPage
+            }
           />
         </div>
       </div>
+      <Modal
+        backdrop="opaque"
+        scrollBehavior="inside"
+        className="bg-white rounded-xl"
+        classNames={{
+          backdrop: "bg-black bg-opacity-30",
+        }}
+        size="5xl"
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent className="bg-white">
+          {(onClose) => (
+            <>
+              <Notifications
+                onOpen={onOpen}
+                isDisplayMode={true}
+                notification={activeNotification}
+              />
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
