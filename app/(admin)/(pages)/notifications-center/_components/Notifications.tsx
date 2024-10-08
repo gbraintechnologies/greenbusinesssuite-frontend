@@ -385,11 +385,14 @@ const Notifications: React.FC<Props> = ({
       toast.loading("Sending email...");
 
       // no start date specified
-      // if (!Boolean(startDate)) {
-      //   toast.dismiss();
-      //   toast.error("Please specify the start date");
-      //   return;
-      // }
+      if (
+        !Boolean(startDate) &&
+        recurringType?.value.toLowerCase() !== "non-recurring"
+      ) {
+        toast.dismiss();
+        toast.error("Please specify the start date");
+        return;
+      }
 
       if (selectedCompanies?.length < 1) {
         toast.dismiss();
@@ -457,7 +460,7 @@ const Notifications: React.FC<Props> = ({
         .sendEmail(data)
         .then((res) => {
           toast.dismiss();
-          toast.success("Email sent successfully to ");
+          toast.success("Email sent successfully");
           onClose();
         })
         .catch((e) => {
@@ -727,7 +730,7 @@ const Notifications: React.FC<Props> = ({
               <label className="text-xs mb-1 font-normal text-slate-700">
                 Recurring type
               </label>
-              <Dropdown isDisabled={isDisplayMode} >
+              <Dropdown isDisabled={isDisplayMode}>
                 <DropdownTrigger>
                   <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
                     <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
