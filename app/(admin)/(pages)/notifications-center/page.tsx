@@ -91,7 +91,8 @@ function page() {
       }
     }
     if (activeFilter?.id == 1) {
-      if (recurringMessages) {
+      
+      if (recurringMessages?.length > 0) {
         setRecurringRows(
           recurringMessages.map((message: any) => ({
             id: message.id,
@@ -176,7 +177,7 @@ function page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>{FormatDateWithSuffix(params.row.data?.startDate)}</div>,
+        <div>{FormatDateWithSuffix(params.row.data?.startDate ?? new Date())}</div>,
       ],
     },
     {
@@ -187,7 +188,7 @@ function page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>{FormatDateWithSuffix(params.row.data?.endDate)}</div>,
+        <div>{FormatDateWithSuffix(params.row.data?.endDate ?? new Date())}</div>,
       ],
     },
 
