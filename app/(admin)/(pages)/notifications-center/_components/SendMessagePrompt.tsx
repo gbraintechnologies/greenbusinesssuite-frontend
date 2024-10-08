@@ -13,7 +13,11 @@ import { Modal, ModalContent, useDisclosure } from "@nextui-org/modal";
 import Link from "next/link";
 import { TbMessage } from "react-icons/tb";
 
-function SendMessage() {
+function SendMessage({
+  type = "super-admin",
+}: {
+  type?: "super-admin" | "company-admin";
+}) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const router = useRouter();
 
@@ -44,7 +48,7 @@ function SendMessage() {
         <ModalContent className="bg-white">
           {(onClose) => (
             <>
-              <Notifications onClose={onClose} />
+              <Notifications type={type} onClose={onClose} />
             </>
           )}
         </ModalContent>

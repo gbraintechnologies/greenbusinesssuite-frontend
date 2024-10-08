@@ -1,50 +1,48 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
-
-import DataTable from "@/components/DataTable/DataTable";
-import SearchBox from "@/components/SearchBox/SearchBox";
-
 import Link from "next/link";
-
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
-
-import { BsThreeDots } from "react-icons/bs";
-
-import UserIcon from "@/public/icons/UserIcon";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { TbMessage } from "react-icons/tb";
+//
+import Tabs from "@/components/Tabs/Tabs";
+import DataTable from "@/components/DataTable/DataTable";
+import { IFilter, TimelineType, TimelineValues } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-
-import useCompany from "@/hooks/useCompany";
-import { IFilter, TimelineType, TimelineValues } from "@/types";
-import DatePicker from "@/components/DatePicker/DatePicker";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import Pagination from "@/components/Pagination/Pagination";
-import Tabs from "@/components/Tabs/Tabs";
-import { TbMessage } from "react-icons/tb";
+import { Modal, ModalContent, useDisclosure } from "@nextui-org/modal";
+import EyeIcon from "@/public/icons/EyeIcon";
 
-function Page() {
-  const { companyBranding: company,  } = useCompany();
+import { FormatDateWithSuffix } from "@/utils/FormatDate/FormatDate";
 
+// shared components with admin
+import Notifications from "@/app/(admin)/(pages)/notifications-center/_components/Notifications";
+import SendMessage from "@/app/(admin)/(pages)/notifications-center/_components/SendMessagePrompt";
 
-  const [rows, setRows] = useState<{ id: number | undefined; data: any }[]>([]);
+function page() {
+  const [messageHistoryRows, setMessageHistoryRows] = useState<
+    { id: number | undefined; data: any }[]
+  >([]);
 
-  const [page, setPage] = useState(0);
+  const [recurringRows, setRecurringRows] = useState<
+    { id: number | undefined; data: any }[]
+  >([]);
 
-  const [limit, setLimit] = useState(10);
+  const [allMessagesPage, setAllMessagesPage] = useState(0);
 
-  const [notificationsLoading, setNotificationsLoading] = useState<boolean>(false);
+  const [allMessagesLimit, setAllMessagesLimit] = useState(10);
+
+  const [recurringMessagesPage, setRecurringMessagesPage] = useState(0);
+
+  const [recurringMessagesLimit, setRecurringMessagesLimit] = useState(10);
 
   const [selectedTimeline, setSelectedTimeline] = useState<
     { label: TimelineValues; value: TimelineType } | undefined
   >();
+
+  const [activeNotification, setActiveNotification] = useState<any>();
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const filters: IFilter[] = [
     {
@@ -56,31 +54,59 @@ function Page() {
       id: 1,
       name: "Recurring Messages",
       value: "recurring_messages",
-    }
+    },
   ];
 
   const [activeFilter, setActiveFilter] = useState<IFilter>({
     id: 0,
-    name: "SMS",
-    value: "sms",
+    name: "Message History",
+    value: "message_history",
   });
 
-  const {
-    data: customers,
-    isLoading,
-  } = useQuery({
-    queryKey: ["all customers", company?.id, page, limit, selectedTimeline?.value],
-    queryFn: services.companyCustomersWithFormCount(
-      company?.id,
-      page,
-      limit,
-      selectedTimeline?.value
-    ),
-    select: (data) => data?.userFormStatList,
+  // get past messages
+  const { data: messages, isLoading } = useQuery({
+    queryKey: ["all messages", allMessagesPage, allMessagesLimit],
+    queryFn: services.allPastNotifications(allMessagesPage, allMessagesLimit),
+    select: (data) => data?.content,
   });
 
+  const { data: recurringMessages, isLoading: recurringMessagesLoading } =
+    useQuery({
+      queryKey: [
+        "all recurring messages",
+        recurringMessagesPage,
+        recurringMessagesLimit,
+      ],
+      queryFn: services.allRecurringNotifications(
+        recurringMessagesPage,
+        recurringMessagesLimit
+      ),
+      select: (data) => data?.content,
+      enabled: activeFilter.id == 1,
+    });
 
-  const columns = [
+  // set messages to rows
+  useEffect(() => {
+    if (activeFilter?.id == 0) {
+      if (messages) {
+        setMessageHistoryRows(
+          messages.map((message: any) => ({ id: message.id, data: message }))
+        );
+      }
+    }
+    if (activeFilter?.id == 1) {
+      if (recurringMessages?.length > 0) {
+        setRecurringRows(
+          recurringMessages.map((message: any) => ({
+            id: message.id,
+            data: message,
+          }))
+        );
+      }
+    }
+  }, [messages, activeFilter, recurringMessages]);
+
+  const messageHistoryColumns = [
     {
       field: "date",
       headerName: "Date",
@@ -89,7 +115,7 @@ function Page() {
       headerAlign: "left",
       flex: 1,
       getActions: (params: any) => [
-        <div>{params.row.date}</div>,
+        <div>{FormatDateWithSuffix(params.row.data?.createdOn)}</div>,
       ],
     },
 
@@ -100,103 +126,219 @@ function Page() {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="w-2/12">
-          {params.row.count}
+          {params.row.data.subject}
         </div>,
       ],
     },
     {
-        field: "Recipients",
-        headerName: "Recipients",
-        flex: 2,
-        type: "actions",
-        getActions: (params: any) => [
-          <div key={params.row.id} className="w-2/12">
-            {params.row.count}
-          </div>,
-        ],
-      },
-      {
-        field: "Type",
-        headerName: "Type",
-        flex: 1,
-        type: "actions",
-        getActions: (params: any) => [
-          <div key={params.row.id} className="w-2/12">
-            {params.row.count}
-          </div>,
-        ],
-      },
+      field: "Recipients",
+      headerName: "Recipients",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="w-2/12">
+          {params.row.data?.totalRecipients}
+        </div>,
+      ],
+    },
+    {
+      field: "Type",
+      headerName: "Type",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="w-2/12">
+          {params.row.data?.messageType}
+        </div>,
+      ],
+    },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <Dropdown>
-          <DropdownTrigger>
-            <Button variant="bordered">
-              {" "}
-              <BsThreeDots size={20} />
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
-            aria-label="Static Actions"
-          >
-            <DropdownItem
-              key="view"
-              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-            >
-              <Link
-                href={
-                  `/${company?.company_identifier}/admin/customers/profile?id=` +
-                  params.row.data.id
-                }
-              >
-                View User
-              </Link>
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>,
+        <button
+          className="outline-none"
+          onClick={() => {
+            setActiveNotification(params.row.data);
+            onOpen();
+          }}
+        >
+          <EyeIcon />
+        </button>,
+      ],
+    },
+  ];
+
+  const recurringColumns = [
+    {
+      field: "startDate",
+      headerName: "Start Date",
+      type: "actions",
+      align: "left",
+      headerAlign: "left",
+      flex: 1,
+      getActions: (params: any) => [
+        <div>
+          {FormatDateWithSuffix(params.row.data?.startDate ?? new Date())}
+        </div>,
+      ],
+    },
+    {
+      field: "endDate",
+      headerName: "End Date",
+      type: "actions",
+      align: "left",
+      headerAlign: "left",
+      flex: 1,
+      getActions: (params: any) => [
+        <div>
+          {FormatDateWithSuffix(params.row.data?.endDate ?? new Date())}
+        </div>,
+      ],
+    },
+
+    {
+      field: "Subject",
+      headerName: "Subject",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="w-full truncate">
+          {params.row.data?.subject}
+        </div>,
+      ],
+    },
+    {
+      field: "Recipients",
+      headerName: "Recipients",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="w-2/12">
+          {params.row.data?.totalRecipients}
+        </div>,
+      ],
+    },
+    {
+      field: "timesSent",
+      headerName: "Times Sent",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row?.id} className="">
+          {params.row.data?.timesSent}
+        </div>,
+      ],
+    },
+    {
+      field: "Type",
+      headerName: "Type",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="">
+          {params.row.data?.messageType}
+        </div>,
+      ],
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <button
+          className="outline-none"
+          onClick={() => {
+            setActiveNotification(params.row.data);
+            onOpen();
+          }}
+        >
+          <EyeIcon />
+        </button>,
       ],
     },
   ];
 
   return (
-    <div className="w-full pb-20 mt-4 py-2 ">
-        <h3 className="px-5 text-xl font-semibold mb-3">Notifications Center</h3>
-      <div className="flex items-center px-5 justify-end my-4">
-        <div className="flex gap-3  items-center">
-        <Link href={`/${company?.company_identifier}/notifications-center/send-message`}>
-          <button className=" bg-white text-[#334155] border border-[rgba(226, 232, 240, 1)] w-auto flex text-sm px-2 font-medium py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg ">
-            <TbMessage color={"#334155"} size={20} />
-            Send Message
-          </button>
-        </Link>
-          <DatePicker
-            selectedTimeline={selectedTimeline}
-            setSelectedTimeline={setSelectedTimeline}
+    <div className="px-5 mt-10 pb-10">
+      <h3 className="font-semibold mb-8 text-xl">Notifications Center</h3>
+
+      <div>
+        <div className="flex justify-between items-center my-2 mb-8">
+          <Tabs
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+            filters={filters}
           />
-          <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
+          <SendMessage type="company-admin" />
+        </div>
+        <DataTable
+          isLoading={isLoading || recurringMessagesLoading}
+          rows={activeFilter.id == 0 ? messageHistoryRows : recurringRows}
+          columns={
+            activeFilter.id == 0 ? messageHistoryColumns : recurringColumns
+          }
+        />
+
+        {/*PAGINATION */}
+        <div className="w-full flex justify-between">
+          <ItemsPerPageSelector
+            limit={
+              activeFilter?.id == 0 ? allMessagesLimit : recurringMessagesLimit
+            }
+            setLimit={
+              activeFilter?.id == 0
+                ? setAllMessagesLimit
+                : setRecurringMessagesLimit
+            }
+          />
           <Pagination
-            page={page}
-            variant="no-text"
-            setPage={setPage}
-            limit={limit}
-            currentData={customers}
+            currentData={activeFilter?.id == 0 ? messages : recurringMessages}
+            limit={
+              activeFilter?.id == 0 ? allMessagesLimit : recurringMessagesLimit
+            }
+            page={
+              activeFilter?.id == 0 ? allMessagesPage : recurringMessagesPage
+            }
+            setPage={
+              activeFilter?.id == 0
+                ? setAllMessagesPage
+                : setRecurringMessagesPage
+            }
           />
         </div>
       </div>
-      <div className="flex justify-center my-2 mb-2  ">
-            <Tabs
-              activeFilter={activeFilter}
-              setActiveFilter={setActiveFilter}
-              filters={filters}
-            />
-          </div>
-      <DataTable isLoading={isLoading || notificationsLoading} rows={rows} columns={columns} />
+
+      {/* MODAL */}
+      <Modal
+        backdrop="opaque"
+        scrollBehavior="inside"
+        className="bg-white rounded-xl"
+        classNames={{
+          backdrop: "bg-black bg-opacity-30",
+        }}
+        size="5xl"
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent className="bg-white">
+          {(onClose) => (
+            <>
+              <Notifications
+                type="company-admin"
+                onClose={onClose}
+                isDisplayMode={true}
+                notification={activeNotification}
+              />
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
 
-export default Page;
+export default page;

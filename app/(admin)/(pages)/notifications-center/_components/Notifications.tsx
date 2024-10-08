@@ -16,6 +16,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { now, getLocalTimeZone } from "@internationalized/date";
 
+import {
+  Autocomplete,
+  AutocompleteSection,
+  AutocompleteItem,
+} from "@nextui-org/autocomplete";
+
 // api
 import services from "@/services";
 
@@ -29,7 +35,7 @@ import {
 import { DatePicker } from "@nextui-org/date-picker";
 
 // ICONS
-import { BiChevronDown } from "react-icons/bi";
+import { BiChevronDown, BiSearch } from "react-icons/bi";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { useOverlayTriggerState } from "@react-stately/overlays";
@@ -39,18 +45,21 @@ import { toast } from "sonner";
 
 // HOOKS
 import useAdmin from "@/hooks/useAdmin";
+import ComboSearch from "@/components/SearchBox/ComboSearch";
 
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: any;
   isDisplayMode?: boolean;
   notification?: any;
+  type?: "super-admin" | "company-admin";
 };
 
 const Notifications: React.FC<Props> = ({
   onClose,
   isDisplayMode = false,
   notification,
+  type = "super-admin",
 }) => {
   // page and limit states for pagination
   const [page, setPage] = useState(0);
@@ -64,6 +73,8 @@ const Notifications: React.FC<Props> = ({
   //state to handle search value
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [activeRecipientGroup, setActiveRecipientGroup] = useState("companies");
+
   //state to handle filtered companies
   const [filteredCompanies, setFilteredCompanies] = useState<any>([]);
 
@@ -71,13 +82,14 @@ const Notifications: React.FC<Props> = ({
   const { data: companies, isLoading } = useQuery({
     queryKey: ["companies", page, limit],
     queryFn: services.getAllCompanies(page * limit, limit),
+    enabled: type === "super-admin",
   });
 
   //fetching companies by search
   const { data: searchData, isLoading: searchLoading } = useQuery({
     queryKey: ["all users", searchTerm],
     queryFn: services.searchCompany(searchTerm),
-    enabled: Boolean(searchTerm),
+    enabled: Boolean(searchTerm) && type === "super-admin",
   });
 
   const filters: IFilter[] = [
@@ -97,6 +109,24 @@ const Notifications: React.FC<Props> = ({
     id: 1,
     name: "Email",
     value: "email",
+  });
+
+  const groupFilters: IFilter[] = [
+    {
+      id: 1,
+      name: "Companies",
+      value: "companies",
+    },
+    {
+      id: 0,
+      name: "Users",
+      value: "Users",
+    },
+  ];
+  const [activeGroupFilter, setActiveGroupFilter] = useState<IFilter>({
+    id: 1,
+    name: "Companies",
+    value: "companies",
   });
 
   // state to handle subject and message states
@@ -274,7 +304,11 @@ const Notifications: React.FC<Props> = ({
   // setting filtered companies to companies on initial load
   useEffect(() => {
     if (companies?.length > 0) {
-      setFilteredCompanies([{ company_name: "All", id: "all" }, ...companies]);
+      setFilteredCompanies([
+        // TODO: IMPLEMENT ALL FUNCTIONALITY BY LOADING ALL COMPANIES INTO RECIPIENTS
+        // { company_name: "All", id: "all" },
+        ...companies,
+      ]);
     }
   }, [companies]);
 
@@ -291,7 +325,8 @@ const Notifications: React.FC<Props> = ({
       );
     } else if (companies && searchTerm.length < 1) {
       setFilteredCompanies([
-        { company_name: "All", id: "all" },
+        // { company_name: "All", id: "all" },
+        // TODO: IMPLEMENT ALL FUNCTIONALITY BY LOADING ALL COMPANIES INTO RECIPIENTS
         ...companies.filter(
           (company: any) =>
             !selectedCompanies.some(
@@ -328,7 +363,7 @@ const Notifications: React.FC<Props> = ({
     //SMS SENDING
     if (activeFilter.id == 0) {
       toast.loading("Sending sms. Please wait...");
-      if (selectedCompanies?.length < 1) {
+      if (type === "super-admin" && selectedCompanies?.length < 1) {
         toast.dismiss();
         toast.error("Select recipient companies");
         return;
@@ -336,7 +371,7 @@ const Notifications: React.FC<Props> = ({
 
       let recipients = [];
 
-      if (selectedRecipient.value == "companyAdmin") {
+      if (type === "super-admin" && selectedRecipient.value == "companyAdmin") {
         for (let i = 0; i < selectedCompanies?.length; i++) {
           let adminId = selectedCompanies[i].company_admin_id;
           if (adminId) {
@@ -348,7 +383,10 @@ const Notifications: React.FC<Props> = ({
         }
       }
 
-      if (selectedRecipient.value == "contactPerson") {
+      if (
+        type === "super-admin" &&
+        selectedRecipient.value == "contactPerson"
+      ) {
         for (let i = 0; i < selectedCompanies?.length; i++) {
           recipients.push(selectedCompanies[i].primary_contact_phone_number);
         }
@@ -374,23 +412,23 @@ const Notifications: React.FC<Props> = ({
       console.log("SENDING SMS", data);
       toast.dismiss();
 
-      // services
-      //   .sendSMS(data)
-      //   .then((res) => {
-      //     toast.dismiss();
-      //     // refetch messages sent
-      //     queryClient.invalidateQueries({
-      //       queryKey: ["all messages"],
-      //     });
-      //     onClose();
-      //     toast.success("SMS sent successfully");
-      //   })
-      //   .catch((e) => {
-      //     console.log("error", e?.response?.data);
-      //     toast.dismiss();
-      //     toast.error("Error sending SMS");
-      //     onClose();
-      //   });
+      services
+        .sendSMS(data)
+        .then((res) => {
+          toast.dismiss();
+          // refetch messages sent
+          queryClient.invalidateQueries({
+            queryKey: ["all messages"],
+          });
+          onClose();
+          toast.success("SMS sent successfully");
+        })
+        .catch((e) => {
+          console.log("error", e?.response?.data);
+          toast.dismiss();
+          toast.error("Error sending SMS");
+          onClose();
+        });
     }
 
     // EMAIL NOTIFICATION
@@ -491,6 +529,18 @@ const Notifications: React.FC<Props> = ({
       //   });
     }
   };
+
+  const [userSearchTerm, setUserSearchTerm] = useState("");
+
+  const {
+    data: users,
+    isLoading: loading,
+    isError: error,
+  } = useQuery({
+    queryKey: ["user search", userSearchTerm],
+    queryFn: services.searchUsers(userSearchTerm),
+    enabled: !!userSearchTerm,
+  });
 
   const state = useOverlayTriggerState({});
 
@@ -612,121 +662,131 @@ const Notifications: React.FC<Props> = ({
           )} */}
 
           {/* RECIPIENTS & COMPANY SELECTION */}
-          <div className="grid grid-cols-2 gap-10">
-            {!isDisplayMode && (
-              <div className="mb-4 hide-input-borders input-holder">
-                <label className="text-xs mb-1 font-normal text-slate-700">
-                  Company
-                </label>
+          {type === "super-admin" && (
+            <div className="mb-5">
+              <Tabs
+                activeFilter={activeGroupFilter}
+                setActiveFilter={setActiveGroupFilter}
+                filters={groupFilters}
+              />
+            </div>
+          )}
+          {type === "super-admin" && activeGroupFilter?.id == 1 && (
+            <div className="grid grid-cols-2 gap-10">
+              {!isDisplayMode && (
+                <div className="mb-4 hide-input-borders input-holder">
+                  <label className="text-xs mb-1 font-normal text-slate-700">
+                    Company
+                  </label>
 
-                <Popover placement="bottom" state={state}>
-                  <PopoverTrigger>
-                    <div
-                      className="border w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
-                      onClick={() => state.open()}
-                    >
-                      <div className="flex flex-wrap flex-1 gap-2">
-                        {selectedCompanies?.map((company: any) => (
-                          <div
-                            className="border border-[#E2E8F0] bg-white px-2 py-1 flex gap-2 items-center rounded-lg z-[200000]"
-                            onMouseDown={(e) => {
-                              e.stopPropagation();
-                            }}
-                          >
-                            <p className="text-sm text-slate-900">
-                              {company?.company_name}{" "}
-                            </p>
+                  <Popover placement="bottom" state={state}>
+                    <PopoverTrigger>
+                      <div
+                        className="border w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
+                        onClick={() => state.open()}
+                      >
+                        <div className="flex flex-wrap flex-1 gap-2">
+                          {selectedCompanies?.map((company: any) => (
                             <div
-                              className="cursor-pointer"
+                              className="border border-[#E2E8F0] bg-white px-2 py-1 flex gap-2 items-center rounded-lg z-[200000]"
                               onMouseDown={(e) => {
                                 e.stopPropagation();
                               }}
                             >
-                              <IoIosCloseCircleOutline
-                                color="#DC2626"
-                                size={20}
-                                onClick={() =>
-                                  handleRemoveSelectedCompany(company)
-                                }
-                              />
-                            </div>
-                          </div>
-                        ))}
-                        {selectedCompanies?.length < 1 &&
-                          !selectAllCompanies && (
-                            <div className="w-full px-3 flex justify-between items-center">
                               <p className="text-sm text-slate-900">
-                                Select companies
-                              </p>{" "}
+                                {company?.company_name}{" "}
+                              </p>
+                              <div
+                                className="cursor-pointer"
+                                onMouseDown={(e) => {
+                                  e.stopPropagation();
+                                }}
+                              >
+                                <IoIosCloseCircleOutline
+                                  color="#DC2626"
+                                  size={20}
+                                  onClick={() =>
+                                    handleRemoveSelectedCompany(company)
+                                  }
+                                />
+                              </div>
+                            </div>
+                          ))}
+                          {selectedCompanies?.length < 1 &&
+                            !selectAllCompanies && (
+                              <div className="w-full px-3 flex justify-between items-center">
+                                <p className="text-sm text-slate-900">
+                                  Select companies
+                                </p>{" "}
+                              </div>
+                            )}
+                          {selectAllCompanies && (
+                            <div className="w-full px-3 flex justify-between items-center">
+                              <p className="text-sm text-slate-900">All</p>{" "}
                             </div>
                           )}
-                        {selectAllCompanies && (
-                          <div className="w-full px-3 flex justify-between items-center">
-                            <p className="text-sm text-slate-900">All</p>{" "}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <BiChevronDown size={21} color="#94A3B8" />
-                      </div>
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="bg-white border rounded-lg border-[#E2E8F0] w-[28rem]">
-                    <div className="input-holder">
-                      <input
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                    {[...filteredCompanies]?.map((company: any) => (
-                      <div
-                        className="items-center cursor-pointer w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                        onClick={() => {
-                          handleSelectionChange(company);
-                        }}
-                      >
-                        {company?.company_name}
-                      </div>
-                    ))}
-                    {filteredCompanies?.length < 1 && (
-                      <p className="text-slate-900 text-sm">No results</p>
-                    )}
-                    {!searchTerm && (
-                      <button
-                        className=" cursor-pointer bg-gray-400 flex gap-2 py-3 text-white text-center justify-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
-                        onClick={() => setLimit(limit + 5)}
-                      >
-                        Load more...
-                      </button>
-                    )}
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-            {!isDisplayMode && (
-              <div className="mb-4 flex flex-col">
-                <label className="text-xs mb-1 font-normal text-slate-700">
-                  Recipients
-                </label>
-                <Dropdown>
-                  <DropdownTrigger>
-                    <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
-                      <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
-                        <p className=" font-medium text-sm">
-                          {selectedRecipient?.label}
-                        </p>
-
-                        <div className="">
+                        </div>
+                        <div>
                           <BiChevronDown size={21} color="#94A3B8" />
                         </div>
                       </div>
-                    </button>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    className="shadow-md bg-white border border-[#F1F5F9] w-[34rem]  -mt-4 rounded-lg flex flex-col gap-3"
-                    aria-label="Static Actions"
-                  >
-                    {/* <DropdownItem
+                    </PopoverTrigger>
+                    <PopoverContent className="bg-white border rounded-lg border-[#E2E8F0] w-[28rem]">
+                      <div className="input-holder">
+                        <input
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                      </div>
+                      {[...filteredCompanies]?.map((company: any) => (
+                        <div
+                          className="items-center cursor-pointer w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                          onClick={() => {
+                            handleSelectionChange(company);
+                          }}
+                        >
+                          {company?.company_name}
+                        </div>
+                      ))}
+                      {filteredCompanies?.length < 1 && (
+                        <p className="text-slate-900 text-sm">No results</p>
+                      )}
+                      {!searchTerm && (
+                        <button
+                          className=" cursor-pointer bg-gray-400 flex gap-2 py-3 text-white text-center justify-center text-sm px-4 hover:opacity-95 items-center rounded-lg w-full"
+                          onClick={() => setLimit(limit + 5)}
+                        >
+                          Load more...
+                        </button>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
+              {!isDisplayMode && (
+                <div className="mb-4 flex flex-col">
+                  <label className="text-xs mb-1 font-normal text-slate-700">
+                    Recipients
+                  </label>
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
+                        <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
+                          <p className=" font-medium text-sm">
+                            {selectedRecipient?.label}
+                          </p>
+
+                          <div className="">
+                            <BiChevronDown size={21} color="#94A3B8" />
+                          </div>
+                        </div>
+                      </button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      className="shadow-md bg-white border border-[#F1F5F9] w-[34rem]  -mt-4 rounded-lg flex flex-col gap-3"
+                      aria-label="Static Actions"
+                    >
+                      {/* <DropdownItem
                     key="view"
                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                     onClick={() =>
@@ -735,35 +795,40 @@ const Notifications: React.FC<Props> = ({
                   >
                     All
                   </DropdownItem> */}
-                    <DropdownItem
-                      key="view"
-                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                      onClick={() =>
-                        setSelectedRecipient({
-                          label: "Company Admin",
-                          value: "companyAdmin",
-                        })
-                      }
-                    >
-                      Company Admin
-                    </DropdownItem>
-                    <DropdownItem
-                      key="view"
-                      className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                      onClick={() =>
-                        setSelectedRecipient({
-                          label: "Contact Person",
-                          value: "contactPerson",
-                        })
-                      }
-                    >
-                      Contact Person
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </div>
-            )}
-          </div>
+                      <DropdownItem
+                        key="view"
+                        className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                        onClick={() =>
+                          setSelectedRecipient({
+                            label: "Company Admin",
+                            value: "companyAdmin",
+                          })
+                        }
+                      >
+                        Company Admin
+                      </DropdownItem>
+                      <DropdownItem
+                        key="view"
+                        className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                        onClick={() =>
+                          setSelectedRecipient({
+                            label: "Contact Person",
+                            value: "contactPerson",
+                          })
+                        }
+                      >
+                        Contact Person
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </div>
+              )}
+            </div>
+          )}
+
+          {(activeGroupFilter?.id == 0 || type === "company-admin") && (
+            <>{/* USERS SEARCH AND ADD HERE */}</>
+          )}
         </div>
 
         {/* RECURRING, START DATE AND TIME */}

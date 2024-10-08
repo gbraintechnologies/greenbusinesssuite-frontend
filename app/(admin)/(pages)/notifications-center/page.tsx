@@ -269,7 +269,7 @@ function page() {
             setActiveFilter={setActiveFilter}
             filters={filters}
           />
-          <SendMessage />
+          <SendMessage type="super-admin" />
         </div>
         <DataTable
           isLoading={isLoading || recurringMessagesLoading}

@@ -19,7 +19,7 @@
     "@mui/material": "^5.15.11",
     "@mui/styled-engine": "^5.15.11",
     "@mui/x-data-grid": "^6.19.6",
-    "@nextui-org/autocomplete": "^2.1.5",
+    "@nextui-org/autocomplete": "^2.1.7",
     "@nextui-org/button": "^2.0.34",
     "@nextui-org/date-picker": "^2.1.8",
     "@nextui-org/dropdown": "^2.1.26",
