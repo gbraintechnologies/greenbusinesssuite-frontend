@@ -402,11 +402,14 @@ const Notifications: React.FC<Props> = ({
       toast.loading("Sending email...");
 
       // no start date specified
-      // if (!Boolean(startDate)) {
-      //   toast.dismiss();
-      //   toast.error("Please specify the start date");
-      //   return;
-      // }
+      if (
+        !Boolean(startDate) &&
+        recurringType?.value.toLowerCase() !== "non-recurring"
+      ) {
+        toast.dismiss();
+        toast.error("Please specify the start date");
+        return;
+      }
 
       if (selectedCompanies?.length < 1) {
         toast.dismiss();
@@ -474,7 +477,7 @@ const Notifications: React.FC<Props> = ({
         .sendEmail(data)
         .then((res) => {
           toast.dismiss();
-          toast.success("Email sent successfully to ");
+          toast.success("Email sent successfully");
           onClose();
         })
         .catch((e) => {

@@ -257,17 +257,14 @@ function page() {
     <div className="px-5 pb-10">
       <h3 className="font-semibold mb-8 text-xl">Notifications Center</h3>
 
-      <div className="flex w-full justify-end mb-5">
-        <SendMessage />
-      </div>
-
       <div>
-        <div className="flex justify-center my-2 mb-4  ">
+        <div className="flex justify-between my-2 mb-8">
           <Tabs
             activeFilter={activeFilter}
             setActiveFilter={setActiveFilter}
             filters={filters}
           />
+          <SendMessage />
         </div>
         <DataTable
           isLoading={isLoading || recurringMessagesLoading}
