@@ -387,6 +387,84 @@ const Notifications: React.FC<Props> = ({
       return;
     }
 
+    // CHECK FOR RECURRING / NON RECURRING FIRST BEFORE SPLITTING INTO TYPE OF NOTIFICATION
+    // RECURRING MESSAGE
+
+    let data: any = {
+      subject: inputData?.subject,
+      body: inputData?.message,
+      isHtml: true,
+      sender: admin?.first_name + " " + admin?.last_name,
+      recurringType: recurringType?.value.toUpperCase(),
+    };
+
+    if (recurringType?.value.toLowerCase() !== "non_recurring") {
+      if (
+        !Boolean(startDate) &&
+        recurringType?.value.toLowerCase() !== "non_recurring"
+      ) {
+        // no start date specified
+        toast.dismiss();
+        toast.error("Specify the start date for recurring notification");
+        return;
+      }
+
+      if (
+        !Boolean(endDate) &&
+        recurringType?.value.toLowerCase() !== "non_recurring"
+      ) {
+        // no start date specified
+        toast.dismiss();
+        toast.error("Specify the end date for recurring notification");
+        return;
+      }
+
+      const { year, day, hour, minute, month, second, millisecond } = startDate;
+      const start =
+        year +
+        "-" +
+        month.toString().padStart(2, "0") +
+        "-" +
+        day.toString().padStart(2, "0") +
+        "T" +
+        hour.toString().padStart(2, "0") +
+        ":" +
+        minute.toString().padStart(2, "0") +
+        ":" +
+        second.toString().padStart(2, "0") +
+        "." +
+        millisecond +
+        "Z";
+
+      const end =
+        year +
+        "-" +
+        endDate?.month.toString().padStart(2, "0") +
+        "-" +
+        endDate?.day.toString().padStart(2, "0") +
+        "T" +
+        endDate?.hour.toString().padStart(2, "0") +
+        ":" +
+        endDate?.minute.toString().padStart(2, "0") +
+        ":" +
+        endDate?.second.toString().padStart(2, "0") +
+        "." +
+        endDate?.millisecond +
+        "Z";
+
+      if (start === end) {
+        toast.error("End date should be different from start date");
+        return;
+      }
+
+      data = {
+        ...data,
+        triggerTime: start,
+        startDate: start,
+        endDate: end,
+      };
+    }
+
     //SMS SENDING
     if (activeFilter.id == 0) {
       if (
@@ -444,16 +522,10 @@ const Notifications: React.FC<Props> = ({
         }
       }
 
-      let data = {
-        sender: admin?.first_name + " " + admin?.last_name,
-        recipients: recipients,
-        subject: inputData.subject,
-        body: inputData.message,
+      data = {
+        ...data,
         isHtml: false,
-        // recurringType: "NON_RECURRING",
-        // triggerTime: "2024-10-03T15:19:30.481Z",
-        // startDate: "2024-10-03T15:19:30.481Z",
-        // endDate: "2024-10-03T15:19:30.481Z",
+        recipients: recipients,
       };
 
       if (recipients?.length == 0) {
@@ -536,89 +608,13 @@ const Notifications: React.FC<Props> = ({
       }
 
       // STANDARD DATA FOR NOTIFICATION
-      let data: any = {
-        sender: admin?.first_name + " " + admin?.last_name,
+      data = {
+        ...data,
         recipients: recipients,
-        subject: inputData?.subject,
-        body: inputData?.message,
         isHtml: true,
       };
 
-      // RECURRING MESSAGE
-      if (recurringType?.value.toLowerCase() !== "non_recurring") {
-        if (
-          !Boolean(startDate) &&
-          recurringType?.value.toLowerCase() !== "non_recurring"
-        ) {
-          // no start date specified
-          toast.dismiss();
-          toast.error("Specify the start date for recurring notification");
-          return;
-        }
-
-        if (
-          !Boolean(endDate) &&
-          recurringType?.value.toLowerCase() !== "non_recurring"
-        ) {
-          // no start date specified
-          toast.dismiss();
-          toast.error("Specify the end date for recurring notification");
-          return;
-        }
-
-        const { year, day, hour, minute, month, second, millisecond } =
-          startDate;
-        const start =
-          year +
-          "-" +
-          month.toString().padStart(2, "0") +
-          "-" +
-          day.toString().padStart(2, "0") +
-          "T" +
-          hour.toString().padStart(2, "0") +
-          ":" +
-          minute.toString().padStart(2, "0") +
-          ":" +
-          second.toString().padStart(2, "0") +
-          "." +
-          millisecond +
-          "Z";
-
-        const end =
-          year +
-          "-" +
-          endDate?.month.toString().padStart(2, "0") +
-          "-" +
-          endDate?.day.toString().padStart(2, "0") +
-          "T" +
-          endDate?.hour.toString().padStart(2, "0") +
-          ":" +
-          endDate?.minute.toString().padStart(2, "0") +
-          ":" +
-          endDate?.second.toString().padStart(2, "0") +
-          "." +
-          endDate?.millisecond +
-          "Z";
-
-        if (start === end) {
-          toast.error("End date should be different from start date");
-          return;
-        }
-
-        data = {
-          sender: admin?.first_name + " " + admin?.last_name,
-          recipients: recipients,
-          subject: inputData?.subject,
-          body: inputData?.message,
-          isHtml: true,
-          recurringType: recurringType?.value.toUpperCase(),
-          triggerTime: start,
-          startDate: start,
-          endDate: end,
-        };
-      }
-
-      console.log("EMAIL DATA", data);
+      // console.log("EMAIL SENDING", data);
 
       let loadingToast = toast.loading("Sending email...");
 
