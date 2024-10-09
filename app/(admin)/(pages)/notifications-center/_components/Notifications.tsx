@@ -14,7 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // DATE TIME HELPERS
 
-import { now, getLocalTimeZone } from "@internationalized/date";
+import { now, getLocalTimeZone, endOfMonth } from "@internationalized/date";
 
 import {
   Autocomplete,
@@ -162,7 +162,9 @@ const Notifications: React.FC<Props> = ({
   // state to handle start date and end date
   const [startDate, setStartDate] = useState<any>(now(getLocalTimeZone()));
 
-  const [endDate, setEndDate] = useState<any>();
+  const [endDate, setEndDate] = useState<any>(
+    endOfMonth(now(getLocalTimeZone()))
+  );
 
   // state to handle show all recipients or just a few
   const [showAllRecipients, setShowAllRecipients] = useState(false);
@@ -254,7 +256,7 @@ const Notifications: React.FC<Props> = ({
     },
     {
       label: "Bi-weekly",
-      value: "biWeekly",
+      value: "bi_Weekly",
     },
     {
       label: "Monthly",
@@ -266,7 +268,7 @@ const Notifications: React.FC<Props> = ({
     },
     {
       label: "Annually",
-      value: "annually",
+      value: "annual",
     },
   ];
 
@@ -373,14 +375,20 @@ const Notifications: React.FC<Props> = ({
 
   // SENDING EMAIL / SMS MESSAGE
   const sendMessage = async () => {
-    if (inputData?.message?.length < 3) {
-      toast.error("Please enter a message to send...");
+    // subject test
+    if (inputData?.subject?.length < 3) {
+      toast.error("Please enter a subject");
       return;
     }
+
+    // Check for message
+    if (inputData?.message?.length < 3) {
+      toast.error("Please enter a message to send");
+      return;
+    }
+
     //SMS SENDING
     if (activeFilter.id == 0) {
-      let loadingToast = toast.loading("Sending sms. Please wait...");
-
       if (
         type === "super-admin" &&
         activeGroupFilter?.id == 1 &&
@@ -449,14 +457,13 @@ const Notifications: React.FC<Props> = ({
       };
 
       if (recipients?.length == 0) {
-        toast.dismiss(loadingToast);
         toast.error("No recipients selected");
         return;
       }
 
       // console.log("SENDING SMS", data);
-      toast.dismiss(loadingToast);
 
+      let loadingToast = toast.loading("Sending sms. Please wait...");
       services
         .sendSMS(data)
         .then((res) => {
@@ -482,18 +489,6 @@ const Notifications: React.FC<Props> = ({
         toast.error("Please enter a subject...");
         return;
       }
-
-      let loadingToast = toast.loading("Sending email...");
-
-      // no start date specified
-      // if (
-      //   !Boolean(startDate) &&
-      //   recurringType?.value.toLowerCase() !== "non-recurring"
-      // ) {
-      //   toast.dismiss();
-      //   toast.error("Please specify the start date");
-      //   return;
-      // }
 
       if (activeGroupFilter?.id === 1 && selectedCompanies?.length < 1) {
         toast.dismiss();
@@ -535,42 +530,97 @@ const Notifications: React.FC<Props> = ({
         }
       }
 
-      // const { year, day, hour, minute, month, second, millisecond } = startDate;
-      // const start =
-      //   year +
-      //   "-" +
-      //   month.toString().padStart(2, "0") +
-      //   "-" +
-      //   day.toString().padStart(2, "0") +
-      //   "T" +
-      //   hour.toString().padStart(2, "0") +
-      //   ":" +
-      //   minute.toString().padStart(2, "0") +
-      //   ":" +
-      //   second.toString().padStart(2, "0") +
-      //   "." +
-      //   millisecond +
-      //   "Z";
-      // "2024-10-03T13:47:04.492Z";
-
       if (recipients?.length == 0) {
-        toast.dismiss(loadingToast);
-        toast.error("Recipients could not be loaded...");
+        toast.error("Select recipients of notification");
         return;
       }
 
-      let data = {
+      // STANDARD DATA FOR NOTIFICATION
+      let data: any = {
         sender: admin?.first_name + " " + admin?.last_name,
         recipients: recipients,
         subject: inputData?.subject,
         body: inputData?.message,
         isHtml: true,
-        // recurringType: recurringType?.value.toUpperCase(),
-        // triggerTime: start,
-        // startDate: start,
-        // if there's no end date it should start and end same day
-        // endDate: start,
       };
+
+      // RECURRING MESSAGE
+      if (recurringType?.value.toLowerCase() !== "non_recurring") {
+        if (
+          !Boolean(startDate) &&
+          recurringType?.value.toLowerCase() !== "non_recurring"
+        ) {
+          // no start date specified
+          toast.dismiss();
+          toast.error("Specify the start date for recurring notification");
+          return;
+        }
+
+        if (
+          !Boolean(endDate) &&
+          recurringType?.value.toLowerCase() !== "non_recurring"
+        ) {
+          // no start date specified
+          toast.dismiss();
+          toast.error("Specify the end date for recurring notification");
+          return;
+        }
+
+        const { year, day, hour, minute, month, second, millisecond } =
+          startDate;
+        const start =
+          year +
+          "-" +
+          month.toString().padStart(2, "0") +
+          "-" +
+          day.toString().padStart(2, "0") +
+          "T" +
+          hour.toString().padStart(2, "0") +
+          ":" +
+          minute.toString().padStart(2, "0") +
+          ":" +
+          second.toString().padStart(2, "0") +
+          "." +
+          millisecond +
+          "Z";
+
+        const end =
+          year +
+          "-" +
+          endDate?.month.toString().padStart(2, "0") +
+          "-" +
+          endDate?.day.toString().padStart(2, "0") +
+          "T" +
+          endDate?.hour.toString().padStart(2, "0") +
+          ":" +
+          endDate?.minute.toString().padStart(2, "0") +
+          ":" +
+          endDate?.second.toString().padStart(2, "0") +
+          "." +
+          endDate?.millisecond +
+          "Z";
+
+        if (start === end) {
+          toast.error("End date should be different from start date");
+          return;
+        }
+
+        data = {
+          sender: admin?.first_name + " " + admin?.last_name,
+          recipients: recipients,
+          subject: inputData?.subject,
+          body: inputData?.message,
+          isHtml: true,
+          recurringType: recurringType?.value.toUpperCase(),
+          triggerTime: start,
+          startDate: start,
+          endDate: end,
+        };
+      }
+
+      console.log("EMAIL DATA", data);
+
+      let loadingToast = toast.loading("Sending email...");
 
       if (!!files?.length) {
         console.log("SENDING EMAIL with file: ", data, files[0]);
@@ -915,19 +965,21 @@ const Notifications: React.FC<Props> = ({
         <div className="bg-white px-4 rounded-lg mt-6 py-5">
           <div className="grid grid-cols-3 gap-10">
             <div
-              className={`mb-4 flex flex-col ${
-                recurringType.value == "NON_RECURRING"
-                  ? "col-span-3"
-                  : "col-span-1"
-              }`}
+              className={`mb-4 flex flex-col 
+                
+                ${
+                  recurringType.value == "NON_RECURRING"
+                    ? "col-span-1"
+                    : "col-span-1"
+                }
+                  
+              
+              `}
             >
               <label className="text-xs mb-1 font-normal text-slate-700">
                 Recurring type
               </label>
-              <Dropdown
-                isDisabled={true}
-                // isDisabled={isDisplayMode}
-              >
+              <Dropdown isDisabled={isDisplayMode}>
                 <DropdownTrigger>
                   <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
                     <div className="flex gap-2 w-full justify-between items-center py-0 px-3">

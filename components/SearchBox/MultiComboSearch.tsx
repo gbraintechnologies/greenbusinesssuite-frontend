@@ -88,7 +88,6 @@ export default function MultiComboSearch({
               data?.map((user: any) => (
                 <Combobox.Option
                   onClick={() => {
-                    console.log("selected", user);
                     if (selected?.length > 0) {
                       setSelected(() => [...selected, user]);
                     } else {
