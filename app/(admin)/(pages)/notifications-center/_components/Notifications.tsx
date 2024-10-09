@@ -16,12 +16,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { now, getLocalTimeZone, endOfMonth } from "@internationalized/date";
 
-import {
-  Autocomplete,
-  AutocompleteSection,
-  AutocompleteItem,
-} from "@nextui-org/autocomplete";
-
 // api
 import services from "@/services";
 
