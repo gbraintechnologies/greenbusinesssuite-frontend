@@ -43,6 +43,7 @@ import ComboSearch from "@/components/SearchBox/ComboSearch";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdAttachFile } from "react-icons/md";
 import MultiComboSearch from "@/components/SearchBox/MultiComboSearch";
+import useCompany from "@/hooks/useCompany";
 
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -62,6 +63,7 @@ const Notifications: React.FC<Props> = ({
   const [page, setPage] = useState(0);
 
   const { admin } = useAdmin();
+  const { companyAdmin } = useCompany();
 
   const [limit, setLimit] = useState(4);
 
@@ -388,7 +390,10 @@ const Notifications: React.FC<Props> = ({
       subject: inputData?.subject,
       body: inputData?.message,
       isHtml: true,
-      sender: admin?.first_name + " " + admin?.last_name,
+      sender:
+        type === "super-admin"
+          ? admin?.first_name + " " + admin?.last_name
+          : companyAdmin?.first_name + " " + companyAdmin?.last_name,
       recurringType: recurringType?.value.toUpperCase(),
     };
 
