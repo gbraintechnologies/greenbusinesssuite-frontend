@@ -78,8 +78,8 @@ const Notifications: React.FC<Props> = ({
   const [limit, setLimit] = useState(4);
 
   useEffect(() => {
-    console.log('limit changed to ', limit);
-  } , [limit])
+    console.log("limit changed to ", limit);
+  }, [limit]);
 
   const queryClient = useQueryClient();
 
@@ -118,9 +118,9 @@ const Notifications: React.FC<Props> = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const fetchMoreData = () => {
-    console.log('menu bottom fetch moree.....')
-    console.log('prev limit ', limit);
-    setLimit(limit + 4);
+    if (limit < allCompanies?.length) {
+      setLimit(limit + 4);
+    }
   };
 
   // get companies
@@ -128,6 +128,12 @@ const Notifications: React.FC<Props> = ({
     queryKey: ["companies", page, limit],
     queryFn: services.getAllCompanies(page * limit, limit),
     enabled: type === "super-admin",
+  });
+
+  // getting all companies
+  const { data: allCompanies } = useQuery({
+    queryKey: ["all companies"],
+    queryFn: services.getAllCompanies(),
   });
 
   //fetching companies by search
@@ -285,13 +291,15 @@ const Notifications: React.FC<Props> = ({
   const handleCompanyChange = (selectedOptions: any) => {
     console.log("selected options", selectedOptions);
     setSelectedCompaniesState(selectedOptions);
-    const selectedValues = selectedOptions ? selectedOptions.map((option: any) => option.value) : [];
+    const selectedValues = selectedOptions
+      ? selectedOptions.map((option: any) => option.value)
+      : [];
     setSelectedCompanies(selectedValues);
   };
 
   useEffect(() => {
-    console.log('select ', selectedCompanies)
-  },[selectedCompanies])
+    console.log("select ", selectedCompanies);
+  }, [selectedCompanies]);
 
   const handleRemoveSelectedCompany = (company: any) => {
     setSelectedCompanies((prev: any) =>
@@ -399,39 +407,54 @@ const Notifications: React.FC<Props> = ({
       setFilteredCompanies([
         // TODO: IMPLEMENT ALL FUNCTIONALITY BY LOADING ALL COMPANIES INTO RECIPIENTS
         // { company_name: "All", id: "all" },
-        ...companies.sort((a: any, b: any) => a.company_name.localeCompare(b.company_name)), // Sorting alphabetically by company_name
+        ...companies.sort((a: any, b: any) =>
+          a.company_name.localeCompare(b.company_name)
+        ), // Sorting alphabetically by company_name
       ]);
     }
   }, [companies]);
 
   // use Effect to handle search functionality and exclude selected companies from filtered results
-// useEffect to handle search functionality and exclude selected companies from filtered results
-useEffect(() => {
-  if (searchTerm.length > 0 && searchData) {
-    setFilteredCompanies(
-      searchData
-        .filter(
-          (company: any) =>
-            !selectedCompanies.some(
-              (selected: any) => selected?.id === company.id
-            )
-        )
-        .sort((a: any, b: any) => a.company_name.localeCompare(b.company_name)) 
-    );
-  } else if (companies && searchTerm.length < 1) {
-    setFilteredCompanies(
-      companies
-        .filter(
-          (company: any) =>
-            !selectedCompanies.some(
-              (selected: any) => selected.id === company.id
-            )
-        )
-        .sort((a: any, b: any) => a.company_name.localeCompare(b.company_name)) 
-    );
-  }
-}, [searchTerm, companies, searchData, selectedCompanies]);
+  // useEffect to handle search functionality and exclude selected companies from filtered results
+  useEffect(() => {
+    if (searchTerm.length > 0 && searchData) {
+      setFilteredCompanies(
+        searchData
+          .filter(
+            (company: any) =>
+              !selectedCompanies.some(
+                (selected: any) => selected?.id === company.id
+              )
+          )
+          .sort((a: any, b: any) =>
+            a.company_name.localeCompare(b.company_name)
+          )
+      );
+    } else if (companies && searchTerm.length < 1) {
+      setFilteredCompanies(
+        companies
+          .filter(
+            (company: any) =>
+              !selectedCompanies.some(
+                (selected: any) => selected.id === company.id
+              )
+          )
+          .sort((a: any, b: any) =>
+            a.company_name.localeCompare(b.company_name)
+          )
+      );
+    }
+  }, [searchTerm, companies, searchData, selectedCompanies]);
 
+  useEffect(() => {
+    if (
+      filteredCompanies.length < 1 &&
+      !searchTerm &&
+      limit < allCompanies?.length
+    ) {
+      fetchMoreData();
+    }
+  }, [allCompanies, filteredCompanies]);
 
   // setting initial values for display mode
   useEffect(() => {
@@ -967,7 +990,7 @@ useEffect(() => {
                           backgroundColor: "#F1F5F9",
                         },
                         ":visited": {
-                          backgroundColor: "#fff"
+                          backgroundColor: "#fff",
                         },
                         ":hover": {
                           backgroundColor: "#F1F5F9",
@@ -976,8 +999,8 @@ useEffect(() => {
                       multiValueRemove: (styles) => ({
                         ...styles,
                         ":hover": {
-                          backgroundColor: "transparent"
-                        }
+                          backgroundColor: "transparent",
+                        },
                       }),
                     }}
                     components={{
@@ -985,8 +1008,7 @@ useEffect(() => {
                       MultiValue: CustomMultiValue,
                       MultiValueContainer: CustomMultiValueContainer,
                     }}
-                    
-                    />
+                  />
 
                   {/* <Popover placement="bottom" state={state}>
                     <PopoverTrigger>
@@ -1290,7 +1312,6 @@ useEffect(() => {
   );
 };
 
-
 const CustomMultiValue = (props: any) => (
   <div className="border border-[#E2E8F0] bg-white m-1 px-2 py-1 flex gap-2 items-center rounded-lg">
     <components.MultiValue {...props}>
@@ -1300,9 +1321,9 @@ const CustomMultiValue = (props: any) => (
 );
 
 const CustomMultiValueContainer = (props: any) => (
-    <components.MultiValueContainer {...props}>
-      <span className="bg-white  flex gap-1 items-center">{props.children}</span>
-    </components.MultiValueContainer>
+  <components.MultiValueContainer {...props}>
+    <span className="bg-white  flex gap-1 items-center">{props.children}</span>
+  </components.MultiValueContainer>
 );
 
 const CustomMultiValueRemove = (props: any) => (
@@ -1312,7 +1333,5 @@ const CustomMultiValueRemove = (props: any) => (
     </span>
   </components.MultiValueRemove>
 );
-
-
 
 export default Notifications;
