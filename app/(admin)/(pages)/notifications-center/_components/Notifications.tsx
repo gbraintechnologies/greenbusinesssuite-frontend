@@ -14,7 +14,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // DATE TIME HELPERS
 
-import { now, getLocalTimeZone, endOfMonth } from "@internationalized/date";
+import {
+  now,
+  getLocalTimeZone,
+  endOfMonth,
+  parseDateTime,
+} from "@internationalized/date";
 
 // api
 import services from "@/services";
@@ -44,6 +49,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdAttachFile } from "react-icons/md";
 import MultiComboSearch from "@/components/SearchBox/MultiComboSearch";
 import useCompany from "@/hooks/useCompany";
+import { IoCheckmark } from "react-icons/io5";
 
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -51,6 +57,7 @@ type Props = {
   isDisplayMode?: boolean;
   notification?: any;
   type?: "super-admin" | "company-admin";
+  invalidateQueries?: any;
 };
 
 const Notifications: React.FC<Props> = ({
@@ -58,6 +65,7 @@ const Notifications: React.FC<Props> = ({
   isDisplayMode = false,
   notification,
   type = "super-admin",
+  invalidateQueries,
 }) => {
   // page and limit states for pagination
   const [page, setPage] = useState(0);
@@ -244,32 +252,38 @@ const Notifications: React.FC<Props> = ({
     },
     {
       label: "Daily",
-      value: "daily",
+      value: "DAILY",
     },
     {
       label: "Weekly",
-      value: "weekly",
+      value: "WEEKLY",
     },
     {
       label: "Bi-weekly",
-      value: "bi_Weekly",
+      value: "BI_WEEKLY",
     },
     {
       label: "Monthly",
-      value: "monthly",
+      value: "MONTHLY",
     },
     {
       label: "Quarterly",
-      value: "quarterly",
+      value: "QUARTERLY",
     },
     {
       label: "Annually",
-      value: "annual",
+      value: "ANNUAL",
     },
   ];
 
   //state to handle recurring type
   const [recurringType, setRecurringType] = useState(recurringTypes[0]);
+
+  // state to handle editing recurring type on display mode
+  const [editingRecurringType, setEditingRecurringType] = useState(false);
+
+  //state to handle saving recurring type udpate
+  const [savingRecurringType, setSavingRecurringType] = useState(false);
 
   // handle subject text field change
   const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -300,6 +314,28 @@ const Notifications: React.FC<Props> = ({
     setFiles((prevFiles: any) =>
       prevFiles.filter((file: any) => file.name !== fileName)
     );
+  };
+
+  //handle changing recurring type
+  const handleEditRecurringType = async () => {
+    if (isDisplayMode && editingRecurringType && notification) {
+      try {
+        setSavingRecurringType(true);
+        await services.updateRecurringMessageType(
+          notification?.id,
+          recurringType?.value
+        );
+        toast.success("Recurring type updated successfully");
+        setEditingRecurringType(false);
+      } catch (error) {
+        console.log(error);
+        toast.error("Error updating recurring type");
+      } finally {
+        setSavingRecurringType(false);
+      }
+    } else {
+      setEditingRecurringType(true);
+    }
   };
 
   // setting filtered companies to companies on initial load
@@ -344,6 +380,7 @@ const Notifications: React.FC<Props> = ({
     }
   }, [filteredCompanies]);
 
+  // setting initial values for display mode
   useEffect(() => {
     if (isDisplayMode) {
       setRecurringType(
@@ -352,6 +389,16 @@ const Notifications: React.FC<Props> = ({
             recurringType?.value == notification?.recurringType
         ) || recurringTypes?.[0]
       );
+
+      // setting initial values for start and end date
+      const startDateString = new Date(notification?.startDate)
+        .toISOString()
+        .slice(0, 16);
+      const endDateString = new Date(notification?.endDate)
+        .toISOString()
+        .slice(0, 16);
+      setStartDate(parseDateTime(startDateString));
+      setEndDate(parseDateTime(endDateString));
     }
   }, [isDisplayMode]);
 
@@ -701,12 +748,27 @@ const Notifications: React.FC<Props> = ({
             />
           </div>
 
+          {isDisplayMode && notification?.sender && (
+            <div className="input-holder ">
+              <label>Sender</label>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  value={notification?.sender}
+                  className="text-sm "
+                  disabled
+                  readOnly
+                />
+              </div>
+            </div>
+          )}
+
           {isDisplayMode && notification?.totalRecipients > 0 && (
             <div className="input-holder">
               <label>Recipient(s)</label>
               <div className="grid grid-cols-2 gap-4">
                 {recipientsToDisplay?.map((recipient: any) => (
-                  <div className="border border-[#E2E8F0] px-2 py-2 flex gap-2 items-center rounded-lg z-[200000]">
+                  <div className="border border-[#E2E8F0] px-5 py-2 flex gap-2 items-center rounded-lg z-[200000]">
                     <p className="text-sm text-slate-900">{recipient}</p>
                   </div>
                 ))}
@@ -887,7 +949,7 @@ const Notifications: React.FC<Props> = ({
                   <Dropdown>
                     <DropdownTrigger>
                       <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
-                        <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
+                        <div className="flex gap-2 w-full justify-between items-center py-0 px-4">
                           <p className=" font-medium text-sm">
                             {selectedRecipient?.label}
                           </p>
@@ -971,18 +1033,41 @@ const Notifications: React.FC<Props> = ({
               
               `}
             >
-              <label className="text-xs mb-1 font-normal text-slate-700">
-                Recurring type
-              </label>
-              <Dropdown isDisabled={isDisplayMode}>
+              <div
+                className={
+                  isDisplayMode
+                    ? "flex w-full items-center justify-between"
+                    : ""
+                }
+              >
+                <label className="text-xs mb-1 font-normal text-slate-700">
+                  Recurring type
+                </label>
+                {((isDisplayMode) &&
+                  (notification?.recurringType !== "NON_RECURRING")) && (
+                    <button
+                      className={`w-auto outline-none border-b border-[#056ee9] border-dashed text-xs text-[#056ee9] disabled:border-[#4b5675] disabled:text-[#4b5675]`}
+                      onClick={() => {
+                        handleEditRecurringType();
+                      }}
+                    >
+                      {editingRecurringType
+                        ? savingRecurringType
+                          ? "Saving..."
+                          : "Save"
+                        : "Edit"} {notification?.recurringType}
+                    </button>
+                  )}
+              </div>
+              <Dropdown isDisabled={isDisplayMode && !editingRecurringType}>
                 <DropdownTrigger>
-                  <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
-                    <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
+                  <button className="outline-none border w-full py-[0.625rem] px-1 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm">
+                    <div className="flex gap-2 w-full justify-between items-center py-0 px-4">
                       <p className=" font-medium text-sm">
                         {recurringType?.label}
                       </p>
 
-                      {!isDisplayMode && (
+                      {!(isDisplayMode && !editingRecurringType) && (
                         <div className="">
                           <BiChevronDown size={21} color="#94A3B8" />
                         </div>
@@ -994,20 +1079,25 @@ const Notifications: React.FC<Props> = ({
                   className="shadow-md bg-white border border-[#F1F5F9] w-[18rem]  -mt-4 rounded-lg flex flex-col gap-3"
                   aria-label="Static Actions"
                 >
-                  {recurringTypes?.map((recurringType: any) => (
+                  {recurringTypes?.map((recurType: any) => (
                     <DropdownItem
                       key="view"
                       className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                      onClick={() => setRecurringType(recurringType)}
+                      onClick={() => setRecurringType(recurType)}
                     >
-                      {recurringType.label}
+                      <div className="flex w-full items-center justify-between">
+                        <p>{recurType.label}</p>
+                        {recurType.value == recurringType?.value && (
+                          <IoCheckmark size={20} color="#334155" />
+                        )}
+                      </div>
                     </DropdownItem>
                   ))}
                 </DropdownMenu>
               </Dropdown>
             </div>
 
-            {recurringType.value !== "NON_RECURRING" && !isDisplayMode && (
+            {recurringType.value !== "NON_RECURRING" && (
               <>
                 <div className="mb-4 flex flex-col">
                   <label className="text-xs mb-1 font-normal text-slate-700">
@@ -1025,6 +1115,7 @@ const Notifications: React.FC<Props> = ({
                         "bg-white border border-[#E2E8F0] rounded-lg",
                     }}
                     isDateUnavailable={isStartDateUnavailable}
+                    isDisabled={isDisplayMode}
                   />
                 </div>
                 <div className="mb-4 flex flex-col">
@@ -1043,6 +1134,7 @@ const Notifications: React.FC<Props> = ({
                         "bg-white border border-[#E2E8F0] rounded-lg",
                     }}
                     isDateUnavailable={isEndDateUnavailable}
+                    isDisabled={isDisplayMode}
                   />
                 </div>
               </>

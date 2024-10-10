@@ -18,6 +18,7 @@ import { FormatDateWithSuffix } from "@/utils/FormatDate/FormatDate";
 // shared components with admin
 import Notifications from "@/app/(admin)/(pages)/notifications-center/_components/Notifications";
 import SendMessage from "@/app/(admin)/(pages)/notifications-center/_components/SendMessagePrompt";
+import RecurringTypeFilter from "@/app/(admin)/(pages)/notifications-center/_components/RecurringTypeFilter";
 
 function page() {
   const [messageHistoryRows, setMessageHistoryRows] = useState<
@@ -41,6 +42,9 @@ function page() {
   >();
 
   const [activeNotification, setActiveNotification] = useState<any>();
+
+  const [recurringType, setRecurringType] = useState<any>();
+
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -85,6 +89,25 @@ function page() {
       enabled: activeFilter.id == 1,
     });
 
+    const {
+      data: recurringMessagesByType,
+      isLoading: recurringMessagesByTypeLoading,
+    } = useQuery({
+      queryKey: [
+        "all recurring messages by type",
+        recurringMessagesPage,
+        recurringMessagesLimit,
+        recurringType,
+      ],
+      queryFn: services.getRecurringMessagesByType(
+        recurringType,
+        recurringMessagesPage,
+        recurringMessagesLimit
+      ),
+      select: (data) => data?.content,
+      enabled: activeFilter.id == 1 && recurringType?.length > 0,
+    });
+
   // set messages to rows
   useEffect(() => {
     if (activeFilter?.id == 0) {
@@ -106,6 +129,29 @@ function page() {
     }
   }, [messages, activeFilter, recurringMessages]);
 
+    // setting recurring messages by type
+    useEffect(() => {
+      if (recurringType?.length > 0 && recurringMessagesByType) {
+        setRecurringRows(
+          recurringMessagesByType.map((message: any) => ({
+            id: message.id,
+            data: message,
+          }))
+        );
+      }
+    }, [recurringType, recurringMessagesByType]);
+
+    const handleSelectAll = () => {
+      if (recurringMessages?.length > 0) {
+        setRecurringRows(
+          recurringMessages.map((message: any) => ({
+            id: message.id,
+            data: message,
+          }))
+        );
+      }
+    }
+
   const messageHistoryColumns = [
     {
       field: "date",
@@ -113,9 +159,9 @@ function page() {
       type: "actions",
       align: "left",
       headerAlign: "left",
-      flex: 1,
+      flex: 3,
       getActions: (params: any) => [
-        <div>{FormatDateWithSuffix(params.row.data?.createdOn)}</div>,
+        <div className="w-full">{FormatDateWithSuffix(params.row.data?.createdOn)}</div>,
       ],
     },
 
@@ -178,7 +224,7 @@ function page() {
       type: "actions",
       align: "left",
       headerAlign: "left",
-      flex: 1,
+      flex: 2,
       getActions: (params: any) => [
         <div>
           {FormatDateWithSuffix(params.row.data?.startDate ?? new Date())}
@@ -191,7 +237,7 @@ function page() {
       type: "actions",
       align: "left",
       headerAlign: "left",
-      flex: 1,
+      flex: 2,
       getActions: (params: any) => [
         <div>
           {FormatDateWithSuffix(params.row.data?.endDate ?? new Date())}
@@ -202,7 +248,7 @@ function page() {
     {
       field: "Subject",
       headerName: "Subject",
-      flex: 1,
+      flex: 2,
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="w-full truncate">
@@ -273,7 +319,19 @@ function page() {
             setActiveFilter={setActiveFilter}
             filters={filters}
           />
+          <div
+            className={activeFilter.id == 0 ? "" : "flex gap-1 items-center"}
+          >
           <SendMessage type="company-admin" />
+            {activeFilter.id == 1 && (
+              <RecurringTypeFilter
+                selected={recurringType}
+                setSelected={setRecurringType}
+                setPage={setRecurringMessagesPage}
+                handleSelectAll={handleSelectAll}
+              />
+            )}
+          </div>
         </div>
         <DataTable
           isLoading={isLoading || recurringMessagesLoading}
