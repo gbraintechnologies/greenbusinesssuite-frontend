@@ -176,7 +176,7 @@ const CreateCompany = () => {
       industry: selectedIndustry?.value as string,
       company_address: selectedCountry?.value as string,
       primary_currency: currencyId,
-      company_code: lowerCaseNoSpace(values.companyName ? values.companyName : "")?.slice(0, 2).toLowerCase() + Math.floor(10 + Math.random() * 90).toString()
+      company_code: String(Math.floor(Math.random() * 10000)).padStart(4, '0')
     };
 
     const custom_fields = [
