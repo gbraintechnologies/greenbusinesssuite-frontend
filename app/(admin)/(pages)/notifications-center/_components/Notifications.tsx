@@ -1055,7 +1055,7 @@ const Notifications: React.FC<Props> = ({
                         ? savingRecurringType
                           ? "Saving..."
                           : "Save"
-                        : "Edit"} {notification?.recurringType}
+                        : "Edit"}
                     </button>
                   )}
               </div>
