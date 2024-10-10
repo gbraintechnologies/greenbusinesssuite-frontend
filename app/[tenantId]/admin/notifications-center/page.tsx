@@ -131,15 +131,32 @@ function page() {
 
     // setting recurring messages by type
     useEffect(() => {
-      if (recurringType?.length > 0 && recurringMessagesByType) {
-        setRecurringRows(
-          recurringMessagesByType.map((message: any) => ({
-            id: message.id,
-            data: message,
-          }))
-        );
+      if (activeFilter.id == 0) {
+        if (recurringType?.length > 0 && recurringMessagesByType) {
+          setMessageHistoryRows(
+            recurringMessagesByType.map((message: any) => ({
+              id: message.id,
+              data: message,
+            }))
+          );
+        }
       }
-    }, [recurringType, recurringMessagesByType]);
+      if (activeFilter.id == 1) {
+        if (recurringType?.length > 0 && recurringMessagesByType) {
+          setRecurringRows(
+            recurringMessagesByType.map((message: any) => ({
+              id: message.id,
+              data: message,
+            }))
+          );
+        }
+      }
+    }, [recurringType, recurringMessagesByType, activeFilter]);
+
+//reset filter when tab changes
+  useEffect(() => {
+    setRecurringType(null);
+  },[activeFilter])
 
     const handleSelectAll = () => {
       if (activeFilter.id == 0) {
