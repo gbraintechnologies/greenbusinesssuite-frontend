@@ -202,7 +202,7 @@ function page() {
       type: "actions",
       align: "left",
       headerAlign: "left",
-      flex: 3,
+      flex: 2,
       getActions: (params: any) => [
         <div>{FormatDateWithSuffix(params.row.data?.createdOn)}</div>,
       ],
