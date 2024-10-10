@@ -23,6 +23,10 @@ export default function RecurringTypeFilter({
       value: "ALL",
     },
     {
+      label: "Non-recurring",
+      value: "NON_RECURRING",
+    },
+    {
       label: "Daily",
       value: "DAILY",
     },

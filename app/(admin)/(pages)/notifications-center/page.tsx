@@ -100,7 +100,7 @@ function page() {
       recurringMessagesLimit
     ),
     select: (data) => data?.content,
-    enabled: activeFilter.id == 1 && recurringType?.length > 0,
+    enabled: recurringType?.length > 0,
   });
 
   // set messages to rows
@@ -126,6 +126,17 @@ function page() {
 
   // setting recurring messages by type
   useEffect(() => {
+    if(activeFilter.id == 0){
+      if (recurringType?.length > 0 && recurringMessagesByType) {
+        setMessageHistoryRows(
+          recurringMessagesByType.map((message: any) => ({
+            id: message.id,
+            data: message,
+          }))
+        );
+      }
+    }
+    if(activeFilter.id == 1){
     if (recurringType?.length > 0 && recurringMessagesByType) {
       setRecurringRows(
         recurringMessagesByType.map((message: any) => ({
@@ -133,24 +144,33 @@ function page() {
           data: message,
         }))
       );
-    }
-  }, [recurringType, recurringMessagesByType]);
+    } }
+  }, [recurringType, recurringMessagesByType, activeFilter]);
 
   const handleSelectAll = () => {
-    if (recurringMessages?.length > 0) {
-      setRecurringRows(
-        recurringMessages.map((message: any) => ({
-          id: message.id,
-          data: message,
-        }))
-      );
+    if (activeFilter.id == 0) {
+      if (messages.length > 0) {
+        setMessageHistoryRows(
+          messages.map((message: any) => ({ id: message.id, data: message }))
+        );
+      }
     }
-  }
+    if (activeFilter.id == 1) {
+      if (recurringMessages?.length > 0) {
+        setRecurringRows(
+          recurringMessages.map((message: any) => ({
+            id: message.id,
+            data: message,
+          }))
+        );
+      }
+    }
+  };
 
   // function to invalidate queries
   // const invalidateQueries = () => {
   //   const queryClient = useQueryClient();
-  
+
   //   if (activeFilter.id === 0) {
   //     queryClient.invalidateQueries({
   //       queryKey: ["all messages", allMessagesPage, allMessagesLimit],
@@ -159,7 +179,7 @@ function page() {
   //     queryClient.invalidateQueries({
   //       queryKey: ["all recurring messages", recurringMessagesPage, recurringMessagesLimit],
   //     });
-  
+
   //     if (recurringType) {
   //       queryClient.invalidateQueries({
   //         queryKey: ["all recurring messages by type", recurringMessagesPage, recurringMessagesLimit, recurringType],
@@ -335,18 +355,14 @@ function page() {
             setActiveFilter={setActiveFilter}
             filters={filters}
           />
-          <div
-            className={activeFilter.id == 0 ? "" : "flex gap-1 items-center"}
-          >
+          <div className={"flex gap-1 items-center"}>
             <SendMessage type="super-admin" />
-            {activeFilter.id == 1 && (
-              <RecurringTypeFilter
-                selected={recurringType}
-                setSelected={setRecurringType}
-                setPage={setRecurringMessagesPage}
-                handleSelectAll={handleSelectAll}
-              />
-            )}
+            <RecurringTypeFilter
+              selected={recurringType}
+              setSelected={setRecurringType}
+              setPage={setRecurringMessagesPage}
+              handleSelectAll={handleSelectAll}
+            />
           </div>
         </div>
         <DataTable
