@@ -77,10 +77,6 @@ const Notifications: React.FC<Props> = ({
 
   const [limit, setLimit] = useState(4);
 
-  useEffect(() => {
-    console.log("limit changed to ", limit);
-  }, [limit]);
-
   const queryClient = useQueryClient();
 
   //state to handle search value
@@ -289,7 +285,6 @@ const Notifications: React.FC<Props> = ({
   // };
 
   const handleCompanyChange = (selectedOptions: any) => {
-    console.log("selected options", selectedOptions);
     setSelectedCompaniesState(selectedOptions);
     const selectedValues = selectedOptions
       ? selectedOptions.map((option: any) => option.value)
@@ -297,9 +292,7 @@ const Notifications: React.FC<Props> = ({
     setSelectedCompanies(selectedValues);
   };
 
-  useEffect(() => {
-    console.log("select ", selectedCompanies);
-  }, [selectedCompanies]);
+ 
 
   const handleRemoveSelectedCompany = (company: any) => {
     setSelectedCompanies((prev: any) =>
