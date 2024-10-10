@@ -11,11 +11,21 @@ const renderFormResponse = (formField: any) => {
   switch (formField?.fieldDataType) {
     case "short-text":
       return (
-        <input defaultValue={formField?.response} className="fit" readOnly disabled/>
+        <input
+          defaultValue={formField?.response}
+          className="fit"
+          readOnly
+          disabled
+        />
       );
     case "email":
       return (
-        <input defaultValue={formField?.response} className="fit" readOnly disabled/>
+        <input
+          defaultValue={formField?.response}
+          className="fit"
+          readOnly
+          disabled
+        />
       );
     case "calendar":
       return (
@@ -29,12 +39,22 @@ const renderFormResponse = (formField: any) => {
 
     case "number":
       return (
-        <input defaultValue={formField?.response} className="fit" readOnly disabled/>
+        <input
+          defaultValue={formField?.response}
+          className="fit"
+          readOnly
+          disabled
+        />
       );
     case "checkboxes":
       return (
         <>
-          <input defaultValue={formField?.response} className="fit" readOnly disabled/>
+          <input
+            defaultValue={formField?.response}
+            className="fit"
+            readOnly
+            disabled
+          />
           <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
             {formField.choiceValue.map((value: any) => {
               // values user selected
@@ -64,7 +84,12 @@ const renderFormResponse = (formField: any) => {
     case "dropdown":
       return (
         <>
-          <input defaultValue={formField?.response} className="fit" readOnly disabled/>
+          <input
+            defaultValue={formField?.response}
+            className="fit"
+            readOnly
+            disabled
+          />
           <div className="mt-2 grid grid-cols-3 gap-x-4 gap-y-1 w-full">
             {formField?.choiceValue?.map((option: any, index: number) => (
               <div key={index} className="flex gap-2 items-center">
@@ -97,11 +122,20 @@ const renderFormResponse = (formField: any) => {
       );
 
     case "long-text":
-      return <textarea className=" big-fit" readOnly disabled>{formField?.response}</textarea>;
+      return (
+        <textarea className=" big-fit" readOnly disabled>
+          {formField?.response}
+        </textarea>
+      );
 
     default:
       return (
-        <input defaultValue={formField?.response} className="fit" readOnly disabled/>
+        <input
+          defaultValue={formField?.response}
+          className="fit"
+          readOnly
+          disabled
+        />
       );
   }
 };
@@ -118,30 +152,41 @@ const FormResponse = forwardRef(function FormResponse(
   const formSections = mergedForm?.formSections;
   return (
     <div className="w-full " ref={ref}>
-      {formSections?.filter((section: any) => section?.isDeleted !== true)?.map((section: any, index: number) => (
-        <div className="bg-white rounded-lg mb-4 w-full px-4 py-5" key={index} id={index > 0 ? "newsection" : "firstsection"}>
-          <div className=" text-slate-900 font-semibold text-lg my-2">
-            {section?.name}
-          </div>
-          <div className="form-container">
-            {section?.formFields?.map((formField: any, index: number) => {
-              const isHorizontalAlign = formField?.horizontalAlign;
+      {formSections
+        ?.filter((section: any) => section?.isDeleted !== true)
+        ?.filter(
+          (section: any) => section.formFields && !section.formDataFields
+        )
+        ?.map((section: any, index: number) => (
+          <div
+            className="bg-white rounded-lg mb-4 w-full px-4 py-5"
+            key={index}
+            id={index > 0 ? "newsection" : "firstsection"}
+          >
+            <div className=" text-slate-900 font-semibold text-lg my-2">
+              {section?.name}
+            </div>
+            <div className="form-container">
+              {section?.formFields?.map((formField: any, index: number) => {
+                const isHorizontalAlign = formField?.horizontalAlign;
 
-              const itemClass = isHorizontalAlign ? "half-width" : "full-width";
-              if (formField?.fieldDataType !== "upload") {
-                return (
-                  <div className={itemClass} key={index}>
-                    <div className={"response-input"}>
-                      <div className="label">{formField?.label}</div>
-                      {renderFormResponse(formField)}
+                const itemClass = isHorizontalAlign
+                  ? "half-width"
+                  : "full-width";
+                if (formField?.fieldDataType !== "upload") {
+                  return (
+                    <div className={itemClass} key={index}>
+                      <div className={"response-input"}>
+                        <div className="label">{formField?.label}</div>
+                        {renderFormResponse(formField)}
+                      </div>
                     </div>
-                  </div>
-                );
-              }
-            })}
+                  );
+                }
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
     </div>
   );
 });

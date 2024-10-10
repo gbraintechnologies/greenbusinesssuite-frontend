@@ -144,6 +144,8 @@ function FormCard({ form, type = "uncompleted" }: Props) {
                 resData[0]?.inputData
               );
 
+              console.log('merged form', mergedForm);
+
               renderToHiddenElement(mergedForm, user, resData[0]?.id);
             } else {
               throw new Error("No data found");
