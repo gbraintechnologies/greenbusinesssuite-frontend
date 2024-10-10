@@ -154,7 +154,7 @@ function page() {
     setRecurringType(null);
   },[activeFilter])
 
-  const handleSelectAll = () => {
+  const handleSelectAll: any = () => {
     if (activeFilter.id == 0) {
       if (messages.length > 0) {
         setMessageHistoryRows(
@@ -369,6 +369,7 @@ function page() {
               setSelected={setRecurringType}
               setPage={setRecurringMessagesPage}
               handleSelectAll={handleSelectAll}
+              activeFilterId={activeFilter.id}
             />
           </div>
         </div>

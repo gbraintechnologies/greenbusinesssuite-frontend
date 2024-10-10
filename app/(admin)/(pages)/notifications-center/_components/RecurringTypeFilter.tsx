@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 import { LuFilter } from "react-icons/lu";
 import { CiSquareCheck } from "react-icons/ci";
@@ -10,12 +10,14 @@ type Props = {
   setSelected: any;
   handleSelectAll: any;
   setPage: any;
+  activeFilterId: number;
 };
 export default function RecurringTypeFilter({
   selected,
   setSelected,
   setPage,
   handleSelectAll,
+  activeFilterId
 }: Props) {
   const recurringTypes: any = [
     {
@@ -52,6 +54,17 @@ export default function RecurringTypeFilter({
     },
   ];
 
+  const [filteredRecurringTypes, setFilteredRecurringTypes] = useState<any>([]);
+
+  useEffect(() => {
+    
+    const filteredRecurringTypes = activeFilterId === 1 
+    ? recurringTypes.filter((type: any) => type.value !== "NON_RECURRING")
+    : recurringTypes;
+    setFilteredRecurringTypes(filteredRecurringTypes);
+  },[activeFilterId]);
+
+
   return (
     <>
       <Menu as="div" className="z-10 relative inline-block text-left">
@@ -59,7 +72,7 @@ export default function RecurringTypeFilter({
           <LuFilter size={16} color="#334155" />{" "}
           <>
             Filter{" "}
-            {recurringTypes?.find((type: any) => type.value == selected)?.label || "All"}
+            {filteredRecurringTypes?.find((type: any) => type.value == selected)?.label || "All"}
           </>
         </Menu.Button>
 
@@ -77,7 +90,7 @@ export default function RecurringTypeFilter({
               static
               className=" absolute bg-white shadow-lg border-gray-200 px-4 border top-3 right-0 rounded-xl p-2 w-56 z-[400]"
             >
-              {recurringTypes?.map((recurringType: any, idx: any) => {
+              {filteredRecurringTypes?.map((recurringType: any, idx: any) => {
                 return (
                   <button
                     key={idx}

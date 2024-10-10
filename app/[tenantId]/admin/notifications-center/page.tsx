@@ -354,6 +354,7 @@ function page() {
                 setSelected={setRecurringType}
                 setPage={setRecurringMessagesPage}
                 handleSelectAll={handleSelectAll}
+                activeFilterId={activeFilter.id}
               />
           </div>
         </div>

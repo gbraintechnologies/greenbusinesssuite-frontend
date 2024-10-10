@@ -77,6 +77,10 @@ const Notifications: React.FC<Props> = ({
 
   const [limit, setLimit] = useState(4);
 
+  useEffect(() => {
+    console.log('limit changed to ', limit);
+  } , [limit])
+
   const queryClient = useQueryClient();
 
   //state to handle search value
@@ -114,10 +118,9 @@ const Notifications: React.FC<Props> = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const fetchMoreData = () => {
-    if (!isLoadingMore && hasMore) {
-      setIsLoadingMore(true);
-      setLimit(limit + 5);
-    }
+    console.log('menu bottom fetch moree.....')
+    console.log('prev limit ', limit);
+    setLimit(limit + 4);
   };
 
   // get companies
@@ -429,12 +432,6 @@ useEffect(() => {
   }
 }, [searchTerm, companies, searchData, selectedCompanies]);
 
-
-  useEffect(() => {
-    if (filteredCompanies?.length < 1 && searchTerm.length < 1) {
-      setLimit(limit + 5);
-    }
-  }, [filteredCompanies]);
 
   // setting initial values for display mode
   useEffect(() => {
@@ -908,8 +905,8 @@ useEffect(() => {
           {type === "super-admin" && activeGroupFilter?.id == 1 && (
             <div className="grid grid-cols-2 gap-10">
               {!isDisplayMode && (
-                <div className="mb-4 hide-input-borders input-holder">
-                  <label className="text-xs mb-10 font-normal text-slate-700">
+                <div className="mb-4 hide-input-borders">
+                  <label className="text-xs font-normal text-slate-700">
                     Company
                   </label>
 
@@ -925,6 +922,9 @@ useEffect(() => {
                       setSearchTerm(inputValue)
                     }
                     placeholder="Select company"
+                    isLoading={isLoading || searchLoading}
+                    onMenuScrollToBottom={fetchMoreData}
+                    closeMenuOnSelect={false}
                     styles={{
                       control: (styles) => ({
                         ...styles,
@@ -951,11 +951,11 @@ useEffect(() => {
                       }),
                       menuList: (styles) => ({
                         ...styles,
-                        padding: 0,
+                        padding: "0px 4px",
                         maxHeight: "200px",
                         overflowY: "auto",
                       }),
-                      option: (styles, { isFocused, isSelected }) => ({
+                      option: (styles) => ({
                         ...styles,
                         // backgroundColor: isSelected ? '#007bff' : isFocused ? '#e0f7fa' : '#ffffff', // Hover color change
                         color: "#334155",
@@ -965,6 +965,9 @@ useEffect(() => {
                         borderRadius: "8px",
                         ":active": {
                           backgroundColor: "#F1F5F9",
+                        },
+                        ":visited": {
+                          backgroundColor: "#fff"
                         },
                         ":hover": {
                           backgroundColor: "#F1F5F9",
@@ -984,7 +987,6 @@ useEffect(() => {
                     }}
                     
                     />
-                    {/* TODO: Implement Infinite Scroll*/}
 
                   {/* <Popover placement="bottom" state={state}>
                     <PopoverTrigger>
@@ -1311,40 +1313,6 @@ const CustomMultiValueRemove = (props: any) => (
   </components.MultiValueRemove>
 );
 
-const CustomMenuList = (props: any) => {
-  const { children, selectProps } = props;
-  const { fetchMoreData, isLoadingMore } = selectProps; // Access custom props passed from Select
-  const listRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (listRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-        if (scrollHeight - scrollTop === clientHeight && !isLoadingMore) {
-          fetchMoreData(); // Load more data when the user reaches the end of the list
-        }
-      }
-    };
-
-    const listNode = listRef.current;
-    if (listNode) {
-      listNode.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (listNode) {
-        listNode.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [isLoadingMore]);
-
-  return (
-    <components.MenuList {...props} innerRef={listRef}>
-      {children}
-      {isLoadingMore && <div className="text-center py-2">Loading more...</div>}
-    </components.MenuList>
-  );
-};
 
 
 export default Notifications;
