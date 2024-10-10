@@ -44,6 +44,28 @@ export const getNotificationById = (id: number) => {
   return () => authApi.get(`/notifications/${id}`).then((res) => res.data);
 };
 
+// retrieve recurring messages by type
+export const getRecurringMessagesByType = (
+  type: string,
+  page: number = 0,
+  size: number = 10
+) => {
+  return () =>
+    authApi
+      .get(`/notifications/messages-by-type/${page}/${size}/${type}`)
+      .then((res) => res.data);
+};
+
+// update recurring type
+export const updateRecurringMessageType = async (
+  id: number | string,
+  recurringType: string
+) => {
+  return await authApi
+    .put(`/notifications/notify-change/${id}/${recurringType}`)
+    .then((res) => res.data);
+};
+
 // const axios = require("axios");
 // const FormData = require("form-data");
 // const fs = require("fs");

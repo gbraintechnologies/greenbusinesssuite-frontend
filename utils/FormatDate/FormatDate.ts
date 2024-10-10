@@ -19,7 +19,8 @@ export const FormatDateTime = (date: any) => {
 
 export const  FormatDateWithSuffix = (date: any) =>  {
   const day = format(date, 'd'); 
-  const monthAndYear = format(date, 'MMMM, yyyy'); 
+  const monthAndYear = format(date, 'MMM, yyyy');
+  const time = format(date, 'hh:mm a'); 
 
   const getOrdinalSuffix = (day: any) => {
     const dayNumber = parseInt(day, 10);
@@ -37,7 +38,7 @@ export const  FormatDateWithSuffix = (date: any) =>  {
   };
 
   const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
-  return `${dayWithSuffix} ${monthAndYear}`;
+  return `${dayWithSuffix} ${monthAndYear} at ${time}`;
 }
 
 export default FormatDate;
