@@ -4,13 +4,15 @@ import { IFilter } from "@/types";
 
 //
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
 // tabs
 import Tabs from "../../../../../components/Tabs/Tabs";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+import Select, { components } from "react-select";
 
 // DATE TIME HELPERS
 
@@ -80,10 +82,43 @@ const Notifications: React.FC<Props> = ({
   //state to handle search value
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  const options: any = [
+    { value: "item1", label: "Item 1" },
+    { value: "item2", label: "Item 2" },
+    { value: "item3", label: "Item 3" },
+    { value: "item4", label: "Item 4" },
+    { value: "item5", label: "Item 5" },
+    { value: "item6", label: "Item 6" },
+    { value: "item7", label: "Item 7" },
+    { value: "item8", label: "Item 8" },
+    { value: "item9", label: "Item 9" },
+    { value: "item10", label: "Item 10" },
+    { value: "item12", label: "Item 2" },
+    { value: "item13", label: "Item 3" },
+  ];
+
+  const handleChange = (selectedOptions: any) => {
+    setSelectedItems(selectedOptions);
+  };
+
   const [activeRecipientGroup, setActiveRecipientGroup] = useState("companies");
 
   //state to handle filtered companies
   const [filteredCompanies, setFilteredCompanies] = useState<any>([]);
+
+  const [selectedCompaniesState, setSelectedCompaniesState] = useState<any>([]);
+
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const fetchMoreData = () => {
+    if (!isLoadingMore && hasMore) {
+      setIsLoadingMore(true);
+      setLimit(limit + 5);
+    }
+  };
 
   // get companies
   const { data: companies, isLoading } = useQuery({
@@ -131,9 +166,9 @@ const Notifications: React.FC<Props> = ({
     },
   ];
   const [activeGroupFilter, setActiveGroupFilter] = useState<IFilter>({
-    id: 0,
-    name: "Users",
-    value: "Users",
+    id: 1,
+    name: "Companies",
+    value: "companies",
   });
 
   // state to handle subject and message states
@@ -238,9 +273,26 @@ const Notifications: React.FC<Props> = ({
   };
 
   // Function to remove a company from the selected list
+  // const handleRemoveSelectedCompany = (company: any) => {
+  //   setSelectedCompanies((prev: any) =>
+  //     prev.filter((item: any) => item.id !== company.id)
+  //   );
+  // };
+
+  const handleCompanyChange = (selectedOptions: any) => {
+    console.log("selected options", selectedOptions);
+    setSelectedCompaniesState(selectedOptions);
+    const selectedValues = selectedOptions ? selectedOptions.map((option: any) => option.value) : [];
+    setSelectedCompanies(selectedValues);
+  };
+
+  useEffect(() => {
+    console.log('select ', selectedCompanies)
+  },[selectedCompanies])
+
   const handleRemoveSelectedCompany = (company: any) => {
     setSelectedCompanies((prev: any) =>
-      prev.filter((item: any) => item.id !== company.id)
+      prev.filter((item: any) => item.id !== company.value.id)
     );
   };
 
@@ -344,35 +396,39 @@ const Notifications: React.FC<Props> = ({
       setFilteredCompanies([
         // TODO: IMPLEMENT ALL FUNCTIONALITY BY LOADING ALL COMPANIES INTO RECIPIENTS
         // { company_name: "All", id: "all" },
-        ...companies,
+        ...companies.sort((a: any, b: any) => a.company_name.localeCompare(b.company_name)), // Sorting alphabetically by company_name
       ]);
     }
   }, [companies]);
 
   // use Effect to handle search functionality and exclude selected companies from filtered results
-  useEffect(() => {
-    if (searchTerm.length > 0 && searchData) {
-      setFilteredCompanies(
-        searchData.filter(
+// useEffect to handle search functionality and exclude selected companies from filtered results
+useEffect(() => {
+  if (searchTerm.length > 0 && searchData) {
+    setFilteredCompanies(
+      searchData
+        .filter(
+          (company: any) =>
+            !selectedCompanies.some(
+              (selected: any) => selected?.id === company.id
+            )
+        )
+        .sort((a: any, b: any) => a.company_name.localeCompare(b.company_name)) 
+    );
+  } else if (companies && searchTerm.length < 1) {
+    setFilteredCompanies(
+      companies
+        .filter(
           (company: any) =>
             !selectedCompanies.some(
               (selected: any) => selected.id === company.id
             )
         )
-      );
-    } else if (companies && searchTerm.length < 1) {
-      setFilteredCompanies([
-        // { company_name: "All", id: "all" },
-        // TODO: IMPLEMENT ALL FUNCTIONALITY BY LOADING ALL COMPANIES INTO RECIPIENTS
-        ...companies.filter(
-          (company: any) =>
-            !selectedCompanies.some(
-              (selected: any) => selected.id === company.id
-            )
-        ),
-      ]);
-    }
-  }, [searchTerm, companies, searchData, selectedCompanies]);
+        .sort((a: any, b: any) => a.company_name.localeCompare(b.company_name)) 
+    );
+  }
+}, [searchTerm, companies, searchData, selectedCompanies]);
+
 
   useEffect(() => {
     if (filteredCompanies?.length < 1 && searchTerm.length < 1) {
@@ -853,14 +909,87 @@ const Notifications: React.FC<Props> = ({
             <div className="grid grid-cols-2 gap-10">
               {!isDisplayMode && (
                 <div className="mb-4 hide-input-borders input-holder">
-                  <label className="text-xs mb-1 font-normal text-slate-700">
+                  <label className="text-xs mb-10 font-normal text-slate-700">
                     Company
                   </label>
 
-                  <Popover placement="bottom" state={state}>
+                  <Select
+                    isMulti
+                    options={filteredCompanies.map((company: any) => ({
+                      value: company, // Store the entire company object in the value
+                      label: company.company_name,
+                    }))}
+                    value={selectedCompaniesState}
+                    onChange={handleCompanyChange}
+                    onInputChange={(inputValue: string) =>
+                      setSearchTerm(inputValue)
+                    }
+                    placeholder="Select company"
+                    styles={{
+                      control: (styles) => ({
+                        ...styles,
+                        backgroundColor: "#f8fafc",
+                        border: "1px solid #E2E8F0",
+                        borderRadius: "8px",
+                        paddingVertical: "8px",
+                        paddingHorizontal: "20px",
+                        fontSize: "0.875rem",
+                        lineHeight: "1.25rem",
+                        boxShadow: "none",
+                        ":hover": {
+                          borderColor: "#E2E8F0",
+                        },
+                      }),
+                      menu: (styles) => ({
+                        ...styles,
+                        backgroundColor: "#fff",
+                        borderRadius: "8px",
+                        marginTop: "4px",
+                        fontSize: "0.875rem",
+                        lineHeight: "1.25rem",
+                        zIndex: 9999,
+                      }),
+                      menuList: (styles) => ({
+                        ...styles,
+                        padding: 0,
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                      }),
+                      option: (styles, { isFocused, isSelected }) => ({
+                        ...styles,
+                        // backgroundColor: isSelected ? '#007bff' : isFocused ? '#e0f7fa' : '#ffffff', // Hover color change
+                        color: "#334155",
+                        cursor: "pointer",
+                        padding: "10px 15px",
+                        margin: "4px 0",
+                        borderRadius: "8px",
+                        ":active": {
+                          backgroundColor: "#F1F5F9",
+                        },
+                        ":hover": {
+                          backgroundColor: "#F1F5F9",
+                        },
+                      }),
+                      multiValueRemove: (styles) => ({
+                        ...styles,
+                        ":hover": {
+                          backgroundColor: "transparent"
+                        }
+                      }),
+                    }}
+                    components={{
+                      MultiValueRemove: CustomMultiValueRemove,
+                      MultiValue: CustomMultiValue,
+                      MultiValueContainer: CustomMultiValueContainer,
+                    }}
+                    
+                    />
+                    {/* TODO: Implement Infinite Scroll*/}
+
+                  {/* <Popover placement="bottom" state={state}>
                     <PopoverTrigger>
                       <div
-                        className="border w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
+                        className="border text-sm w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
                         onClick={() => state.open()}
                       >
                         <div className="flex flex-wrap flex-1 gap-2">
@@ -938,7 +1067,7 @@ const Notifications: React.FC<Props> = ({
                         </button>
                       )}
                     </PopoverContent>
-                  </Popover>
+                  </Popover> */}
                 </div>
               )}
               {!isDisplayMode && (
@@ -1043,8 +1172,8 @@ const Notifications: React.FC<Props> = ({
                 <label className="text-xs mb-1 font-normal text-slate-700">
                   Recurring type
                 </label>
-                {((isDisplayMode) &&
-                  (notification?.recurringType !== "NON_RECURRING")) && (
+                {isDisplayMode &&
+                  notification?.recurringType !== "NON_RECURRING" && (
                     <button
                       className={`w-auto outline-none border-b border-[#056ee9] border-dashed text-xs text-[#056ee9] disabled:border-[#4b5675] disabled:text-[#4b5675]`}
                       onClick={() => {
@@ -1158,5 +1287,64 @@ const Notifications: React.FC<Props> = ({
     </div>
   );
 };
+
+
+const CustomMultiValue = (props: any) => (
+  <div className="border border-[#E2E8F0] bg-white m-1 px-2 py-1 flex gap-2 items-center rounded-lg">
+    <components.MultiValue {...props}>
+      <div className="bg-white text-sm">{props.children}</div>
+    </components.MultiValue>
+  </div>
+);
+
+const CustomMultiValueContainer = (props: any) => (
+    <components.MultiValueContainer {...props}>
+      <span className="bg-white  flex gap-1 items-center">{props.children}</span>
+    </components.MultiValueContainer>
+);
+
+const CustomMultiValueRemove = (props: any) => (
+  <components.MultiValueRemove {...props}>
+    <span className="bg-white hover:bg-transparent">
+      <IoIosCloseCircleOutline color="#DC2626" size={20} />
+    </span>
+  </components.MultiValueRemove>
+);
+
+const CustomMenuList = (props: any) => {
+  const { children, selectProps } = props;
+  const { fetchMoreData, isLoadingMore } = selectProps; // Access custom props passed from Select
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (listRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+        if (scrollHeight - scrollTop === clientHeight && !isLoadingMore) {
+          fetchMoreData(); // Load more data when the user reaches the end of the list
+        }
+      }
+    };
+
+    const listNode = listRef.current;
+    if (listNode) {
+      listNode.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (listNode) {
+        listNode.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [isLoadingMore]);
+
+  return (
+    <components.MenuList {...props} innerRef={listRef}>
+      {children}
+      {isLoadingMore && <div className="text-center py-2">Loading more...</div>}
+    </components.MenuList>
+  );
+};
+
 
 export default Notifications;
