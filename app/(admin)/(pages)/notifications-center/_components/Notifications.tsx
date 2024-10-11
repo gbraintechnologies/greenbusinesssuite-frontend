@@ -59,7 +59,6 @@ type Props = {
   isDisplayMode?: boolean;
   notification?: any;
   type?: "super-admin" | "company-admin";
-  invalidateQueries?: any;
 };
 
 const Notifications: React.FC<Props> = ({
@@ -67,7 +66,6 @@ const Notifications: React.FC<Props> = ({
   isDisplayMode = false,
   notification,
   type = "super-admin",
-  invalidateQueries,
 }) => {
   // page and limit states for pagination
   const [page, setPage] = useState(0);
@@ -82,27 +80,6 @@ const Notifications: React.FC<Props> = ({
   //state to handle search value
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [selectedItems, setSelectedItems] = useState([]);
-
-  const options: any = [
-    { value: "item1", label: "Item 1" },
-    { value: "item2", label: "Item 2" },
-    { value: "item3", label: "Item 3" },
-    { value: "item4", label: "Item 4" },
-    { value: "item5", label: "Item 5" },
-    { value: "item6", label: "Item 6" },
-    { value: "item7", label: "Item 7" },
-    { value: "item8", label: "Item 8" },
-    { value: "item9", label: "Item 9" },
-    { value: "item10", label: "Item 10" },
-    { value: "item12", label: "Item 2" },
-    { value: "item13", label: "Item 3" },
-  ];
-
-  const handleChange = (selectedOptions: any) => {
-    setSelectedItems(selectedOptions);
-  };
-
   const [activeRecipientGroup, setActiveRecipientGroup] = useState("companies");
 
   //state to handle filtered companies
@@ -114,27 +91,28 @@ const Notifications: React.FC<Props> = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const fetchMoreData = () => {
-    if (limit < allCompanies?.length) {
+    if (limit < 14) {
       setLimit(limit + 4);
     }
   };
 
   // get companies
-  const { data: companies, isLoading } = useQuery({
-    queryKey: ["companies", page, limit],
-    queryFn: services.getAllCompanies(page * limit, limit),
-    enabled: type === "super-admin",
-  });
+  // const { data: companies, isLoading } = useQuery({
+  //   queryKey: ["companies", page, limit],
+  //   queryFn: services.getAllCompanies(page * limit, limit),
+  //   enabled: type === "super-admin",
+  // });
 
   // getting all companies
-  const { data: allCompanies } = useQuery({
+  const { data: companies, isLoading } = useQuery({
     queryKey: ["all companies"],
     queryFn: services.getAllCompanies(),
+    enabled: type === "super-admin",
   });
 
   //fetching companies by search
   const { data: searchData, isLoading: searchLoading } = useQuery({
-    queryKey: ["all users", searchTerm],
+    queryKey: ["search company", searchTerm],
     queryFn: services.searchCompany(searchTerm),
     enabled: Boolean(searchTerm) && type === "super-admin",
   });
@@ -261,21 +239,21 @@ const Notifications: React.FC<Props> = ({
   };
 
   // Handle individual company selection
-  const handleSelectionChange = (company: any) => {
-    if (company.id === "all") {
-      handleSelectAll();
-    } else if (selectedCompanies.some((item: any) => item.id === company.id)) {
-      setSelectAllCompanies(false);
-      // If the company is already selected, remove it from the selected list
-      setSelectedCompanies((prev: any) =>
-        prev.filter((item: any) => item.id !== company.id)
-      );
-    } else {
-      setSelectAllCompanies(false);
-      // Add the company to the selected list
-      setSelectedCompanies((prev: any) => [...prev, company]);
-    }
-  };
+  // const handleSelectionChange = (company: any) => {
+  //   if (company.id === "all") {
+  //     handleSelectAll();
+  //   } else if (selectedCompanies.some((item: any) => item.id === company.id)) {
+  //     setSelectAllCompanies(false);
+  //     // If the company is already selected, remove it from the selected list
+  //     setSelectedCompanies((prev: any) =>
+  //       prev.filter((item: any) => item.id !== company.id)
+  //     );
+  //   } else {
+  //     setSelectAllCompanies(false);
+  //     // Add the company to the selected list
+  //     setSelectedCompanies((prev: any) => [...prev, company]);
+  //   }
+  // };
 
   // Function to remove a company from the selected list
   // const handleRemoveSelectedCompany = (company: any) => {
@@ -402,7 +380,7 @@ const Notifications: React.FC<Props> = ({
         // { company_name: "All", id: "all" },
         ...companies.sort((a: any, b: any) =>
           a.company_name.localeCompare(b.company_name)
-        ), // Sorting alphabetically by company_name
+        ), 
       ]);
     }
   }, [companies]);
@@ -442,12 +420,10 @@ const Notifications: React.FC<Props> = ({
   useEffect(() => {
     if (
       filteredCompanies.length < 1 &&
-      !searchTerm &&
-      limit < allCompanies?.length
-    ) {
+      !searchTerm     ) {
       fetchMoreData();
     }
-  }, [allCompanies, filteredCompanies]);
+  }, [filteredCompanies]);
 
   // setting initial values for display mode
   useEffect(() => {
