@@ -4,13 +4,15 @@ import { IFilter } from "@/types";
 
 //
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
 // tabs
 import Tabs from "../../../../../components/Tabs/Tabs";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+import Select, { components } from "react-select";
 
 // DATE TIME HELPERS
 
@@ -57,7 +59,6 @@ type Props = {
   isDisplayMode?: boolean;
   notification?: any;
   type?: "super-admin" | "company-admin";
-  invalidateQueries?: any;
 };
 
 const Notifications: React.FC<Props> = ({
@@ -65,7 +66,6 @@ const Notifications: React.FC<Props> = ({
   isDisplayMode = false,
   notification,
   type = "super-admin",
-  invalidateQueries,
 }) => {
   // page and limit states for pagination
   const [page, setPage] = useState(0);
@@ -85,16 +85,34 @@ const Notifications: React.FC<Props> = ({
   //state to handle filtered companies
   const [filteredCompanies, setFilteredCompanies] = useState<any>([]);
 
+  const [selectedCompaniesState, setSelectedCompaniesState] = useState<any>([]);
+
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const fetchMoreData = () => {
+    if (limit < 14) {
+      setLimit(limit + 4);
+    }
+  };
+
   // get companies
+  // const { data: companies, isLoading } = useQuery({
+  //   queryKey: ["companies", page, limit],
+  //   queryFn: services.getAllCompanies(page * limit, limit),
+  //   enabled: type === "super-admin",
+  // });
+
+  // getting all companies
   const { data: companies, isLoading } = useQuery({
-    queryKey: ["companies", page, limit],
-    queryFn: services.getAllCompanies(page * limit, limit),
+    queryKey: ["all companies"],
+    queryFn: services.getAllCompanies(),
     enabled: type === "super-admin",
   });
 
   //fetching companies by search
   const { data: searchData, isLoading: searchLoading } = useQuery({
-    queryKey: ["all users", searchTerm],
+    queryKey: ["search company", searchTerm],
     queryFn: services.searchCompany(searchTerm),
     enabled: Boolean(searchTerm) && type === "super-admin",
   });
@@ -131,9 +149,9 @@ const Notifications: React.FC<Props> = ({
     },
   ];
   const [activeGroupFilter, setActiveGroupFilter] = useState<IFilter>({
-    id: 0,
-    name: "Users",
-    value: "Users",
+    id: 1,
+    name: "Companies",
+    value: "companies",
   });
 
   // state to handle subject and message states
@@ -221,26 +239,42 @@ const Notifications: React.FC<Props> = ({
   };
 
   // Handle individual company selection
-  const handleSelectionChange = (company: any) => {
-    if (company.id === "all") {
-      handleSelectAll();
-    } else if (selectedCompanies.some((item: any) => item.id === company.id)) {
-      setSelectAllCompanies(false);
-      // If the company is already selected, remove it from the selected list
-      setSelectedCompanies((prev: any) =>
-        prev.filter((item: any) => item.id !== company.id)
-      );
-    } else {
-      setSelectAllCompanies(false);
-      // Add the company to the selected list
-      setSelectedCompanies((prev: any) => [...prev, company]);
-    }
-  };
+  // const handleSelectionChange = (company: any) => {
+  //   if (company.id === "all") {
+  //     handleSelectAll();
+  //   } else if (selectedCompanies.some((item: any) => item.id === company.id)) {
+  //     setSelectAllCompanies(false);
+  //     // If the company is already selected, remove it from the selected list
+  //     setSelectedCompanies((prev: any) =>
+  //       prev.filter((item: any) => item.id !== company.id)
+  //     );
+  //   } else {
+  //     setSelectAllCompanies(false);
+  //     // Add the company to the selected list
+  //     setSelectedCompanies((prev: any) => [...prev, company]);
+  //   }
+  // };
 
   // Function to remove a company from the selected list
+  // const handleRemoveSelectedCompany = (company: any) => {
+  //   setSelectedCompanies((prev: any) =>
+  //     prev.filter((item: any) => item.id !== company.id)
+  //   );
+  // };
+
+  const handleCompanyChange = (selectedOptions: any) => {
+    setSelectedCompaniesState(selectedOptions);
+    const selectedValues = selectedOptions
+      ? selectedOptions.map((option: any) => option.value)
+      : [];
+    setSelectedCompanies(selectedValues);
+  };
+
+ 
+
   const handleRemoveSelectedCompany = (company: any) => {
     setSelectedCompanies((prev: any) =>
-      prev.filter((item: any) => item.id !== company.id)
+      prev.filter((item: any) => item.id !== company.value.id)
     );
   };
 
@@ -344,39 +378,50 @@ const Notifications: React.FC<Props> = ({
       setFilteredCompanies([
         // TODO: IMPLEMENT ALL FUNCTIONALITY BY LOADING ALL COMPANIES INTO RECIPIENTS
         // { company_name: "All", id: "all" },
-        ...companies,
+        ...companies.sort((a: any, b: any) =>
+          a.company_name.localeCompare(b.company_name)
+        ), 
       ]);
     }
   }, [companies]);
 
   // use Effect to handle search functionality and exclude selected companies from filtered results
+  // useEffect to handle search functionality and exclude selected companies from filtered results
   useEffect(() => {
     if (searchTerm.length > 0 && searchData) {
       setFilteredCompanies(
-        searchData.filter(
-          (company: any) =>
-            !selectedCompanies.some(
-              (selected: any) => selected.id === company.id
-            )
-        )
+        searchData
+          .filter(
+            (company: any) =>
+              !selectedCompanies.some(
+                (selected: any) => selected?.id === company.id
+              )
+          )
+          .sort((a: any, b: any) =>
+            a.company_name.localeCompare(b.company_name)
+          )
       );
     } else if (companies && searchTerm.length < 1) {
-      setFilteredCompanies([
-        // { company_name: "All", id: "all" },
-        // TODO: IMPLEMENT ALL FUNCTIONALITY BY LOADING ALL COMPANIES INTO RECIPIENTS
-        ...companies.filter(
-          (company: any) =>
-            !selectedCompanies.some(
-              (selected: any) => selected.id === company.id
-            )
-        ),
-      ]);
+      setFilteredCompanies(
+        companies
+          .filter(
+            (company: any) =>
+              !selectedCompanies.some(
+                (selected: any) => selected.id === company.id
+              )
+          )
+          .sort((a: any, b: any) =>
+            a.company_name.localeCompare(b.company_name)
+          )
+      );
     }
   }, [searchTerm, companies, searchData, selectedCompanies]);
 
   useEffect(() => {
-    if (filteredCompanies?.length < 1 && searchTerm.length < 1) {
-      setLimit(limit + 5);
+    if (
+      filteredCompanies.length < 1 &&
+      !searchTerm     ) {
+      fetchMoreData();
     }
   }, [filteredCompanies]);
 
@@ -852,15 +897,92 @@ const Notifications: React.FC<Props> = ({
           {type === "super-admin" && activeGroupFilter?.id == 1 && (
             <div className="grid grid-cols-2 gap-10">
               {!isDisplayMode && (
-                <div className="mb-4 hide-input-borders input-holder">
-                  <label className="text-xs mb-1 font-normal text-slate-700">
+                <div className="mb-4 hide-input-borders">
+                  <label className="text-xs font-normal text-slate-700">
                     Company
                   </label>
 
-                  <Popover placement="bottom" state={state}>
+                  <Select
+                    isMulti
+                    options={filteredCompanies.map((company: any) => ({
+                      value: company, // Store the entire company object in the value
+                      label: company.company_name,
+                    }))}
+                    value={selectedCompaniesState}
+                    onChange={handleCompanyChange}
+                    onInputChange={(inputValue: string) =>
+                      setSearchTerm(inputValue)
+                    }
+                    placeholder="Select company"
+                    isLoading={isLoading || searchLoading}
+                    onMenuScrollToBottom={fetchMoreData}
+                    closeMenuOnSelect={false}
+                    styles={{
+                      control: (styles) => ({
+                        ...styles,
+                        backgroundColor: "#f8fafc",
+                        border: "1px solid #E2E8F0",
+                        borderRadius: "8px",
+                        paddingVertical: "8px",
+                        paddingHorizontal: "20px",
+                        fontSize: "0.875rem",
+                        lineHeight: "1.25rem",
+                        boxShadow: "none",
+                        ":hover": {
+                          borderColor: "#E2E8F0",
+                        },
+                      }),
+                      menu: (styles) => ({
+                        ...styles,
+                        backgroundColor: "#fff",
+                        borderRadius: "8px",
+                        marginTop: "4px",
+                        fontSize: "0.875rem",
+                        lineHeight: "1.25rem",
+                        zIndex: 9999,
+                      }),
+                      menuList: (styles) => ({
+                        ...styles,
+                        padding: "0px 4px",
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                      }),
+                      option: (styles) => ({
+                        ...styles,
+                        // backgroundColor: isSelected ? '#007bff' : isFocused ? '#e0f7fa' : '#ffffff', // Hover color change
+                        color: "#334155",
+                        cursor: "pointer",
+                        padding: "10px 15px",
+                        margin: "4px 0",
+                        borderRadius: "8px",
+                        ":active": {
+                          backgroundColor: "#F1F5F9",
+                        },
+                        ":visited": {
+                          backgroundColor: "#fff",
+                        },
+                        ":hover": {
+                          backgroundColor: "#F1F5F9",
+                        },
+                      }),
+                      multiValueRemove: (styles) => ({
+                        ...styles,
+                        ":hover": {
+                          backgroundColor: "transparent",
+                        },
+                      }),
+                    }}
+                    components={{
+                      MultiValueRemove: CustomMultiValueRemove,
+                      MultiValue: CustomMultiValue,
+                      MultiValueContainer: CustomMultiValueContainer,
+                    }}
+                  />
+
+                  {/* <Popover placement="bottom" state={state}>
                     <PopoverTrigger>
                       <div
-                        className="border w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
+                        className="border text-sm w-full flex gap-2 flex-wrap py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC]  rounded-lg my-1 shadow-sm"
                         onClick={() => state.open()}
                       >
                         <div className="flex flex-wrap flex-1 gap-2">
@@ -938,7 +1060,7 @@ const Notifications: React.FC<Props> = ({
                         </button>
                       )}
                     </PopoverContent>
-                  </Popover>
+                  </Popover> */}
                 </div>
               )}
               {!isDisplayMode && (
@@ -1043,8 +1165,8 @@ const Notifications: React.FC<Props> = ({
                 <label className="text-xs mb-1 font-normal text-slate-700">
                   Recurring type
                 </label>
-                {((isDisplayMode) &&
-                  (notification?.recurringType !== "NON_RECURRING")) && (
+                {isDisplayMode &&
+                  notification?.recurringType !== "NON_RECURRING" && (
                     <button
                       className={`w-auto outline-none border-b border-[#056ee9] border-dashed text-xs text-[#056ee9] disabled:border-[#4b5675] disabled:text-[#4b5675]`}
                       onClick={() => {
@@ -1158,5 +1280,27 @@ const Notifications: React.FC<Props> = ({
     </div>
   );
 };
+
+const CustomMultiValue = (props: any) => (
+  <div className="border border-[#E2E8F0] bg-white m-1 px-2 py-1 flex gap-2 items-center rounded-lg">
+    <components.MultiValue {...props}>
+      <div className="bg-white text-sm">{props.children}</div>
+    </components.MultiValue>
+  </div>
+);
+
+const CustomMultiValueContainer = (props: any) => (
+  <components.MultiValueContainer {...props}>
+    <span className="bg-white  flex gap-1 items-center">{props.children}</span>
+  </components.MultiValueContainer>
+);
+
+const CustomMultiValueRemove = (props: any) => (
+  <components.MultiValueRemove {...props}>
+    <span className="bg-white hover:bg-transparent">
+      <IoIosCloseCircleOutline color="#DC2626" size={20} />
+    </span>
+  </components.MultiValueRemove>
+);
 
 export default Notifications;

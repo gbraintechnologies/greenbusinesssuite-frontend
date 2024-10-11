@@ -38,7 +38,7 @@ export const  FormatDateWithSuffix = (date: any) =>  {
   };
 
   const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
-  return `${dayWithSuffix} ${monthAndYear} at ${time}`;
+  return `${dayWithSuffix} ${monthAndYear}, ${time}`;
 }
 
 export default FormatDate;
