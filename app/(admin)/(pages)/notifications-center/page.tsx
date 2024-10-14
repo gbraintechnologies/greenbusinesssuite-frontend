@@ -146,7 +146,7 @@ function page() {
         );
       }
     }
-  }, [recurringType, recurringMessagesByType, activeFilter]);
+  }, [recurringType, recurringMessagesByType]);
 
 
   //reset filter when tab changes

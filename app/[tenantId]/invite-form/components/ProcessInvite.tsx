@@ -63,7 +63,7 @@ function ProcessInvite({ tenantId }: any) {
   // }
 
   // PROMPT TO LOGIN / CREATE ACCOUNT TO FILL FORM IF NOT AUTHENTICATED
-  if (!Boolean(auth?.access_token) && !Boolean(user?.id)) {
+  if (!Boolean(auth?.access_token) || !Boolean(user?.id)) {
     return (
       <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
         <div className="flex -mt-[20vh] items-center text-center justify-center flex-col gap-2">
@@ -119,7 +119,6 @@ function ProcessInvite({ tenantId }: any) {
   useEffect(() => {
     //
     if (data && user) {
-      // console.log("data", data);
       // CHECK PUBLISH STATUS: PUBLISH | UNPUBLISHED
 
       if (data?.publishStatus !== "PUBLISHED") {
@@ -177,15 +176,24 @@ function ProcessInvite({ tenantId }: any) {
       let inputData = {
         formSections: formSections,
       };
-
       // ASSIGN TO USER UPON LOGIN THEN CLEAR SESSION STORAGE
       services
         .acceptInvite(formId, user?.id, Number(companyId), inputData)
-        .then((res) => {
+        .then(async (res) => {
           setLoading(false);
           setMessage(
             "Successfully accepted invitation. Please proceed to your dashboard to fill the form"
           );
+
+          // send email notification to company admin
+          await services
+            .sendFormEmailNotification(
+              user?.id,
+              Number(companyId),
+              Number(formId)
+            )
+            .then((res: any) => console.log("email sent ", res))
+            .catch((error: any) => console.log("Error ", error));
         })
         .catch((e: any) => {
           setLoading(false);
@@ -195,7 +203,7 @@ function ProcessInvite({ tenantId }: any) {
           console.log("error accepting form", e);
         });
     }
-  }, [data]);
+  }, [data, user]);
 
   if (loading) {
     return (

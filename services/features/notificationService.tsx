@@ -66,6 +66,20 @@ export const updateRecurringMessageType = async (
     .then((res) => res.data);
 };
 
+export const sendFormEmailNotification = async (
+  userId: string | number,
+  companyId: string | number,
+  formId: string | number
+) => {
+  return await authApi
+    .post(`/notifications/form-submit-email`, {
+      userId: userId,
+      companyId: companyId,
+      formId: formId,
+    })
+    .then((res) => res.data);
+};
+
 // const axios = require("axios");
 // const FormData = require("form-data");
 // const fs = require("fs");
