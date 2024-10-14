@@ -12,6 +12,7 @@ import Image from "next/image";
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
+import services from "@/services";
 
 function FormSubmission({
   showOnlySubmitButton = false,
@@ -92,7 +93,15 @@ function FormSubmission({
           toast.dismiss();
           setSavingResponses(false);
 
-          // TODO:  invalidate form queries to reload cached data
+          services
+            .notifyCompanyAdminOfFormCompletion(user?.id, clientForm?.id)
+            .then((res) => {
+              // admin notified
+            })
+            .catch((e) => {
+              console.log("error", e);
+            });
+
           toast.dismiss();
           setShowConfirmationModal(false);
           setShowSuccessModal(true);

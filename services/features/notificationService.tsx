@@ -10,6 +10,13 @@ export const notifyClientForDocumentIssued = (data: any) => {
   return authApi.post(`/notifications/send-document-issuance`, data);
 };
 
+export const notifyCompanyAdminOfFormCompletion = (
+  userId: string,
+  formId: number
+) => {
+  return authApi.post(`/notifications/form-response-email/${userId}/${formId}`);
+};
+
 export const sendEmailWithFile = (data: any, file: any) => {
   const formData = new FormData();
 
@@ -24,7 +31,6 @@ export const sendSMS = (data: any) => {
 };
 
 // retrieve messages
-
 export const allPastNotifications = (page: number = 0, size: number = 10) => {
   return () =>
     authApi
