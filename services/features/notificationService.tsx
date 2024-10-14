@@ -14,7 +14,9 @@ export const notifyCompanyAdminOfFormCompletion = (
   userId: string,
   formId: number
 ) => {
-  return authApi.post(`/notifications/form-response-email/${userId}/${formId}`);
+  return authApi.post(
+    `/notifications/form-response-email/${userId}/${formId}/true`
+  );
 };
 
 export const sendEmailWithFile = (data: any, file: any) => {

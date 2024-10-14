@@ -830,8 +830,8 @@ const Notifications: React.FC<Props> = ({
               )}
             </div>
           )}
-          {/* TODO: ADD SUPPORT FOR EMAIL FILES */}
-          {!(activeFilter?.id == 0) && !isDisplayMode && (
+          {/* TODO: ADD SUPPORT FOR EMAIL FILES When enabled by backend */}
+          {/* {!(activeFilter?.id == 0) && !isDisplayMode && (
             <div>
               <label className="text-xs mb-1 font-normal text-slate-700">
                 Add File Attachment
@@ -875,7 +875,7 @@ const Notifications: React.FC<Props> = ({
                 )}
               </div>
             </div>
-          )}
+          )} */}
 
           {/* RECIPIENTS & COMPANY SELECTION */}
           {type === "super-admin" && !isDisplayMode && (
