@@ -2,8 +2,6 @@
 
 import { IFilter } from "@/types";
 
-//
-
 import React, { useEffect, useRef, useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
@@ -270,8 +268,6 @@ const Notifications: React.FC<Props> = ({
     setSelectedCompanies(selectedValues);
   };
 
- 
-
   const handleRemoveSelectedCompany = (company: any) => {
     setSelectedCompanies((prev: any) =>
       prev.filter((item: any) => item.id !== company.value.id)
@@ -380,7 +376,7 @@ const Notifications: React.FC<Props> = ({
         // { company_name: "All", id: "all" },
         ...companies.sort((a: any, b: any) =>
           a.company_name.localeCompare(b.company_name)
-        ), 
+        ),
       ]);
     }
   }, [companies]);
@@ -418,9 +414,7 @@ const Notifications: React.FC<Props> = ({
   }, [searchTerm, companies, searchData, selectedCompanies]);
 
   useEffect(() => {
-    if (
-      filteredCompanies.length < 1 &&
-      !searchTerm     ) {
+    if (filteredCompanies.length < 1 && !searchTerm) {
       fetchMoreData();
     }
   }, [filteredCompanies]);

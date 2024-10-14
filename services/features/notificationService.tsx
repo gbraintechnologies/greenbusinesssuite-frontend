@@ -6,6 +6,10 @@ export const sendEmail = (data: any) => {
   return authApi.post(`/notifications/email/push`, data);
 };
 
+export const notifyClientForDocumentIssued = (data: any) => {
+  return authApi.post(`/notifications/send-document-issuance`, data);
+};
+
 export const sendEmailWithFile = (data: any, file: any) => {
   const formData = new FormData();
 
@@ -65,36 +69,3 @@ export const updateRecurringMessageType = async (
     .put(`/notifications/notify-change/${id}/${recurringType}`)
     .then((res) => res.data);
 };
-
-// const axios = require("axios");
-// const FormData = require("form-data");
-// const fs = require("fs");
-// let data = new FormData();
-// data.append(
-//   "email",
-//   '{\n  "sender": "sample",\n  "recipients": [\n    "attament@gmail.com"\n  ],\n  "subject": "dave",\n  "body": "string",\n  "isHtml": true,\n  "recurringType": "NON_RECURRING",\n  "triggerTime": "2024-10-04T12:42:55.233Z",\n  "startDate": "2024-10-04T12:42:55.234Z",\n  "endDate": "2024-10-04T12:42:55.234Z"\n}',
-//   { contentType: "application/json" }
-// );
-// data.append(
-//   "attachment",
-//   fs.createReadStream(
-//     "/C:/Users/USER/Desktop/DevWkSpace/WebDev/html mini project/img/gobe-classic.jpeg"
-//   )
-// );
-// let config = {
-//   method: "post",
-//   maxBodyLength: Infinity,
-//   url: "http://localhost:9009/mesh-suite/v1.0/notifications/attach-email/push",
-//   headers: {
-//     ...data.getHeaders(),
-//   },
-//   data: data,
-// };
-// axios
-//   .request(config)
-//   .then((response) => {
-//     console.log(JSON.stringify(response.data));
-//   })
-//   .catch((error) => {
-//     console.log(error);
-//   });
