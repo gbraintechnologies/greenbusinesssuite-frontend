@@ -116,9 +116,29 @@ function ProcessInvite({ tenantId }: any) {
   //form deadline
   const [formDeadline, setFormDeadline] = useState();
 
+  // useEffect(() => {
+  //   if (user) {
+  //     const getNoti = async () => {
+  //       try {
+  //         await services.sendFormEmailNotification(
+  //           user?.id,
+  //           Number(companyId),
+  //           Number(formId)
+  //         );
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     };
+
+  //     getNoti();
+
+  //   }
+  // }, [user]);
+
   useEffect(() => {
     //
     if (data && user) {
+      console.log("user ", user);
       // CHECK PUBLISH STATUS: PUBLISH | UNPUBLISHED
 
       if (data?.publishStatus !== "PUBLISHED") {

@@ -168,6 +168,8 @@ const Page = () => {
     setUserStatus(user?.user_status);
   }, [user]);
 
+
+
   return areStatsLoading ? (
     <div className="flex justify-center items-center h-screen w-screen">
       <LoadingIcon />
