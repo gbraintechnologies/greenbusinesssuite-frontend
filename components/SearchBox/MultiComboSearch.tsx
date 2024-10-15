@@ -15,18 +15,20 @@ export default function MultiComboSearch({
   placeholder = "Search and select users...",
   search,
   setSearch,
+  sendToAllUsers = "false",
   selected,
   setSelected,
 }: any) {
   //
   return (
     <Combobox
+      disabled={sendToAllUsers}
       value={selected}
       // onChange={setSelected}
       nullable
     >
       <div className="relative w-full">
-        <div className="flex px-2 cursor-pointer rounded-lg text-sm items-center bg-white link2 text-neutral-700 border min-h-10  h-full">
+        <div className="flex px-2 disabled:cursor-not-allowed cursor-pointer rounded-lg text-sm items-center bg-white link2 text-neutral-700 border min-h-10  h-full">
           <FiSearch size={18} className="mr-3" />
 
           <Combobox.Input

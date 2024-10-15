@@ -8,6 +8,12 @@ export const allUsers = (offset: number = 0, limit: number = 20) => {
       .then((res) => res.data);
 };
 
+export const allUsersRaw = (offset: number = 0, limit: number = 20) => {
+  return authApi
+    .get(`/users/all_users?offset=${offset}&limit=${limit}`)
+    .then((res) => res.data);
+};
+
 export const userByID = (id: any) => {
   return () => authApi.get(`/users/user_by_id/${id}`).then((res) => res.data);
 };

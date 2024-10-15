@@ -11,6 +11,7 @@ import Tabs from "../../../../../components/Tabs/Tabs";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import Select, { components } from "react-select";
+import { Checkbox } from "@nextui-org/checkbox";
 
 // DATE TIME HELPERS
 
@@ -51,6 +52,10 @@ import MultiComboSearch from "@/components/SearchBox/MultiComboSearch";
 import useCompany from "@/hooks/useCompany";
 import { IoCheckmark } from "react-icons/io5";
 
+// refactor to incrementally fetch users
+// endpoint docs? Not clear
+const MAX_NUMBER_OF_USERS = 1000000;
+
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: any;
@@ -72,6 +77,8 @@ const Notifications: React.FC<Props> = ({
   const { companyAdmin } = useCompany();
 
   const [limit, setLimit] = useState(4);
+
+  const [sendToAllUsers, setSendToAllUsers] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -562,7 +569,11 @@ const Notifications: React.FC<Props> = ({
         return;
       }
 
-      if (activeGroupFilter.id == 0 && selectedUsers.length < 1) {
+      if (
+        activeGroupFilter.id == 0 &&
+        selectedUsers.length < 1 &&
+        !sendToAllUsers
+      ) {
         toast.error("Select recipients");
         return;
       }
@@ -601,6 +612,18 @@ const Notifications: React.FC<Props> = ({
       if (activeGroupFilter?.id == 0 && selectedUsers?.length > 0) {
         for (let i = 0; i < selectedUsers?.length; i++) {
           let phone = selectedUsers[i]?.phone_number;
+          if (phone?.length > 5) {
+            recipients.push(phone);
+          }
+        }
+      }
+
+      // sending to all users
+      if (activeGroupFilter?.id == 0 && sendToAllUsers) {
+        // fetch all users and populate data
+        let allUsers: any = await services.allUsersRaw(0, MAX_NUMBER_OF_USERS);
+        for (let i = 0; i < allUsers?.length; i++) {
+          let phone = allUsers[i]?.phone_number;
           if (phone?.length > 5) {
             recipients.push(phone);
           }
@@ -684,6 +707,13 @@ const Notifications: React.FC<Props> = ({
       if (activeGroupFilter?.id == 0 && selectedUsers?.length > 0) {
         for (let i = 0; i < selectedUsers?.length; i++) {
           recipients.push(selectedUsers[i]?.email);
+        }
+      }
+
+      if (activeGroupFilter?.id == 0 && sendToAllUsers) {
+        let allUsers: any = await services.allUsersRaw(0, MAX_NUMBER_OF_USERS);
+        for (let i = 0; i < allUsers?.length; i++) {
+          recipients.push(allUsers[i]?.email);
         }
       }
 
@@ -1124,12 +1154,21 @@ const Notifications: React.FC<Props> = ({
             !isDisplayMode && (
               <>
                 <MultiComboSearch
+                  sendToAllUsers={sendToAllUsers}
                   data={users}
                   search={userSearchTerm}
                   setSearch={setUserSearchTerm}
                   selected={selectedUsers}
                   setSelected={setSelectedUsers}
                 />
+                <div className="flex items-center mt-4 text-sm text-gray-500">
+                  <Checkbox
+                    radius="lg"
+                    onValueChange={setSendToAllUsers}
+                    isSelected={sendToAllUsers}
+                  />{" "}
+                  <span>Send to all users</span>
+                </div>
               </>
             )}
         </div>
