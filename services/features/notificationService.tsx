@@ -1,4 +1,6 @@
+import defaultMeshApi from "../defaultMeshClient";
 import authApi from "../meshAuthClient";
+import noAuthApi from "../meshNoAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
 
 // send notifications
@@ -75,5 +77,19 @@ export const updateRecurringMessageType = async (
 ) => {
   return await authApi
     .put(`/notifications/notify-change/${id}/${recurringType}`)
+    .then((res) => res.data);
+};
+
+export const sendFormEmailNotification = async (
+  userId: string | number,
+  companyId: string | number,
+  formId: string | number
+) => {
+  return await authApi
+    .post(`/notifications/form-submit-email`, {
+      userId: userId,
+      companyId: companyId,
+      formId: formId,
+    })
     .then((res) => res.data);
 };

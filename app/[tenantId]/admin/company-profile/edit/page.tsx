@@ -263,11 +263,7 @@ const Page = () => {
       industry: selectedIndustry?.value as string,
       company_address: selectedCountry?.value as string,
       primary_currency: companyData?.primary_currency,
-      company_code:
-        values.companyName?.slice(0, 3).toLowerCase() +
-        Math.floor(Math.random() * 1000)
-          .toString()
-          .padStart(3, "0"),
+      company_code: String(Math.floor(Math.random() * 10000)).padStart(4, '0'),
     };
 
     const custom_fields: CustomField[] = [

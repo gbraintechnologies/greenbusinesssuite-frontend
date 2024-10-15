@@ -135,16 +135,13 @@ function FormCard({ form, type = "uncompleted" }: Props) {
             );
 
             if (resData) {
-              // console.log("response id ", resData[0]?.id);
-              // console.log("form ", form);
-              // console.log("res data input data", resData[0]?.inputData);
+
               const mergedForm = mergeForm(
                 resData[0]?.id,
                 form,
                 resData[0]?.inputData
               );
 
-              console.log('merged form', mergedForm);
 
               renderToHiddenElement(mergedForm, user, resData[0]?.id);
             } else {
