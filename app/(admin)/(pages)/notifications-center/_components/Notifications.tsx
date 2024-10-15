@@ -2,8 +2,6 @@
 
 import { IFilter } from "@/types";
 
-//
-
 import React, { useEffect, useRef, useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
@@ -13,6 +11,7 @@ import Tabs from "../../../../../components/Tabs/Tabs";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import Select, { components } from "react-select";
+import { Checkbox } from "@nextui-org/checkbox";
 
 // DATE TIME HELPERS
 
@@ -53,6 +52,10 @@ import MultiComboSearch from "@/components/SearchBox/MultiComboSearch";
 import useCompany from "@/hooks/useCompany";
 import { IoCheckmark } from "react-icons/io5";
 
+// refactor to incrementally fetch users
+// endpoint docs? Not clear
+const MAX_NUMBER_OF_USERS = 1000000;
+
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: any;
@@ -74,6 +77,8 @@ const Notifications: React.FC<Props> = ({
   const { companyAdmin } = useCompany();
 
   const [limit, setLimit] = useState(4);
+
+  const [sendToAllUsers, setSendToAllUsers] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -270,8 +275,6 @@ const Notifications: React.FC<Props> = ({
     setSelectedCompanies(selectedValues);
   };
 
- 
-
   const handleRemoveSelectedCompany = (company: any) => {
     setSelectedCompanies((prev: any) =>
       prev.filter((item: any) => item.id !== company.value.id)
@@ -380,7 +383,7 @@ const Notifications: React.FC<Props> = ({
         // { company_name: "All", id: "all" },
         ...companies.sort((a: any, b: any) =>
           a.company_name.localeCompare(b.company_name)
-        ), 
+        ),
       ]);
     }
   }, [companies]);
@@ -418,9 +421,7 @@ const Notifications: React.FC<Props> = ({
   }, [searchTerm, companies, searchData, selectedCompanies]);
 
   useEffect(() => {
-    if (
-      filteredCompanies.length < 1 &&
-      !searchTerm     ) {
+    if (filteredCompanies.length < 1 && !searchTerm) {
       fetchMoreData();
     }
   }, [filteredCompanies]);
@@ -568,7 +569,11 @@ const Notifications: React.FC<Props> = ({
         return;
       }
 
-      if (activeGroupFilter.id == 0 && selectedUsers.length < 1) {
+      if (
+        activeGroupFilter.id == 0 &&
+        selectedUsers.length < 1 &&
+        !sendToAllUsers
+      ) {
         toast.error("Select recipients");
         return;
       }
@@ -607,6 +612,18 @@ const Notifications: React.FC<Props> = ({
       if (activeGroupFilter?.id == 0 && selectedUsers?.length > 0) {
         for (let i = 0; i < selectedUsers?.length; i++) {
           let phone = selectedUsers[i]?.phone_number;
+          if (phone?.length > 5) {
+            recipients.push(phone);
+          }
+        }
+      }
+
+      // sending to all users
+      if (activeGroupFilter?.id == 0 && sendToAllUsers) {
+        // fetch all users and populate data
+        let allUsers: any = await services.allUsersRaw(0, MAX_NUMBER_OF_USERS);
+        for (let i = 0; i < allUsers?.length; i++) {
+          let phone = allUsers[i]?.phone_number;
           if (phone?.length > 5) {
             recipients.push(phone);
           }
@@ -690,6 +707,13 @@ const Notifications: React.FC<Props> = ({
       if (activeGroupFilter?.id == 0 && selectedUsers?.length > 0) {
         for (let i = 0; i < selectedUsers?.length; i++) {
           recipients.push(selectedUsers[i]?.email);
+        }
+      }
+
+      if (activeGroupFilter?.id == 0 && sendToAllUsers) {
+        let allUsers: any = await services.allUsersRaw(0, MAX_NUMBER_OF_USERS);
+        for (let i = 0; i < allUsers?.length; i++) {
+          recipients.push(allUsers[i]?.email);
         }
       }
 
@@ -836,8 +860,8 @@ const Notifications: React.FC<Props> = ({
               )}
             </div>
           )}
-          {/* TODO: ADD SUPPORT FOR EMAIL FILES */}
-          {!(activeFilter?.id == 0) && !isDisplayMode && (
+          {/* TODO: ADD SUPPORT FOR EMAIL FILES When enabled by backend */}
+          {/* {!(activeFilter?.id == 0) && !isDisplayMode && (
             <div>
               <label className="text-xs mb-1 font-normal text-slate-700">
                 Add File Attachment
@@ -881,7 +905,7 @@ const Notifications: React.FC<Props> = ({
                 )}
               </div>
             </div>
-          )}
+          )} */}
 
           {/* RECIPIENTS & COMPANY SELECTION */}
           {type === "super-admin" && !isDisplayMode && (
@@ -1130,12 +1154,21 @@ const Notifications: React.FC<Props> = ({
             !isDisplayMode && (
               <>
                 <MultiComboSearch
+                  sendToAllUsers={sendToAllUsers}
                   data={users}
                   search={userSearchTerm}
                   setSearch={setUserSearchTerm}
                   selected={selectedUsers}
                   setSelected={setSelectedUsers}
                 />
+                <div className="flex items-center mt-4 text-sm text-gray-500">
+                  <Checkbox
+                    radius="lg"
+                    onValueChange={setSendToAllUsers}
+                    isSelected={sendToAllUsers}
+                  />{" "}
+                  <span>Send to all users</span>
+                </div>
               </>
             )}
         </div>

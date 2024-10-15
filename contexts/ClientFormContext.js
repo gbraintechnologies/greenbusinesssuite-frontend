@@ -48,8 +48,6 @@ export const ClientFormProvider = ({ children }) => {
 
     let formSections = [];
 
-    console.log("data form sections", data?.formSections);
-
     for (let i = 0; i < data?.formSections?.length; i++) {
       let section = data?.formSections[i];
 
@@ -196,6 +194,7 @@ export const ClientFormProvider = ({ children }) => {
       updatedOn: new Date(),
       createdOn: new Date(),
     };
+    // Enum: PENDING, PROCESSING, COMPLETED;
 
     return services.saveResponse(response);
   };

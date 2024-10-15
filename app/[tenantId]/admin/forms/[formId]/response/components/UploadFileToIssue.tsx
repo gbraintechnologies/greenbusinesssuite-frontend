@@ -55,7 +55,7 @@ function UploadFileToIssue({ formId, userId, onClose, refetch }: any) {
       let companyId = company.id;
 
       try {
-        await services.issueFileToUserWithFormId(
+        let res: any = await services.issueFileToUserWithFormId(
           userId,
           companyId,
           formId,
@@ -63,6 +63,18 @@ function UploadFileToIssue({ formId, userId, onClose, refetch }: any) {
           fileName
         );
         toast.success(`Issued ${fileName} successfully!`);
+
+        try {
+          await services.notifyClientForDocumentIssued({
+            companyId,
+            userId,
+            docLink: res?.data,
+          });
+
+          toast.success("Client notified successfully.");
+        } catch (e) {
+          toast.error("Error notifying client");
+        }
       } catch (e) {
         toast.error(`Error issuing ${fileName}`);
       }
