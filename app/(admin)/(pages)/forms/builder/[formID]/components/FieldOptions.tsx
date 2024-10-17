@@ -59,8 +59,6 @@ function FieldOptions({ refetch }: any) {
     setLocalField(activeField?.field);
   }, [activeField]);
 
-  console.log("active field", activeField);
-
   const inputStyle =
     "border border-gray-200 focus:outline-none rounded-lg p-2 ";
 
