@@ -52,7 +52,7 @@ import MultiComboSearch from "@/components/SearchBox/MultiComboSearch";
 import useCompany from "@/hooks/useCompany";
 import { IoCheckmark } from "react-icons/io5";
 
-// refactor to incrementally fetch users
+// TODO: refactor to incrementally fetch users
 // endpoint docs? Not clear
 const MAX_NUMBER_OF_USERS = 1000000;
 

@@ -59,6 +59,8 @@ function FieldOptions({ refetch }: any) {
     setLocalField(activeField?.field);
   }, [activeField]);
 
+  console.log("active field", activeField);
+
   const inputStyle =
     "border border-gray-200 focus:outline-none rounded-lg p-2 ";
 
@@ -222,10 +224,10 @@ function FieldOptions({ refetch }: any) {
                     <DropdownItem
                       key={type.id}
                       onClick={() => {
-                        // setLocalField((prev: any) => ({
-                        //   ...prev,
-                        //   instruction: type?.value,
-                        // }));
+                        setLocalField((prev: any) => ({
+                          ...prev,
+                          instruction: type?.value,
+                        }));
                         updateActiveField(activeField.section, {
                           ...localField,
                           instruction: type?.value,
