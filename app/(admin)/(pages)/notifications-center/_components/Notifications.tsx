@@ -154,9 +154,9 @@ const Notifications: React.FC<Props> = ({
     },
   ];
   const [activeGroupFilter, setActiveGroupFilter] = useState<IFilter>({
-    id: 1,
-    name: "Companies",
-    value: "companies",
+    id: 0,
+    name: "Users",
+    value: "Users",
   });
 
   // state to handle subject and message states
@@ -670,7 +670,11 @@ const Notifications: React.FC<Props> = ({
         return;
       }
 
-      if (activeGroupFilter?.id === 1 && selectedCompanies?.length < 1) {
+      if (
+        type === "super-admin" &&
+        activeGroupFilter?.id === 1 &&
+        selectedCompanies?.length < 1
+      ) {
         toast.dismiss();
         toast.error("Select recipient companies");
         return;
@@ -679,6 +683,7 @@ const Notifications: React.FC<Props> = ({
       let recipients = [];
 
       if (
+        type === "super-admin" &&
         activeGroupFilter?.id == 1 &&
         selectedRecipient.value == "companyAdmin"
       ) {
@@ -694,6 +699,7 @@ const Notifications: React.FC<Props> = ({
       }
 
       if (
+        type === "super-admin" &&
         activeGroupFilter?.id == 1 &&
         selectedRecipient.value == "contactPerson"
       ) {
@@ -712,6 +718,7 @@ const Notifications: React.FC<Props> = ({
 
       if (activeGroupFilter?.id == 0 && sendToAllUsers) {
         let allUsers: any = await services.allUsersRaw(0, MAX_NUMBER_OF_USERS);
+        console.log("all users", allUsers);
         for (let i = 0; i < allUsers?.length; i++) {
           recipients.push(allUsers[i]?.email);
         }
@@ -728,8 +735,6 @@ const Notifications: React.FC<Props> = ({
         recipients: recipients,
         isHtml: true,
       };
-
-      // console.log("EMAIL SENDING", data);
 
       let loadingToast = toast.loading("Sending email...");
 
