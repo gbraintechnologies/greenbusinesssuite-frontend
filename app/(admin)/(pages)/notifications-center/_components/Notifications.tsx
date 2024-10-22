@@ -724,10 +724,10 @@ const Notifications: React.FC<Props> = ({
         }
       }
 
-      if (recipients?.length == 0) {
-        toast.error("Select recipients of notification");
-        return;
-      }
+      // if (recipients?.length == 0) {
+      //   toast.error("Select recipients of notification");
+      //   return;
+      // }
 
       // STANDARD DATA FOR NOTIFICATION
       data = {
@@ -739,7 +739,11 @@ const Notifications: React.FC<Props> = ({
       let loadingToast = toast.loading("Sending email...");
 
       if (!!files?.length) {
-        console.log("SENDING EMAIL with file: ", data, files[0]);
+        console.log(
+          "SENDING EMAIL with file: ",
+          { ...data, isHtml: false },
+          files[0]
+        );
         services
           .sendEmailWithFile(data, files[0])
           .then((res) => {
@@ -866,7 +870,7 @@ const Notifications: React.FC<Props> = ({
             </div>
           )}
           {/* TODO: ADD SUPPORT FOR EMAIL FILES When enabled by backend */}
-          {/* {!(activeFilter?.id == 0) && !isDisplayMode && (
+          {!(activeFilter?.id == 0) && !isDisplayMode && (
             <div>
               <label className="text-xs mb-1 font-normal text-slate-700">
                 Add File Attachment
@@ -910,7 +914,7 @@ const Notifications: React.FC<Props> = ({
                 )}
               </div>
             </div>
-          )} */}
+          )}
 
           {/* RECIPIENTS & COMPANY SELECTION */}
           {type === "super-admin" && !isDisplayMode && (
