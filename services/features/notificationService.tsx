@@ -2,6 +2,7 @@ import defaultMeshApi from "../defaultMeshClient";
 import authApi from "../meshAuthClient";
 import noAuthApi from "../meshNoAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
+import authNoTenantApi from "../meshAuthNoTenantClient"
 
 // send notifications
 export const sendEmail = (data: any) => {
@@ -85,7 +86,7 @@ export const sendFormEmailNotification = async (
   companyId: string | number,
   formId: string | number
 ) => {
-  return await authApi
+  return await authNoTenantApi
     .post(`/notifications/form-submit-email`, {
       userId: userId,
       companyId: companyId,
