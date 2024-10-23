@@ -52,7 +52,7 @@ import MultiComboSearch from "@/components/SearchBox/MultiComboSearch";
 import useCompany from "@/hooks/useCompany";
 import { IoCheckmark } from "react-icons/io5";
 
-// refactor to incrementally fetch users
+// TODO: refactor to incrementally fetch users
 // endpoint docs? Not clear
 const MAX_NUMBER_OF_USERS = 1000000;
 
@@ -154,9 +154,9 @@ const Notifications: React.FC<Props> = ({
     },
   ];
   const [activeGroupFilter, setActiveGroupFilter] = useState<IFilter>({
-    id: 1,
-    name: "Companies",
-    value: "companies",
+    id: 0,
+    name: "Users",
+    value: "Users",
   });
 
   // state to handle subject and message states
@@ -670,7 +670,11 @@ const Notifications: React.FC<Props> = ({
         return;
       }
 
-      if (activeGroupFilter?.id === 1 && selectedCompanies?.length < 1) {
+      if (
+        type === "super-admin" &&
+        activeGroupFilter?.id === 1 &&
+        selectedCompanies?.length < 1
+      ) {
         toast.dismiss();
         toast.error("Select recipient companies");
         return;
@@ -679,6 +683,7 @@ const Notifications: React.FC<Props> = ({
       let recipients = [];
 
       if (
+        type === "super-admin" &&
         activeGroupFilter?.id == 1 &&
         selectedRecipient.value == "companyAdmin"
       ) {
@@ -694,6 +699,7 @@ const Notifications: React.FC<Props> = ({
       }
 
       if (
+        type === "super-admin" &&
         activeGroupFilter?.id == 1 &&
         selectedRecipient.value == "contactPerson"
       ) {
@@ -712,15 +718,16 @@ const Notifications: React.FC<Props> = ({
 
       if (activeGroupFilter?.id == 0 && sendToAllUsers) {
         let allUsers: any = await services.allUsersRaw(0, MAX_NUMBER_OF_USERS);
+        console.log("all users", allUsers);
         for (let i = 0; i < allUsers?.length; i++) {
           recipients.push(allUsers[i]?.email);
         }
       }
 
-      if (recipients?.length == 0) {
-        toast.error("Select recipients of notification");
-        return;
-      }
+      // if (recipients?.length == 0) {
+      //   toast.error("Select recipients of notification");
+      //   return;
+      // }
 
       // STANDARD DATA FOR NOTIFICATION
       data = {
@@ -729,12 +736,14 @@ const Notifications: React.FC<Props> = ({
         isHtml: true,
       };
 
-      // console.log("EMAIL SENDING", data);
-
       let loadingToast = toast.loading("Sending email...");
 
       if (!!files?.length) {
-        console.log("SENDING EMAIL with file: ", data, files[0]);
+        console.log(
+          "SENDING EMAIL with file: ",
+          { ...data, isHtml: false },
+          files[0]
+        );
         services
           .sendEmailWithFile(data, files[0])
           .then((res) => {
@@ -861,7 +870,7 @@ const Notifications: React.FC<Props> = ({
             </div>
           )}
           {/* TODO: ADD SUPPORT FOR EMAIL FILES When enabled by backend */}
-          {/* {!(activeFilter?.id == 0) && !isDisplayMode && (
+          {!(activeFilter?.id == 0) && !isDisplayMode && (
             <div>
               <label className="text-xs mb-1 font-normal text-slate-700">
                 Add File Attachment
@@ -905,7 +914,7 @@ const Notifications: React.FC<Props> = ({
                 )}
               </div>
             </div>
-          )} */}
+          )}
 
           {/* RECIPIENTS & COMPANY SELECTION */}
           {type === "super-admin" && !isDisplayMode && (

@@ -222,10 +222,10 @@ function FieldOptions({ refetch }: any) {
                     <DropdownItem
                       key={type.id}
                       onClick={() => {
-                        // setLocalField((prev: any) => ({
-                        //   ...prev,
-                        //   instruction: type?.value,
-                        // }));
+                        setLocalField((prev: any) => ({
+                          ...prev,
+                          instruction: type?.value,
+                        }));
                         updateActiveField(activeField.section, {
                           ...localField,
                           instruction: type?.value,
