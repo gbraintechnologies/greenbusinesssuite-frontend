@@ -14,6 +14,12 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "mesh-suite-pics-prod-bucket.s3.us-west-1.amazonaws.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };
