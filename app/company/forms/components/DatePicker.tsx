@@ -15,7 +15,10 @@ const DatePicker = () => {
           <DatePickerIcon />
         </div>
         <div className="text-sm">All Time</div>
-        <BsChevronDown color="#94A3B8" />
+        <label htmlFor="date-picker" className="sr-only">
+        </label>
+        <input type="date" name="date-picker" id="date-picker" className="hidden" />
+        <BsChevronDown color="#94A3B8"  />
       </button>
     </div>
   );

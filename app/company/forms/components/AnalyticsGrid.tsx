@@ -40,7 +40,7 @@ const AnalyticsGrid = () => {
       {data.map((item, index) => (
         <div
           className={
-            "flex w-[50%] min-h-56 px-5 border-[#E2E8F0]" +
+            "flex w-[50%] min-h-72 px-5 border-[#E2E8F0]" +
             (index % 2 === 0 ? " border-r border-b " : " border-b") +
             ((index === 0 || index === 1) ? " mt-4": " pt-4 ") +   
             ((index === data.length - 1 || index === data.length -2 ) ? " border-b-0" : "")
