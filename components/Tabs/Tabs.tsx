@@ -4,13 +4,13 @@ import { IFilter } from "@/types";
 
 type Props = {
   activeFilter: IFilter;
-  setActiveFilter: React.Dispatch<React.SetStateAction<IFilter>>;
+  setActiveFilter: any;
   filters: IFilter[];
 };
 
 const Tabs: React.FC<Props> = ({ filters, activeFilter, setActiveFilter }) => {
   return (
-    <div className="bg-[#F1F5F9] text-sm p-1 rounded-lg w-fit">
+    <div className="bg-[#F1F5F9] text-sm p-1 rounded-lg flex w-fit">
       {filters.map((filter: IFilter, index: number) => {
         return (
           <TabItem

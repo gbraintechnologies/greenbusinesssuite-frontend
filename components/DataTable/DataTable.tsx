@@ -6,49 +6,16 @@ import { ImCheckboxChecked } from "react-icons/im";
 
 import Checkbox from "@mui/material/Checkbox";
 
-import {
-  IoIosArrowForward,
-  IoIosArrowBack,
-  IoIosArrowUp,
-  IoIosArrowDown,
-} from "react-icons/io";
-
 // mui styles
-import {
-  DataGrid,
-  gridPageSelector,
-  useGridApiContext,
-  useGridSelector,
-} from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 
 import { styled } from "@mui/material/styles";
 
 // custom css
 import "./index.css";
 
-// Loader
-import LoadingIcon from "../LoadingIcon/LoadingIcon";
-
-function CustomPagination(pageCount: any) {
-  const apiRef = useGridApiContext();
-  const page = useGridSelector(apiRef, gridPageSelector);
-  // const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
-  return (
-    // <Pagination
-    //   color="primary"
-    //   variant="outlined"
-    //   shape="rounded"
-    //   page={page + 1}
-    //   count={pageCount}
-    //   // @ts-expect-error
-    //   renderItem={(props2) => <PaginationItem {...props2} disableRipple />}
-    //   onChange={(event: React.ChangeEvent<unknown>, value: number) =>
-    //     apiRef.current.setPage(value - 1)
-    //   }
-    // />
-    <div></div>
-  );
+function CustomPagination() {
+  return <div></div>;
 }
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
@@ -97,15 +64,11 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
 function DataTable({
   rows,
   columns,
-  totalCount,
   pagination = 100,
   sortField = "orderDate",
   sort = "desc",
   checkboxes = false,
-  setSelectedRows,
   rowsPerView,
-  onRowClick,
-  setRowsPerView,
   isLoading,
 }: any) {
   // local works
@@ -122,7 +85,6 @@ function DataTable({
     if (localRowsView !== rowsPerView) {
       setLocalRowsView(rowsPerView);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowsPerView]);
 
@@ -133,8 +95,26 @@ function DataTable({
   return (
     <>
       {isLoading ? (
-        <div className="h-[30vh] w-full">
-          <LoadingIcon />
+        <div className="min-h-[60vh] w-full">
+          <div className="flex items-center text-left bg-gray-100 font-medium py-5 justify-between gap-5 px-5 mb-4">
+            {columns.map((column: any) => {
+              return (
+                <div className="text-left text-xs uppercase  w-full">
+                  <h4>{column.headerName}</h4>
+                </div>
+              );
+            })}
+          </div>
+          {/* @ts-ignore */}
+          {Array.apply(null, { length: 7 }).map((e, i) => (
+            <div className="flex items-center mb-4 justify-between p-3 gap-4 mx-5 border border-gray-200 bg-white  rounded-lg">
+              {columns.map(() => {
+                return (
+                  <div className="h-6 w-full bg-gray-200 rounded-lg animate-pulse" />
+                );
+              })}
+            </div>
+          ))}
         </div>
       ) : (
         <>
@@ -146,16 +126,7 @@ function DataTable({
               },
             }}
             rows={localRows}
-            // onRowSelectionModelChange={(ids: any) => {
-            //   const selectedIDs = new Set(ids);
-            //   const selectedRowData = localRows.filter((row: any) =>
-            //     selectedIDs.has(row.id.toString())
-            //   );
-            //   console.log(selectedRowData, "selectedRowData");
-            //   // setSelectedRows(selectedRowData);
-            // }}
             onRowSelectionModelChange={(newRowSelectionModel: any) => {
-              console.log(newRowSelectionModel, "newRowSelectionModel");
               setRowSelectionModel(newRowSelectionModel);
             }}
             rowSelectionModel={rowSelectionModel}
@@ -172,7 +143,6 @@ function DataTable({
               },
             }}
             getRowId={(row: any) => row.id}
-            pageSizeOptions={[5, 10, 25]}
             checkboxSelection={checkboxes}
             autoHeight={true}
             slots={{
@@ -188,66 +158,6 @@ function DataTable({
               ),
             }}
           />
-
-          {/* CUSTOM PAGINATION */}
-          {rows && (
-            <></>
-            // <div className="z-50 mb-10 px-5 py-2 flex items-center justify-between text-sm">
-            //   <div className="flex items-center gap-2">
-            //     <div className="flex divide-x divide-gray-300 rounded-lg  items-center border border-gray-300">
-            //       <form
-            //         onSubmit={(e) => {
-            //           e.preventDefault();
-            //           setRowsPerView(parseInt(localRowsView));
-            //         }}
-            //       >
-            //         <input
-            //           min={1}
-            //           max={totalCount}
-            //           value={localRowsView}
-            //           onChange={(e) =>
-            //             setLocalRowsView(parseInt(e.target.value))
-            //           }
-            //           className="px-3 inline border-none focus:outline-0 w-12"
-            //           type="number"
-            //         />
-            //       </form>
-            //       <div className="cursor-pointer flex flex-col text-center">
-            //         <button
-            //           onClick={() => setRowsPerView(rowsPerView + 1)}
-            //           className="px-3"
-            //         >
-            //           <IoIosArrowUp size={14} />
-            //         </button>
-
-            //         <button
-            //           onClick={() => setRowsPerView(rowsPerView - 1)}
-            //           className="px-3"
-            //         >
-            //           <IoIosArrowDown size={14} />
-            //         </button>
-            //       </div>
-            //     </div>
-            //     Entries per page
-            //   </div>
-            //   <p>
-            //     {" "}
-            //     <p>
-            //       Showing: 1 -{" "}
-            //       {rowsPerView > totalCount ? totalCount : rowsPerView} of{" "}
-            //       {totalCount}
-            //     </p>
-            //   </p>
-            //   <div className="flex gap-2 items-center">
-            //     <button className="text-sm border border-gray-300 p-2 rounded-lg">
-            //       <IoIosArrowBack size={12} />
-            //     </button>
-            //     <button className="text-sm border border-gray-300 p-2 rounded-lg">
-            //       <IoIosArrowForward size={12} />
-            //     </button>
-            //   </div>
-            // </div>
-          )}
         </>
       )}
     </>

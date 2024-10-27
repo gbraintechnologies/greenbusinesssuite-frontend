@@ -1,8 +1,16 @@
 import axios from "axios";
 
-import { getToken, getRefreshToken } from "./localService";
+import {
+  getToken,
+  getRefreshToken,
+  getCompanyID,
+  getUserUUID,
+  getUserId,
+  getTenantID,
+} from "./localService";
 
-import toast from "react-hot-toast";
+import { toast } from "sonner";
+import { headerT } from "@/types/headerType";
 
 const authApi = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
@@ -12,12 +20,20 @@ const authApi = axios.create({
 authApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
+    let headers: headerT = {
+      "Content-Type": "application/json",
+      "user-uuid": getUserUUID(),
+      Authorization: `Bearer ${getToken()}`,
+    };
+
+    // Route to admin or tenant
+    if (getCompanyID() !== 0) {
+      headers = { ...headers, tenantid: getTenantID() };
+    }
+
     return {
       ...config,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
+      headers: headers,
     };
   },
   (error) => Promise.reject(error)
@@ -32,25 +48,47 @@ authApi.interceptors.response.use(
     // If the error status is 401 and there is no originalRequest._retry flag,
     // it means the token has expired and we need to refresh it
     // 403 error means the server understands but refuses to authorize because token is expired
-    if (
-      (error.response.status === 401 || error.response.status === 403) &&
-      !originalRequest._retry
-    ) {
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      //  GET REFRESH TOKEN AND RETRY REQUEST
+      let headers: headerT = {
+        "Content-Type": "application/json",
+        "user-uuid": getUserUUID(),
+        Authorization: `Bearer ${getToken()}`,
+      };
 
+      // Route to admin or tenant
+      if (getCompanyID() !== 0) {
+        headers = { ...headers, tenantid: getTenantID() };
+      }
+
+      const config = {
+        headers: {
+          ...headers,
+        },
+      };
+
+      //  GET REFRESH TOKEN AND RETRY REQUEST
       axios
-        .post(`/users/refresh_token/?token=${getRefreshToken()}`)
+        .post(
+          `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
+          null,
+          config
+        )
         .then((res) => {
-          // @ts-ignore
-          const admin = JSON.parse(localStorage.getItem("admin"));
-          console.log("get new token and set");
+          const oldRefreshToken = getRefreshToken();
+          const uuid = getUserUUID();
+          const companyId = getCompanyID();
+          const userId = getUserId();
+
           localStorage.setItem(
-            "admin",
+            "auth",
             JSON.stringify({
               access_token: res?.data?.access_token,
-              ...admin,
+              company_id: companyId,
+              refresh_token: oldRefreshToken,
+              user_id: userId,
+              user_uuid: uuid,
             })
           );
 
@@ -58,18 +96,26 @@ authApi.interceptors.response.use(
           return axios({
             ...originalRequest,
             headers: {
-              Authorization: `Bearer ${getToken()}`,
+              // USE NEW TOKEN IN RETRY REQUEST
+              ...headers,
+              Authorization: `Bearer ${res?.data?.access_token}`,
             },
           });
         })
         .catch((e) => {
-          console.log("Unable to refresh token", e);
-          // @ts-ignore
-          localStorage.setItem("admin", null);
-          window.location.replace("/login");
-          window.location.reload();
           toast.dismiss();
-          toast.error("Please login to continue");
+          toast.warning("Login to continue", {
+            description: "Your session has expired. Please login to continue.",
+          });
+          // @ts-ignore
+
+          localStorage.clear();
+          if (Boolean(getTenantID())) {
+            window.location.replace(`/${getTenantID()}`);
+          } else {
+            window.location.replace("/");
+          }
+          window.location.reload();
         });
     }
 

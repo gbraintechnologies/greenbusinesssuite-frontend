@@ -1,0 +1,84 @@
+* {
+  box-sizing: border-box !important;
+}
+
+.response-input {
+    @apply flex flex-col mb-5;
+  }
+
+  .half {
+    @apply w-1/2 !important;
+  }
+
+   .full {
+    @apply w-full
+  }
+  
+  .response-input input:not([type="checkbox"]):not([type="radio"]),
+  textarea, select {
+    @apply border cursor-default text-sm py-2 px-5 border-[#E2E8F0] rounded-lg my-2 shadow-sm text-[#666];
+  }
+
+  .response-input .like-input {
+    @apply border cursor-default text-sm py-2 px-5 border-[#E2E8F0] rounded-lg my-2 shadow-sm text-[#666];
+  }
+
+  .response-input .fit {
+    height: 2.375rem !important;
+    padding: 0rem 1.25rem !important;
+  }
+
+  .response-input .big-fit {
+    padding: 1rem 1.25rem !important;
+    height:fit-content !important;
+  }
+
+  .response-input input,
+  textarea, select {
+    @apply focus:outline-none
+  }
+
+  .response-input .label {
+    @apply text-sm mb-1 font-normal text-slate-700;
+  }
+
+  .form-check-input:checked {
+    background-color: #1D4ED8 !important;
+    border: 0;
+  }
+
+  .form-check-input {
+    width: 15px;
+    height: 15px;
+  }
+
+
+  .react-international-phone-input-container .react-international-phone-country-selector-button , .react-international-phone-input-container .react-international-phone-input{
+    height: 2.375rem !important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-items: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+
+  }
+
+  .react-international-phone-input-container .react-international-phone-input {
+    /* margin: auto !important; */
+    /* border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important; */
+  }
+
+  .form-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 16px; 
+  }
+  
+  .full-width {
+    grid-column: span 2; 
+  }
+  
+  .half-width {
+    grid-column: span 1; 
+  }

@@ -1,12 +1,25 @@
 import { CustomField } from "@/types";
 import authApi from "../axiosAuthClient";
 
-export const allUsers = () => {
-  return () => authApi.get("/users/all_users/").then((res) => res.data);
+export const allUsers = (offset: number = 0, limit: number = 20) => {
+  return () =>
+    authApi
+      .get(`/users/all_users?offset=${offset}&limit=${limit}`)
+      .then((res) => res.data);
+};
+
+export const allUsersRaw = (offset: number = 0, limit: number = 20) => {
+  return authApi
+    .get(`/users/all_users?offset=${offset}&limit=${limit}`)
+    .then((res) => res.data);
 };
 
 export const userByID = (id: any) => {
   return () => authApi.get(`/users/user_by_id/${id}`).then((res) => res.data);
+};
+
+export const userByIDRaw = (id: any) => {
+  return authApi.get(`/users/user_by_id/${id}`).then((res) => res.data);
 };
 
 export const searchUsers = (filter_word: any) => {
@@ -14,9 +27,13 @@ export const searchUsers = (filter_word: any) => {
     authApi.get(`/users/search_users/${filter_word}`).then((res) => res.data);
 };
 
+export const searchUsersByEmailFull = (email: string) => {
+  return () => authApi.get(`/users/search_users_by_email/${email}`);
+};
+
 export const searchUsersByEmail = (email: string) => {
   return authApi.get(`/users/search_users_by_email/${email}`);
-}
+};
 
 export const allUsersByRole = (role_id: any, role_name: any) => {
   return authApi.get(`/users/byrole/${role_id}?role_name=${role_name}`);
@@ -24,6 +41,10 @@ export const allUsersByRole = (role_id: any, role_name: any) => {
 
 export const createUser = (data: any) => {
   return authApi.post("/users/create", data);
+};
+
+export const blacklistUser = (userId: string) => {
+  return authApi.post("/users/blacklist/" + userId);
 };
 
 export const createUserWithCustomProfiles = (
@@ -36,19 +57,31 @@ export const createUserWithCustomProfiles = (
   });
 };
 
-export const editUserWithCustomProfiles = (data: any, custom_profiles: any) => {
-  return authApi.put("/users/edit_with_custom_fields/", {
-    user_data: data,
-    custom_profiles,
-  });
+export const editUserWithCustomProfiles = (
+  id: any,
+  data: any,
+  custom_profiles: any
+) => {
+  if (id) {
+    return authApi.put("/users/edit_with_custom_fields/" + id, {
+      user_data: data,
+      custom_profiles,
+    });
+  } else {
+    throw new Error("User ID is required");
+  }
 };
 
-export const editUserWithCustomFields = (data: any, custom_fields: CustomField[], userId: string) => {
+export const editUserWithCustomFields = (
+  data: any,
+  custom_fields: CustomField[],
+  userId: string
+) => {
   return authApi.put(`users/edit_with_custom_fields/${userId}`, {
     user_data: data,
-    custom_profiles: custom_fields
-  } )
-}
+    custom_profiles: custom_fields,
+  });
+};
 
 // CUSTOM FIELDS
 

@@ -1,0 +1,48 @@
+.custom-radio {
+    /* Hide the default radio button */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* Use a custom size */
+    width: 1.2em;
+    height: 1.2em;
+    /* Use a custom background color */
+    background-color: #ffffff;
+    /* Add a border */
+    border: 1px solid #cbd5e0;
+    /* Add some padding for better alignment */
+    padding: 0.2em;
+    /* Position the radio button absolute within the relative container */
+    position: absolute;
+    top: 1px; /* Adjust as needed */
+    right: -25px; /* Adjust as needed */
+    /* Allow custom indicators to be positioned */
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+/* Style the radio button when it's checked */
+.custom-radio:checked {
+    /* Change the background color when checked */
+    background-color: #ffffff; /* Green background for checked state */
+}
+
+/* Add custom checkmark indicator */
+.custom-radio:checked::before {
+    content: '';
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    background: #32CD32;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #32CD32; /* Green border for the checkmark */
+}
+
+/* Style the label text */
+label {
+    /* Add some margin for spacing */
+    margin-bottom: 0.5em;
+}

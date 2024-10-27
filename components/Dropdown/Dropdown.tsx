@@ -5,7 +5,7 @@ import Select from "react-select";
 //
 import "./index.css";
 
-function Dropdown({ options, selected, setSelected, bgColor }: any) {
+function Dropdown({ options, selected, setSelected, bgColor, disabled=false }: any) {
   return (
     <Select
       className= {`border-0 flex-1 ${bgColor}`}
@@ -13,6 +13,7 @@ function Dropdown({ options, selected, setSelected, bgColor }: any) {
       options={options}
       value={selected}
       onChange={(selected: any) => setSelected(selected)}
+      isDisabled={disabled}
     />
   );
 }

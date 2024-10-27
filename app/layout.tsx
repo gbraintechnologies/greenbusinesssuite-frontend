@@ -9,16 +9,22 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Mesh Suite",
   description: "Mesh Suite",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 // Toast Notifications
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "sonner";
 
 // RTK
 import ReactQueryProvider from "@/lib/ReactQueryProvider/ReactQueryProvider";
 
 // context provider
 import AdminContextProvider from "@/lib/AdminContextProvider/AdminContextProvider";
+import UserContextProvider from "@/lib/UserContextProvider/UserContextProvider";
+import AuthContextProvider from "@/lib/AuthContextProvider/AuthContextProvider";
+import CompanyContextProvider from "@/lib/CompanyContextProvider/CompanyContextProvider";
 
 export default function RootLayout({
   children,
@@ -54,10 +60,19 @@ export default function RootLayout({
       <meta name="theme-color" content="#ffffff"></meta>
       <body className={inter.className}>
         <ReactQueryProvider>
-          <AdminContextProvider>
-            {children}
-            <Toaster position="top-center" reverseOrder={true} />
-          </AdminContextProvider>
+          <AuthContextProvider>
+            <AdminContextProvider>
+              <CompanyContextProvider>
+                <UserContextProvider>{children}</UserContextProvider>
+              </CompanyContextProvider>
+              <Toaster
+                duration={1000}
+                // closeButton
+                expand
+                position="top-right"
+              />
+            </AdminContextProvider>
+          </AuthContextProvider>
         </ReactQueryProvider>
       </body>
     </html>

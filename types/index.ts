@@ -29,8 +29,10 @@ export interface CompanyInfo {
   primary_contact_phone_number: string;
   company_logo: string;
   industry: string;
+  company_address: string;
   company_admin_id?: number;
   primary_currency: string;
+  company_code: string;
   id?: number;
   status?: string;
   company_custom_values?: CustomField[];
@@ -51,3 +53,27 @@ export interface IFilter {
   name: string;
   value: string;
 }
+
+export interface IModal {
+  isOpen: boolean;
+  setIsOpen: any;
+  title?: string;
+  children: any;
+  showTitle?: boolean;
+  hideClose?: boolean;
+  size?: "small" | "big";
+}
+
+export type TimelineType =
+  | "ALL"
+  | "TODAY"
+  | "THIS_WEEK"
+  | "THIS_MONTH"
+  | "THIS_YEAR";
+
+export type TimelineValues =
+  | "All time"
+  | "Today"
+  | "This week"
+  | "This month"
+  | "This year";

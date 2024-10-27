@@ -2,6 +2,13 @@ import React, { createContext, useEffect, useState } from "react";
 
 export const FormContext = createContext();
 
+// services and query
+import services from "@/services";
+import { useQueryClient } from "@tanstack/react-query";
+
+//toast
+import { toast } from "sonner";
+
 const UserFromLS =
   typeof window !== "undefined"
     ? JSON.parse(localStorage.getItem("form") || null)
@@ -9,27 +16,102 @@ const UserFromLS =
 
 export const FormProvider = ({ children }) => {
   const [form, setForm] = useState(UserFromLS);
+  // view
   const [view, setView] = useState("builder");
-
-  // for syncing with the server
-  const [triggerRemoteUpdate, setTriggerRemoteUpdate] = useState(false);
-
   // layout
   const [formLayout, setFormLayout] = useState(form?.layout);
+
+  // loaders for updates
+  const [loadingSection, setLoadingSection] = useState(false);
+  const [loadingField, setLoadingField] = useState(false);
+
+  const [activeField, setActiveField] = useState(null);
+
+  const queryClient = useQueryClient();
+
+  function isEmpty(obj) {
+    if (obj !== null) {
+      return Object.keys(obj).length === 0 && obj?.constructor === Object;
+    }
+  }
+
+  // for syncing with the server
+
   useEffect(() => {
-    if (form) {
+    if (!isEmpty(form)) {
       setForm((prev) => ({ ...prev, layout: formLayout }));
+      // update remote form too
+      updateRemoteForm({ ...form, layout: formLayout });
     }
   }, [formLayout]);
+
+  // UPDATE REMOTE FORM FIRST
+  const updateRemoteForm = (updatedForm) => {
+    // only when there's an active form selected
+    if (!isEmpty(form)) {
+      services
+        .updateForm({ ...updatedForm, updatedOn: new Date() })
+        .then((res) => {
+          setForm(res.data);
+          setLoadingField(false);
+          setLoadingSection(false);
+          queryClient.invalidateQueries({
+            queryKey: ["form", form?.id],
+          });
+          toast.dismiss();
+          // TODO: REMOVE AFTER TESTS
+          // toast.success("updated remote");
+        })
+        .catch((e) => {
+          toast.dismiss();
+          // toast.error("Error occured");
+          console.log("error updating remote form:", e);
+        });
+    }
+  };
 
   // form stuff
   const selectForm = (data) => {
     setForm(data);
   };
 
+  const updateIsTemplate = (isTemplate) => {
+    setForm((prev) => ({ ...prev, isTemplate: isTemplate }));
+    updateRemoteForm({ ...form, isTemplate: isTemplate });
+  };
+
+  const updateActiveField = (section, data) => {
+    if (!isEmpty(form)) {
+      services
+        .updateFormField({ ...data, updatedOn: new Date() })
+        .then((res) => {
+          // setForm(res.data);
+          setLoadingField(false);
+          setLoadingSection(false);
+          services
+            .getFormByIdRaw(form.id)
+            .then((res) => {
+              setForm(res.data);
+              queryClient.invalidateQueries({
+                queryKey: ["form", form?.id],
+              });
+            })
+            .catch((e) => {
+              console.log("error getting updated form", e);
+            });
+
+          toast.dismiss();
+        })
+        .catch((e) => {
+          toast.dismiss();
+          // toast.error("Error occured");
+          console.log("error updating remote form:", e);
+        });
+    }
+  };
+
   const updateNameAndDescription = (data) => {
-    setForm((prev) => ({ ...prev, ...data }));
-    setTriggerRemoteUpdate(!triggerRemoteUpdate);
+    updateRemoteForm({ ...form, ...data });
   };
 
   const removeForm = () => {
@@ -38,19 +120,34 @@ export const FormProvider = ({ children }) => {
 
   // sections
   const addFormSection = (data) => {
-    setForm((prev) => ({
-      ...prev,
+    setLoadingSection(true);
+    updateRemoteForm({
+      ...form,
       formSections: [
         ...form.formSections,
         { ordering: form.formSections.length, ...data },
       ],
-    }));
+    });
+  };
 
-    // update remote
-    setTriggerRemoteUpdate(!triggerRemoteUpdate);
+  // deadline
+  const updateDeadline = (date) => {
+    updateRemoteForm({
+      ...form,
+      deadline: new Date(date),
+    });
+  };
+
+  const updateFormSectionsOrdering = (sections) => {
+    //
+    updateRemoteForm({
+      ...form,
+      formSections: [...sections],
+    });
   };
 
   const updateSection = (data) => {
+    // setLoadingField(true);
     let sections = form?.formSections;
     //
     let tempSections = [];
@@ -64,29 +161,61 @@ export const FormProvider = ({ children }) => {
     }
 
     // update form
-    setForm((prev) => ({
-      ...prev,
+    updateRemoteForm({
+      ...form,
       formSections: tempSections,
-    }));
-
-    // update remote
-    setTriggerRemoteUpdate(!triggerRemoteUpdate);
+    });
+    // setForm((prev) => ({
+    //   ...prev,
+    //   formSections: tempSections,
+    // }));
   };
 
   const removeSection = (data) => {
-    //
-    setForm((prev) => ({
-      ...prev,
-      formSections: [
-        ...form.formSections.filter((item) => item.id !== data.id),
-      ],
-    }));
-    // update remote
-    setTriggerRemoteUpdate(!triggerRemoteUpdate);
+    setLoadingSection(true);
+
+    // let tempFormSections = form?.formSections;
+
+    // let indexSection = tempFormSections?.indexOf(data);
+
+    // if (indexSection !== -1) {
+    //   tempFormSections[indexSection] = {
+    //     ...data,
+    //     isDeleted: true,
+    //     deletedOn: new Date(),
+    //   };
+    // }
+    toast.loading("Deleting section...");
+    services
+      .deleteSection(data?.id)
+      .then((res) => {
+        toast.dismiss();
+        toast.success("Section deleted");
+        setLoadingSection(false);
+        queryClient.invalidateQueries({
+          queryKey: ["form", form?.id],
+        });
+        services
+          .getFormByIdRaw(form?.id)
+          .then((res) => {
+            setForm(res?.data);
+            setLoadingSection(false);
+          })
+          .catch((e) => {
+            toast.error("Error occured retriving updated form");
+            console.log("error getting form");
+          });
+      })
+      .catch((e) => {
+        toast.error("Error deleting form section");
+        console.log("error deleting section", e);
+        setLoadingSection(false);
+      });
   };
 
   // fields
   const addFormField = (section, data) => {
+    setLoadingField(true);
     let sections = form?.formSections;
     //
     let tempSections = [];
@@ -107,17 +236,18 @@ export const FormProvider = ({ children }) => {
     }
 
     // update form
-    setForm((prev) => ({
-      ...prev,
+    updateRemoteForm({
+      ...form,
       formSections: tempSections,
-    }));
-
-    // update remote
-    setTriggerRemoteUpdate(!triggerRemoteUpdate);
+    });
+    // setForm((prev) => ({
+    //   ...prev,
+    //   formSections: tempSections,
+    // }));
   };
 
+  // update LS FORM
   useEffect(() => {
-    //
     localStorage.setItem("form", JSON.stringify(form));
   }, [form]);
 
@@ -125,18 +255,25 @@ export const FormProvider = ({ children }) => {
     <FormContext.Provider
       value={{
         form,
+        loadingField,
+        loadingSection,
         updateNameAndDescription,
         removeSection,
         updateSection,
+        activeField,
+        setActiveField,
+        updateActiveField,
         view,
         setView,
+        updateFormSectionsOrdering,
         selectForm,
         addFormSection,
-        triggerRemoteUpdate,
         removeForm,
         addFormField,
         formLayout,
         setFormLayout,
+        updateIsTemplate,
+        updateDeadline,
       }}
     >
       {children}

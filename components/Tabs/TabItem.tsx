@@ -3,7 +3,7 @@ import React from "react";
 
 type Props = {
   activeFilter: IFilter;
-  setActiveFilter: React.Dispatch<React.SetStateAction<IFilter>>;
+  setActiveFilter: any;
   filter: IFilter;
 };
 const TabItem: React.FC<Props> = ({
@@ -18,7 +18,7 @@ const TabItem: React.FC<Props> = ({
         activeFilter.id === filter.id
           ? "bg-white rounded-lg text-black"
           : "text-slate-500 font-normal"
-      } px-12 py-1`}
+      }  w-36 h-10 flex justify-center items-center md:block md:w-fit md:h-auto md:px-5 md:py-1 `}
     >
       {filter.name}
     </button>

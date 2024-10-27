@@ -1,9 +1,20 @@
 import React from "react";
+import { StringSchema } from "yup";
 
-function StatusPill({ status }: any) {
+function StatusPill({
+  status,
+  success,
+  textTransform = "capitalize",
+}: {
+  status: string;
+  success?: boolean;
+  textTransform?: string;
+}) {
   if (
     status.toLowerCase().includes("inactive") ||
-    status.toLowerCase().includes("temp")
+    status.toLowerCase().includes("temp") ||
+    status.toLowerCase().includes("incomplete") ||
+    status.toLowerCase().includes("process")
   ) {
     return (
       <span className="text-[#D97706] bg-[#FFFBEB] capitalize text-xs px-5 rounded-full py-1">
@@ -11,18 +22,31 @@ function StatusPill({ status }: any) {
       </span>
     );
   }
-  
+
   if (
     status.toLowerCase().includes("success") ||
-    status.toLowerCase().includes("active")
+    status.toLowerCase().includes("active") ||
+    status.toLowerCase().includes("complete") ||
+    success === true
   ) {
     return (
-      <span className="text-[#16A34A] bg-[#F0FDF4]  capitalize text-xs px-5 rounded-full py-1">
+      <span
+        className={`text-[#16A34A] bg-[#F0FDF4]  ${textTransform} text-xs px-5 rounded-full py-1`}
+      >
         {status.toLowerCase().replaceAll("_", " ")}
       </span>
     );
   }
 
+  if (success === false) {
+    return (
+      <span
+        className={`text-red-700 bg-red-50 ${textTransform} text-xs px-5 rounded-full py-1`}
+      >
+        {status.toLowerCase().replaceAll("_", " ")}
+      </span>
+    );
+  }
 
   // DEFAULT FILTER
   return (

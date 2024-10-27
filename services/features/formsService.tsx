@@ -1,32 +1,207 @@
+import { TimelineType } from "@/types";
 import authApi from "../meshAuthClient";
+import defaultMeshApi from "../defaultMeshClient";
 
-export const allForms = () => {
+export const allForms = (
+  pageNumber: number,
+  pageSize: number,
+  timeLine: TimelineType = "ALL"
+) => {
   return () =>
-    authApi.get("/forms/builder/all?page=0&size=90").then((res) => res.data);
+    authApi
+      .get(`/forms/builder/all/${pageNumber}/${pageSize}/${timeLine}`)
+      .then((res) => res.data);
 };
 
-export const allFormTemplates = () => {
+export const allFormTemplates = (
+  pageNumber: number,
+  pageSize: number,
+  timeLine: TimelineType = "ALL"
+) => {
   return () =>
-    authApi.get("/forms/builder/list-templates").then((res) => res.data);
+    authApi
+      .get(
+        `/forms/builder/list-templates/${pageNumber}/${pageSize}/${timeLine}`
+      )
+      .then((res) => res.data);
+};
+
+export const companyCustomersWithFormCount = (
+  companyId: number,
+  page: number,
+  size: number,
+  timeline: TimelineType = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(
+        `/forms/response/completed-forms-count/${companyId}/${page}/${size}/${timeline}`
+      )
+      .then((res) => res.data);
+};
+
+export const publishedFomsOfCompany = (companyId: number) => {
+  return () =>
+    defaultMeshApi
+      .get(`/forms/builder/published-forms-ids/${companyId}`)
+      .then((res) => res.data);
+};
+
+export const assignFormToCompany = (
+  formId: number | string,
+  companyId: string
+) => {
+  return authApi.put(`/forms/builder/company/${formId}/${companyId}`);
 };
 
 export const getFormById = (id: any) => {
-  return () => authApi.get(`/forms/builder/${id}`).then((res) => res.data);
+  return () =>
+    defaultMeshApi.get(`/forms/builder/${id}`).then((res) => res.data);
 };
 
-export const getFormsByCompanyName = (companyName: string) => {
-  return () => authApi.get(`/forms/builder/company/${companyName}`);
-}
+export const getFormByIdDefault = (id: any) => {
+  return () =>
+    defaultMeshApi.get(`/forms/builder/${id}`).then((res) => res.data);
+};
 
-export const getFormResponseById = (id: number) => {
-  return () => authApi.get(`/forms/response/data/${id}`).then((res) => res.data)
-}
+export const getFormByIdRaw = (id: any) => {
+  return defaultMeshApi.get(`/forms/builder/${id}`);
+};
+
+export const getFormByIdRawForUser = (id: any) => {
+  return defaultMeshApi.get(`/forms/builder/${id}`);
+};
+
+export const getFormsByCompanyId = (
+  companyId: string,
+  page: string | number,
+  size: string | number,
+  timeLine: TimelineType = "ALL"
+) => {
+  return () =>
+    defaultMeshApi
+      .get(
+        `/forms/builder/search-assign-forms/${companyId}/${page}/${size}/${timeLine}`
+      )
+      .then((res) => res.data);
+};
+
+export const getFormStatisticsForUser = (userId: string | null) => {
+  if (!userId) {
+    throw new Error("No User Id");
+  }
+  return () =>
+    authApi
+      .get(`/forms/builder/user/form-statistics/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getCompletedFormsByUserId = (userId: string) => {
+  return () =>
+    authApi
+      .get(`/forms/builder/user/completed-forms/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getCompletedFormIdsByUserId = (userId: string) => {
+  return () =>
+    authApi
+      .get(`/forms/response/completed-form-ids/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getUncompletedFormIdsByUserId = (userId: string) => {
+  return () =>
+    authApi
+      .get(`/forms/response/uncompleted-form-ids/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getUnassignedForms = (
+  page: string | number = 1,
+  size: string | number = 12,
+  timeline: TimelineType = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(`/forms/builder/unassigned-forms/${page}/${size}/${timeline}`)
+      .then((res) => res.data);
+};
+
+export const getUncompletedFormsByUserId = (userId: string) => {
+  return () =>
+    authApi
+      .get(`/forms/builder/user/uncompleted-forms/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getAllFormsByUserId = (userId: string) => {
+  return () =>
+    defaultMeshApi
+      .get(`/forms/builder/user-forms/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getFormsByUserId = (userId: string | null) => {
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+  return () =>
+    authApi
+      .get(`/forms/response/user/form-ids/${userId}`)
+      .then((res) => res.data);
+};
+
+export const getFormResponseById = (
+  id: number,
+  page: string | number = 0,
+  size: string | number = 20,
+  timeLine: TimelineType = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(`/forms/response/data/${id}/${page}/${size}/${timeLine}`)
+      .then((res) => res.data);
+};
+
+export const getFormResponsesById = (id: number) => {
+  return authApi.get(`/forms/response/data/${id}/0/10000/ALL`);
+};
+
+export const formResponseAnalytics = (id: number, companyId: string) => {
+  return () =>
+    authApi
+      .get(`/forms/response/analytics/${id}/${companyId}`)
+      .then((res) => res.data);
+};
 
 export const getFormStatusCountById = (id: number) => {
-  return () => authApi.get(`/forms/response/forms-status/count/${id}`).then((res) => res.data)
-}
+  return () =>
+    authApi
+      .get(`/forms/response/forms-status/count/${id}`)
+      .then((res) => res.data);
+};
+
+export const publishedFormsCount = () => {
+  return () =>
+    authApi
+      .get(`/forms/dashboard/published-forms/count`)
+      .then((res) => res.data);
+};
+
+export const unpublishedFormsCount = () => {
+  return () =>
+    authApi
+      .get("/forms/dashboard/unpublished-forms/count")
+      .then((res) => res.data);
+};
+
 export const updateForm = (data: any) => {
-  return authApi.put(`/forms/builder/update`, data);
+  return defaultMeshApi.put(`/forms/builder/update`, data);
+};
+
+export const updateFormField = (data: any) => {
+  return authApi.put(`/forms/builder/field-update`, data);
 };
 
 export const renameForm = (id: any, name: string) => {
@@ -38,137 +213,26 @@ export const createNewForm = (data: any) => {
 };
 
 export const duplicateForm = (id: any) => {
-  return authApi.post(`/forms/builder/${id}/duplicateForm`);
+  return authApi.post(`/forms/builder/duplicateForm/${id}`);
 };
 
-export const publishForm = (data: any) => {
-  let sampleData = {
-    id: 0,
-    name: "string",
-    url: "string",
-    description: "string",
-    formInstruction: "string",
-    formSections: [
-      {
-        id: 0,
-        name: "string",
-        description: "string",
-        instruction: "string",
-        form: {
-          id: 0,
-          name: "string",
-          url: "string",
-          description: "string",
-          formInstruction: "string",
-          formSections: [
-            {
-              id: 0,
-              name: "string",
-              description: "string",
-              instruction: "string",
-              form: "string",
-              formFields: [
-                {
-                  id: 0,
-                  name: "string",
-                  description: "string",
-                  formSection: "string",
-                  instruction: "string",
-                  ordering: 0,
-                  isDeleted: true,
-                  fieldDataType: "string",
-                  choiceValues: ["string"],
-                  isMandatory: true,
-                  createdOn: "2024-03-13T14:30:34.351Z",
-                  updatedOn: "2024-03-13T14:30:34.351Z",
-                  deletedOn: "2024-03-13T14:30:34.351Z",
-                },
-              ],
-              ordering: 0,
-              isDeleted: true,
-              createdOn: "2024-03-13T14:30:34.351Z",
-              updatedOn: "2024-03-13T14:30:34.351Z",
-              deletedOn: "2024-03-13T14:30:34.351Z",
-            },
-          ],
-          userMandatory: true,
-          deadline: "2024-03-13T14:30:34.351Z",
-          publishStatus: "DRAFT",
-          isDeleted: true,
-          createdOn: "2024-03-13T14:30:34.351Z",
-          updatedOn: "2024-03-13T14:30:34.351Z",
-          deletedOn: "2024-03-13T14:30:34.351Z",
-        },
-        formFields: [
-          {
-            id: 0,
-            name: "string",
-            description: "string",
-            formSection: {
-              id: 0,
-              name: "string",
-              description: "string",
-              instruction: "string",
-              form: "string",
-              formFields: [
-                {
-                  id: 0,
-                  name: "string",
-                  description: "string",
-                  formSection: "string",
-                  instruction: "string",
-                  ordering: 0,
-                  isDeleted: true,
-                  fieldDataType: "string",
-                  choiceValues: ["string"],
-                  isMandatory: true,
-                  createdOn: "2024-03-13T14:30:34.351Z",
-                  updatedOn: "2024-03-13T14:30:34.351Z",
-                  deletedOn: "2024-03-13T14:30:34.351Z",
-                },
-              ],
-              ordering: 0,
-              isDeleted: true,
-              createdOn: "2024-03-13T14:30:34.351Z",
-              updatedOn: "2024-03-13T14:30:34.351Z",
-              deletedOn: "2024-03-13T14:30:34.351Z",
-            },
-            instruction: "string",
-            ordering: 0,
-            isDeleted: true,
-            fieldDataType: "string",
-            choiceValues: ["string"],
-            isMandatory: true,
-            createdOn: "2024-03-13T14:30:34.351Z",
-            updatedOn: "2024-03-13T14:30:34.351Z",
-            deletedOn: "2024-03-13T14:30:34.351Z",
-          },
-        ],
-        ordering: 0,
-        isDeleted: true,
-        createdOn: "2024-03-13T14:30:34.351Z",
-        updatedOn: "2024-03-13T14:30:34.351Z",
-        deletedOn: "2024-03-13T14:30:34.351Z",
-      },
-    ],
-    userMandatory: true,
-    deadline: "2024-03-13T14:30:34.351Z",
-    publishStatus: "DRAFT",
-    isDeleted: true,
-    createdOn: "2024-03-13T14:30:34.351Z",
-    updatedOn: "2024-03-13T14:30:34.351Z",
-    deletedOn: "2024-03-13T14:30:34.351Z",
-  };
-  return authApi.post("/forms/publish", data);
+export const publishForm = (id: any) => {
+  return defaultMeshApi.put(`/forms/builder/publish/${id}`);
 };
 
 export const unpublishForm = (id: any) => {
-  return authApi.put(`/forms/builder/unpublish/${id}`);
+  return defaultMeshApi.put(`/forms/builder/unpublish/by-id/${id}`);
+};
+
+export const deleteSection = (id: any) => {
+  return authApi.delete(`/forms/builder/form-section/${id}`);
 };
 
 export const deleteForm = (id: any) => {
   return authApi.delete(`/forms/builder/soft-delete/${id}`);
 };
+
+// PUBLISH FORM
 
 // API KEYS
 export const regenerateAPIKey = (id: any) => {
@@ -179,4 +243,92 @@ export const assignCompanyToForm = (company: any, id: any) => {
   return authApi.post(`/forms/builder/${company}/duplicateForm`);
 };
 
-// BUILDER ENDPOINTS
+export const hardDeleteForm = (id: any) => {
+  return authApi.delete(`/forms/builder/delete/${id}`);
+};
+
+export const deleteFormField = (id: any) => {
+  return authApi.delete(`/forms/builder/formfield/${id}`);
+};
+
+export const hardDeleteUserForm = (userId: any, formId: any) => {
+  return authApi.delete(`/forms/response/delete/${userId}/${formId}`);
+};
+
+// PUBLIC FORM ENDPOINTS
+export const accessPublicPublishedForm = (id: any) => {
+  return () =>
+    authApi
+      .get(`forms/builder/access-published-form/${id}`)
+      .then((res) => res.data);
+};
+
+export const acceptInvite = (
+  formId: any,
+  userId: any,
+  companyId: any,
+  inputData: any
+) => {
+  return authApi.post(`forms/response/create`, {
+    formId: parseInt(formId),
+    isCompleted: false,
+    inputData: inputData,
+    status: "PENDING",
+    companyId: companyId,
+    userId: parseInt(userId),
+  });
+};
+
+export const updateResponseStatus = (
+  status: string,
+  formResponseId: number
+) => {
+  return authApi.put(`forms/response/${status}/${formResponseId}`);
+};
+
+export const deleteResponse = (formResponseId: number) => {
+  return authApi.delete(`forms/response/${formResponseId}`);
+};
+
+export const saveResponse = ({
+  formId,
+  userId,
+  companyId,
+  inputData,
+  isCompleted,
+  id,
+}: any) => {
+  return authApi.put(`forms/response/update`, {
+    id: parseInt(id),
+    formId: parseInt(formId),
+    isCompleted: isCompleted,
+    inputData: inputData,
+    companyId: companyId,
+    userId: parseInt(userId),
+  });
+};
+
+export const retrieveFormUserResponses = (
+  userId: number | string | null,
+  formId: any
+) => {
+  if (userId === null) {
+    throw new Error("No User Id");
+  }
+  return () =>
+    authApi
+      .get(`forms/response/data/user-form/${userId}/${formId}`)
+      .then((res) => res.data);
+};
+
+export const retrieveFormUserResponseRaw = (
+  userId: number | string | undefined | null,
+  formId: number | string
+) => {
+  if (formId === undefined) {
+    throw new Error("No Form Id");
+  }
+  return authApi
+    .get(`forms/response/data/user-form/${userId}/${formId}`)
+    .then((res) => res.data);
+};

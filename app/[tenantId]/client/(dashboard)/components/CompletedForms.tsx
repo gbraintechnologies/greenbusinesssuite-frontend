@@ -1,0 +1,53 @@
+import React from "react";
+
+import FormCard from "./UserFormCard";
+
+// components
+import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+
+// icons
+import EmptyListIcon from "@/public/icons/EmptyListIcon";
+
+function CompletedForms({
+  forms,
+  isFormsLoading,
+}: {
+  forms: any;
+  isFormsLoading: boolean;
+}) {
+  return (
+    <div>
+      <div className="mt-4">
+        {isFormsLoading ? (
+          <div className="h-[20rem] flex items-center justify-center">
+            <div>
+              <LoadingIcon />
+              <p className="mt-2 text-xs text-gray-500">Fetching all forms</p>
+            </div>
+          </div>
+        ) : (
+          // ALL FORMS
+          <>
+            {forms?.length === 0 ? (
+              <div className="flex h-[40vh] flex-col gap-5 items-center justify-center">
+                <EmptyListIcon />
+                <p>No Completed Forms</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-5">
+                {forms &&
+                  forms?.map((form: any) => {
+                    return (
+                      <FormCard type="completed" key={form.id} form={form} />
+                    );
+                  })}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default CompletedForms;

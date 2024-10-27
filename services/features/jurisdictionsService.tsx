@@ -1,27 +1,45 @@
-import authApi from "../axiosAuthClient";
+import defaultMeshApi from "../defaultMeshClient";
+import authApi from "../meshAuthClient";
+import multipartMeshApi from "../multipartMeshClient";
 
-
-export const allJurisdictions = () => {
-    return () => authApi.get("/jurisdictions/").then((res) => res.data);
+export const allJurisdictions = (Page: number = 0, Size: number = 100) => {
+  return () =>
+    defaultMeshApi.get(`countries/all/${Page}/${Size}`).then((res) => res.data);
 };
 
-export const SearchJurisdictions = (filter_word: any) => {
-    return () =>
-        authApi.get(`/jurisdictions-by-filter/${filter_word}`).then((res) => res.data);
+export const allcountries = () => {
+  return () => defaultMeshApi.get(`/countries/names`).then((res) => res.data);
 };
 
-export const JurisdictionsID = (id: any) => {
-    return () => authApi.get(`/jurisdictions/${id}`).then((res) => res.data);
+export const csvUploads = (formData: FormData) => {
+  return multipartMeshApi.post(`/countries/csv-import`, formData);
 };
 
-export const createJurisdictions = (data: any) => {
-    return authApi.post("/jurisdictions/", data);
+export const createCountry = (data: any) => {
+  return authApi.post("/countries", data);
 };
 
-export const createAddressScheme = (data: any) => {
-    return authApi.post("/addresses/create_addressing_scheme/", data);
+export const updateCountry = (data: any) => {
+  return authApi.put(`/countries`, data);
 };
 
-export const createAddressLevel = (data: any) => {
-    return authApi.post("/addresses/create_address_level/", data);
+export const deletecountryWithAssoc = (id: any) => {
+  return authApi.delete(`/countries/delete/${id}`);
+};
+
+export const deleteparentLevel = (id: any) => {
+  return authApi.delete(`/countries/delete-parent-level/${id}`);
+};
+
+export const getJurisdictionById = (id: number) => {
+  return () =>
+    defaultMeshApi.get(`/countries/by-id/${id}`).then((res) => res.data);
+};
+
+export const getJurisdictionByIdRaw = (id: number) => {
+  return authApi.get(`/countries/by-id/${id}`).then((res) => res.data);
+};
+
+export const getCountryInfoByName = (countryName: string) => {
+  return authApi.get(`/countries/name/${countryName}`).then((res) => res.data);
 };
