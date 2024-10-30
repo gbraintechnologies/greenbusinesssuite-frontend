@@ -189,6 +189,8 @@ function SingleFormCompany({ params }: any) {
             filters={filters}
             activeFilter={activeFilter}
             setActiveFilter={handleTabChange}
+            enableQueryState={false}
+            
           />
           {activeFilter.id == 1 ? (
             <div className="flex gap-3 items-center">

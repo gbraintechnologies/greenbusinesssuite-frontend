@@ -13,7 +13,7 @@ const SearchBox: FC<Props> = ({ searchTerm, setSearchTerm, placeholder }) => {
       <input
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="outline-none text-sm focus:outline-none w-full bg-white input-custom"
+        className="outline-none text-sm focus:outline-none w-full bg-transparent input-custom"
         placeholder={placeholder ?? "Search by name only"}
       />
     </div>

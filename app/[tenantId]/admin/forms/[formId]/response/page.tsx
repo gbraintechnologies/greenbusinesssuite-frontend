@@ -319,6 +319,7 @@ const page = ({ params }: any) => {
             filters={tabs}
             setActiveFilter={handleTabChange}
             activeFilter={activeTab}
+            enableQueryState={false}
           />
         </div>
         <div className="mt-6">

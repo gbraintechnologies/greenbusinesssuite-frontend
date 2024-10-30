@@ -800,6 +800,7 @@ const Notifications: React.FC<Props> = ({
                 activeFilter={activeFilter}
                 setActiveFilter={setActiveFilter}
                 filters={filters}
+                enableQueryState={false}
               />
             </div>
           )}
@@ -942,6 +943,7 @@ const Notifications: React.FC<Props> = ({
                 activeFilter={activeGroupFilter}
                 setActiveFilter={setActiveGroupFilter}
                 filters={groupFilters}
+                enableQueryState={false}
               />
             </div>
           )}
