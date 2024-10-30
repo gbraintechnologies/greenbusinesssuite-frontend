@@ -43,7 +43,6 @@
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.2",
     "jspdf": "^2.5.1",
-    "mesh_suite_forms_ui": "file:",
     "next": "^14.2.5",
     "nuqs": "^1.17.4",
     "papaparse": "^5.4.1",
