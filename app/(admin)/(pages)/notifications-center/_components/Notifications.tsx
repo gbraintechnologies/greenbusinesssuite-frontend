@@ -739,6 +739,10 @@ const Notifications: React.FC<Props> = ({
       let loadingToast = toast.loading("Sending email...");
 
       if (!!files?.length) {
+        data = {
+          ...data,
+          fileName: files[0]?.name,
+        }
         console.log(
           "SENDING EMAIL with file: ",
           { ...data, isHtml: false },
@@ -825,6 +829,21 @@ const Notifications: React.FC<Props> = ({
               readOnly={isDisplayMode}
             />
           </div>
+
+          {isDisplayMode && notification?.fileName && (
+            <div className="input-holder ">
+              <label>File</label>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  value={notification?.fileName}
+                  className="text-sm "
+                  disabled
+                  readOnly
+                />
+              </div>
+            </div>
+          )}
 
           {isDisplayMode && notification?.sender && (
             <div className="input-holder ">
