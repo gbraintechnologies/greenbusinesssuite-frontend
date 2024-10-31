@@ -26,13 +26,13 @@ import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import { RiImageCircleLine } from "react-icons/ri";
 import Nav from "../components/Nav";
-import Tabs from "../components/Tabs";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 import Modal from "@/components/Modal/Modal";
 import Notifications from "@/app/(admin)/(pages)/notifications-center/_components/Notifications";
 import { TbMessage } from "react-icons/tb";
+import Tabs from "@/components/Tabs/Tabs";
 
 export interface IFilter {
   id: number;

@@ -65,7 +65,7 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
           </button>
         </DropdownTrigger>
         <DropdownMenu
-          className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
+          className="shadow-md bg-white border border-[#F1F5F9] rounded-lg flex flex-col gap-3"
           aria-label="Static Actions"
         >
           {timelines.map((timeline) => (

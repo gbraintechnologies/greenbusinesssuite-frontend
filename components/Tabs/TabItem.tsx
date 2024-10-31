@@ -3,17 +3,23 @@ import React from "react";
 
 type Props = {
   activeFilter: IFilter;
+  setActiveFilterId: any;
   setActiveFilter: any;
   filter: IFilter;
 };
 const TabItem: React.FC<Props> = ({
   activeFilter,
   setActiveFilter,
+  setActiveFilterId,
   filter,
 }) => {
   return (
     <button
-      onClick={() => setActiveFilter(filter)}
+      onClick={() => {
+        // console.log('new filter ', filter);
+        // setActiveFilter(filter);
+        setActiveFilterId(filter.id);
+      }}
       className={`${
         activeFilter.id === filter.id
           ? "bg-white rounded-lg text-black"

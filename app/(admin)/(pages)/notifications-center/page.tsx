@@ -2,7 +2,6 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { TbMessage } from "react-icons/tb";
-import Tabs from "../company-setup/components/Tabs";
 import DataTable from "@/components/DataTable/DataTable";
 import { IFilter, TimelineType, TimelineValues } from "@/types";
 import SendMessage from "./_components/SendMessagePrompt";
@@ -15,6 +14,7 @@ import EyeIcon from "@/public/icons/EyeIcon";
 import Notifications from "./_components/Notifications";
 import { FormatDateWithSuffix } from "@/utils/FormatDate/FormatDate";
 import RecurringTypeFilter from "./_components/RecurringTypeFilter";
+import Tabs from "@/components/Tabs/Tabs";
 
 function page() {
   const [messageHistoryRows, setMessageHistoryRows] = useState<
