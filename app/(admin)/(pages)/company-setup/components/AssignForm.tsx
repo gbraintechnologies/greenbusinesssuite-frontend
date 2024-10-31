@@ -33,9 +33,8 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   const {
     data: allForms,
     isLoading: areFormsLoading,
-    refetch,
   } = useQuery({
-    queryKey: ["get all forms"],
+    queryKey: ["get all forms by ", page, limit, selectedTimeline?.value],
     queryFn: services.getUnassignedForms(page, limit, selectedTimeline?.value),
   });
 
@@ -55,7 +54,7 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   // }, [allForms, searchTerm]);
 
   React.useEffect(() => {
-    refetch();
+    setSelected(null)
   }, [page, selectedTimeline]);
 
   const assignFormToCompany = async () => {
@@ -108,14 +107,8 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
             <EmptyList text="You do not have any unassigned forms." />
           </div>
         ) : (
-          <div>
-            {/* <SearchBox
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              placeholder="Search by form name"
-            /> */}
-
-            <div className="grid grid-cols-4 gap-5 h-72 mb-2 overflow-scroll mt-2">
+          <>
+          <div className="grid grid-cols-4 my-4 gap-4 h-64 overflow-y-scroll">
               {allForms?.content &&
                 allForms?.content?.map((form: any) => {
                   return (
@@ -136,7 +129,7 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
                   );
                 })}
             </div>
-          </div>
+          </>
         )}
       </div>
       <div className="flex justify-between">

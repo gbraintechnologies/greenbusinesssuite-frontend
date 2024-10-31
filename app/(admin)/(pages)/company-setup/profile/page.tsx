@@ -43,17 +43,13 @@ const Page = () => {
   ]);
 
   const [filters, setFilters] = useState<IFilter[]>([
-    { id: 1, name: "Description", value: "description" },
-    { id: 5, name: "Administrators", value: "administrators" },
+    { id: 0, name: "Description", value: "description" },
+    { id: 1, name: "Administrators", value: "administrators" },
     { id: 2, name: "Assigned Forms", value: "assigned_forms" },
     { id: 3, name: "Branding Settings", value: "branding_settings" },
   ]);
 
-  const [activeFilter, setActiveFilter] = useState<IFilter>({
-    id: 3,
-    name: "Branding Settings",
-    value: "branding_settings",
-  });
+  const [activeFilter, setActiveFilter] = useState<IFilter>(filters[0]);
 
   const [activeStatus, setActiveStatus] = useState({} as any);
 
@@ -344,7 +340,7 @@ const Page = () => {
                 <Menu as={"div"} className={"z-20 relative inline-block"}>
                   <Menu.Button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
                     {activeStatus?.name}
-                    <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
+                    <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-9"></div>
                     <IoIosArrowDown />
                   </Menu.Button>
 
@@ -363,7 +359,7 @@ const Page = () => {
                         .map((status) => (
                           <Menu.Item key={status.id}>
                             <button
-                              className="flex hover:text-primary-dark w-24 hover:bg-gray-50 border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg px-3 py-2"
+                              className="flex hover:text-primary-dark w-24 hover:bg-gray-50 text-sm bg-white items-center h-9 rounded-lg px-3 py-2"
                               onClick={() => editCompanyStatus(status)}
                             >
                               {status.name}
@@ -663,7 +659,7 @@ const Page = () => {
               </>
             )}
 
-            {activeFilter.value === "administrators" && (
+            {activeFilter?.value === "administrators" && (
               <CompanyAdmins companyId={id} />
             )}
           </div>

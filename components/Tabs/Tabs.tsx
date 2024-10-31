@@ -24,12 +24,12 @@ const Tabs: React.FC<Props> = ({
         serialize: String,
         defaultValue: filters[0]?.id ?? 0,
       })
-    : React.useState(filters[0].id);
+    : React.useState(filters[0]?.id ?? 0);
 
   useEffect(() => {
-    setActiveFilter(
-      filters.find((filter) => filter.id === activeFilterId) || filters[0]
-    );
+    const newFilter =
+      filters.find((filter) => filter.id === activeFilterId) || filters[0];
+    setActiveFilter(newFilter);
   }, [activeFilterId]);
 
   useEffect(() => {
