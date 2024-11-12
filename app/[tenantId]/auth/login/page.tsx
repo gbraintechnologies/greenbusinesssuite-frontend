@@ -115,51 +115,58 @@ function CompanyAdminAuth({ params }: any) {
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const token: any = await login(data.username, data.password);
+      
       if (token?.status === 200) {
-        addAuthData(token?.data);
+        addAuthData(token.data);
+  
         const user = await fetchCurrentUser(token.data?.access_token);
-        if (
-          // user?.data?.user_status === "NEWLY_CREATED" ||
-          user?.data?.user_status === "TEMP_CREDENTIALS"
-        ) {
+        const userStatus = user?.data?.user_status;
+        const userRole = user?.data?.profiles[0]?.role_id;
+  
+      
+        if (userStatus === "NEWLY_CREATED") {
+          toast("Verify your account");
+          router.push(`/${tenantId}/auth/verify-account`);
+          return;
+        } else if (userStatus === "ACTIVE") {
+          addCompanyAdminData(user?.data);
+          toast.success("Logged in");
+          router.push(`/${tenantId}/admin`);
+          return;
+        } else if (userStatus === "TEMP_CREDENTIALS") {
           toast("Create your password");
-          router.push(
-            `/${tenantId}/auth/create-password?temp=${data.password}`
-          );
+          router.push(`/${tenantId}/auth/create-password?temp=${data.password}`);
           return;
         }
-        // ROLE 6 - CLIENT ONLY
-        // change to !== 6
-        else if (user?.data?.profiles[0]?.role_id !== 6) {
+  
+        
+        if (userRole !== 6) {
           addCompanyAdminData(user?.data);
           toast.success("Logged in");
           router.push(`/${tenantId}/admin`);
         } else {
           addUserData(user?.data);
           toast.success("Logged in");
-          // Generally route to client dashboard
-          // if redirectTo is available, route to invitation
+  
           if (Boolean(redirectTo)) {
-            router.push(
-              `/${tenantId}/invite-form?f=${formId}&c=${companyName}`
-            );
+            router.push(`/${tenantId}/invite-form?f=${formId}&c=${companyName}`);
             return;
           }
-
-          // normal authentication
+  
           router.push(`/${tenantId}/client`);
         }
       }
     } catch (error) {
       // @ts-ignore
       if (Boolean(error?.response?.data?.detail)) {
-        //  @ts-ignore
-        setLoginError(error?.response?.data?.detail);
+        // @ts-ignore
+        setLoginError(error.response.data.detail);
       } else {
         setLoginError("Incorrect email address or password");
       }
     }
   };
+  
 
   return (
     <div className="bg-[#F5F7FA] w-full flex items-center justify-center h-screen">
