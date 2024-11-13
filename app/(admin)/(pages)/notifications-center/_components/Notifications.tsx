@@ -35,9 +35,8 @@ import {
 import { DatePicker } from "@nextui-org/date-picker";
 
 // ICONS
-import { BiChevronDown, BiSearch } from "react-icons/bi";
+import { BiChevronDown } from "react-icons/bi";
 
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 
 //
@@ -45,7 +44,6 @@ import { toast } from "sonner";
 
 // HOOKS
 import useAdmin from "@/hooks/useAdmin";
-import ComboSearch from "@/components/SearchBox/ComboSearch";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdAttachFile } from "react-icons/md";
 import MultiComboSearch from "@/components/SearchBox/MultiComboSearch";
@@ -74,7 +72,12 @@ const Notifications: React.FC<Props> = ({
   const [page, setPage] = useState(0);
 
   const { admin } = useAdmin();
-  const { companyAdmin } = useCompany();
+  const { companyAdmin, companyBranding } = useCompany();
+
+  const { data: companyData } = useQuery({
+    queryKey: ["company", parseInt(companyBranding?.id as string)],
+    queryFn: services.getCompanyById(Number(companyBranding?.id)),
+  });
 
   const [limit, setLimit] = useState(4);
 
@@ -153,6 +156,7 @@ const Notifications: React.FC<Props> = ({
       value: "companies",
     },
   ];
+
   const [activeGroupFilter, setActiveGroupFilter] = useState<IFilter>({
     id: 0,
     name: "Users",
@@ -559,11 +563,34 @@ const Notifications: React.FC<Props> = ({
 
     //SMS SENDING
     if (activeFilter.id == 0) {
+      // set the sender for companies to the company_sms_sender_id
+      if (type === "super-admin") {
+        data = {
+          ...data,
+          sender: "MeshBiz",
+        };
+      }
+
+      if (type === "company-admin") {
+        if (companyData?.company_sms_sender_id == null) {
+          toast.error(
+            `No sender id exists for ${companyData?.company_name} company. Please contact the super admin`
+          );
+          return;
+        }
+        data = {
+          ...data,
+          sender: companyData?.company_sms_sender_id,
+        };
+      }
+
       if (
         type === "super-admin" &&
         activeGroupFilter?.id == 1 &&
         selectedCompanies?.length < 1
       ) {
+        // sender id for admin is meshbiz
+
         toast.dismiss();
         toast.error("Select recipient companies");
         return;
@@ -742,7 +769,7 @@ const Notifications: React.FC<Props> = ({
         data = {
           ...data,
           fileName: files[0]?.name,
-        }
+        };
         console.log(
           "SENDING EMAIL with file: ",
           { ...data, isHtml: false },
