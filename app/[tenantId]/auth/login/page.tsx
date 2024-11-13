@@ -115,31 +115,31 @@ function CompanyAdminAuth({ params }: any) {
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const token: any = await login(data.username, data.password);
-      
+
       if (token?.status === 200) {
         addAuthData(token.data);
-  
+
         const user = await fetchCurrentUser(token.data?.access_token);
         const userStatus = user?.data?.user_status;
         const userRole = user?.data?.profiles[0]?.role_id;
-  
-      
+
+        // all newly created accounts have to verify
         if (userStatus === "NEWLY_CREATED") {
           toast("Verify your account");
           router.push(`/${tenantId}/auth/verify-account`);
           return;
-        } else if (userStatus === "ACTIVE") {
-          addCompanyAdminData(user?.data);
-          toast.success("Logged in");
-          router.push(`/${tenantId}/admin`);
-          return;
-        } else if (userStatus === "TEMP_CREDENTIALS") {
+        }
+
+        // all temp credentials have to create a password
+        if (userStatus === "TEMP_CREDENTIALS") {
           toast("Create your password");
-          router.push(`/${tenantId}/auth/create-password?temp=${data.password}`);
+          router.push(
+            `/${tenantId}/auth/create-password?temp=${data.password}`
+          );
           return;
         }
-  
-        
+
+        // check role and navigate to right dashboard
         if (userRole !== 6) {
           addCompanyAdminData(user?.data);
           toast.success("Logged in");
@@ -147,12 +147,15 @@ function CompanyAdminAuth({ params }: any) {
         } else {
           addUserData(user?.data);
           toast.success("Logged in");
-  
+
+          // send to form processing if redirect exists
           if (Boolean(redirectTo)) {
-            router.push(`/${tenantId}/invite-form?f=${formId}&c=${companyName}`);
+            router.push(
+              `/${tenantId}/invite-form?f=${formId}&c=${companyName}`
+            );
             return;
           }
-  
+
           router.push(`/${tenantId}/client`);
         }
       }
@@ -166,7 +169,6 @@ function CompanyAdminAuth({ params }: any) {
       }
     }
   };
-  
 
   return (
     <div className="bg-[#F5F7FA] w-full flex items-center justify-center h-screen">
