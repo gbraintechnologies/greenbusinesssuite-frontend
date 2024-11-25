@@ -32,7 +32,6 @@ import { useQueryState } from "nuqs";
 import useAuth from "@/hooks/useAuth";
 import html2pdf from "html2pdf.js";
 
-
 const page = ({ params }: any) => {
   let formID = params.formId;
 
@@ -63,20 +62,18 @@ const page = ({ params }: any) => {
     { id: 2, name: "Issued", value: "Issued" },
   ]);
 
-  const [activeTabId, setActiveTabId] = useQueryState("tab", {
-    parse: Number,
-    serialize: String,
-    defaultValue: 0,
-  });
+  // const [activeTabId, setActiveTabId] = useQueryState("tab", {
+  //   parse: Number,
+  //   serialize: String,
+  //   defaultValue: 0,
+  // });
 
-  const [activeTab, setActiveTab] = useState(
-    tabs.find((tab) => tab.id === activeTabId) || tabs[0]
-  );
+  const [activeTab, setActiveTab] = useState(tabs[0]);
 
-  const handleTabChange = (tab: IFilter) => {
-    setActiveTab(tab);
-    setActiveTabId(tab.id);
-  };
+  // const handleTabChange = (tab: IFilter) => {
+  //   setActiveTab(tab);
+  //   setActiveTabId(tab.id);
+  // };
 
   // GET USER RESPONSE
   const {
@@ -137,10 +134,8 @@ const page = ({ params }: any) => {
   const pdfRef = React.useRef(null);
 
   const downloadPDF = () => {
-
-
     const input = pdfRef?.current;
-  
+
     if (input) {
       setPdfGenerating(true);
       const options = {
@@ -149,9 +144,9 @@ const page = ({ params }: any) => {
         image: { type: "jpeg", quality: 0.75 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: 'avoid-all', before: '#newsection' }
+        pagebreak: { mode: "avoid-all", before: "#newsection" },
       };
-  
+
       html2pdf()
         .set(options)
         .from(input)
@@ -167,13 +162,13 @@ const page = ({ params }: any) => {
             minute: "2-digit",
           });
           const responseName = `${userData?.first_name} ${userData?.last_name}`;
-  
+
           for (let i = 1; i <= totalPages; i++) {
-            pdf.setPage(i); 
+            pdf.setPage(i);
             pdf.setFontSize(8);
-            pdf.text(`Date Printed: ${date}`, 5, 5); 
-            pdf.text("|", 60, 5); 
-            pdf.text(`Response: ${responseName}`, 65, 5); 
+            pdf.text(`Date Printed: ${date}`, 5, 5);
+            pdf.text("|", 60, 5);
+            pdf.text(`Response: ${responseName}`, 65, 5);
           }
         })
         .save()
@@ -317,14 +312,17 @@ const page = ({ params }: any) => {
         <div className="mt-3">
           <Tabs
             filters={tabs}
-            setActiveFilter={handleTabChange}
+            setActiveFilter={setActiveTab}
             activeFilter={activeTab}
-            enableQueryState={false}
+            tabQueryKey="tabId"
+            // enableQueryState={false}
           />
         </div>
         <div className="mt-6">
           {activeTab.id == 0 && (
-            <div className="w-[80%]"><FormResponse mergedForm={mergedForm} ref={pdfRef} /></div>
+            <div className="w-[80%]">
+              <FormResponse mergedForm={mergedForm} ref={pdfRef} />
+            </div>
           )}
           {activeTab.id == 1 && <Uploaded user={userData} form={mergedForm} />}
           {activeTab.id == 2 && (
