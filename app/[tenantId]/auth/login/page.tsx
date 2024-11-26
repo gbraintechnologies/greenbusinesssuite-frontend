@@ -115,30 +115,40 @@ function CompanyAdminAuth({ params }: any) {
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const token: any = await login(data.username, data.password);
+
       if (token?.status === 200) {
-        addAuthData(token?.data);
+        addAuthData(token.data);
+
         const user = await fetchCurrentUser(token.data?.access_token);
-        if (
-          // user?.data?.user_status === "NEWLY_CREATED" ||
-          user?.data?.user_status === "TEMP_CREDENTIALS"
-        ) {
+        const userStatus = user?.data?.user_status;
+        const userRole = user?.data?.profiles[0]?.role_id;
+
+        // all newly created accounts have to verify
+        if (userStatus === "NEWLY_CREATED") {
+          toast("Verify your account");
+          router.push(`/${tenantId}/auth/verify-account`);
+          return;
+        }
+
+        // all temp credentials have to create a password
+        if (userStatus === "TEMP_CREDENTIALS") {
           toast("Create your password");
           router.push(
             `/${tenantId}/auth/create-password?temp=${data.password}`
           );
           return;
         }
-        // ROLE 6 - CLIENT ONLY
-        // change to !== 6
-        else if (user?.data?.profiles[0]?.role_id !== 6) {
+
+        // check role and navigate to right dashboard
+        if (userRole !== 6) {
           addCompanyAdminData(user?.data);
           toast.success("Logged in");
           router.push(`/${tenantId}/admin`);
         } else {
           addUserData(user?.data);
           toast.success("Logged in");
-          // Generally route to client dashboard
-          // if redirectTo is available, route to invitation
+
+          // send to form processing if redirect exists
           if (Boolean(redirectTo)) {
             router.push(
               `/${tenantId}/invite-form?f=${formId}&c=${companyName}`
@@ -146,15 +156,14 @@ function CompanyAdminAuth({ params }: any) {
             return;
           }
 
-          // normal authentication
           router.push(`/${tenantId}/client`);
         }
       }
     } catch (error) {
       // @ts-ignore
       if (Boolean(error?.response?.data?.detail)) {
-        //  @ts-ignore
-        setLoginError(error?.response?.data?.detail);
+        // @ts-ignore
+        setLoginError(error.response.data.detail);
       } else {
         setLoginError("Incorrect email address or password");
       }

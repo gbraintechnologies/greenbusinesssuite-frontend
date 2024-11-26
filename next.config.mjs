@@ -7,12 +7,11 @@ const nextConfig = {
         hostname: "localhost",
         port: "3000",
         pathname: "/**",
-        search: "",
       },
       {
         protocol: "https",
         hostname: "mesh-suite-pics-staging-bucket.s3.amazonaws.com",
-        search: "",
+
         port: "",
         pathname: "/**",
       },
@@ -21,7 +20,6 @@ const nextConfig = {
         hostname: "**.amazonaws.com",
         port: "",
         pathname: "/**",
-        search: "",
       },
     ],
   },

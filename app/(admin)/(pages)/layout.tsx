@@ -92,11 +92,18 @@ export default function AdminLayout({
     {
       name: "Companies",
       icon: <PiBuildingsBold size={20} />,
-      link: [
-        "/company-setup",
-        "/company-setup/create",
-        "/company-setup/profile",
-        "/company-setup/profile/edit",
+      link: null,
+      subNavigation: [
+        {
+          name: "Company creation",
+          icon: null,
+          link: "/company-setup",
+        },
+        {
+          name: "Category setup",
+          icon: null,
+          link: "/category-setup",
+        },
       ],
     },
     {

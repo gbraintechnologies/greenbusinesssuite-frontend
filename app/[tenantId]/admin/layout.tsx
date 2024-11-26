@@ -45,7 +45,7 @@ export default function CompanyLayout({ children, params }: any) {
     company: companyInfo,
   } = useCompany();
 
-  const { auth } = useAuth();
+  const { auth, removeAuth } = useAuth();
 
   const [loading, setLoading] = useState(true);
 
@@ -57,6 +57,13 @@ export default function CompanyLayout({ children, params }: any) {
     } else {
       // CHECK COMPANY ADMIN ROLE: 6
       let role = companyAdmin?.profiles[0]?.role_id;
+
+      // clients with role 6 shouldn't access this dashboard
+      if (role == 6) {
+        removeAuth();
+        router.push(`/${params?.tenantId}/auth`);
+        return;
+      }
       setLoading(false);
     }
   }, [companyAdmin, auth, pathname]);

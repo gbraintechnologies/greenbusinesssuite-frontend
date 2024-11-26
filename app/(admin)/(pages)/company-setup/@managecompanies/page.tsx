@@ -1,8 +1,8 @@
 "use client";
-import React, { Fragment, useEffect, useState } from "react";
-import SearchIcon from "@/public/icons/SearchIcon";
+import React, { useEffect, useState } from "react";
+
 import Image from "next/image";
-import UserIcon from "@/public/icons/UserIcon";
+
 import StatusPill from "@/components/StatusPill/StatusPill";
 import { BsThreeDots } from "react-icons/bs";
 import DataTable from "@/components/DataTable/DataTable";
@@ -10,9 +10,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 import { CompanyInfo } from "@/types";
 import Link from "next/link";
-import { Menu, Transition } from "@headlessui/react";
+
 import { GridColDef } from "@mui/x-data-grid";
-import { createPortal } from "react-dom";
 
 import {
   Dropdown,
@@ -29,9 +28,7 @@ import Nav from "../components/Nav";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
-import Modal from "@/components/Modal/Modal";
-import Notifications from "@/app/(admin)/(pages)/notifications-center/_components/Notifications";
-import { TbMessage } from "react-icons/tb";
+
 import Tabs from "@/components/Tabs/Tabs";
 
 export interface IFilter {

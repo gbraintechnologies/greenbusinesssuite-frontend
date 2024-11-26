@@ -26,7 +26,7 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
           if (item.subNavigation) {
             return (
               <>
-                <Disclosure>
+                <Disclosure defaultOpen>
                   {({ open }) => (
                     <>
                       <Disclosure.Button className="flex mt-2 w-full justify-between items-center">

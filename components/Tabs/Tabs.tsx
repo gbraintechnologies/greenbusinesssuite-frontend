@@ -32,10 +32,6 @@ const Tabs: React.FC<Props> = ({
     setActiveFilter(newFilter);
   }, [activeFilterId]);
 
-  useEffect(() => {
-    console.log("active filter id changed ", activeFilter);
-  }, [activeFilter]);
-
   return (
     <div className="bg-[#F1F5F9] text-sm p-1 rounded-lg flex w-fit">
       {filters.map((filter: IFilter, index: number) => {

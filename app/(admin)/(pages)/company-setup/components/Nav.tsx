@@ -26,8 +26,6 @@ function Nav() {
         <Link href={"/company-setup/create"}>
           <button className="bg-primary-green flex text-white text-sm px-4 py-3 hover:opacity-95 items-center gap-2 rounded-xl">
             <LuPlusCircle size={15} /> Add New{" "}
-            {/* <div className="border-r-[0.3px] border-opacity-50 border-white h-10"></div>{" "}
-          <IoIosArrowDown /> */}
           </button>
         </Link>
       )}
