@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Nav from "./components/Nav";
 
 import { useQuery } from "@tanstack/react-query";
@@ -20,7 +20,7 @@ import DatePicker from "@/components/DatePicker/DatePicker";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
 function CompanyForms() {
-  const { companyAdmin: admin, companyBranding: companyData } = useCompany();
+  const {  companyBranding: companyData } = useCompany();
 
   //pagination
   const [page, setPage] = useState(0);

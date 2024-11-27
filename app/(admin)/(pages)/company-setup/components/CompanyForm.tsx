@@ -274,8 +274,12 @@ const CompanyForm: React.FC<Props> = ({
     try {
       const response = await services.getCurrencyByCountryName(country);
       setCurrencyId(response[0]?.id);
-    } catch (err) {
+      if(response[0]?.id){
+        toast.success(`Currency for ${country} found`)
+      }
+    } catch (err: any) {
       setCurrencyId("");
+      toast.error(err?.response?.data ?? "An error occurred. Please try again later.");
       console.log("error ", err);
     }
   };
