@@ -22,7 +22,7 @@ const ModuleCard = ({
         <div>
           <input
             type="checkbox"
-            className="form-check-input checked:!bg-[#16A34A] !w-4 !h-4"
+            className="form-check-input checked:!bg-[#16A34A] border border-[#16A34A] !w-4 !h-4 focus:!outline-none focus:!shadow-none focus:!ring-0 focus:!border-none visited:!outline-none"
             id={`moduleCard${index}`}
           />
         </div>
