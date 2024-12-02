@@ -277,8 +277,8 @@ const CreateCompany = () => {
       setBackgroundImageUrl("");
       resetForm();
 
-      // go back to companies page
-      router.back();
+      // go to the configuration setup page
+      router.push('/company-setup/configure');
     } catch (error) {
       toast.error("An error occurred");
     } finally {

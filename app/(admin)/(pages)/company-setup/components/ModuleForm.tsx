@@ -104,7 +104,7 @@ const ModuleForm: React.FC<Props> = ({
 
                 <div className="input-holder">
                   <label className="flex items-start gap-1">
-                    Module Name<span className=" text-red-700">*</span>
+                    Module Name<span className=" text-red-500 ">*</span>
                   </label>
                   <Field
                     // style={getStyles(errors, "moduleName")}
@@ -142,7 +142,7 @@ const ModuleForm: React.FC<Props> = ({
                 </div> */}
 
                 <div className="input-holder">
-                  <label>Company Admin Portal</label>
+                  <label>Company Admin Portal Feature Description</label>
                   <Field
                     // style={getStyles(errors, "moduleDescription")}
                     as="textarea"
@@ -153,7 +153,7 @@ const ModuleForm: React.FC<Props> = ({
                   <ShowError name="companyAdminPortal" />
                 </div>
                 <div className="input-holder">
-                  <label>Client Portal</label>
+                  <label>Client Portal Feature Description</label>
                   <Field
                     // style={getStyles(errors, "moduleDescription")}
                     as="textarea"
