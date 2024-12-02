@@ -1,10 +1,9 @@
 "use client";
 import { FormikHelpers } from "formik";
-import { useRouter } from "next/navigation";
 import React from "react";
 
 import { toast } from "sonner";
-import ModuleForm from "../../company-setup/components/ModuleForm";
+import ModuleForm from "../../../components/ModuleForm";
 
 const page = () => {
   const submitFn = (values: any, formikHelpers: FormikHelpers<any>): void => {
@@ -39,7 +38,7 @@ const page = () => {
     <ModuleForm
       initialValues={initialValues}
       submitFn={submitFn}
-      headerText="Create Module"
+      headerText="Edit Core Module"
     />
   );
 };

@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { IoCheckmark } from "react-icons/io5";
-import ModuleCard from "../../components/ModuleCard";
+import ModuleCard from "../components/ModuleCard";
 
 const page = () => {
   const router = useRouter();

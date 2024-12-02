@@ -10,7 +10,7 @@ import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import Link from "next/link";
 import CardDescription from "../components/CustomCard";
 import { LuPlusCircle } from "react-icons/lu";
-import SwitchButton from "../components/SwitchButton";
+// import SwitchButton from "../components/SwitchButton";
 
 const CategoryScheme = Yup.object().shape({
     categoryName: Yup.string().required("Required"),
