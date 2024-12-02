@@ -30,7 +30,7 @@ function CategorySetup() {
       </div>
 
       <div className="p-6 grid grid-cols-3 gap-[22px]">
-        <Link href={`/category-setup/1/create-module`}>
+        <Link href={`/category-setup/category-details`}>
         <CardDescription
           name="Micro-lending"
           description="This category is for companies that provide micro lending services."
