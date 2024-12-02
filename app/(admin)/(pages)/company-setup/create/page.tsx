@@ -268,17 +268,17 @@ const CreateCompany = () => {
       // ROLE ID: 6 for company admin
       // await services.assignRoleToUser(createUserResponse.data.id, 6);
 
-      setPhone("");
-      setSelectedIndustry(undefined);
-      setSelectedCountry(undefined);
-      setCompanyLogo(null);
-      setCompanySmallLogo(null);
-      setSmallLogoUrl("");
-      setBackgroundImageUrl("");
-      resetForm();
+      // setPhone("");
+      // setSelectedIndustry(undefined);
+      // setSelectedCountry(undefined);
+      // setCompanyLogo(null);
+      // setCompanySmallLogo(null);
+      // setSmallLogoUrl("");
+      // setBackgroundImageUrl("");
+      // resetForm();
 
-      // go back to companies page
-      router.back();
+      // go to the configuration setup page
+      router.push(`/company-setup/configure?id=${companyData?.id}`);
     } catch (error) {
       toast.error("An error occurred");
     } finally {

@@ -31,14 +31,14 @@ function SingleFormCompany({ params }: any) {
     { id: 1, name: "Responses", value: "responses" },
   ]);
 
-  const [activeFilterId, setActiveFilterId] = useQueryState("tab", {
-    parse: Number,
-    serialize: String,
-    defaultValue: 0,
-  });
+  // const [activeFilterId, setActiveFilterId] = useQueryState("tab", {
+  //   parse: Number,
+  //   serialize: String,
+  //   defaultValue: 0,
+  // });
 
   const [activeFilter, setActiveFilter] = useState(
-    filters.find((filter) => filter.id === activeFilterId) || filters[0]
+    filters[0]
   );
 
   const [responseData, setResponseData] = useState<any>([]);
@@ -49,10 +49,10 @@ function SingleFormCompany({ params }: any) {
 
   const [limit, setLimit] = useState(20);
 
-  const handleTabChange = (filter: IFilter) => {
-    setActiveFilter(filter);
-    setActiveFilterId(filter.id);
-  };
+  // const handleTabChange = (filter: IFilter) => {
+  //   setActiveFilter(filter);
+  //   setActiveFilterId(filter.id);
+  // };
 
   //
 
@@ -188,8 +188,8 @@ function SingleFormCompany({ params }: any) {
           <Tabs
             filters={filters}
             activeFilter={activeFilter}
-            setActiveFilter={handleTabChange}
-            enableQueryState={false}
+            setActiveFilter={setActiveFilter}
+            // enableQueryState={false}
             
           />
           {activeFilter.id == 1 ? (

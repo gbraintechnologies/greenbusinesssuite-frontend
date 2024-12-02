@@ -274,8 +274,12 @@ const CompanyForm: React.FC<Props> = ({
     try {
       const response = await services.getCurrencyByCountryName(country);
       setCurrencyId(response[0]?.id);
-    } catch (err) {
+      if(response[0]?.id){
+        toast.success(`Currency for ${country} found`)
+      }
+    } catch (err: any) {
       setCurrencyId("");
+      toast.error(err?.response?.data ?? "An error occurred. Please try again later.");
       console.log("error ", err);
     }
   };
@@ -593,13 +597,13 @@ const CompanyForm: React.FC<Props> = ({
                 {selectedCountry && !sectorsLoading && (
                   <div className="flex gap-5">
                     <div className="new-input half hide-input-borders">
-                      <label>Industry</label>
+                      <label>Sector</label>
 
                       <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                         <Autocomplete
                           variant="bordered"
                           className="w-full"
-                          placeholder="Select industry"
+                          placeholder="Select Sector"
                           selectedKey={selectedIndustry?.label}
                           scrollShadowProps={{
                             isEnabled: false,

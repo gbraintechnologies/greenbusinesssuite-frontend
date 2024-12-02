@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import SearchIcon from "@/public/icons/SearchIcon";
 import Nav from "./components/Nav";
 import CardDescription from "./components/CustomCard";
+import Link from "next/link";
 
 function CategorySetup() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,10 +30,12 @@ function CategorySetup() {
       </div>
 
       <div className="p-6 grid grid-cols-3 gap-[22px]">
+        <Link href={`/category-setup/1/create-module`}>
         <CardDescription
           name="Micro-lending"
           description="This category is for companies that provide micro lending services."
-        />
+          />
+          </Link>
         <CardDescription
           name="Business Consultancy"
           description="This category is for companies that provide Business Consultancy such as business registration."

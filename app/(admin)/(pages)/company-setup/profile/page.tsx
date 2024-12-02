@@ -35,6 +35,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import useFileUpload from "@/hooks/useFileUpload";
 import { VscLink } from "react-icons/vsc";
 import Loader from "@/components/Loader/Loader";
+import Configuration from "./_components/Configuration";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -47,6 +48,7 @@ const Page = () => {
     { id: 1, name: "Administrators", value: "administrators" },
     { id: 2, name: "Assigned Forms", value: "assigned_forms" },
     { id: 3, name: "Branding Settings", value: "branding_settings" },
+    { id: 4, name: "Configuration", value: "configuration" },
   ]);
 
   const [activeFilter, setActiveFilter] = useState<IFilter>(filters[0]);
@@ -376,7 +378,7 @@ const Page = () => {
 
         {/* TABS FOR DESCRIPTION  / ASSIGNED FORMS */}
         <div className="mt-10">
-          <div className="flex justify-start items-center">
+          <div className="flex justify-center items-center">
             <Tabs
               filters={filters}
               setActiveFilter={setActiveFilter}
@@ -661,6 +663,10 @@ const Page = () => {
 
             {activeFilter?.value === "administrators" && (
               <CompanyAdmins companyId={id} />
+            )}
+
+            {activeFilter?.value === "configuration" && (
+              <Configuration />
             )}
           </div>
         </div>

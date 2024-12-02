@@ -97,7 +97,7 @@ export default function AdminLayout({
         {
           name: "Company creation",
           icon: null,
-          link: "/company-setup",
+          link: ["/company-setup", "/company-setup/create", "/company-setup/configuration/create"],
         },
         {
           name: "Category setup",
