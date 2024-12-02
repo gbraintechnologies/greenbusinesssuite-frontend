@@ -12,29 +12,30 @@ interface Props {
   submitFn: any;
   headerText: string;
   isCategorySpecificModule?: boolean;
+  isSubmitting: boolean
 }
 
-const moduleSchema = Yup.object()
-  .shape({
-    moduleName: Yup.string().required("Module name is required"),
-    // moduleType: Yup.mixed()
-    //   .oneOf(["coreModule", "categorySpecificModule"] as const)
-    //   .defined(),
-    companyAdminPortal: Yup.string(),
-    clientPortal: Yup.string(),
-  })
-  .test(
-    "at-least-one",
-    "At least one of 'Company Admin Portal' or 'Client Portal' must be filled",
-    (values) => {
-      return !!values.companyAdminPortal || !!values.clientPortal;
-    }
-  );
+const moduleSchema = Yup.object().shape({
+  moduleName: Yup.string().required("Module name is required"),
+  // moduleType: Yup.mixed()
+  //   .oneOf(["coreModule", "categorySpecificModule"] as const)
+  //   .defined(),
+  companyAdminPortal: Yup.string(),
+  clientPortal: Yup.string()
+})
+.test(
+  "at-least-one",
+  "At least one of 'Company Admin Portal' or 'Client Portal' must be filled",
+  (values) => {
+    return !!values.companyAdminPortal || !!values.clientPortal;
+  }
+);
 const ModuleForm: React.FC<Props> = ({
   initialValues,
   submitFn,
   headerText,
   isCategorySpecificModule = false,
+  isSubmitting
 }) => {
   const router = useRouter();
 
@@ -52,7 +53,7 @@ const ModuleForm: React.FC<Props> = ({
         validationSchema={moduleSchema}
         onSubmit={submitFn}
       >
-        {({ errors, isSubmitting }) => {
+        {() => {
           return (
             <Form>
               {/* HEADER */}

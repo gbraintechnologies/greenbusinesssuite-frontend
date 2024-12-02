@@ -6,15 +6,17 @@ import { toast } from "sonner";
 import ModuleForm from "../../../components/ModuleForm";
 
 const page = () => {
+  // states for handling form submission
+  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
+
   const submitFn = (values: any, formikHelpers: FormikHelpers<any>): void => {
-    const { setSubmitting } = formikHelpers;
 
     // Check if both fields are empty
     if (!values.companyAdminPortal && !values.clientPortal) {
       toast.error(
         "Please fill out at least one of the 'Company Admin Portal' or 'Client Portal' fields before submitting."
       );
-      setSubmitting(false);
+      setIsSubmitting(false);
       return;
     }
 
@@ -24,21 +26,22 @@ const page = () => {
       console.error("Error submitting form", error);
       toast.error("An error occurred. Please try again");
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
   const initialValues = {
     moduleName: "Documents",
     // moduleType: "coreModule",
-    companyAdminPortal: "",
-    clientPortal: "",
+    companyAdminPortal: "Upload and assign documents",
+    clientPortal: "View and download assigned documents",
   };
   return (
     <ModuleForm
       initialValues={initialValues}
       submitFn={submitFn}
       headerText="Edit Core Module"
+      isSubmitting={isSubmitting}
     />
   );
 };

@@ -15,7 +15,7 @@ function CreateModule() {
                     <h3 className="font-semibold text-xl mb-10">Core Modules</h3>
                 </div>
                 <div>
-                    <Link href="/category-setup/add-module" className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
+                    <Link href="/category-setup/core-modules/create" className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
                         <LuPlusCircle /> Create new module
                         <div className="border-opacity-50 border-white h-10"></div>
                     </Link>
@@ -33,12 +33,14 @@ function CreateModule() {
             </div>
             <div className="max-w-full">
                 <div className="w-full p-6 grid grid-cols-3 gap-6">
+                    <Link href={"/category-setup/1"}>
                     <CardDescription
                         name="Dashboard"
                         description={[
                             "Company Admin: View Analytics and metrics of the company",
                         ]}
                     />
+                    </Link>
                     <CardDescription
                         name="Documents"
                         description={[

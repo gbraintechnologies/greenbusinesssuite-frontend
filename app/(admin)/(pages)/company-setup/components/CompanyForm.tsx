@@ -597,13 +597,13 @@ const CompanyForm: React.FC<Props> = ({
                 {selectedCountry && !sectorsLoading && (
                   <div className="flex gap-5">
                     <div className="new-input half hide-input-borders">
-                      <label>Industry</label>
+                      <label>Sector</label>
 
                       <div className="flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]">
                         <Autocomplete
                           variant="bordered"
                           className="w-full"
-                          placeholder="Select industry"
+                          placeholder="Select Sector"
                           selectedKey={selectedIndustry?.label}
                           scrollShadowProps={{
                             isEnabled: false,

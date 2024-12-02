@@ -16,7 +16,7 @@
 }
 
 .switch-input:checked + span {
-  background-color: #d6d5d5;
+  @apply bg-primary-green
 }
 
 .switch-label input:checked + span:before {

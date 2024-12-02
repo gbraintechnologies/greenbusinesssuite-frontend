@@ -5,12 +5,14 @@ type Props = {
   moduleName: string;
   companyAdminPortal?: string;
   clientPortal?: string;
+  defaultChecked?: boolean
   index: string
 };
 const ModuleCard = ({
   moduleName,
   companyAdminPortal,
   clientPortal,
+  defaultChecked=false,
   index
 }: Props) => {
   return (
@@ -18,14 +20,13 @@ const ModuleCard = ({
       className="rounded-lg bg-[#F8FAFC] py-3 px-6 min-h-36 w-auto cursor-pointer"
       htmlFor={`moduleCard${index}`}
     >
-      <div className="flex items-center gap-3">
-        <div>
+      <div className="flex !items-center gap-3">
           <input
             type="checkbox"
-            className="form-check-input checked:!bg-[#16A34A] border border-[#16A34A] !w-4 !h-4 focus:!outline-none focus:!shadow-none focus:!ring-0 focus:!border-none visited:!outline-none"
+            className="form-check-input checked:bg-[#16A34A] border border-[#16A34A] !w-4 !h-4 focus:!outline-none focus:!shadow-none focus:!ring-0 focus:!border-none visited:!outline-none"
             id={`moduleCard${index}`}
+            defaultChecked={defaultChecked}
           />
-        </div>
         <p className="text-slate-900 font-medium">{moduleName}</p>
       </div>
       <div className="mt-1">

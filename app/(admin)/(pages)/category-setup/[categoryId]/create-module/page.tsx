@@ -1,35 +1,49 @@
 "use client";
 import { FormikHelpers } from "formik";
-import React from "react";
+import React, { useState } from "react";
 
 import { toast } from "sonner";
-import ModuleForm from "../components/ModuleForm";
+import { useRouter } from "next/navigation";
+import ModuleForm from "../../components/ModuleForm";
 
-const page = () => {
+const page = ({params}: any) => {
+  // getting the category id
+  let categoryId = params.categoryId;
+
+  // states for handling submission
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+
+  const router = useRouter();
+
   const submitFn = (values: any, formikHelpers: FormikHelpers<any>): void => {
-    const { setSubmitting } = formikHelpers;
+
 
     // Check if both fields are empty
     if (!values.companyAdminPortal && !values.clientPortal) {
       toast.error(
         "Please fill out at least one of the 'Company Admin Portal' or 'Client Portal' fields before submitting."
       );
-      setSubmitting(false);
+      
+      
       return;
     }
 
     try {
+      setIsSubmitting(true)
       console.log("Submitting form with values:", values);
+      formikHelpers.resetForm();
+      router.back()
     } catch (error) {
+      setIsSubmitting(false)
       console.error("Error submitting form", error);
       toast.error("An error occurred. Please try again");
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false)
     }
   };
 
   const initialValues = {
-    moduleName: "Documents",
+    moduleName: "",
     // moduleType: "coreModule",
     companyAdminPortal: "",
     clientPortal: "",
@@ -38,7 +52,9 @@ const page = () => {
     <ModuleForm
       initialValues={initialValues}
       submitFn={submitFn}
-      headerText="Create Module"
+      headerText="Create Category Specific Module"
+      isSubmitting={isSubmitting}
+      isCategorySpecificModule={true}
     />
   );
 };
