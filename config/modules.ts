@@ -1,9 +1,9 @@
 export const CoreModules = [
-  "Notifications Center",
+  "Dashboard",
   "Form Builder",
+  "Form Reports",
+  "Notifications Center",
   "User Management",
-  "Dashboard"
-
 ]
 
 export const CategorySpecificModules = [
