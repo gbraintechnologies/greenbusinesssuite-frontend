@@ -126,6 +126,8 @@ function CategoryDetails() {
           <p className="text-gray-900 text-sm">{data.categoryDescription}</p>
         </div>
       </div>
+          
+           
       <div className="px-5 mt-7">
         <div className="flex justify-between items-center">
           <div>

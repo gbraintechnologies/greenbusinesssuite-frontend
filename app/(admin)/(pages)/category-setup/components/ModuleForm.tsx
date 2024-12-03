@@ -1,10 +1,14 @@
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Switch from "@/components/Switch/Switch";
+import { CoreModules } from "@/config/modules";
 import { ShowError } from "@/utils/FormHelpers/FormHelpers";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { BiChevronDown } from "react-icons/bi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
+import { IoCheckmark } from "react-icons/io5";
 import * as Yup from "yup";
 
 interface Props {
@@ -12,11 +16,13 @@ interface Props {
   submitFn: any;
   headerText: string;
   isCategorySpecificModule?: boolean;
+  moduleName: any;
+  setModuleName: any;
   isSubmitting: boolean
 }
 
 const moduleSchema = Yup.object().shape({
-  moduleName: Yup.string().required("Module name is required"),
+  // moduleName: Yup.mixed().oneOf(CoreModules).required("Module name is required"),
   // moduleType: Yup.mixed()
   //   .oneOf(["coreModule", "categorySpecificModule"] as const)
   //   .defined(),
@@ -35,7 +41,8 @@ const ModuleForm: React.FC<Props> = ({
   submitFn,
   headerText,
   isCategorySpecificModule = false,
-  isSubmitting
+  isSubmitting,
+  moduleName, setModuleName
 }) => {
   const router = useRouter();
 
@@ -46,12 +53,15 @@ const ModuleForm: React.FC<Props> = ({
       console.log("unchecked");
     }
   };
+
+
   return (
     <div className="px-5 pb-20">
       <Formik
         initialValues={initialValues}
         validationSchema={moduleSchema}
         onSubmit={submitFn}
+        enableReinitialize
       >
         {() => {
           return (
@@ -107,12 +117,38 @@ const ModuleForm: React.FC<Props> = ({
                   <label className="flex items-start gap-1">
                     Module Name<span className=" text-red-500 ">*</span>
                   </label>
-                  <Field
-                    // style={getStyles(errors, "moduleName")}
-                    name="moduleName"
-                    placeholder="eg. Documents"
-                    className="!text-sm"
-                  />
+                  <Dropdown>
+            <DropdownTrigger>
+              <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff] rounded-lg my-1">
+                <div className="flex gap-2 w-full justify-between items-center py-0 px-4">
+                  <p className=" font-normal text-sm ">{moduleName}</p>
+
+                  <div className="">
+                    <BiChevronDown size={21} color="#94A3B8" />
+                  </div>
+                </div>
+              </button>
+            </DropdownTrigger>
+            <DropdownMenu
+              className="shadow-md bg-white border border-[#F1F5F9] w-[42rem] rounded-lg flex flex-col gap-3"
+              aria-label="Static Actions"
+            >
+              {CoreModules?.map((mod: any) => (
+                <DropdownItem
+                  key="view"
+                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                    onClick={() => setModuleName(mod)}
+                >
+                  <div className="flex w-full items-center justify-between">
+                    <p>{mod}</p>
+                    {mod == moduleName && (
+                      <IoCheckmark size={20} color="#334155" />
+                    )}
+                  </div>
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
                   <ShowError name="moduleName" />
                 </div>
 

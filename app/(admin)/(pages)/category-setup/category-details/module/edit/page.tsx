@@ -1,37 +1,39 @@
 "use client";
 import { FormikHelpers } from "formik";
-import React, { useState } from "react";
+import React from "react";
 
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import ModuleForm from "../../components/ModuleForm";
+import ModuleForm from "../../../components/ModuleForm";
+import { useSearchParams } from "next/navigation";
 
-const page = ({ params }: any) => {
-  // getting the category id
-  let categoryId = params.categoryId;
+const page = () => {
+  // getting the module id
+  const searchParams = useSearchParams();
+  const moduleId = searchParams.get("module");
 
-  // states for handling submission
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // states for handling form submission
+  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
 
-  const router = useRouter();
+  //state for handling module name
+  const [moduleName, setModuleName] = React.useState<any>();
 
   const submitFn = (values: any, formikHelpers: FormikHelpers<any>): void => {
+    if (!moduleName) {
+      toast.error("Module name is required");
+      return;
+    }
     // Check if both fields are empty
     if (!values.companyAdminPortal && !values.clientPortal) {
       toast.error(
         "Please fill out at least one of the 'Company Admin Portal' or 'Client Portal' fields before submitting."
       );
-
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      setIsSubmitting(true);
       console.log("Submitting form with values:", values);
-      formikHelpers.resetForm();
-      router.back();
     } catch (error) {
-      setIsSubmitting(false);
       console.error("Error submitting form", error);
       toast.error("An error occurred. Please try again");
     } finally {
@@ -40,18 +42,19 @@ const page = ({ params }: any) => {
   };
 
   const initialValues = {
-    moduleName: "",
+    // moduleName: "Documents",
     // moduleType: "coreModule",
-    companyAdminPortal: "",
-    clientPortal: "",
+    companyAdminPortal: "Upload and assign documents",
+    clientPortal: "View and download assigned documents",
   };
   return (
     <ModuleForm
       initialValues={initialValues}
       submitFn={submitFn}
-      headerText="Create Category Specific Module"
+      headerText="Edit Core Module"
       isSubmitting={isSubmitting}
-      isCategorySpecificModule={true}
+      moduleName={moduleName}
+      setModuleName={setModuleName}
     />
   );
 };

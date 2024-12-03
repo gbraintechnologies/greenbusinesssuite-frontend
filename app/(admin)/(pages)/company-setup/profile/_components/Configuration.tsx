@@ -74,19 +74,19 @@ const Configuration = () => {
 
   return (
     <div className="w-full my-6">
-      <div className="pb-5 ">
+      <div className=" ">
         <h3 className="text-lg text-primary-dark font-semibold">
           Category Details
         </h3>
 
         <div>
-          <label className="text-[#334155] text-xs font-normal">
+          <label className="text-[#334155] text-sm font-normal">
             Category Name
           </label>
           <p className="text-[#334155] text-sm font-medium">Micro-lending </p>
         </div>
         <div>
-          <label className="text-[#334155] text-xs font-normal">
+          <label className="text-[#334155] text-sm font-normal">
             Category Description
           </label>
           <p className="text-[#334155] text-sm font-medium">
@@ -118,6 +118,8 @@ const Configuration = () => {
                       (desc: any) => desc?.role == "Client"
                     )?.details ?? ""
                   }
+                  disableCheckboxes={true}
+                  defaultChecked={true}
                   index={index + "core"}
                 />
               ))}

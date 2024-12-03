@@ -3,25 +3,26 @@ import { FormikHelpers } from "formik";
 import React, { useState } from "react";
 
 import { toast } from "sonner";
-import ModuleForm from "../../components/ModuleForm";
-import { useRouter } from "next/navigation";
-import services from "@/services";
+import { useRouter, useSearchParams } from "next/navigation";
+import ModuleForm from "../../../components/ModuleForm";
 
 const page = () => {
+  // getting the category id
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("catId");
+
+    //state for handling module name
+    const [moduleName, setModuleName] = useState<any>();
+
   // states for handling submission
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  //state for handling module name
-  const [moduleName, setModuleName] = useState<any>();
-
   const router = useRouter();
 
-  const submitFn = async (
-    values: any,
-    formikHelpers: FormikHelpers<any>
-  ): Promise<void> => {
+  const submitFn = (values: any, formikHelpers: FormikHelpers<any>): void => {
+
     if (!moduleName) {
-      toast.error("Module name is required!");
+      toast.error("Module name is required");
       return;
     }
 
@@ -36,12 +37,7 @@ const page = () => {
 
     try {
       setIsSubmitting(true);
-      const data = {
-        moduleName: moduleName,
-        moduleDescription: `${values?.companyAdminPortal},${values?.clientPortal}`,
-        template: false,
-      };
-      await services.createModule(data);
+      console.log("Submitting form with values:", values);
       formikHelpers.resetForm();
       router.back();
     } catch (error) {
@@ -54,7 +50,7 @@ const page = () => {
   };
 
   const initialValues = {
-    moduleName: "",
+    // moduleName: "",
     // moduleType: "coreModule",
     companyAdminPortal: "",
     clientPortal: "",
@@ -63,8 +59,9 @@ const page = () => {
     <ModuleForm
       initialValues={initialValues}
       submitFn={submitFn}
-      headerText="Create Module"
+      headerText="Create Category Specific Module"
       isSubmitting={isSubmitting}
+      isCategorySpecificModule={true}
       moduleName={moduleName}
       setModuleName={setModuleName}
     />
