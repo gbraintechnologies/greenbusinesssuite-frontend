@@ -7,6 +7,7 @@ import ModuleForm from "../../../components/ModuleForm";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import Loader from "@/components/Loader/Loader";
+import { CoreModules } from "@/config/modules";
 
 const page = ({ params }: any) => {
   const moduleId = params.moduleId;
@@ -21,13 +22,18 @@ const page = ({ params }: any) => {
   // states for handling form submission
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
 
-  const [initialValues, setInitialValues] = React.useState<any>({
-    moduleName: "",
-    companyAdminPortal: "",
-    clientPortal: ""
-  })
+  //state for handling module name
+  const [moduleName, setModuleName] = React.useState<any>();
 
-  const submitFn = async (values: any, formikHelpers: FormikHelpers<any>): Promise<void> => {
+  const [initialValues, setInitialValues] = React.useState<any>({
+    companyAdminPortal: "",
+    clientPortal: "",
+  });
+
+  const submitFn = async (
+    values: any,
+    formikHelpers: FormikHelpers<any>
+  ): Promise<void> => {
     // Check if both fields are empty
     if (!values.companyAdminPortal && !values.clientPortal) {
       toast.error(
@@ -39,15 +45,16 @@ const page = ({ params }: any) => {
 
     try {
       console.log("Submitting form with values:", values);
+      setIsSubmitting(true);
       const data = {
         id: moduleId,
         moduleName: values.moduleName,
-        moduleDescription: `${values?.companyAdminPortal},${values?.clientPortal}`
-      }
+        moduleDescription: `${values?.companyAdminPortal},${values?.clientPortal}`,
+      };
 
-      await services.updateModule(data)
+      await services.updateModule(data);
 
-      toast.success(`Successfully edited ${values.moduleName} module`)
+      toast.success(`Successfully edited ${values.moduleName} module`);
     } catch (error) {
       console.error("Error submitting form", error);
       toast.error("An error occurred. Please try again");
@@ -57,23 +64,26 @@ const page = ({ params }: any) => {
   };
 
   React.useEffect(() => {
-
-    if(moduleData){
-      console.log('there is module data')
-      console.log('here',moduleData)
+    if (moduleData) {
       let initial = {
-        moduleName: moduleData?.moduleName,
+        // moduleName: moduleData?.moduleName,
         // moduleType: "coreModule",
-        companyAdminPortal: moduleData?.moduleDescription,
-        clientPortal: moduleData?.moduleDescription,
+        companyAdminPortal: moduleData?.moduleDescription?.split(",")[0],
+        clientPortal: moduleData?.moduleDescription?.split(",")[1],
       };
-      setInitialValues(initial)
+      setInitialValues(initial);
+      setModuleName(
+        CoreModules.find((mod: string) => mod == moduleData?.moduleName)
+      );
     }
-  }, [moduleData])
+  }, [moduleData]);
 
-  React.useEffect(() => console.log('changed to ',initialValues),[initialValues])
-  if(isLoading && !moduleData){
-    return <Loader text="Loading module details" />
+  React.useEffect(
+    () => console.log("changed to ", initialValues),
+    [initialValues]
+  );
+  if (isLoading && !moduleData) {
+    return <Loader text="Loading module details" />;
   }
   return (
     <ModuleForm
@@ -81,6 +91,8 @@ const page = ({ params }: any) => {
       submitFn={submitFn}
       headerText="Edit Core Module"
       isSubmitting={isSubmitting}
+      moduleName={moduleName}
+      setModuleName={setModuleName}
     />
   );
 };

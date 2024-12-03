@@ -11,12 +11,21 @@ const page = () => {
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("catId");
 
+    //state for handling module name
+    const [moduleName, setModuleName] = useState<any>();
+
   // states for handling submission
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const router = useRouter();
 
   const submitFn = (values: any, formikHelpers: FormikHelpers<any>): void => {
+
+    if (!moduleName) {
+      toast.error("Module name is required");
+      return;
+    }
+
     // Check if both fields are empty
     if (!values.companyAdminPortal && !values.clientPortal) {
       toast.error(
@@ -41,7 +50,7 @@ const page = () => {
   };
 
   const initialValues = {
-    moduleName: "",
+    // moduleName: "",
     // moduleType: "coreModule",
     companyAdminPortal: "",
     clientPortal: "",
@@ -53,6 +62,8 @@ const page = () => {
       headerText="Create Category Specific Module"
       isSubmitting={isSubmitting}
       isCategorySpecificModule={true}
+      moduleName={moduleName}
+      setModuleName={setModuleName}
     />
   );
 };

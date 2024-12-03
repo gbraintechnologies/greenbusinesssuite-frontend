@@ -14,7 +14,14 @@ const page = () => {
   // states for handling form submission
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
 
+  //state for handling module name
+  const [moduleName, setModuleName] = React.useState<any>();
+
   const submitFn = (values: any, formikHelpers: FormikHelpers<any>): void => {
+    if (!moduleName) {
+      toast.error("Module name is required");
+      return;
+    }
     // Check if both fields are empty
     if (!values.companyAdminPortal && !values.clientPortal) {
       toast.error(
@@ -35,7 +42,7 @@ const page = () => {
   };
 
   const initialValues = {
-    moduleName: "Documents",
+    // moduleName: "Documents",
     // moduleType: "coreModule",
     companyAdminPortal: "Upload and assign documents",
     clientPortal: "View and download assigned documents",
@@ -46,6 +53,8 @@ const page = () => {
       submitFn={submitFn}
       headerText="Edit Core Module"
       isSubmitting={isSubmitting}
+      moduleName={moduleName}
+      setModuleName={setModuleName}
     />
   );
 };
