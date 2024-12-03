@@ -5,7 +5,8 @@ type Props = {
   moduleName: string;
   companyAdminPortal?: string;
   clientPortal?: string;
-  defaultChecked?: boolean
+  defaultChecked?: boolean;
+  disableCheckboxes?: boolean;
   index: string
 };
 const ModuleCard = ({
@@ -13,6 +14,7 @@ const ModuleCard = ({
   companyAdminPortal,
   clientPortal,
   defaultChecked=false,
+  disableCheckboxes=false,
   index
 }: Props) => {
   return (
@@ -23,9 +25,10 @@ const ModuleCard = ({
       <div className="flex !items-center gap-3">
           <input
             type="checkbox"
-            className="form-check-input checked:bg-[#16A34A] border border-[#16A34A] !w-4 !h-4 focus:!outline-none focus:!shadow-none focus:!ring-0 focus:!border-none visited:!outline-none"
+            className="form-check-input checked:!bg-[#16A34A] border !border-[#16A34A] !w-4 !h-4 focus:!outline-none focus:!shadow-none focus:!ring-0 focus:!border-none visited:!outline-none"
             id={`moduleCard${index}`}
-            defaultChecked={defaultChecked}
+            // checked={defaultChecked}
+            // disabled={disableCheckboxes}
           />
         <p className="text-slate-900 font-medium">{moduleName}</p>
       </div>

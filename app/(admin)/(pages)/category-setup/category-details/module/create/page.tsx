@@ -1,29 +1,38 @@
 "use client";
 import { FormikHelpers } from "formik";
-import React from "react";
+import React, { useState } from "react";
 
 import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
 import ModuleForm from "../../../components/ModuleForm";
 
-const page = ({params}: any) => {
-  
-  // states for handling form submission
-  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
+const page = () => {
+  // getting the category id
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("catId");
+
+  // states for handling submission
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const submitFn = (values: any, formikHelpers: FormikHelpers<any>): void => {
-
     // Check if both fields are empty
     if (!values.companyAdminPortal && !values.clientPortal) {
       toast.error(
         "Please fill out at least one of the 'Company Admin Portal' or 'Client Portal' fields before submitting."
       );
-      setIsSubmitting(false);
+
       return;
     }
 
     try {
+      setIsSubmitting(true);
       console.log("Submitting form with values:", values);
+      formikHelpers.resetForm();
+      router.back();
     } catch (error) {
+      setIsSubmitting(false);
       console.error("Error submitting form", error);
       toast.error("An error occurred. Please try again");
     } finally {
@@ -32,17 +41,18 @@ const page = ({params}: any) => {
   };
 
   const initialValues = {
-    moduleName: "Documents",
+    moduleName: "",
     // moduleType: "coreModule",
-    companyAdminPortal: "Upload and assign documents",
-    clientPortal: "View and download assigned documents",
+    companyAdminPortal: "",
+    clientPortal: "",
   };
   return (
     <ModuleForm
       initialValues={initialValues}
       submitFn={submitFn}
-      headerText="Edit Core Module"
+      headerText="Create Category Specific Module"
       isSubmitting={isSubmitting}
+      isCategorySpecificModule={true}
     />
   );
 };

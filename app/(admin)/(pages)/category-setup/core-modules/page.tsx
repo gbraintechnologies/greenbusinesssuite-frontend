@@ -46,7 +46,7 @@ function CreateModule() {
                     {modules && modules.map((item: any) => (
                         <Link
                             key={item.id}
-                            href={`/category-setup/1?moduleId=${item.id}`} // Pass the category id as a query parameter
+                            href={`/category-setup/core-modules/${item.id}`} // Pass the category id as a query parameter
                         >
                             <CardDescription
                                 name={item.moduleName}

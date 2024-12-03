@@ -94,7 +94,7 @@ function CategoryDetails() {
               </p>
             </div>
             <Link
-              href={`/category-setup/1/create-module`}
+              href={`/category-setup/category-details/module/create?catId=${Id}`}
               className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
             >
               <LuPlusCircle />Create new module
