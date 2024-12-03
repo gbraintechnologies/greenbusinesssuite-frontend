@@ -12,6 +12,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import services from "@/services";
 import { deleteCategoryByID } from "@/services/features/categoryService";
+import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 
 interface Category {
   categoryName: string;
@@ -61,16 +62,26 @@ function CategoryDetails() {
 
   // Early returns for edge cases
   if (!categoryId) return <div>No category ID provided</div>;
-  if (isLoading) return <div>Loading category data...</div>;
+  if (isLoading)
+    return (
+      <div className="w-full flex items-center justify-center min-h-[50vh]">
+        <LoadingIcon />
+      </div>
+    );
   if (error) return <div>Error loading category data</div>;
   if (!data) return <div>No category found</div>;
 
   return (
     <div className="w-full pb-20">
       <div className="flex items-center px-5 justify-between my-4">
-        <div>
-          <h3 className="font-semibold text-lg">Category - {data.categoryName}</h3>
-        </div>
+        <Link
+          href="/category-setup"
+          className="bg-white border border-gray-200 flex items-center justify-center text-black text-sm px-2 hover:bg-gray-100 py-1 hover:opacity-95  gap-2 rounded-xl w-24"
+        >
+          <IoArrowBackSharp /> Back
+          <div className="border-opacity-50 border-white h-7"></div>
+        </Link>
+
         <div className="flex items-center gap-2">
           <Link
             href={`/category-setup/edit-category?categoryId=${categoryId}`}
@@ -84,36 +95,46 @@ function CategoryDetails() {
             disabled={isDeleting}
             className="bg-primary-red flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
           >
-            {isDeleting ? "Deleting..." : <><TiDeleteOutline /> Delete Category</>}
+            {isDeleting ? (
+              "Deleting..."
+            ) : (
+              <>
+                <TiDeleteOutline /> Delete Category
+              </>
+            )}
             <div className="border-opacity-50 border-white h-10"></div>
           </button>
         </div>
       </div>
-      <div className="px-5">
-        <Link
-          href="/category-setup"
-          className="bg-white border border-gray-200 flex text-black text-sm px-2 hover:bg-gray-100 py-1 hover:opacity-95 items-center gap-2 rounded-xl w-24"
-        >
-          <IoArrowBackSharp /> Back
-          <div className="border-opacity-50 border-white h-10"></div>
-        </Link>
-      </div>
+
       <div className="px-5 mt-5">
-        <h3 className="font-semibold text-xl mb-4">Category Details</h3>
-        <div>
-          <label className="block mb-1 font-medium text-gray-700">Category Name</label>
+        <h3 className="font-semibold text-xl mb-4">
+          {" "}
+          Category - {data.categoryName}
+        </h3>
+
+        <div className="mt-5">
+          <label className="block mb-1 font-medium text-gray-700">
+            Category Name
+          </label>
           <p className="text-gray-900 text-sm">{data.categoryName}</p>
         </div>
         <div className="mt-5">
-          <label className="block mb-1 font-medium text-gray-700">Category Description</label>
+          <label className="block mb-1 font-medium text-gray-700">
+            Category Description
+          </label>
           <p className="text-gray-900 text-sm">{data.categoryDescription}</p>
         </div>
       </div>
       <div className="px-5 mt-7">
         <div className="flex justify-between items-center">
           <div>
-            <h4 className="font-bold text-black-400">Category-Specific Modules</h4>
-            <p className="text-black-400 text-sm">Modules tailor-made for specific categories</p>
+            <h4 className="font-bold text-black-400">
+              Category-Specific Modules
+            </h4>
+            <p className="text-black-400 text-sm">
+              Modules tailor-made for specific categories
+            </p>
           </div>
           <Link
             href={`/category-setup/${categoryId}/create-module`}
