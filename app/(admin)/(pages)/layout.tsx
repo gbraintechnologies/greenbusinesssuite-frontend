@@ -95,9 +95,13 @@ export default function AdminLayout({
       link: null,
       subNavigation: [
         {
-          name: "Company creation",
+          name: "All Companies",
           icon: null,
-          link: ["/company-setup", "/company-setup/create", "/company-setup/configuration/create"],
+          link: [
+            "/company-setup",
+            "/company-setup/create",
+            "/company-setup/configuration/create",
+          ],
         },
         {
           name: "Category setup",
