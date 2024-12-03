@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LuPlusCircle } from "react-icons/lu";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import { RiSettingsLine } from "react-icons/ri";
 
 function Nav() {
@@ -11,7 +11,7 @@ function Nav() {
       </div>
       <div className="flex items-center gap-2">
         <Link href="/category-setup/add-category" className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
-          <LuPlusCircle /> Create new Category
+          <IoIosAddCircleOutline /> Create new Category
           <div className="border-opacity-50 border-white h-10"></div>
         </Link>
         <div>
