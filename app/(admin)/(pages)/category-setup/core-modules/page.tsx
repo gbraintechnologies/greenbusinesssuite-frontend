@@ -7,14 +7,15 @@ import { IoArrowBackSharp } from "react-icons/io5";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
-
 function CreateModule() {
+  const { data: modules } = useQuery({
+    queryKey: ["all_modules"],
+    queryFn: services.getAllModules,
+  });
 
-    const { data: modules } = useQuery({
-        queryKey: ["all_modules"],
-        queryFn: services.getAllModules,
-    });
+  useEffect(() => {}, [modules]);
 
+<<<<<<< HEAD
     useEffect(() => {
     }, [modules]);
 
@@ -56,8 +57,50 @@ function CreateModule() {
                     ))}
                 </div>
             </div>
+=======
+  return (
+    <div className="w-full px-5 pb-20 py-5">
+      <div className="w-full text-primary-dark flex justify-between">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/category-setup"
+            className="bg-white border border-gray-200 flex justify-center text-black text-sm p-2 hover:bg-gray-100 hover:opacity-95 items-center gap-2 rounded-xl"
+          >
+            <IoArrowBackSharp />
+          </Link>
+          <h3 className="font-semibold text-2xl my-4">Core Modules</h3>
+>>>>>>> 43143783dff0d33096f49880b9079ccc4f7a957d
         </div>
-    );
+
+        <div>
+          <Link
+            href="/category-setup/core-modules/create"
+            className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+          >
+            <IoIosAddCircleOutline /> Create new module
+            <div className="border-opacity-50 border-white h-10"></div>
+          </Link>
+        </div>
+      </div>
+
+      <div className="max-w-full">
+        <div className="w-full py-6 grid grid-cols-3 gap-6">
+          {modules &&
+            modules.map((item: any) => (
+              <Link
+                key={item.id}
+                href={`/category-setup/1?moduleId=${item.id}`} // Pass the category id as a query parameter
+              >
+                <CardDescription
+                  name={item.moduleName}
+                  description={item.moduleDescription}
+                />
+              </Link>
+            ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default CreateModule;

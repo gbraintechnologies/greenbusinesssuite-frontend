@@ -73,14 +73,19 @@ function CategoryDetails() {
 
   return (
     <div className="w-full pb-20">
-      <div className="flex items-center px-5 justify-between my-4">
-        <Link
-          href="/category-setup"
-          className="bg-white border border-gray-200 flex items-center justify-center text-black text-sm px-2 hover:bg-gray-100 py-1 hover:opacity-95  gap-2 rounded-xl w-24"
-        >
-          <IoArrowBackSharp /> Back
-          <div className="border-opacity-50 border-white h-7"></div>
-        </Link>
+      <div className="flex items-center px-5 justify-between my-4 mb-8">
+        <div className="flex items-center gap-4">
+          <Link
+            href="/category-setup"
+            className="bg-white border border-gray-200 flex items-center justify-center text-black text-sm p-3 hover:bg-gray-100  hover:opacity-95  gap-2 rounded-xl "
+          >
+            <IoArrowBackSharp />
+          </Link>
+          <h3 className="font-semibold text-xl">
+            {" "}
+            Category - {data.categoryName}
+          </h3>
+        </div>
 
         <div className="flex items-center gap-2">
           <Link
@@ -108,11 +113,6 @@ function CategoryDetails() {
       </div>
 
       <div className="px-5 mt-5">
-        <h3 className="font-semibold text-xl mb-4">
-          {" "}
-          Category - {data.categoryName}
-        </h3>
-
         <div className="mt-5">
           <label className="block mb-1 font-medium text-gray-700">
             Category Name
