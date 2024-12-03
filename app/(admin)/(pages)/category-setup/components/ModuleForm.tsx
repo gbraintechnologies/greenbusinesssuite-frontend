@@ -46,12 +46,17 @@ const ModuleForm: React.FC<Props> = ({
       console.log("unchecked");
     }
   };
+
+  React.useEffect(() => {
+    console.log('initial values ', initialValues)
+  },[])
   return (
     <div className="px-5 pb-20">
       <Formik
         initialValues={initialValues}
         validationSchema={moduleSchema}
         onSubmit={submitFn}
+        enableReinitialize
       >
         {() => {
           return (

@@ -33,10 +33,9 @@ export const deleteCategoryByID = (id: any) => {
 };
 
 export const getCategoryByID = (id: number) => {
-    return () =>
-        authApi.get(`/setup/get-category/${id}`).then((res) => res.data);
-};
-
+    return authApi.get(`/setup/get-category/${id}`).then((res) => res.data);
+  };
+  
 export const getModuleByID = (id: number) => {
     return () =>
         authApi.get(`/setup/get-module/${id}`).then((res) => res.data);

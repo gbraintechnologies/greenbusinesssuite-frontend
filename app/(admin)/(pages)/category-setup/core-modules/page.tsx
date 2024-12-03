@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import CardDescription from "../components/CustomCard";
 import Link from "next/link";
-import { LuPlusCircle } from "react-icons/lu";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
@@ -26,7 +26,7 @@ function CreateModule() {
                 </div>
                 <div>
                     <Link href="/category-setup/core-modules/create" className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
-                        <LuPlusCircle /> Create new module
+                        <IoIosAddCircleOutline /> Create new module
                         <div className="border-opacity-50 border-white h-10"></div>
                     </Link>
 

@@ -51,11 +51,15 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
                       <Disclosure.Panel>
                         <div className="pl-5">
                           {item.subNavigation.map((sub: any) => {
+                            let link = sub.link;
+                            if (Array.isArray(sub.link)) {
+                              link = sub.link[0];
+                            }
                             return (
-                              <Link key={sub.name} href={sub.link}>
+                              <Link key={sub.name} href={link}>
                                 <li
                                   className={`${
-                                    pathname == sub.link
+                                    pathname.includes(link)
                                       ? "bg-[#E2E8F0] text-[#1E293B] font-semibold  "
                                       : "text-gray-600"
                                   } flex items-center w-full pl-5 gap-3 my-1 py-2 px-3 rounded-xl font-medium `}

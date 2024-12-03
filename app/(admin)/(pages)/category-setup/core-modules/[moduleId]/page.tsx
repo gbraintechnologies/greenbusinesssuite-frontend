@@ -12,6 +12,7 @@ const page = ({ params }: any) => {
   // getting the module id
   let moduleId = params.moduleId;
 
+  // getting the module data
   const { data: moduleData, isLoading } = useQuery({
     queryKey: ["module", moduleId],
     queryFn: services.getModuleByID(moduleId),
