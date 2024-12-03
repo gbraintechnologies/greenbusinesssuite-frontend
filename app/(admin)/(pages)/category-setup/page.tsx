@@ -1,12 +1,31 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchIcon from "@/public/icons/SearchIcon";
 import Nav from "./components/Nav";
 import CardDescription from "./components/CustomCard";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
 
 function CategorySetup() {
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Query to fetch all categories
+  const { data: allCategories, isLoading: isLoadingAllCategories } = useQuery({
+    queryKey: ["all_categories"],
+    queryFn: services.getAllCategories,
+    enabled: !searchTerm, // Only fetch when no search term is provided
+  });
+
+  // Query to fetch searched categories
+  const { data: searchedCategories, isLoading: isLoadingSearch } = useQuery({
+    queryKey: ["searchCategory", searchTerm],
+    queryFn: () => services.searchCtegoryBycategoryName(searchTerm),
+    enabled: !!searchTerm, // Only fetch when there is a search term
+  });
+
+  // Determine which data to display (all or searched categories)
+  const categoriesToDisplay = searchTerm ? searchedCategories : allCategories;
 
   return (
     <div className="w-full pb-20">
@@ -28,26 +47,24 @@ function CategorySetup() {
           </div>
         </div>
       </div>
-
       <div className="p-6 grid grid-cols-3 gap-[22px]">
-        <Link href={`/category-setup/1/create-module`}>
-        <CardDescription
-          name="Micro-lending"
-          description="This category is for companies that provide micro lending services."
-          />
-          </Link>
-        <CardDescription
-          name="Business Consultancy"
-          description="This category is for companies that provide Business Consultancy such as business registration."
-        />
-        <CardDescription
-          name="Agri/agrobusiness Programs"
-          description="This category is for companies that provide Agri/agrobusiness Programs services."
-        />
-        <CardDescription
-          name="Business Association"
-          description="This category is for companies that provide Business Association services."
-        />
+        {isLoadingAllCategories || isLoadingSearch ? (
+          <p>Loading...</p>
+        ) : categoriesToDisplay?.length > 0 ? (
+          categoriesToDisplay.map((item: any) => (
+            <Link
+              key={item.id}
+              href={`/category-setup/category-details?categoryId=${item.id}`}
+            >
+              <CardDescription
+                name={item.categoryName}
+                description={item.categoryDescription}
+              />
+            </Link>
+          ))
+        ) : (
+          <p>No categories found.</p>
+        )}
       </div>
     </div>
   );

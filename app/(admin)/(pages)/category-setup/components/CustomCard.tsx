@@ -15,7 +15,7 @@ const CardDescription: React.FC<CustomCardProps> = ({
         <div
             className={`bg-gray-50 text-gray-800 rounded-lg shadow-md p-4 
         hover:bg-gray-200 transition-colors duration-200 ease-in-out 
-        cursor-pointer ${extraClasses}`}
+        cursor-pointer min-h-40 ${extraClasses}`}
         >
             <h2 className="text-lg font-semibold">{name}</h2>
 
