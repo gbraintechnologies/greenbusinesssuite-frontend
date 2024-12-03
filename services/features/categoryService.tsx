@@ -41,3 +41,7 @@ export const getModuleByID = (id: number) => {
     return () =>
         authApi.get(`/setup/get-module/${id}`).then((res) => res.data);
 };
+
+export const searchCtegoryBycategoryName = (categoryName: string) => {
+    return authApi.get(`/setup/category-name-search/${categoryName}`).then((res) => res.data);
+  };

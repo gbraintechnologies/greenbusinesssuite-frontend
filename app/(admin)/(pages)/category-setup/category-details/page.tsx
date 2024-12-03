@@ -1,19 +1,42 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaRegEdit } from "react-icons/fa";
 import { TiDeleteOutline } from "react-icons/ti";
 import { IoArrowBackSharp } from "react-icons/io5";
 import CardDescription from "../components/CustomCard";
 import { LuPlusCircle } from "react-icons/lu";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import services from "@/services";
+import { useQuery } from "@tanstack/react-query";
+
+
+interface Category {
+  categoryName: string;
+  categoryDescription: string;
+  // Add any other fields you expect from the response
+}
 
 function CategoryDetails() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const Id = searchParams.get("categoryId");
+  const { data, isLoading, isError, error } = useQuery<Category, Error>({
+    queryKey: ["category", Id],
+    queryFn: services.getCategoryByID(Number(Id)),
+    enabled: !!Id,
+  });
+
+  if (!data) {
+    return <div>No category found</div>;
+  }
 
   return (
     <div className="w-full pb-20">
       <div className="flex items-center px-5 justify-between my-4">
         <div>
-          <h3 className="font-semibold text-lg">Category - Micro Lending</h3>
+          <h3 className="font-semibold text-lg">Category - {data.categoryName}</h3>
         </div>
         <div className="flex items-center gap-2">
           <Link href="" className="bg-white border border-gray-200 flex text-black text-sm px-4 hover:bg-gray-100 hover:opacity-95 items-center gap-2 rounded-xl">
@@ -49,7 +72,7 @@ function CategoryDetails() {
             Category Name
           </label>
           <p className="text-gray-900 text-sm">
-            Micro-Lending
+            {data.categoryName}
           </p>
         </div>
         <div className="px-5 mt-5">
@@ -57,7 +80,7 @@ function CategoryDetails() {
             Category Description
           </label>
           <p className="text-gray-900 text-sm">
-            This category is for companies that provide micro-lending services
+            {data.categoryDescription}
           </p>
         </div>
       </div>
@@ -97,14 +120,14 @@ function CategoryDetails() {
             ]}
           />
           <CardDescription
-             name="Lending Home Page Template 3"
+            name="Lending Home Page Template 3"
             description={[
               "Company Admin: Upload and assign documents to users.",
               "Client Portal: View and download assigned documents.",
             ]}
           />
           <CardDescription
-             name="Lending Home Page Template 4"
+            name="Lending Home Page Template 4"
             description={[
               "Company Admin: Upload and assign documents to users.",
               "Client Portal: View and download assigned documents.",
