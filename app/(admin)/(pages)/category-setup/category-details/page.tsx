@@ -126,24 +126,8 @@ function CategoryDetails() {
           <p className="text-gray-900 text-sm">{data.categoryDescription}</p>
         </div>
       </div>
-<<<<<<< HEAD
-      <div>
-        <div className="px-5 mt-7">
-          <div className="flex justify-between items-center">
-            <div>
-              <h4 className="font-bold text-black-400">Category-Specific Modules</h4>
-              <p className="text-black-400 text-sm">
-                Modules tailor-made for specific categories
-              </p>
-            </div>
-            <Link
-              href={`/category-setup/category-details/module/create?catId=${Id}`}
-              className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-            >
-              <LuPlusCircle />Create new module
-              <div className="border-opacity-50 border-white h-10"></div>
-            </Link>
-=======
+          
+           
       <div className="px-5 mt-7">
         <div className="flex justify-between items-center">
           <div>
@@ -153,7 +137,6 @@ function CategoryDetails() {
             <p className="text-black-400 text-sm">
               Modules tailor-made for specific categories
             </p>
->>>>>>> 64a041acddfd1ad2a8484aa8750e92e883a5822c
           </div>
           <Link
             href={`/category-setup/${categoryId}/create-module`}
