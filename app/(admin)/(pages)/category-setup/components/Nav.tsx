@@ -3,14 +3,16 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { RiSettingsLine } from "react-icons/ri";
 
 function Nav() {
-
   return (
-    <div className="w-full text-[#0F172A] px-5 flex justify-between">
+    <div className="w-full text-[#0F172A] px-5 flex items-center justify-between">
       <div>
-        <h3 className="font-semibold text-xl">Category Setup</h3>
+        <h3 className="font-semibold text-2xl">Category Setup</h3>
       </div>
       <div className="flex items-center gap-2">
-        <Link href="/category-setup/add-category" className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
+        <Link
+          href="/category-setup/add-category"
+          className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+        >
           <IoIosAddCircleOutline /> Create new Category
           <div className="border-opacity-50 border-white h-10"></div>
         </Link>
@@ -22,7 +24,6 @@ function Nav() {
             <RiSettingsLine /> Core Modules
             <div className="border-opacity-50 border-white h-10"></div>
           </Link>
-
         </div>
       </div>
     </div>
