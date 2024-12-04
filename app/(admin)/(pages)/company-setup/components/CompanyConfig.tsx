@@ -15,20 +15,34 @@ import ModuleCard from "../components/ModuleCard";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "@/components/Loader/Loader";
+import EmptyList from "@/components/Form/EmptyList";
 
 const CompanyConfig = () => {
   const router = useRouter();
 
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+
   // Query to fetch all categories
   const { data: allCategories, isLoading: isLoadingAllCategories } = useQuery({
     queryKey: ["all_categories"],
-    queryFn: services.getAllCategories,
+    queryFn: services.getAllSpecificCategories,
+  });
+
+  // Query to fetch all category specific modules
+  const {
+    data: allCategorySpecificModules,
+    isLoading: loadingCategorySpecificModules,
+  } = useQuery({
+    queryKey: ["category_specific_module", selectedCategory?.id],
+    queryFn: () =>
+      services.getAllSpecificModuleCategoryByID(selectedCategory?.id),
+    enabled: Boolean(selectedCategory?.id),
   });
 
   // Query to fetch all modules
-  const { data: allModules, isLoading: loadingModules } = useQuery({
-    queryKey: ["all modules"],
-    queryFn: services.getAllModules,
+  const { data: allCoreModules, isLoading: loadingCoreModules } = useQuery({
+    queryKey: ["all core modules"],
+    queryFn: services.getAllCoreModules(),
   });
 
   const [selectedModules, setSelectedModules] = useState<any>([]);
@@ -71,19 +85,17 @@ const CompanyConfig = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
-
   React.useEffect(() => {
     if (allCategories) {
       setSelectedCategory(allCategories[0]);
     }
-  }, [allCategories, selectedModules]);
+  }, [allCategories]);
 
-  if (isLoadingAllCategories || loadingModules)
+  if (isLoadingAllCategories || loadingCoreModules)
     return <Loader text="Loading categories and modules" />;
 
   return (
-    <div className="px-5 pb-20">
+    <div className="px-5 pb-20 pt-8">
       <div className="w-full text-primary-dark pb-3 flex justify-between">
         <div className="flex items-center gap-3">
           {/* <div
@@ -184,7 +196,7 @@ const CompanyConfig = () => {
               </p>
             </header>
             <div className="mt-3 grid grid-cols-3 gap-2 w-full">
-              {allModules?.map((module: any, index: number) => {
+              {allCoreModules?.map((module: any, index: number) => {
                 let parsedDescription;
                 try {
                   parsedDescription = JSON.parse(module?.moduleDescription);
@@ -196,14 +208,8 @@ const CompanyConfig = () => {
                   <ModuleCard
                     key={index + "core"}
                     moduleData={module}
-                    companyAdminPortal={
-                      parsedDescription?.companyAdminPortal ??
-                      module?.moduleDescription
-                    }
-                    clientPortal={
-                      parsedDescription?.clientPortal ??
-                      module?.moduleDescription
-                    }
+                    companyAdminPortal={module?.adminFeatures}
+                    clientPortal={module?.clientFeatures}
                     index={index + "core"}
                     onCheckboxChange={handleCoreModulesCheckboxChange}
                   />
@@ -222,33 +228,34 @@ const CompanyConfig = () => {
                 Modules tailor-made for specific categories{" "}
               </p>
             </header>
-            <div className="mt-3 grid grid-cols-3 gap-2 w-full">
-              {allModules?.map((module: any, index: number) => {
-                let parsedDescription;
-                try {
-                  parsedDescription = JSON.parse(module?.moduleDescription);
-                } catch (error) {
-                  parsedDescription = null;
-                }
-
-                return (
-                  <ModuleCard
-                    key={index + "category"}
-                    moduleData={module}
-                    companyAdminPortal={
-                      parsedDescription?.companyAdminPortal ??
-                      module?.moduleDescription
-                    }
-                    clientPortal={
-                      parsedDescription?.clientPortal ??
-                      module?.moduleDescription
-                    }
-                    index={index + "core"}
-                    onCheckboxChange={handleCategoryModulesCheckboxChange}
-                  />
-                );
-              })}
-            </div>
+            {loadingCategorySpecificModules ? (
+              <Loader text="Loading category specific modules" />
+            ) : allCategorySpecificModules?.length > 0 ? (
+              <div className="mt-3 grid grid-cols-3 gap-2 w-full">
+                {allCategorySpecificModules?.map(
+                  (module: any, index: number) => {
+                    return (
+                      <ModuleCard
+                        key={index + "category"}
+                        moduleData={module}
+                        companyAdminPortal={module?.adminFeatures}
+                        clientPortal={module?.clientFeatures}
+                        index={index + "category"}
+                        onCheckboxChange={handleCategoryModulesCheckboxChange}
+                      />
+                    );
+                  }
+                )}
+              </div>
+            ) : (
+              <div className="w-full h-auto py-10 flex justify-center items-center flex-col">
+                <h1 className="text-lg">No modules</h1>
+                <p className="text-sm text-[#667085]">
+                  There are no modules for the {selectedCategory?.categoryName}{" "}
+                  category
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

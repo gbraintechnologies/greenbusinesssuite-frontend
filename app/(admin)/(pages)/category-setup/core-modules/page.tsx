@@ -10,7 +10,7 @@ import services from "@/services";
 function CreateModule() {
   const { data: modules } = useQuery({
     queryKey: ["all_modules"],
-    queryFn: services.getAllModules,
+    queryFn: services.getAllCoreModules(),
   });
 
   useEffect(() => {}, [modules]);

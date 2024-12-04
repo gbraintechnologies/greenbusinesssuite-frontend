@@ -33,13 +33,13 @@ const CardDescription: React.FC<CustomCardProps> = ({
       {/* Handle different types of description */}
       {typeof parsedDescription === "object" && !Array.isArray(parsedDescription) ? (
         <div className="mt-2 text-sm space-y-2">
-          {Object.entries(parsedDescription).map(([key, value], index) => (
+          {/* {Object.entries(parsedDescription).map(([key, value], index) => (
             <div key={index} className="space-y-1">
               <p className="font-medium">
                 <span className="list-disc inline-block mr-2">•</span> {key}: "{value}"
               </p>
             </div>
-          ))}
+          ))} */}
         </div>
       ) : Array.isArray(parsedDescription) ? (
         <ul className="mt-2 text-sm list-disc pl-5 space-y-1">

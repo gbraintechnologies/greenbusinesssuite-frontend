@@ -11,7 +11,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import services from "@/services";
-import { deleteCategoryByID } from "@/services/features/categoryService";
+// import { deleteCategoryByID } from "@/services/features/categoryService";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 
 interface Category {
@@ -31,7 +31,7 @@ function CategoryDetails() {
   // Fetch category details
   const { data, error, isLoading } = useQuery<Category, Error>({
     queryKey: ["category", categoryId],
-    queryFn: () => services.getCategoryByID(Number(categoryId)),
+    queryFn: () => services.getSpecificCategoryByID(Number(categoryId)),
     enabled: Boolean(categoryId),
     staleTime: 30000,
     refetchOnWindowFocus: false,
@@ -41,7 +41,7 @@ function CategoryDetails() {
   const { mutate: deleteCategory, status } = useMutation({
     mutationFn: async () => {
       if (!categoryId) throw new Error("Invalid category ID");
-      const response = await deleteCategoryByID(Number(categoryId));
+      const response = await services.deleteSpecificCategoryByID(Number(categoryId));
       return response.data;
     },
     onSuccess: () => {
@@ -55,7 +55,13 @@ function CategoryDetails() {
 
   const { data: allCategories, isLoading: isLoadingAllCategories } = useQuery({
     queryKey: ["all_categories"],
-    queryFn: services.getAllCategories,
+    queryFn: services.getAllSpecificCategories,
+  });
+
+  const { data: allCategoryModules, isLoading: isLoadingAllCategoryModules } = useQuery({
+    queryKey: ["all_category_modules", categoryId],
+    queryFn: () => services.getAllSpecificModuleCategoryByID(Number(categoryId)),
+    enabled: !!categoryId
   });
 
   const isDeleting = status === "pending";

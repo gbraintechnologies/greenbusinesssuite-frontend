@@ -16,28 +16,26 @@ const page = ({ params }: any) => {
   // getting the module data
   const { data: moduleData, isLoading } = useQuery({
     queryKey: ["module", moduleId],
-    queryFn: services.getModuleByID(moduleId),
+    queryFn: services.getCoreModuleByID(moduleId),
     enabled: Boolean(moduleId),
   });
 
   const router = useRouter();
 
-  const [parsedDescription, setParsedDescription] = React.useState<any>(null);
+  // const [parsedDescription, setParsedDescription] = React.useState<any>(null);
 
-  React.useEffect(() => {
-    if (moduleData) {
-      try {
-        setParsedDescription(JSON.parse(moduleData.moduleDescription));
-      } catch (error) {
-        console.log("Error parsing module description", error);
-        setParsedDescription(null);
-      }
-    }
-  }, [moduleData]);
+  // React.useEffect(() => {
+  //   if (moduleData) {
+  //     try {
+  //       setParsedDescription(JSON.parse(moduleData.moduleDescription));
+  //     } catch (error) {
+  //       console.log("Error parsing module description", error);
+  //       setParsedDescription(null);
+  //     }
+  //   }
+  // }, [moduleData]);
 
-  React.useEffect(() => {
-    console.log("parsed description changed to ", parsedDescription);
-  }, [parsedDescription]);
+
 
   if (isLoading) {
     return <Loader text="Loading module details" />;
@@ -92,40 +90,27 @@ const page = ({ params }: any) => {
           </p>
         </div>
         {/* MODULE DESCRIPTION IF THERE IS NO COMPANY ADMIN DESCRIPTION AND CLIENT DESCRIPTION */}
-        {!parsedDescription && (
-          <div>
-            <label className="text-[#334155] text-xs font-normal">
-              Description
-            </label>
-            <p className="text-[#334155] text-base font-medium">
-              {moduleData?.moduleDescription}
-            </p>
-          </div>
-        )}
+        
         {/* COMPANY ADMIN PORTAL FEATURE DESCRIPTION */}
-        {parsedDescription && parsedDescription?.companyAdminPortal && (
+        {moduleData?.adminFeatures && (
           <div>
             <label className="text-[#334155] text-xs font-normal">
               Company Admin Portal Feature Description
             </label>
             <p className="text-[#334155] text-base font-medium">
-              {parsedDescription
-                ? parsedDescription?.companyAdminPortal
-                : moduleData?.moduleDescription}
+              {moduleData?.adminFeatures}
             </p>
           </div>
         )}
         {/* CLIENT PORTAL FEATURE DESCRIPTION */}
 
-        {parsedDescription && parsedDescription?.clientPortal && (
+        {moduleData?.clientFeatures && (
           <div>
             <label className="text-[#334155] text-xs font-normal">
               Client Portal Feature Description
             </label>
             <p className="text-[#334155] text-base font-medium">
-              {parsedDescription
-                ? parsedDescription?.clientPortal
-                : moduleData?.moduleDescription}
+              {moduleData?.clientFeatures}
             </p>
           </div>
         )}

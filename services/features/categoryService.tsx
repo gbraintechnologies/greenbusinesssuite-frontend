@@ -35,3 +35,7 @@ export const getAllSpecificModuleCategoryByID = (id: number) => {
 export const searchSpecificCategoryByName = (categoryName: string) => {
     return authApi.get(`/specific-category-module/category-name-search/${categoryName}`).then((res) => res.data);
 };
+
+export const createCategorySpecificModule = (categoryID: number, data: any) => {
+    return authApi.post(`/specific-category-module/add-module/${categoryID}`, data).then((res) => res.data);
+}

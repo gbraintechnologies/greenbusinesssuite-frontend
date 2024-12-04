@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import ModuleForm from "../../../components/ModuleForm";
+import services from "@/services";
 
 const page = () => {
   // getting the category id
@@ -14,12 +15,15 @@ const page = () => {
     //state for handling module name
     const [moduleName, setModuleName] = useState<any>();
 
+    //state for handling whether module is a template or not
+    const [isTemplate, setIsTemplate] = useState<boolean>(false);
+
   // states for handling submission
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const router = useRouter();
 
-  const submitFn = (values: any, formikHelpers: FormikHelpers<any>): void => {
+  const submitFn = async(values: any, formikHelpers: FormikHelpers<any>): Promise<void> => {
 
     if (!moduleName) {
       toast.error("Module name is required");
@@ -38,7 +42,14 @@ const page = () => {
     try {
       setIsSubmitting(true);
       console.log("Submitting form with values:", values);
-      formikHelpers.resetForm();
+      const data = {
+        moduleName: moduleName,
+        adminFeatures: values.companyAdminPortal,
+        clientFeatures: values.clientPortal,
+        template: isTemplate
+      }
+
+      await services.createCategorySpecificModule(Number(categoryId), data);
       router.back();
     } catch (error) {
       setIsSubmitting(false);
@@ -64,6 +75,8 @@ const page = () => {
       isCategorySpecificModule={true}
       moduleName={moduleName}
       setModuleName={setModuleName}
+      isTemplate={isTemplate}
+      setIsTemplate={setIsTemplate}
     />
   );
 };
