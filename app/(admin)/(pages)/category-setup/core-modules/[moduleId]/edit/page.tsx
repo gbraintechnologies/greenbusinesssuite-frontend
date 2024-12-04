@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import Loader from "@/components/Loader/Loader";
 import { CoreModules } from "@/config/modules";
+import { useRouter } from "next/navigation";
 
 const page = ({ params }: any) => {
   const moduleId = params.moduleId;
@@ -29,6 +30,8 @@ const page = ({ params }: any) => {
     companyAdminPortal: "",
     clientPortal: "",
   });
+
+  const router = useRouter();
 
   const submitFn = async (
     values: any,
@@ -54,11 +57,10 @@ const page = ({ params }: any) => {
         clientFeatures: values.clientPortal,
       };
 
-      console.log("data", data);
-
       await services.updateCoreModule(data);
 
-      toast.success(`Successfully edited module`);
+      toast.success(`Successfully edited the ${moduleName} module`);
+      router.back();
     } catch (error) {
       console.error("Error submitting form", error);
       toast.error("An error occurred. Please try again");
