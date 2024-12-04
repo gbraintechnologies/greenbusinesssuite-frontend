@@ -126,8 +126,7 @@ function CategoryDetails() {
           <p className="text-gray-900 text-sm">{data.categoryDescription}</p>
         </div>
       </div>
-          
-           
+
       <div className="px-5 mt-7">
         <div className="flex justify-between items-center">
           <div>
@@ -139,7 +138,7 @@ function CategoryDetails() {
             </p>
           </div>
           <Link
-            href={`/category-setup/${categoryId}/create-module`}
+            href={`/category-setup/category-details/module/create?catId=${categoryId}`}
             className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
           >
             <IoIosAddCircleOutline /> Create new module

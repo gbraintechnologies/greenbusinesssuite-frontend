@@ -36,6 +36,9 @@ import useFileUpload from "@/hooks/useFileUpload";
 import { VscLink } from "react-icons/vsc";
 import Loader from "@/components/Loader/Loader";
 import Configuration from "./_components/Configuration";
+import BrandingSettings from "./_components/BrandingSettings";
+import AssignedForms from "./_components/AssignedForms";
+import Description from "./_components/Description";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -389,285 +392,48 @@ const Page = () => {
           {/* RENDERING BASED ON FILTER */}
           <div>
             {activeFilter.value === "description" && (
-              <>
-                <div className="flex-1 py-5 pb-3">
-                  {companyDescription && (
-                    <div className="group-item">
-                      <div className="label">Company description</div>
-                      <div className="value">{companyDescription}</div>
-                    </div>
-                  )}
-                  {companyData?.company_address && (
-                    <div className="group-item">
-                      <div className="label">Jurisdiction</div>
-                      <div className="value">
-                        {country?.countryName}
-                        {","}
-                        {parentAddressScheme?.parentName}
-                        {","}
-                        {parentAddressScheme?.childLevels?.find(
-                          (entry: any) => entry == companyChildAddressId
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {companyData?.industry && (
-                    <div className="group-item">
-                      <div className="label">Industry</div>
-                      <div className="value">
-                        {isConvertibleToNumber(companyData?.industry)
-                          ? industry?.sector?.parentSector
-                          : companyData?.industry}
-                        {","}
-                        {companySubSector}
-                      </div>
-                    </div>
-                  )}
-                  {companyData?.primary_contact_name && (
-                    <div className="group-item">
-                      <div className="label">Contact person</div>
-                      <div className="value">
-                        {companyData?.primary_contact_name}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex justify-between">
-                    {companyData?.primary_contact_phone_number && (
-                      <div className="group-item">
-                        <div className="label">Phone Number</div>
-                        <div className="value">
-                          {companyData?.primary_contact_phone_number}
-                        </div>
-                      </div>
-                    )}
-                    {companyData?.primary_contact_email && (
-                      <div className="group-item">
-                        <div className="label">Email</div>
-                        <div className="value">
-                          {companyData?.primary_contact_email}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </>
+              <Description
+                companyData={companyData}
+                companyChildAddressId={companyChildAddressId}
+                companyDescription={companyDescription}
+                companySubSector={companySubSector}
+                country={country}
+                industry={industry}
+                parentAddressScheme={parentAddressScheme}
+               />
             )}
 
             {activeFilter.value === "assigned_forms" && (
-              <>
-                <div className="min-h-[40vh]">
-                  <div className="flex items-center justify-between mb-2 mt-2">
-                    <div className=" w-full text-[#475569] font-medium my-4 text-base">
-                      Assigned Forms
-                    </div>
-                    {/* ASSIGN NEW FORM */}
-                    <button
-                      className=" bg-white border border-[rgba(226, 232, 240, 1)] flex max-w-64 text-sm px-4 py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg w-full "
-                      onClick={() => setShowAssignModal(true)}
-                    >
-                      <LuPlusCircle /> Assign New Form
-                    </button>
-                  </div>
-
-                  {/* PAGINATION AND TIMELINE FILTER*/}
-                  <div className="flex justify-between mb-3">
-                    <DatePicker
-                      selectedTimeline={selectedTimeline}
-                      setSelectedTimeline={setSelectedTimeline}
-                    />
-                    <Pagination
-                      limit={limit}
-                      variant="no-text"
-                      page={page}
-                      currentData={assignedForms?.content}
-                      setPage={setPage}
-                    />
-                  </div>
-
-                  {/* LOADING FORMS */}
-                  {formsLoading && <Loader text="Fetching forms" />}
-                  {/* NO ASSIGNED FORM */}
-                  {assignedForms?.content?.length === 0 && (
-                    <div className="flex items-center justify-center py-5 w-full ">
-                      <EmptyList
-                        text={
-                          selectedTimeline?.value == "ALL"
-                            ? "No forms assigned to company"
-                            : ""
-                        }
-                      />
-                    </div>
-                  )}
-
-                  {/**DISPLAYING ASSIGNED FORMS*/}
-                  {assignedForms && assignedForms?.content?.length > 0 && (
-                    <>
-                      <div className="grid grid-cols-4 gap-10 ">
-                        {assignedForms &&
-                          assignedForms?.content?.map((form: any) => {
-                            return (
-                              <FormCard
-                                key={form.id}
-                                form={form}
-                                noMetaData={true}
-                              />
-                            );
-                          })}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </>
+              <AssignedForms
+                assignedForms={assignedForms}
+                selectedTimeline={selectedTimeline}
+                setSelectedTimeline={setSelectedTimeline}
+                page={page}
+                setPage={setPage}
+                limit={limit}
+                setShowAssignModal={setShowAssignModal}
+                formsLoading={formsLoading}
+              />
             )}
 
             {activeFilter.value === "branding_settings" && (
-              <>
-                {brandingLoading ? (
-                  <Loader text="Fetching company branding information" />
-                ) : (
-                  <div className="pt-6">
-                    <header className="pb-3 flex justify-between items-center w-full">
-                      <div>
-                        <h3 className="text-lg text-primary-dark font-semibold">
-                          Branding Settings
-                        </h3>
-                        <p className="text-sm text-[#667085]">
-                          Set your default branding elements to determine how
-                          the interface appears to customers.
-                        </p>
-                      </div>
-                      {/* <button
-                    type="button"
-                    className="bg-white disabled:bg-gray-400 py-3 text-black border w-24 flex items-center justify-center border-[rgba(226, 232, 240, 1)] text-sm hover:opacity-95 items-center gap-2 rounded-xl"
-                    onClick={editCompanyBranding}
-                  >
-                    Save
-                  </button> */}
-                    </header>
-
-                    <div className="max-w-2xl">
-                      {/* COMPANY SMALL LOGO */}
-                      <div className="mt-2 mb-4">
-                        <h2 className="text-base text-primary-dark font-medium">
-                          Upload small icon
-                        </h2>
-                        <p className="text-sm text-[#667085]">
-                          A smaller representation of your logo to be used as a
-                          favicon. It must be squared and at least 128px by
-                          128px with a max size of 512KB. Supported formats are
-                          JPG and PNG only.
-                        </p>
-
-                        {!companySmallLogo && !smallLogoUrl && (
-                          <label className="mt-2 flex gap-2 items-center my-2 bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer">
-                            <input
-                              type="file"
-                              className="hidden"
-                              onChange={(e) => {
-                                setCompanySmallLogo(
-                                  e.target.files && e.target.files[0]
-                                );
-                              }}
-                              accept=".jpg, .png"
-                            />
-                            <CloudUploadIcon />
-                            <p>Upload</p>
-                          </label>
-                        )}
-
-                        {smallLogoUrl && (
-                          <div
-                            className="w-32 h-32 rounded-md my-3"
-                            style={{
-                              backgroundImage: `url(${smallLogoUrl})`,
-                              backgroundSize: "cover",
-                              backgroundPosition: "center",
-                              border: "1px solid #E2E8F0",
-                              position: "relative",
-                            }}
-                          >
-                            {/* <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
-                          <div
-                            className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
-                            onClick={() => {
-                              setCompanySmallLogo(null);
-                              setSmallLogoUrl("");
-                            }}
-                          >
-                            <RiDeleteBin6Line color="#0E121B" />
-                          </div>
-                          <label className="flex justify-center items-center w-8 py-2 relative cursor-pointer">
-                            <input
-                              type="file"
-                              className="hidden"
-                              onChange={(e) => {
-                                setCompanySmallLogo(
-                                  e.target.files && e.target.files[0]
-                                );
-                              }}
-                              accept=".jpg, .png"
-                            />
-                            <WriteIcon />
-                          </label>
-                        </div> */}{" "}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* COMPANY COLOR */}
-                      <div className="input-holder">
-                        <h2 className="text-base text-primary-dark font-medium">
-                          Company Color
-                        </h2>
-                        <p className="text-sm text-[#667085]">
-                          Add a splash of color to your pages
-                        </p>
-
-                        {!color && (
-                          <button
-                            className="mt-2 flex gap-2 items-center my-2 bg-white w-fit h-fit border py-2 px-4 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer"
-                            type="button"
-                            onClick={() => setShowColorPicker(!showColorPicker)}
-                          >
-                            Select
-                          </button>
-                        )}
-
-                        {color && (
-                          <button
-                            className="mt-2 flex items-center my-2 bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer"
-                            type="button"
-                            // onClick={() => setShowColorPicker(!showColorPicker)}
-                          >
-                            <div
-                              className="w-5 h-8 rounded-tl-md rounded-bl-md"
-                              style={{ backgroundColor: color }}
-                            ></div>
-                            <p className="p-2">{color}</p>
-                          </button>
-                        )}
-
-                        {showColorPicker && (
-                          <SketchPicker
-                            color={color}
-                            onChangeComplete={handleChangeComplete}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
+              <BrandingSettings
+                color={color}
+                setCompanySmallLogo={setCompanySmallLogo}
+                companySmallLogo={companySmallLogo}
+                smallLogoUrl={smallLogoUrl}
+                showColorPicker={showColorPicker}
+                setShowColorPicker={setShowColorPicker}
+                handleChangeComplete={handleChangeComplete}
+                brandingLoading={brandingLoading}
+              />
             )}
 
             {activeFilter?.value === "administrators" && (
               <CompanyAdmins companyId={id} />
             )}
 
-            {activeFilter?.value === "configuration" && (
-              <Configuration />
-            )}
+            {activeFilter?.value === "configuration" && <Configuration />}
           </div>
         </div>
       </div>

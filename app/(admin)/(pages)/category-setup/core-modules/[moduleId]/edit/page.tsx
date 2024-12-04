@@ -46,10 +46,15 @@ const page = ({ params }: any) => {
     try {
       console.log("Submitting form with values:", values);
       setIsSubmitting(true);
+      const description = JSON.stringify({
+        companyAdminPortal: values.companyAdminPortal,
+        clientPortal: values.clientPortal,
+      });
       const data = {
         id: moduleId,
-        moduleName: values.moduleName,
-        moduleDescription: `${values?.companyAdminPortal},${values?.clientPortal}`,
+        moduleName: moduleName,
+        moduleDescription: description,
+        template: false,
       };
 
       await services.updateModule(data);
@@ -65,11 +70,21 @@ const page = ({ params }: any) => {
 
   React.useEffect(() => {
     if (moduleData) {
+      let parsedDescription: any;
+      try {
+        parsedDescription = JSON.parse(moduleData?.moduleDescription);
+      } catch (error) {
+        parsedDescription = null;
+      }
       let initial = {
         // moduleName: moduleData?.moduleName,
         // moduleType: "coreModule",
-        companyAdminPortal: moduleData?.moduleDescription?.split(",")[0],
-        clientPortal: moduleData?.moduleDescription?.split(",")[1],
+        companyAdminPortal: parsedDescription
+          ? parsedDescription?.companyAdminPortal
+          : moduleData?.moduleDescription,
+        clientPortal: parsedDescription
+          ? parsedDescription?.clientPortal
+          : moduleData?.moduleDescription,
       };
       setInitialValues(initial);
       setModuleName(
