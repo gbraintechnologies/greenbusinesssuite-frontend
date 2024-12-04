@@ -16,7 +16,7 @@ import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "@/components/Loader/Loader";
 
-const page = () => {
+const CompanyConfig = () => {
   const router = useRouter();
 
   // Query to fetch all categories
@@ -257,4 +257,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default CompanyConfig;

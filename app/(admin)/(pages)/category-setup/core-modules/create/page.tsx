@@ -42,11 +42,10 @@ const page = () => {
         clientPortal: values.clientPortal,
       })
       const data = {
-        id: 5,
         moduleName: moduleName,
         moduleDescription: description,
       };
-      await services.createModule(data);
+      await services.createCoreModule(data);
       formikHelpers.resetForm();
       router.back();
     } catch (error) {

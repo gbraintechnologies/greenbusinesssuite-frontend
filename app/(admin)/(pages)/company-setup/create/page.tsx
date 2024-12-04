@@ -13,6 +13,7 @@ import CompanyForm from "../components/CompanyForm";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
+import CompanyConfig from "../components/CompanyConfig";
 
 
 interface ICompany {
@@ -353,6 +354,9 @@ const CreateCompany = () => {
             </div>
           </div>
         </Modal>
+      </div>
+      <div className="mt-4 border-t ">
+        <CompanyConfig />
       </div>
     </div>
   );
