@@ -26,6 +26,8 @@ import * as notificationService from "./features/notificationService";
 
 import * as categoryService from "./features/categoryService";
 
+import * as coreModuleService from "./features/coreModuleService";
+
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -43,4 +45,5 @@ export default {
   ...documentService,
   ...categoryService,
   ...notificationService,
+  ...coreModuleService,
 };

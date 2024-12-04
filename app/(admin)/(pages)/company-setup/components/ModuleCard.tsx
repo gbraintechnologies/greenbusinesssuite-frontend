@@ -1,22 +1,31 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { TbPointFilled } from "react-icons/tb";
 
 type Props = {
-  moduleName: string;
+  moduleData: any;
   companyAdminPortal?: string;
   clientPortal?: string;
   defaultChecked?: boolean;
   disableCheckboxes?: boolean;
-  index: string
+  index: string;
+  onCheckboxChange?: (moduleData: any, isChecked: boolean) => void;
+
 };
 const ModuleCard = ({
-  moduleName,
+  moduleData,
   companyAdminPortal,
   clientPortal,
   defaultChecked=false,
   disableCheckboxes=false,
-  index
+  index,
+  onCheckboxChange
 }: Props) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+    if (onCheckboxChange) {
+      onCheckboxChange(moduleData, e.target.checked);
+    }
+  };
   return (
     <label
       className="rounded-lg bg-[#F8FAFC] py-3 px-6 min-h-36 w-auto cursor-pointer"
@@ -27,10 +36,11 @@ const ModuleCard = ({
             type="checkbox"
             className="form-check-input checked:!bg-[#16A34A] border !border-[#16A34A] !w-4 !h-4 focus:!outline-none focus:!shadow-none focus:!ring-0 focus:!border-none visited:!outline-none"
             id={`moduleCard${index}`}
+            onChange={handleChange}
             // checked={defaultChecked}
             // disabled={disableCheckboxes}
           />
-        <p className="text-slate-900 font-medium">{moduleName}</p>
+        <p className="text-slate-900 font-medium">{moduleData?.moduleName}</p>
       </div>
       <div className="mt-1">
         {companyAdminPortal && (

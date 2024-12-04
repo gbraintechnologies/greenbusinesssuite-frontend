@@ -107,7 +107,7 @@ const Configuration = () => {
           <div className="mt-3 grid grid-cols-3 gap-2 w-full">
               {dummyCoreModules?.map((module: any, index: number) => (
                 <ModuleCard
-                  moduleName={module?.title}
+                  moduleData={module}
                   companyAdminPortal={
                     module?.description?.find(
                       (desc: any) => desc?.role == "CompanyAdmin"
