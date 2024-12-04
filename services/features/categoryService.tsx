@@ -1,46 +1,37 @@
 import authApi from "../meshAuthClient";
 
-export const getAllModules = () => {
-    return authApi.get("/setup/module").then((res) => res.data);
+
+export const getAllSpecificCategories = () => {
+    return authApi.get("/specific-category-module/all").then((res) => res.data);
 };
 
-export const getAllCategories = () => {
-    return authApi.get("/setup/category").then((res) => res.data);
+export const updateSpecificCategory = (data: any) => {
+    return authApi.put(`/specific-category-module/update`, data);
 };
 
-export const updateModule = (data: any) => {
-    return authApi.put(`/setup/module-update`, data);
+
+export const createSpecificCategory = (data: any) => {
+    return authApi.post("/specific-category-module/create", data);
 };
 
-export const updateCategory = (data: any) => {
-    return authApi.put(`/setup/category/update`, data);
+
+export const deleteSpecificCategoryByID = (id: number) => {
+    return authApi.delete(`/specific-category-module/category-delete/${id}`);
 };
 
-export const createModule = (data: any) => {
-    return authApi.post("/setup/module", data);
+export const deleteSpecificItemFromCategory = (categoryID: number, moduleID: number) => {
+    return authApi.delete(`/specific-category-item/delete-specific-item/${categoryID}/${moduleID}`);
 };
 
-export const createCategory = (data: any) => {
-    return authApi.post("/setup/category", data);
+export const getSpecificCategoryByID = (id: number) => {
+    return authApi.get(`/specific-category-module/get-category/${id}`).then((res) => res.data);
 };
 
-export const deleteModuleByID = (id: any) => {
-    return authApi.delete(`/setup/module-delete/${id}`);
+export const getAllSpecificModuleCategoryByID = (id: number) => {
+    return authApi.get(`/specific-category-module/get-all-modules/${id}`).then((res) => res.data);
 };
 
-export const deleteCategoryByID = (id: any) => {
-    return authApi.delete(`/setup/category-delete/${id}`);
-};
 
-export const getCategoryByID = (id: number) => {
-    return authApi.get(`/setup/get-category/${id}`).then((res) => res.data);
-  };
-  
-export const getModuleByID = (id: number) => {
-    return () =>
-        authApi.get(`/setup/get-module/${id}`).then((res) => res.data);
+export const searchSpecificCategoryByName = (categoryName: string) => {
+    return authApi.get(`/specific-category-module/category-name-search/${categoryName}`).then((res) => res.data);
 };
-
-export const searchCtegoryBycategoryName = (categoryName: string) => {
-    return authApi.get(`/setup/category-name-search/${categoryName}`).then((res) => res.data);
-  };
