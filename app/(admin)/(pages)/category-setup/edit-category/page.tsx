@@ -31,9 +31,12 @@ function EditCategory() {
 
     const { data, isLoading, isError } = useQuery<Category, Error>({
         queryKey: ["category", categoryId],
-        queryFn: () => services.getCategoryByID(Number(categoryId)),
+        queryFn: () => services.getSpecificCategoryByID(Number(categoryId)),
         enabled: !!categoryId,
     });
+
+    useEffect(() => {  }, [data])
+
 
     const router = useRouter();
 
@@ -47,12 +50,13 @@ function EditCategory() {
 
         try {
             if (data) {
-                await services.updateCategory({
-                    id: data.id, 
+                await services.updateSpecificCategory({
+                    id: data.id,
                     categoryName,
                     categoryDescription,
                     createdOn: new Date().toISOString(),
                     updatedOn: new Date().toISOString(),
+                    categorySpecificModules: [],
                 });
 
                 toast.success("Category updated successfully!");
@@ -79,7 +83,7 @@ function EditCategory() {
                 }}
                 validationSchema={CategoryScheme}
                 onSubmit={handleFormSubmit}
-                enableReinitialize={true} 
+                enableReinitialize={true}
             >
                 {({ errors, isSubmitting }) => (
                     <Form>

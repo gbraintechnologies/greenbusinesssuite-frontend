@@ -35,6 +35,7 @@ function AddCategory() {
         categoryDescription,
         createdOn: new Date().toISOString(),
         updatedOn: new Date().toISOString(),
+        categorySpecificModules: [],
       });
 
       toast.success("Category created successfully!");

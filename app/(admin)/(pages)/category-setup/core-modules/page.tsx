@@ -13,7 +13,7 @@ function CreateModule() {
     queryFn: services.getAllCoreModules(),
   });
 
-  useEffect(() => {}, [modules]);
+  useEffect(() => { }, [modules]);
 
   return (
     <div className="w-full px-5 pb-20 py-5">
@@ -48,12 +48,16 @@ function CreateModule() {
                 href={`/category-setup/core-modules/${item.id}`} // Pass the category id as a query parameter
               >
                 <CardDescription
-                  name={item.moduleName}
-                  description={item.moduleDescription}
+                  name={item.moduleName || "Unnamed Module"} // Fallback for missing moduleName
+                  description={[
+                    item.adminFeatures || "",
+                    item.clientFeatures || "",
+                  ].filter(Boolean)} // Filter out empty strings or falsy values
                 />
               </Link>
             ))}
         </div>
+
       </div>
     </div>
   );
