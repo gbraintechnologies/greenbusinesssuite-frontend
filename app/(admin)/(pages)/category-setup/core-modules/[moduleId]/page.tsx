@@ -57,7 +57,7 @@ const page = ({ params }: any) => {
             Edit
           </Link>
           <button
-            onClick={() => router.back()}
+            // onClick={() => router.back()}
             type="button"
             className="bg-[#EF4444] border border-[#DC2626] shadow-sm py-2 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
           >
@@ -68,8 +68,8 @@ const page = ({ params }: any) => {
       </header>
       <div className="mt-2">
         <button
-          // onClick={() => null}
-          type="button"
+            onClick={() => router.back()}
+            type="button"
           className="bg-white border border-[#CBD5E1] shadow-sm py-2 flex text-[#334155] text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
         >
           <IoArrowBack />
