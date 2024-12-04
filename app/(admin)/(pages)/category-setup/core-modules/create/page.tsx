@@ -36,10 +36,15 @@ const page = () => {
 
     try {
       setIsSubmitting(true);
+
+      const description = JSON.stringify({
+        companyAdminPortal: values.companyAdminPortal,
+        clientPortal: values.clientPortal,
+      })
       const data = {
+        id: 4,
         moduleName: moduleName,
-        moduleDescription: `${values?.companyAdminPortal},${values?.clientPortal}`,
-        template: false,
+        moduleDescription: description,
       };
       await services.createModule(data);
       formikHelpers.resetForm();
