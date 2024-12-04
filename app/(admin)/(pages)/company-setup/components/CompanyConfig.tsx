@@ -77,7 +77,6 @@ const CompanyConfig = () => {
     if (allCategories) {
       setSelectedCategory(allCategories[0]);
     }
-    console.log("selected modules are", selectedModules);
   }, [allCategories, selectedModules]);
 
   if (isLoadingAllCategories || loadingModules)
