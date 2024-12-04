@@ -29,12 +29,13 @@ function AddCategory() {
     const loading = toast.loading("Creating Category. Please wait...");
 
     try {
-      await services.createCategory({
+      await services.createSpecificCategory({
         id: 0,
         categoryName,
         categoryDescription,
         createdOn: new Date().toISOString(),
         updatedOn: new Date().toISOString(),
+        categorySpecificModules: [],
       });
 
       toast.success("Category created successfully!");

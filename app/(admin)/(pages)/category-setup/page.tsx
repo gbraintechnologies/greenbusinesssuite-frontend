@@ -15,14 +15,14 @@ function CategorySetup() {
   // Query to fetch all categories
   const { data: allCategories, isLoading: isLoadingAllCategories } = useQuery({
     queryKey: ["all_categories"],
-    queryFn: services.getAllCategories,
+    queryFn: services.getAllSpecificCategories,
     enabled: !searchTerm, // Only fetch when no search term is provided
   });
 
   // Query to fetch searched categories
   const { data: searchedCategories, isLoading: isLoadingSearch } = useQuery({
     queryKey: ["searchCategory", searchTerm],
-    queryFn: () => services.searchCtegoryBycategoryName(searchTerm),
+    queryFn: () => services.searchSpecificCategoryByName(searchTerm),
     enabled: !!searchTerm, // Only fetch when there is a search term
   });
 

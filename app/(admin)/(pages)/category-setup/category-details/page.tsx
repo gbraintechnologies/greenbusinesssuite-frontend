@@ -11,8 +11,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import services from "@/services";
-import { deleteCategoryByID } from "@/services/features/categoryService";
+import { deleteSpecificCategoryByID } from "@/services/features/categoryService";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import { refreshToken } from "@/services/features/appService";
 
 interface Category {
   categoryName: string;
@@ -24,24 +25,39 @@ function CategoryDetails() {
   const router = useRouter();
   const [categoryId, setCategoryId] = useState<string | null>(null);
 
+
   useEffect(() => {
     setCategoryId(searchParams.get("categoryId"));
   }, [searchParams]);
 
   // Fetch category details
-  const { data, error, isLoading } = useQuery<Category, Error>({
+  const { data: category, error, isLoading, refetch } = useQuery<Category, Error>({
     queryKey: ["category", categoryId],
-    queryFn: () => services.getCategoryByID(Number(categoryId)),
+    queryFn: () => services.getSpecificCategoryByID(Number(categoryId)),
     enabled: Boolean(categoryId),
     staleTime: 30000,
     refetchOnWindowFocus: false,
   });
 
+  const { data: specificCategory, isLoading: isLoadingAllCategories } = useQuery<Category, Error>({
+    queryKey: ["specific-category", categoryId],
+    queryFn: () => services.getAllSpecificModuleCategoryByID(Number(categoryId)),
+    enabled: Boolean(categoryId),
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (categoryId) {
+      refetch();
+    }
+  }, [categoryId]);
+
   // Delete category mutation
   const { mutate: deleteCategory, status } = useMutation({
     mutationFn: async () => {
       if (!categoryId) throw new Error("Invalid category ID");
-      const response = await deleteCategoryByID(Number(categoryId));
+      const response = await deleteSpecificCategoryByID(Number(categoryId));
       return response.data;
     },
     onSuccess: () => {
@@ -53,10 +69,6 @@ function CategoryDetails() {
     },
   });
 
-  const { data: allCategories, isLoading: isLoadingAllCategories } = useQuery({
-    queryKey: ["all_categories"],
-    queryFn: services.getAllCategories,
-  });
 
   const isDeleting = status === "pending";
 
@@ -69,7 +81,7 @@ function CategoryDetails() {
       </div>
     );
   if (error) return <div>Error loading category data</div>;
-  if (!data) return <div>No category found</div>;
+  if (!category) return <div>No category found</div>;
 
   return (
     <div className="w-full pb-20">
@@ -83,7 +95,7 @@ function CategoryDetails() {
           </Link>
           <h3 className="font-semibold text-xl">
             {" "}
-            Category - {data.categoryName}
+            Category - {category.categoryName}
           </h3>
         </div>
 
@@ -117,13 +129,13 @@ function CategoryDetails() {
           <label className="block mb-1 font-medium text-gray-700">
             Category Name
           </label>
-          <p className="text-gray-900 text-sm">{data.categoryName}</p>
+          <p className="text-gray-900 text-sm">{category.categoryName}</p>
         </div>
         <div className="mt-5">
           <label className="block mb-1 font-medium text-gray-700">
             Category Description
           </label>
-          <p className="text-gray-900 text-sm">{data.categoryDescription}</p>
+          <p className="text-gray-900 text-sm">{category.categoryDescription}</p>
         </div>
       </div>
 
@@ -147,19 +159,25 @@ function CategoryDetails() {
         </div>
         <div className="p-6 grid grid-cols-3 gap-[22px]">
           {isLoadingAllCategories ? (
-            <p>Loading...</p>
-          ) : allCategories?.length > 0 ? (
-            allCategories.map((item: any) => (
+            <p>Loading...</p> // Loading text or spinner while data is fetching
+          ) : specificCategory && Array.isArray(specificCategory) && specificCategory.length > 0 ? (
+            specificCategory.map((item: any) => (
               <CardDescription
                 key={item.id}
-                name={item.categoryName}
-                description={[item.categoryDescription]}
+                name={item.moduleName || "Unnamed Module"} // Fallback for missing moduleName
+                description={[
+                  item.adminFeatures || "",
+                  item.clientFeatures || "",
+                ].filter(Boolean)} // Filter out empty strings or falsy values
               />
             ))
           ) : (
-            <p>No categories found.</p>
+            <p>No Category Specific-Modules found.</p>
           )}
         </div>
+
+
+
       </div>
     </div>
   );
