@@ -36,7 +36,7 @@ const page = ({ params }: any) => {
   }, [moduleData]);
 
   React.useEffect(() => {
-    console.log('parsed description changed to ', parsedDescription);
+    console.log("parsed description changed to ", parsedDescription);
   }, [parsedDescription]);
 
   if (isLoading) {
@@ -68,8 +68,8 @@ const page = ({ params }: any) => {
       </header>
       <div className="mt-2">
         <button
-            onClick={() => router.back()}
-            type="button"
+          onClick={() => router.back()}
+          type="button"
           className="bg-white border border-[#CBD5E1] shadow-sm py-2 flex text-[#334155] text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
         >
           <IoArrowBack />
@@ -91,29 +91,44 @@ const page = ({ params }: any) => {
             {moduleData?.moduleName}
           </p>
         </div>
+        {/* MODULE DESCRIPTION IF THERE IS NO COMPANY ADMIN DESCRIPTION AND CLIENT DESCRIPTION */}
+        {!parsedDescription && (
+          <div>
+            <label className="text-[#334155] text-xs font-normal">
+              Description
+            </label>
+            <p className="text-[#334155] text-base font-medium">
+              {moduleData?.moduleDescription}
+            </p>
+          </div>
+        )}
         {/* COMPANY ADMIN PORTAL FEATURE DESCRIPTION */}
-        <div>
-          <label className="text-[#334155] text-xs font-normal">
-            Company Admin Portal Feature Description
-          </label>
-          <p className="text-[#334155] text-base font-medium">
-            {parsedDescription
-              ? parsedDescription?.companyAdminPortal
-              : moduleData?.moduleDescription}
-          </p>
-        </div>
+        {parsedDescription && parsedDescription?.companyAdminPortal && (
+          <div>
+            <label className="text-[#334155] text-xs font-normal">
+              Company Admin Portal Feature Description
+            </label>
+            <p className="text-[#334155] text-base font-medium">
+              {parsedDescription
+                ? parsedDescription?.companyAdminPortal
+                : moduleData?.moduleDescription}
+            </p>
+          </div>
+        )}
         {/* CLIENT PORTAL FEATURE DESCRIPTION */}
 
-        <div>
-          <label className="text-[#334155] text-xs font-normal">
-            Client Portal Feature Description
-          </label>
-          <p className="text-[#334155] text-base font-medium">
-            {parsedDescription
-              ? parsedDescription?.clientPortal
-              : moduleData?.moduleDescription}
-          </p>
-        </div>
+        {parsedDescription && parsedDescription?.clientPortal && (
+          <div>
+            <label className="text-[#334155] text-xs font-normal">
+              Client Portal Feature Description
+            </label>
+            <p className="text-[#334155] text-base font-medium">
+              {parsedDescription
+                ? parsedDescription?.clientPortal
+                : moduleData?.moduleDescription}
+            </p>
+          </div>
+        )}
         {/* IS TEMPLATE FEATURE */}
         {moduleData?.isTemplate && (
           <div>
