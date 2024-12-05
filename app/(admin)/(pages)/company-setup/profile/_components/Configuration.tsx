@@ -20,7 +20,7 @@ const Configuration = ({ tenantId }: { tenantId: string }) => {
 
   return (
     <div className="w-full my-6">
-      <div className=" ">
+      {/* <div className=" ">
         <h3 className="text-lg text-primary-dark font-semibold">
           Category Details
         </h3>
@@ -30,7 +30,6 @@ const Configuration = ({ tenantId }: { tenantId: string }) => {
             Category Name
           </label>
           <p className="text-[#334155] text-base font-medium ">
-            Micro-lending{" "}
           </p>
         </div>
         <div className="my-2">
@@ -38,18 +37,17 @@ const Configuration = ({ tenantId }: { tenantId: string }) => {
             Category Description
           </label>
           <p className="text-[#334155] text-base font-medium">
-            This category is for companies that provide micro-lending services.
           </p>
         </div>
-      </div>
+      </div> */}
       <div className="mt-4">
         <div>
           <header>
             <h3 className="text-lg text-primary-dark font-semibold">
-              Industry Modules
+              Category Specific Modules
             </h3>
             <p className="text-[#667085] text-sm">
-              Modules tailor-made for specific industries
+              Modules tailor-made for specific categories{" "}
             </p>
           </header>
           {companyBranding?.categorySpecificModules?.length > 0 ? (
@@ -86,18 +84,16 @@ const Configuration = ({ tenantId }: { tenantId: string }) => {
           </header>
           {companyBranding?.modules?.length > 0 ? (
             <div className="mt-3 grid grid-cols-3 gap-2 w-full">
-              {companyBranding?.modules?.map(
-                (module: any, index: number) => (
-                  <ModuleCard
-                    moduleData={module}
-                    companyAdminPortal={module?.adminFeatures}
-                    clientPortal={module?.clientFeatures}
-                    disableCheckboxes={true}
-                    defaultChecked={true}
-                    index={index + "core"}
-                  />
-                )
-              )}
+              {companyBranding?.modules?.map((module: any, index: number) => (
+                <ModuleCard
+                  moduleData={module}
+                  companyAdminPortal={module?.adminFeatures}
+                  clientPortal={module?.clientFeatures}
+                  disableCheckboxes={true}
+                  defaultChecked={true}
+                  index={index + "core"}
+                />
+              ))}
             </div>
           ) : (
             <NoItems
