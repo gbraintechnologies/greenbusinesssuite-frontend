@@ -50,9 +50,9 @@ function CreateModule() {
                 <CardDescription
                   name={item.moduleName || "Unnamed Module"} // Fallback for missing moduleName
                   description={[
-                    item.adminFeatures || "",
-                    item.clientFeatures || "",
-                  ].filter(Boolean)} // Filter out empty strings or falsy values
+                    item.adminFeatures ? `Company Admin: ${item.adminFeatures}` : "",
+                    item.clientFeatures ? `Client Portal: ${item.clientFeatures}` : "",
+                  ].filter(Boolean)} // Add prefixes and filter out empty stringsFilter out empty strings or falsy values
                 />
               </Link>
             ))}
