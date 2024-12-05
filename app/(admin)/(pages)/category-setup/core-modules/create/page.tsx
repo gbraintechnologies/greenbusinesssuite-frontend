@@ -37,13 +37,14 @@ const page = () => {
     try {
       setIsSubmitting(true);
 
-      const description = JSON.stringify({
-        companyAdminPortal: values.companyAdminPortal,
-        clientPortal: values.clientPortal,
-      })
+      // const description = JSON.stringify({
+      //   companyAdminPortal: values.companyAdminPortal,
+      //   clientPortal: values.clientPortal,
+      // })
       const data = {
         moduleName: moduleName,
-        moduleDescription: description,
+        adminFeatures: values.companyAdminPortal,
+        clientFeatures: values.clientPortal,
       };
       await services.createCoreModule(data);
       formikHelpers.resetForm();

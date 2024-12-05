@@ -1,8 +1,13 @@
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Switch from "@/components/Switch/Switch";
-import { CoreModules } from "@/config/modules";
+import { CategorySpecificModules, CoreModules } from "@/config/modules";
 import { ShowError } from "@/utils/FormHelpers/FormHelpers";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -18,7 +23,9 @@ interface Props {
   isCategorySpecificModule?: boolean;
   moduleName: any;
   setModuleName: any;
-  isSubmitting: boolean
+  isSubmitting: boolean;
+  isTemplate?: boolean;
+  setIsTemplate?: any;
 }
 
 const moduleSchema = Yup.object().shape({
@@ -27,33 +34,42 @@ const moduleSchema = Yup.object().shape({
   //   .oneOf(["coreModule", "categorySpecificModule"] as const)
   //   .defined(),
   companyAdminPortal: Yup.string(),
-  clientPortal: Yup.string()
-})
-.test(
-  "at-least-one",
-  "At least one of 'Company Admin Portal' or 'Client Portal' must be filled",
-  (values) => {
-    return !!values.companyAdminPortal || !!values.clientPortal;
-  }
-);
+  clientPortal: Yup.string(),
+});
+
 const ModuleForm: React.FC<Props> = ({
   initialValues,
   submitFn,
   headerText,
   isCategorySpecificModule = false,
   isSubmitting,
-  moduleName, setModuleName
+  moduleName,
+  setModuleName,
+  isTemplate = false,
+  setIsTemplate,
 }) => {
   const router = useRouter();
 
   const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      console.log("checked");
+    if (e.target.checked && setIsTemplate) {
+      setIsTemplate(true);
     } else {
+      setIsTemplate(false);
       console.log("unchecked");
     }
   };
 
+  const [modules, setModules] = React.useState<any[]>([]); //state for handling modules
+
+  React.useEffect(() => {
+    if(isCategorySpecificModule){
+      setModules(CategorySpecificModules)
+    }else {
+      setModules(CoreModules)
+    }
+
+    console.log('is template' , isTemplate)
+  },[isCategorySpecificModule, isTemplate])
 
   return (
     <div className="px-5 pb-20">
@@ -118,37 +134,37 @@ const ModuleForm: React.FC<Props> = ({
                     Module Name<span className=" text-red-500 ">*</span>
                   </label>
                   <Dropdown>
-            <DropdownTrigger>
-              <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff] rounded-lg my-1">
-                <div className="flex gap-2 w-full justify-between items-center py-0 px-4">
-                  <p className=" font-normal text-sm ">{moduleName}</p>
+                    <DropdownTrigger>
+                      <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff] rounded-lg my-1">
+                        <div className="flex gap-2 w-full justify-between items-center py-0 px-4">
+                          <p className=" font-normal text-sm ">{moduleName}</p>
 
-                  <div className="">
-                    <BiChevronDown size={21} color="#94A3B8" />
-                  </div>
-                </div>
-              </button>
-            </DropdownTrigger>
-            <DropdownMenu
-              className="shadow-md bg-white border border-[#F1F5F9] w-[42rem] rounded-lg flex flex-col gap-3"
-              aria-label="Static Actions"
-            >
-              {CoreModules?.map((mod: any) => (
-                <DropdownItem
-                  key="view"
-                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                    onClick={() => setModuleName(mod)}
-                >
-                  <div className="flex w-full items-center justify-between">
-                    <p>{mod}</p>
-                    {mod == moduleName && (
-                      <IoCheckmark size={20} color="#334155" />
-                    )}
-                  </div>
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
+                          <div className="">
+                            <BiChevronDown size={21} color="#94A3B8" />
+                          </div>
+                        </div>
+                      </button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      className="shadow-md bg-white border border-[#F1F5F9] w-[42rem] rounded-lg flex flex-col gap-3"
+                      aria-label="Static Actions"
+                    >
+                      {modules?.map((mod: any) => (
+                        <DropdownItem
+                          key="view"
+                          className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                          onClick={() => setModuleName(mod)}
+                        >
+                          <div className="flex w-full items-center justify-between">
+                            <p>{mod}</p>
+                            {mod == moduleName && (
+                              <IoCheckmark size={20} color="#334155" />
+                            )}
+                          </div>
+                        </DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
                   <ShowError name="moduleName" />
                 </div>
 
@@ -205,7 +221,10 @@ const ModuleForm: React.FC<Props> = ({
                     <p className="text-sm text-[#475569]">
                       Module is a template
                     </p>
-                    <Switch onSwitchChange={handleSwitchChange} />
+                    <Switch
+                      onSwitchChange={handleSwitchChange}
+                      defaultChecked={isTemplate}
+                    />
                   </div>
                 )}
               </div>

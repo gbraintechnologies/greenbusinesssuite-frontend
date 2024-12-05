@@ -162,6 +162,10 @@ function CategoryDetails() {
             <p>Loading...</p> // Loading text or spinner while data is fetching
           ) : specificCategory && Array.isArray(specificCategory) && specificCategory.length > 0 ? (
             specificCategory.map((item: any) => (
+              <Link
+                key={item.id}
+                href={`/category-setup/category-details/module?catId=${categoryId}&module=${item.id}`} // Pass the category id as a query parameter
+              >
               <CardDescription
                 key={item.id}
                 name={item.moduleName || "Unnamed Module"} // Fallback for missing moduleName
@@ -170,6 +174,7 @@ function CategoryDetails() {
                   item.clientFeatures || "",
                 ].filter(Boolean)} // Filter out empty strings or falsy values
               />
+              </Link>
             ))
           ) : (
             <p>No Category Specific-Modules found.</p>

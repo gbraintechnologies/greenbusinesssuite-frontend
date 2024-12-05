@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import Loader from "@/components/Loader/Loader";
 import { CoreModules } from "@/config/modules";
+import { useRouter } from "next/navigation";
 
 const page = ({ params }: any) => {
   const moduleId = params.moduleId;
@@ -15,7 +16,7 @@ const page = ({ params }: any) => {
   //getting the module data
   const { data: moduleData, isLoading } = useQuery({
     queryKey: ["module", moduleId],
-    queryFn: services.getModuleByID(moduleId),
+    queryFn: services.getCoreModuleByID(moduleId),
     enabled: Boolean(moduleId),
   });
 
@@ -29,6 +30,8 @@ const page = ({ params }: any) => {
     companyAdminPortal: "",
     clientPortal: "",
   });
+
+  const router = useRouter();
 
   const submitFn = async (
     values: any,
@@ -46,20 +49,18 @@ const page = ({ params }: any) => {
     try {
       console.log("Submitting form with values:", values);
       setIsSubmitting(true);
-      const description = JSON.stringify({
-        companyAdminPortal: values.companyAdminPortal,
-        clientPortal: values.clientPortal,
-      });
+      
       const data = {
         id: moduleId,
         moduleName: moduleName,
-        moduleDescription: description,
-        template: false,
+        adminFeatures: values.companyAdminPortal,
+        clientFeatures: values.clientPortal,
       };
 
-      await services.updateModule(data);
+      await services.updateCoreModule(data);
 
-      toast.success(`Successfully edited ${values.moduleName} module`);
+      toast.success(`Successfully edited the ${moduleName} module`);
+      router.back();
     } catch (error) {
       console.error("Error submitting form", error);
       toast.error("An error occurred. Please try again");
@@ -79,12 +80,8 @@ const page = ({ params }: any) => {
       let initial = {
         // moduleName: moduleData?.moduleName,
         // moduleType: "coreModule",
-        companyAdminPortal: parsedDescription
-          ? parsedDescription?.companyAdminPortal
-          : moduleData?.moduleDescription,
-        clientPortal: parsedDescription
-          ? parsedDescription?.clientPortal
-          : moduleData?.moduleDescription,
+        companyAdminPortal: moduleData?.adminFeatures ?? "",
+        clientPortal: moduleData?.clientFeatures ?? "",
       };
       setInitialValues(initial);
       setModuleName(

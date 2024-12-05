@@ -1,76 +1,21 @@
+"use client";
 import React from "react";
 import ModuleCard from "../../components/ModuleCard";
-import "../index.css"
+import "../index.css";
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
+import Loader from "@/components/Loader/Loader";
 
-const Configuration = () => {
-  const dummyCoreModules = [
-    {
-      title: "Dashboard",
-      description: [
-        {
-          role: "CompanyAdmin",
-          details: "View analytics and metrics of the company.",
-        },
-      ],
-    },
-    {
-      title: "Documents",
-      description: [
-        {
-          role: "CompanyAdmin",
-          details: "Upload and assign documents to users.",
-        },
-        {
-          role: "Client",
-          details: "View and download assigned documents.",
-        },
-      ],
-    },
-    {
-      title: "Notifications",
-      description: [
-        {
-          role: "CompanyAdmin",
-          details: "Send messages through SMS, email or in-app.",
-        },
-        {
-          role: "Client",
-          details: "View in-app messages.",
-        },
-      ],
-    },
-    {
-      title: "User Management",
-      description: [
-        {
-          role: "CompanyAdmin",
-          details: "Manage users and roles in company.",
-        },
-      ],
-    },
-    
-  ];
+const Configuration = ({ tenantId }: { tenantId: string }) => {
+  const { data: companyBranding, isLoading } = useQuery({
+    queryKey: ["branding", tenantId],
+    queryFn: services.getCompanyBranding(tenantId),
+    enabled: Boolean(tenantId),
+  });
 
-  const dummyCategoryModules = [
-    {
-      title: "Home Page Template 1",
-      description: [
-        {
-          role: "Client",
-          details: "Home screen for a lending-focused company.",
-        },
-      ],
-    },
-    {
-      title: "Home Page Template 2",
-      description: [
-        {
-          role: "Client",
-          details: "Home screen for a lending-focused company.",
-        },
-      ],
-    },
-  ];
+  if (isLoading) {
+    return <Loader text="Loading branding information" />;
+  }
 
   return (
     <div className="w-full my-6">
@@ -79,17 +24,19 @@ const Configuration = () => {
           Category Details
         </h3>
 
-        <div>
-          <label className="text-[#334155] text-sm font-normal">
+        <div className="my-2">
+          <label className="text-[#334155] text-xs font-normal">
             Category Name
           </label>
-          <p className="text-[#334155] text-sm font-medium">Micro-lending </p>
+          <p className="text-[#334155] text-base font-medium ">
+            Micro-lending{" "}
+          </p>
         </div>
-        <div>
-          <label className="text-[#334155] text-sm font-normal">
+        <div className="my-2">
+          <label className="text-[#334155] text-xs font-normal">
             Category Description
           </label>
-          <p className="text-[#334155] text-sm font-medium">
+          <p className="text-[#334155] text-base font-medium">
             This category is for companies that provide micro-lending services.
           </p>
         </div>
@@ -105,27 +52,21 @@ const Configuration = () => {
             </p>
           </header>
           <div className="mt-3 grid grid-cols-3 gap-2 w-full">
-              {dummyCoreModules?.map((module: any, index: number) => (
+            {companyBranding?.categorySpecificModules?.map(
+              (module: any, index: number) => (
                 <ModuleCard
                   moduleData={module}
-                  companyAdminPortal={
-                    module?.description?.find(
-                      (desc: any) => desc?.role == "CompanyAdmin"
-                    )?.details ?? ""
-                  }
-                  clientPortal={
-                    module?.description?.find(
-                      (desc: any) => desc?.role == "Client"
-                    )?.details ?? ""
-                  }
+                  companyAdminPortal={module?.adminFeatures}
+                  clientPortal={module?.clientFeatures}
                   disableCheckboxes={true}
                   defaultChecked={true}
-                  index={index + "core"}
+                  index={index + "category"}
                 />
-              ))}
-            </div>
+              )
+            )}
+          </div>
         </div>
-        <div>
+        <div className="mt-3">
           <header>
             <h3 className="text-lg text-primary-dark font-semibold">
               Core Modules
@@ -134,6 +75,18 @@ const Configuration = () => {
               Core Modules that apply to all industries{" "}
             </p>
           </header>
+          <div className="mt-3 grid grid-cols-3 gap-2 w-full">
+            {companyBranding?.modules?.map((module: any, index: number) => (
+              <ModuleCard
+                moduleData={module}
+                companyAdminPortal={module?.adminFeatures}
+                clientPortal={module?.clientFeatures}
+                disableCheckboxes={true}
+                defaultChecked={true}
+                index={index + "core"}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

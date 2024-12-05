@@ -19,8 +19,8 @@ export const deleteSpecificCategoryByID = (id: number) => {
     return authApi.delete(`/specific-category-module/category-delete/${id}`);
 };
 
-export const deleteSpecificItemFromCategory = (categoryID: number, moduleID: number) => {
-    return authApi.delete(`/specific-category-item/delete-specific-item/${categoryID}/${moduleID}`);
+export const deleteSpecificModuleFromCategory = (categoryID: number, moduleID: number) => {
+    return authApi.delete(`/specific-category-module/delete-specific-module/${categoryID}/${moduleID}`);
 };
 
 export const getSpecificCategoryByID = (id: number) => {
@@ -35,3 +35,7 @@ export const getAllSpecificModuleCategoryByID = (id: number) => {
 export const searchSpecificCategoryByName = (categoryName: string) => {
     return authApi.get(`/specific-category-module/category-name-search/${categoryName}`).then((res) => res.data);
 };
+
+export const createCategorySpecificModule = (categoryID: number, data: any) => {
+    return authApi.post(`/specific-category-module/add-module/${categoryID}`, data).then((res) => res.data);
+}
