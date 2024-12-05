@@ -166,14 +166,15 @@ function CategoryDetails() {
                 key={item.id}
                 href={`/category-setup/category-details/module?catId=${categoryId}&module=${item.id}`} // Pass the category id as a query parameter
               >
-              <CardDescription
-                key={item.id}
-                name={item.moduleName || "Unnamed Module"} // Fallback for missing moduleName
-                description={[
-                  item.adminFeatures || "",
-                  item.clientFeatures || "",
-                ].filter(Boolean)} // Filter out empty strings or falsy values
-              />
+                <CardDescription
+                  key={item.id}
+                  name={item.moduleName || "Unnamed Module"} // Fallback for missing moduleName
+                  description={[
+                    item.adminFeatures ? `Company Admin: ${item.adminFeatures}` : "",
+                    item.clientFeatures ? `Client Portal: ${item.clientFeatures}` : "",
+                  ].filter(Boolean)} // Add prefixes and filter out empty strings
+                />
+
               </Link>
             ))
           ) : (
