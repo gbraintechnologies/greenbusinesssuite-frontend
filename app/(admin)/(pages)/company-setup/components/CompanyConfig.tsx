@@ -14,6 +14,7 @@ import ModuleCard from "../components/ModuleCard";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "@/components/Loader/Loader";
+import NoItems from "@/components/NoItems/NoItems";
 
 const CompanyConfig = ({
   discardFn,
@@ -32,7 +33,6 @@ const CompanyConfig = ({
   setSelectedCategory: any;
   submitting: boolean;
 }) => {
-
   // Query to fetch all categories
   const { data: allCategories, isLoading: isLoadingAllCategories } = useQuery({
     queryKey: ["all_categories"],
@@ -199,27 +199,34 @@ const CompanyConfig = ({
                 Core Modules that apply to all categories{" "}
               </p>
             </header>
-            <div className="mt-3 grid grid-cols-3 gap-2 w-full">
-              {allCoreModules?.map((module: any, index: number) => {
-                // let parsedDescription;
-                // try {
-                //   parsedDescription = JSON.parse(module?.moduleDescription);
-                // } catch (error) {
-                //   parsedDescription = null;
-                // }
+            {allCategorySpecificModules?.length > 0 ? (
+              <div className="mt-3 grid grid-cols-3 gap-2 w-full">
+                {allCoreModules?.map((module: any, index: number) => {
+                  // let parsedDescription;
+                  // try {
+                  //   parsedDescription = JSON.parse(module?.moduleDescription);
+                  // } catch (error) {
+                  //   parsedDescription = null;
+                  // }
 
-                return (
-                  <ModuleCard
-                    key={index + "core"}
-                    moduleData={module}
-                    companyAdminPortal={module?.adminFeatures}
-                    clientPortal={module?.clientFeatures}
-                    index={index + "core"}
-                    onCheckboxChange={handleCoreModulesCheckboxChange}
-                  />
-                );
-              })}
-            </div>
+                  return (
+                    <ModuleCard
+                      key={index + "core"}
+                      moduleData={module}
+                      companyAdminPortal={module?.adminFeatures}
+                      clientPortal={module?.clientFeatures}
+                      index={index + "core"}
+                      onCheckboxChange={handleCoreModulesCheckboxChange}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <NoItems
+                headerText="No core modules"
+                subtext="There are no core modules."
+              />
+            )}
           </div>
 
           {/* CATEGORY SPECIFIC MODULES */}
@@ -252,13 +259,10 @@ const CompanyConfig = ({
                 )}
               </div>
             ) : (
-              <div className="w-full h-auto py-10 flex justify-center items-center flex-col">
-                <h1 className="text-lg">No modules</h1>
-                <p className="text-sm text-[#667085]">
-                  There are no modules for the {selectedCategory?.categoryName}{" "}
-                  category
-                </p>
-              </div>
+              <NoItems
+                headerText="No modules"
+                subtext={`There are no modules for the ${selectedCategory?.categoryName} category`}
+              />
             )}
           </div>
         </div>

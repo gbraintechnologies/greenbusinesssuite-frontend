@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
-import ModuleCard from "../../components/ModuleCard";
 import "../index.css";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import Loader from "@/components/Loader/Loader";
 import NoItems from "@/components/NoItems/NoItems";
+import ModuleCard from "./ModuleCard";
 
 const Configuration = ({ tenantId }: { tenantId: string }) => {
   const { data: companyBranding, isLoading } = useQuery({
