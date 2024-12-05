@@ -76,7 +76,9 @@ export const createCompanyBranding = (
   tenantId: string,
   logo: string,
   color: string,
-  companyName: string
+  companyName: string,
+  moduleIds: string[],
+  categorySpecificModuleIds: string[]
 ) => {
   return meshApi.post("/company-branding/create", {
     tenancyId: tenantId,
@@ -84,6 +86,8 @@ export const createCompanyBranding = (
     logo: logo,
     color: color,
     companyName: companyName,
+    moduleIds: moduleIds,
+    categorySpecificModuleIds: categorySpecificModuleIds,
   });
 };
 

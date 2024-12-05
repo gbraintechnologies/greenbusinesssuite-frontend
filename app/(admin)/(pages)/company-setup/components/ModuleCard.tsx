@@ -20,12 +20,27 @@ const ModuleCard = ({
   index,
   onCheckboxChange
 }: Props) => {
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // State to control checkbox
+    const [isChecked, setIsChecked] = React.useState(defaultChecked);
 
-    if (onCheckboxChange) {
-      onCheckboxChange(moduleData, e.target.checked);
-    }
-  };
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      const newChecked = e.target.checked;
+      setIsChecked(newChecked); // Update state
+  
+      if (onCheckboxChange) {
+        onCheckboxChange(moduleData, newChecked);
+      }
+  
+      console.log("e.target.checked:", newChecked);
+    };
+
+  // const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+  //   if (onCheckboxChange) {
+  //     onCheckboxChange(moduleData, e.target.checked);
+  //   }
+  //   console.log('e target checked', e.target.checked)
+  // };
   return (
     <label
       className="rounded-lg bg-[#F8FAFC] py-3 px-6 min-h-36 w-auto cursor-pointer"
@@ -34,10 +49,13 @@ const ModuleCard = ({
       <div className="flex !items-center gap-3">
           <input
             type="checkbox"
-            className="form-check-input checked:!bg-[#16A34A] border !border-[#16A34A] !w-4 !h-4 focus:!outline-none focus:!shadow-none focus:!ring-0 focus:!border-none visited:!outline-none"
+            className="form-check-input checked:!bg-[#16A34A] disabled:!bg-[#94A3B8] border !border-[#16A34A] !w-4 !h-4 focus:!outline-none focus:!shadow-none focus:!ring-0 focus:!border-none visited:!outline-none"
             id={`moduleCard${index}`}
             onChange={handleChange}
+            // defaultValue={defaultChecked}
             // checked={defaultChecked}
+            disabled={disableCheckboxes}
+            checked={isChecked}
             // disabled={disableCheckboxes}
           />
         <p className="text-slate-900 font-medium">{moduleData?.moduleName}</p>

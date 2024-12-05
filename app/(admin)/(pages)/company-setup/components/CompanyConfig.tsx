@@ -6,7 +6,6 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
@@ -15,12 +14,24 @@ import ModuleCard from "../components/ModuleCard";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "@/components/Loader/Loader";
-import EmptyList from "@/components/Form/EmptyList";
 
-const CompanyConfig = () => {
-  const router = useRouter();
-
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+const CompanyConfig = ({
+  discardFn,
+  saveFn,
+  setSelectedCategory,
+  setSelectedCategoryModules,
+  setSelectedCoreModules,
+  selectedCategory,
+  submitting,
+}: {
+  discardFn: () => void;
+  saveFn: (values: any) => Promise<void>;
+  setSelectedCoreModules: any;
+  setSelectedCategoryModules: any;
+  selectedCategory: any;
+  setSelectedCategory: any;
+  submitting: boolean;
+}) => {
 
   // Query to fetch all categories
   const { data: allCategories, isLoading: isLoadingAllCategories } = useQuery({
@@ -45,18 +56,12 @@ const CompanyConfig = () => {
     queryFn: services.getAllCoreModules(),
   });
 
-  const [selectedModules, setSelectedModules] = useState<any>([]);
-
-  const [selectedCategoryModules, setSelectedCategoryModules] = useState<any>(
-    []
-  );
-
   // function to handle core modules checkbox change
   const handleCoreModulesCheckboxChange = (
     moduleData: any,
     isChecked: boolean
   ) => {
-    setSelectedModules((prevSelected: any) => {
+    setSelectedCoreModules((prevSelected: any) => {
       if (isChecked) {
         return [...prevSelected, moduleData];
       } else {
@@ -83,8 +88,6 @@ const CompanyConfig = () => {
     });
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   React.useEffect(() => {
     if (allCategories) {
       setSelectedCategory(allCategories[0]);
@@ -95,7 +98,7 @@ const CompanyConfig = () => {
     return <Loader text="Loading categories and modules" />;
 
   return (
-    <div className="px-5 pb-20 pt-8">
+    <div className="pb-20">
       <div className="w-full text-primary-dark pb-3 flex justify-between">
         <div className="flex items-center gap-3">
           {/* <div
@@ -109,18 +112,19 @@ const CompanyConfig = () => {
 
         <div className="flex gap-3">
           <button
-            onClick={() => router.back()}
+            onClick={discardFn}
             type="button"
             className="bg-gray-50 border border-gray-200 shadow-sm py-2 flex text-primary-dark text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
           >
-            Discard
+            Go back
           </button>
           <button
-            type="submit"
-            disabled={isSubmitting}
+            onClick={saveFn}
+            // type="submit"
+            disabled={submitting}
             className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
           >
-            {isSubmitting ? (
+            {submitting ? (
               <>
                 <LoadingIcon />
                 Saving
@@ -197,12 +201,12 @@ const CompanyConfig = () => {
             </header>
             <div className="mt-3 grid grid-cols-3 gap-2 w-full">
               {allCoreModules?.map((module: any, index: number) => {
-                let parsedDescription;
-                try {
-                  parsedDescription = JSON.parse(module?.moduleDescription);
-                } catch (error) {
-                  parsedDescription = null;
-                }
+                // let parsedDescription;
+                // try {
+                //   parsedDescription = JSON.parse(module?.moduleDescription);
+                // } catch (error) {
+                //   parsedDescription = null;
+                // }
 
                 return (
                   <ModuleCard

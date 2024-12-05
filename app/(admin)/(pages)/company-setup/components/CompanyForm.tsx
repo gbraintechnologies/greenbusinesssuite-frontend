@@ -36,6 +36,7 @@ import {
   AutocompleteItem,
   AutocompleteSection,
 } from "@nextui-org/autocomplete";
+import { GrFormNextLink } from "react-icons/gr";
 
 export interface ICompany {
   companyName: string;
@@ -166,12 +167,15 @@ type Props = {
   setColor: React.Dispatch<React.SetStateAction<string>>;
   currencyId: string;
   setCurrencyId: React.Dispatch<React.SetStateAction<string>>;
+  step?: number;
+  errors: any
 };
 const CompanyForm: React.FC<Props> = ({
   headerText,
   logoPresentOnLoad = false,
   initialValues,
   submitFn,
+  errors,
   setShowCancelModal,
   companyLogo,
   setCompanyLogo,
@@ -201,6 +205,7 @@ const CompanyForm: React.FC<Props> = ({
   setColor,
   currencyId,
   setCurrencyId,
+  step,
 }) => {
   const [industries, setIndustries] = useState<any>([]);
 
@@ -274,12 +279,14 @@ const CompanyForm: React.FC<Props> = ({
     try {
       const response = await services.getCurrencyByCountryName(country);
       setCurrencyId(response[0]?.id);
-      if(response[0]?.id){
-        toast.success(`Currency for ${country} found`)
+      if (response[0]?.id) {
+        toast.success(`Currency for ${country} found`);
       }
     } catch (err: any) {
       setCurrencyId("");
-      toast.error(err?.response?.data ?? "An error occurred. Please try again later.");
+      toast.error(
+        err?.response?.data ?? "An error occurred. Please try again later."
+      );
       console.log("error ", err);
     }
   };
@@ -339,13 +346,7 @@ const CompanyForm: React.FC<Props> = ({
 
   return (
     <div className="">
-      <Formik
-        initialValues={initialValues}
-        validationSchema={companySchema}
-        onSubmit={submitFn}
-      >
-        {({ errors, isSubmitting }) => {
-          return (
+      
             <Form>
               {/* HEADER */}
               <div className="w-full text-primary-dark  flex justify-between">
@@ -368,21 +369,23 @@ const CompanyForm: React.FC<Props> = ({
                     Discard
                   </button>
                   <button
-                    type="submit"
-                    disabled={isSubmitting}
+                    type="button"
+                    onClick={submitFn}
                     className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <LoadingIcon />
-                        Saving
-                      </>
-                    ) : (
-                      <>
-                        {" "}
-                        <HiOutlineInboxArrowDown /> Save
-                      </>
-                    )}
+                    <>
+                      {" "}
+                      {step && step == 1 ? (
+                        <>
+                          <GrFormNextLink />
+                          Proceed to configuration
+                        </>
+                      ) : (
+                        <>
+                          <HiOutlineInboxArrowDown /> Save
+                        </>
+                      )}
+                    </>
                   </button>
                 </div>
               </div>
@@ -944,9 +947,7 @@ const CompanyForm: React.FC<Props> = ({
                 </div>
               </div>
             </Form>
-          );
-        }}
-      </Formik>
+          
       {/* CANCEL MODAL: DISCARD ALL CHANGES */}
     </div>
   );

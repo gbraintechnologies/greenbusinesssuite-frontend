@@ -433,7 +433,7 @@ const Page = () => {
               <CompanyAdmins companyId={id} />
             )}
 
-            {activeFilter?.value === "configuration" && <Configuration />}
+            {activeFilter?.value === "configuration" && <Configuration tenantId={companyData?.company_identifier}/>}
           </div>
         </div>
       </div>
