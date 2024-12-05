@@ -67,7 +67,9 @@ const ModuleForm: React.FC<Props> = ({
     }else {
       setModules(CoreModules)
     }
-  },[isCategorySpecificModule])
+
+    console.log('is template' , isTemplate)
+  },[isCategorySpecificModule, isTemplate])
 
   return (
     <div className="px-5 pb-20">

@@ -8,7 +8,7 @@ const Switch = ({ onSwitchChange, defaultChecked }: {onSwitchChange: (e: React.C
         type="checkbox"
         className="switch-input"
         onChange={(e) => onSwitchChange(e)}
-        defaultChecked={defaultChecked}
+        checked={defaultChecked}
       />
       <span className="switch-span"></span>
     </label>

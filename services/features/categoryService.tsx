@@ -19,8 +19,8 @@ export const deleteSpecificCategoryByID = (id: number) => {
     return authApi.delete(`/specific-category-module/category-delete/${id}`);
 };
 
-export const deleteSpecificItemFromCategory = (categoryID: number, moduleID: number) => {
-    return authApi.delete(`/specific-category-item/delete-specific-item/${categoryID}/${moduleID}`);
+export const deleteSpecificModuleFromCategory = (categoryID: number, moduleID: number) => {
+    return authApi.delete(`/specific-category-module/delete-specific-module/${categoryID}/${moduleID}`);
 };
 
 export const getSpecificCategoryByID = (id: number) => {
