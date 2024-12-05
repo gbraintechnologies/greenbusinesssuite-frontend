@@ -35,9 +35,9 @@ import { VscLink } from "react-icons/vsc";
 import useCompany from "@/hooks/useCompany";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
+import Configuration from "./components/Configuration";
 
 const Page = ({ params }: any) => {
-
   const tenant_id = params.tenantId;
 
   const { companyBranding, setCompanyBranding } = useCompany();
@@ -52,6 +52,7 @@ const Page = ({ params }: any) => {
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "Description", value: "description" },
     { id: 2, name: "Branding Settings", value: "branding_settings" },
+    { id: 3, name: "Configuration", value: "configuration" },
   ]);
 
   const [activeFilter, setActiveFilter] = useState<IFilter>({
@@ -78,7 +79,7 @@ const Page = ({ params }: any) => {
 
   const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
 
-  const {checkPermission} = useAdmin()
+  const { checkPermission } = useAdmin();
 
   //pagination
   const [page, setPage] = useState(0);
@@ -107,7 +108,6 @@ const Page = ({ params }: any) => {
     queryFn: services.getCompanyById(Number(companyBranding?.id)),
     enabled: !!companyBranding?.id,
   });
-
 
   const companyDescription =
     companyData?.company_custom_values?.find(
@@ -164,7 +164,6 @@ const Page = ({ params }: any) => {
   //     isConvertibleToNumber(companyData?.industry),
   // });
 
-
   const { handleFileUpload } = useFileUpload();
 
   useEffect(() => {
@@ -185,7 +184,6 @@ const Page = ({ params }: any) => {
       setColor(companyBranding?.color);
       setSmallLogoUrl(companyBranding?.logo);
     }
-
   }, [companyData, companyBranding]);
 
   const editCompanyBranding = async () => {
@@ -229,16 +227,18 @@ const Page = ({ params }: any) => {
         <div className="w-full text-primary-dark  flex justify-between items-center">
           <h3 className="font-semibold text-xl">Company Profile</h3>
 
-          {checkPermission(PermissionTypes.EDIT_COMPANY) && <div className="flex gap-3">
-            <Link
-              href={`/${tenant_id}/admin/company-profile/edit`}
-              style={{ backgroundColor: companyBranding?.color}}
-              className="disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-            >
-              <Image src={UpdateInfo} alt="Update Info" />
-              Update Information
-            </Link>
-          </div>}
+          {checkPermission(PermissionTypes.EDIT_COMPANY) && (
+            <div className="flex gap-3">
+              <Link
+                href={`/${tenant_id}/admin/company-profile/edit`}
+                style={{ backgroundColor: companyBranding?.color }}
+                className="disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              >
+                <Image src={UpdateInfo} alt="Update Info" />
+                Update Information
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
@@ -273,7 +273,8 @@ const Page = ({ params }: any) => {
                   onClick={() => {
                     const currentHost = window.location.origin;
                     const url =
-                      currentHost + `/${companyData?.company_identifier}/auth/login`;
+                      currentHost +
+                      `/${companyData?.company_identifier}/auth/login`;
 
                     navigator.clipboard.writeText(url).then(() => {
                       toast.dismiss();
@@ -323,8 +324,7 @@ const Page = ({ params }: any) => {
                       <div className="value">{companyDescription}</div>
                     </div>
                   )}
-                  
-                  
+
                   {companyData?.primary_contact_name && (
                     <div className="group-item">
                       <div className="label">Contact person</div>
@@ -482,6 +482,10 @@ const Page = ({ params }: any) => {
                   </div>
                 </div>
               </div>
+            )}
+
+            {activeFilter?.value === "configuration" && (
+              <Configuration tenantId={companyData?.company_identifier} />
             )}
           </div>
         </div>

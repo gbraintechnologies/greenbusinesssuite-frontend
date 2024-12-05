@@ -114,6 +114,7 @@ const UserForm = ({
           initialValues={initialValues}
           onSubmit={submitFn}
           validationSchema={UserSchema}
+          enableReinitialize
         >
           {({ errors }) => (
             <Form aria-disabled={readonly}>
