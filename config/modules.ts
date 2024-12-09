@@ -4,8 +4,6 @@ export const CoreModules = [
   "Form Reports",
   "Notifications Center",
   "User Management",
-]
+];
 
-export const CategorySpecificModules = [
-  "Lending Home Page Template"
-]
+export const CategorySpecificModules = ["Lending Home Page Template"];

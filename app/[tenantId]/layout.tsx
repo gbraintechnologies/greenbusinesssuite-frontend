@@ -36,9 +36,29 @@ export default function Layout({ children, params }: layoutProps) {
 
   useEffect(() => {
     if (Boolean(data)) {
-      const { companyName, color, companyId, logo, tenancyId } = data;
+      const {
+        companyName,
+        color,
+        companyId,
+        logo,
+        tenancyId,
+        modules,
+        categorySpecificModules,
+      } = data;
+
+      let allModules = [
+        ...(modules?.map((element: any) => element.moduleName) || []),
+        ...(categorySpecificModules?.map(
+          (element: any) => element.moduleName
+        ) || []),
+      ];
+
+      // console.log("ALL MODULES", allModules);
 
       let newBranding = {
+        modules,
+        categorySpecificModules,
+        companyModules: allModules,
         color: color,
         company_identifier: tenancyId,
         id: companyId,
