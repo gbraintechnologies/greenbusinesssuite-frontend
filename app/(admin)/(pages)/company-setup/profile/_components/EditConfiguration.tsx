@@ -85,7 +85,7 @@ const EditConfiguration = ({
     }
   };
   return (
-    <div>
+    <div className="my-6">
       <CompanyConfig
         discardFn={() => setEditConfiguration(false)}
         saveFn={() => editCompanyConfiguration()}
