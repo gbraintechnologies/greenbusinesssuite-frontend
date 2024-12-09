@@ -25,6 +25,7 @@ import useCompany from "@/hooks/useCompany";
 
 // components
 import Deactivated from "@/components/Deactivated/Deactivated";
+import { AvailableModules } from "@/config/modules";
 
 export default function ClientLayout({
   children,
@@ -52,24 +53,44 @@ export default function ClientLayout({
     }
   }, [user]);
 
+  const [navigation, setNavigation] = useState([]);
+
   // COMPANY ADMIN NAVIGATION
-  const navigation = [
+  const all_navigation = [
     {
       name: "Dashboard",
+      linkedModule: AvailableModules.Dashboard,
       icon: <ClientDashboardIcon />,
       link: `/${company?.company_identifier}/client`,
     },
     {
       name: "Documents",
+      linkedModule: AvailableModules.FormBuilder,
       icon: <HiOutlineDocumentText />,
       link: `/${company?.company_identifier}/client/documents`,
     },
-    {
+  ];
+
+  useEffect(() => {
+    let enabled_modules = company.companyModules;
+    let temp: any = [];
+
+    all_navigation.forEach((item) => {
+      if (enabled_modules.includes(item.linkedModule)) {
+        temp.push(item);
+      }
+    });
+
+    // constants
+    temp.push({
       name: "Settings",
       icon: <TbCurrentLocation size={20} />,
       link: `/${company?.company_identifier}/client/settings`,
-    },
-  ];
+    });
+
+    // assign
+    setNavigation(temp);
+  }, [company]);
 
   if (companyInfo && companyInfo?.status?.toLowerCase() === "inactive") {
     return (
