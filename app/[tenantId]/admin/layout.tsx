@@ -29,6 +29,11 @@ import useCompany from "@/hooks/useCompany";
 // components
 import Deactivated from "@/components/Deactivated/Deactivated";
 import { LuSend } from "react-icons/lu";
+import {
+  AvailableModules,
+  CategorySpecificModules,
+  CoreModules,
+} from "@/config/modules";
 
 export default function CompanyLayout({ children, params }: any) {
   // {
@@ -69,35 +74,45 @@ export default function CompanyLayout({ children, params }: any) {
   }, [companyAdmin, auth, pathname]);
 
   // COMPANY ADMIN NAVIGATION
-  const navigation = [
+
+  const [navigation, setNavigation] = useState([]);
+
+  // Display modules based on what's available
+  let all_navigation = [
     {
       name: "Dashboard",
+      linkedModule: AvailableModules.Dashboard,
       icon: <MdOutlineDashboard size={20} />,
       link: `/${company?.company_identifier}/admin`,
     },
     {
       name: "Forms",
+      linkedModule: AvailableModules.FormBuilder,
       icon: <FormsNavIcon />,
       link: `/${company?.company_identifier}/admin/forms`,
     },
     {
       name: "Customers",
+      linkedModule: AvailableModules.FormBuilder,
       icon: <MdOutlineSupervisedUserCircle size={20} />,
       link: `/${company?.company_identifier}/admin/customers`,
     },
     {
       name: "Notifications Center",
+      linkedModule: AvailableModules.Notifications,
       icon: <LuSend size={20} />,
       link: `/${company?.company_identifier}/admin/notifications-center`,
     },
 
     {
       name: "Reports",
+      linkedModule: AvailableModules.FormBuilder,
       icon: <TbBrandGoogleAnalytics size={20} />,
       link: null,
       subNavigation: [
         {
           name: "Form Reports",
+          linkedModule: AvailableModules.FormBuilder,
           icon: null,
           link: `/${company?.company_identifier}/admin/form-reports`,
         },
@@ -105,21 +120,37 @@ export default function CompanyLayout({ children, params }: any) {
     },
     {
       name: "Company Profile",
+      linkedModule: AvailableModules.CompanyProfile,
       icon: <RiListSettingsFill size={20} />,
       link: `/${company?.company_identifier}/admin/company-profile`,
     },
     {
       name: "User management",
+      linkedModule: AvailableModules.UserManagement,
       icon: <FaUsers size={20} />,
       link: `/${company?.company_identifier}/admin/usermanagement`,
     },
-
-    // {
-    //   name: "Audit Trail",
-    //   icon: <PiListMagnifyingGlassBold size={18} />,
-    //   link: "/company/audit-trail",
-    // },
+    {
+      name: "Audit Trail",
+      icon: <PiListMagnifyingGlassBold size={18} />,
+      link: "/company/audit-trail",
+    },
   ];
+
+  //
+  useEffect(() => {
+    let enabled_modules = company.companyModules;
+    let temp: any = [];
+
+    all_navigation.forEach((item) => {
+      if (enabled_modules.includes(item.linkedModule)) {
+        temp.push(item);
+      }
+    });
+
+    // assign
+    setNavigation(temp);
+  }, [company]);
 
   const thirdPartyApps: any = [];
 

@@ -1,7 +1,7 @@
 import React from "react";
 
-function AuditTrail() {
+function page() {
   return <div></div>;
 }
 
-export default AuditTrail;
+export default page;
