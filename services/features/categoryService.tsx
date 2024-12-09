@@ -27,6 +27,13 @@ export const getSpecificCategoryByID = (id: number) => {
     return authApi.get(`/specific-category-module/get-category/${id}`).then((res) => res.data);
 };
 
+export const getCategoryByCategorySpecificModuleId = (categorySpecificModuleId: string) => {
+    return () =>
+      authApi
+        .get(`/specific-category-module/get-category-by/${categorySpecificModuleId}`)
+        .then((res) => res.data);
+  }
+
 export const getAllSpecificModuleCategoryByID = (id: number) => {
     return authApi.get(`/specific-category-module/get-all-modules/${id}`).then((res) => res.data);
 };

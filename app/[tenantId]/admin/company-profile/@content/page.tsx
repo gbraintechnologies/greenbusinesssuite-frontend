@@ -187,13 +187,16 @@ const Page = ({ params }: any) => {
         companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
       await services.editCompanyBranding(
+        companyBranding?.id,
         companyData?.id,
         companyData?.company_identifier,
         companySmallLogo
           ? companySmallLogoURL?.file_url
           : companyBranding?.logo,
         color,
-        companyData?.company_name
+        companyData?.company_name,
+        companyBranding?.moduleIds,
+        companyBranding?.categorySpecificModuleIds
       );
       toast.success("Company branding updated successfully");
     } catch (error) {

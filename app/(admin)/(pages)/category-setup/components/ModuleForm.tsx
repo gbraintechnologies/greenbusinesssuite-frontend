@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
-import { IoCheckmark } from "react-icons/io5";
+import { IoArrowBack, IoCheckmark } from "react-icons/io5";
 import * as Yup from "yup";
 
 interface Props {
@@ -62,14 +62,14 @@ const ModuleForm: React.FC<Props> = ({
   const [modules, setModules] = React.useState<any[]>([]); //state for handling modules
 
   React.useEffect(() => {
-    if(isCategorySpecificModule){
-      setModules(CategorySpecificModules)
-    }else {
-      setModules(CoreModules)
+    if (isCategorySpecificModule) {
+      setModules(CategorySpecificModules);
+    } else {
+      setModules(CoreModules);
     }
 
-    console.log('is template' , isTemplate)
-  },[isCategorySpecificModule, isTemplate])
+    console.log("is template", isTemplate);
+  }, [isCategorySpecificModule, isTemplate]);
 
   return (
     <div className="px-5 pb-20">
@@ -91,7 +91,18 @@ const ModuleForm: React.FC<Props> = ({
                   >
                     <IoIosArrowBack size={12} />
                   </div> */}
-                  <h3 className="font-semibold text-xl">{headerText}</h3>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => router.back()}
+                      type="button"
+                      className="bg-white border border-[#CBD5E1] shadow-sm p-2 flex text-[#334155] text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+                    >
+                      <IoArrowBack />
+                      {/* Back */}
+                    </button>
+
+                    <h3 className="font-semibold text-xl">{headerText}</h3>
+                  </div>
                 </div>
 
                 <div className="flex gap-3">

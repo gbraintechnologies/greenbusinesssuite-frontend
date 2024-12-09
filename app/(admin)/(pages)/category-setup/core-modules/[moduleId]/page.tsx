@@ -49,7 +49,7 @@ const page = ({ params }: any) => {
     try {
       await services.deleteCoreModuleByID(moduleId);
       toast.success("Module deleted successfully");
-      router.push('/category-setup/core-modules');
+      router.push("/category-setup/core-modules");
     } catch (error) {
       console.log("Error deleting module", error);
     }
@@ -68,9 +68,19 @@ const page = ({ params }: any) => {
     <>
       <div className="px-5 pb-20">
         <header className="flex w-full justify-between items-center">
-          <h3 className="font-semibold text-xl text-[#334155] ">
-            {moduleData?.moduleName}
-          </h3>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.back()}
+              type="button"
+              className="bg-white border border-[#CBD5E1] shadow-sm p-2 flex text-[#334155] text-sm  hover:opacity-95 items-center gap-2 rounded-xl"
+            >
+              <IoArrowBack />
+              {/* Back */}
+            </button>
+            <h3 className="font-semibold text-xl text-[#334155] ">
+              {moduleData?.moduleName}
+            </h3>
+          </div>
           <div className="flex items-center gap-2">
             <Link
               href={`/category-setup/core-modules/${moduleId}/edit`}
@@ -89,17 +99,8 @@ const page = ({ params }: any) => {
             </button>
           </div>
         </header>
-        <div className="mt-2">
-          <button
-            onClick={() => router.back()}
-            type="button"
-            className="bg-white border border-[#CBD5E1] shadow-sm py-2 flex text-[#334155] text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-          >
-            <IoArrowBack />
-            Back
-          </button>
-        </div>
-        <div className="py-4">
+        
+        <div className="py-3">
           <h3 className="font-semibold text-lg text-primary-dark ">
             Module Details
           </h3>
