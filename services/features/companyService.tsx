@@ -93,18 +93,24 @@ export const createCompanyBranding = (
 
 //edit company branding by id
 export const editCompanyBranding = (
+  id: string | number,
   companyId: string | number,
   tenantId: string,
   logo: string,
   color: string,
-  companyName: string
+  companyName: string,
+  coreModuleIds: string[],
+  categorySpecificModuleIds: string[]
 ) => {
-  return defaultMeshApi.put(`/company-branding/update/${tenantId}`, {
+  return defaultMeshApi.put(`/company-branding/update`, {
+    id: id,
     tenancyId: tenantId,
     companyId: companyId,
     logo: logo,
     color: color,
     companyName: companyName,
+    moduleIds: coreModuleIds,
+    categorySpecificModuleIds: categorySpecificModuleIds,
   });
 };
 
@@ -116,3 +122,5 @@ export const getCompanyBranding = (tenantId: string) => {
       .then((res) => res.data);
   // return () => meshApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`).then((res) => res.data);
 };
+
+

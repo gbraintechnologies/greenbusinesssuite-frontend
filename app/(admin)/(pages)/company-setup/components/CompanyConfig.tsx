@@ -6,7 +6,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { IoCheckmark } from "react-icons/io5";
@@ -22,6 +22,8 @@ const CompanyConfig = ({
   setSelectedCategory,
   setSelectedCategoryModules,
   setSelectedCoreModules,
+  selectedCoreModules=[],
+  selectedCategoryModules=[],
   selectedCategory,
   submitting,
 }: {
@@ -29,17 +31,20 @@ const CompanyConfig = ({
   saveFn: (values: any) => Promise<void>;
   setSelectedCoreModules: any;
   setSelectedCategoryModules: any;
+  selectedCoreModules?: string[];
+  selectedCategoryModules?: string[];
   selectedCategory: any;
   setSelectedCategory: any;
   submitting: boolean;
 }) => {
+
   // Query to fetch all categories
   const { data: allCategories, isLoading: isLoadingAllCategories } = useQuery({
     queryKey: ["all_categories"],
     queryFn: services.getAllSpecificCategories,
   });
 
-  // Query to fetch all category specific modules
+  // Query to fetch all category-specific modules
   const {
     data: allCategorySpecificModules,
     isLoading: loadingCategorySpecificModules,
@@ -50,13 +55,13 @@ const CompanyConfig = ({
     enabled: Boolean(selectedCategory?.id),
   });
 
-  // Query to fetch all modules
+  // Query to fetch all core modules
   const { data: allCoreModules, isLoading: loadingCoreModules } = useQuery({
     queryKey: ["all core modules"],
     queryFn: services.getAllCoreModules(),
   });
 
-  // function to handle core modules checkbox change
+  // Function to handle core modules checkbox change
   const handleCoreModulesCheckboxChange = (
     moduleData: any,
     isChecked: boolean
@@ -72,7 +77,7 @@ const CompanyConfig = ({
     });
   };
 
-  //function to handle category modules checkbox change
+  // Function to handle category-specific modules checkbox change
   const handleCategoryModulesCheckboxChange = (
     moduleData: any,
     isChecked: boolean
@@ -88,7 +93,7 @@ const CompanyConfig = ({
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (allCategories) {
       setSelectedCategory(allCategories[0]);
     }
@@ -99,14 +104,8 @@ const CompanyConfig = ({
 
   return (
     <div className="pb-20">
-      <div className="w-full text-primary-dark pb-3 flex justify-between">
+      <div className="w-full text-primary-dark flex justify-between">
         <div className="flex items-center gap-3">
-          {/* <div
-                    className="my-3 cursor-pointer flex text-sm items-center gap-2"
-                    onClick={() => router.back()}
-                  >
-                    <IoIosArrowBack size={12} />
-                  </div> */}
           <h3 className="font-semibold text-xl">Configuration</h3>
         </div>
 
@@ -120,7 +119,6 @@ const CompanyConfig = ({
           </button>
           <button
             onClick={saveFn}
-            // type="submit"
             disabled={submitting}
             className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
           >
@@ -139,9 +137,8 @@ const CompanyConfig = ({
         </div>
       </div>
 
-      <div className="w-full  py-5 pb-3">
-        {/* SELECT CATEGORY */}
-        <header className="pb-2  ">
+      <div className="w-full py-5 pb-3">
+        <header className="pb-2">
           <h3 className="text-lg text-primary-dark font-semibold">
             Select Category
           </h3>
@@ -149,14 +146,14 @@ const CompanyConfig = ({
             Select the category template that best fits the company
           </p>
         </header>
-        {/* SELECT CATEGORIES */}
+
         <div className="max-w-2xl">
           <label className="text-xs text-slate-700 mb-2">Category</label>
           <Dropdown>
             <DropdownTrigger>
               <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#F8FAFC] text-[#334155] rounded-lg my-1">
                 <div className="flex gap-2 w-full justify-between items-center py-0 px-4">
-                  <p className=" font-normal text-sm">
+                  <p className="font-normal text-sm">
                     {selectedCategory?.categoryName}
                   </p>
                   <div className="">
@@ -189,37 +186,29 @@ const CompanyConfig = ({
 
         {/* DISPLAYING MODULES */}
         <div className="border-l-2 border-[#F1F5F9] px-4 mt-6">
-          {/* CORE MODULES */}
           <div>
-            <header className="pb-2 ">
+            <header className="pb-2">
               <h3 className="text-lg text-primary-dark font-semibold">
                 Core Modules
               </h3>
               <p className="text-sm text-[#667085]">
-                Core Modules that apply to all categories{" "}
+                Core Modules that apply to all categories
               </p>
             </header>
-            {allCategorySpecificModules?.length > 0 ? (
+            {allCoreModules?.length > 0 ? (
               <div className="mt-3 grid grid-cols-3 gap-2 w-full">
                 {allCoreModules?.map((module: any, index: number) => {
-                  // let parsedDescription;
-                  // try {
-                  //   parsedDescription = JSON.parse(module?.moduleDescription);
-                  // } catch (error) {
-                  //   parsedDescription = null;
-                  // }
-
                   return (
-                    <ModuleCard
-                      key={index + "core"}
-                      moduleData={module}
-                      companyAdminPortal={module?.adminFeatures}
-                      clientPortal={module?.clientFeatures}
-                      index={index + "core"}
-                      onCheckboxChange={handleCoreModulesCheckboxChange}
-                    />
-                  );
-                })}
+                  <ModuleCard
+                    key={index + "core"}
+                    moduleData={module}
+                    companyAdminPortal={module?.adminFeatures}
+                    clientPortal={module?.clientFeatures}
+                    index={index + "core"}
+                    onCheckboxChange={handleCoreModulesCheckboxChange}
+                    defaultChecked={selectedCoreModules?.some((selected: any) => selected?.id === module.id)}
+                  />
+                )})}
               </div>
             ) : (
               <NoItems
@@ -229,14 +218,13 @@ const CompanyConfig = ({
             )}
           </div>
 
-          {/* CATEGORY SPECIFIC MODULES */}
           <div className="mt-6">
-            <header className="pb-2 ">
+            <header className="pb-2">
               <h3 className="text-lg text-primary-dark font-semibold">
-                Category-Specific Modules{" "}
+                Category-Specific Modules
               </h3>
               <p className="text-sm text-[#667085]">
-                Modules tailor-made for specific categories{" "}
+                Modules tailor-made for specific categories
               </p>
             </header>
             {loadingCategorySpecificModules ? (
@@ -244,18 +232,17 @@ const CompanyConfig = ({
             ) : allCategorySpecificModules?.length > 0 ? (
               <div className="mt-3 grid grid-cols-3 gap-2 w-full">
                 {allCategorySpecificModules?.map(
-                  (module: any, index: number) => {
-                    return (
-                      <ModuleCard
-                        key={index + "category"}
-                        moduleData={module}
-                        companyAdminPortal={module?.adminFeatures}
-                        clientPortal={module?.clientFeatures}
-                        index={index + "category"}
-                        onCheckboxChange={handleCategoryModulesCheckboxChange}
-                      />
-                    );
-                  }
+                  (module: any, index: number) => (
+                    <ModuleCard
+                      key={index + "category"}
+                      moduleData={module}
+                      companyAdminPortal={module?.adminFeatures}
+                      clientPortal={module?.clientFeatures}
+                      index={index + "category"}
+                      onCheckboxChange={handleCategoryModulesCheckboxChange}
+                      defaultChecked={selectedCategoryModules?.some((selected: any) => selected?.id === module.id)}
+                    />
+                  )
                 )}
               </div>
             ) : (

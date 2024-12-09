@@ -22,6 +22,10 @@ const ModuleCard = ({
   // State to control checkbox
   const [isChecked, setIsChecked] = React.useState(defaultChecked);
 
+  React.useEffect(() => {
+    setIsChecked(defaultChecked);
+  }, [defaultChecked]);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newChecked = e.target.checked;
     setIsChecked(newChecked); // Update state
