@@ -296,7 +296,10 @@ function CompanySetup() {
               )}
               {checkPermission(PermissionTypes.EDIT_COMPANY) &&
                 (params.row.data?.status?.toLowerCase() === "active" ? (
-                  <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                  <DropdownItem
+                    key="deactivate"
+                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                  >
                     <button
                       onClick={() =>
                         editCompanyStatus(params.row.data, "INACTIVE")
@@ -306,7 +309,10 @@ function CompanySetup() {
                     </button>
                   </DropdownItem>
                 ) : (
-                  <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                  <DropdownItem
+                    key="activate"
+                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                  >
                     <button
                       onClick={() =>
                         editCompanyStatus(params.row.data, "ACTIVE")
