@@ -386,8 +386,8 @@ const Page = () => {
           : companyBranding?.logo,
         color,
         values.companyName as string,
-        companyBranding?.moduleIds,
-        companyBranding?.categorySpecificModuleIds    
+        companyBranding?.modules?.map((module: any) => module?.id),
+        companyBranding?.categorySpecificModules?.map((module: any) => module?.id) 
       );
 
       toast.success(`Company ${companyData?.company_name} edited successfully`);

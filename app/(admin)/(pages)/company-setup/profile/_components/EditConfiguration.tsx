@@ -35,6 +35,7 @@ const EditConfiguration = ({
   React.useEffect(() => {
     setSelectedCoreModules(coreModuleIds);
     setSelectedCategoryModules(categorySpecificModuleIds);
+
   }, [coreModuleIds, categorySpecificModuleIds]);
 
   const editCompanyConfiguration = async () => {

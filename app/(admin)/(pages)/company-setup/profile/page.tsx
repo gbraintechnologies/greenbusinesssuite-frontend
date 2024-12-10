@@ -251,8 +251,8 @@ const Page = () => {
           : companyBranding?.logo,
         color,
         companyData?.company_name,
-        companyBranding?.moduleIds,
-        companyBranding?.categorySpecificModuleIds
+        companyBranding?.modules?.map((module: any) => module?.id),
+        companyBranding?.categorySpecificModules?.map((module: any) => module?.id)
       );
       toast.success("Company branding updated successfully");
     } catch (error) {
