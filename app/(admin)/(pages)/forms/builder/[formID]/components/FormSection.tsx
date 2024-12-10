@@ -14,7 +14,6 @@ import FormElementSelector from "./FormElementSelector";
 import useForm from "@/hooks/useForm";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-import Border from "@/components/Border/Border";
 import removeIds from "@/utils/RemoveIds/RemoveIds";
 import { toast } from "sonner";
 
