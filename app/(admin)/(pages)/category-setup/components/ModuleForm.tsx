@@ -70,7 +70,7 @@ const ModuleForm: React.FC<Props> = ({
   React.useEffect(() => {
     if (createdCoreModules) {
       if (isCategorySpecificModule) {
-        // setModules(CategorySpecificModules);
+        setModules(CategorySpecificModules);
       } else {
         setModules(
           CoreModules.filter(
