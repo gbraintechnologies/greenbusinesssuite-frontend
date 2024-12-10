@@ -66,6 +66,8 @@ const CompanyConfig = ({
     moduleData: any,
     isChecked: boolean
   ) => {
+
+    // Update the selected core modules state based on the checkbox change
     setSelectedCoreModules((prevSelected: any) => {
       if (isChecked) {
         return [...prevSelected, moduleData];
@@ -82,6 +84,7 @@ const CompanyConfig = ({
     moduleData: any,
     isChecked: boolean
   ) => {
+    // Update the selected category modules state based on the checkbox change
     setSelectedCategoryModules((prevSelected: any) => {
       if (isChecked) {
         return [...prevSelected, moduleData];
@@ -93,8 +96,9 @@ const CompanyConfig = ({
     });
   };
 
+  // Set the selected category to the first category in the list
   useEffect(() => {
-    if (allCategories) {
+    if (allCategories && !selectedCategory) {
       setSelectedCategory(allCategories[0]);
     }
   }, [allCategories]);

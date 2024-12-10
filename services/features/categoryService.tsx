@@ -30,7 +30,7 @@ export const getSpecificCategoryByID = (id: number) => {
 export const getCategoryByCategorySpecificModuleId = (categorySpecificModuleId: string) => {
     return () =>
       authApi
-        .get(`/specific-category-module/get-category-by/${categorySpecificModuleId}`)
+        .get(`/specific-category-module/retrieve/by-module-id/${categorySpecificModuleId}`)
         .then((res) => res.data);
   }
 
