@@ -90,7 +90,7 @@ const CreateCompany = () => {
   const [currencyId, setCurrencyId] = useState<string>("");
 
   // multi-step form
-  const [step, setStep] = useState<number>(2);
+  const [step, setStep] = useState<number>(1);
 
   
 

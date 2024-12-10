@@ -14,34 +14,49 @@ const Configuration = ({ tenantId }: { tenantId: string }) => {
     enabled: Boolean(tenantId),
   });
 
+  const { data: category, isLoading: categoryLoading } = useQuery({
+    queryKey: [
+      "category_by_module_id",
+      companyBranding?.categorySpecificModules[0]?.id,
+    ],
+    queryFn: services.getCategoryByCategorySpecificModuleId(
+      companyBranding?.categorySpecificModules[0]?.id
+    ),
+    enabled: Boolean(companyBranding?.categorySpecificModules[0]?.id),
+  });
+
   if (isLoading) {
     return <Loader text="Loading branding information" />;
   }
 
   return (
     <div className="w-full my-6">
-      <div className=" ">
-        <h3 className="text-lg text-primary-dark font-semibold">
-          Category Details
-        </h3>
+      {category && (
+            <div className=" ">
+              <div className="flex items-center justify-between w-full">
+                <h3 className="text-lg text-primary-dark font-semibold">
+                  Category Details
+                </h3>
+              </div>
 
-        <div className="my-2">
-          <label className="text-[#334155] text-xs font-normal">
-            Category Name
-          </label>
-          <p className="text-[#334155] text-base font-medium ">
-            Micro-lending{" "}
-          </p>
-        </div>
-        <div className="my-2">
-          <label className="text-[#334155] text-xs font-normal">
-            Category Description
-          </label>
-          <p className="text-[#334155] text-base font-medium">
-            This category is for companies that provide micro-lending services.
-          </p>
-        </div>
-      </div>
+              <div className="mb-2">
+                <label className="text-[#334155] text-xs font-normal">
+                  Category Name
+                </label>
+                <p className="text-[#334155] text-base font-medium ">
+                  {category?.categoryName}
+                </p>
+              </div>
+              <div className="my-2">
+                <label className="text-[#334155] text-xs font-normal">
+                  Category Description
+                </label>
+                <p className="text-[#334155] text-base font-medium">
+                  {category?.categoryDescription}
+                </p>
+              </div>
+            </div>
+          )}
       <div className="mt-4">
         <div>
           <header>
