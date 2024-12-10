@@ -378,13 +378,16 @@ const Page = () => {
         companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
       await services.editCompanyBranding(
+        companyBranding?.id,
         companyData?.id,
         companyData?.company_identifier,
         companySmallLogo
           ? companySmallLogoURL?.file_url
           : companyBranding?.logo,
         color,
-        values.companyName as string
+        values.companyName as string,
+        companyBranding?.moduleIds,
+        companyBranding?.categorySpecificModuleIds    
       );
 
       toast.success(`Company ${companyData?.company_name} edited successfully`);
