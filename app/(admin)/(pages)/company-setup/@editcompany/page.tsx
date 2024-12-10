@@ -365,7 +365,7 @@
 //       //     ? companySmallLogoURL?.file_url
 //       //     : companyBranding?.logo,
 //       //   color,
-//       //   companyData?.company_name
+//       //   companyData?.company_name,
 //       // );
 
 //       toast.success(`Company ${companyData?.company_name} edited successfully`);
