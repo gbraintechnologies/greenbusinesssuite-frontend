@@ -1,6 +1,7 @@
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import Switch from "@/components/Switch/Switch";
 import { CategorySpecificModules, CoreModules } from "@/config/modules";
+import services from "@/services";
 import { ShowError } from "@/utils/FormHelpers/FormHelpers";
 import {
   Dropdown,
@@ -8,6 +9,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
+import { useQuery } from "@tanstack/react-query";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -55,21 +57,32 @@ const ModuleForm: React.FC<Props> = ({
       setIsTemplate(true);
     } else {
       setIsTemplate(false);
-      console.log("unchecked");
     }
   };
 
   const [modules, setModules] = React.useState<any[]>([]); //state for handling modules
 
-  React.useEffect(() => {
-    if (isCategorySpecificModule) {
-      setModules(CategorySpecificModules);
-    } else {
-      setModules(CoreModules);
-    }
+  const { data: createdCoreModules } = useQuery({
+    queryKey: ["all_modules"],
+    queryFn: services.getAllCoreModules(),
+  });
 
-    console.log("is template", isTemplate);
-  }, [isCategorySpecificModule, isTemplate]);
+  React.useEffect(() => {
+    if (createdCoreModules) {
+      if (isCategorySpecificModule) {
+        // setModules(CategorySpecificModules);
+      } else {
+        setModules(
+          CoreModules.filter(
+            (item) =>
+              !createdCoreModules?.some(
+                (module: any) => module.moduleName == item
+              )
+          )
+        );
+      }
+    }
+  }, [isCategorySpecificModule, isTemplate, createdCoreModules]);
 
   return (
     <div className="px-5 pb-20">
