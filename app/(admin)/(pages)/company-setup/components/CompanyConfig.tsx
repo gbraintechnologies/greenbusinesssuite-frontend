@@ -98,7 +98,7 @@ const CompanyConfig = ({
 
   // Set the selected category to the first category in the list
   useEffect(() => {
-    if (allCategories && !selectedCategory) {
+    if (allCategories && (!selectedCategory || typeof selectedCategory == "undefined")) {
       setSelectedCategory(allCategories[0]);
     }
   }, [allCategories]);
