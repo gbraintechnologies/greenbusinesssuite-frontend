@@ -3,7 +3,7 @@
 // Next & React imports
 import React, { useEffect, useState, Suspense } from "react";
 
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 // components
 import SideNav from "@/components/SideNav/SideNav";
@@ -59,7 +59,7 @@ export default function ClientLayout({
   const all_navigation = [
     {
       name: "Home",
-      linkedModule: AvailableModules.MediaHomeTemplate,
+      linkedModule: AvailableModules.MediaCenter,
       icon: <ClientDashboardIcon />,
       link: `/${company?.company_identifier}/client/home`,
     },
