@@ -58,6 +58,12 @@ export default function ClientLayout({
   // COMPANY ADMIN NAVIGATION
   const all_navigation = [
     {
+      name: "Home",
+      linkedModule: AvailableModules.MediaHomeTemplate,
+      icon: <ClientDashboardIcon />,
+      link: `/${company?.company_identifier}/client/home`,
+    },
+    {
       name: "Dashboard",
       linkedModule: AvailableModules.Dashboard,
       icon: <ClientDashboardIcon />,
