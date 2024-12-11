@@ -2,10 +2,9 @@ import useForm from "@/hooks/useForm";
 import React from "react";
 
 // icons
-import { LuUploadCloud } from "react-icons/lu";
+import { LuCloudUpload } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
-import Border from "@/components/Border/Border";
 
 function FormField({ field, section, activeTab, setActiveTab }: any) {
   const {
@@ -269,7 +268,7 @@ function FormField({ field, section, activeTab, setActiveTab }: any) {
             {label ? label : "No label"}
           </label>
           <div className="border text-gray-400 mt-2 border-gray-200 p-7 my-4 flex items-center justify-center flex-col gap-1 text-center text-sm rounded-lg">
-            <LuUploadCloud size={32} />
+            <LuCloudUpload size={32} />
             {placeHolder ? placeHolder : "No placeholder specified"}
             <p className="text-xs font-light text-gray-500">
               Supported formats: PNG, JPEG, PDF (1MB max file size)

@@ -29,11 +29,7 @@ import useCompany from "@/hooks/useCompany";
 // components
 import Deactivated from "@/components/Deactivated/Deactivated";
 import { LuSend } from "react-icons/lu";
-import {
-  AvailableModules,
-  CategorySpecificModules,
-  CoreModules,
-} from "@/config/modules";
+import { AvailableModules } from "@/config/modules";
 
 export default function CompanyLayout({ children, params }: any) {
   // {

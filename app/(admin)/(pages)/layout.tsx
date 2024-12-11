@@ -21,10 +21,6 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { PiBuildingsBold } from "react-icons/pi";
 import { BiTargetLock } from "react-icons/bi";
 import UserIcon from "@/public/icons/UserIcon";
-import { AiOutlineMoneyCollect } from "react-icons/ai";
-import { RiFlag2Fill } from "react-icons/ri";
-import { FaLandMineOn } from "react-icons/fa6";
-import { PiListMagnifyingGlassBold } from "react-icons/pi";
 
 //
 import useAuth from "@/hooks/useAuth";
