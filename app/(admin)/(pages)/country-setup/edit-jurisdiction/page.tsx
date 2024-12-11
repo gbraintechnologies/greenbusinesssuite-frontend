@@ -20,8 +20,12 @@ import { RiDeleteBin6Line, RiArrowGoBackLine } from "react-icons/ri";
 import { BsDot } from "react-icons/bs";
 import { toast } from "sonner";
 import { Button } from "@nextui-org/button";
-import { LuPlusCircle } from "react-icons/lu";
-import { deletecountryWithAssoc, deleteparentLevel, updateCountry } from "@/services/features/jurisdictionsService";
+import { GoPlusCircle } from "react-icons/go";
+import {
+  deletecountryWithAssoc,
+  deleteparentLevel,
+  updateCountry,
+} from "@/services/features/jurisdictionsService";
 import toJoin from "@/utils/UnderScoreJoin/underScoreJoin";
 
 const schema = yup.object({
@@ -29,18 +33,23 @@ const schema = yup.object({
   countryName: yup.string().required(),
   countryId: yup.number().required(),
   inputType: yup.string().required(),
-  addressingScheme: yup.object({
-    id: yup.number().required(),
-    parentLevelName: yup.string().required(),
-    childLevelName: yup.string().required(),
-    parentLevels: yup.array().of(
-      yup.object({
-        id: yup.number().required(),
-        parentName: yup.string().required(),
-        childLevels: yup.array().of(yup.string()).required(),
-      })
-    ).required(),
-  }).required(),
+  addressingScheme: yup
+    .object({
+      id: yup.number().required(),
+      parentLevelName: yup.string().required(),
+      childLevelName: yup.string().required(),
+      parentLevels: yup
+        .array()
+        .of(
+          yup.object({
+            id: yup.number().required(),
+            parentName: yup.string().required(),
+            childLevels: yup.array().of(yup.string()).required(),
+          })
+        )
+        .required(),
+    })
+    .required(),
 });
 
 type ParentLevel = {
@@ -83,7 +92,7 @@ function EditJurisdiction() {
   const [editRow, setEditRow] = useState<Row | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [region, setRegion] = useState("");
-  const [districts, setDistricts] = useState("")
+  const [districts, setDistricts] = useState("");
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["all countries", Id],
@@ -114,9 +123,9 @@ function EditJurisdiction() {
             id: 0,
             parentName: "",
             childLevels: [],
-          }
-        ]
-      }
+          },
+        ],
+      },
     },
   });
 
@@ -136,8 +145,6 @@ function EditJurisdiction() {
       setRows(formattedRows);
     }
   }, [data, setValue]);
-
-
 
   const columns = [
     {
@@ -179,7 +186,10 @@ function EditJurisdiction() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <div className="flex items-center justify-end overflow-y-auto max-h-20" key={params.row.id}>
+        <div
+          className="flex items-center justify-end overflow-y-auto max-h-20"
+          key={params.row.id}
+        >
           <button
             type="button"
             className="rounded-full"
@@ -203,7 +213,6 @@ function EditJurisdiction() {
       ],
     },
   ];
-
 
   const handleSaveEdit = () => {
     if (!editRow) return;
@@ -230,7 +239,6 @@ function EditJurisdiction() {
 
     setIsModalOpen(false);
   };
-
 
   const handleDeleteRow = async (row: Row | null) => {
     try {
@@ -287,10 +295,12 @@ function EditJurisdiction() {
         parentLevels: existingParentLevels.map((level: ParentLevel) =>
           level.id === row.id
             ? {
-              ...level,
-              parentName: row.regions, // Update parentName
-              childLevels: row.districts.split(',').map((d: string) => d.trim()) // Update childLevels
-            }
+                ...level,
+                parentName: row.regions, // Update parentName
+                childLevels: row.districts
+                  .split(",")
+                  .map((d: string) => d.trim()), // Update childLevels
+              }
             : level
         ),
       },
@@ -312,7 +322,9 @@ function EditJurisdiction() {
         await refetch();
       } else {
         toast.dismiss(loadingToast);
-        toast.error(`Failed to update: ${response.data.message || "Unknown error"}`);
+        toast.error(
+          `Failed to update: ${response.data.message || "Unknown error"}`
+        );
       }
     } catch (error) {
       toast.dismiss(loadingToast);
@@ -320,13 +332,11 @@ function EditJurisdiction() {
     }
   };
 
-
-
-
   const handleAddButton = async () => {
     let loadingToast = toast.loading("Please wait...");
 
-    const existingParentLevels: ParentLevel[] = data?.addressingScheme?.parentLevels || [];
+    const existingParentLevels: ParentLevel[] =
+      data?.addressingScheme?.parentLevels || [];
 
     const newParentLevelId = existingParentLevels.length
       ? Math.max(...existingParentLevels.map((p: ParentLevel) => p.id)) + 1
@@ -346,10 +356,10 @@ function EditJurisdiction() {
           {
             id: newParentLevelId,
             parentName: region,
-            childLevels: districts.split(',').map(d => d.trim()) // Convert districts to array
-          }
-        ]
-      }
+            childLevels: districts.split(",").map((d) => d.trim()), // Convert districts to array
+          },
+        ],
+      },
     };
 
     try {
@@ -366,14 +376,17 @@ function EditJurisdiction() {
         setDistricts("");
       } else {
         toast.dismiss(loadingToast);
-        toast.error(`Failed to create child entries: ${response.data.message || "Unknown error"}`);
+        toast.error(
+          `Failed to create child entries: ${
+            response.data.message || "Unknown error"
+          }`
+        );
       }
     } catch (error) {
       toast.dismiss(loadingToast);
       toast.error("An error occurred");
     }
   };
-
 
   return (
     <div className="w-full p-5">
@@ -397,7 +410,8 @@ function EditJurisdiction() {
                   type="button"
                   className="button bg-gray-50 border border-gray-200 shadow-sm py-3 px-4 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
                 >
-                  <RiArrowGoBackLine />Go back
+                  <RiArrowGoBackLine />
+                  Go back
                 </button>
               </Link>
               {/* <button
@@ -437,7 +451,6 @@ function EditJurisdiction() {
                 style={{ width: "30%", height: "30%" }}
               />
             </div>
-
           </div>
           <div>
             <h4 className="font-bold text-black-400">Addressing Scheme</h4>
@@ -465,8 +478,11 @@ function EditJurisdiction() {
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <Button onClick={() => setIsAddModalOpen(true)} className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl">
-                  <LuPlusCircle />
+                <Button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl"
+                >
+                  <GoPlusCircle />
                   Add new {data?.addressingScheme.parentLevelName}
                 </Button>
                 <div className="flex items-center gap-2">
@@ -496,8 +512,14 @@ function EditJurisdiction() {
                 margin: "10px 0",
               }}
             >
-              <div  style={{ flex: 1, borderBottom: "1px solid lightgray",marginBottom:"20px",marginTop:"15px" }}  >
-              </div>
+              <div
+                style={{
+                  flex: 1,
+                  borderBottom: "1px solid lightgray",
+                  marginBottom: "20px",
+                  marginTop: "15px",
+                }}
+              ></div>
             </div>
             <div className="w-full">
               <DataTable isLoading={isLoading} rows={rows} columns={columns} />
@@ -605,8 +627,7 @@ function EditJurisdiction() {
             sub-level values you have inputted.This action cannot be undone.
           </p>
           <p className="text-center text-sm text-[#334155] mt-5">
-            Type the phrase “delete all” to delete the{" "}
-            setup.
+            Type the phrase “delete all” to delete the setup.
           </p>
           <div className="px-7">
             <TextInput
@@ -626,8 +647,9 @@ function EditJurisdiction() {
             </button>
             <button
               onClick={handleDeleteAll}
-              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${inputValue === "delete all" ? "bg-primary-red" : "bg-red-300"
-                } ${inputValue !== "delete all" ? "cursor-not-allowed" : ""}`}
+              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${
+                inputValue === "delete all" ? "bg-primary-red" : "bg-red-300"
+              } ${inputValue !== "delete all" ? "cursor-not-allowed" : ""}`}
               disabled={inputValue !== "delete all"}
             >
               Yes,delete all
@@ -680,7 +702,7 @@ function EditJurisdiction() {
           </div>
         </div>
       </Modal>
-    </div >
+    </div>
   );
 }
 

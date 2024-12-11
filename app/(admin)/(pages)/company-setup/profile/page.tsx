@@ -15,7 +15,7 @@ import { Fragment, useEffect, useState } from "react";
 import { toast } from "sonner";
 import UserIcon from "@/public/icons/UserIcon";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import { LuPlusCircle } from "react-icons/lu";
+import { GoPlusCircle } from "react-icons/go";
 
 import FormCard from "@/components/Form/FormCard";
 import AssignForm from "../components/AssignForm";
@@ -252,7 +252,9 @@ const Page = () => {
         color,
         companyData?.company_name,
         companyBranding?.modules?.map((module: any) => module?.id),
-        companyBranding?.categorySpecificModules?.map((module: any) => module?.id)
+        companyBranding?.categorySpecificModules?.map(
+          (module: any) => module?.id
+        )
       );
       toast.success("Company branding updated successfully");
     } catch (error) {
@@ -403,7 +405,7 @@ const Page = () => {
                 country={country}
                 industry={industry}
                 parentAddressScheme={parentAddressScheme}
-               />
+              />
             )}
 
             {activeFilter.value === "assigned_forms" && (
@@ -436,7 +438,9 @@ const Page = () => {
               <CompanyAdmins companyId={id} />
             )}
 
-            {activeFilter?.value === "configuration" && <Configuration tenantId={companyData?.company_identifier}/>}
+            {activeFilter?.value === "configuration" && (
+              <Configuration tenantId={companyData?.company_identifier} />
+            )}
           </div>
         </div>
       </div>

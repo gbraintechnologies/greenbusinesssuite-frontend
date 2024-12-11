@@ -1,7 +1,7 @@
 "use client";
 
 // icons
-import { LuPlusCircle } from "react-icons/lu";
+import { GoPlusCircle } from "react-icons/go";
 import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
 
@@ -19,7 +19,7 @@ function Nav() {
 
       <Link href={`usermanagement/create`}>
         <CompanyThemedButton className="flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
-          <LuPlusCircle /> Add New{" "}
+          <GoPlusCircle /> Add New{" "}
           {/* <div className="border-r-[0.3px] border-opacity-50 border-white h-10"></div>{" "}
           <IoIosArrowDown /> */}
         </CompanyThemedButton>
