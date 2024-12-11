@@ -5,6 +5,7 @@ export const CoreModules = [
   "Notifications Center",
   "Company Profile",
   "User Management",
+  "Media Center"
   // "Audit Trail"
 ];
 
@@ -19,4 +20,5 @@ export enum AvailableModules {
   UserManagement = "User Management",
   AuditTrail = "Audit Trail",
   LendingHomePage = "Lending Home Page Template",
+  MediaCenter = "Media Center"
 }

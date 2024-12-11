@@ -17,9 +17,7 @@ import { FaUsers } from "react-icons/fa";
 import { MdOutlineSupervisedUserCircle } from "react-icons/md";
 import { RiListSettingsFill } from "react-icons/ri";
 import { PiListMagnifyingGlassBold } from "react-icons/pi";
-
-// toast
-import { toast } from "sonner";
+import { GrMultimedia } from "react-icons/gr";
 
 // hooks
 import useAuth from "@/hooks/useAuth";
@@ -99,7 +97,12 @@ export default function CompanyLayout({ children, params }: any) {
       icon: <LuSend size={20} />,
       link: `/${company?.company_identifier}/admin/notifications-center`,
     },
-
+    {
+      name: "Media Center",
+      linkedModule: AvailableModules.MediaCenter,
+      icon: <GrMultimedia size={20} />,
+      link: `/${company?.company_identifier}/admin/media-center`,
+    },
     {
       name: "Reports",
       linkedModule: AvailableModules.FormBuilder,
