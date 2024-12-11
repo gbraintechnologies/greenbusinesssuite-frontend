@@ -1,8 +1,8 @@
 import React from "react";
 
 type Props = {
-  headerLeft?: React.ReactElement;
-  headerRight?: React.ReactElement;
+  headerLeft?: React.ReactElement<any>;
+  headerRight?: React.ReactElement<any>;
   headerLeftTitle?: string;
 };
 const Nav: React.FC<Props> = ({ headerLeft, headerRight, headerLeftTitle }) => {

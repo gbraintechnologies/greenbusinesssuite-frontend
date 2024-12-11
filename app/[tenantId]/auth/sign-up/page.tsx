@@ -4,7 +4,7 @@ import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 
 //
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, use } from "react";
 import * as yup from "yup";
 
 //
@@ -31,7 +31,8 @@ import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 import Image from "next/image";
 import useCompany from "@/hooks/useCompany";
 
-function Page({ params }: any) {
+function Page(props: any) {
+  const params: any = use(props.params);
   const tenantId = params.tenantId;
 
   const { companyBranding } = useCompany();

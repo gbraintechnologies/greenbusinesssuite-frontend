@@ -21,16 +21,16 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
             ORGANIZATION
           </li>
         )}
-        {navigation.map((item: any) => {
+        {navigation.map((item: any, index: number) => {
           // SUBNAVIGATION
           if (item.subNavigation) {
             return (
-              <>
-                <Disclosure defaultOpen>
+              <React.Fragment key={index}>
+                <Disclosure defaultOpen >
                   {({ open }) => (
                     <>
                       <Disclosure.Button className="flex mt-2 w-full justify-between items-center">
-                        <p key={item.name}>
+                        <div key={item.name}>
                           <li
                             className={`${
                               pathname.includes(item.link)
@@ -40,7 +40,7 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
                           >
                             {item.icon} <p>{item.name}</p>
                           </li>
-                        </p>
+                        </div>
                         <FiChevronDown
                           size={17}
                           className={`${
@@ -50,13 +50,13 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
                       </Disclosure.Button>
                       <Disclosure.Panel>
                         <div className="pl-5">
-                          {item.subNavigation.map((sub: any) => {
+                          {item.subNavigation.map((sub: any, index: number) => {
                             let link = sub.link;
                             if (Array.isArray(sub.link)) {
                               link = sub.link[0];
                             }
                             return (
-                              <Link key={sub.name} href={link}>
+                              <Link key={index} href={link}>
                                 <li
                                   className={`${
                                     pathname.includes(link)
@@ -74,13 +74,13 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
                     </>
                   )}
                 </Disclosure>
-              </>
+              </React.Fragment>
             );
           } else {
             // STANDARD NAVIGATION
             return (
               <Link
-                key={item.name}
+                key={index}
                 href={Array.isArray(item.link) ? item.link[0] : item.link}
               >
                 <li
@@ -106,10 +106,10 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
           <li className="text-xs font-light text-gray-500 mb-2">
             THIRD PARTY APPS
           </li>
-          {thirdPartyApps.map((item: any) => {
+          {thirdPartyApps.map((item: any, index: number) => {
             return (
               <Link
-                key={item.name}
+                key={index}
                 className="cursor-pointer"
                 href={Array.isArray(item.link) ? item.link[0] : item.link}
               >

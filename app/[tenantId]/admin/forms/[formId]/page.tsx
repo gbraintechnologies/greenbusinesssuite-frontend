@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 
 // services
 import services from "@/services";
@@ -25,7 +25,8 @@ import DatePicker from "@/components/DatePicker/DatePicker";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
-function SingleFormCompany({ params }: any) {
+function SingleFormCompany(props: any) {
+  const params: any = use(props.params);
   const [filters, setFilters] = useState([
     { id: 0, name: "Insights", value: "insights" },
     { id: 1, name: "Responses", value: "responses" },
@@ -37,9 +38,7 @@ function SingleFormCompany({ params }: any) {
   //   defaultValue: 0,
   // });
 
-  const [activeFilter, setActiveFilter] = useState(
-    filters[0]
-  );
+  const [activeFilter, setActiveFilter] = useState(filters[0]);
 
   const [responseData, setResponseData] = useState<any>([]);
 
@@ -174,9 +173,7 @@ function SingleFormCompany({ params }: any) {
             />
           </div>
         </div>
-
         <div className="mb-5 text-[#475569]">{form?.description}</div>
-
         <div
           className={
             " mt-5 " +
@@ -190,7 +187,6 @@ function SingleFormCompany({ params }: any) {
             activeFilter={activeFilter}
             setActiveFilter={setActiveFilter}
             // enableQueryState={false}
-            
           />
           {activeFilter.id == 1 ? (
             <div className="flex gap-3 items-center">

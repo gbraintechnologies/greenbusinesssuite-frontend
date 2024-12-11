@@ -5,14 +5,15 @@ import services from "@/services";
 import { getStyles, ShowError } from "@/utils/FormHelpers/FormHelpers";
 import { Field, Form, Formik } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import { toast } from "sonner";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import * as yup from "yup";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import CompanyLogo from "@/components/ThemeLogo/CompanyLogo";
 
-const page = ({ params }: any) => {
+const page = (props: any) => {
+  const params: any = use(props.params);
   const tenantId = params?.tenantId;
 
   const [loading, setLoading] = useState(false);

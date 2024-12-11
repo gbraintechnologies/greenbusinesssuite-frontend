@@ -7,13 +7,13 @@ const EmailIcon = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_167_21809)">
+      <g clipRule="url(#clip0_167_21809)">
         <path
           d="M0 12.1543C0 5.52688 5.37258 0.154297 12 0.154297H340C346.627 0.154297 352 5.52688 352 12.1543V201.154C352 207.782 346.627 213.154 340 213.154H12C5.37259 213.154 0 207.782 0 201.154V12.1543Z"
           fill="#F8FAFC"
         />
         <g filter="url(#filter0_d_167_21809)">
-          <g clip-path="url(#clip1_167_21809)">
+          <g clipRule="url(#clip1_167_21809)">
             <g filter="url(#filter1_d_167_21809)">
               <rect
                 x="93.4546"
@@ -30,19 +30,19 @@ const EmailIcon = () => {
                 height="97.6587"
                 rx="7.56355"
                 stroke="#E2E8F0"
-                stroke-width="0.6577"
+                strokeWidth="0.6577"
               />
             </g>
             <path
               d="M188.175 112.063L243.549 145.475"
               stroke="#E2E8F0"
-              stroke-width="1.3154"
+              strokeWidth="1.3154"
               stroke-linecap="round"
             />
             <path
               d="M163.967 112.063L108.593 145.475"
               stroke="#E2E8F0"
-              stroke-width="1.3154"
+              strokeWidth="1.3154"
               stroke-linecap="round"
             />
             <g filter="url(#filter2_ddi_167_21809)">
@@ -63,7 +63,7 @@ const EmailIcon = () => {
             height="97.6587"
             rx="8.22125"
             stroke="#E2E8F0"
-            stroke-width="0.6577"
+            strokeWidth="0.6577"
             shape-rendering="crispEdges"
           />
         </g>

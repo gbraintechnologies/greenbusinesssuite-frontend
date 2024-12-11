@@ -2,7 +2,7 @@
 import DataTable from "@/components/DataTable/DataTable";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Tabs from "@/components/Tabs/Tabs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import Nav from "../components/Nav";
 import { BsThreeDots } from "react-icons/bs";
 import StatusPill from "@/components/StatusPill/StatusPill";
@@ -29,7 +29,8 @@ import Link from "next/link";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
-function UserManagement({ params }: any) {
+function UserManagement(props: any) {
+  const params: any = use(props.params);
   const tenantId = params?.tenantId;
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "All", value: "all" },

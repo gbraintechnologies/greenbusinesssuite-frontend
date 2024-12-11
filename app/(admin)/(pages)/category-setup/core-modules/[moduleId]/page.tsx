@@ -5,15 +5,17 @@ import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
-import React from "react";
+import React, { use } from "react";
 import { FiEdit } from "react-icons/fi";
 import { IoArrowBack } from "react-icons/io5";
 import { MdOutlineCancel } from "react-icons/md";
 import { toast } from "sonner";
 
-const page = ({ params }: any) => {
+const page = (props: any) => {
+  const params: any = use(props.params);
   // getting the module id
   let moduleId = params.moduleId;
+  console.log('moduleId', moduleId);
 
   // getting the module data
   const {

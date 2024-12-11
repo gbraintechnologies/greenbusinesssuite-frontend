@@ -68,6 +68,8 @@ const ModuleForm: React.FC<Props> = ({
   });
 
   React.useEffect(() => {
+    console.log('module name ', moduleName)
+
     if (createdCoreModules) {
       if (isCategorySpecificModule) {
         setModules(CategorySpecificModules);
@@ -82,7 +84,11 @@ const ModuleForm: React.FC<Props> = ({
         );
       }
     }
+
+    console.log('module name ', moduleName)
   }, [isCategorySpecificModule, isTemplate, createdCoreModules]);
+
+  React.useEffect(() => { console.log('modules ', modules) },[modules])
 
   return (
     <div className="px-5 pb-20">
@@ -157,6 +163,7 @@ const ModuleForm: React.FC<Props> = ({
                   <label className="flex items-start gap-1">
                     Module Name<span className=" text-red-500 ">*</span>
                   </label>
+                  
                   <Dropdown>
                     <DropdownTrigger>
                       <button className="outline-none border w-full py-2 px-1 border-[#E2E8F0] bg-[#fcfdff] rounded-lg my-1">

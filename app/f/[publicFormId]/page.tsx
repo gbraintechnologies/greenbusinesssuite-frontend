@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { use } from "react";
 
 //
 import { useQuery } from "@tanstack/react-query";
@@ -15,7 +15,8 @@ import Loader from "@/components/BeatLoader/Loader";
 import Form from "./components/Form";
 import Image from "next/image";
 
-function PublicForm({ params }: any) {
+function PublicForm(props: any) {
+  const params: any = use(props.params);
   const { publicFormId } = params;
   let formID = publicFormId;
   // Get form Details

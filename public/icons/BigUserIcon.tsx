@@ -14,7 +14,7 @@ const BigUserIcon = ({ fill }: any) => {
         ry="17.19"
         fill="#E2E8F0"
         stroke="#E2E8F0"
-        stroke-width="9.66939"
+        strokeWidth="9.66939"
       />
       <ellipse
         cx="52.1787"

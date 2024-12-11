@@ -9,7 +9,7 @@ import Tabs from "@/components/Tabs/Tabs";
 import services from "@/services";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { toast } from "sonner";
 import UserIcon from "@/public/icons/UserIcon";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
@@ -28,7 +28,8 @@ import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 import Configuration from "../components/Configuration";
 
-const Page = ({ params }: any) => {
+const Page = (props: any) => {
+  const params: any = use(props.params);
   const tenant_id = params.tenantId;
 
   const { companyBranding, setCompanyBranding } = useCompany();
@@ -196,7 +197,9 @@ const Page = ({ params }: any) => {
         color,
         companyData?.company_name,
         companyBranding?.modules?.map((module: any) => module?.id),
-        companyBranding?.categorySpecificModules?.map((module: any) => module?.id)
+        companyBranding?.categorySpecificModules?.map(
+          (module: any) => module?.id
+        )
       );
       toast.success("Company branding updated successfully");
     } catch (error) {

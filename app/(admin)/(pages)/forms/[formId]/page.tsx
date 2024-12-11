@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 
 import { VscEmptyWindow } from "react-icons/vsc";
@@ -27,7 +27,8 @@ import { toast } from "sonner";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import Image from "next/image";
 
-function FormDetail({ params }: any) {
+function FormDetail(props: any) {
+  const params: any = use(props.params);
   let formID = params.formId;
 
   //
