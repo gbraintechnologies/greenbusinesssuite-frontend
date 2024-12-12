@@ -90,7 +90,7 @@ function page() {
     ); // For Profile Picture
   }, [data]);
 
-  const inputFileRef = React.useRef();
+  const inputFileRef = React.useRef(null);
 
   const editUser = async (values: any, resetForm: any) => {
     let finalData = {
