@@ -92,15 +92,13 @@ const CreateCompany = () => {
   // multi-step form
   const [step, setStep] = useState<number>(1);
 
-  
-
   // state for handling selected core modules
   const [selectedCoreModules, setSelectedCoreModules] = useState<any>([]);
 
   useEffect(() => {
-    console.log('selectedCoreModules', selectedCoreModules)
-  },[selectedCoreModules])
-  
+    console.log("selectedCoreModules", selectedCoreModules);
+  }, [selectedCoreModules]);
+
   // state for handling selected category modules
   const [selectedCategoryModules, setSelectedCategoryModules] = useState<any>(
     []
@@ -125,7 +123,11 @@ const CreateCompany = () => {
   const { handleFileUpload } = useFileUpload();
 
   // checks on the company details screen before proceeding to the next step
-  const proccedToNextStep = async (errors: any, setTouched: any, validateForm: any,) => {
+  const proccedToNextStep = async (
+    errors: any,
+    setTouched: any,
+    validateForm: any
+  ) => {
     setTouched(
       Object.keys(errors).reduce((acc: any, key: any) => {
         acc[key] = true;
@@ -263,11 +265,11 @@ const CreateCompany = () => {
       return;
     }
 
-    if (selectedCategoryModules?.length < 1) {
-      toast.error("Select one or more category modules to proceed");
-      setSubmitting(false);
-      return;
-    }
+    // if (selectedCategoryModules?.length < 1) {
+    //   toast.error("Select one or more category modules to proceed");
+    //   setSubmitting(false);
+    //   return;
+    // }
 
     const companyLogoURL =
       companyLogo && (await handleFileUpload(companyLogo as File));
@@ -430,7 +432,9 @@ const CreateCompany = () => {
                 <CompanyForm
                   headerText="Create A New Company"
                   errors={errors}
-                  submitFn={async () => await proccedToNextStep(errors, setTouched, validateForm)}
+                  submitFn={async () =>
+                    await proccedToNextStep(errors, setTouched, validateForm)
+                  }
                   initialValues={initialValues}
                   setShowCancelModal={setShowCancelModal}
                   companyLogo={companyLogo}

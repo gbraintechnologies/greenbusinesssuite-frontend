@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react";
 import Modal from "./Modal";
-import { LuPlusCircle } from "react-icons/lu";
+import { GoPlusCircle } from "react-icons/go";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
@@ -17,15 +17,17 @@ function Nav() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [fileName, setFileName] = useState<any>({ 'name': '', 'size': '' })
+  const [fileName, setFileName] = useState<any>({ "name": "", "size": "" });
   const { checkPermission } = useAdmin();
 
   const handleDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     const acceptedExtensions = [".csv", ".xls", ".xlsx"];
-    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    const fileExtension = file.name
+      .substring(file.name.lastIndexOf("."))
+      .toLowerCase();
 
-    setFileName({ name: file.name, size: file.size })
+    setFileName({ name: file.name, size: file.size });
 
     if (acceptedExtensions.includes(fileExtension)) {
       const simulateImport = () => {
@@ -52,7 +54,6 @@ function Nav() {
       setIDImage(null);
       setUploadProgress(0);
     }, 5000);
-
   };
 
   return (
@@ -64,7 +65,7 @@ function Nav() {
         <Menu as="div" className="z-20 relative inline-block text-left">
           <div>
             <Menu.Button className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
-              <LuPlusCircle /> Add New{" "}
+              <GoPlusCircle /> Add New{" "}
               <div className="border-r-[0.3px] border-opacity-50 border-white h-10"></div>{" "}
               <IoIosAddCircleOutline />
             </Menu.Button>
@@ -135,12 +136,17 @@ function Nav() {
                   <div className="flex flex-row mb-2">
                     <ExcelIcon />
                     <div>
-                      <div className="font-semibold">&nbsp;&nbsp;{fileName?.name}</div>
+                      <div className="font-semibold">
+                        &nbsp;&nbsp;{fileName?.name}
+                      </div>
                       <div>{FormatByte(fileName?.size)}</div>
                     </div>
                   </div>
                   <div className="w-auto h-3 bg-white rounded-full relative">
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                    <div
+                      className="h-full bg-green-500 rounded-full"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
                   </div>
                   <div className="absolute top-0 right-0 mb-20">
                     <button

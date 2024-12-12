@@ -6,8 +6,8 @@ import { BsCardText } from "react-icons/bs";
 import { AiOutlineNumber } from "react-icons/ai";
 import { RiDropdownList } from "react-icons/ri";
 import { RiCheckboxMultipleLine } from "react-icons/ri";
-import { LuUploadCloud } from "react-icons/lu";
-import { LuUser2 } from "react-icons/lu";
+import { LuCloudUpload } from "react-icons/lu";
+import { LuUser } from "react-icons/lu";
 import { FaRegBuilding } from "react-icons/fa";
 import { FaRegMap } from "react-icons/fa";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -55,7 +55,7 @@ let template = {
 
 export const defaultFormElements = [
   {
-    icon: <LuUser2 size={18} />,
+    icon: <LuUser size={18} />,
     name: "Full Name",
     properties: {
       ...template,
@@ -218,7 +218,7 @@ export const defaultFormElements = [
     },
   },
   {
-    icon: <LuUploadCloud size={18} />,
+    icon: <LuCloudUpload size={18} />,
     name: "File Upload",
     properties: {
       ...template,

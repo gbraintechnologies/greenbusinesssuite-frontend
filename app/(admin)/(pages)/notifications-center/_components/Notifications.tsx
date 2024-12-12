@@ -999,7 +999,7 @@ const Notifications: React.FC<Props> = ({
                     onMenuScrollToBottom={fetchMoreData}
                     closeMenuOnSelect={false}
                     styles={{
-                      control: (styles) => ({
+                      control: (styles: any) => ({
                         ...styles,
                         backgroundColor: "#f8fafc",
                         border: "1px solid #E2E8F0",
@@ -1013,7 +1013,7 @@ const Notifications: React.FC<Props> = ({
                           borderColor: "#E2E8F0",
                         },
                       }),
-                      menu: (styles) => ({
+                      menu: (styles: any) => ({
                         ...styles,
                         backgroundColor: "#fff",
                         borderRadius: "8px",
@@ -1022,13 +1022,13 @@ const Notifications: React.FC<Props> = ({
                         lineHeight: "1.25rem",
                         zIndex: 9999,
                       }),
-                      menuList: (styles) => ({
+                      menuList: (styles: any) => ({
                         ...styles,
                         padding: "0px 4px",
                         maxHeight: "200px",
                         overflowY: "auto",
                       }),
-                      option: (styles) => ({
+                      option: (styles: any) => ({
                         ...styles,
                         // backgroundColor: isSelected ? '#007bff' : isFocused ? '#e0f7fa' : '#ffffff', // Hover color change
                         color: "#334155",
@@ -1046,7 +1046,7 @@ const Notifications: React.FC<Props> = ({
                           backgroundColor: "#F1F5F9",
                         },
                       }),
-                      multiValueRemove: (styles) => ({
+                      multiValueRemove: (styles: any) => ({
                         ...styles,
                         ":hover": {
                           backgroundColor: "transparent",

@@ -1,7 +1,7 @@
 "use client";
 
 // Next & React imports
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, use } from "react";
 
 import { usePathname, useRouter } from "next/navigation";
 
@@ -17,9 +17,7 @@ import { FaUsers } from "react-icons/fa";
 import { MdOutlineSupervisedUserCircle } from "react-icons/md";
 import { RiListSettingsFill } from "react-icons/ri";
 import { PiListMagnifyingGlassBold } from "react-icons/pi";
-
-// toast
-import { toast } from "sonner";
+import { GrMultimedia } from "react-icons/gr";
 
 // hooks
 import useAuth from "@/hooks/useAuth";
@@ -29,13 +27,13 @@ import useCompany from "@/hooks/useCompany";
 // components
 import Deactivated from "@/components/Deactivated/Deactivated";
 import { LuSend } from "react-icons/lu";
-import {
-  AvailableModules,
-  CategorySpecificModules,
-  CoreModules,
-} from "@/config/modules";
+import { AvailableModules } from "@/config/modules";
 
-export default function CompanyLayout({ children, params }: any) {
+export default function CompanyLayout(props: any) {
+  const params: any = use(props.params);
+
+  const { children } = props;
+
   // {
 
   //  children: React.ReactNode;
@@ -103,7 +101,12 @@ export default function CompanyLayout({ children, params }: any) {
       icon: <LuSend size={20} />,
       link: `/${company?.company_identifier}/admin/notifications-center`,
     },
-
+    {
+      name: "Media Center",
+      linkedModule: AvailableModules.MediaCenter,
+      icon: <GrMultimedia size={20} />,
+      link: `/${company?.company_identifier}/admin/media-center`,
+    },
     {
       name: "Reports",
       linkedModule: AvailableModules.FormBuilder,

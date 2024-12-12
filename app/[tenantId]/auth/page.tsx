@@ -1,11 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, use } from "react";
 
 //
 import SetupLoader from "@/components/SetupLoader/SetupLoader";
 
-function Auth({ params }: any) {
+function Auth(props: any) {
+  const params: any = use(props.params);
   const tenantId = params?.tenantId;
   const router = useRouter();
 

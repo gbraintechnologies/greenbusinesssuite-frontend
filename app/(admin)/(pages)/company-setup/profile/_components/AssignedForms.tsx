@@ -4,7 +4,7 @@ import FormCard from "@/components/Form/FormCard";
 import Loader from "@/components/Loader/Loader";
 import Pagination from "@/components/Pagination/Pagination";
 import React from "react";
-import { LuPlusCircle } from "react-icons/lu";
+import { GoPlusCircle } from "react-icons/go";
 
 const AssignedForms = ({
   assignedForms,
@@ -14,7 +14,7 @@ const AssignedForms = ({
   setShowAssignModal,
   selectedTimeline,
   setSelectedTimeline,
-  formsLoading
+  formsLoading,
 }: {
   assignedForms: any;
   page: number;
@@ -39,7 +39,7 @@ const AssignedForms = ({
               className=" bg-white border border-[rgba(226, 232, 240, 1)] flex max-w-64 text-sm px-4 py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg w-full "
               onClick={() => setShowAssignModal(true)}
             >
-              <LuPlusCircle /> Assign New Form
+              <GoPlusCircle /> Assign New Form
             </button>
           </div>
 

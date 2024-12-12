@@ -2,7 +2,7 @@
 import DataTable from "@/components/DataTable/DataTable";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Tabs from "@/components/Tabs/Tabs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import Nav from "../components/Nav";
 import { BsThreeDots } from "react-icons/bs";
 import StatusPill from "@/components/StatusPill/StatusPill";
@@ -29,7 +29,8 @@ import Link from "next/link";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
-function UserManagement({ params }: any) {
+function UserManagement(props: any) {
+  const params: any = use(props.params);
   const tenantId = params?.tenantId;
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "All", value: "all" },
@@ -309,7 +310,10 @@ function UserManagement({ params }: any) {
             </DropdownItem>
             {params.row.data?.user_status?.toLowerCase() === "inactive" ||
             params.row.data?.user_status?.toLowerCase() === "blacklisted" ? (
-              <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+              <DropdownItem
+                key={"activate"}
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
                 <button
                   onClick={() => editUserStatus(params.row.data, "ACTIVE")}
                 >
@@ -317,7 +321,10 @@ function UserManagement({ params }: any) {
                 </button>
               </DropdownItem>
             ) : (
-              <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+              <DropdownItem
+                key={"deactivate"}
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
                 <button
                   onClick={() => editUserStatus(params.row.data, "INACTIVE")}
                 >
@@ -325,7 +332,10 @@ function UserManagement({ params }: any) {
                 </button>
               </DropdownItem>
             )}
-            <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+            <DropdownItem
+              key={"blacklist"}
+              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+            >
               <button onClick={() => blacklistUser(params.row.data.id)}>
                 Blacklist User
               </button>

@@ -63,7 +63,7 @@ const UserForm = ({
   readonly = false,
   roleId,
 }: Props) => {
-  const inputFileRef = React.useRef(null);
+  const inputFileRef = React.useRef(undefined);
 
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>();
 

@@ -24,7 +24,7 @@ import {
   deleteBySectorID,
 } from "@/services/features/sectorService";
 import { Button } from "@nextui-org/button";
-import { LuPlusCircle } from "react-icons/lu";
+import { GoPlusCircle } from "react-icons/go";
 
 const schema = yup.object().shape({
   id: yup.number().required(),
@@ -100,8 +100,8 @@ function EditSector() {
   const [editRow, setEditRow] = useState<Row | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
-  const [sector, setSector] = useState('');
-  const [subSectors, setSubSectors] = useState('');
+  const [sector, setSector] = useState("");
+  const [subSectors, setSubSectors] = useState("");
 
   useEffect(() => {
     //alert(JSON.stringify(Id))
@@ -187,7 +187,7 @@ function EditSector() {
       await updateSector(payload);
 
       toast.dismiss(loadingToast);
-      toast.success( "updated sucessfully");
+      toast.success("updated sucessfully");
 
       await refetch();
     } catch (error) {
@@ -293,7 +293,6 @@ function EditSector() {
       ),
     },
   ];
-  
 
   const handleAddButton = async () => {
     let loadingToast = toast.loading("Adding new sector...");
@@ -303,9 +302,7 @@ function EditSector() {
 
       const newSector = {
         parentSector: sector || "New Sector",
-        subSector: subSectors
-          .split(",")
-          .map((sub: string) => sub.trim()),
+        subSector: subSectors.split(",").map((sub: string) => sub.trim()),
       };
       const updatedSectors = [...sectors, newSector];
       const payload = {
@@ -322,8 +319,8 @@ function EditSector() {
       await refetch();
 
       setIsAddModalOpen(false);
-      setSector('');
-      setSubSectors('');
+      setSector("");
+      setSubSectors("");
     } catch (error) {
       toast.dismiss(loadingToast);
 
@@ -334,13 +331,11 @@ function EditSector() {
     }
   };
 
-
   return (
     <div className="w-full p-5">
       <div className="w-full">
         <form
           className="flex flex-col gap-6"
-
           style={{ display: "inline-flex", width: "100%" }}
         >
           <div className="w-full text-primary-dark flex justify-between">
@@ -406,8 +401,11 @@ function EditSector() {
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <Button onClick={() => setIsAddModalOpen(true)} className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl">
-                  <LuPlusCircle />
+                <Button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl"
+                >
+                  <GoPlusCircle />
                   Add new sectors
                 </Button>
                 <div className="flex items-center gap-2">
@@ -549,8 +547,9 @@ function EditSector() {
             </button>
             <button
               onClick={handleDeleteAll}
-              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${inputValue === "delete all" ? "bg-primary-red" : "bg-red-300"
-                } ${inputValue !== "delete all" ? "cursor-not-allowed" : ""}`}
+              className={`py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-2xl ${
+                inputValue === "delete all" ? "bg-primary-red" : "bg-red-300"
+              } ${inputValue !== "delete all" ? "cursor-not-allowed" : ""}`}
               disabled={inputValue !== "delete all"}
             >
               Yes,delete all

@@ -12,7 +12,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment, use } from "react";
 import { BsArrowLeft } from "react-icons/bs";
 import FormResponse from "../../components/FormResponse/FormResponse";
 import html2canvas from "html2canvas";
@@ -32,7 +32,8 @@ import { useQueryState } from "nuqs";
 import useAuth from "@/hooks/useAuth";
 import html2pdf from "html2pdf.js";
 
-const page = ({ params }: any) => {
+const page = (props: any) => {
+  const params: any = use(props.params);
   let formID = params.formId;
 
   const [pdfGenerating, setPdfGenerating] = React.useState(false);

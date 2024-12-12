@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 
 // componetns
@@ -11,7 +11,8 @@ import useUser from "@/hooks/useUser";
 import useCompany from "@/hooks/useCompany";
 import useAuth from "@/hooks/useAuth";
 
-function page({ params }: any) {
+function page(props: any) {
+  const params: any = use(props.params);
   const tenantId = params.tenantId;
 
   const { user } = useUser();

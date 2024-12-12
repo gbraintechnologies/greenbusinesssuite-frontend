@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, use } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import SetupLoader from "@/components/SetupLoader/SetupLoader";
 import services from "@/services";
 import { toast } from "sonner";
 
-function ConfirmAccount({ params }: any) {
+function ConfirmAccount(props: any) {
+  const params: any = use(props.params);
   const searchParams = useSearchParams();
 
   const token = searchParams.get("token");

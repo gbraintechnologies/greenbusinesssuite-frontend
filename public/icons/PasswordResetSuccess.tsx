@@ -9,7 +9,7 @@ const PasswordResetSuccess = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_167_21765)">
+      <g clipRule="url(#clip0_167_21765)">
         <path
           d="M0 12.2168C0 5.58938 5.37258 0.216797 12 0.216797H340C346.627 0.216797 352 5.58938 352 12.2168V201.217C352 207.844 346.627 213.217 340 213.217H12C5.37259 213.217 0 207.844 0 201.217V12.2168Z"
           fill="#F8FAFC"
@@ -24,8 +24,8 @@ const PasswordResetSuccess = () => {
         />
         <g filter="url(#filter0_d_167_21765)">
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M77.0138 127.629C77.0138 134.16 71.7198 139.454 65.1893 139.454C58.6588 139.454 53.3647 134.16 53.3647 127.629C53.3647 121.099 58.6588 115.805 65.1893 115.805C71.7198 115.805 77.0138 121.099 77.0138 127.629ZM69.955 124.046C70.3013 124.392 70.3013 124.954 69.955 125.3L64.0427 131.212C63.6964 131.559 63.1348 131.559 62.7885 131.212L60.4236 128.848C60.0773 128.501 60.0773 127.94 60.4236 127.593C60.7699 127.247 61.3315 127.247 61.6778 127.593L63.4156 129.331L66.0582 126.689L68.7008 124.046C69.0471 123.7 69.6086 123.7 69.955 124.046Z"
             fill="#DCFCE7"
           />
@@ -56,15 +56,15 @@ const PasswordResetSuccess = () => {
           >
             <rect fill="white" x="160.537" y="61.3311" width="31" height="66" />
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M175.852 85.9614C180.997 85.9614 185.167 81.7909 185.167 76.6462C185.167 71.5016 180.997 67.3311 175.852 67.3311C170.708 67.3311 166.537 71.5016 166.537 76.6462C166.537 81.7909 170.708 85.9614 175.852 85.9614ZM190.167 76.6462C190.167 83.8731 184.812 89.8492 177.854 90.8227L177.854 121.554V124.554C177.854 125.658 176.958 126.554 175.854 126.554C174.749 126.554 173.854 125.658 173.854 124.554V123.554H167.041C165.936 123.554 165.041 122.658 165.041 121.554C165.041 120.449 165.936 119.554 167.041 119.554H173.854L173.854 90.823C166.894 89.8506 161.537 83.874 161.537 76.6462C161.537 68.7402 167.946 62.3311 175.852 62.3311C183.758 62.3311 190.167 68.7402 190.167 76.6462Z"
             />
           </mask>
           <g filter="url(#filter3_i_167_21765)">
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M175.852 85.9614C180.997 85.9614 185.167 81.7909 185.167 76.6462C185.167 71.5016 180.997 67.3311 175.852 67.3311C170.708 67.3311 166.537 71.5016 166.537 76.6462C166.537 81.7909 170.708 85.9614 175.852 85.9614ZM190.167 76.6462C190.167 83.8731 184.812 89.8492 177.854 90.8227L177.854 121.554V124.554C177.854 125.658 176.958 126.554 175.854 126.554C174.749 126.554 173.854 125.658 173.854 124.554V123.554H167.041C165.936 123.554 165.041 122.658 165.041 121.554C165.041 120.449 165.936 119.554 167.041 119.554H173.854L173.854 90.823C166.894 89.8506 161.537 83.874 161.537 76.6462C161.537 68.7402 167.946 62.3311 175.852 62.3311C183.758 62.3311 190.167 68.7402 190.167 76.6462Z"
               fill="#F8FAFC"
             />
@@ -85,8 +85,8 @@ const PasswordResetSuccess = () => {
         />
         <g filter="url(#filter4_d_167_21765)">
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M241.014 68.6292C241.014 75.1597 235.72 80.4538 229.189 80.4538C222.659 80.4538 217.365 75.1597 217.365 68.6292C217.365 62.0987 222.659 56.8047 229.189 56.8047C235.72 56.8047 241.014 62.0987 241.014 68.6292ZM233.955 65.046C234.301 65.3923 234.301 65.9538 233.955 66.3002L228.043 72.2125C227.696 72.5588 227.135 72.5588 226.789 72.2125L224.424 69.8475C224.077 69.5012 224.077 68.9397 224.424 68.5934C224.77 68.247 225.331 68.247 225.678 68.5934L227.416 70.3312L230.058 67.6886L232.701 65.046C233.047 64.6997 233.609 64.6997 233.955 65.046Z"
             fill="#DCFCE7"
           />
@@ -104,9 +104,9 @@ const PasswordResetSuccess = () => {
           width="34.6716"
           height="34.6716"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -139,9 +139,9 @@ const PasswordResetSuccess = () => {
           width="184.148"
           height="220.242"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -174,9 +174,9 @@ const PasswordResetSuccess = () => {
           width="125.414"
           height="159.071"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -244,9 +244,9 @@ const PasswordResetSuccess = () => {
           width="29.6304"
           height="69.2227"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -279,9 +279,9 @@ const PasswordResetSuccess = () => {
           width="34.6716"
           height="34.6716"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"

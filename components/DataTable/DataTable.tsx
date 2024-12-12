@@ -97,9 +97,9 @@ function DataTable({
       {isLoading ? (
         <div className="min-h-[60vh] w-full">
           <div className="flex items-center text-left bg-gray-100 font-medium py-5 justify-between gap-5 px-5 mb-4">
-            {columns.map((column: any) => {
+            {columns.map((column: any, index: number) => {
               return (
-                <div className="text-left text-xs uppercase  w-full">
+                <div className="text-left text-xs uppercase  w-full" key={index}>
                   <h4>{column.headerName}</h4>
                 </div>
               );
@@ -107,10 +107,10 @@ function DataTable({
           </div>
           {/* @ts-ignore */}
           {Array.apply(null, { length: 7 }).map((e, i) => (
-            <div className="flex items-center mb-4 justify-between p-3 gap-4 mx-5 border border-gray-200 bg-white  rounded-lg">
-              {columns.map(() => {
+            <div className="flex items-center mb-4 justify-between p-3 gap-4 mx-5 border border-gray-200 bg-white  rounded-lg" key={i}>
+              {columns.map((_: any,index: number) => {
                 return (
-                  <div className="h-6 w-full bg-gray-200 rounded-lg animate-pulse" />
+                  <div className="h-6 w-full bg-gray-200 rounded-lg animate-pulse" key={index}/>
                 );
               })}
             </div>

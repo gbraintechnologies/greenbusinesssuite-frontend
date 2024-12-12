@@ -1,11 +1,7 @@
 "use client";
 
-import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useRef, useState } from "react";
-
 // icons
-import { LuPlusCircle } from "react-icons/lu";
-import { IoIosArrowDown } from "react-icons/io";
+import { GoPlusCircle } from "react-icons/go";
 import Link from "next/link";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
@@ -25,7 +21,7 @@ function Nav() {
       {checkPermission(PermissionTypes.CREATE_COMPANY) && (
         <Link href={"/company-setup/create"}>
           <button className="bg-primary-green flex text-white text-sm px-4 py-3 hover:opacity-95 items-center gap-2 rounded-xl">
-            <LuPlusCircle size={15} /> Add New{" "}
+            <GoPlusCircle size={15} /> Add New{" "}
           </button>
         </Link>
       )}

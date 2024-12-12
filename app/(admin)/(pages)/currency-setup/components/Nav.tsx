@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { LuPlusCircle } from "react-icons/lu";
+import { GoPlusCircle } from "react-icons/go";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 
 function Nav() {
   const { checkPermission } = useAdmin();
-
 
   return (
     <div className="w-full text-[#0F172A] px-5 flex justify-between">
@@ -14,8 +13,11 @@ function Nav() {
       </div>
       {checkPermission(PermissionTypes.CREATE_CURRENCY) && (
         <div>
-          <Link href="/currency-setup/add-currency" className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
-            <LuPlusCircle /> Add New Currency
+          <Link
+            href="/currency-setup/add-currency"
+            className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+          >
+            <GoPlusCircle /> Add New Currency
             <div className="border-opacity-50 border-white h-10"></div>
           </Link>
         </div>

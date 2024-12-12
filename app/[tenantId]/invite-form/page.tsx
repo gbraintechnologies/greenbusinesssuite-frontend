@@ -10,7 +10,8 @@ export const metadata: Metadata = {
   description: "Invitation to participate in form",
 };
 
-function InviteToForm({ params }: any) {
+async function InviteToForm(props: any) {
+  const params = await props.params;
   return (
     <div>
       <ProcessInvite tenantId={params.tenantId} />
