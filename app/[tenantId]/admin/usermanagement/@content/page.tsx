@@ -310,7 +310,10 @@ function UserManagement(props: any) {
             </DropdownItem>
             {params.row.data?.user_status?.toLowerCase() === "inactive" ||
             params.row.data?.user_status?.toLowerCase() === "blacklisted" ? (
-              <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+              <DropdownItem
+                key={"activate"}
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
                 <button
                   onClick={() => editUserStatus(params.row.data, "ACTIVE")}
                 >
@@ -318,7 +321,10 @@ function UserManagement(props: any) {
                 </button>
               </DropdownItem>
             ) : (
-              <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+              <DropdownItem
+                key={"deactivate"}
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
                 <button
                   onClick={() => editUserStatus(params.row.data, "INACTIVE")}
                 >
@@ -326,7 +332,10 @@ function UserManagement(props: any) {
                 </button>
               </DropdownItem>
             )}
-            <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+            <DropdownItem
+              key={"blacklist"}
+              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+            >
               <button onClick={() => blacklistUser(params.row.data.id)}>
                 Blacklist User
               </button>

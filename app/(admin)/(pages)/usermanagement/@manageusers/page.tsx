@@ -231,7 +231,10 @@ function UserManagement() {
             {checkPermission(PermissionTypes.EDIT_USER) &&
               (params.row.data?.user_status?.toLowerCase() === "inactive" ||
               params.row.data?.user_status?.toLowerCase() === "blacklisted" ? (
-                <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                <DropdownItem
+                  key={"edit"}
+                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                >
                   <button
                     onClick={() => editUserStatus(params.row.data, "ACTIVE")}
                   >
@@ -239,7 +242,10 @@ function UserManagement() {
                   </button>
                 </DropdownItem>
               ) : (
-                <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
+                <DropdownItem
+                  key={"deactivate"}
+                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+                >
                   <button
                     onClick={() => editUserStatus(params.row.data, "INACTIVE")}
                   >
@@ -247,11 +253,16 @@ function UserManagement() {
                   </button>
                 </DropdownItem>
               ))}
-            {checkPermission(PermissionTypes.BLACKLIST_USER) && <DropdownItem className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]">
-              <button onClick={() => blacklistUser(params.row.data.id)}>
-                Blacklist User
-              </button>
-            </DropdownItem>}
+            {checkPermission(PermissionTypes.BLACKLIST_USER) && (
+              <DropdownItem
+                key={"blacklist"}
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
+                <button onClick={() => blacklistUser(params.row.data.id)}>
+                  Blacklist User
+                </button>
+              </DropdownItem>
+            )}
           </DropdownMenu>
         </Dropdown>,
       ],
