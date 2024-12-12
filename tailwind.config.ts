@@ -1,3 +1,4 @@
+import {nextui} from '@nextui-org/theme';
 import type { Config } from "tailwindcss";
 
 const colors = require("tailwindcss/colors");
@@ -142,6 +143,6 @@ const config: Config = {
       `ui-selected:text-${customColor}`,
     ]),
   ],
-  plugins: [require("@headlessui/tailwindcss"), require("@tailwindcss/forms")],
+  plugins: [require("@headlessui/tailwindcss"),require("@tailwindcss/forms"),nextui()],
 };
 export default config;
