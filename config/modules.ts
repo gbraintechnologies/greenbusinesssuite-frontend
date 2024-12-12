@@ -5,10 +5,11 @@ export const CoreModules = [
   "Notifications Center",
   "Company Profile",
   "User Management",
+  "Media Center"
   // "Audit Trail"
 ];
 
-export const CategorySpecificModules = ["Lending Home Page Template"];
+export const CategorySpecificModules = ["Media Home Template"];
 
 export enum AvailableModules {
   Dashboard = "Dashboard",
@@ -18,5 +19,6 @@ export enum AvailableModules {
   CompanyProfile = "Company Profile",
   UserManagement = "User Management",
   AuditTrail = "Audit Trail",
-  LendingHomePage = "Lending Home Page Template",
+  MediaHomeTemplate = "Media Home Template",
+  MediaCenter = "Media Center"
 }

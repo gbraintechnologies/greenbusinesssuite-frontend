@@ -279,7 +279,7 @@ function CompanySetup() {
                   View Company
                 </Link>
               </DropdownItem>
-              {/* {checkPermission(PermissionTypes.EDIT_COMPANY) && (
+              {checkPermission(PermissionTypes.EDIT_COMPANY) && (
                 <DropdownItem
                   key="edit"
                   className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
@@ -293,7 +293,7 @@ function CompanySetup() {
                     Edit Company
                   </Link>
                 </DropdownItem>
-              )} */}
+              )}
               {/* {checkPermission(PermissionTypes.EDIT_COMPANY) &&
                 (params.row.data?.status?.toLowerCase() === "active" ? (
                   <DropdownItem
