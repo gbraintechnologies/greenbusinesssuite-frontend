@@ -15,19 +15,19 @@ const DatePickerIcon = () => (
       d="M7 4V2.5"
       stroke="#1E293B"
       strokeWidth="1.5"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M17 4V2.5"
       stroke="#1E293B"
       strokeWidth="1.5"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M2.5 9H21.5"
       stroke="#1E293B"
       strokeWidth="1.5"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
   </svg>
 );

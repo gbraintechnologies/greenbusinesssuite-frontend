@@ -31,14 +31,14 @@ const UserShareIcon = () => (
       d="M12 9.77777V11.5555"
       stroke="#1E293B"
       strokeWidth="1.2"
-      stroke-linecap="round"
+      strokeLinecap="round"
       stroke-linejoin="round"
     />
     <path
       d="M11.1108 10.6667L12.8886 10.6667"
       stroke="#1E293B"
       strokeWidth="1.2"
-      stroke-linecap="round"
+      strokeLinecap="round"
       stroke-linejoin="round"
     />
   </svg>

@@ -16,13 +16,13 @@ const ClientDashboardIcon = () => {
         d="M14.6665 12.6666H14.3332C13.4127 12.6666 12.6665 11.9204 12.6665 10.9999L12.6665 4.99992C12.6665 4.07944 13.4127 3.33325 14.3332 3.33325L14.6665 3.33325"
         stroke="#475569"
         strokeWidth="1.5"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M1.3335 12.6666H1.66683C2.5873 12.6666 3.3335 11.9204 3.3335 10.9999L3.3335 4.99992C3.3335 4.07944 2.5873 3.33325 1.66683 3.33325L1.3335 3.33325"
         stroke="#475569"
         strokeWidth="1.5"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
     </svg>
   );

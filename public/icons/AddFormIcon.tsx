@@ -17,7 +17,7 @@ const AddFormIcon = ({ fill }: any) => {
         fill="#1E293B"
         stroke="#16A34A"
         strokeWidth="1.5"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
     </svg>
   );
