@@ -2,11 +2,12 @@
 import useAuth from "@/hooks/useAuth";
 import MeshSuiteLogo from "@/public/icons/MeshSuitLogoGray";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { use } from "react";
 import { FaExclamation } from "react-icons/fa6";
 import { MdCheck } from "react-icons/md";
 
-const verifyAccount = ({ params }: any) => {
+const verifyAccount = (props: any) => {
+  const params: any = use(props.params);
   const tenantId = params?.tenantId;
   const router = useRouter();
   const { setAuth, removeAuth } = useAuth();

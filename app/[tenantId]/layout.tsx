@@ -5,7 +5,7 @@ import useCompany from "@/hooks/useCompany";
 import { usePathname, useRouter } from "next/navigation";
 
 // Next & React imports
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, use } from "react";
 
 import SetupLoader from "@/components/SetupLoader/SetupLoader";
 
@@ -15,10 +15,14 @@ import services from "@/services";
 
 interface layoutProps {
   children: React.ReactNode;
-  params: { tenantId: string };
+  params: Promise<{ tenantId: string }>;
 }
 
-export default function Layout({ children, params }: layoutProps) {
+export default function Layout(props: layoutProps) {
+  const params: any = use(props.params);
+
+  const { children } = props;
+
   const tenantId = params.tenantId;
 
   const { auth, addAuthData } = useAuth();

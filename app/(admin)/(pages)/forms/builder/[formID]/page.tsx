@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -20,7 +20,8 @@ import Connect from "./views/Connect";
 //
 import GeneralFormSettings from "./components/GeneralFormSettings";
 
-function FormEditing({ params }: any) {
+function FormEditing(props: any) {
+  const params: any = use(props.params);
   useEffect(() => {
     typeof window !== "undefined" && window.scrollTo(0, 0);
   }, []);

@@ -1,7 +1,7 @@
 "use client";
 
 // Next & React imports
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, use } from "react";
 
 import { usePathname, useRouter } from "next/navigation";
 
@@ -29,7 +29,11 @@ import Deactivated from "@/components/Deactivated/Deactivated";
 import { LuSend } from "react-icons/lu";
 import { AvailableModules } from "@/config/modules";
 
-export default function CompanyLayout({ children, params }: any) {
+export default function CompanyLayout(props: any) {
+  const params: any = use(props.params);
+
+  const { children } = props;
+
   // {
 
   //  children: React.ReactNode;

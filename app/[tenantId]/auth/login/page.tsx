@@ -2,7 +2,7 @@
 
 import useAuth from "@/hooks/useAuth";
 import useCompany from "@/hooks/useCompany";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -33,7 +33,8 @@ import CompanyLogo from "@/components/ThemeLogo/CompanyLogo";
 
 //
 
-function CompanyAdminAuth({ params }: any) {
+function CompanyAdminAuth(props: any) {
+  const params: any = use(props.params);
   const {
     addCompanyAdminData,
     companyAdmin,

@@ -15,7 +15,7 @@ const FormPreviewIcon = ({ fill }: any) => {
           height="36.9468"
           rx="3"
           fill="white"
-          shape-rendering="crispEdges"
+          shapeRendering="crispEdges"
         />
         <rect
           x="8"
@@ -66,9 +66,9 @@ const FormPreviewIcon = ({ fill }: any) => {
           width="83"
           height="44.9468"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"

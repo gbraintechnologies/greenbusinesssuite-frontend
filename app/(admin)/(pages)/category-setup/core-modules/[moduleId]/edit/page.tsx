@@ -1,6 +1,6 @@
 "use client";
 import { FormikHelpers } from "formik";
-import React from "react";
+import React, { use } from "react";
 
 import { toast } from "sonner";
 import ModuleForm from "../../../components/ModuleForm";
@@ -10,8 +10,9 @@ import Loader from "@/components/Loader/Loader";
 import { CoreModules } from "@/config/modules";
 import { useRouter } from "next/navigation";
 
-const page = ({ params }: any) => {
-  const moduleId = params.moduleId;
+const page = (props: any) => {
+  const params: any = use(props.params);
+  const moduleId = params?.moduleId;
 
   //getting the module data
   const { data: moduleData, isLoading } = useQuery({
@@ -71,12 +72,6 @@ const page = ({ params }: any) => {
 
   React.useEffect(() => {
     if (moduleData) {
-      let parsedDescription: any;
-      try {
-        parsedDescription = JSON.parse(moduleData?.moduleDescription);
-      } catch (error) {
-        parsedDescription = null;
-      }
       let initial = {
         // moduleName: moduleData?.moduleName,
         // moduleType: "coreModule",

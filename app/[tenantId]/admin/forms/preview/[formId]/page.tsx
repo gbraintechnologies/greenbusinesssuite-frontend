@@ -2,7 +2,7 @@
 
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { use } from "react";
 import FormSection from "../components/FormSectionCompany";
 
 import { IoIosArrowBack } from "react-icons/io";
@@ -11,7 +11,8 @@ import { useRouter } from "next/navigation";
 //
 import { BsEye } from "react-icons/bs";
 
-function PreviewForm({ params }: any) {
+function PreviewForm(props: any) {
+  const params:any = use(props.params);
   let formId = params.formId;
 
   const { data: formData, isLoading } = useQuery({

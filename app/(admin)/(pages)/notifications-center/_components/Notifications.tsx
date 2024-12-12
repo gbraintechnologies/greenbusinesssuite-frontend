@@ -10,7 +10,7 @@ import Tabs from "../../../../../components/Tabs/Tabs";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import Select, { components } from "react-select";
+import Select, { components, MultiValueGenericProps, MultiValueProps, MultiValueRemoveProps } from "react-select";
 import { Checkbox } from "@nextui-org/checkbox";
 
 // DATE TIME HELPERS
@@ -999,7 +999,7 @@ const Notifications: React.FC<Props> = ({
                     onMenuScrollToBottom={fetchMoreData}
                     closeMenuOnSelect={false}
                     styles={{
-                      control: (styles) => ({
+                      control: (styles: any) => ({
                         ...styles,
                         backgroundColor: "#f8fafc",
                         border: "1px solid #E2E8F0",
@@ -1013,7 +1013,7 @@ const Notifications: React.FC<Props> = ({
                           borderColor: "#E2E8F0",
                         },
                       }),
-                      menu: (styles) => ({
+                      menu: (styles: any) => ({
                         ...styles,
                         backgroundColor: "#fff",
                         borderRadius: "8px",
@@ -1022,13 +1022,13 @@ const Notifications: React.FC<Props> = ({
                         lineHeight: "1.25rem",
                         zIndex: 9999,
                       }),
-                      menuList: (styles) => ({
+                      menuList: (styles: any) => ({
                         ...styles,
                         padding: "0px 4px",
                         maxHeight: "200px",
                         overflowY: "auto",
                       }),
-                      option: (styles) => ({
+                      option: (styles: any) => ({
                         ...styles,
                         // backgroundColor: isSelected ? '#007bff' : isFocused ? '#e0f7fa' : '#ffffff', // Hover color change
                         color: "#334155",
@@ -1046,7 +1046,7 @@ const Notifications: React.FC<Props> = ({
                           backgroundColor: "#F1F5F9",
                         },
                       }),
-                      multiValueRemove: (styles) => ({
+                      multiValueRemove: (styles: any) => ({
                         ...styles,
                         ":hover": {
                           backgroundColor: "transparent",
@@ -1371,26 +1371,38 @@ const Notifications: React.FC<Props> = ({
   );
 };
 
-const CustomMultiValue = (props: any) => (
-  <div className="border border-[#E2E8F0] bg-white m-1 px-2 py-1 flex gap-2 items-center rounded-lg">
-    <components.MultiValue {...props}>
-      <div className="bg-white text-sm">{props.children}</div>
-    </components.MultiValue>
-  </div>
-);
+const CustomMultiValue = <OptionType,>(props: MultiValueProps<OptionType, true>) => {
+  const MultiValueComponent = components.MultiValue as React.ComponentType<MultiValueProps<OptionType, true>>;
 
-const CustomMultiValueContainer = (props: any) => (
-  <components.MultiValueContainer {...props}>
-    <span className="bg-white  flex gap-1 items-center">{props.children}</span>
-  </components.MultiValueContainer>
-);
+  return (
+    <div className="border border-[#E2E8F0] bg-white m-1 px-2 py-1 flex gap-2 items-center rounded-lg">
+      <MultiValueComponent {...props}>
+        <div className="bg-white text-sm">{props.children}</div>
+      </MultiValueComponent>
+    </div>
+  );
+};
 
-const CustomMultiValueRemove = (props: any) => (
-  <components.MultiValueRemove {...props}>
-    <span className="bg-white hover:bg-transparent">
-      <IoIosCloseCircleOutline color="#DC2626" size={20} />
-    </span>
-  </components.MultiValueRemove>
-);
+const CustomMultiValueContainer = <OptionType,>(props: MultiValueGenericProps<OptionType, true>) => {
+  const MultiValueContainerComponent = components.MultiValueContainer as React.ComponentType<MultiValueGenericProps<OptionType, true>>;
+
+  return (
+    <MultiValueContainerComponent {...props}>
+      <span className="bg-white flex gap-1 items-center">{props.children}</span>
+    </MultiValueContainerComponent>
+  );
+};
+
+const CustomMultiValueRemove = <OptionType,>(props: MultiValueRemoveProps<OptionType, true>) => {
+  const MultiValueRemoveComponent = components.MultiValueRemove as React.ComponentType<MultiValueRemoveProps<OptionType, true>>;
+
+  return (
+    <MultiValueRemoveComponent {...props}>
+      <span className="bg-white hover:bg-transparent">
+        <IoIosCloseCircleOutline color="#DC2626" size={20} />
+      </span>
+    </MultiValueRemoveComponent>
+  );
+};
 
 export default Notifications;

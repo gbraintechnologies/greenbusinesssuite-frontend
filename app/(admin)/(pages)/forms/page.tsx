@@ -169,7 +169,9 @@ function Forms() {
                 forms?.content
                   ?.filter((form: any) => form.isTemplate !== true)
                   ?.map((form: any) => {
-                    return <FormCard key={form.id} form={form} />;
+                    return <React.Fragment key={form?.id}>
+                      <FormCard key={form.id} form={form} />
+                      </React.Fragment>
                   })}
             </div>
           )}

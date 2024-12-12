@@ -195,7 +195,7 @@ function NewUser() {
       .required("Email address is required"),
   });
 
-  const inputFileRef = React.useRef();
+  const inputFileRef = React.useRef(undefined);
 
   return (
     <div className="pb-40 px-5">
