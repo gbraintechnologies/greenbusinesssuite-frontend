@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Thumbnail from "@/public/svg/Thumbnail.svg"; 
+import Thumbnail from "@/public/svg/Thumbnail.svg";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 interface ThumbnailUploadProps {
     initialImage?: string;
@@ -13,7 +14,9 @@ const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
 }) => {
     const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(initialImage);
-    const [logoPresentOnLoad, setLogoPresentOnLoad] = useState<boolean>(false); 
+    const [logoPresentOnLoad, setLogoPresentOnLoad] = useState<boolean>(false);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (thumbnailImage) {
@@ -35,6 +38,18 @@ const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
         }
     };
 
+    const handleRemoveImage = () => {
+        setThumbnailImage(null);
+        setPreviewImage(null);
+        setLogoPresentOnLoad(false);
+        onImageChange(null);
+    };
+
+    // Trigger file input click
+    const triggerFileInput = () => {
+        fileInputRef.current?.click();
+    };
+
     return (
         <div className="w-full my-2">
             <div className="flex justify-center items-center w-full relative my-2">
@@ -51,27 +66,46 @@ const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
                         <div className="absolute inset-0 bg-black bg-opacity-50 h-64"></div>
                     )}
 
-                    <div className="flex flex-col gap-3 z-10 relative">
-                        <div className="flex w-full items-center justify-center">
-                            <div className="flex items-center justify-center rounded-full w-12 h-12 bg-[#F1F5F9]">
-                                <Image src={Thumbnail} alt="upload icon" />
+                    {/* Show upload icon only if no image is uploaded */}
+                    {!previewImage && !logoPresentOnLoad && (
+                        <div className="flex flex-col gap-3 z-10 relative">
+                            <div className="flex w-full items-center justify-center">
+                                <div className="flex items-center justify-center rounded-full w-12 h-12 bg-[#F1F5F9]">
+                                    <Image src={Thumbnail} alt="upload icon" />
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-center">
+                                <CompanyThemedButton
+                                    className="bg-black text-white rounded-lg text-sm"
+                                    onPress={triggerFileInput}
+                                >
+                                    Upload Thumbnail
+                                </CompanyThemedButton>
                             </div>
                         </div>
-                        <div className="flex items-center justify-center">
-                            <div className="w-60 h-8 border-1 border-[#E2E8F0] text-sm bg-white flex items-center justify-center rounded-lg shadow-[0px_2px_2px_0px_rgba(0,0,0,0.04)]">
-                                Upload Thumbnail
-                            </div>
-                        </div>
-                    </div>
+                    )}
 
                     {/* Hidden file input */}
                     <input
+                        ref={fileInputRef}
                         type="file"
                         className="hidden"
                         onChange={handleImageChange}
                         accept=".jpg, .png"
                     />
                 </label>
+
+                {/* Show Remove button when an image is uploaded */}
+                {previewImage && (
+                    <div className="absolute bottom-4">
+                        <CompanyThemedButton
+                            className="bg-black text-white hover:bg-gray-100 rounded-lg shadow"
+                            onPress={handleRemoveImage}
+                        >
+                            Remove Thumbnail
+                        </CompanyThemedButton>
+                    </div>
+                )}
             </div>
         </div>
     );

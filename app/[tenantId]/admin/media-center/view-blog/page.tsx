@@ -15,6 +15,7 @@ import { IoArrowBackSharp } from "react-icons/io5";
 import ThumbnailUpload from "../component/ThumbnailUpload";
 import { MdOutlineInsertLink } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 
 const UploadBlogScheme = Yup.object().shape({
@@ -86,22 +87,22 @@ function ViewBlog({ params }: any) {
                     <FaRegEdit /> Edit
                   </button>
                 </Link>
-                <button
+                <CompanyThemedButton
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-primary-green disabled:bg-gray-400 h-10 flex items-center justify-center text-white text-sm px-4 hover:opacity-95 gap-2 rounded-xl"
+                  className="disabled:bg-gray-400 h-10 flex items-center justify-center text-white text-sm px-4 hover:opacity-95 gap-2 rounded-xl"
                 >
                   {isSubmitting ? (
                     <>
                       <LoadingIcon />
-                      Saving
+                      Activating
                     </>
                   ) : (
                     <>
                       <HiOutlineInboxArrowDown /> Activate
                     </>
                   )}
-                </button>
+                </CompanyThemedButton>
               </div>
             </div>
 
