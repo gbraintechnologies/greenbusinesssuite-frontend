@@ -57,10 +57,10 @@ function NewRole() {
     let loading = toast.loading("Creating role. Please wait...");
 
     try {
-      console.log("Role creation payload:", {
-        name: roleName,
-        description: roleDescription,
-      });
+      // console.log("Role creation payload:", {
+      //   name: roleName,
+      //   description: roleDescription,
+      // });
 
       const createRoleResponse = await services.createRole({
         name: roleName,

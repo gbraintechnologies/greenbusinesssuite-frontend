@@ -31,6 +31,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
+import { MeshRoles } from "@/config/roles.app";
 
 function UserManagement() {
   const [filters, setFilters] = useState([
@@ -384,7 +385,12 @@ function UserManagement() {
             </div>
           )}
           <RoleFilter
-            roles={roles}
+            roles={
+              roles &&
+              roles?.filter((role: any) =>
+                MeshRoles?.includes(role?.role_name?.toLowerCase())
+              )
+            }
             selected={activeRoleFilter}
             setSelected={setActiveRoleFilter}
           />

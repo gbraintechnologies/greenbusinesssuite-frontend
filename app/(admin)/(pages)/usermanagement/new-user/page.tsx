@@ -44,6 +44,7 @@ import "./index.css";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { useQuery } from "@tanstack/react-query";
+import { MeshRoles } from "@/config/roles.app";
 
 function NewUser() {
   const [loading, setLoading] = useState(false);
@@ -72,7 +73,9 @@ function NewUser() {
       for (let i = 0; i < data.length; i++) {
         if (data[i].role_name.toLowerCase() == "client") {
           // do not add clients
-        } else {
+        }
+
+        if (MeshRoles.includes(data[i]?.role_name?.toLowerCase())) {
           temp.push({
             id: data[i].id,
             value: data[i].id,

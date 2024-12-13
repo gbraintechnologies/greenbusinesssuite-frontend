@@ -14,6 +14,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Button } from "@nextui-org/button";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
+import { MeshRoles } from "@/config/roles.app";
 
 interface Permission {
   app_id: number;
@@ -45,7 +46,7 @@ function ViewRoles() {
   const [rows, setRows] = useState<RowData[]>([]);
   const [limit, setLimit] = useState(15);
 
-  const {checkPermission} = useAdmin()
+  const { checkPermission } = useAdmin();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["all user roles", limit],
@@ -54,12 +55,19 @@ function ViewRoles() {
 
   useEffect(() => {
     if (data) {
-      const transformedData = data.map((role: Role) => ({
-        id: role.id,
-        roleName: role.role_name,
-        roleDescription: role.role_description,
-        permissions: role.permissions.map((p) => p.permission_name).join(", "),
-      }));
+      const transformedData = data
+        .filter((role: Role) =>
+          MeshRoles.includes(role.role_name?.toLowerCase())
+        )
+        .map((role: Role) => ({
+          id: role.id,
+          roleName: role.role_name,
+          roleDescription: role.role_description,
+          permissions: role.permissions
+            .map((p) => p.permission_name)
+            .join(", "),
+        }));
+
       setRows(transformedData);
     }
     refetch();
@@ -110,16 +118,18 @@ function ViewRoles() {
       flex: 1,
       renderCell: (params: any) => (
         <div className="flex items-center justify-end h-12">
-          {checkPermission(PermissionTypes.UPDATE_ROLE) && <button
-            type="button"
-            className="rounded-full"
-            style={{ right: "-10px" }}
-            onClick={() =>
-              router.push(`/usermanagement/edit-role?roleId=${params.row.id}`)
-            }
-          >
-            <EditIconSetup />
-          </button>}
+          {checkPermission(PermissionTypes.UPDATE_ROLE) && (
+            <button
+              type="button"
+              className="rounded-full"
+              style={{ right: "-10px" }}
+              onClick={() =>
+                router.push(`/usermanagement/edit-role?roleId=${params.row.id}`)
+              }
+            >
+              <EditIconSetup />
+            </button>
+          )}
           {/* <button
             type="button"
             className="rounded-full"
