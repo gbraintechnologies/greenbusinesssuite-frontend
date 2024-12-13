@@ -259,7 +259,7 @@ function CompanySetup() {
           EDGE */}
           <Dropdown>
             <DropdownTrigger>
-              <Button variant="bordered">
+              <Button variant="light">
                 {" "}
                 <BsThreeDots size={20} />
               </Button>
