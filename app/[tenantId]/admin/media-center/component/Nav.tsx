@@ -1,19 +1,19 @@
 "use client";
 
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 
 // icons
 import { GoPlusCircle } from "react-icons/go";
 import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 interface NavProps {
   tenantId: string;
 }
 
 function Nav({ tenantId }: NavProps) {
-
   return (
     <div className="w-full text-[#0F172A] px-5 flex justify-between">
       <div>
@@ -21,13 +21,14 @@ function Nav({ tenantId }: NavProps) {
       </div>
 
       <div className="flex items-center gap-2">
-
         <Menu as="div" className="relative inline-block text-left">
           <div>
-            <Menu.Button className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl">
-              <GoPlusCircle /> Add New
-              <div className="border-r-[0.3px] border-opacity-50 border-white h-10"></div>
-              <IoIosArrowDown />
+            <Menu.Button as={Fragment}>
+              <CompanyThemedButton className="flex items-center gap-2">
+                <GoPlusCircle /> Add New
+                <div className="border-r-[0.3px] border-opacity-50 border-white h-10"></div>
+                <IoIosArrowDown />
+              </CompanyThemedButton>
             </Menu.Button>
           </div>
           <Transition
@@ -48,7 +49,7 @@ function Nav({ tenantId }: NavProps) {
                 </Link>
               </Menu.Item>
               <Menu.Item>
-                <Link  href={`/${tenantId}/admin/media-center/upload-video`}>
+                <Link href={`/${tenantId}/admin/media-center/upload-video`}>
                   <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
                     Video
                   </button>
