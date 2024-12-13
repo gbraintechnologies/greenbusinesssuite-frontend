@@ -30,11 +30,8 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
-  const {
-    data: allForms,
-    isLoading: areFormsLoading,
-  } = useQuery({
-    queryKey: ["get all forms by ", page, limit, selectedTimeline?.value],
+  const { data: allForms, isLoading: areFormsLoading } = useQuery({
+    queryKey: ["unassigned forms", page, limit, selectedTimeline?.value],
     queryFn: services.getUnassignedForms(page, limit, selectedTimeline?.value),
   });
 
@@ -54,7 +51,7 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   // }, [allForms, searchTerm]);
 
   React.useEffect(() => {
-    setSelected(null)
+    setSelected(null);
   }, [page, selectedTimeline]);
 
   const assignFormToCompany = async () => {
@@ -81,13 +78,15 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
       <div className="h-[20rem] flex items-center justify-center">
         <div>
           <LoadingIcon />
-          <p className="mt-2 text-xs text-gray-500">Fetching forms</p>
+          <p className="mt-2 text-xs text-gray-500">
+            Fetching unassigned forms
+          </p>
         </div>
       </div>
     );
   }
   return (
-    <div className="bg-white px-5 py-2">
+    <div className=" h-full px-5 py-2">
       <div className="px-2">
         <div className="flex justify-between items-center">
           <DatePicker
@@ -108,7 +107,7 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
           </div>
         ) : (
           <>
-          <div className="grid grid-cols-4 my-4 gap-4 h-64 overflow-y-scroll">
+            <div className="grid grid-cols-4 my-4 gap-4 h-full overflow-y-scroll">
               {allForms?.content &&
                 allForms?.content?.map((form: any) => {
                   return (

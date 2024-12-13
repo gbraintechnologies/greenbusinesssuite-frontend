@@ -17,7 +17,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
   }, []);
 
   return (
-    <nav className="h-[3.5rem] z-[100] fixed top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
+    <nav className="h-[3.5rem] z-[100] fixed top-0 bg-[#1E293B]  w-full flex justify-between items-center px-5">
       <div className="flex h-full items-center gap-3">
         <Link
           className="flex items-center w-10 h-[60%] justify-center rounded-lg bg-[#F1F5F9]"

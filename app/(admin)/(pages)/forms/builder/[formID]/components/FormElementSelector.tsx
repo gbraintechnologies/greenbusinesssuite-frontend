@@ -71,7 +71,7 @@ export default function FormElementSelector({ section }: any) {
             <div className="px-1 py-1 ">
               {elements.map((item: any, idx: any) => {
                 return (
-                  <Menu.Item>
+                  <Menu.Item key={idx}>
                     <div>
                       {idx === 6 && (
                         <p className="custom-p text-left ml-4">

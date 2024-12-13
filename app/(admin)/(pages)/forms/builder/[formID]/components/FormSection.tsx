@@ -158,9 +158,10 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
         <div className="grid grid-cols-2 gap-5">
           {localSection?.formFields
             ?.filter((item: any) => !item.isDeleted)
-            .map((field: any) => {
+            .map((field: any, idx: any) => {
               return (
                 <FormField
+                  key={idx}
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
                   section={section}

@@ -70,7 +70,7 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
         >
           {timelines.map((timeline) => (
             <DropdownItem
-              key="view"
+              key={timeline.label}
               className="items-center w-full p-2 rounded-md text-sm font-medium hover:bg-[#F1F5F9]"
               onClick={() => setSelectedTimeline(timeline)}
             >
