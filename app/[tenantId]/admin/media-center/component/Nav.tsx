@@ -48,14 +48,14 @@ function Nav({ tenantId }: NavProps) {
                 </Link>
               </Menu.Item>
               <Menu.Item>
-                <Link href="">
+                <Link  href={`/${tenantId}/admin/media-center/upload-video`}>
                   <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
                     Video
                   </button>
                 </Link>
               </Menu.Item>
               <Menu.Item>
-                <Link href="">
+                <Link href={`/${tenantId}/admin/media-center/upload-ads`}>
                   <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
                     Ads
                   </button>

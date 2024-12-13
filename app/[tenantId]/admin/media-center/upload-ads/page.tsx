@@ -18,26 +18,26 @@ import { MdOutlineInsertLink } from "react-icons/md";
 
 const UploadBlogScheme = Yup.object().shape({
     altText: Yup.string().optional(),
-    blogHead: Yup.string(),
+    adDescription: Yup.string(),
     Url: Yup.string().url("Invalid URL").optional(),
 });
 
-function UploadBlog({ params }: any) {
+function UploadAds({ params }: any) {
     const tenantId = params.tenantId;
     const router = useRouter();
     const [thumbnail, setThumbnail] = useState<File | null>(null);
     const handleFormSubmit = async (
-        values: { altText: string; blogHead?: string; Url?: string; thumbnail?: File | null },
+        values: { altText: string; adDescription?: string; Url?: string; thumbnail?: File | null },
         { setSubmitting, resetForm }: FormikHelpers<any>
     ) => {
-        const { altText, blogHead, Url, thumbnail } = values;
+        const { altText, adDescription, Url, thumbnail } = values;
 
-        const loading = toast.loading("Saving Blog. Please wait...");
+        const loading = toast.loading("Saving Ads. Please wait...");
 
         try {
             alert(JSON.stringify({
                 altText,
-                blogHead,
+                adDescription,
                 Url,
                 thumbnail: thumbnail ? thumbnail.name : null
             }, null, 2));
@@ -53,8 +53,8 @@ function UploadBlog({ params }: any) {
         <div className="px-5 pb-20">
             <Formik
                 initialValues={{
+                    adDescription: "",
                     altText: "",
-                    blogHead: "",
                     Url: "",
                     thumbnail: null,
                 }}
@@ -73,7 +73,7 @@ function UploadBlog({ params }: any) {
                                     >
                                         <IoArrowBackSharp />
                                     </Link>
-                                    <h3 className="font-semibold text-xl">Upload Blog</h3>
+                                    <h3 className="font-semibold text-xl">Upload Ads</h3>
                                 </div>
                             </div>
                             <div className="flex gap-3">
@@ -108,28 +108,50 @@ function UploadBlog({ params }: any) {
                         <div className="max-w-2xl rounded-lg py-5 pb-3">
                             <div className="">
                                 <label className="block text-base font-medium text-gray-700 mb-2">
-                                    Blog Thumbnail
+                                    Ad Thumbnail
                                 </label>
                                 <ThumbnailUpload onImageChange={setThumbnail} />
                             </div>
 
+
                             {/* Category Description */}
-                            <div className="input-holder">
-                                <label htmlFor="blogHead" className="flex justify-between items-center">
-                                    Blog Heading
+                            <div className="input-holder mt-5">
+                                <label htmlFor="adDescription">
+                                    Ad Description
                                 </label>
                                 <Field
-                                    id="blogHead"
-                                    name="blogHead"
-                                    placeholder="Type description here"
-                                    style={getStyles(errors, "blogHead")}
+                                    id="adDescription"
+                                    as="textarea"
+                                    name="adDescription"
+                                    placeholder="Type Description here"
+                                    style={getStyles(errors, "adDescription")}
+                                    className="w-full h-32 resize-none bg-slate-50 border border-slate-200 px-4 py-3 rounded-md"
+                                />
+                                <ShowError name="categoryDescription" />
+                            </div>
+
+                            <div className="input-holder">
+                                <label htmlFor="altext" className="flex justify-between items-center">
+                                    Alt Text
+                                    {/* Optional text aligned to the right */}
+                                    <span className="text-sm text-gray-500 ml-2">Optional</span>
+                                </label>
+                                <Field
+                                    id="altext"
+                                    name="altext"
+                                    placeholder="Type alternate here"
+                                    style={getStyles(errors, "altext")}
                                     className="w-full border border-gray-200 px-4 py-2 rounded-md"
                                 />
-                                <ShowError name="blogHead" />
+                                <ShowError name="altext" />
                             </div>
 
                             <div className="input-holder relative">
-                                <label htmlFor="Url">URL</label>
+                                <label htmlFor="Url" className="flex justify-between items-center">
+                                    URL
+                                    {/* Optional text aligned to the right */}
+                                    <span className="text-sm text-gray-500 ml-2">Optional</span>
+                                </label>
                                 <div className="relative w-full">
                                     <Field
                                         id="Url"
@@ -145,21 +167,7 @@ function UploadBlog({ params }: any) {
                                 </div>
                                 <ShowError name="Url" />
                             </div>
-                            <div className="input-holder">
-                                <label htmlFor="altText" className="flex justify-between items-center">
-                                    Alt Text
-                                    {/* Optional text aligned to the right */}
-                                    <span className="text-sm text-gray-500 ml-2">Optional</span>
-                                </label>
-                                <Field
-                                    id="altText"
-                                    name="altText"
-                                    placeholder="Type alternate text here"
-                                    style={getStyles(errors, "altText")}
-                                    className="w-full border border-gray-200 px-4 py-2 rounded-md"
-                                />
-                                <ShowError name="altText" />
-                            </div>
+
                         </div>
                     </Form>
                 )}
@@ -168,4 +176,4 @@ function UploadBlog({ params }: any) {
     );
 }
 
-export default UploadBlog;
+export default UploadAds;

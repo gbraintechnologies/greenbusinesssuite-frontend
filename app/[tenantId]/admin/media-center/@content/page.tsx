@@ -168,7 +168,7 @@ function MediaCenter({ params }: any) {
           <h3 className="font-semibold mb-8 mt-10 text-lg">Blogs</h3>
           <div className="grid grid-cols-4 gap-5">
             {blogData.map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
+              <BlogCard key={blog.id} blog={blog} tenantId={tenantId}/>
             ))}
           </div>
         </>
@@ -179,7 +179,7 @@ function MediaCenter({ params }: any) {
           <h3 className="font-semibold mb-8 mt-10 text-lg">Videos</h3>
           <div className="grid grid-cols-4 gap-5">
             {videoData.map((video) => (
-              <VideoCard key={video.id} video={video} />
+              <VideoCard key={video.id} video={video} tenantId={tenantId}/>
             ))}
           </div>
         </>
@@ -190,7 +190,7 @@ function MediaCenter({ params }: any) {
           <h3 className="font-semibold mb-8 mt-10 text-lg">Ads</h3>
           <div className="grid grid-cols-4 gap-5">
             {adData.map((ad) => (
-              <AdCard key={ad.id} ad={ad} />
+              <AdCard key={ad.id} ad={ad} tenantId={tenantId}/>
             ))}
           </div>
         </>
