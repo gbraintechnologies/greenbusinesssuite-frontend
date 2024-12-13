@@ -18,26 +18,26 @@ import { MdOutlineInsertLink } from "react-icons/md";
 
 const UploadBlogScheme = Yup.object().shape({
     altText: Yup.string().optional(),
-    blogHead: Yup.string(),
+    videoHead: Yup.string(),
     Url: Yup.string().url("Invalid URL").optional(),
 });
 
-function UploadBlog({ params }: any) {
+function UploadVideo({ params }: any) {
     const tenantId = params.tenantId;
     const router = useRouter();
     const [thumbnail, setThumbnail] = useState<File | null>(null);
     const handleFormSubmit = async (
-        values: { altText: string; blogHead?: string; Url?: string; thumbnail?: File | null },
+        values: { altText: string; videoHead?: string; Url?: string; thumbnail?: File | null },
         { setSubmitting, resetForm }: FormikHelpers<any>
     ) => {
-        const { altText, blogHead, Url, thumbnail } = values;
+        const { altText, videoHead, Url, thumbnail } = values;
 
-        const loading = toast.loading("Saving Blog. Please wait...");
+        const loading = toast.loading("Saving Video. Please wait...");
 
         try {
             alert(JSON.stringify({
                 altText,
-                blogHead,
+                videoHead,
                 Url,
                 thumbnail: thumbnail ? thumbnail.name : null
             }, null, 2));
@@ -54,7 +54,7 @@ function UploadBlog({ params }: any) {
             <Formik
                 initialValues={{
                     altText: "",
-                    blogHead: "",
+                    videoHead: "",
                     Url: "",
                     thumbnail: null,
                 }}
@@ -73,7 +73,7 @@ function UploadBlog({ params }: any) {
                                     >
                                         <IoArrowBackSharp />
                                     </Link>
-                                    <h3 className="font-semibold text-xl">Upload Blog</h3>
+                                    <h3 className="font-semibold text-xl">Upload Video</h3>
                                 </div>
                             </div>
                             <div className="flex gap-3">
@@ -108,24 +108,23 @@ function UploadBlog({ params }: any) {
                         <div className="max-w-2xl rounded-lg py-5 pb-3">
                             <div className="">
                                 <label className="block text-base font-medium text-gray-700 mb-2">
-                                    Blog Thumbnail
+                                    Video Thumbnail
                                 </label>
                                 <ThumbnailUpload onImageChange={setThumbnail} />
                             </div>
 
-                            {/* Category Description */}
                             <div className="input-holder">
                                 <label htmlFor="blogHead" className="flex justify-between items-center">
-                                    Blog Heading
+                                    Video Heading
                                 </label>
                                 <Field
-                                    id="blogHead"
-                                    name="blogHead"
+                                    id="videoHead"
+                                    name="videoHead"
                                     placeholder="Type description here"
-                                    style={getStyles(errors, "blogHead")}
+                                    style={getStyles(errors, "videoHead")}
                                     className="w-full border border-gray-200 px-4 py-2 rounded-md"
                                 />
-                                <ShowError name="blogHead" />
+                                <ShowError name="videoHead" />
                             </div>
 
                             <div className="input-holder relative">
@@ -160,6 +159,7 @@ function UploadBlog({ params }: any) {
                                 />
                                 <ShowError name="altText" />
                             </div>
+
                         </div>
                     </Form>
                 )}
@@ -168,4 +168,4 @@ function UploadBlog({ params }: any) {
     );
 }
 
-export default UploadBlog;
+export default UploadVideo;

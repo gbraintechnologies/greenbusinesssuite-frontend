@@ -19,57 +19,58 @@ type Blog = {
 
 type Props = {
     blog: Blog;
+    tenantId: string;
 };
 
-function BlogCard({ blog }: Props) {
+function BlogCard({ blog, tenantId }: Props) {
+
     const { id, title, updatedOn, url, description, createdCount, imageUrl } = blog;
     const router = useRouter();
 
-    // Local state for show/hide
-    const [isHidden, setIsHidden] = useState(false);
+    // Local state for activate/deactivate
+    const [isActivated, setIsActivated] = useState(true);
 
     // Modal control for delete
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    // Toggle Show/Hide logic
-    const toggleHide = () => {
-        setIsHidden((prev) => !prev);
+    // Toggle Activate/Deactivate logic
+    const toggleActivate = () => {
+        setIsActivated((prev) => !prev);
         toast.success(
-            `${isHidden ? "Blog is now visible!" : "Blog is hidden!"}`
+            `${isActivated ? "Ad is now hidden!" : "Ad is showing!"}`
         );
     };
 
-    // Dropdown Options
     const options = [
         {
             title: "View Blog",
-            func: () => router.push(`/blogs/${id}`),
+            func: () => router.push(`/${tenantId}/admin/media-center/view-blog`),
         },
         {
             title: "Edit Blog",
-            func: () => router.push(`/blogs/edit/${id}`),
+            func: () => router.push(`/${tenantId}/admin/media-center/edit-blog`),
         },
         {
             title: "Go to Link",
             func: () => window.open(url, "_blank"),
         },
         {
-            title: isHidden ? "Show" : "Hide", // Dynamic title
-            func: toggleHide,
+            title: isActivated ? "Show" : "Hide", // Dynamic title for dropdown
+            func: toggleActivate,
         },
         {
             title: "Delete",
-            func: () => setShowDeleteModal(true),
+           // func: () => setShowDeleteModal(true),
         },
     ];
 
     return (
         <>
             <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
-                {/* Thumbnail Image */}
+                {/* Thumbnail Image without Play Button Overlay */}
                 <div
-                    onClick={() => router.push(`/blogs/${id}`)}
-                    className="w-full h-[10rem] rounded-tl-lg rounded-tr-lg cursor-pointer overflow-hidden"
+                    onClick={() => router.push(`/ads/${id}`)}
+                    className="relative w-full h-[10rem] rounded-tl-lg rounded-tr-lg cursor-pointer overflow-hidden"
                 >
                     <img
                         src={imageUrl}
@@ -90,20 +91,20 @@ function BlogCard({ blog }: Props) {
                         {description}
                     </p>
 
-                    {/* Show/Hide Button */}
+                    {/* Activate/Deactivate Button */}
                     <div className="flex items-center justify-start mt-2">
                         <p
-                            className={`px-4 py-2 text-sm font-medium rounded-md cursor-pointer ${isHidden
-                                ? "text-green-600"
-                                : "text-red-600"
+                            className={`px-4 py-2 text-sm font-medium rounded-md cursor-pointer ${isActivated
+                                ? "text-red-600"
+                                : "text-green-600"
                                 }`}
-                            onClick={toggleHide}
+                            onClick={toggleActivate}
                         >
-                            {isHidden ? "Show" : "Hide"}
+                            {isActivated ? "Hide" : "Show"} {/* Dynamic text for the card */}
                         </p>
                     </div>
 
-                    {/* Created Count & Three Dots Inline */}
+                    {/* View Count & Three Dots Inline */}
                     <div className="flex items-center justify-between mt-4">
                         <p className="text-xs text-gray-600">
                             Created {createdCount}{" "}
@@ -140,15 +141,6 @@ function BlogCard({ blog }: Props) {
                     </div>
                 </div>
             </div>
-
-            {/* DELETE BLOG MODAL */}
-            <Modal
-                isOpen={showDeleteModal}
-                setIsOpen={setShowDeleteModal}
-                title={`Are you sure you want to delete "${title}"?`}
-            >
-                <p>This action cannot be undone.</p>
-            </Modal>
         </>
     );
 }

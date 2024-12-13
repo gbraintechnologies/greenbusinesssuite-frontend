@@ -14,14 +14,15 @@ type Ad = {
     url: string;
     description: string;
     createdCount: number;
-    thumbnailUrl: string; // Add ad thumbnail URL
+    thumbnailUrl: string;
 };
 
 type Props = {
     ad: Ad;
+    tenantId: string;
 };
 
-function AdCard({ ad }: Props) {
+function AdCard({ ad, tenantId }: Props) {
     const { id, title, updatedOn, url, description, createdCount, thumbnailUrl } = ad;
     const router = useRouter();
 
@@ -39,27 +40,27 @@ function AdCard({ ad }: Props) {
         );
     };
 
-    // Dropdown Options
+    // Dropdown Options with conditional "Activate" or "Deactivate"
     const options = [
         {
             title: "View Ads",
-            func: () => router.push(`/ads/${id}`),
+            func: () => router.push(`/${tenantId}/admin/media-center/view-ad`),
         },
         {
             title: "Edit Ads",
-            func: () => router.push(`/ads/edit/${id}`),
+            func: () => router.push(`/${tenantId}/admin/media-center/edit-ad`),
         },
         {
             title: "Go to Link",
             func: () => window.open(url, "_blank"),
         },
         {
-            title: isActivated ? "Deactivate" : "Activate", // Dynamic title
+            title: isActivated ? "Activate" : "Deactivate", // Dynamic title for dropdown
             func: toggleActivate,
         },
         {
             title: "Delete",
-            func: () => setShowDeleteModal(true),
+          //  func: () => (),
         },
     ];
 
@@ -99,13 +100,13 @@ function AdCard({ ad }: Props) {
                                 }`}
                             onClick={toggleActivate}
                         >
-                            {isActivated ? "Deactivate" : "Activate"}
+                            {isActivated ? "Deactivate" : "Activate"} {/* Dynamic text for the card */}
                         </p>
                     </div>
 
                     {/* View Count & Three Dots Inline */}
                     <div className="flex items-center justify-between mt-4">
-                    <p className="text-xs text-gray-600">
+                        <p className="text-xs text-gray-600">
                             Created {createdCount}{" "}
                             {createdCount === 1 ? "time" : "times"}
                         </p>
@@ -142,13 +143,7 @@ function AdCard({ ad }: Props) {
             </div>
 
             {/* DELETE AD MODAL */}
-            <Modal
-                isOpen={showDeleteModal}
-                setIsOpen={setShowDeleteModal}
-                title={`Are you sure you want to delete "${title}"?`}
-            >
-                <p>This action cannot be undone.</p>
-            </Modal>
+          
         </>
     );
 }
