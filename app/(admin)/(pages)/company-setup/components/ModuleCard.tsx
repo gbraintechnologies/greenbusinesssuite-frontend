@@ -46,6 +46,7 @@ const ModuleCard = ({
     <label
       className="rounded-lg bg-[#F8FAFC] border border-gray-200 py-3 px-6 min-h-36 w-auto cursor-pointer"
       htmlFor={`moduleCard${index}`}
+      key={`moduleCard${index}`}
     >
       <div className="flex !items-center gap-3">
         <input

@@ -14,7 +14,7 @@ import { editCompanyWithCustomFields } from "@/services/features/companyService"
 import { searchUsersByEmail } from "@/services/features/userManagementService";
 import { profile } from "console";
 import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
-import CompanyForm, { ICompany } from "../components/CompanyForm";
+import CompanyForm, { ICompany } from "../../components/CompanyForm";
 import useCompany from "@/hooks/useCompany";
 import { PermissionTypes } from "@/types/permissionTypes";
 import useAdmin from "@/hooks/useAdmin";
@@ -186,8 +186,7 @@ const Page = () => {
 
   const { handleFileUpload } = useFileUpload();
 
-  const {checkPermission} = useAdmin();
-
+  const { checkPermission } = useAdmin();
 
   const editCompany = async (
     values: Partial<ICompany>,
@@ -246,7 +245,6 @@ const Page = () => {
       setSubmitting(false);
       return;
     }
-    
 
     const companyLogoURL =
       companyLogo && (await handleFileUpload(companyLogo as File));
@@ -263,7 +261,7 @@ const Page = () => {
       industry: selectedIndustry?.value as string,
       company_address: selectedCountry?.value as string,
       primary_currency: companyData?.primary_currency,
-      company_code: String(Math.floor(Math.random() * 10000)).padStart(4, '0'),
+      company_code: String(Math.floor(Math.random() * 10000)).padStart(4, "0"),
     };
 
     const custom_fields: CustomField[] = [
@@ -387,7 +385,9 @@ const Page = () => {
         color,
         values.companyName as string,
         companyBranding?.modules?.map((module: any) => module?.id),
-        companyBranding?.categorySpecificModules?.map((module: any) => module?.id) 
+        companyBranding?.categorySpecificModules?.map(
+          (module: any) => module?.id
+        )
       );
 
       toast.success(`Company ${companyData?.company_name} edited successfully`);
@@ -407,8 +407,6 @@ const Page = () => {
   //     )
   //   );
   // }, [companyData, country]);
-
-  
 
   useEffect(() => {
     if (companyData) {
