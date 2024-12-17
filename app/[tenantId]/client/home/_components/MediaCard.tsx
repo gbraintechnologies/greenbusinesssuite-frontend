@@ -1,5 +1,4 @@
 "use client";
-import useCompany from "@/hooks/useCompany";
 import { FormatDateWithSuffix } from "@/utils/FormatDate/FormatDate";
 import Image from "next/image";
 import Link from "next/link";
