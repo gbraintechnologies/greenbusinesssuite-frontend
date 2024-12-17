@@ -10,7 +10,7 @@ import { LiaVideoSlashSolid } from "react-icons/lia";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 
-function MediaHomeTemplate() {
+function MediaHomeTemplate({ search }: { search: string }) {
   // page states for blogs
   const [blogsPage, setBlogsPage] = React.useState(0);
 
@@ -32,20 +32,62 @@ function MediaHomeTemplate() {
   const { data: blogs, isLoading: blogsLoading } = useQuery({
     queryKey: ["blogs", blogsPage, blogsLimit],
     queryFn: services.getMediaByType("BLOGS", blogsPage, blogsLimit),
-    select: (data) => data.content,
+    select: (data) => data.content.filter((blog: any) => blog.isActive),
+    enabled: !Boolean(search),
   });
 
   const { data: videos, isLoading: videosLoading } = useQuery({
     queryKey: ["videos", videosPage, videosLimit],
     queryFn: services.getMediaByType("VIDEOS", videosPage, videosLimit),
-    select: (data) => data.content,
+    select: (data) => data.content.filter((video: any) => video.isActive),
+    enabled: !Boolean(search),
   });
 
   const { data: ads, isLoading: adsLoading } = useQuery({
     queryKey: ["ads", adsPage, adsLimit],
     queryFn: services.getMediaByType("ADS", adsPage, adsLimit),
-    select: (data) => data.content,
+    select: (data) => data.content.filter((ad: any) => ad.isActive),
+    enabled: !Boolean(search),
   });
+
+  const { data: filteredMedia, isLoading: filteredMediaLoading } = useQuery({
+    queryKey: ["filteredMedia", search],
+    queryFn: services.getFilteredMedia(search),
+    enabled: Boolean(search),
+    select: (data) => data.filter((media: any) => media.isActive),
+  });
+
+  const [blogData, setBlogData] = React.useState([]);
+
+  const [videoData, setVideoData] = React.useState([]);
+
+  const [adData, setAdData] = React.useState([]);
+
+  // set blog data, video data and ad data states based on search term and media data
+  React.useEffect(() => {
+    // select filtered media based on search term
+    if (search) {
+      // filter media based on media type
+      const filteredBlogs = filteredMedia?.filter(
+        (item: any) => item.mediaType === "BLOGS"
+      );
+      const filteredVideos = filteredMedia?.filter(
+        (item: any) => item.mediaType === "VIDEOS"
+      );
+      const filteredAds = filteredMedia?.filter(
+        (item: any) => item.mediaType === "ADS"
+      );
+
+      setBlogData(filteredBlogs);
+      setVideoData(filteredVideos);
+      setAdData(filteredAds);
+    } else {
+      // set blog data, video data and ad data based on media data
+      blogs && setBlogData(blogs);
+      videos && setVideoData(videos);
+      ads && setAdData(ads);
+    }
+  }, [blogs, videos, ads, search, filteredMedia]);
 
   return (
     <div className="pb-20 grid grid-cols-4 gap-7">
@@ -53,11 +95,11 @@ function MediaHomeTemplate() {
         <div className="">
           <div className="w-full">
             <h1 className="text-[#475569] font-semibold text-xl">Blog</h1>
-            {blogsLoading ? (
+            {blogsLoading || filteredMediaLoading ? (
               <Loader text="Loading blogs" />
-            ) : blogs?.length > 0 ? (
+            ) : blogData?.length > 0 ? (
               <div className="grid grid-cols-3 gap-4 w-full mt-3">
-                {blogs?.map((_: any, index: number) => (
+                {blogData?.map((_: any, index: number) => (
                   <React.Fragment key={index}>
                     <MediaCard type={"BLOGS"} media={_} />
                   </React.Fragment>
@@ -66,31 +108,33 @@ function MediaHomeTemplate() {
             ) : (
               <NoItems
                 headerText="No Blogs"
-                subtext="There are no blogs matching the specific filter. Try adjusting the filters to find videos."
+                subtext="There are no blogs matching the specific filter. Try adjusting the filters to find blogs."
               />
             )}
-            <div className="w-full flex justify-between mt-4">
-              <ItemsPerPageSelector
-                limit={blogsLimit}
-                setLimit={setBlogsLimit}
-              />
-              <Pagination
-                page={blogsPage}
-                setPage={setBlogsPage}
-                limit={blogsLimit}
-                currentData={blogs}
-              />
-            </div>
+            {!Boolean(search) && (
+              <div className="w-full flex justify-between mt-4">
+                <ItemsPerPageSelector
+                  limit={blogsLimit}
+                  setLimit={setBlogsLimit}
+                />
+                <Pagination
+                  page={blogsPage}
+                  setPage={setBlogsPage}
+                  limit={blogsLimit}
+                  currentData={blogData}
+                />
+              </div>
+            )}
           </div>
           <div className="mt-8 mb-4">
             <div className="flex justify-between items-center">
               <h1 className="text-[#475569] font-semibold text-xl">Videos</h1>
             </div>
-            {videosLoading ? (
+            {(videosLoading || filteredMediaLoading) ? (
               <Loader text="Loading videos" />
-            ) : videos?.length > 0 ? (
+            ) : videoData?.length > 0 ? (
               <div className="grid grid-cols-3 gap-4 w-full mt-3">
-                {videos?.map((_: any, index: number) => (
+                {videoData?.map((_: any, index: number) => (
                   <React.Fragment key={index}>
                     <MediaCard type={"VIDEOS"} media={_} />
                   </React.Fragment>
@@ -103,18 +147,20 @@ function MediaHomeTemplate() {
                 icon={<LiaVideoSlashSolid size={30} />}
               />
             )}
-            <div className="w-full flex justify-between mt-4">
-              <ItemsPerPageSelector
-                limit={videosLimit}
-                setLimit={setVideosLimit}
-              />
-              <Pagination
-                page={videosPage}
-                setPage={setVideosPage}
-                limit={videosLimit}
-                currentData={videos}
-              />
-            </div>
+            {!Boolean(search) && (
+              <div className="w-full flex justify-between mt-4">
+                <ItemsPerPageSelector
+                  limit={videosLimit}
+                  setLimit={setVideosLimit}
+                />
+                <Pagination
+                  page={videosPage}
+                  setPage={setVideosPage}
+                  limit={videosLimit}
+                  currentData={videoData}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -126,16 +172,21 @@ function MediaHomeTemplate() {
         <div className="">
           <div className="flex items-center justify-between">
             <h1 className="text-slate-900 font-semibold text-xl">Ads</h1>
-            <ItemsPerPageSelector
-              limit={videosLimit}
-              setLimit={setVideosLimit}
-            />
+            {!Boolean(search) && (
+              <Pagination
+                page={adsPage}
+                setPage={setAdsPage}
+                limit={adsLimit}
+                currentData={adData}
+                variant="no-text"
+              />
+            )}
           </div>
-          {adsLoading ? (
+          {adsLoading || filteredMediaLoading ? (
             <Loader text="Loading ads" />
-          ) : ads?.length > 0 ? (
+          ) : adData?.length > 0 ? (
             <div className="grid grid-cols-1 gap-4 w-full mt-3">
-              {ads?.map((_: any, index: number) => (
+              {adData?.map((_: any, index: number) => (
                 <React.Fragment key={index}>
                   <MediaCard type={"ADS"} media={_} />
                 </React.Fragment>
@@ -144,16 +195,10 @@ function MediaHomeTemplate() {
           ) : (
             <NoItems
               headerText="No Ads"
-              subtext="There are no ads matching the specific filter. Try adjusting the filters to find videos."
+              subtext="There are no ads matching the specific filter. Try adjusting the filters to find ads."
             />
           )}
         </div>
-        <Pagination
-          page={videosPage}
-          setPage={setVideosPage}
-          limit={videosLimit}
-          currentData={videos}
-        />
       </div>
     </div>
   );
