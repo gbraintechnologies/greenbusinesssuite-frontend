@@ -1,27 +1,28 @@
 "use client";
 import React from "react";
 import MediaCard from "../_components/MediaCard";
-import ProfileCard from "../_components/ProfileCard";
+// import ProfileCard from "../_components/ProfileCard";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import Loader from "@/components/Loader/Loader";
 import NoItems from "@/components/NoItems/NoItems";
-import { LiaVideoSlashSolid } from "react-icons/lia";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import { AiFillFileExclamation } from "react-icons/ai";
+import { TbCameraExclamation } from "react-icons/tb";
 
 function MediaHomeTemplate({ search }: { search: string }) {
   // page states for blogs
   const [blogsPage, setBlogsPage] = React.useState(0);
 
   // limit states for blogs
-  const [blogsLimit, setBlogsLimit] = React.useState(4);
+  const [blogsLimit, setBlogsLimit] = React.useState(8);
 
   // page states for videos
   const [videosPage, setVideosPage] = React.useState(0);
 
   // limit states for videos
-  const [videosLimit, setVideosLimit] = React.useState(4);
+  const [videosLimit, setVideosLimit] = React.useState(8);
 
   // page states for ads
   const [adsPage, setAdsPage] = React.useState(0);
@@ -93,6 +94,7 @@ function MediaHomeTemplate({ search }: { search: string }) {
     <div className="pb-20 grid grid-cols-4 gap-7">
       <div className="col-start-1 col-span-3 ">
         <div className="">
+          {/* BLOGS */}
           <div className="w-full">
             <h1 className="text-[#475569] font-semibold text-xl">Blog</h1>
             {blogsLoading || filteredMediaLoading ? (
@@ -107,6 +109,7 @@ function MediaHomeTemplate({ search }: { search: string }) {
               </div>
             ) : (
               <NoItems
+                icon={<AiFillFileExclamation size={30} />}
                 headerText="No Blogs"
                 subtext="There are no blogs matching the specific filter. Try adjusting the filters to find blogs."
               />
@@ -126,11 +129,12 @@ function MediaHomeTemplate({ search }: { search: string }) {
               </div>
             )}
           </div>
+          {/* VIDEOS */}
           <div className="mt-8 mb-4">
             <div className="flex justify-between items-center">
               <h1 className="text-[#475569] font-semibold text-xl">Videos</h1>
             </div>
-            {(videosLoading || filteredMediaLoading) ? (
+            {videosLoading || filteredMediaLoading ? (
               <Loader text="Loading videos" />
             ) : videoData?.length > 0 ? (
               <div className="grid grid-cols-3 gap-4 w-full mt-3">
@@ -144,7 +148,7 @@ function MediaHomeTemplate({ search }: { search: string }) {
               <NoItems
                 headerText="No Videos"
                 subtext="There are no videos matching the specific filter. Try adjusting the filters to find videos."
-                icon={<LiaVideoSlashSolid size={30} />}
+                icon={<TbCameraExclamation size={30} />}
               />
             )}
             {!Boolean(search) && (
@@ -168,10 +172,10 @@ function MediaHomeTemplate({ search }: { search: string }) {
         {/* <div className="pb-16 border-b border-[#E2E8F0]">
           <ProfileCard />
         </div> */}
-
+        {/* ADS */}
         <div className="">
           <div className="flex items-center justify-between">
-            <h1 className="text-slate-900 font-semibold text-xl">Ads</h1>
+            <h1 className="text-[#475569] font-semibold text-xl">Ads</h1>
             {!Boolean(search) && (
               <Pagination
                 page={adsPage}
@@ -194,6 +198,7 @@ function MediaHomeTemplate({ search }: { search: string }) {
             </div>
           ) : (
             <NoItems
+              icon={<AiFillFileExclamation size={30} />}
               headerText="No Ads"
               subtext="There are no ads matching the specific filter. Try adjusting the filters to find ads."
             />
