@@ -1,51 +1,208 @@
+"use client";
 import React from "react";
 import MediaCard from "../_components/MediaCard";
-import ProfileCard from "../_components/ProfileCard";
+// import ProfileCard from "../_components/ProfileCard";
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
+import Loader from "@/components/Loader/Loader";
+import NoItems from "@/components/NoItems/NoItems";
+import Pagination from "@/components/Pagination/Pagination";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import { AiFillFileExclamation } from "react-icons/ai";
+import { TbCameraExclamation } from "react-icons/tb";
 
-function MediaHomeTemplate() {
-  // Implement the first media homepage template here
+function MediaHomeTemplate({ search }: { search: string }) {
+  // page states for blogs
+  const [blogsPage, setBlogsPage] = React.useState(0);
 
-  // any special components can live in _components folder under home
+  // limit states for blogs
+  const [blogsLimit, setBlogsLimit] = React.useState(8);
+
+  // page states for videos
+  const [videosPage, setVideosPage] = React.useState(0);
+
+  // limit states for videos
+  const [videosLimit, setVideosLimit] = React.useState(8);
+
+  // page states for ads
+  const [adsPage, setAdsPage] = React.useState(0);
+
+  // limit states for ads
+  const [adsLimit, setAdsLimit] = React.useState(4);
+
+  const { data: blogs, isLoading: blogsLoading } = useQuery({
+    queryKey: ["blogs", blogsPage, blogsLimit],
+    queryFn: services.getMediaByType("BLOGS", blogsPage, blogsLimit),
+    select: (data) => data.content.filter((blog: any) => blog.isActive),
+    enabled: !Boolean(search),
+  });
+
+  const { data: videos, isLoading: videosLoading } = useQuery({
+    queryKey: ["videos", videosPage, videosLimit],
+    queryFn: services.getMediaByType("VIDEOS", videosPage, videosLimit),
+    select: (data) => data.content.filter((video: any) => video.isActive),
+    enabled: !Boolean(search),
+  });
+
+  const { data: ads, isLoading: adsLoading } = useQuery({
+    queryKey: ["ads", adsPage, adsLimit],
+    queryFn: services.getMediaByType("ADS", adsPage, adsLimit),
+    select: (data) => data.content.filter((ad: any) => ad.isActive),
+    enabled: !Boolean(search),
+  });
+
+  const { data: filteredMedia, isLoading: filteredMediaLoading } = useQuery({
+    queryKey: ["filteredMedia", search],
+    queryFn: services.getFilteredMedia(search),
+    enabled: Boolean(search),
+    select: (data) => data.filter((media: any) => media.isActive),
+  });
+
+  const [blogData, setBlogData] = React.useState([]);
+
+  const [videoData, setVideoData] = React.useState([]);
+
+  const [adData, setAdData] = React.useState([]);
+
+  // set blog data, video data and ad data states based on search term and media data
+  React.useEffect(() => {
+    // select filtered media based on search term
+    if (search) {
+      // filter media based on media type
+      const filteredBlogs = filteredMedia?.filter(
+        (item: any) => item.mediaType === "BLOGS"
+      );
+      const filteredVideos = filteredMedia?.filter(
+        (item: any) => item.mediaType === "VIDEOS"
+      );
+      const filteredAds = filteredMedia?.filter(
+        (item: any) => item.mediaType === "ADS"
+      );
+
+      setBlogData(filteredBlogs);
+      setVideoData(filteredVideos);
+      setAdData(filteredAds);
+    } else {
+      // set blog data, video data and ad data based on media data
+      blogs && setBlogData(blogs);
+      videos && setVideoData(videos);
+      ads && setAdData(ads);
+    }
+  }, [blogs, videos, ads, search, filteredMedia]);
+
   return (
     <div className="pb-20 grid grid-cols-4 gap-7">
       <div className="col-start-1 col-span-3 ">
         <div className="">
+          {/* BLOGS */}
           <div className="w-full">
             <h1 className="text-[#475569] font-semibold text-xl">Blog</h1>
-            <div className="grid grid-cols-3 gap-4 w-full mt-3">
-              {Array.from({ length: 4 }).map((_: any, index: number) => (
-                <React.Fragment key={index}>
-                  <MediaCard showDate/>
-                </React.Fragment>
-              ))}
-            </div>
+            {blogsLoading || filteredMediaLoading ? (
+              <Loader text="Loading blogs" />
+            ) : blogData?.length > 0 ? (
+              <div className="grid grid-cols-3 gap-4 w-full mt-3">
+                {blogData?.map((_: any, index: number) => (
+                  <React.Fragment key={index}>
+                    <MediaCard type={"BLOGS"} media={_} />
+                  </React.Fragment>
+                ))}
+              </div>
+            ) : (
+              <NoItems
+                icon={<AiFillFileExclamation size={30} />}
+                headerText="No Blogs"
+                subtext="There are no blogs matching the specific filter. Try adjusting the filters to find blogs."
+              />
+            )}
+            {!Boolean(search) && (
+              <div className="w-full flex justify-between mt-4">
+                <ItemsPerPageSelector
+                  limit={blogsLimit}
+                  setLimit={setBlogsLimit}
+                />
+                <Pagination
+                  page={blogsPage}
+                  setPage={setBlogsPage}
+                  limit={blogsLimit}
+                  currentData={blogData}
+                />
+              </div>
+            )}
           </div>
+          {/* VIDEOS */}
           <div className="mt-8 mb-4">
-            <h1 className="text-[#475569] font-semibold text-xl">News</h1>
-            <div className="grid grid-cols-3 gap-4 w-full mt-3">
-              {Array.from({ length: 1 }).map((_: any, index: number) => (
-                <React.Fragment key={index}>
-                  <MediaCard />
-                </React.Fragment>
-              ))}
+            <div className="flex justify-between items-center">
+              <h1 className="text-[#475569] font-semibold text-xl">Videos</h1>
             </div>
+            {videosLoading || filteredMediaLoading ? (
+              <Loader text="Loading videos" />
+            ) : videoData?.length > 0 ? (
+              <div className="grid grid-cols-3 gap-4 w-full mt-3">
+                {videoData?.map((_: any, index: number) => (
+                  <React.Fragment key={index}>
+                    <MediaCard type={"VIDEOS"} media={_} />
+                  </React.Fragment>
+                ))}
+              </div>
+            ) : (
+              <NoItems
+                headerText="No Videos"
+                subtext="There are no videos matching the specific filter. Try adjusting the filters to find videos."
+                icon={<TbCameraExclamation size={30} />}
+              />
+            )}
+            {!Boolean(search) && (
+              <div className="w-full flex justify-between mt-4">
+                <ItemsPerPageSelector
+                  limit={videosLimit}
+                  setLimit={setVideosLimit}
+                />
+                <Pagination
+                  page={videosPage}
+                  setPage={setVideosPage}
+                  limit={videosLimit}
+                  currentData={videoData}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
       <div className=" col-start-4 ">
-        <div className="pb-8 border-b border-[#E2E8F0]">
-
-        <ProfileCard />
-        </div>
-        <div className="mt-8">
-          <h1 className="text-slate-900 font-semibold text-xl">Ads</h1>
-          <div className="grid grid-cols-1 gap-4 w-full mt-3">
-              {Array.from({ length: 1 }).map((_: any, index: number) => (
+        {/* <div className="pb-16 border-b border-[#E2E8F0]">
+          <ProfileCard />
+        </div> */}
+        {/* ADS */}
+        <div className="">
+          <div className="flex items-center justify-between">
+            <h1 className="text-[#475569] font-semibold text-xl">Ads</h1>
+            {!Boolean(search) && (
+              <Pagination
+                page={adsPage}
+                setPage={setAdsPage}
+                limit={adsLimit}
+                currentData={adData}
+                variant="no-text"
+              />
+            )}
+          </div>
+          {adsLoading || filteredMediaLoading ? (
+            <Loader text="Loading ads" />
+          ) : adData?.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 w-full mt-3">
+              {adData?.map((_: any, index: number) => (
                 <React.Fragment key={index}>
-                  <MediaCard />
+                  <MediaCard type={"ADS"} media={_} />
                 </React.Fragment>
               ))}
             </div>
+          ) : (
+            <NoItems
+              icon={<AiFillFileExclamation size={30} />}
+              headerText="No Ads"
+              subtext="There are no ads matching the specific filter. Try adjusting the filters to find ads."
+            />
+          )}
         </div>
       </div>
     </div>

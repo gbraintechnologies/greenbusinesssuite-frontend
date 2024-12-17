@@ -28,6 +28,8 @@ import * as categoryService from "./features/categoryService";
 
 import * as coreModuleService from "./features/coreModuleService";
 
+import * as mediaService from "./features/mediaService";
+
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -46,4 +48,5 @@ export default {
   ...categoryService,
   ...notificationService,
   ...coreModuleService,
+  ...mediaService
 };

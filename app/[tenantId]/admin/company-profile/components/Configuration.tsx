@@ -61,7 +61,7 @@ const Configuration = ({ tenantId }: { tenantId: string }) => {
         <div>
           <header>
             <h3 className="text-lg text-primary-dark font-semibold">
-              Industry Modules
+              Category Specific Modules
             </h3>
             <p className="text-[#667085] text-sm">
               Modules tailor-made for specific industries
