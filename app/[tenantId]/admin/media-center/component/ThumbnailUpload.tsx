@@ -33,10 +33,11 @@ const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
         if (file) {
-            setThumbnailImage(file);
-            onImageChange(file);
+          setThumbnailImage(file);  // Update the local state for preview
+          onImageChange(file);  // Update the parent state
         }
-    };
+      };
+      
 
     const handleRemoveImage = () => {
         setThumbnailImage(null);
@@ -91,7 +92,7 @@ const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
                         type="file"
                         className="hidden"
                         onChange={handleImageChange}
-                        accept=".jpg, .png"
+                        accept="*/*" 
                     />
                 </label>
 

@@ -3,66 +3,108 @@
 import "./index.css";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import Link from "next/link";
 import { toast } from "sonner";
 import services from "@/services";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IoArrowBackSharp } from "react-icons/io5";
 import ThumbnailUpload from "../component/ThumbnailUpload";
 import { MdOutlineInsertLink } from "react-icons/md";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
+import { useQuery } from "@tanstack/react-query";
+import { S3BucketFileUpload } from "@/services/features/mediaService";
 
 
-const UploadBlogScheme = Yup.object().shape({
+const UploadVideoScheme = Yup.object().shape({
   altText: Yup.string().optional(),
-  blogHead: Yup.string(),
+  videoHead: Yup.string(),
   Url: Yup.string().url("Invalid URL").optional(),
 });
 
 function EditVideo({ params }: any) {
   const tenantId = params.tenantId;
   const router = useRouter();
-  const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const handleFormSubmit = async (
-    values: { altText: string; blogHead?: string; Url?: string; thumbnail?: File | null },
-    { setSubmitting, resetForm }: FormikHelpers<any>
-  ) => {
-    const { altText, blogHead, Url, thumbnail } = values;
+  const searchParams = useSearchParams();  // Access the search params
+  const videoId = searchParams.get("id");
 
-    const loading = toast.loading("Saving Blog. Please wait...");
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["mediaType", videoId],
+    queryFn: services.getMediaTypeByID(Number(videoId)),
+    enabled: !!videoId,
+  });
+
+  useEffect(() => { }, [data, refetch])
+
+  const handleFormSubmit = async (
+    values: { altText: string; videoHead?: string; Url?: string; thumbnail?: File | null },
+    { setSubmitting }: FormikHelpers<any>
+  ) => {
+    const { altText, videoHead, Url, thumbnail } = values;
+    const loading = toast.loading("Updating Video. Please wait...");
 
     try {
-      alert(JSON.stringify({
-        altText,
-        blogHead,
-        Url,
-        thumbnail: thumbnail ? thumbnail.name : null
-      }, null, 2));
+      let thumbnailUrl = data?.thumbnail || "";
+
+      if (thumbnail && thumbnail !== data?.thumbnail) {
+        const formData = new FormData();
+        formData.append("file", thumbnail);
+
+        console.log("FormData being sent to S3:", formData);
+        const response = await S3BucketFileUpload(formData, thumbnail.name);
+
+        if (response?.data) {
+          thumbnailUrl = response.data;
+          console.log("Uploaded thumbnail URL:", thumbnailUrl);
+        } else {
+          console.error("No URL returned from S3 upload");
+        }
+        toast.success("Thumbnail uploaded successfully!");
+      }
+
+      const payload = {
+        id: Number(videoId),
+        mediaType: "VIDEOS",
+        thumbnail: thumbnailUrl,
+        altText: altText || "",
+        heading: videoHead || "",
+        url: Url || "",
+        isActive: data?.isActive,
+        updatedOn: new Date().toISOString(),
+      };
+
+      await services.updateMediaType(payload);
+      toast.success("Video updated successfully!");
+
+      router.push(`/${tenantId}/admin/media-center`);
     } catch (error) {
-      toast.error("An error occurred while processing the form.");
+      console.error("Error uploading video:", error);
+      toast.error("An error occurred while saving the video.");
     } finally {
       setSubmitting(false);
       toast.dismiss(loading);
     }
   };
 
+  
+  if (isLoading) return <LoadingIcon />;
+
   return (
     <div className="px-5 pb-20">
       <Formik
         initialValues={{
-          altText: "",
-          blogHead: "",
-          Url: "",
-          thumbnail: null,
+          altText: data?.altText || "",
+          videoHead: data?.heading || "",
+          Url: data?.url || "",
+          thumbnail: data?.thumbnail || "",
         }}
-        validationSchema={UploadBlogScheme}
+        validationSchema={UploadVideoScheme}
         onSubmit={handleFormSubmit}
       >
-        {({ errors, isSubmitting }) => (
+        {({ errors, isSubmitting, setFieldValue }) => (
           <Form>
             {/* Header */}
             <div className="w-full text-primary-dark flex pt-4 justify-between">
@@ -111,21 +153,17 @@ function EditVideo({ params }: any) {
                 <label className="block text-base font-medium text-gray-700 mb-2">
                   Blog Thumbnail
                 </label>
-                <ThumbnailUpload onImageChange={setThumbnail} />
+                <ThumbnailUpload
+                  onImageChange={(file: File | null) => {
+                    setFieldValue("thumbnail", file);
+                  }}
+                />
               </div>
 
               <div className="input-holder">
-                <label htmlFor="blogHead" className="flex justify-between items-center">
-                  Blog Heading
-                </label>
-                <Field
-                  id="blogHead"
-                  name="blogHead"
-                  placeholder="Type description here"
-                  style={getStyles(errors, "blogHead")}
-                  className="w-full border border-gray-200 px-4 py-2 rounded-md"
-                />
-                <ShowError name="blogHead" />
+                <label htmlFor="videoHead">Video Heading</label>
+                <Field id="videoHead" name="videoHead" className="w-full px-4 py-2 rounded-md" />
+                <ShowError name="videoHead" />
               </div>
 
               <div className="input-holder relative">

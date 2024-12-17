@@ -3,52 +3,80 @@
 import "./index.css";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import Link from "next/link";
 import { toast } from "sonner";
 import services from "@/services";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IoArrowBackSharp } from "react-icons/io5";
 import ThumbnailUpload from "../component/ThumbnailUpload";
 import { MdOutlineInsertLink } from "react-icons/md";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 
-const UploadBlogScheme = Yup.object().shape({
+const UploadVideoScheme = Yup.object().shape({
     altText: Yup.string().optional(),
     videoHead: Yup.string(),
     Url: Yup.string().url("Invalid URL").optional(),
 });
 
+interface VideoFormValues {
+    altText: string;
+    videoHead: string;
+    Url: string;
+    thumbnail: File | null;
+}
+
 function UploadVideo({ params }: any) {
     const tenantId = params.tenantId;
     const router = useRouter();
     const [thumbnail, setThumbnail] = useState<File | null>(null);
-    const handleFormSubmit = async (
-        values: { altText: string; videoHead?: string; Url?: string; thumbnail?: File | null },
-        { setSubmitting, resetForm }: FormikHelpers<any>
-    ) => {
-        const { altText, videoHead, Url, thumbnail } = values;
+    const [isActive, setIsActive] = useState<boolean>(false);
+    const searchParams = useSearchParams();
+    const videoType = searchParams.get("type");
 
-        const loading = toast.loading("Saving Video. Please wait...");
+    useEffect(() => {
+    }, [videoType]);
 
-        try {
-            alert(JSON.stringify({
-                altText,
-                videoHead,
-                Url,
-                thumbnail: thumbnail ? thumbnail.name : null
-            }, null, 2));
-        } catch (error) {
-            toast.error("An error occurred while processing the form.");
-        } finally {
-            setSubmitting(false);
-            toast.dismiss(loading);
-        }
-    };
+     const handleFormSubmit = async (
+            values: VideoFormValues,
+            { setSubmitting, resetForm }: FormikHelpers<VideoFormValues>
+        ) => {
+            const { altText, videoHead, Url } = values;
+            const formValuesWithThumbnail = { ...values, thumbnail: thumbnail };
+    
+            const loading = toast.loading("Saving Video. Please wait...");
+    
+    
+            try {
+                const formData = new FormData();
+                formData.append("mediaType", videoType || "VIDEOS");
+                formData.append("altText", altText || "");
+                formData.append("heading", videoHead || "");
+                formData.append("url", Url || "");
+                formData.append("isActive", String(isActive));
+    
+                if (thumbnail) {
+                    formData.append("thumbnail", thumbnail);
+                }
+                console.log("Form Values with Thumbnail:", formValuesWithThumbnail);
+                
+                await services.mediaUpload(formData);
+                toast.success("Video uploaded successfully!");
+                resetForm();
+                setThumbnail(null); 
+                router.push(`/${tenantId}/admin/media-center`);
+            } catch (error) {
+                console.error("Error uploading Video:", error);
+                toast.error("An error occurred while uploading the Video.");
+            } finally {
+                setSubmitting(false);
+                toast.dismiss(loading);
+            }
+        };
 
     return (
         <div className="px-5 pb-20">
@@ -57,9 +85,9 @@ function UploadVideo({ params }: any) {
                     altText: "",
                     videoHead: "",
                     Url: "",
-                    thumbnail: null,
+                    thumbnail: thumbnail,
                 }}
-                validationSchema={UploadBlogScheme}
+                validationSchema={UploadVideoScheme}
                 onSubmit={handleFormSubmit}
             >
                 {({ errors, isSubmitting }) => (

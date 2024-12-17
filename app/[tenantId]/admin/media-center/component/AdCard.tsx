@@ -1,151 +1,160 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-import Modal from "@/components/Modal/Modal";
 import { toast } from "sonner";
+import { deleteMediaTypeByID, changeStatus } from "@/services/features/mediaService";
 
-type Ad = {
-    id: number;
-    title: string;
-    updatedOn: string;
-    url: string;
-    description: string;
-    createdCount: number;
-    thumbnailUrl: string;
-};
+interface MediaItem {
+  id: number;
+  mediaType: string;
+  thumbnail: string;
+  altText: string;
+  heading: string;
+  url: string;
+  isActive: boolean;
+  createdOn: string;
+  updatedOn: string;
+}
 
 type Props = {
-    ad: Ad;
-    tenantId: string;
+  ad: MediaItem;
+  tenantId: string;
+  refetchData: () => void;
 };
 
-function AdCard({ ad, tenantId }: Props) {
-    const { id, title, updatedOn, url, description, createdCount, thumbnailUrl } = ad;
-    const router = useRouter();
+function AdCard({ ad, tenantId, refetchData }: Props) {
+  const { id, heading, updatedOn, url, isActive, createdOn, thumbnail } = ad;
+  const router = useRouter();
+  const [isActivated, setIsActivated] = useState(isActive); // Default the state to the blog's current status
 
-    // Local state for activate/deactivate
-    const [isActivated, setIsActivated] = useState(true);
+  const toggleActivate = async () => {
+    try {
+      const newStatus = !isActivated;
+      setIsActivated(newStatus);
 
-    // Modal control for delete
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+      await changeStatus(id, newStatus);
+      toast.success(`Ad has been ${newStatus ? "activated" : "deactivated"} successfully!`);
+      refetchData();
+    } catch (error) {
+      toast.error("An error occurred while updating the Ad status.");
+    }
+  };
 
-    // Toggle Activate/Deactivate logic
-    const toggleActivate = () => {
-        setIsActivated((prev) => !prev);
-        toast.success(
-            `${isActivated ? "Ad is now deactivated!" : "Ad is activated!"}`
-        );
-    };
+  const handleDelete = async () => {
+    try {
+      const loading = toast.loading("Deleting ad...");
+      await deleteMediaTypeByID(id);
+      toast.success("Ad deleted successfully!");
+      toast.dismiss(loading);
+      refetchData();
+    } catch (error) {
+      toast.error("An error occurred while deleting the ad.");
+    }
+  };
 
-    // Dropdown Options with conditional "Activate" or "Deactivate"
-    const options = [
-        {
-            title: "View Ads",
-            func: () => router.push(`/${tenantId}/admin/media-center/view-ad`),
-        },
-        {
-            title: "Edit Ads",
-            func: () => router.push(`/${tenantId}/admin/media-center/edit-ad`),
-        },
-        {
-            title: "Go to Link",
-            func: () => window.open(url, "_blank"),
-        },
-        {
-            title: isActivated ? "Activate" : "Deactivate", // Dynamic title for dropdown
-            func: toggleActivate,
-        },
-        {
-            title: "Delete",
-          //  func: () => (),
-        },
-    ];
+  const options = [
+    {
+      title: "View Ads",
+      func: () => router.push(`/${tenantId}/admin/media-center/view-ad?id=${id}`),
+    },
+    {
+      title: "Edit Ads",
+      func: () => router.push(`/${tenantId}/admin/media-center/edit-ad?id=${id}`),
+    },
+    {
+      title: "Go to Link",
+      func: () => window.open(url, "_blank"),
+    },
+    {
+      title: isActivated ? "Deactivate" : "Activate", // Show the opposite status in the dropdown
+      func: toggleActivate, // Toggle status on click
+    },
+    {
+      title: "Delete",
+      func: async () => await handleDelete(),
+    },
+  ];
 
-    return (
-        <>
-            <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
-                {/* Thumbnail Image without Play Button Overlay */}
-                <div
-                    onClick={() => router.push(`/ads/${id}`)}
-                    className="relative w-full h-[10rem] rounded-tl-lg rounded-tr-lg cursor-pointer overflow-hidden"
-                >
-                    <img
-                        src={thumbnailUrl}
-                        alt={title}
-                        className="w-full h-full object-cover"
-                    />
-                </div>
+  return (
+    <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+      {/* Thumbnail */}
+      <div className="relative w-full h-[10rem] rounded-t-lg overflow-hidden cursor-pointer">
+        <img
+          src={thumbnail}
+          alt={heading}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-                {/* Card Content */}
-                <div className="p-3">
-                    {/* Date on the left */}
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-gray-500">{updatedOn}</p>
-                    </div>
+      {/* Card Content */}
+      <div className="p-3">
+        {/* Date */}
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm text-gray-500">{updatedOn}</p>
+        </div>
 
-                    {/* Bold Description */}
-                    <p className="text-sm font-bold text-gray-700 mt-2">
-                        {description}
-                    </p>
+        {/* Title */}
+        <p className="text-sm font-bold text-gray-700 mt-2">{heading}</p>
 
-                    {/* Activate/Deactivate Button */}
-                    <div className="flex items-center justify-start mt-2">
-                        <p
-                            className={`px-4 py-2 text-sm font-medium rounded-md cursor-pointer ${isActivated
-                                ? "text-red-600"
-                                : "text-green-600"
-                                }`}
-                            onClick={toggleActivate}
-                        >
-                            {isActivated ? "Deactivate" : "Activate"} {/* Dynamic text for the card */}
-                        </p>
-                    </div>
+        {/* Activate/Deactivate */}
+        <div className="flex items-center justify-start mt-2">
+          <p
+            className={`px-4 py-2 text-sm font-medium rounded-md ${isActivated ? "text-green-600" : "text-red-600"}`}
+          >
+            {isActivated ? "Activate" : "Deactivate"} {/* Just display the current status */}
+          </p>
+        </div>
 
-                    {/* View Count & Three Dots Inline */}
-                    <div className="flex items-center justify-between mt-4">
-                        <p className="text-xs text-gray-600">
-                            Created {createdCount}{" "}
-                            {createdCount === 1 ? "time" : "times"}
-                        </p>
-                        {/* Three Dots Dropdown */}
-                        <Menu as="div" className="relative">
-                            <Menu.Button className="text-gray-700 hover:text-gray-900">
-                                <BsThreeDots className="w-5 h-5" />
-                            </Menu.Button>
-                            <Transition
-                                enter="transition ease-out duration-100"
-                                enterFrom="transform opacity-0 scale-95"
-                                enterTo="transform opacity-100 scale-100"
-                                leave="transition ease-in duration-75"
-                                leaveFrom="transform opacity-100 scale-100"
-                                leaveTo="transform opacity-0 scale-95"
-                            >
-                                <Menu.Items className="absolute right-0 w-40 rounded-lg shadow-lg bg-white">
-                                    {options.map((option, idx) => (
-                                        <Menu.Item key={idx}>
-                                            <button
-                                                className={`${option.title === "Delete"
-                                                    } py-2 px-4 font-light hover:bg-gray-50 w-full text-left`}
-                                                onClick={option.func}
-                                            >
-                                                {option.title}
-                                            </button>
-                                        </Menu.Item>
-                                    ))}
-                                </Menu.Items>
-                            </Transition>
-                        </Menu>
-                    </div>
-                </div>
+        {/* Footer: Created Date & Menu */}
+        <div className="flex items-center justify-between mt-4">
+          <p className="text-xs text-gray-600">Created on {createdOn}</p>
+
+          {/* Dropdown Menu */}
+          <Menu as="div" className="relative">
+            <div>
+              <Menu.Button className="text-gray-700 hover:text-gray-900">
+                <BsThreeDots className="w-5 h-5" />
+              </Menu.Button>
             </div>
 
-            {/* DELETE AD MODAL */}
-          
-        </>
-    );
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="absolute right-0 -top-2 w-40 rounded-lg shadow-md bg-white flex flex-col text-left z-50">
+                {options.map((option, idx) => (
+                  <Menu.Item key={idx}>
+                    <div>
+                      <button
+                        className={`${option.title.toLowerCase() === "delete"
+                          ? "text-red-600"
+                          : "text-gray-500"
+                          } py-3 px-4 font-light hover:bg-gray-50 w-full text-left`}
+                        onClick={option.func}
+                      >
+                        {option.title}
+                      </button>
+                      {idx % 2 === 0 && (
+                        <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
+                      )}
+                    </div>
+                  </Menu.Item>
+                ))}
+              </Menu.Items>
+            </Transition>
+          </Menu>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default AdCard;
