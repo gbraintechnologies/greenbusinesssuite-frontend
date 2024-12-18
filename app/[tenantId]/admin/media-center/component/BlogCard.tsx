@@ -1,147 +1,159 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-import Modal from "@/components/Modal/Modal";
 import { toast } from "sonner";
+import { changeStatus, deleteMediaTypeByID } from "@/services/features/mediaService";
 
-type Blog = {
+interface MediaItem {
     id: number;
-    title: string;
-    updatedOn: string;
+    mediaType: string;
+    thumbnail: string;
+    altText: string;
+    heading: string;
     url: string;
-    description: string;
-    createdCount: number;
-    imageUrl: string; // Add image URL
-};
+    isActive: boolean;
+    createdOn: string;
+    updatedOn: string;
+}
 
 type Props = {
-    blog: Blog;
+    blog: MediaItem;
     tenantId: string;
+    refetchData: () => void;
 };
 
-function BlogCard({ blog, tenantId }: Props) {
-
-    const { id, title, updatedOn, url, description, createdCount, imageUrl } = blog;
+function BlogCard({ blog, tenantId, refetchData }: Props) {
+    const { id, heading, updatedOn, url, isActive, createdOn, thumbnail } = blog;
     const router = useRouter();
+    const [isActivated, setIsActivated] = useState(isActive); // Default the state to the blog's current status
 
-    // Local state for activate/deactivate
-    const [isActivated, setIsActivated] = useState(true);
+    const toggleActivate = async () => {
+        try {
+            const newStatus = !isActivated;
+            setIsActivated(newStatus);
 
-    // Modal control for delete
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-    // Toggle Activate/Deactivate logic
-    const toggleActivate = () => {
-        setIsActivated((prev) => !prev);
-        toast.success(
-            `${isActivated ? "Ad is now hidden!" : "Ad is showing!"}`
-        );
+            await changeStatus(id, newStatus);
+            toast.success(`Blog has been ${newStatus ? "activated" : "deactivated"} successfully!`);
+            refetchData();
+        } catch (error) {
+            toast.error("An error occurred while updating the blog status.");
+        }
     };
 
     const options = [
         {
             title: "View Blog",
-            func: () => router.push(`/${tenantId}/admin/media-center/view-blog`),
+            func: () => router.push(`/${tenantId}/admin/media-center/view-blog?id=${id}`),
         },
         {
             title: "Edit Blog",
-            func: () => router.push(`/${tenantId}/admin/media-center/edit-blog`),
+            func: () => router.push(`/${tenantId}/admin/media-center/edit-blog?id=${id}`),
         },
         {
             title: "Go to Link",
             func: () => window.open(url, "_blank"),
         },
         {
-            title: isActivated ? "Show" : "Hide", // Dynamic title for dropdown
-            func: toggleActivate,
+            title: isActivated ? "Deactivate" : "Activate", // Show the opposite status in the dropdown
+            func: toggleActivate, // Toggle status on click
         },
         {
             title: "Delete",
-           // func: () => setShowDeleteModal(true),
+            func: async () => await handleDelete(),
         },
     ];
 
+    const handleDelete = async () => {
+        try {
+            const loading = toast.loading("Deleting blog...");
+            await deleteMediaTypeByID(id);
+            toast.success("Blog deleted successfully!");
+            toast.dismiss(loading);
+            refetchData();
+        } catch (error) {
+            toast.error("An error occurred while deleting the blog.");
+        }
+    };
+
     return (
-        <>
-            <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
-                {/* Thumbnail Image without Play Button Overlay */}
-                <div
-                    onClick={() => router.push(`/ads/${id}`)}
-                    className="relative w-full h-[10rem] rounded-tl-lg rounded-tr-lg cursor-pointer overflow-hidden"
-                >
-                    <img
-                        src={imageUrl}
-                        alt={title}
-                        className="w-full h-full object-cover"
-                    />
+        <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+            {/* Thumbnail Image */}
+            <div className="relative w-full h-[10rem] rounded-t-lg overflow-hidden cursor-pointer">
+                <img
+                    src={thumbnail}
+                    alt={heading}
+                    className="w-full h-full object-cover"
+                />
+            </div>
+
+            {/* Card Content */}
+            <div className="p-3">
+                {/* Date */}
+                <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm text-gray-500">{updatedOn}</p>
                 </div>
 
-                {/* Card Content */}
-                <div className="p-3">
-                    {/* Date on the left */}
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-gray-500">{updatedOn}</p>
-                    </div>
+                {/* Title */}
+                <p className="text-sm font-bold text-gray-700 mt-2">{heading}</p>
 
-                    {/* Bold Description */}
-                    <p className="text-sm font-bold text-gray-700 mt-2">
-                        {description}
+                {/* Display Status */}
+                <div className="flex items-center justify-start mt-2">
+                    <p
+                        className={`px-4 py-2 text-sm font-medium rounded-md ${isActivated ? "text-green-600" : "text-red-600"}`}
+                    >
+                        {isActivated ? "Activate" : "Deactivate"} {/* Just display the current status */}
                     </p>
+                </div>
 
-                    {/* Activate/Deactivate Button */}
-                    <div className="flex items-center justify-start mt-2">
-                        <p
-                            className={`px-4 py-2 text-sm font-medium rounded-md cursor-pointer ${isActivated
-                                ? "text-red-600"
-                                : "text-green-600"
-                                }`}
-                            onClick={toggleActivate}
-                        >
-                            {isActivated ? "Hide" : "Show"} {/* Dynamic text for the card */}
-                        </p>
-                    </div>
+                {/* Footer: Created Date & Menu */}
+                <div className="flex items-center justify-between mt-4">
+                    <p className="text-xs text-gray-600">Created on {createdOn}</p>
 
-                    {/* View Count & Three Dots Inline */}
-                    <div className="flex items-center justify-between mt-4">
-                        <p className="text-xs text-gray-600">
-                            Created {createdCount}{" "}
-                            {createdCount === 1 ? "time" : "times"}
-                        </p>
-                        {/* Three Dots Dropdown */}
-                        <Menu as="div" className="relative">
+                    {/* Dropdown Menu */}
+                    <Menu as="div" className="relative">
+                        <div>
                             <Menu.Button className="text-gray-700 hover:text-gray-900">
                                 <BsThreeDots className="w-5 h-5" />
                             </Menu.Button>
-                            <Transition
-                                enter="transition ease-out duration-100"
-                                enterFrom="transform opacity-0 scale-95"
-                                enterTo="transform opacity-100 scale-100"
-                                leave="transition ease-in duration-75"
-                                leaveFrom="transform opacity-100 scale-100"
-                                leaveTo="transform opacity-0 scale-95"
-                            >
-                                <Menu.Items className="absolute right-0 w-40 rounded-lg shadow-lg bg-white">
-                                    {options.map((option, idx) => (
-                                        <Menu.Item key={idx}>
+                        </div>
+
+                        <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                        >
+                            <Menu.Items className="absolute right-0 -top-2 w-40 rounded-lg shadow-md bg-white flex flex-col text-left z-50">
+                                {options.map((option, idx) => (
+                                    <Menu.Item key={idx}>
+                                        <div>
                                             <button
-                                                className={`${option.title === "Delete"
-                                                    } py-2 px-4 font-light hover:bg-gray-50 w-full text-left`}
+                                                className={`${option.title.toLowerCase() === "delete"
+                                                    ? "text-red-600"
+                                                    : "text-gray-500"
+                                                    } py-3 px-4 font-light hover:bg-gray-50 w-full text-left`}
                                                 onClick={option.func}
                                             >
                                                 {option.title}
                                             </button>
-                                        </Menu.Item>
-                                    ))}
-                                </Menu.Items>
-                            </Transition>
-                        </Menu>
-                    </div>
+                                            {idx % 2 === 0 && (
+                                                <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
+                                            )}
+                                        </div>
+                                    </Menu.Item>
+                                ))}
+                            </Menu.Items>
+                        </Transition>
+                    </Menu>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

@@ -1,137 +1,107 @@
-"use client";
-
-import React, { useState } from "react";
+"use client"
+import React, { useEffect, useState } from "react";
 import Nav from "../component/Nav";
 import SearchIcon from "@/public/icons/SearchIcon";
 import BlogCard from "../component/BlogCard";
+import VideoCard from "../component/VideoCard";
+import AdCard from "../component/AdCard";
 import DatePicker from "@/components/DatePicker/DatePicker";
 import { TimelineType, TimelineValues } from "@/types";
 import Tabs from "@/components/Tabs/Tabs";
-import VideoCard from "../component/VideoCard";
-import AdCard from "../component/AdCard";
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
+import Pagination from "@/components/Pagination/Pagination";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import { getFilteredMedia } from "@/services/features/mediaService"; // Import your new search function
+
+interface MediaItem {
+  id: number;
+  mediaType: string;
+  thumbnail: string;
+  altText: string;
+  heading: string;
+  url: string;
+  isActive: boolean;
+  createdOn: string;
+  updatedOn: string;
+}
+
+interface MediaData {
+  content: MediaItem[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
 
 function MediaCenter({ params }: any) {
   const tenantId = params.tenantId;
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
 
-  const [selectedTimeline, setSelectedTimeline] = useState<
-    { label: TimelineValues; value: TimelineType } | undefined
-  >();
+  const [selectedTimeline, setSelectedTimeline] = useState<{
+    label: TimelineValues;
+    value: TimelineType;
+  } | undefined>();
 
-  const [filters, setFilters] = useState([
-    { id: 1, name: "Blogs", value: "Blogs" },
-    { id: 2, name: "Videos", value: "Videos" },
-    { id: 3, name: "Ads", value: "Ads" },
-  ]);
+  const filters = [
+    { id: 1, name: "Blogs", value: "BLOGS" },
+    { id: 2, name: "Videos", value: "VIDEOS" },
+    { id: 3, name: "Ads", value: "ADS" },
+  ];
 
-  const [activeFilter, setActiveFilter] = useState({
+  const [activeFilter, setActiveFilter] = useState<{
+    id: number;
+    name: string;
+    value: "BLOGS" | "VIDEOS" | "ADS";
+  }>( {
     id: 1,
     name: "Blogs",
-    value: "Blogs",
+    value: "BLOGS",
   });
-  const [activeRoleFilter, setActiveRoleFilter] = useState([]);
 
-  const blogData = [
-    {
-      id: 1,
-      title: "First Blog",
-      updatedOn: "August 17,2024",
-      url: "https://example.com/blog1",
-      description: "This is the first blog description.",
-      createdCount: 2,
-      imageUrl: "https://via.placeholder.com/600x400?text=First+Blog",
+  // Query to fetch filtered media based on selectedTimeline, activeFilter, searchTerm, page, and size
+  const { data, refetch } = useQuery<MediaData>({
+    queryKey: [
+      "MediaBySearch",
+      activeFilter.value, // The active filter value (BLOGS, VIDEOS, ADS)
+      searchTerm, // The search term (heading)
+      page, // The current page
+      size, // The size of the data per page
+      selectedTimeline?.value, // Selected timeline filter (if any)
+    ],
+    queryFn: async () => {
+      if (searchTerm) {
+        // When there's a search term, use the searchMedia function with both heading and mediaType
+        return services.searchMedia(searchTerm, activeFilter.value); 
+      } else {
+        // If there's no search term, fall back to the regular media query by timeline
+        return services.filterMediaByTimeline(
+          activeFilter.value,
+          selectedTimeline?.value ?? "ALL",
+          page,
+          size
+        );
+      }
     },
-    {
-      id: 2,
-      title: "Second Blog",
-      updatedOn: "August 17,2024",
-      url: "https://example.com/blog2",
-      description: "This is the second blog description.",
-      createdCount: 4,
-      imageUrl: "https://via.placeholder.com/600x400?text=Second+Blog",
-    },
-    {
-      id: 3,
-      title: "Third Blog",
-      updatedOn: "August 17,2024",
-      url: "https://example.com/blog3",
-      description: "This is the third blog description.",
-      createdCount: 1,
-      imageUrl: "https://via.placeholder.com/600x400?text=Third+Blog",
-    },
-    {
-      id: 4,
-      title: "Fourth Blog",
-      updatedOn: "August 17,2024",
-      url: "https://example.com/blog4",
-      description: "This is the fourth blog description.",
-      createdCount: 3,
-      imageUrl: "https://via.placeholder.com/600x400?text=Fourth+Blog",
-    },
-  ];
+    enabled: !!selectedTimeline || !!searchTerm, // Enable the query only if there's a timeline or search term
+  });
+  
+  
 
-  const videoData = [
-    {
-      id: 1,
-      title: "Introduction to React",
-      updatedOn: "2024-12-01",
-      url: "https://www.example.com/video1",
-      description: "A comprehensive guide to React for beginners.",
-      createdCount: 1023,
-      thumbnailUrl: "https://www.example.com/thumbnails/react-thumbnail.jpg",
-    },
-    {
-      id: 2,
-      title: "Advanced JavaScript Techniques",
-      updatedOn: "2024-12-05",
-      url: "https://www.example.com/video2",
-      description: "Deep dive into advanced JavaScript concepts.",
-      createdCount: 324,
-      thumbnailUrl: "https://www.example.com/thumbnails/js-thumbnail.jpg",
-    },
-    {
-      id: 3,
-      title: "Building Full Stack Applications",
-      updatedOn: "2024-12-10",
-      url: "https://www.example.com/video3",
-      description: "Learn how to build full-stack applications with Node.js and React.",
-      createdCount: 431,
-      thumbnailUrl: "https://www.example.com/thumbnails/fullstack-thumbnail.jpg",
-    },
-  ];
-
-  const adData = [
-    {
-      id: 1,
-      title: "Holiday Sale - 50% Off",
-      updatedOn: "2024-12-05",
-      url: "https://www.example.com/ad1",
-      description: "Huge discounts on our products. Limited time offer!",
-      createdCount: 874,
-      thumbnailUrl: "https://www.example.com/thumbnails/holiday-sale.jpg",
-    },
-    {
-      id: 2,
-      title: "New Year Giveaway",
-      updatedOn: "2024-12-08",
-      url: "https://www.example.com/ad2",
-      description: "Enter our giveaway for a chance to win amazing prizes!",
-      createdCount: 215,
-      thumbnailUrl: "https://www.example.com/thumbnails/giveaway-ad.jpg",
-    },
-    {
-      id: 3,
-      title: "Best Fitness Equipment",
-      updatedOn: "2024-12-10",
-      url: "https://www.example.com/ad3",
-      description: "Get in shape with the best fitness gear at unbeatable prices.",
-      createdCount: 102,
-      thumbnailUrl: "https://www.example.com/thumbnails/fitness-ad.jpg",
-    },
-  ];
+  useEffect(() => {
+    if (selectedTimeline || searchTerm) {
+      refetch();
+    }
+  }, [page, size, activeFilter.value, selectedTimeline, searchTerm, refetch]);
 
   const handleFilterChange = (filter: any) => {
-    setActiveFilter(filter);
+    setActiveFilter({
+      ...filter,
+      value: filter.value.toUpperCase(),
+    });
+    setPage(0); // Reset to first page on filter change
   };
 
   return (
@@ -150,7 +120,7 @@ function MediaCenter({ params }: any) {
             <SearchIcon />
             <input
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)} // Set search term on input change
               className="outline-none text-sm focus:outline-none bg-white custom-input input-custom"
               placeholder="Search"
             />
@@ -162,35 +132,45 @@ function MediaCenter({ params }: any) {
         </div>
       </div>
 
-      {/* Conditional Rendering Based on Active Filter */}
-      {activeFilter.value === "Blogs" && (
+      <div className="flex items-center justify-between">
+        <ItemsPerPageSelector limit={size} setLimit={setSize} />
+        <Pagination
+          limit={size}
+          variant="no-text"
+          page={page}
+          currentData={data?.content ?? []}
+          setPage={setPage}
+        />
+      </div>
+
+      {activeFilter.value === "BLOGS" && (
         <>
           <h3 className="font-semibold mb-8 mt-10 text-lg">Blogs</h3>
           <div className="grid grid-cols-4 gap-5">
-            {blogData.map((blog) => (
-              <BlogCard key={blog.id} blog={blog} tenantId={tenantId}/>
+            {data?.content?.map((item: MediaItem) => (
+              <BlogCard key={item.id} blog={item} tenantId={tenantId} refetchData={refetch} />
             ))}
           </div>
         </>
       )}
 
-      {activeFilter.value === "Videos" && (
+      {activeFilter.value === "VIDEOS" && (
         <>
           <h3 className="font-semibold mb-8 mt-10 text-lg">Videos</h3>
           <div className="grid grid-cols-4 gap-5">
-            {videoData.map((video) => (
-              <VideoCard key={video.id} video={video} tenantId={tenantId}/>
+            {data?.content?.map((item: MediaItem) => (
+              <VideoCard key={item.id} video={item} tenantId={tenantId} refetchData={refetch} />
             ))}
           </div>
         </>
       )}
 
-      {activeFilter.value === "Ads" && (
+      {activeFilter.value === "ADS" && (
         <>
           <h3 className="font-semibold mb-8 mt-10 text-lg">Ads</h3>
           <div className="grid grid-cols-4 gap-5">
-            {adData.map((ad) => (
-              <AdCard key={ad.id} ad={ad} tenantId={tenantId}/>
+            {data?.content?.map((item: MediaItem) => (
+              <AdCard key={item.id} ad={item} tenantId={tenantId} refetchData={refetch} />
             ))}
           </div>
         </>

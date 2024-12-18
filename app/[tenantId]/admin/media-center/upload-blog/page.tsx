@@ -1,54 +1,84 @@
 "use client";
 
 import "./index.css";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { Field, Form, Formik, FormikHelpers, FormikErrors } from "formik";
 import * as Yup from "yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import Link from "next/link";
 import { toast } from "sonner";
 import services from "@/services";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IoArrowBackSharp } from "react-icons/io5";
 import ThumbnailUpload from "../component/ThumbnailUpload";
 import { MdOutlineInsertLink } from "react-icons/md";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
+// Define the interface for the form values
+interface BlogFormValues {
+    altText: string;
+    blogHead: string;
+    Url: string;
+    thumbnail: File | null;
+}
 
+// Define the validation schema using Yup
 const UploadBlogScheme = Yup.object().shape({
     altText: Yup.string().optional(),
-    blogHead: Yup.string(),
-    Url: Yup.string().url("Invalid URL").optional(),
+    blogHead: Yup.string().required("Blog heading is required"),
+    Url: Yup.string().url("Invalid URL").required("URL is required"),
 });
 
 function UploadBlog({ params }: any) {
     const tenantId = params.tenantId;
     const router = useRouter();
     const [thumbnail, setThumbnail] = useState<File | null>(null);
+    const [isActive, setIsActive] = useState<boolean>(false);
+
+    const searchParams = useSearchParams();
+    const blogType = searchParams.get("type");
+
+    useEffect(() => { }, [blogType]);
+
     const handleFormSubmit = async (
-        values: { altText: string; blogHead?: string; Url?: string; thumbnail?: File | null },
-        { setSubmitting, resetForm }: FormikHelpers<any>
+        values: BlogFormValues,
+        { setSubmitting, resetForm }: FormikHelpers<BlogFormValues>
     ) => {
-        const { altText, blogHead, Url, thumbnail } = values;
+        const { altText, blogHead, Url } = values;
+        const formValuesWithThumbnail = { ...values, thumbnail: thumbnail };
 
         const loading = toast.loading("Saving Blog. Please wait...");
 
+
         try {
-            alert(JSON.stringify({
-                altText,
-                blogHead,
-                Url,
-                thumbnail: thumbnail ? thumbnail.name : null
-            }, null, 2));
+            const formData = new FormData();
+            formData.append("mediaType", blogType || "BLOGS");
+            formData.append("altText", altText || "");
+            formData.append("heading", blogHead || "");
+            formData.append("url", Url || "");
+            formData.append("isActive", String(isActive));
+
+            if (thumbnail) {
+                formData.append("thumbnail", thumbnail);
+            }
+            console.log("Form Values with Thumbnail:", formValuesWithThumbnail);
+            
+            await services.mediaUpload(formData);
+            toast.success("Blog uploaded successfully!");
+            resetForm();
+            setThumbnail(null); 
+            router.push(`/${tenantId}/admin/media-center`);
         } catch (error) {
-            toast.error("An error occurred while processing the form.");
+            console.error("Error uploading blog:", error);
+            toast.error("An error occurred while uploading the blog.");
         } finally {
             setSubmitting(false);
             toast.dismiss(loading);
         }
     };
+
 
     return (
         <div className="px-5 pb-20">
@@ -57,12 +87,12 @@ function UploadBlog({ params }: any) {
                     altText: "",
                     blogHead: "",
                     Url: "",
-                    thumbnail: null,
+                    thumbnail: thumbnail,
                 }}
                 validationSchema={UploadBlogScheme}
                 onSubmit={handleFormSubmit}
             >
-                {({ errors, isSubmitting }) => (
+                {({ isSubmitting, errors }) => (
                     <Form>
                         {/* Header */}
                         <div className="w-full text-primary-dark flex pt-4 justify-between">
@@ -70,7 +100,7 @@ function UploadBlog({ params }: any) {
                                 <div className="flex items-center gap-3 mb-10">
                                     <Link
                                         href={`/${tenantId}/admin/media-center`}
-                                        className="bg-white border border-gray-200 flex items-center justify-center text-black text-sm p-2 hover:bg-gray-100 hover:opacity-95  gap-2 rounded-xl"
+                                        className="bg-white border border-gray-200 flex items-center justify-center text-black text-sm p-2 hover:bg-gray-100 hover:opacity-95 gap-2 rounded-xl"
                                     >
                                         <IoArrowBackSharp />
                                     </Link>
@@ -102,7 +132,6 @@ function UploadBlog({ params }: any) {
                                         </>
                                     )}
                                 </CompanyThemedButton>
-
                             </div>
                         </div>
 
@@ -115,7 +144,7 @@ function UploadBlog({ params }: any) {
                                 <ThumbnailUpload onImageChange={setThumbnail} />
                             </div>
 
-                            {/* Category Description */}
+                            {/* Blog Heading */}
                             <div className="input-holder">
                                 <label htmlFor="blogHead" className="flex justify-between items-center">
                                     Blog Heading
@@ -130,6 +159,7 @@ function UploadBlog({ params }: any) {
                                 <ShowError name="blogHead" />
                             </div>
 
+                            {/* URL */}
                             <div className="input-holder relative">
                                 <label htmlFor="Url">URL</label>
                                 <div className="relative w-full">
@@ -140,17 +170,17 @@ function UploadBlog({ params }: any) {
                                         style={getStyles(errors, "Url")}
                                         className="w-full px-4 py-2 rounded-md pr-10"
                                     />
-
                                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
                                         <MdOutlineInsertLink size={24} />
                                     </div>
                                 </div>
                                 <ShowError name="Url" />
                             </div>
+
+                            {/* Alt Text */}
                             <div className="input-holder">
                                 <label htmlFor="altText" className="flex justify-between items-center">
                                     Alt Text
-                                    {/* Optional text aligned to the right */}
                                     <span className="text-sm text-gray-500 ml-2">Optional</span>
                                 </label>
                                 <Field

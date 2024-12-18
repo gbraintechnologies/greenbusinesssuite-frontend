@@ -2,8 +2,6 @@
 
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-
-// icons
 import { GoPlusCircle } from "react-icons/go";
 import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
@@ -42,21 +40,36 @@ function Nav({ tenantId }: NavProps) {
           >
             <Menu.Items className="z-50 absolute right-0 mt-2 px-1 py-1 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
               <Menu.Item>
-                <Link href={`/${tenantId}/admin/media-center/upload-blog`}>
+                <Link
+                  href={{
+                    pathname: `/${tenantId}/admin/media-center/upload-blog`,
+                    query: { type: "BLOGS" },
+                  }}
+                >
                   <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
                     Blog
                   </button>
                 </Link>
               </Menu.Item>
               <Menu.Item>
-                <Link href={`/${tenantId}/admin/media-center/upload-video`}>
+                <Link
+                  href={{
+                    pathname: `/${tenantId}/admin/media-center/upload-video`,
+                    query: { type: "VIDEOS" },
+                  }}
+                >
                   <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
                     Video
                   </button>
                 </Link>
               </Menu.Item>
               <Menu.Item>
-                <Link href={`/${tenantId}/admin/media-center/upload-ads`}>
+                <Link
+                  href={{
+                    pathname: `/${tenantId}/admin/media-center/upload-ads`,
+                    query: { type: "ADS" },
+                  }}
+                >
                   <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
                     Ads
                   </button>

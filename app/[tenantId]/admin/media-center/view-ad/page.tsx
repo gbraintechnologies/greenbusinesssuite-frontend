@@ -1,67 +1,71 @@
 "use client";
 
 import "./index.css";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import Link from "next/link";
 import { toast } from "sonner";
 import services from "@/services";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IoArrowBackSharp } from "react-icons/io5";
-import ThumbnailUpload from "../component/ThumbnailUpload";
 import { MdOutlineInsertLink } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
+import { useQuery } from "@tanstack/react-query";
+import { changeStatus } from "@/services/features/mediaService";
 
 
-const UploadBlogScheme = Yup.object().shape({
+const UploadAdScheme = Yup.object().shape({
   altText: Yup.string().optional(),
-  blogHead: Yup.string(),
+  adHead: Yup.string(),
   Url: Yup.string().url("Invalid URL").optional(),
 });
 
 function ViewAd({ params }: any) {
   const tenantId = params.tenantId;
   const router = useRouter();
-  const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const handleFormSubmit = async (
-    values: { altText: string; blogHead?: string; Url?: string; thumbnail?: File | null },
-    { setSubmitting, resetForm }: FormikHelpers<any>
-  ) => {
-    const { altText, blogHead, Url, thumbnail } = values;
+  const searchParams = useSearchParams();  // Access the search params
+  const AdId = searchParams.get("id");
 
-    const loading = toast.loading("Saving Blog. Please wait...");
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["mediaType", AdId],
+    queryFn: services.getMediaTypeByID(Number(AdId)),
+    enabled: !!AdId,
+  });
 
+  const [isActivated, setIsActivated] = useState(data?.isActive);
+
+  useEffect(() => {
+  }, [data, refetch]);
+
+  const toggleStatus = async () => {
     try {
-      alert(JSON.stringify({
-        altText,
-        blogHead,
-        Url,
-        thumbnail: thumbnail ? thumbnail.name : null
-      }, null, 2));
+      const newStatus = !isActivated;
+      setIsActivated(newStatus);
+
+      await changeStatus(data?.id, newStatus);
+      toast.success(`Video has been ${newStatus ? "activated" : "deactivated"} successfully!`);
+      refetch();
     } catch (error) {
-      toast.error("An error occurred while processing the form.");
-    } finally {
-      setSubmitting(false);
-      toast.dismiss(loading);
+      toast.error("An error occurred while updating the video status.");
     }
   };
-
+  if (isLoading) return <div>Loading...</div>;
   return (
     <div className="px-5 pb-20">
       <Formik
         initialValues={{
-          altText: "",
-          blogHead: "",
-          Url: "",
+          altText: data?.altText || "",
+          adHead: data?.heading || "",
+          Url: data?.url || "",
           thumbnail: null,
         }}
-        validationSchema={UploadBlogScheme}
-        onSubmit={handleFormSubmit}
+        validationSchema={UploadAdScheme}
+        onSubmit={() => { }}
       >
         {({ errors, isSubmitting }) => (
           <Form>
@@ -79,7 +83,7 @@ function ViewAd({ params }: any) {
                 </div>
               </div>
               <div className="flex gap-3">
-                <Link href={`/${tenantId}/admin/media-center/edit-ad`}>
+              <Link href={`/${tenantId}/admin/media-center/edit-ad?id=${data?.id}`}>
                   <button
                     type="button"
                     className="bg-gray-50 border border-gray-200 shadow-sm py-2 flex text-primary-dark text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
@@ -88,8 +92,8 @@ function ViewAd({ params }: any) {
                   </button>
                 </Link>
                 <CompanyThemedButton
-                  type="submit"
-                  disabled={isSubmitting}
+                  type="button" 
+                  onClick={toggleStatus}
                   className="disabled:bg-gray-400 h-10 flex items-center justify-center text-white text-sm px-4 hover:opacity-95 gap-2 rounded-xl"
                 >
                   {isSubmitting ? (
@@ -99,7 +103,7 @@ function ViewAd({ params }: any) {
                     </>
                   ) : (
                     <>
-                      <HiOutlineInboxArrowDown /> Activate
+                      <HiOutlineInboxArrowDown /> {isActivated ? "Deactivate" : "Activate"}
                     </>
                   )}
                 </CompanyThemedButton>
@@ -108,15 +112,28 @@ function ViewAd({ params }: any) {
 
             {/* Form Body */}
             <div className="max-w-2xl rounded-lg py-5 pb-3">
-              <div className="">
-                <label className="block text-base font-medium text-gray-700 mb-2">
-                  Blog Thumbnail
-                </label>
-                <ThumbnailUpload onImageChange={setThumbnail} />
+              <div className="relative w-full h-[10rem] rounded-t-lg overflow-hidden cursor-pointer">
+                <img
+                  src={data?.thumbnail}
+                  alt={data?.heading}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="mt-4">
+                <div className="font-bold">{data?.heading}</div>
+                <div className="flex items-center text-sm mt-2">
+                  <span
+                    className={`${data?.isActive ? "text-green-500" : "text-red-500"
+                      } font-semibold`}
+                  >
+                    {data?.isActive ? "Active" : "Inactive"}
+                  </span>
+                  <span className="ml-4">{data?.createdOn}</span>
+                </div>
               </div>
 
 
-              <div className="input-holder relative">
+              <div className="input-holder relative mt-6">
                 <label htmlFor="Url">URL</label>
                 <div className="relative w-full">
                   <Field
@@ -126,7 +143,6 @@ function ViewAd({ params }: any) {
                     style={getStyles(errors, "Url")}
                     className="w-full px-4 py-2 rounded-md pr-10"
                   />
-
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
                     <MdOutlineInsertLink size={24} />
                   </div>

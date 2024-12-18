@@ -3,52 +3,82 @@
 import "./index.css";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import Link from "next/link";
 import { toast } from "sonner";
 import services from "@/services";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IoArrowBackSharp } from "react-icons/io5";
 import ThumbnailUpload from "../component/ThumbnailUpload";
 import { MdOutlineInsertLink } from "react-icons/md";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
 
-const UploadBlogScheme = Yup.object().shape({
+const UploadAdScheme = Yup.object().shape({
     altText: Yup.string().optional(),
     adDescription: Yup.string(),
     Url: Yup.string().url("Invalid URL").optional(),
 });
 
+interface AdFormValues {
+    altText: string;
+    adDescription: string;
+    Url: string;
+    thumbnail: File | null;
+}
+
 function UploadAds({ params }: any) {
     const tenantId = params.tenantId;
     const router = useRouter();
     const [thumbnail, setThumbnail] = useState<File | null>(null);
-    const handleFormSubmit = async (
-        values: { altText: string; adDescription?: string; Url?: string; thumbnail?: File | null },
-        { setSubmitting, resetForm }: FormikHelpers<any>
-    ) => {
-        const { altText, adDescription, Url, thumbnail } = values;
+    const [isActive, setIsActive] = useState<boolean>(false);
+    const searchParams = useSearchParams();
+    const adType = searchParams.get("type");
 
-        const loading = toast.loading("Saving Ads. Please wait...");
+    useEffect(() => { 
+    }, [adType]);
 
-        try {
-            alert(JSON.stringify({
-                altText,
-                adDescription,
-                Url,
-                thumbnail: thumbnail ? thumbnail.name : null
-            }, null, 2));
-        } catch (error) {
-            toast.error("An error occurred while processing the form.");
-        } finally {
-            setSubmitting(false);
-            toast.dismiss(loading);
-        }
-    };
+     const handleFormSubmit = async (
+               values: AdFormValues,
+               { setSubmitting, resetForm }: FormikHelpers<AdFormValues>
+           ) => {
+               const { altText, adDescription, Url } = values;
+               const formValuesWithThumbnail = { ...values, thumbnail: thumbnail };
+       
+               const loading = toast.loading("Saving AD. Please wait...");
+       
+       
+               try {
+                   const formData = new FormData();
+                   formData.append("mediaType", adType || "ADS");
+                   formData.append("altText", altText || "");
+                   formData.append("heading", adDescription || "");
+                   formData.append("url", Url || "");
+                   formData.append("isActive", String(isActive));
+       
+                   if (thumbnail) {
+                       formData.append("thumbnail", thumbnail);
+                   }
+                   console.log("Form Values with Thumbnail:", formValuesWithThumbnail);
+                   
+                   await services.mediaUpload(formData);
+                   toast.success("AD uploaded successfully!");
+                   resetForm();
+                   setThumbnail(null); 
+                   router.push(`/${tenantId}/admin/media-center`);
+               } catch (error) {
+                   console.error("Error uploading AD:", error);
+                   toast.error("An error occurred while uploading the AD.");
+               } finally {
+                   setSubmitting(false);
+                   toast.dismiss(loading);
+               }
+           };
+   
+
 
     return (
         <div className="px-5 pb-20">
@@ -57,12 +87,12 @@ function UploadAds({ params }: any) {
                     adDescription: "",
                     altText: "",
                     Url: "",
-                    thumbnail: null,
+                    thumbnail: thumbnail,
                 }}
-                validationSchema={UploadBlogScheme}
+                validationSchema={UploadAdScheme}
                 onSubmit={handleFormSubmit}
             >
-                {({ errors, isSubmitting }) => (
+                {({ isSubmitting, errors}) => (
                     <Form>
                         {/* Header */}
                         <div className="w-full text-primary-dark flex pt-4 justify-between">
@@ -106,7 +136,6 @@ function UploadAds({ params }: any) {
                             </div>
                         </div>
 
-                        {/* Form Body */}
                         <div className="max-w-2xl rounded-lg py-5 pb-3">
                             <div className="">
                                 <label className="block text-base font-medium text-gray-700 mb-2">
@@ -115,8 +144,6 @@ function UploadAds({ params }: any) {
                                 <ThumbnailUpload onImageChange={setThumbnail} />
                             </div>
 
-
-                            {/* Category Description */}
                             <div className="input-holder mt-5">
                                 <label htmlFor="adDescription">
                                     Ad Description
@@ -135,7 +162,6 @@ function UploadAds({ params }: any) {
                             <div className="input-holder">
                                 <label htmlFor="altext" className="flex justify-between items-center">
                                     Alt Text
-                                    {/* Optional text aligned to the right */}
                                     <span className="text-sm text-gray-500 ml-2">Optional</span>
                                 </label>
                                 <Field
@@ -151,7 +177,6 @@ function UploadAds({ params }: any) {
                             <div className="input-holder relative">
                                 <label htmlFor="Url" className="flex justify-between items-center">
                                     URL
-                                    {/* Optional text aligned to the right */}
                                     <span className="text-sm text-gray-500 ml-2">Optional</span>
                                 </label>
                                 <div className="relative w-full">
