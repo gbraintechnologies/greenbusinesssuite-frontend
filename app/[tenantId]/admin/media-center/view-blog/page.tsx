@@ -17,6 +17,7 @@ import { FaRegEdit } from "react-icons/fa";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import { useQuery } from "@tanstack/react-query";
 import { changeStatus } from "@/services/features/mediaService";
+import { FormatDateWithDayShort } from "@/utils/FormatDate/FormatDate";
 
 const UploadBlogScheme = Yup.object().shape({
   altText: Yup.string().optional(),
@@ -133,7 +134,7 @@ function ViewBlog({ params }: any) {
                   >
                     {data?.isActive ? "Active" : "Inactive"}
                   </span>
-                  <span className="ml-4">{data?.createdOn}</span>
+                  <span className="ml-4">{FormatDateWithDayShort(data?.createdOn)}</span>
                 </div>
               </div>
 

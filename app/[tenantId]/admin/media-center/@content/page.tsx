@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
-import { filterMediaByTimeline } from "@/services/features/mediaService";
+import { searchMedia } from "@/services/features/mediaService";
 
 interface MediaItem {
   id: number;
@@ -59,22 +59,42 @@ function MediaCenter({ params }: any) {
   }>(filters[0]);
 
   const { data, refetch } = useQuery<MediaData>({
-    queryKey: ["SpecificMediaType", activeFilter.value, page, size, selectedTimeline?.value],
-    queryFn: () => services.filterMediaByTimeline(
-      activeFilter.value, 
-      selectedTimeline?.value ?? "ALL", 
-      page, 
-      size
-    )(), // Call the filter function here
-    enabled: !!selectedTimeline, // Refetch when selectedTimeline is available
+    queryKey: [
+      "SpecificMediaType",
+      activeFilter.value,
+      page,
+      size,
+      selectedTimeline?.value,
+      searchTerm,
+    ],
+    queryFn: async () => {
+      const rawData = searchTerm
+        ? await searchMedia(searchTerm, activeFilter.value) // Fetch filtered data
+        : await services.filterMediaByTimeline(
+            activeFilter.value,
+            selectedTimeline?.value ?? "ALL",
+            page,
+            size
+          )();
+  
+      // Client-side fallback for case-insensitive/partial match
+      if (searchTerm) {
+        const filteredData = rawData.content.filter((item: MediaItem) =>
+          item.heading.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+  
+        return { ...rawData, content: filteredData }; // Return filtered data
+      }
+  
+      return rawData;
+    },
+    enabled: true,
   });
   
 
   useEffect(() => {
-    if (selectedTimeline) {
-      refetch();
-    }
-  }, [page, size, activeFilter.value, selectedTimeline, refetch]);
+    refetch();
+  }, [page, size, activeFilter.value, selectedTimeline, searchTerm, refetch]);
 
   const handleFilterChange = (filter: any) => {
     setActiveFilter({
