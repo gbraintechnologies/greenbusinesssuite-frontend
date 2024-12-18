@@ -6,6 +6,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { changeStatus, deleteMediaTypeByID } from "@/services/features/mediaService";
+import { FormatDateWithDayShort } from "@/utils/FormatDate/FormatDate";
 
 interface MediaItem {
     id: number;
@@ -57,7 +58,7 @@ function VideoCard({ video, tenantId, refetchData }: Props) {
             func: () => window.open(url, "_blank"),
         },
         {
-            title: isActivated ? "Deactivate" : "Activate", // Show the opposite status in the dropdown
+            title: isActivated ? "Inactive" : "Active", // Show the opposite status in the dropdown
             func: toggleActivate, // Toggle status on click
         },
         {
@@ -93,7 +94,7 @@ function VideoCard({ video, tenantId, refetchData }: Props) {
             <div className="p-3">
                 {/* Date */}
                 <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm text-gray-500">{updatedOn}</p>
+                    <p className="text-sm text-gray-500">{FormatDateWithDayShort(updatedOn)}</p>
                 </div>
 
                 {/* Title */}
@@ -104,13 +105,13 @@ function VideoCard({ video, tenantId, refetchData }: Props) {
                     <p
                         className={`px-4 py-2 text-sm font-medium rounded-md ${isActivated ? "text-green-600" : "text-red-600"}`}
                     >
-                        {isActivated ? "Activate" : "Deactivate"} {/* Just display the current status */}
+                        {isActivated ? "Active" : "Inactive"} {/* Just display the current status */}
                     </p>
                 </div>
 
                 {/* Footer: Created Date & Menu */}
                 <div className="flex items-center justify-between mt-4">
-                    <p className="text-xs text-gray-600">Created on {createdOn}</p>
+                    <p className="text-xs text-gray-600">Created on {FormatDateWithDayShort(createdOn)}</p>
 
                     {/* Dropdown Menu */}
                     <Menu as="div" className="relative">
