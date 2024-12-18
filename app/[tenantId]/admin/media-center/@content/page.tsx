@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import React, { useEffect, useState } from "react";
 import Nav from "../component/Nav";
 import SearchIcon from "@/public/icons/SearchIcon";
@@ -13,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import { getFilteredMedia } from "@/services/features/mediaService"; // Import your new search function
 
 interface MediaItem {
   id: number;
@@ -37,8 +37,8 @@ interface MediaData {
 function MediaCenter({ params }: any) {
   const tenantId = params.tenantId;
   const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(0); // Current page state
-  const [size, setSize] = useState(10); // Items per page state
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
 
   const [selectedTimeline, setSelectedTimeline] = useState<{
     label: TimelineValues;
@@ -54,27 +54,54 @@ function MediaCenter({ params }: any) {
   const [activeFilter, setActiveFilter] = useState<{
     id: number;
     name: string;
-    value: "BLOGS" | "VIDEOS" | "ADS"; // Type the value here
-  }>({
+    value: "BLOGS" | "VIDEOS" | "ADS";
+  }>( {
     id: 1,
     name: "Blogs",
-    value: "BLOGS", // Ensure initial value matches the type
+    value: "BLOGS",
   });
 
+  // Query to fetch filtered media based on selectedTimeline, activeFilter, searchTerm, page, and size
   const { data, refetch } = useQuery<MediaData>({
-    queryKey: ["SpecificMediaType", activeFilter.value, page, size],
-    queryFn:  services.getMediaByType(activeFilter.value, page, size),
+    queryKey: [
+      "MediaBySearch",
+      activeFilter.value, // The active filter value (BLOGS, VIDEOS, ADS)
+      searchTerm, // The search term (heading)
+      page, // The current page
+      size, // The size of the data per page
+      selectedTimeline?.value, // Selected timeline filter (if any)
+    ],
+    queryFn: async () => {
+      if (searchTerm) {
+        // When there's a search term, use the searchMedia function with both heading and mediaType
+        return services.searchMedia(searchTerm, activeFilter.value); 
+      } else {
+        // If there's no search term, fall back to the regular media query by timeline
+        return services.filterMediaByTimeline(
+          activeFilter.value,
+          selectedTimeline?.value ?? "ALL",
+          page,
+          size
+        );
+      }
+    },
+    enabled: !!selectedTimeline || !!searchTerm, // Enable the query only if there's a timeline or search term
   });
+  
+  
 
   useEffect(() => {
-    refetch();
-  }, [page, size, activeFilter.value, refetch]);
+    if (selectedTimeline || searchTerm) {
+      refetch();
+    }
+  }, [page, size, activeFilter.value, selectedTimeline, searchTerm, refetch]);
 
   const handleFilterChange = (filter: any) => {
     setActiveFilter({
       ...filter,
       value: filter.value.toUpperCase(),
     });
+    setPage(0); // Reset to first page on filter change
   };
 
   return (
@@ -93,7 +120,7 @@ function MediaCenter({ params }: any) {
             <SearchIcon />
             <input
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)} // Set search term on input change
               className="outline-none text-sm focus:outline-none bg-white custom-input input-custom"
               placeholder="Search"
             />
@@ -121,7 +148,7 @@ function MediaCenter({ params }: any) {
           <h3 className="font-semibold mb-8 mt-10 text-lg">Blogs</h3>
           <div className="grid grid-cols-4 gap-5">
             {data?.content?.map((item: MediaItem) => (
-              <BlogCard key={item.id} blog={item} tenantId={tenantId} refetchData={refetch}/>
+              <BlogCard key={item.id} blog={item} tenantId={tenantId} refetchData={refetch} />
             ))}
           </div>
         </>
@@ -132,7 +159,7 @@ function MediaCenter({ params }: any) {
           <h3 className="font-semibold mb-8 mt-10 text-lg">Videos</h3>
           <div className="grid grid-cols-4 gap-5">
             {data?.content?.map((item: MediaItem) => (
-              <VideoCard key={item.id} video={item} tenantId={tenantId} refetchData={refetch}/>
+              <VideoCard key={item.id} video={item} tenantId={tenantId} refetchData={refetch} />
             ))}
           </div>
         </>
@@ -143,7 +170,7 @@ function MediaCenter({ params }: any) {
           <h3 className="font-semibold mb-8 mt-10 text-lg">Ads</h3>
           <div className="grid grid-cols-4 gap-5">
             {data?.content?.map((item: MediaItem) => (
-              <AdCard key={item.id} ad={item} tenantId={tenantId} refetchData={refetch}/>
+              <AdCard key={item.id} ad={item} tenantId={tenantId} refetchData={refetch} />
             ))}
           </div>
         </>
