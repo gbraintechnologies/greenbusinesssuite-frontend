@@ -41,3 +41,7 @@ export const changeStatus = (id: number, isActive: any) => {
 export const updateMediaType = (data: any) => {
     return authApi.put(`/media`, data);
 };
+
+export const filterMediaByTimeline = (mediaType: string, timeline: string, page: number, size: number) => {
+    return () => authApi.get(`/media/findBy-range/${mediaType}/${timeline}/${page}/${size}`).then((res) => res.data);
+}
