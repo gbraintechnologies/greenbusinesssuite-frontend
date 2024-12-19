@@ -13,7 +13,7 @@ interface NavProps {
 
 function Nav({ tenantId }: NavProps) {
   return (
-    <div className="w-full text-[#0F172A] px-5 flex justify-between">
+    <div className="w-full text-[#0F172A] flex justify-between">
       <div>
         <h3 className="font-semibold text-xl">Media Center</h3>
       </div>
@@ -71,7 +71,7 @@ function Nav({ tenantId }: NavProps) {
                   }}
                 >
                   <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
-                    Ads
+                    Ad
                   </button>
                 </Link>
               </Menu.Item>

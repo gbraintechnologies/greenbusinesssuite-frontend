@@ -5,7 +5,10 @@ import { Menu, Transition } from "@headlessui/react";
 import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { deleteMediaTypeByID, changeStatus } from "@/services/features/mediaService";
+import {
+  deleteMediaTypeByID,
+  changeStatus,
+} from "@/services/features/mediaService";
 import { FormatDateWithDayShort } from "@/utils/FormatDate/FormatDate";
 
 interface MediaItem {
@@ -37,7 +40,9 @@ function AdCard({ ad, tenantId, refetchData }: Props) {
       setIsActivated(newStatus);
 
       await changeStatus(id, newStatus);
-      toast.success(`Ad has been ${newStatus ? "activated" : "deactivated"} successfully!`);
+      toast.success(
+        `Ad has been ${newStatus ? "activated" : "deactivated"} successfully!`
+      );
       refetchData();
     } catch (error) {
       toast.error("An error occurred while updating the Ad status.");
@@ -58,19 +63,21 @@ function AdCard({ ad, tenantId, refetchData }: Props) {
 
   const options = [
     {
-      title: "View Ads",
-      func: () => router.push(`/${tenantId}/admin/media-center/view-ad?id=${id}`),
+      title: "View Ad",
+      func: () =>
+        router.push(`/${tenantId}/admin/media-center/view-ad?id=${id}`),
     },
     {
-      title: "Edit Ads",
-      func: () => router.push(`/${tenantId}/admin/media-center/edit-ad?id=${id}`),
+      title: "Edit Ad",
+      func: () =>
+        router.push(`/${tenantId}/admin/media-center/edit-ad?id=${id}`),
     },
     {
       title: "Go to Link",
       func: () => window.open(url, "_blank"),
     },
     {
-      title: isActivated ? "Inactive" : "Active", // Show the opposite status in the dropdown
+      title: isActivated ? "Deactivate" : "Activate", // Show the opposite status in the dropdown
       func: toggleActivate, // Toggle status on click
     },
     {
@@ -94,7 +101,9 @@ function AdCard({ ad, tenantId, refetchData }: Props) {
       <div className="p-3">
         {/* Date */}
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm text-gray-500">{FormatDateWithDayShort(updatedOn)}</p>
+          <p className="text-sm text-gray-500">
+            {FormatDateWithDayShort(updatedOn)}
+          </p>
         </div>
 
         {/* Title */}
@@ -103,15 +112,20 @@ function AdCard({ ad, tenantId, refetchData }: Props) {
         {/* Activate/Deactivate */}
         <div className="flex items-center justify-start mt-2">
           <p
-            className={`px-4 py-2 text-sm font-medium rounded-md ${isActivated ? "text-green-600" : "text-red-600"}`}
+            className={`pr-4 py-1 text-sm font-medium rounded-md ${
+              isActivated ? "text-green-600" : "text-red-600"
+            }`}
           >
-            {isActivated ? "Active" : "Inactive"} {/* Just display the current status */}
+            {isActivated ? "Active" : "Inactive"}{" "}
+            {/* Just display the current status */}
           </p>
         </div>
 
         {/* Footer: Created Date & Menu */}
         <div className="flex items-center justify-between mt-4">
-          <p className="text-xs text-gray-600">Created on {FormatDateWithDayShort(createdOn)}</p>
+          <p className="text-xs text-gray-600">
+            Created on {FormatDateWithDayShort(createdOn)}
+          </p>
 
           {/* Dropdown Menu */}
           <Menu as="div" className="relative">
@@ -135,10 +149,11 @@ function AdCard({ ad, tenantId, refetchData }: Props) {
                   <Menu.Item key={idx}>
                     <div>
                       <button
-                        className={`${option.title.toLowerCase() === "delete"
-                          ? "text-red-600"
-                          : "text-gray-500"
-                          } py-3 px-4 font-light hover:bg-gray-50 w-full text-left`}
+                        className={`${
+                          option.title.toLowerCase() === "delete"
+                            ? "text-red-600"
+                            : "text-gray-500"
+                        } py-3 px-4 font-light hover:bg-gray-50 w-full text-left`}
                         onClick={option.func}
                       >
                         {option.title}
