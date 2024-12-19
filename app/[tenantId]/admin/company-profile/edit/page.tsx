@@ -1,7 +1,7 @@
 "use client";
 import "./index.css";
 import Modal from "@/components/Modal/Modal";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
@@ -11,12 +11,10 @@ import { FormikHelpers } from "formik";
 import { toast } from "sonner";
 import useFileUpload from "@/hooks/useFileUpload";
 import { editCompanyWithCustomFields } from "@/services/features/companyService";
-import { searchUsersByEmail } from "@/services/features/userManagementService";
-import { profile } from "console";
-import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
-import CompanyForm, { ICompany } from "../../components/CompanyForm";
+
+import CompanyForm, { ICompany } from "./../components/CompanyForm";
 import useCompany from "@/hooks/useCompany";
-import { PermissionTypes } from "@/types/permissionTypes";
+
 import useAdmin from "@/hooks/useAdmin";
 
 const Page = () => {
