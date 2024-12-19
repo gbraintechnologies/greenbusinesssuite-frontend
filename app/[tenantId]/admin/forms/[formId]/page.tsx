@@ -135,7 +135,7 @@ function SingleFormCompany(props: any) {
 
   if (form) {
     return (
-      <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 h-full">
+      <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 min-h-[100vh]">
         {/* HEADER */}
         <div className="flex items-center justify-between">
           <div>

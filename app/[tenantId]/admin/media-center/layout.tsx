@@ -4,14 +4,12 @@ import ModuleRestrictedAccess from "@/components/ModuleRestrictedAccess/ModuleRe
 import { AvailableModules } from "@/config/modules";
 import useCompany from "@/hooks/useCompany";
 import React from "react";
-import { usePathname } from "next/navigation";
 
-function Layout({ children, content }: any) {
+function Layout({ children }: any) {
   const { companyBranding: company } = useCompany();
-  const pathname = usePathname();
+
   return (
     <div>
-      {pathname == `/${company?.company_identifier}/admin/media-center` && content}
       {company.companyModules.includes(AvailableModules.MediaCenter) ? (
         children
       ) : (

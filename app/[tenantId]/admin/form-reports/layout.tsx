@@ -5,15 +5,13 @@ import { AvailableModules } from "@/config/modules";
 import useCompany from "@/hooks/useCompany";
 import React from "react";
 
-function Layout({ children, content }: any) {
+function Layout({ children }: any) {
   const { companyBranding: company } = useCompany();
 
   return (
     <div>
-      {children}
-
       {company.companyModules.includes(AvailableModules.FormReports) ? (
-        content
+        children
       ) : (
         <ModuleRestrictedAccess name="Form Reports" />
       )}
