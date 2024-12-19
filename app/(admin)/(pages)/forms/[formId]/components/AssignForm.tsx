@@ -92,7 +92,7 @@ function AssignForm({ setShow, id: formId, queryClient }: any) {
 
         <Select
           options={filteredCompanies.map((company: any) => ({
-            value: company, // Store the entire company object in the value
+            value: company, 
             label: company?.company_name,
           }))}
           components={{ Option: CustomOption }}
@@ -138,7 +138,7 @@ function AssignForm({ setShow, id: formId, queryClient }: any) {
               ...styles,
               display: "flex",
               alignItems: "center",
-              gap: "8px", // Add gap between image and text
+              gap: "8px",
               color: "#334155",
               cursor: "pointer",
               padding: "10px 15px",
@@ -157,7 +157,7 @@ function AssignForm({ setShow, id: formId, queryClient }: any) {
               ...styles,
               display: "flex",
               alignItems: "center",
-              gap: "8px", // Add gap between image and text
+              gap: "8px", 
             }),
           }}
         />
