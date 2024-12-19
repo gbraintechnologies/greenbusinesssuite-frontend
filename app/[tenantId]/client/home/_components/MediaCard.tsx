@@ -60,7 +60,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ type, media }) => {
       </h1>
       {type !== "ADS" && (
         <p className="text-[#94A3B8] font-medium text-xs">
-          {FormatDateWithSuffix(media?.updatedOn)}
+          {FormatDateWithSuffix(media?.updatedOn, "text")}
         </p>
       )}
     </Link>

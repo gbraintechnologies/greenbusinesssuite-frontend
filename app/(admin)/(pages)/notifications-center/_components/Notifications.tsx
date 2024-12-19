@@ -1295,7 +1295,7 @@ const Notifications: React.FC<Props> = ({
                     <DropdownItem
                       key="view"
                       className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                      onClick={() => setRecurringType(recurType)}
+                      onPress={() => setRecurringType(recurType)}
                     >
                       <div className="flex w-full items-center justify-between">
                         <p>{recurType.label}</p>
@@ -1371,6 +1371,8 @@ const Notifications: React.FC<Props> = ({
   );
 };
 
+
+// custom react select components
 const CustomMultiValue = <OptionType,>(props: MultiValueProps<OptionType, true>) => {
   const MultiValueComponent = components.MultiValue as React.ComponentType<MultiValueProps<OptionType, true>>;
 
