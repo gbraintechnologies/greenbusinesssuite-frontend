@@ -143,6 +143,7 @@ function ViewVideo({ params }: any) {
                     placeholder="Paste link here"
                     style={getStyles(errors, "Url")}
                     className="w-full px-4 py-2 rounded-md pr-10"
+                    readOnly
                   />
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
                     <MdOutlineInsertLink size={24} />
