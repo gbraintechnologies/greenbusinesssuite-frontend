@@ -89,7 +89,7 @@ function EditVideo({ params }: any) {
     }
   };
 
-  
+
   if (isLoading) return <LoadingIcon />;
 
   return (
@@ -154,6 +154,7 @@ function EditVideo({ params }: any) {
                   Blog Thumbnail
                 </label>
                 <ThumbnailUpload
+                  initialImage={data?.thumbnail}
                   onImageChange={(file: File | null) => {
                     setFieldValue("thumbnail", file);
                   }}

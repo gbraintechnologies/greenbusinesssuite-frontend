@@ -153,6 +153,7 @@ function EditBlog({ params }: any) {
                   Blog Thumbnail
                 </label>
                 <ThumbnailUpload
+                  initialImage={data?.thumbnail} 
                   onImageChange={(file: File | null) => {
                     setFieldValue("thumbnail", file);
                   }}
