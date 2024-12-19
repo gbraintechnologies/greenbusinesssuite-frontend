@@ -46,11 +46,6 @@ function FormDetail(props: any) {
     enabled: Boolean(formID),
   });
 
-  const { data: companies } = useQuery({
-    queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(0, 500),
-  });
-
   const { data: companyData, isLoading: isLoadingCompanyInfo } = useQuery({
     queryKey: ["company", parseInt(form?.companyId as string)],
     queryFn: services.getCompanyById(Number(form?.companyId)),
@@ -231,7 +226,6 @@ function FormDetail(props: any) {
           <AssignForm
             id={formID}
             setShow={setShowAssignModal}
-            companies={companies}
             queryClient={queryClient}
           />
         </Modal>
