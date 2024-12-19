@@ -20,7 +20,6 @@ function AssignForm({ setShow, id: formId, queryClient }: any) {
 
   const [filteredCompanies, setFilteredCompanies] = useState<any>([]);
 
-  const [limit, setLimit] = useState(4);
 
   const { data: companies } = useQuery({
     queryKey: ["all companies"],
@@ -33,11 +32,6 @@ function AssignForm({ setShow, id: formId, queryClient }: any) {
     enabled: Boolean(query),
   });
 
-  const fetchMoreData = () => {
-    if (limit < 14) {
-      setLimit(limit + 4);
-    }
-  };
 
   const assignFormToCompany = async () => {
     setLoading(true);
@@ -103,7 +97,6 @@ function AssignForm({ setShow, id: formId, queryClient }: any) {
           isLoading={loading || searchLoading}
           isClearable={false}
           isOptionSelected={(option) => option.value === selected}
-          onMenuScrollToBottom={fetchMoreData}
           styles={{
             control: (styles: any) => ({
               ...styles,
@@ -230,7 +223,7 @@ function AssignForm({ setShow, id: formId, queryClient }: any) {
           Cancel
         </button>
         <button
-          disabled={loading}
+          disabled={loading || !selected}
           className="bg-primary-green disabled:bg-gray-600 disabled:cursor-not-allowed disabled:bg-opacity-70 py-3 shadow-md flex text-white text-sm px-6 hover:opacity-95 items-center gap-2 rounded-xl"
           onClick={assignFormToCompany}
         >
