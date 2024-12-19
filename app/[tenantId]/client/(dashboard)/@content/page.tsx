@@ -76,8 +76,6 @@ const Page = () => {
     enabled: Boolean(user?.id),
   });
 
-  console.log("uncomplted form ids", uncompletedFormsIds);
-
   const {
     data: completedFormsIds,
     isLoading: areCompletedFormsIdLoading,
