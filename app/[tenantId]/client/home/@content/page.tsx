@@ -18,7 +18,7 @@ function Home() {
           <SearchBox
             searchTerm={search}
             setSearchTerm={setSearch}
-            placeholder="Search for blogs, videos, and ads by heading"
+            placeholder="Search for blogs, videos or ads"
           />
         </div>
       </div>
