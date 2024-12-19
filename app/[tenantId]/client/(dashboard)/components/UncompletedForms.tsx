@@ -31,7 +31,7 @@ function UnCompletedForms({
             {forms?.length === 0 ? (
               <div className="flex h-[40vh]  flex-col gap-5 items-center justify-center">
                 <EmptyListIcon />
-                <p>No Uncompleted Forms</p>
+                <p>No incomplete Forms</p>
               </div>
             ) : (
               <div className="grid grid-cols-4 gap-5 mt-5">

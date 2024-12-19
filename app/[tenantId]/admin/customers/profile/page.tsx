@@ -126,7 +126,7 @@ const page = () => {
     );
   }
   return (
-    <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 h-full">
+    <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 min-h-[100vh]">
       <button
         className="my-3 flex items-center gap-2"
         onClick={() => router.back()}

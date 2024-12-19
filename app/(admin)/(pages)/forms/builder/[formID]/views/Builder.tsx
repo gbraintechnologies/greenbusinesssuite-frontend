@@ -310,18 +310,3 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
 }
 
 export default Builder;
-
-//SECTION:
-// {
-//   id: 1,
-//   name: "Personal Information",
-//   description: "Enter your personal details.",
-//   instruction: "Please provide accurate information.",
-//   formFields: [
-
-//   ],
-//   isDeleted: false,
-//   createdOn: "2024-03-22T09:07:40.598049",
-//   updatedOn: "2024-03-22T09:07:40.598078",
-//   deletedOn: null,
-// },

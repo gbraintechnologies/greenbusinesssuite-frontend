@@ -48,7 +48,7 @@ function FormDetail(props: any) {
 
   const { data: companies } = useQuery({
     queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(),
+    queryFn: services.getAllCompanies(0, 500),
   });
 
   const { data: companyData, isLoading: isLoadingCompanyInfo } = useQuery({

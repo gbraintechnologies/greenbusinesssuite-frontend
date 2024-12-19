@@ -19,7 +19,16 @@ function ItemsPerPageSelector({ limit = 10, setLimit }: any) {
   return (
     <div className="flex text-gray-500 text-sm px-2 items-center gap-2">
       Items per page{" "}
-      <Dropdown shouldBlockScroll={false}>
+      <Dropdown
+        showArrow
+        classNames={{
+          base: "before:bg-default-200",
+          content: "w-20 py-1 px-1 border border-default-200 ",
+        }}
+        size="sm"
+        className="w-20"
+        shouldBlockScroll={false}
+      >
         <DropdownTrigger>
           <button className="flex justify-between outline-none items-center px-3 py-1 gap-2">
             <div className="text-sm">{limit}</div>
@@ -27,7 +36,7 @@ function ItemsPerPageSelector({ limit = 10, setLimit }: any) {
           </button>
         </DropdownTrigger>
         <DropdownMenu
-          className="shadow-md w-20 bg-white border border-[#F1F5F9] rounded-lg flex flex-col gap-3"
+          className=" rounded-lg flex flex-col gap-3"
           aria-label="Static Actions"
         >
           {limitValues.map((limitValue, idx) => (

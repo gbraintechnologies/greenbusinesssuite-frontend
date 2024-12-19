@@ -15,7 +15,7 @@ import { toast } from "sonner";
 // icons
 import ClientDashboardIcon from "@/public/icons/ClientDashboardIcon";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { TbCurrentLocation } from "react-icons/tb";
+import { TbCurrentLocation, TbDeviceLaptop } from "react-icons/tb";
 import { HiOutlineDocumentText } from "react-icons/hi";
 
 // hooks
@@ -64,9 +64,9 @@ export default function ClientLayout({
       link: `/${company?.company_identifier}/client/home`,
     },
     {
-      name: "Dashboard",
+      name: "Services",
       linkedModule: AvailableModules.Dashboard,
-      icon: <ClientDashboardIcon />,
+      icon: <TbDeviceLaptop size={20} />,
       link: `/${company?.company_identifier}/client`,
     },
     {

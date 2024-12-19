@@ -24,7 +24,7 @@ const UncompletedCard = ({ form }: any) => {
             {form?.name}
           </p>
           <p className="text-[#525866] text-xs md:text-sm ">
-            You have an uncompleted form
+            You have an incomplete application
           </p>
         </div>
       </div>

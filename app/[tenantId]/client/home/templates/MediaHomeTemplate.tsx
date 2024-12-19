@@ -116,23 +116,25 @@ function MediaHomeTemplate({ search }: { search: string }) {
             )}
             {!Boolean(search) && (
               <div className="w-full flex justify-between mt-4">
-                <ItemsPerPageSelector
+                {/* <ItemsPerPageSelector
                   limit={blogsLimit}
                   setLimit={setBlogsLimit}
-                />
-                <Pagination
-                  page={blogsPage}
-                  setPage={setBlogsPage}
-                  limit={blogsLimit}
-                  currentData={blogData}
-                />
+                /> */}
+                {(blogsPage > 0 || blogs?.length > 7) && (
+                  <Pagination
+                    page={blogsPage}
+                    setPage={setBlogsPage}
+                    limit={blogsLimit}
+                    currentData={blogData}
+                  />
+                )}
               </div>
             )}
           </div>
           {/* VIDEOS */}
           <div className="mt-8 mb-4">
             <div className="flex justify-between items-center">
-              <h1 className="text-[#475569] font-semibold text-xl">Videos</h1>
+              <h1 className="text-[#475569] font-semibold text-xl">News</h1>
             </div>
             {videosLoading || filteredMediaLoading ? (
               <Loader text="Loading videos" />
@@ -153,16 +155,18 @@ function MediaHomeTemplate({ search }: { search: string }) {
             )}
             {!Boolean(search) && (
               <div className="w-full flex justify-between mt-4">
-                <ItemsPerPageSelector
+                {/* <ItemsPerPageSelector
                   limit={videosLimit}
                   setLimit={setVideosLimit}
-                />
-                <Pagination
-                  page={videosPage}
-                  setPage={setVideosPage}
-                  limit={videosLimit}
-                  currentData={videoData}
-                />
+                /> */}
+                {(videosPage > 0 || videos?.length > 7) && (
+                  <Pagination
+                    page={videosPage}
+                    setPage={setVideosPage}
+                    limit={videosLimit}
+                    currentData={videoData}
+                  />
+                )}
               </div>
             )}
           </div>

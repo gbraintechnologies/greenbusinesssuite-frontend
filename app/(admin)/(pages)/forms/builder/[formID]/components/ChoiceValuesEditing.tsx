@@ -19,28 +19,25 @@ function ChoiceValuesEditing({ localField, setLocalField }: any) {
       <h4 className="labelStyle">Options</h4>
 
       <div className="mt-2 w-full flex flex-col gap-4 ">
-        {localField?.choiceValue?.map((value: any) => {
+        {localField?.choiceValue?.map((value: any, idx: any) => {
           return (
-            <div className="flex justify-between items-center w-full gap-2">
+            <div
+              key={idx}
+              className="flex justify-between items-center w-full gap-2"
+            >
               <input
                 value={value}
+                id={String(idx)}
                 className={inputStyle}
                 onChange={(e) => {
-                  // find item and replace in arary
-                  let allValues = localField?.choiceValue;
+                  const updatedValues = localField.choiceValue.map(
+                    (item: string, itemIdx: number) =>
+                      itemIdx === idx ? e.target.value : item
+                  );
 
-                  let temp: any = [];
-                  for (let i = 0; i < allValues.length; i++) {
-                    if (allValues[i] === value) {
-                      temp.push(e.target.value);
-                    } else {
-                      temp.push(allValues[i]);
-                    }
-                  }
-                  // replace full array
                   setLocalField((prev: any) => ({
                     ...prev,
-                    choiceValue: temp,
+                    choiceValue: updatedValues,
                   }));
                 }}
                 onBlur={() =>

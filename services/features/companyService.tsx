@@ -4,7 +4,7 @@ import meshApi from "../meshAuthClient";
 import meshNoAuthApi from "../meshNoAuthClient";
 import defaultMeshApi from "../defaultMeshClient";
 
-export const getAllCompanies = (offset: number = 0, limit: number = 20) => {
+export const getAllCompanies = (offset: number = 0, limit: number = 50) => {
   return () =>
     authApi
       .get(`/companies/all_companies?offset=${offset}&limit=${limit}`)
@@ -122,5 +122,3 @@ export const getCompanyBranding = (tenantId: string) => {
       .then((res) => res.data);
   // return () => meshApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`).then((res) => res.data);
 };
-
-
