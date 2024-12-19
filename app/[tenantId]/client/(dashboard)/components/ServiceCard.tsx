@@ -13,6 +13,7 @@ import services from "@/services";
 import useCompany from "@/hooks/useCompany";
 import { BsArrowRight } from "react-icons/bs";
 import useUser from "@/hooks/useUser";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   form: any;
@@ -28,6 +29,8 @@ function ServiceCard({ form }: Props) {
 
   // current client
   const { user } = useUser();
+
+  const queryClient = useQueryClient();
 
   const startApplication = () => {
     toast.error("Creating application. Please wait...");
@@ -87,7 +90,7 @@ function ServiceCard({ form }: Props) {
         .then(async (res) => {
           toast.success("Successfully started application!");
           // console.log("accept res", res?.data);
-
+          queryClient.invalidateQueries();
           // start application
           router.push(
             `/${company?.company_identifier}/client/form?id=${form?.id}&company=${company?.id}`
@@ -109,7 +112,7 @@ function ServiceCard({ form }: Props) {
         })
         .catch((e: any) => {
           toast.error(
-            "There was an error processing your invite to this form. Kindly contact your company administrator. The form is either unaccessible or you have already accepted this form."
+            "There was an error processing your invite to this form. The form is either unaccessible or you have already accepted this form."
           );
           console.log("error accepting form", e);
         });
@@ -118,17 +121,21 @@ function ServiceCard({ form }: Props) {
 
   return (
     <>
-      <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
-        <div
-          className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
-        >
-          <FormPreviewIcon />
+      <div className="w-full flex flex-col justify-between rounded-lg shadow-md bg-[#F8FAFC]">
+        <div>
+          <div
+            className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          >
+            <FormPreviewIcon />
+          </div>
+          <div className="p-3">
+            <h5 className="text-lg w-full text-left font-medium">
+              {name?.replace(/"/g, " ")}
+            </h5>
+            <p className="mt-1  text-gray-600">{form?.description}</p>
+          </div>
         </div>
         <div className="p-3">
-          <h5 className="text-lg w-full text-left font-medium">
-            {name?.replace(/"/g, " ")}
-          </h5>
-          <p className="mt-1  text-gray-600">{form?.description}</p>
           <button
             onClick={startApplication}
             className="mt-5 text-sm hover:text-black text-gray-600 py-2 rounded-xl flex w-full gap-3 items-center "

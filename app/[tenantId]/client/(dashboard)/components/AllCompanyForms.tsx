@@ -14,9 +14,13 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import ServiceCard from "./ServiceCard";
 
 import { IoLaptopOutline } from "react-icons/io5";
+import useUser from "@/hooks/useUser";
 
 function AllCompanyForms() {
   const { companyBranding: companyData } = useCompany();
+
+  // current client
+  const { user } = useUser();
 
   //pagination
   const [page, setPage] = useState(0);
@@ -43,7 +47,25 @@ function AllCompanyForms() {
     ),
   });
 
-  console.log("forms", forms);
+  const {
+    data: completedFormsIds,
+    isLoading: areCompletedFormsIdLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["get completed forms by user", user?.id],
+    queryFn: services.getCompletedFormIdsByUserId(user?.id),
+    enabled: Boolean(user?.id),
+  });
+
+  const {
+    data: uncompletedFormsIds,
+    isLoading: areUncompletedFormsIdsLoading,
+    refetch: refetchUncompleted,
+  } = useQuery({
+    queryKey: ["get uncompleted forms id", user?.id],
+    queryFn: services.getUncompletedFormIdsByUserId(user?.id),
+    enabled: Boolean(user?.id),
+  });
 
   return (
     <div className="mt-5">
@@ -72,18 +94,32 @@ function AllCompanyForms() {
               />
             </div>
           </div>
-          {forms?.content?.filter(
-            (item: any) => item.publishStatus == "PUBLISHED"
-          ).length === 0 ? (
+          {forms?.content
+            ?.filter((item: any) => !uncompletedFormsIds.includes(item?.id))
+            ?.filter((item: any) => !completedFormsIds.includes(item?.id))
+            ?.filter((item: any) => item.publishStatus == "PUBLISHED")
+            .length === 0 ? (
             <div className="flex items-center justify-center flex-col min-h-[20vh]">
               <IoLaptopOutline size={50} />
-              <p className="mt-2"> No Services available at this time</p>
+              <p className="mt-2 text-lg font-semibold">
+                {" "}
+                No Available Services
+              </p>
+              <p className="text-gray-500 max-w-sm mx-auto text-center">
+                There are currently no services accepting new applications.
+              </p>
             </div>
           ) : (
             <>
               <div className="grid grid-cols-4 gap-5">
                 {forms &&
                   forms?.content
+                    ?.filter(
+                      (item: any) => !uncompletedFormsIds.includes(item?.id)
+                    )
+                    ?.filter(
+                      (item: any) => !completedFormsIds.includes(item?.id)
+                    )
                     ?.filter((item: any) => item.publishStatus == "PUBLISHED")
                     .map((form: any) => {
                       return <ServiceCard key={form.id} form={form} />;

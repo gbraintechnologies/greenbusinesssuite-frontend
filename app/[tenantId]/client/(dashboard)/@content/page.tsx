@@ -18,7 +18,6 @@ import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
-import SuspendedNotice from "../components/SuspendedNotice";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import AllCompanyForms from "../components/AllCompanyForms";
 
@@ -76,6 +75,8 @@ const Page = () => {
     queryFn: services.getUncompletedFormIdsByUserId(user?.id),
     enabled: Boolean(user?.id),
   });
+
+  console.log("uncomplted form ids", uncompletedFormsIds);
 
   const {
     data: completedFormsIds,
@@ -201,7 +202,7 @@ const Page = () => {
       {/* My FORMS */}
       <div className="mt-8 ">
         <div className="text-slate-900 font-semibold text-lg mb-5">
-          My forms
+          Services
         </div>
         <div className="mt-3">
           <Tabs
