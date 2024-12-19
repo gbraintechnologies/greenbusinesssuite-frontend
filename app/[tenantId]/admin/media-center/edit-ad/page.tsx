@@ -154,6 +154,7 @@ function EditAd({ params }: any) {
                   Ad Thumbnail
                 </label>
                 <ThumbnailUpload
+                  initialImage={data?.thumbnail}
                   onImageChange={(file: File | null) => {
                     setFieldValue("thumbnail", file);
                   }}
