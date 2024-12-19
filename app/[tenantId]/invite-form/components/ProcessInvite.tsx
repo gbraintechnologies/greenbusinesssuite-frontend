@@ -9,8 +9,6 @@ import useUser from "@/hooks/useUser";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
-// logo
-import MeshSuiteLogo from "@/public/icons/MeshSuiteLogo";
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
@@ -20,9 +18,9 @@ import { useSearchParams } from "next/navigation";
 import useCompany from "@/hooks/useCompany";
 import Image from "next/image";
 import { Button } from "@nextui-org/button";
-import { toast } from "sonner";
+
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
-import UnpublishedForm from "./FormAccessError";
+
 import FormAccessError from "./FormAccessError";
 
 function ProcessInvite({ tenantId }: any) {
@@ -116,12 +114,9 @@ function ProcessInvite({ tenantId }: any) {
   //form deadline
   const [formDeadline, setFormDeadline] = useState();
 
-
-
   useEffect(() => {
     //
     if (data && user) {
-      console.log("user ", user);
       // CHECK PUBLISH STATUS: PUBLISH | UNPUBLISHED
 
       if (data?.publishStatus !== "PUBLISHED") {

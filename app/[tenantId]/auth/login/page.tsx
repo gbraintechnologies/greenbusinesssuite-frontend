@@ -157,7 +157,7 @@ function CompanyAdminAuth(props: any) {
             return;
           }
 
-          router.push(`/${tenantId}/client`);
+          router.push(`/${tenantId}/client/home`);
         }
       }
     } catch (error) {

@@ -139,14 +139,14 @@ function MediaCenter({ params }: any) {
       </div>
 
       <div className="min-h-[40vh]">
+        <h3 className="font-semibold mb-8 text-lg">{activeFilter?.name}</h3>
         {isLoading && (
-          <div className="border border-gray-200 rounded-xl min-h-[40vh] flex items-center justify-center">
+          <div className="border border-gray-100 rounded-xl min-h-[30vh] flex items-center justify-center">
             <Loader text={`Loading ${activeFilter.name}`} />
           </div>
         )}
         {activeFilter.value === "BLOGS" && (
           <>
-            <h3 className="font-semibold mb-8 text-lg">Blogs</h3>
             {data?.content?.length === 0 ? (
               <p className="text-gray-500 text-center col-span-4">No Blogs</p>
             ) : (
@@ -166,7 +166,6 @@ function MediaCenter({ params }: any) {
 
         {activeFilter.value === "VIDEOS" && (
           <>
-            <h3 className="font-semibold mb-8 text-lg">Videos</h3>
             {data?.content?.length === 0 ? (
               <p className="text-gray-500 text-center col-span-4">No Videos</p>
             ) : (
@@ -186,7 +185,6 @@ function MediaCenter({ params }: any) {
 
         {activeFilter.value === "ADS" && (
           <>
-            <h3 className="font-semibold mb-8 text-lg">Ads</h3>
             {data?.content?.length === 0 ? (
               <p className="text-gray-500 text-center col-span-4">No Ads</p>
             ) : (

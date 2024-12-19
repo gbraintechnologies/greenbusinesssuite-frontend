@@ -134,7 +134,7 @@ function MediaHomeTemplate({ search }: { search: string }) {
           {/* VIDEOS */}
           <div className="mt-8 mb-4">
             <div className="flex justify-between items-center">
-              <h1 className="text-[#475569] font-semibold text-xl">Videos</h1>
+              <h1 className="text-[#475569] font-semibold text-xl">News</h1>
             </div>
             {videosLoading || filteredMediaLoading ? (
               <Loader text="Loading videos" />

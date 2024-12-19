@@ -22,7 +22,9 @@ function CompletedForms({
           <div className="h-[20rem] flex items-center justify-center">
             <div>
               <LoadingIcon />
-              <p className="mt-2 text-xs text-gray-500">Fetching all forms</p>
+              <p className="mt-2 text-xs text-gray-500">
+                Fetching all applications
+              </p>
             </div>
           </div>
         ) : (
@@ -31,7 +33,7 @@ function CompletedForms({
             {forms?.length === 0 ? (
               <div className="flex h-[40vh] flex-col gap-5 items-center justify-center">
                 <EmptyListIcon />
-                <p>No Completed Forms</p>
+                <p>No completed application</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-5">

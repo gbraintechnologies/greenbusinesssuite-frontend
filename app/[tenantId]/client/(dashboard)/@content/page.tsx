@@ -20,22 +20,23 @@ import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
 import SuspendedNotice from "../components/SuspendedNotice";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
+import AllCompanyForms from "../components/AllCompanyForms";
 
 const Page = () => {
   const [filters] = useState([
-    // {
-    //   id: 0,
-    //   name: "All",
-    //   value: "all",
-    // },
+    {
+      id: 0,
+      name: "All Services",
+      value: "all",
+    },
     {
       id: 1,
-      name: "Completed",
+      name: "Complete Applications",
       value: "completed",
     },
     {
       id: 2,
-      name: "Uncompleted",
+      name: "Incomplete Applications",
       value: "uncompleted",
     },
   ]);
@@ -174,13 +175,7 @@ const Page = () => {
     </div>
   ) : (
     <div className="px-5 pb-20 pt-5 min-h-screen bg-[#F8FAFC]">
-      <div className="text-slate-900 font-semibold text-xl mb-2">Dashboard</div>
-
-      {userStatus === "INACTIVE" && (
-        <div className="mt-4">
-          <SuspendedNotice />
-        </div>
-      )}
+      <div className="text-slate-900 font-semibold text-xl mb-2">Services</div>
 
       <div className="mt-4 grid grid-col-1 gap-3">
         {uncompletedFormsIds &&
@@ -192,11 +187,11 @@ const Page = () => {
         <StatsBlock
           stats={[
             {
-              label: "Number of submitted forms",
+              label: "Number of submitted applications",
               value: formsStats?.completedForms,
             },
             {
-              label: "Number of uncompleted forms",
+              label: "Number of incomplete applications",
               value: formsStats?.uncompletedForms,
             },
           ]}
@@ -216,12 +211,7 @@ const Page = () => {
           />
         </div>
         <div className="mt-4">
-          {/* {activeFilter.id === 0 && (
-            <CompletedForms
-              forms={allUserForms}
-              isFormsLoading={allUserFormsLoading}
-            />
-          )} */}
+          {activeFilter.id === 0 && <AllCompanyForms />}
           {activeFilter.id === 1 && (
             <CompletedForms
               forms={completedForms}
