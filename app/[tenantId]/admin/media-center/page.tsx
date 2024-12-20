@@ -14,7 +14,6 @@ import services from "@/services";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import { searchMedia } from "@/services/features/mediaService";
-import Loader from "@/components/Loader/Loader";
 
 interface MediaItem {
   id: number;
@@ -36,37 +35,27 @@ interface MediaData {
   totalPages: number;
 }
 
-function MediaCenter({ params }: any) {
-  const tenantId = params.tenantId;
+function MediaCenter({ params }: { params: Promise<{ tenantId: string }> }) {
+  const { tenantId } = React.use(params);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
 
-  const [selectedTimeline, setSelectedTimeline] = useState<
-    | {
-        label: TimelineValues;
-        value: TimelineType;
-      }
-    | undefined
-  >();
+  const [selectedTimeline, setSelectedTimeline] = useState<{
+    label: TimelineValues;
+    value: TimelineType;
+  } | undefined>();
 
-  const filters: {
-    id: number;
-    name: string;
-    value: "BLOGS" | "VIDEOS" | "ADS";
-  }[] = [
+  const filters: { id: number; name: string; value: "BLOGS" | "VIDEOS" | "ADS" }[] = [
     { id: 1, name: "Blogs", value: "BLOGS" },
     { id: 2, name: "Videos", value: "VIDEOS" },
     { id: 3, name: "Ads", value: "ADS" },
   ];
 
-  const [activeFilter, setActiveFilter] = useState<{
-    id: number;
-    name: string;
-    value: "BLOGS" | "VIDEOS" | "ADS";
-  }>(filters[0]);
+  const [activeFilter, setActiveFilter] = useState(filters[0]);
 
-  const { data, isLoading, refetch } = useQuery<MediaData>({
+  const { data, refetch } = useQuery<MediaData>({
     queryKey: [
       "SpecificMediaType",
       activeFilter.value,
@@ -77,7 +66,7 @@ function MediaCenter({ params }: any) {
     ],
     queryFn: async () => {
       const rawData = searchTerm
-        ? await searchMedia(searchTerm, activeFilter.value) // Fetch filtered data
+        ? await searchMedia(searchTerm, activeFilter.value)
         : await services.filterMediaByTimeline(
             activeFilter.value,
             selectedTimeline?.value ?? "ALL",
@@ -85,13 +74,11 @@ function MediaCenter({ params }: any) {
             size
           )();
 
-      // Client-side fallback for case-insensitive/partial match
       if (searchTerm) {
         const filteredData = rawData.content.filter((item: MediaItem) =>
           item.heading.toLowerCase().includes(searchTerm.toLowerCase())
         );
-
-        return { ...rawData, content: filteredData }; // Return filtered data
+        return { ...rawData, content: filteredData };
       }
 
       return rawData;
@@ -113,8 +100,8 @@ function MediaCenter({ params }: any) {
   return (
     <div className="px-5 pb-10 mt-10">
       <Nav tenantId={tenantId} />
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center justify-between my-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center px-5 justify-between my-4">
           <Tabs
             filters={filters}
             setActiveFilter={handleFilterChange}
@@ -138,71 +125,7 @@ function MediaCenter({ params }: any) {
         </div>
       </div>
 
-      <div className="min-h-[40vh]">
-        <h3 className="font-semibold mb-8 text-lg">{activeFilter?.name}</h3>
-        {isLoading && (
-          <div className="border border-gray-100 rounded-xl min-h-[30vh] flex items-center justify-center">
-            <Loader text={`Loading ${activeFilter.name}`} />
-          </div>
-        )}
-        {activeFilter.value === "BLOGS" && (
-          <>
-            {data?.content?.length === 0 ? (
-              <p className="text-gray-500 text-center col-span-4">No Blogs</p>
-            ) : (
-              <div className="grid grid-cols-4 gap-5">
-                {data?.content?.map((item: MediaItem) => (
-                  <BlogCard
-                    key={item.id}
-                    blog={item}
-                    tenantId={tenantId}
-                    refetchData={refetch}
-                  />
-                ))}
-              </div>
-            )}
-          </>
-        )}
-
-        {activeFilter.value === "VIDEOS" && (
-          <>
-            {data?.content?.length === 0 ? (
-              <p className="text-gray-500 text-center col-span-4">No Videos</p>
-            ) : (
-              <div className="grid grid-cols-4 gap-5">
-                {data?.content?.map((item: MediaItem) => (
-                  <VideoCard
-                    key={item.id}
-                    video={item}
-                    tenantId={tenantId}
-                    refetchData={refetch}
-                  />
-                ))}
-              </div>
-            )}
-          </>
-        )}
-
-        {activeFilter.value === "ADS" && (
-          <>
-            {data?.content?.length === 0 ? (
-              <p className="text-gray-500 text-center col-span-4">No Ads</p>
-            ) : (
-              <div className="grid grid-cols-4 gap-5">
-                {data?.content?.map((item: MediaItem) => (
-                  <AdCard
-                    key={item.id}
-                    ad={item}
-                    tenantId={tenantId}
-                    refetchData={refetch}
-                  />
-                ))}
-              </div>
-            )}
-          </>
-        )}
-      </div>
-      <div className="flex items-center mt-10 justify-between">
+      <div className="flex items-center justify-between">
         <ItemsPerPageSelector limit={size} setLimit={setSize} />
         <Pagination
           limit={size}
@@ -212,6 +135,51 @@ function MediaCenter({ params }: any) {
           setPage={setPage}
         />
       </div>
+
+      {activeFilter.value === "BLOGS" && (
+        <>
+          <h3 className="font-semibold mb-8 mt-10 text-lg">Blogs</h3>
+          {data?.content?.length === 0 ? (
+            <p className="text-gray-500 text-center col-span-4">No Blogs</p>
+          ) : (
+            <div className="grid grid-cols-4 gap-5">
+              {data?.content?.map((item: MediaItem) => (
+                <BlogCard key={item.id} blog={item} tenantId={tenantId} refetchData={refetch} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {activeFilter.value === "VIDEOS" && (
+        <>
+          <h3 className="font-semibold mb-8 mt-10 text-lg">Videos</h3>
+          {data?.content?.length === 0 ? (
+            <p className="text-gray-500 text-center col-span-4">No Videos</p>
+          ) : (
+            <div className="grid grid-cols-4 gap-5">
+              {data?.content?.map((item: MediaItem) => (
+                <VideoCard key={item.id} video={item} tenantId={tenantId} refetchData={refetch} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {activeFilter.value === "ADS" && (
+        <>
+          <h3 className="font-semibold mb-8 mt-10 text-lg">Ads</h3>
+          {data?.content?.length === 0 ? (
+            <p className="text-gray-500 text-center col-span-4">No Ads</p>
+          ) : (
+            <div className="grid grid-cols-4 gap-5">
+              {data?.content?.map((item: MediaItem) => (
+                <AdCard key={item.id} ad={item} tenantId={tenantId} refetchData={refetch} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
