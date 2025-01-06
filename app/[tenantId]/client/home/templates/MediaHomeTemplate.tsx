@@ -10,6 +10,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import { AiFillFileExclamation } from "react-icons/ai";
 import { TbCameraExclamation } from "react-icons/tb";
+import clsx from "clsx";
 
 function MediaHomeTemplate({ search }: { search: string }) {
   // page states for blogs
@@ -95,7 +96,14 @@ function MediaHomeTemplate({ search }: { search: string }) {
       <div className="col-start-1 col-span-3 ">
         <div className="">
           {/* BLOGS */}
-          <div className="w-full">
+          <div
+            className={clsx(
+              blogData?.length < 1 && !(blogsLoading || filteredMediaLoading || search)
+                ? "hidden"
+                : "block mb-8",
+              `w-full`
+            )}
+          >
             <h1 className="text-[#475569] font-semibold text-xl">Blog</h1>
             {blogsLoading || filteredMediaLoading ? (
               <Loader text="Loading blogs" />
@@ -132,7 +140,12 @@ function MediaHomeTemplate({ search }: { search: string }) {
             )}
           </div>
           {/* VIDEOS */}
-          <div className="mt-8 mb-4">
+          <div className={clsx(
+              videoData?.length < 1 && !(videosLoading || filteredMediaLoading || search)
+                ? "hidden"
+                : "block",
+              ``
+            )}>
             <div className="flex justify-between items-center">
               <h1 className="text-[#475569] font-semibold text-xl">News</h1>
             </div>
@@ -177,7 +190,11 @@ function MediaHomeTemplate({ search }: { search: string }) {
           <ProfileCard />
         </div> */}
         {/* ADS */}
-        <div className="">
+        <div className={clsx(
+              adData?.length < 1 && !(adsLoading || filteredMediaLoading || search)
+                ? "hidden"
+                : "block"
+            )}>
           <div className="flex items-center justify-between">
             <h1 className="text-[#475569] font-semibold text-xl">Ads</h1>
             {!Boolean(search) && (
