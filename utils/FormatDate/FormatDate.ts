@@ -17,14 +17,14 @@ export const FormatDateTime = (date: any) => {
   if (Boolean(date)) return format(new Date(date), "HH:mm, do MMM, yyyy");
 };
 
-export const  FormatDateWithSuffix = (date: any, type: "default" | "text" = "default") =>  {
-  const day = format(date, 'd'); 
+export const FormatDateWithSuffix = (date: any, type: "default" | "text" = "default") => {
+  const day = format(date, 'd');
   const monthAndYear = format(date, 'MMM, yyyy');
-  const time = format(date, 'hh:mm a'); 
+  const time = format(date, 'hh:mm a');
 
   const getOrdinalSuffix = (day: any) => {
     const dayNumber = parseInt(day, 10);
-    if (dayNumber > 3 && dayNumber < 21) return 'th'; 
+    if (dayNumber > 3 && dayNumber < 21) return 'th';
     switch (dayNumber % 10) {
       case 1:
         return 'st';
@@ -37,8 +37,8 @@ export const  FormatDateWithSuffix = (date: any, type: "default" | "text" = "def
     }
   };
 
-  const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
-  return type == "default" ? `${dayWithSuffix} ${monthAndYear}, ${time}` : `${dayWithSuffix} ${monthAndYear} at ${time}`;
+  const dayWithSuffix = `${ day }${ getOrdinalSuffix(day) }`;
+  return type == "default" ? `${ dayWithSuffix } ${ monthAndYear }, ${ time }` : `${ dayWithSuffix } ${ monthAndYear } at ${ time }`;
 }
 
 export default FormatDate;

@@ -98,15 +98,19 @@ function MediaHomeTemplate({ search }: { search: string }) {
           {/* BLOGS */}
           <div
             className={clsx(
-              blogData?.length < 1 && !(blogsLoading || filteredMediaLoading || search)
+              blogData?.length < 1 &&
+                !(blogsLoading || filteredMediaLoading || search)
                 ? "hidden"
                 : "block mb-8",
               `w-full`
             )}
           >
-            <h1 className="text-[#475569] font-semibold text-xl">Blog</h1>
+            {blogData && Boolean(blogData?.length) && (
+              <h1 className="text-[#475569] font-semibold text-xl">News</h1>
+            )}
             {blogsLoading || filteredMediaLoading ? (
-              <Loader text="Loading blogs" />
+              // <Loader text="Loading blogs" />
+              <></>
             ) : blogData?.length > 0 ? (
               <div className="grid grid-cols-3 gap-4 w-full mt-3">
                 {blogData?.map((_: any, index: number) => (
@@ -140,17 +144,23 @@ function MediaHomeTemplate({ search }: { search: string }) {
             )}
           </div>
           {/* VIDEOS */}
-          <div className={clsx(
-              videoData?.length < 1 && !(videosLoading || filteredMediaLoading || search)
+          <div
+            className={clsx(
+              videoData?.length < 1 &&
+                !(videosLoading || filteredMediaLoading || search)
                 ? "hidden"
                 : "block",
               ``
-            )}>
-            <div className="flex justify-between items-center">
-              <h1 className="text-[#475569] font-semibold text-xl">News</h1>
-            </div>
+            )}
+          >
+            {videoData && Boolean(videoData?.length) && (
+              <div className="flex justify-between items-center">
+                <h1 className="text-[#475569] font-semibold text-xl">Videos</h1>
+              </div>
+            )}
             {videosLoading || filteredMediaLoading ? (
-              <Loader text="Loading videos" />
+              // <Loader text="Loading videos" />
+              <></>
             ) : videoData?.length > 0 ? (
               <div className="grid grid-cols-3 gap-4 w-full mt-3">
                 {videoData?.map((_: any, index: number) => (
@@ -190,13 +200,18 @@ function MediaHomeTemplate({ search }: { search: string }) {
           <ProfileCard />
         </div> */}
         {/* ADS */}
-        <div className={clsx(
-              adData?.length < 1 && !(adsLoading || filteredMediaLoading || search)
-                ? "hidden"
-                : "block"
-            )}>
+        <div
+          className={clsx(
+            adData?.length < 1 &&
+              !(adsLoading || filteredMediaLoading || search)
+              ? "hidden"
+              : "block"
+          )}
+        >
           <div className="flex items-center justify-between">
-            <h1 className="text-[#475569] font-semibold text-xl">Ads</h1>
+            {adData && !!adData?.length && (
+              <h1 className="text-[#475569] font-semibold text-xl">Ads</h1>
+            )}
             {!Boolean(search) && (
               <Pagination
                 page={adsPage}
@@ -208,7 +223,8 @@ function MediaHomeTemplate({ search }: { search: string }) {
             )}
           </div>
           {adsLoading || filteredMediaLoading ? (
-            <Loader text="Loading ads" />
+            // <Loader text="Loading ads" />
+            <></>
           ) : adData?.length > 0 ? (
             <div className="grid grid-cols-1 gap-4 w-full mt-3">
               {adData?.map((_: any, index: number) => (
