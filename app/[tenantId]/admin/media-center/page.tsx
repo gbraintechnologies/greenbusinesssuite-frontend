@@ -44,9 +44,9 @@ function MediaCenter({ params }: any) {
 
   const [selectedTimeline, setSelectedTimeline] = useState<
     | {
-        label: TimelineValues;
-        value: TimelineType;
-      }
+      label: TimelineValues;
+      value: TimelineType;
+    }
     | undefined
   >();
 
@@ -55,10 +55,10 @@ function MediaCenter({ params }: any) {
     name: string;
     value: "BLOGS" | "VIDEOS" | "ADS";
   }[] = [
-    { id: 1, name: "Blogs", value: "BLOGS" },
-    { id: 2, name: "Videos", value: "VIDEOS" },
-    { id: 3, name: "Ads", value: "ADS" },
-  ];
+      { id: 1, name: "News", value: "BLOGS" }, // Rename Blogs to News
+      { id: 2, name: "Videos", value: "VIDEOS" },
+      { id: 3, name: "Ads", value: "ADS" },
+    ];
 
   const [activeFilter, setActiveFilter] = useState<{
     id: number;
@@ -79,11 +79,11 @@ function MediaCenter({ params }: any) {
       const rawData = searchTerm
         ? await searchMedia(searchTerm, activeFilter.value) // Fetch filtered data
         : await services.filterMediaByTimeline(
-            activeFilter.value,
-            selectedTimeline?.value ?? "ALL",
-            page,
-            size
-          )();
+          activeFilter.value,
+          selectedTimeline?.value ?? "ALL",
+          page,
+          size
+        )();
 
       // Client-side fallback for case-insensitive/partial match
       if (searchTerm) {
@@ -139,7 +139,9 @@ function MediaCenter({ params }: any) {
       </div>
 
       <div className="min-h-[40vh]">
-        <h3 className="font-semibold mb-8 text-lg">{activeFilter?.name}</h3>
+        <h3 className="font-semibold mb-8 text-lg">
+          {activeFilter?.name === "News" ? "News" : activeFilter?.name}
+        </h3>
         {isLoading && (
           <div className="border border-gray-100 rounded-xl min-h-[30vh] flex items-center justify-center">
             <Loader text={`Loading ${activeFilter.name}`} />
