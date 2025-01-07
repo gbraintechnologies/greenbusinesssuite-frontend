@@ -47,7 +47,7 @@ function Nav({ tenantId }: NavProps) {
                   }}
                 >
                   <button className="flex hover:text-primary-dark hover:bg-gray-50 w-full items-center rounded-md px-3 py-2">
-                    Blog
+                    News
                   </button>
                 </Link>
               </Menu.Item>

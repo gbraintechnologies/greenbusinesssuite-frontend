@@ -51,12 +51,12 @@ function BlogCard({ blog, tenantId, refetchData }: Props) {
 
   const options = [
     {
-      title: "View Blog",
+      title: "View News",
       func: () =>
         router.push(`/${tenantId}/admin/media-center/view-blog?id=${id}`),
     },
     {
-      title: "Edit Blog",
+      title: "Edit News",
       func: () =>
         router.push(`/${tenantId}/admin/media-center/edit-blog?id=${id}`),
     },
@@ -76,13 +76,13 @@ function BlogCard({ blog, tenantId, refetchData }: Props) {
 
   const handleDelete = async () => {
     try {
-      const loading = toast.loading("Deleting blog...");
+      const loading = toast.loading("Deleting News...");
       await deleteMediaTypeByID(id);
-      toast.success("Blog deleted successfully!");
+      toast.success("News deleted successfully!");
       toast.dismiss(loading);
       refetchData();
     } catch (error) {
-      toast.error("An error occurred while deleting the blog.");
+      toast.error("An error occurred while deleting the News.");
     }
   };
 

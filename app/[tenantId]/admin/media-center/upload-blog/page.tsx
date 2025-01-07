@@ -27,7 +27,7 @@ interface BlogFormValues {
 // Define the validation schema using Yup
 const UploadBlogScheme = Yup.object().shape({
     altText: Yup.string().optional(),
-    blogHead: Yup.string().required("Blog heading is required"),
+    blogHead: Yup.string().required("News heading is required"),
     Url: Yup.string().url("Invalid URL").required("URL is required"),
 });
 
@@ -49,7 +49,7 @@ function UploadBlog({ params }: any) {
         const { altText, blogHead, Url } = values;
         const formValuesWithThumbnail = { ...values, thumbnail: thumbnail };
 
-        const loading = toast.loading("Saving Blog. Please wait...");
+        const loading = toast.loading("Saving News. Please wait...");
 
 
         try {
@@ -66,13 +66,13 @@ function UploadBlog({ params }: any) {
             console.log("Form Values with Thumbnail:", formValuesWithThumbnail);
             
             await services.mediaUpload(formData);
-            toast.success("Blog uploaded successfully!");
+            toast.success("News uploaded successfully!");
             resetForm();
             setThumbnail(null); 
             router.push(`/${tenantId}/admin/media-center`);
         } catch (error) {
-            console.error("Error uploading blog:", error);
-            toast.error("An error occurred while uploading the blog.");
+            console.error("Error uploading News:", error);
+            toast.error("An error occurred while uploading the News.");
         } finally {
             setSubmitting(false);
             toast.dismiss(loading);
@@ -104,7 +104,7 @@ function UploadBlog({ params }: any) {
                                     >
                                         <IoArrowBackSharp />
                                     </Link>
-                                    <h3 className="font-semibold text-xl">Upload Blog</h3>
+                                    <h3 className="font-semibold text-xl">Upload News</h3>
                                 </div>
                             </div>
                             <div className="flex gap-3">
@@ -139,7 +139,7 @@ function UploadBlog({ params }: any) {
                         <div className="max-w-2xl rounded-lg py-5 pb-3">
                             <div className="">
                                 <label className="block text-base font-medium text-gray-700 mb-2">
-                                    Blog Thumbnail
+                                    News Thumbnail
                                 </label>
                                 <ThumbnailUpload onImageChange={setThumbnail} />
                             </div>
@@ -147,7 +147,7 @@ function UploadBlog({ params }: any) {
                             {/* Blog Heading */}
                             <div className="input-holder">
                                 <label htmlFor="blogHead" className="flex justify-between items-center">
-                                    Blog Heading
+                                    News Heading
                                 </label>
                                 <Field
                                     id="blogHead"

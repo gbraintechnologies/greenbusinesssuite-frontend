@@ -116,7 +116,7 @@ function EditBlog({ params }: any) {
                   >
                     <IoArrowBackSharp />
                   </Link>
-                  <h3 className="font-semibold text-xl">Edit Blog</h3>
+                  <h3 className="font-semibold text-xl">Edit News</h3>
                 </div>
               </div>
               <div className="flex gap-3">
@@ -150,7 +150,7 @@ function EditBlog({ params }: any) {
             <div className="max-w-2xl rounded-lg py-5 pb-3">
               <div className="">
                 <label className="block text-base font-medium text-gray-700 mb-2">
-                  Blog Thumbnail
+                  News Thumbnail
                 </label>
                 <ThumbnailUpload
                   initialImage={data?.thumbnail} 
@@ -161,7 +161,7 @@ function EditBlog({ params }: any) {
               </div>
 
               <div className="input-holder">
-                <label htmlFor="blogHead">Blog Heading</label>
+                <label htmlFor="blogHead">News Heading</label>
                 <Field id="blogHead" name="blogHead" className="w-full px-4 py-2 rounded-md" />
                 <ShowError name="blogHead" />
               </div>

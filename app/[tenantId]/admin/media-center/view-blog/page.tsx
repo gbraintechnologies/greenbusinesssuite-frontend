@@ -49,10 +49,10 @@ function ViewBlog({ params }: any) {
       setIsActivated(newStatus);
 
       await changeStatus(data?.id, newStatus);
-      toast.success(`Blog has been ${newStatus ? "activated" : "deactivated"} successfully!`);
+      toast.success(`News has been ${newStatus ? "activated" : "deactivated"} successfully!`);
       refetch();
     } catch (error) {
-      toast.error("An error occurred while updating the blog status.");
+      toast.error("An error occurred while updating the News status.");
     }
   };
 
@@ -82,7 +82,7 @@ function ViewBlog({ params }: any) {
                   >
                     <IoArrowBackSharp />
                   </Link>
-                  <h3 className="font-semibold text-xl">View Blog</h3>
+                  <h3 className="font-semibold text-xl">View News</h3>
                 </div>
               </div>
               <div className="flex gap-3">
