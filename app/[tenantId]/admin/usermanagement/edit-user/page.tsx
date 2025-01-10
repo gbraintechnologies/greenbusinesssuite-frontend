@@ -133,18 +133,21 @@ function page() {
       .then((res: any) => {
         setLoading(false);
 
-        // ASSIGN ROLE TO CREATED USER
-        services
-          //@ts-ignore
-          .assignRoleToUser(res.data.id, selectedRole?.value)
-          .then((res) => {
-            toast.dismiss(loading);
-            toast.success("Edited user successfully");
-          })
-          .catch((e: any) => {
-            toast.error("Error occured");
-            console.log("error asinging", e);
-          });
+        // TODO: UPDATE ROLE OF CURRENT USER BEING EDITED
+        // services
+        //   //@ts-ignore
+        //   .assignRoleToUser(res.data.id, selectedRole?.value)
+        //   .then((res) => {
+        //     toast.dismiss(loading);
+        //     toast.success("Edited user successfully");
+        //   })
+        //   .catch((e: any) => {
+        //     setLoading(false);
+        //     toast.dismiss(loading);
+        //     toast.dismiss();
+        //     toast.error("Error occured");
+        //     console.log("error asinging", e);
+        //   });
       })
       .catch((e) => {
         setLoading(false);

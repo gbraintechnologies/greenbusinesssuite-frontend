@@ -251,7 +251,7 @@ const UserForm = ({
                     style={getStyles(errors, "lastname")}
                     name="email"
                     placeholder="Email"
-                    disabled={true}
+                    // disabled={true}
                   />
                   <ShowError name="email" />
 
@@ -280,7 +280,7 @@ const UserForm = ({
                     selected={selectedRole}
                     setSelected={setSelectedRole}
                     options={roles}
-                    disabled={true}
+                    // disabled={true}
                   />
                 </div>
               </div>
