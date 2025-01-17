@@ -16,6 +16,10 @@ import Loader from "@/components/Loader/Loader";
 import { enumToArray } from "@/utils/EnumToArray/EnumToArray";
 import { businessSectors, gender, TypeOfBusiness } from "@/enums";
 import FormikControl from "@/components/FormikHelpers/FormikControl";
+import { toEnumFormat } from "@/utils/EnumFormatConversion/EnumFormatConversion";
+import UploadAreaInput from "@/app/(admin)/(pages)/country-setup/components/UploadAreaInput";
+import { AiOutlineDelete } from "react-icons/ai";
+import Image from "next/image";
 
 function BusinessProfile() {
   const { user } = useUser();
@@ -83,7 +87,11 @@ function BusinessProfile() {
       //  UPDATE
       console.log("to update");
       services
-        .updateBusinessProfile(values)
+        .updateBusinessProfile({
+          ...values,
+          sector: sector ? toEnumFormat(sector) : "",
+          typeOfBusiness: typeOfBusiness ? toEnumFormat(typeOfBusiness) : "",
+        })
         .then((res) => {
           toast.success("Updated business profile");
           queryClient.invalidateQueries({
@@ -103,8 +111,8 @@ function BusinessProfile() {
         businessName,
         businessOwnerName,
         gender,
-        sector,
-        typeOfBusiness,
+        sector: sector ? toEnumFormat(sector) : "",
+        typeOfBusiness: typeOfBusiness ? toEnumFormat(typeOfBusiness) : "",
         businessRegistrationNo,
         businessAddress,
         email,
@@ -127,6 +135,53 @@ function BusinessProfile() {
           toast.error("Error creating business profile");
           console.log("error creating", e);
         });
+    }
+  };
+
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+
+  const [IDImage, setIDImage] = useState<File | null>(null);
+  const [businessDocument, setBusinessDocument] = useState<File | null>(null);
+
+  const handleDrop = (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    const acceptedExtensions = [
+      ".jpg",
+      ".jpeg",
+      ".gif",
+      ".avif",
+      ".webp",
+      ".png",
+    ];
+    const fileExtension = file.name
+      .substring(file.name.lastIndexOf("."))
+      .toLowerCase();
+
+    if (acceptedExtensions.includes(fileExtension)) {
+      setIDImage(file);
+    } else {
+      alert("Please upload an image");
+    }
+  };
+
+  const handleDropBusinessDocument = (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    const acceptedExtensions = [
+      ".jpg",
+      ".jpeg",
+      ".gif",
+      ".avif",
+      ".webp",
+      ".png",
+    ];
+    const fileExtension = file.name
+      .substring(file.name.lastIndexOf("."))
+      .toLowerCase();
+
+    if (acceptedExtensions.includes(fileExtension)) {
+      setBusinessDocument(file);
+    } else {
+      alert("Please upload an image");
     }
   };
 
@@ -207,6 +262,46 @@ function BusinessProfile() {
                   </div>
 
                   {/* business owner id card */}
+
+                  <div className="input-holder">
+                    <label className="mb-5">
+                      Business Owner ID (Ghana Card){" "}
+                    </label>
+                    <div className="w-full h-[304px]">
+                      {IDImage ? (
+                        <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
+                          <Image
+                            src={URL.createObjectURL(IDImage)}
+                            alt="profile"
+                            width={280}
+                            height={124}
+                            className="rounded-md h-full w-[15rem] object-cover"
+                          />
+                          <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
+                            <AiOutlineDelete
+                              onClick={() => setIDImage(null)}
+                              size={20}
+                              className="h-5 w-5 text-white"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <UploadAreaInput
+                          accept={[
+                            ".jpg",
+                            ".jpeg",
+                            ".gif",
+                            ".avif",
+                            ".webp",
+                            ".png",
+                          ]}
+                          subLabel="Accepted files: Jpg, png, avif"
+                          onDrop={handleDrop}
+                          label="Drag and drop or choose a file to upload"
+                        />
+                      )}
+                    </div>
+                  </div>
 
                   {/* industry / sector */}
                   <div className="input-holder">
@@ -293,6 +388,45 @@ function BusinessProfile() {
                   </div>
 
                   {/* business documents */}
+                  <div className="input-holder">
+                    <label className="mb-5 block">
+                      Upload Business documents
+                    </label>
+                    <div className="mt-5 w-full h-[304px]">
+                      {IDImage ? (
+                        <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
+                          <Image
+                            src={URL.createObjectURL(IDImage)}
+                            alt="profile"
+                            width={280}
+                            height={124}
+                            className="rounded-md h-full w-[15rem] object-cover"
+                          />
+                          <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
+                            <AiOutlineDelete
+                              onClick={() => setIDImage(null)}
+                              size={20}
+                              className="h-5 w-5 text-white"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <UploadAreaInput
+                          accept={[
+                            ".jpg",
+                            ".jpeg",
+                            ".gif",
+                            ".avif",
+                            ".webp",
+                            ".png",
+                          ]}
+                          subLabel="Accepted files: Jpg, png, avif"
+                          onDrop={handleDropBusinessDocument}
+                          label="Drag and drop or choose a file to upload"
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <div className="flex justify-end">
                   <CompanyThemedButton type="submit">

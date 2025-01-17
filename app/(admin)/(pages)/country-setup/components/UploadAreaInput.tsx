@@ -12,6 +12,7 @@ interface UploadAreaInputProps {
   helperText?: string;
   loading?: boolean;
   progress?: number;
+  accept?: any;
 }
 
 const UploadAreaInput: React.FC<UploadAreaInputProps> = ({
@@ -22,6 +23,7 @@ const UploadAreaInput: React.FC<UploadAreaInputProps> = ({
   helperText,
   loading,
   progress,
+  accept = [".csv, .xls, application/vnd.ms-excel"],
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -29,7 +31,7 @@ const UploadAreaInput: React.FC<UploadAreaInputProps> = ({
 
   const inputProps = {
     ...getInputProps(),
-    accept: ".csv, .xls, application/vnd.ms-excel",
+    accept: accept,
   };
 
   const baseStyle =

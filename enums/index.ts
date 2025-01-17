@@ -1,10 +1,8 @@
 export enum TypeOfBusiness {
   "Sole Proprietorship" = "Sole Proprietorship",
   "Partnership" = "Partnership",
-  "Corporation" = "Corporation",
-  "Limited Liability Company (LLC)" = "Limited Liability Company (LLC)",
-  "Nonprofit Organization" = "Nonprofit Organization",
-  "Cooperative" = "Cooperative",
+  "Limited By Liability" = "Limited By Liability",
+  "Limited By Guarantee" = "Limited By Guarantee",
 }
 export enum businessSectors {
   "Agribusiness" = "Agribusiness",
