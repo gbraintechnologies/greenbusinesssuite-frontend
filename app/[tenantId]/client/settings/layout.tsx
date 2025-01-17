@@ -16,7 +16,9 @@ export default function SettingsLayout({
       <div className="w-full h-full">
         <div className="flex flex-row">
           <SettingsSideNav />
-          <div className="mt-4 p-2">{children}</div>
+          <div className="mt-4 p-2 w-full flex flex-col items-start">
+            {children}
+          </div>
         </div>
       </div>
     </Suspense>

@@ -1,0 +1,341 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+
+import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
+
+import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import services from "@/services";
+import useUser from "@/hooks/useUser";
+import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
+import useCompany from "@/hooks/useCompany";
+import { toast } from "sonner";
+import Loader from "@/components/Loader/Loader";
+import { enumToArray } from "@/utils/EnumToArray/EnumToArray";
+import { businessSectors, gender, TypeOfBusiness } from "@/enums";
+import FormikControl from "@/components/FormikHelpers/FormikControl";
+
+function BusinessProfile() {
+  const { user } = useUser();
+  const { companyBranding: company } = useCompany();
+
+  const queryClient = useQueryClient();
+
+  const [initialValues, setInitialValues] = useState<any>(null);
+
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["business profile", user?.id],
+    queryFn: services.getBusinessProfileOfUser(user?.id),
+    enabled: Boolean(user?.id),
+  });
+
+  useEffect(() => {
+    if (profile) {
+      // no profile
+      if (typeof profile !== "object") {
+        setInitialValues({
+          businessName: "",
+          companyId: "",
+          userId: "",
+          businessOwnerName: "",
+          sector: "",
+          typeOfBusiness: "",
+          businessRegistrationNo: "",
+          businessAddress: "",
+          email: "",
+          phoneNumber: "",
+          gender: "",
+          tin: "",
+          socialMediaLink: "",
+          completed: false,
+        });
+
+        return;
+      } else {
+        // update initial values to profile already exisitng
+        console.log("profile", profile[0]);
+        setInitialValues(profile[0]);
+      }
+    }
+
+    // profile
+  }, [profile, isLoading]);
+
+  const submitFn = (values: any, resetForm: any) => {
+    const {
+      businessName,
+      businessOwnerName,
+      sector,
+      typeOfBusiness,
+      businessRegistrationNo,
+      businessAddress,
+      email,
+      phoneNumber,
+      gender,
+      tin,
+      socialMediaLink,
+      completed,
+    } = values;
+
+    if (!!values?.id) {
+      //  UPDATE
+      console.log("to update");
+      services
+        .updateBusinessProfile(values)
+        .then((res) => {
+          toast.success("Updated business profile");
+          queryClient.invalidateQueries({
+            queryKey: ["business profile", user?.id],
+          });
+        })
+        .catch((e) => {
+          console.log("");
+          toast.error("Error updating business profile");
+        });
+    } else {
+      // CREATE NEW PROFILE
+
+      let data = {
+        companyId: company?.id,
+        userId: user?.id,
+        businessName,
+        businessOwnerName,
+        gender,
+        sector,
+        typeOfBusiness,
+        businessRegistrationNo,
+        businessAddress,
+        email,
+        phoneNumber,
+        tin,
+        socialMediaLink,
+        completed,
+      };
+
+      services
+        .createBusinessProfile(data)
+        .then((res) => {
+          resetForm();
+          toast.success("Created business profile successfully");
+          queryClient.invalidateQueries({
+            queryKey: ["business profile", user?.id],
+          });
+        })
+        .catch((e) => {
+          toast.error("Error creating business profile");
+          console.log("error creating", e);
+        });
+    }
+  };
+
+  const companySchema = Yup.object().shape({
+    // businessname: Yup.string().required("Business name is required"),
+    // businessOwnerName: Yup.string().required("Business owner name is required"),
+  });
+
+  if (initialValues) {
+    return (
+      <div className="w-[80%] mb-40">
+        {/* header */}
+        <div className="flex items-center justify-between w-full mb-10">
+          <div>
+            <h3 className="text-2xl font-semibold">
+              Business profile management
+            </h3>
+            <p>Manage your business information here</p>
+          </div>
+          <div className="border border-rounded-xl px-6 border-gray-300 text-center p-4 rounded-xl">
+            <h5 className="font-semibold">Profile completeness</h5>
+            {typeof profile !== "object" ? (
+              <p className="bg-red-100 rounded-full border-red-600 border p-1 text-sm text-red-700 mt-2">
+                Not started
+              </p>
+            ) : (
+              <p className="bg-green-100 rounded-full border-green-600 border p-1 text-sm text-green-700 mt-2">
+                Started
+              </p>
+            )}
+          </div>
+        </div>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={companySchema}
+          onSubmit={submitFn}
+        >
+          {({ errors, isSubmitting }) => {
+            return (
+              <Form>
+                <div className="border border-gray-300 p-4 rounded-xl flex flex-col gap-6 w-full mb-6">
+                  <div className="input-holder">
+                    <label>Business Name</label>
+                    <Field
+                      style={getStyles(errors, "businessname")}
+                      name="businessName"
+                      placeholder="Business Name"
+                    />
+                    <ShowError name="businessName" />
+                  </div>
+
+                  {/* owner name */}
+                  <div className="input-holder">
+                    <label>Business Owner Name</label>
+                    <Field
+                      style={getStyles(errors, "businessOwnerName")}
+                      name="businessOwnerName"
+                      placeholder="Business Owner Name"
+                    />
+                    <ShowError name="businessOwnerName" />
+                  </div>
+
+                  {/* gender */}
+                  <div className="input-holder">
+                    <label>Gender </label>
+
+                    <FormikControl
+                      control="select"
+                      type="idType"
+                      style={getStyles(errors, "gender")}
+                      name="gender"
+                      placeholder={
+                        initialValues?.gender ? initialValues?.gender : "Gender"
+                      }
+                      options={enumToArray(gender)}
+                    />
+                    <ShowError name="gender" />
+                  </div>
+
+                  {/* business owner id card */}
+
+                  {/* industry / sector */}
+                  <div className="input-holder">
+                    <label>Industry / Sector </label>
+
+                    <FormikControl
+                      control="select"
+                      type="idType"
+                      style={getStyles(errors, "sector")}
+                      name="sector"
+                      options={enumToArray(businessSectors)}
+                      placeholder={
+                        initialValues?.sector
+                          ? initialValues?.sector
+                          : "Business Sector"
+                      }
+                    />
+                    <ShowError name="sector" />
+                  </div>
+
+                  {/* type of business */}
+                  <div className="input-holder">
+                    <label>Type of Business</label>
+
+                    <FormikControl
+                      control="select"
+                      type="idType"
+                      style={getStyles(errors, "typeOfBusiness")}
+                      name="typeOfBusiness"
+                      options={enumToArray(TypeOfBusiness)}
+                      placeholder={
+                        initialValues?.typeOfBusiness
+                          ? initialValues?.typeOfBusiness
+                          : "Type of Business"
+                      }
+                    />
+                    <ShowError name="typeOfBusiness" />
+                  </div>
+
+                  {/* email address */}
+                  <div className="input-holder">
+                    <label>Email Address</label>
+                    <Field
+                      style={getStyles(errors, "email")}
+                      name="email"
+                      placeholder="Email Address"
+                    />
+                    <ShowError name="businessOwnerName" />
+                  </div>
+
+                  {/* phone Number */}
+                  <div className="input-holder">
+                    <label>Phone Number</label>
+                    <Field
+                      style={getStyles(errors, "phoneNumber")}
+                      name="phoneNumber"
+                      placeholder="Phone Number"
+                    />
+                    <ShowError name="phoneNumber" />
+                  </div>
+
+                  {/* tax identification */}
+                  <div className="input-holder">
+                    <label>Tax Identification Number (if Applicable)</label>
+                    <Field
+                      style={getStyles(errors, "tin")}
+                      name="tin"
+                      placeholder="TIN"
+                    />
+                    <ShowError name="tin" />
+                  </div>
+
+                  {/* social media links */}
+                  <div className="input-holder">
+                    <label>Social Media Link(s)</label>
+                    <Field
+                      as="textarea"
+                      rows={5}
+                      style={getStyles(errors, "socialMediaLink")}
+                      name="socialMediaLink"
+                      placeholder="Social Media"
+                    />
+                    <ShowError name="socialMediaLink" />
+                  </div>
+
+                  {/* business documents */}
+                </div>
+                <div className="flex justify-end">
+                  <CompanyThemedButton type="submit">
+                    Save Changes
+                  </CompanyThemedButton>
+                </div>
+              </Form>
+            );
+          }}
+        </Formik>
+      </div>
+    );
+  } else {
+    return (
+      <div className="w-[80%]">
+        {/* header */}
+        <div className="flex items-center justify-between w-full mb-10">
+          <div>
+            <h3 className="text-2xl font-semibold">
+              Business profile management
+            </h3>
+            <p>Manage your business information here</p>
+          </div>
+          <div className="border border-rounded-xl px-6 border-gray-300 text-center p-4 rounded-xl">
+            <h5 className="font-semibold">Profile completeness</h5>
+            {typeof profile !== "object" ? (
+              <p className="bg-red-100 rounded-full border-red-600 border p-1 text-sm text-red-700 mt-2">
+                Not started
+              </p>
+            ) : (
+              <p className="bg-green-100 rounded-full border-green-600 border p-1 text-sm text-green-700 mt-2">
+                Started
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="border border-gray-300 rounded-xl">
+          <Loader text="Loading business profile" />
+        </div>
+      </div>
+    );
+  }
+}
+
+export default BusinessProfile;

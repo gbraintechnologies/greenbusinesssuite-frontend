@@ -18,6 +18,8 @@ import useUser from "@/hooks/useUser";
 import useAdmin from "@/hooks/useAdmin";
 import useAuth from "@/hooks/useAuth";
 import useCompany from "@/hooks/useCompany";
+import { TbBriefcase2 } from "react-icons/tb";
+import { BsArrowLeft } from "react-icons/bs";
 
 function SettingsSideNav() {
   const { user, setUser, removeUser } = useUser();
@@ -28,6 +30,11 @@ function SettingsSideNav() {
   const router = useRouter();
 
   const navigation = [
+    {
+      name: "Business Profile",
+      icon: <TbBriefcase2 size={20} />,
+      link: `/${company?.company_identifier}/client/settings/business-profile`,
+    },
     {
       name: "Account",
       icon: <HiOutlineUser size={20} />,
@@ -43,14 +50,14 @@ function SettingsSideNav() {
 
   const [showLogOutModal, setShowLogOutModal] = useState(false);
 
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   return (
-    <aside className="w-[20rem] sticky mt-4   px-5 p-2">
+    <aside className="w-[20rem] sticky mt-8   px-5 p-2">
+      <Link href={`/${company?.company_identifier}/client/home`}>
+        <button className="border  mb-8 flex items-center text-sm gap-2 border-gray-300 bg-white shadow rounded-xl p-2 px-4 text-gray-600">
+          <BsArrowLeft size={20} />
+          Back to Home
+        </button>
+      </Link>
       {/* USER INFORMATION & PICTURE */}
       <div className="flex gap-3 items-center mb-5">
         <div className="flex items-center">
