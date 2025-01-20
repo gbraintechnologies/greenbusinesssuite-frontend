@@ -160,7 +160,7 @@ const Page = () => {
                   value: formStatusCount?.completedCount,
                 },
                 {
-                  label: "Incompleted submissions",
+                  label: "Incomplete submissions",
                   value: formStatusCount?.unCompletedCount,
                 },
               ]}

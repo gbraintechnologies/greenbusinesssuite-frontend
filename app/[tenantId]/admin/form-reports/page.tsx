@@ -51,7 +51,7 @@ function CompanyFormReports() {
   });
 
   const { data: formStats } = useQuery({
-    queryKey: ["form stats completed/incompleted", company?.id],
+    queryKey: ["form stats completed/incomplete", company?.id],
     queryFn: services.companyFormStats(company?.id),
   });
 
@@ -88,7 +88,7 @@ function CompanyFormReports() {
               value: formStats?.completedForms,
             },
             {
-              label: "Uncompleted Submissions",
+              label: "Incomplete Submissions",
               value: formStats?.uncompletedForms,
             },
           ]}

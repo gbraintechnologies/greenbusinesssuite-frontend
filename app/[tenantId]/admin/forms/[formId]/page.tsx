@@ -221,7 +221,7 @@ function SingleFormCompany(props: any) {
                   value: formStatusCount?.completedCount,
                 },
                 {
-                  label: "Incompleted submissions",
+                  label: "Incomplete submissions",
                   value: formStatusCount?.unCompletedCount,
                 },
               ]}
