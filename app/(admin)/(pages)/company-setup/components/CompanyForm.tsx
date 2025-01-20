@@ -422,6 +422,16 @@ const CompanyForm: React.FC<Props> = ({
                   />
                   <ShowError name="companyDescription" />
                 </div>
+                {/* COMPANY SMS SENDER ID */}
+                <div className="input-holder">
+                  <label>Company SMS Sender id</label>
+                  <Field
+                    style={getStyles(errors, "companySmsSenderId")}
+                    name="companySmsSenderId"
+                    placeholder=""
+                  />
+                  <ShowError name="companySmsSenderId" />
+                </div>
                 {/* JURISDICTION */}
                 <div className="bg-blue-50 px-3 py-3 mb-4 rounded-lg text-lg flex justify-center items-center text-blue-900 flex-row gap-2">
                   <CiCircleInfo size={20} />{" "}

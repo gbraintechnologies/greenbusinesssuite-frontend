@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import useCompany from "@/hooks/useCompany";
 import SuspendedNotice from "../components/SuspendedNotice";
+import Analytics from "../components/Analytics/Analytics";
 
 function CompanyDashboard() {
   //
@@ -48,19 +49,26 @@ function CompanyDashboard() {
         <StatsBlock
           stats={[
             {
-              label: "Number of Registrations",
+              label: "Number of registrations",
               value: totalEntries !== null ? totalEntries : "-",
             },
             {
-              label: "Submitted Applications",
+              label: "Number of submitted applications",
               value: formStats?.completedForms,
             },
             {
-              label: "Active Users",
+              label: "Total number of active businesses",
+              value: formStats?.completedForms,
+            },
+            {
+              label: "Number of active users",
               value: uniqueUsersCount !== null ? uniqueUsersCount : "-",
             },
           ]}
         />
+      </div>
+      <div>
+        {/* <Analytics /> */}
       </div>
       {/* <div className="flex gap-5 flex-wrap">
         {data.map((item: any, index: number) => (

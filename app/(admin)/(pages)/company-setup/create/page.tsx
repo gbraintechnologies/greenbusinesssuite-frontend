@@ -24,6 +24,7 @@ interface ICompany {
   adminFirstName: string;
   adminLastName: string;
   adminEmail: string;
+  companySmsSenderId: string;
   contactFirstName: string;
   contactLastName: string;
   contactEmail: string;
@@ -33,6 +34,7 @@ interface ICompany {
 const companySchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
   companyDescription: Yup.string().required("Company description is required"),
+  companySmsSenderId: Yup.string().required("SMS Sender ID is required"),
   // adminFirstName: Yup.string().required("First name is required"),
   // adminLastName: Yup.string().required("Last name is required"),
   // adminEmail: Yup.string().email("Invalid email").required("Email is required"),
@@ -285,6 +287,7 @@ const CreateCompany = () => {
       company_address: selectedCountry?.value as string,
       primary_currency: currencyId,
       company_code: String(Math.floor(Math.random() * 10000)).padStart(4, "0"),
+      company_sms_sender_id: values.companySmsSenderId as string,
     };
 
     const custom_fields = [

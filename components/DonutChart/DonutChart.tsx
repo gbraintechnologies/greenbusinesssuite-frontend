@@ -18,7 +18,7 @@ const baseColors = [
 ];
 
 type Props = {
-  item?: any;
+  item?: { data: any[], fieldName: string };
 };
 
 const Donutchart = ({ item }: Props) => {
@@ -35,8 +35,41 @@ const Donutchart = ({ item }: Props) => {
         color,
       };
     });
+    console.log('newDataWithColors', newDataWithColors);
     setDataWithColors(newDataWithColors);
   }, [item]);
+
+  const data = [
+    {
+      name: "SolarCells",
+      amount: 4890,
+    },
+    {
+      name: "Glass",
+      amount: 2103,
+    },
+    {
+      name: "JunctionBox",
+      amount: 2050,
+    },
+    {
+      name: "Adhesive",
+      amount: 1300,
+    },
+    {
+      name: "BackSheet",
+      amount: 1100,
+    },
+    {
+      name: "Frame",
+      amount: 700,
+    },
+    {
+      name: "Encapsulant",
+      amount: 200,
+    },
+  ]
+  
 
   return (
     <div className="col-span-2 py-7 border border-gray-100 px-5">
@@ -45,7 +78,7 @@ const Donutchart = ({ item }: Props) => {
       </h1>
       <Legend item={dataWithColors} />
       <DonutChart
-        data={dataWithColors}
+        data={data}
         variant="donut"
         showLabel={false}
         colors={dataWithColors?.map((d: any) => d.color)}
@@ -55,7 +88,7 @@ const Donutchart = ({ item }: Props) => {
   );
 };
 
-const Legend = ({ item }: Props) => {
+const Legend = ({ item }: any) => {
   return (
     <div className="w-full flex flex-wrap justify-between my-4">
       {item?.map((category: any, index: number) => (

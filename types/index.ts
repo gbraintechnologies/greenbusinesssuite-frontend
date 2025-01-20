@@ -36,6 +36,7 @@ export interface CompanyInfo {
   id?: number;
   status?: string;
   company_custom_values?: CustomField[];
+  company_sms_sender_id?: string;
 }
 
 export interface CustomField {
