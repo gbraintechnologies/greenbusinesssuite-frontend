@@ -24,6 +24,7 @@ interface ICompany {
   adminFirstName: string;
   adminLastName: string;
   adminEmail: string;
+  companySmsSenderId: string;
   contactFirstName: string;
   contactLastName: string;
   contactEmail: string;
