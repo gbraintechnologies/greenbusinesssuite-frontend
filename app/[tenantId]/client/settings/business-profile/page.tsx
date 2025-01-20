@@ -30,23 +30,24 @@ function BusinessProfile() {
 
   const [initialValues, setInitialValues] = useState<any>(null);
 
-  const { data: profile, isLoading } = useQuery({
+  const {
+    data: profile,
+    isLoading,
+    isFetched,
+  } = useQuery({
     queryKey: ["business profile", user?.id],
     queryFn: services.getBusinessProfileOfUser(user?.id),
     enabled: Boolean(user?.id),
   });
 
-  console.log(
-    "Ini values check",
-    profile,
-    initialValues,
-    Boolean(initialValues)
-  );
-
   useEffect(() => {
-    if (profile) {
-      // no profile
-      if (typeof profile !== "object") {
+    // Profile is sent as an array of 1 object
+    if (isFetched) {
+      if (Array.isArray(profile)) {
+        // update initial values to profile already exisitng
+        setInitialValues(profile[0]);
+        return;
+      } else {
         setInitialValues({
           businessName: "",
           companyId: "",
@@ -63,19 +64,14 @@ function BusinessProfile() {
           socialMediaLink: "",
           completed: false,
         });
-
-        return;
-      } else {
-        // update initial values to profile already exisitng
-        setInitialValues(profile[0]);
       }
     }
-  }, [profile, isLoading, user]);
+  }, [profile, isLoading, user, isFetched]);
 
   const [IDImage, setIDImage] = useState<File | null>(null);
   const [businessDocument, setBusinessDocument] = useState<File | null>(null);
 
-  const submitFn = (values: any, resetForm: any) => {
+  const submitFn = (values: any) => {
     const {
       businessName,
       businessOwnerName,
@@ -91,6 +87,7 @@ function BusinessProfile() {
       completed,
     } = values;
 
+    // UPDATE PROFILE
     if (!!values?.id) {
       //  UPDATE
       services
@@ -129,6 +126,16 @@ function BusinessProfile() {
         completed,
       };
 
+      if (!IDImage) {
+        toast.error("Please upload Business Owner ID (Ghana Card)");
+        return;
+      }
+
+      if (!businessDocument) {
+        toast.error("Please upload your business document");
+        return;
+      }
+
       if (!!IDImage) {
         data = { ...data, businessOwnerIdImage: IDImage };
       }
@@ -139,7 +146,6 @@ function BusinessProfile() {
       services
         .createBusinessProfile(data)
         .then((res) => {
-          resetForm();
           toast.success("Created business profile successfully");
           queryClient.invalidateQueries({
             queryKey: ["business profile", user?.id],
@@ -151,8 +157,6 @@ function BusinessProfile() {
         });
     }
   };
-
-  console.log("id image", IDImage, businessDocument);
 
   const handleDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -233,244 +237,272 @@ function BusinessProfile() {
     );
   }
 
-  return (
-    <div className="w-[80%] mb-40">
-      {/* header */}
-      <div className="flex items-center justify-between w-full mb-10">
-        <div>
-          <h3 className="text-2xl font-semibold">
-            Business profile management
-          </h3>
-          <p>Manage your business information here</p>
+  if (initialValues) {
+    return (
+      <div className="w-[80%] mb-40">
+        {/* header */}
+        <div className="flex items-center justify-between w-full mb-10">
+          <div>
+            <h3 className="text-2xl font-semibold">
+              Business profile management
+            </h3>
+            <p>Manage your business information here</p>
+          </div>
+          <ProfileCompleteness
+            completed={initialValues && initialValues?.completed}
+          />
         </div>
-        <ProfileCompleteness
-          completed={initialValues && initialValues?.completed}
-        />
+        <Formik
+          initialValues={initialValues}
+          validationSchema={schema}
+          onSubmit={submitFn}
+        >
+          {({ errors, isSubmitting }) => {
+            return (
+              <Form>
+                <div className="border border-gray-300 p-4 rounded-xl flex flex-col gap-6 w-full mb-6">
+                  <div className="input-holder">
+                    <label>Business Name</label>
+                    <Field
+                      style={getStyles(errors, "businessName")}
+                      name="businessName"
+                      placeholder="Business Name"
+                    />
+                    <ShowError name="businessName" />
+                  </div>
+
+                  {/* owner name */}
+                  <div className="input-holder">
+                    <label>Business Owner Name</label>
+                    <Field
+                      style={getStyles(errors, "businessOwnerName")}
+                      name="businessOwnerName"
+                      placeholder="Business Owner Name"
+                    />
+                    <ShowError name="businessOwnerName" />
+                  </div>
+
+                  {/* gender */}
+                  <div className="input-holder">
+                    <label>Gender </label>
+
+                    <FormikControl
+                      control="select"
+                      type="idType"
+                      style={getStyles(errors, "gender")}
+                      name="gender"
+                      placeholder={
+                        initialValues?.gender ? initialValues?.gender : "Gender"
+                      }
+                      options={enumToArray(gender)}
+                    />
+                    <ShowError name="gender" />
+                  </div>
+
+                  {/* business owner id card */}
+                  <div className="input-holder">
+                    <label className="mb-5">
+                      Business Owner ID (Ghana Card){" "}
+                    </label>
+                    {!!initialValues?.businessOwnerIdImage ? (
+                      <div>
+                        {" "}
+                        <Image
+                          src={initialValues?.businessOwnerIdImage}
+                          alt="profile"
+                          width={280}
+                          height={124}
+                          className="rounded-md h-full w-[15rem] object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full h-[304px]">
+                        {IDImage ? (
+                          <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
+                            <Image
+                              src={URL.createObjectURL(IDImage)}
+                              alt="profile"
+                              width={280}
+                              height={124}
+                              className="rounded-md h-full w-[15rem] object-cover"
+                            />
+                            <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
+                              <AiOutlineDelete
+                                onClick={() => setIDImage(null)}
+                                size={20}
+                                className="h-5 w-5 text-white"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <UploadAreaInput
+                            accept={[
+                              ".jpg",
+                              ".jpeg",
+                              ".gif",
+                              ".avif",
+                              ".webp",
+                              ".png",
+                            ]}
+                            subLabel="Accepted files: Jpg, png, avif"
+                            onDrop={handleDrop}
+                            label="Drag and drop or choose a file to upload"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* industry / sector */}
+                  <div className="input-holder">
+                    <label>Industry / Sector </label>
+
+                    <FormikControl
+                      control="select"
+                      type="idType"
+                      style={getStyles(errors, "sector")}
+                      name="sector"
+                      options={enumToArray(businessSectors)}
+                      placeholder={
+                        initialValues?.sector
+                          ? initialValues?.sector
+                          : "Business Sector"
+                      }
+                    />
+                    <ShowError name="sector" />
+                  </div>
+
+                  {/* type of business */}
+                  <div className="input-holder">
+                    <label>Type of Business</label>
+
+                    <FormikControl
+                      control="select"
+                      type="idType"
+                      style={getStyles(errors, "typeOfBusiness")}
+                      name="typeOfBusiness"
+                      options={enumToArray(TypeOfBusiness)}
+                      placeholder={
+                        initialValues?.typeOfBusiness
+                          ? initialValues?.typeOfBusiness
+                          : "Type of Business"
+                      }
+                    />
+                    <ShowError name="typeOfBusiness" />
+                  </div>
+
+                  {/* email address */}
+                  <div className="input-holder">
+                    <label>Email Address</label>
+                    <Field
+                      style={getStyles(errors, "email")}
+                      name="email"
+                      placeholder="Email Address"
+                    />
+                    <ShowError name="businessOwnerName" />
+                  </div>
+
+                  {/* phone Number */}
+                  <div className="input-holder">
+                    <label>Phone Number</label>
+                    <Field
+                      style={getStyles(errors, "phoneNumber")}
+                      name="phoneNumber"
+                      placeholder="Phone Number"
+                    />
+                    <ShowError name="phoneNumber" />
+                  </div>
+
+                  {/* tax identification */}
+                  <div className="input-holder">
+                    <label>Tax Identification Number (if Applicable)</label>
+                    <Field
+                      style={getStyles(errors, "tin")}
+                      name="tin"
+                      placeholder="TIN"
+                    />
+                    <ShowError name="tin" />
+                  </div>
+
+                  {/* social media links */}
+                  <div className="input-holder">
+                    <label>Social Media Link(s)</label>
+                    <Field
+                      as="textarea"
+                      rows={5}
+                      style={getStyles(errors, "socialMediaLink")}
+                      name="socialMediaLink"
+                    />
+                    <ShowError name="socialMediaLink" />
+                  </div>
+
+                  {/* business documents */}
+                  <div className="input-holder">
+                    <label className="mb-5 block">
+                      Upload Business documents
+                    </label>
+                    {!!initialValues?.businessDocumentImage ? (
+                      <div>
+                        <Image
+                          src={initialValues?.businessDocumentImage}
+                          alt="profile"
+                          width={280}
+                          height={124}
+                          className="rounded-md h-full w-[15rem] object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="mt-5 w-full h-[304px]">
+                        {businessDocument ? (
+                          <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
+                            <Image
+                              src={URL.createObjectURL(businessDocument)}
+                              alt="profile"
+                              width={280}
+                              height={124}
+                              className="rounded-md h-full w-[15rem] object-cover"
+                            />
+                            <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
+                              <AiOutlineDelete
+                                onClick={() => setBusinessDocument(null)}
+                                size={20}
+                                className="h-5 w-5 text-white"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <UploadAreaInput
+                            accept={[
+                              ".jpg",
+                              ".jpeg",
+                              ".gif",
+                              ".avif",
+                              ".webp",
+                              ".png",
+                            ]}
+                            subLabel="Accepted files: Jpg, png, avif"
+                            onDrop={handleDropBusinessDocument}
+                            label="Drag and drop or choose a file to upload"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <CompanyThemedButton type="submit">
+                    Save Changes
+                  </CompanyThemedButton>
+                </div>
+              </Form>
+            );
+          }}
+        </Formik>
       </div>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={schema}
-        onSubmit={submitFn}
-      >
-        {({ errors, isSubmitting }) => {
-          return (
-            <Form>
-              <div className="border border-gray-300 p-4 rounded-xl flex flex-col gap-6 w-full mb-6">
-                <div className="input-holder">
-                  <label>Business Name</label>
-                  <Field
-                    style={getStyles(errors, "businessname")}
-                    name="businessName"
-                    placeholder="Business Name"
-                  />
-                  <ShowError name="businessName" />
-                </div>
-
-                {/* owner name */}
-                <div className="input-holder">
-                  <label>Business Owner Name</label>
-                  <Field
-                    style={getStyles(errors, "businessOwnerName")}
-                    name="businessOwnerName"
-                    placeholder="Business Owner Name"
-                  />
-                  <ShowError name="businessOwnerName" />
-                </div>
-
-                {/* gender */}
-                <div className="input-holder">
-                  <label>Gender </label>
-
-                  <FormikControl
-                    control="select"
-                    type="idType"
-                    style={getStyles(errors, "gender")}
-                    name="gender"
-                    placeholder={
-                      initialValues?.gender ? initialValues?.gender : "Gender"
-                    }
-                    options={enumToArray(gender)}
-                  />
-                  <ShowError name="gender" />
-                </div>
-
-                {/* business owner id card */}
-                <div className="input-holder">
-                  <label className="mb-5">
-                    Business Owner ID (Ghana Card){" "}
-                  </label>
-                  <div className="w-full h-[304px]">
-                    {IDImage ? (
-                      <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
-                        <Image
-                          src={URL.createObjectURL(IDImage)}
-                          alt="profile"
-                          width={280}
-                          height={124}
-                          className="rounded-md h-full w-[15rem] object-cover"
-                        />
-                        <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
-                          <AiOutlineDelete
-                            onClick={() => setIDImage(null)}
-                            size={20}
-                            className="h-5 w-5 text-white"
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <UploadAreaInput
-                        accept={[
-                          ".jpg",
-                          ".jpeg",
-                          ".gif",
-                          ".avif",
-                          ".webp",
-                          ".png",
-                        ]}
-                        subLabel="Accepted files: Jpg, png, avif"
-                        onDrop={handleDrop}
-                        label="Drag and drop or choose a file to upload"
-                      />
-                    )}
-                  </div>
-                </div>
-
-                {/* industry / sector */}
-                <div className="input-holder">
-                  <label>Industry / Sector </label>
-
-                  <FormikControl
-                    control="select"
-                    type="idType"
-                    style={getStyles(errors, "sector")}
-                    name="sector"
-                    options={enumToArray(businessSectors)}
-                    placeholder={
-                      initialValues?.sector
-                        ? initialValues?.sector
-                        : "Business Sector"
-                    }
-                  />
-                  <ShowError name="sector" />
-                </div>
-
-                {/* type of business */}
-                <div className="input-holder">
-                  <label>Type of Business</label>
-
-                  <FormikControl
-                    control="select"
-                    type="idType"
-                    style={getStyles(errors, "typeOfBusiness")}
-                    name="typeOfBusiness"
-                    options={enumToArray(TypeOfBusiness)}
-                    placeholder={
-                      initialValues?.typeOfBusiness
-                        ? initialValues?.typeOfBusiness
-                        : "Type of Business"
-                    }
-                  />
-                  <ShowError name="typeOfBusiness" />
-                </div>
-
-                {/* email address */}
-                <div className="input-holder">
-                  <label>Email Address</label>
-                  <Field
-                    style={getStyles(errors, "email")}
-                    name="email"
-                    placeholder="Email Address"
-                  />
-                  <ShowError name="businessOwnerName" />
-                </div>
-
-                {/* phone Number */}
-                <div className="input-holder">
-                  <label>Phone Number</label>
-                  <Field
-                    style={getStyles(errors, "phoneNumber")}
-                    name="phoneNumber"
-                    placeholder="Phone Number"
-                  />
-                  <ShowError name="phoneNumber" />
-                </div>
-
-                {/* tax identification */}
-                <div className="input-holder">
-                  <label>Tax Identification Number (if Applicable)</label>
-                  <Field
-                    style={getStyles(errors, "tin")}
-                    name="tin"
-                    placeholder="TIN"
-                  />
-                  <ShowError name="tin" />
-                </div>
-
-                {/* social media links */}
-                <div className="input-holder">
-                  <label>Social Media Link(s)</label>
-                  <Field
-                    as="textarea"
-                    rows={5}
-                    style={getStyles(errors, "socialMediaLink")}
-                    name="socialMediaLink"
-                    placeholder="Social Media"
-                  />
-                  <ShowError name="socialMediaLink" />
-                </div>
-
-                {/* business documents */}
-                <div className="input-holder">
-                  <label className="mb-5 block">
-                    Upload Business documents
-                  </label>
-                  <div className="mt-5 w-full h-[304px]">
-                    {businessDocument ? (
-                      <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
-                        <Image
-                          src={URL.createObjectURL(businessDocument)}
-                          alt="profile"
-                          width={280}
-                          height={124}
-                          className="rounded-md h-full w-[15rem] object-cover"
-                        />
-                        <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
-                          <AiOutlineDelete
-                            onClick={() => setBusinessDocument(null)}
-                            size={20}
-                            className="h-5 w-5 text-white"
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <UploadAreaInput
-                        accept={[
-                          ".jpg",
-                          ".jpeg",
-                          ".gif",
-                          ".avif",
-                          ".webp",
-                          ".png",
-                        ]}
-                        subLabel="Accepted files: Jpg, png, avif"
-                        onDrop={handleDropBusinessDocument}
-                        label="Drag and drop or choose a file to upload"
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <CompanyThemedButton type="submit">
-                  Save Changes
-                </CompanyThemedButton>
-              </div>
-            </Form>
-          );
-        }}
-      </Formik>
-    </div>
-  );
+    );
+  } else {
+    return <></>;
+  }
 }
 
 export default BusinessProfile;
