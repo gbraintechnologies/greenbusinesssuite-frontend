@@ -4,9 +4,9 @@ import React from "react";
 import { LuChartLine } from "react-icons/lu";
 
 // display types
-import Barchart from "./BarChart/BarChart";
-import Single from "./Single/Single";
-import Donutchart from "./DonutChart/DonutChart";
+import Barchart from "../../../../../../components/BarChart/BarChart";
+import Single from "../../../../../../components/Single/Single";
+import Donutchart from "../../../../../../components/DonutChart/DonutChart";
 
 const AnalyticsGrid = ({ analytics }: any) => {
   if (analytics?.length === 0) {
