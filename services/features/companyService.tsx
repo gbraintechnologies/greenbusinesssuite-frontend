@@ -38,6 +38,17 @@ export const editCompanyWithCustomFields = async (
   });
 };
 
+export const editCompanySMSSenderIDWithCustomFields = async (
+  companyId: number | undefined,
+  data: CompanyInfo,
+  custom_fields?: CustomField[]
+) => {
+  return await authApi.put(`/companies/edit_with_custom_fields/${companyId}`, {
+    company_data: data,
+    custom_fields,
+  });
+};
+
 export const getCustomFields = () => {
   return authApi.get("/companies/get_custom_fields").then((res) => res.data);
 };
