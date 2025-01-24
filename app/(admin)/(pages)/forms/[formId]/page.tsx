@@ -209,7 +209,7 @@ function FormDetail(props: any) {
                   value: formStatusCount?.completedCount,
                 },
                 {
-                  label: "Incompleted submissions",
+                  label: " submissions",
                   value: formStatusCount?.unCompletedCount,
                 },
               ]}

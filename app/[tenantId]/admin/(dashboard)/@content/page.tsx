@@ -29,7 +29,7 @@ function CompanyDashboard() {
   });
 
   const { data: formStats } = useQuery({
-    queryKey: ["form stats completed/incompleted", company?.id],
+    queryKey: ["form stats completed/incomplete", company?.id],
     queryFn: services.companyFormStats(company?.id),
   });
 

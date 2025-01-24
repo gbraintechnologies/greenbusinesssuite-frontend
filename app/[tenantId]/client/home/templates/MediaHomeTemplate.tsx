@@ -11,8 +11,13 @@ import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import { AiFillFileExclamation } from "react-icons/ai";
 import { TbCameraExclamation } from "react-icons/tb";
 import clsx from "clsx";
+import useUser from "@/hooks/useUser";
+import ProfileCompleteness from "../../settings/business-profile/_components/ProfileCompleteness";
+import ProfileCard from "../_components/ProfileCard";
 
 function MediaHomeTemplate({ search }: { search: string }) {
+  const { user } = useUser();
+
   // page states for blogs
   const [blogsPage, setBlogsPage] = React.useState(0);
 
@@ -64,6 +69,12 @@ function MediaHomeTemplate({ search }: { search: string }) {
   const [videoData, setVideoData] = React.useState([]);
 
   const [adData, setAdData] = React.useState([]);
+
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["business profile", user?.id],
+    queryFn: services.getBusinessProfileOfUser(user?.id),
+    enabled: Boolean(user?.id),
+  });
 
   // set blog data, video data and ad data states based on search term and media data
   React.useEffect(() => {
@@ -195,11 +206,12 @@ function MediaHomeTemplate({ search }: { search: string }) {
           </div>
         </div>
       </div>
-      <div className=" col-start-4 ">
-        {/* <div className="pb-16 border-b border-[#E2E8F0]">
-          <ProfileCard />
-        </div> */}
+      <div className="col-start-4 ">
+        <div className="pb-16 border-b border-[#E2E8F0]">
+          <ProfileCard profile={profile} />
+        </div>
         {/* ADS */}
+
         <div
           className={clsx(
             adData?.length < 1 &&

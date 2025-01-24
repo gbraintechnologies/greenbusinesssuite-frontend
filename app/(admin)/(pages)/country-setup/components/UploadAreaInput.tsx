@@ -41,7 +41,7 @@ const UploadAreaInput: React.FC<UploadAreaInputProps> = ({
     isDragActive ? activeStyle : ""
   } ${className}`;
 
-  const handleFileSelect = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFileSelect = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -83,12 +83,13 @@ const UploadAreaInput: React.FC<UploadAreaInputProps> = ({
             <p className="text-xs text-slate-500">
               {subLabel || "Supported format: CSV, XLS(1MB max file size)"}
             </p>
-            <button
+            {/* Update: Changing button to div not to interfere with formik submissions */}
+            <div
               onClick={handleFileSelect}
-              className="text-md text-black-600 mt-2 shadow-2xl rounded-xl px-4 py-2 hover:bg-gray-100"
+              className="text-md text-black-600 mt-2 cursor-pointer shadow-2xl rounded-xl px-4 py-2 hover:bg-gray-100"
             >
               Select files
-            </button>
+            </div>
           </div>
         )}
       </div>

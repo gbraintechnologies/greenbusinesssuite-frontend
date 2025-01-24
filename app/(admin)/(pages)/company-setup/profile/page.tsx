@@ -39,6 +39,7 @@ import Configuration from "./_components/Configuration";
 import BrandingSettings from "./_components/BrandingSettings";
 import AssignedForms from "./_components/AssignedForms";
 import Description from "./_components/Description";
+import SMSSenderID from "./_components/SMSSenderID";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -51,7 +52,8 @@ const Page = () => {
     { id: 1, name: "Administrators", value: "administrators" },
     { id: 2, name: "Assigned Forms", value: "assigned_forms" },
     { id: 3, name: "Branding Settings", value: "branding_settings" },
-    { id: 4, name: "Configuration", value: "configuration" },
+    { id: 4, name: "SMS Sender ID", value: "sms_sender_id" },
+    { id: 5, name: "Configuration", value: "configuration" },
   ]);
 
   const [activeFilter, setActiveFilter] = useState<IFilter>(filters[0]);
@@ -440,6 +442,10 @@ const Page = () => {
 
             {activeFilter?.value === "configuration" && (
               <Configuration tenantId={companyData?.company_identifier} />
+            )}
+
+            {activeFilter?.value === "sms_sender_id" && (
+              <SMSSenderID company={companyData} companyId={id} />
             )}
           </div>
         </div>

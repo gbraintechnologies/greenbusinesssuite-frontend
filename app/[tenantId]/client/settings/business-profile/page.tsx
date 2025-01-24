@@ -20,6 +20,7 @@ import { toEnumFormat } from "@/utils/EnumFormatConversion/EnumFormatConversion"
 import UploadAreaInput from "@/app/(admin)/(pages)/country-setup/components/UploadAreaInput";
 import { AiOutlineDelete } from "react-icons/ai";
 import Image from "next/image";
+import ProfileCompleteness from "./_components/ProfileCompleteness";
 
 function BusinessProfile() {
   const { user } = useUser();
@@ -29,16 +30,24 @@ function BusinessProfile() {
 
   const [initialValues, setInitialValues] = useState<any>(null);
 
-  const { data: profile, isLoading } = useQuery({
+  const {
+    data: profile,
+    isLoading,
+    isFetched,
+  } = useQuery({
     queryKey: ["business profile", user?.id],
     queryFn: services.getBusinessProfileOfUser(user?.id),
     enabled: Boolean(user?.id),
   });
 
   useEffect(() => {
-    if (profile) {
-      // no profile
-      if (typeof profile !== "object") {
+    // Profile is sent as an array of 1 object
+    if (isFetched) {
+      if (Array.isArray(profile)) {
+        // update initial values to profile already exisitng
+        setInitialValues(profile[0]);
+        return;
+      } else {
         setInitialValues({
           businessName: "",
           companyId: "",
@@ -55,19 +64,14 @@ function BusinessProfile() {
           socialMediaLink: "",
           completed: false,
         });
-
-        return;
-      } else {
-        // update initial values to profile already exisitng
-        console.log("profile", profile[0]);
-        setInitialValues(profile[0]);
       }
     }
+  }, [profile, isLoading, user, isFetched]);
 
-    // profile
-  }, [profile, isLoading]);
+  const [IDImage, setIDImage] = useState<File | null>(null);
+  const [businessDocument, setBusinessDocument] = useState<File | null>(null);
 
-  const submitFn = (values: any, resetForm: any) => {
+  const submitFn = (values: any) => {
     const {
       businessName,
       businessOwnerName,
@@ -83,9 +87,9 @@ function BusinessProfile() {
       completed,
     } = values;
 
+    // UPDATE PROFILE
     if (!!values?.id) {
       //  UPDATE
-      console.log("to update");
       services
         .updateBusinessProfile({
           ...values,
@@ -105,7 +109,7 @@ function BusinessProfile() {
     } else {
       // CREATE NEW PROFILE
 
-      let data = {
+      let data: any = {
         companyId: company?.id,
         userId: user?.id,
         businessName,
@@ -122,10 +126,26 @@ function BusinessProfile() {
         completed,
       };
 
+      if (!IDImage) {
+        toast.error("Please upload Business Owner ID (Ghana Card)");
+        return;
+      }
+
+      if (!businessDocument) {
+        toast.error("Please upload your business document");
+        return;
+      }
+
+      if (!!IDImage) {
+        data = { ...data, businessOwnerIdImage: IDImage };
+      }
+      if (!!businessDocument) {
+        data = { ...data, businessDocumentImage: businessDocument };
+      }
+
       services
         .createBusinessProfile(data)
         .then((res) => {
-          resetForm();
           toast.success("Created business profile successfully");
           queryClient.invalidateQueries({
             queryKey: ["business profile", user?.id],
@@ -137,11 +157,6 @@ function BusinessProfile() {
         });
     }
   };
-
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
-
-  const [IDImage, setIDImage] = useState<File | null>(null);
-  const [businessDocument, setBusinessDocument] = useState<File | null>(null);
 
   const handleDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -185,14 +200,14 @@ function BusinessProfile() {
     }
   };
 
-  const companySchema = Yup.object().shape({
+  const schema = Yup.object().shape({
     // businessname: Yup.string().required("Business name is required"),
     // businessOwnerName: Yup.string().required("Business owner name is required"),
   });
 
-  if (initialValues) {
+  if (isLoading) {
     return (
-      <div className="w-[80%] mb-40">
+      <div className="w-[80%]">
         {/* header */}
         <div className="flex items-center justify-between w-full mb-10">
           <div>
@@ -214,9 +229,32 @@ function BusinessProfile() {
             )}
           </div>
         </div>
+
+        <div className="border border-gray-300 rounded-xl">
+          <Loader text="Loading business profile" />
+        </div>
+      </div>
+    );
+  }
+
+  if (initialValues) {
+    return (
+      <div className="w-[80%] mb-40">
+        {/* header */}
+        <div className="flex items-center justify-between w-full mb-10">
+          <div>
+            <h3 className="text-2xl font-semibold">
+              Business profile management
+            </h3>
+            <p>Manage your business information here</p>
+          </div>
+          <ProfileCompleteness
+            completed={initialValues && initialValues?.completed}
+          />
+        </div>
         <Formik
           initialValues={initialValues}
-          validationSchema={companySchema}
+          validationSchema={schema}
           onSubmit={submitFn}
         >
           {({ errors, isSubmitting }) => {
@@ -226,7 +264,7 @@ function BusinessProfile() {
                   <div className="input-holder">
                     <label>Business Name</label>
                     <Field
-                      style={getStyles(errors, "businessname")}
+                      style={getStyles(errors, "businessName")}
                       name="businessName"
                       placeholder="Business Name"
                     />
@@ -262,45 +300,57 @@ function BusinessProfile() {
                   </div>
 
                   {/* business owner id card */}
-
                   <div className="input-holder">
                     <label className="mb-5">
                       Business Owner ID (Ghana Card){" "}
                     </label>
-                    <div className="w-full h-[304px]">
-                      {IDImage ? (
-                        <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
-                          <Image
-                            src={URL.createObjectURL(IDImage)}
-                            alt="profile"
-                            width={280}
-                            height={124}
-                            className="rounded-md h-full w-[15rem] object-cover"
-                          />
-                          <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
-                            <AiOutlineDelete
-                              onClick={() => setIDImage(null)}
-                              size={20}
-                              className="h-5 w-5 text-white"
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <UploadAreaInput
-                          accept={[
-                            ".jpg",
-                            ".jpeg",
-                            ".gif",
-                            ".avif",
-                            ".webp",
-                            ".png",
-                          ]}
-                          subLabel="Accepted files: Jpg, png, avif"
-                          onDrop={handleDrop}
-                          label="Drag and drop or choose a file to upload"
+                    {!!initialValues?.businessOwnerIdImage ? (
+                      <div>
+                        {" "}
+                        <Image
+                          src={initialValues?.businessOwnerIdImage}
+                          alt="profile"
+                          width={280}
+                          height={124}
+                          className="rounded-md h-full w-[15rem] object-cover"
                         />
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="w-full h-[304px]">
+                        {IDImage ? (
+                          <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
+                            <Image
+                              src={URL.createObjectURL(IDImage)}
+                              alt="profile"
+                              width={280}
+                              height={124}
+                              className="rounded-md h-full w-[15rem] object-cover"
+                            />
+                            <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
+                              <AiOutlineDelete
+                                onClick={() => setIDImage(null)}
+                                size={20}
+                                className="h-5 w-5 text-white"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <UploadAreaInput
+                            accept={[
+                              ".jpg",
+                              ".jpeg",
+                              ".gif",
+                              ".avif",
+                              ".webp",
+                              ".png",
+                            ]}
+                            subLabel="Accepted files: Jpg, png, avif"
+                            onDrop={handleDrop}
+                            label="Drag and drop or choose a file to upload"
+                          />
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* industry / sector */}
@@ -382,7 +432,6 @@ function BusinessProfile() {
                       rows={5}
                       style={getStyles(errors, "socialMediaLink")}
                       name="socialMediaLink"
-                      placeholder="Social Media"
                     />
                     <ShowError name="socialMediaLink" />
                   </div>
@@ -392,40 +441,52 @@ function BusinessProfile() {
                     <label className="mb-5 block">
                       Upload Business documents
                     </label>
-                    <div className="mt-5 w-full h-[304px]">
-                      {IDImage ? (
-                        <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
-                          <Image
-                            src={URL.createObjectURL(IDImage)}
-                            alt="profile"
-                            width={280}
-                            height={124}
-                            className="rounded-md h-full w-[15rem] object-cover"
-                          />
-                          <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
-                            <AiOutlineDelete
-                              onClick={() => setIDImage(null)}
-                              size={20}
-                              className="h-5 w-5 text-white"
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <UploadAreaInput
-                          accept={[
-                            ".jpg",
-                            ".jpeg",
-                            ".gif",
-                            ".avif",
-                            ".webp",
-                            ".png",
-                          ]}
-                          subLabel="Accepted files: Jpg, png, avif"
-                          onDrop={handleDropBusinessDocument}
-                          label="Drag and drop or choose a file to upload"
+                    {!!initialValues?.businessDocumentImage ? (
+                      <div>
+                        <Image
+                          src={initialValues?.businessDocumentImage}
+                          alt="profile"
+                          width={280}
+                          height={124}
+                          className="rounded-md h-full w-[15rem] object-cover"
                         />
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="mt-5 w-full h-[304px]">
+                        {businessDocument ? (
+                          <div className="border relative border-dashed border-grey-500 max-w-[400px] min-h-[50px] rounded-2xl cursor-pointer hover:border-grey-800 flex flex-col justify-center p-4">
+                            <Image
+                              src={URL.createObjectURL(businessDocument)}
+                              alt="profile"
+                              width={280}
+                              height={124}
+                              className="rounded-md h-full w-[15rem] object-cover"
+                            />
+                            <div className="absolute p-2 rounded-lg bg-red-700 top-2 right-2">
+                              <AiOutlineDelete
+                                onClick={() => setBusinessDocument(null)}
+                                size={20}
+                                className="h-5 w-5 text-white"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <UploadAreaInput
+                            accept={[
+                              ".jpg",
+                              ".jpeg",
+                              ".gif",
+                              ".avif",
+                              ".webp",
+                              ".png",
+                            ]}
+                            subLabel="Accepted files: Jpg, png, avif"
+                            onDrop={handleDropBusinessDocument}
+                            label="Drag and drop or choose a file to upload"
+                          />
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex justify-end">
@@ -440,35 +501,7 @@ function BusinessProfile() {
       </div>
     );
   } else {
-    return (
-      <div className="w-[80%]">
-        {/* header */}
-        <div className="flex items-center justify-between w-full mb-10">
-          <div>
-            <h3 className="text-2xl font-semibold">
-              Business profile management
-            </h3>
-            <p>Manage your business information here</p>
-          </div>
-          <div className="border border-rounded-xl px-6 border-gray-300 text-center p-4 rounded-xl">
-            <h5 className="font-semibold">Profile completeness</h5>
-            {typeof profile !== "object" ? (
-              <p className="bg-red-100 rounded-full border-red-600 border p-1 text-sm text-red-700 mt-2">
-                Not started
-              </p>
-            ) : (
-              <p className="bg-green-100 rounded-full border-green-600 border p-1 text-sm text-green-700 mt-2">
-                Started
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="border border-gray-300 rounded-xl">
-          <Loader text="Loading business profile" />
-        </div>
-      </div>
-    );
+    return <></>;
   }
 }
 
