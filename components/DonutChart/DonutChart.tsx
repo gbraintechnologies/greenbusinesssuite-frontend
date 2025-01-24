@@ -18,7 +18,7 @@ const baseColors = [
 ];
 
 type Props = {
-  item?: { data: any[], fieldName: string };
+  item: { data: any[], fieldName: string };
 };
 
 const Donutchart = ({ item }: Props) => {
@@ -39,36 +39,36 @@ const Donutchart = ({ item }: Props) => {
     setDataWithColors(newDataWithColors);
   }, [item]);
 
-  const data = [
-    {
-      name: "SolarCells",
-      amount: 4890,
-    },
-    {
-      name: "Glass",
-      amount: 2103,
-    },
-    {
-      name: "JunctionBox",
-      amount: 2050,
-    },
-    {
-      name: "Adhesive",
-      amount: 1300,
-    },
-    {
-      name: "BackSheet",
-      amount: 1100,
-    },
-    {
-      name: "Frame",
-      amount: 700,
-    },
-    {
-      name: "Encapsulant",
-      amount: 200,
-    },
-  ]
+  // const data = [
+  //   {
+  //     name: "SolarCells",
+  //     amount: 4890,
+  //   },
+  //   {
+  //     name: "Glass",
+  //     amount: 2103,
+  //   },
+  //   {
+  //     name: "JunctionBox",
+  //     amount: 2050,
+  //   },
+  //   {
+  //     name: "Adhesive",
+  //     amount: 1300,
+  //   },
+  //   {
+  //     name: "BackSheet",
+  //     amount: 1100,
+  //   },
+  //   {
+  //     name: "Frame",
+  //     amount: 700,
+  //   },
+  //   {
+  //     name: "Encapsulant",
+  //     amount: 200,
+  //   },
+  // ]
   
 
   return (
@@ -78,7 +78,7 @@ const Donutchart = ({ item }: Props) => {
       </h1>
       <Legend item={dataWithColors} />
       <DonutChart
-        data={data}
+        data={item?.data}
         variant="donut"
         showLabel={false}
         colors={dataWithColors?.map((d: any) => d.color)}

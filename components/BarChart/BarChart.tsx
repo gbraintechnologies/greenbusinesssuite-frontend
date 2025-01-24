@@ -3,17 +3,19 @@ import React from "react";
 
 type Props = {
   item: any;
+  categories?: any;
 };
-const Barchart = ({ item }: Props) => {
+
+const Barchart = ({ item, categories }: Props) => {
   return (
-    <div className="col-span-2 border border-gray-100 px-5 py-2">
+    <div className="w-full border border-gray-100 px-5 py-2">
       <h1 className="font-medium text-lg text-slate-900 mb-2">
         {item?.fieldName}
       </h1>
       <BarChart
         data={item?.data}
         index="name"
-        categories={["value"]}
+        categories={categories ?? ["value"]}
         colors={["green"]}
         yAxisWidth={48}
       />

@@ -68,7 +68,7 @@ function CompanyDashboard() {
         />
       </div>
       <div>
-        {/* <Analytics /> */}
+        <Analytics />
       </div>
       {/* <div className="flex gap-5 flex-wrap">
         {data.map((item: any, index: number) => (

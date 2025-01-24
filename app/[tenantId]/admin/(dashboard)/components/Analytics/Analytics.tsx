@@ -14,13 +14,13 @@ function Analytics() {
   });
 
   const { data: sectorStats, isLoading: sectorStatsLoading } = useQuery({
-    queryKey: ["business profiles by gender"],
-    queryFn: services.getBusinessProfileGenderCount(),
+    queryKey: ["business profiles by sector"],
+    queryFn: services.getBusinessProfileSectorCount(),
   });
 
   const { data: businessStats, isLoading: businessStatsLoading } = useQuery({
-    queryKey: ["business profiles by gender"],
-    queryFn: services.getBusinessProfileGenderCount(),
+    queryKey: ["business profiles by type"],
+    queryFn: services.getBusinessProfileTypesCount(),
   });
 
   return (
@@ -55,12 +55,16 @@ function Analytics() {
           </div>
         )}
 
-        { <AnalyticsGrid genderStats={genderStats} sectorStats={sectorStats} businessStats={businessStats}/>}
+        {(genderStats && sectorStats && businessStats) && (
+          <AnalyticsGrid
+            genderStats={genderStats}
+            sectorStats={sectorStats}
+            businessStats={businessStats}
+          />
+        )}
       </div>
     </div>
   );
 }
 
 export default Analytics;
-
-
