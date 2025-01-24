@@ -40,7 +40,9 @@ const DataVisualization = ({ item }: any) => {
       return <Donutchart item={item} />;
 
     case "bar-chart":
-      return <Barchart item={item} />;
+      return <div className="col-span-2">
+        <Barchart item={item} categories={["value"]} />;
+        </div>
 
     // DEFAULT CASE WHEN
     default:
