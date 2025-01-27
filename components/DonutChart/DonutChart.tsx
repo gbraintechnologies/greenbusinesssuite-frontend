@@ -18,7 +18,7 @@ const baseColors = [
 ];
 
 type Props = {
-  item: { data: any[], fieldName: string };
+  item: { data: any[]; fieldName: string };
 };
 
 const Donutchart = ({ item }: Props) => {
@@ -35,7 +35,7 @@ const Donutchart = ({ item }: Props) => {
         color,
       };
     });
-    console.log('newDataWithColors', newDataWithColors);
+    // console.log('newDataWithColors', newDataWithColors);
     setDataWithColors(newDataWithColors);
   }, [item]);
 
@@ -69,7 +69,6 @@ const Donutchart = ({ item }: Props) => {
   //     amount: 200,
   //   },
   // ]
-  
 
   return (
     <div className="col-span-2 py-7 border border-gray-100 px-5">

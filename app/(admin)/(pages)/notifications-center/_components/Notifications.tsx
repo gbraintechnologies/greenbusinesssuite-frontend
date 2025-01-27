@@ -10,7 +10,12 @@ import Tabs from "../../../../../components/Tabs/Tabs";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import Select, { components, MultiValueGenericProps, MultiValueProps, MultiValueRemoveProps } from "react-select";
+import Select, {
+  components,
+  MultiValueGenericProps,
+  MultiValueProps,
+  MultiValueRemoveProps,
+} from "react-select";
 import { Checkbox } from "@nextui-org/checkbox";
 
 // DATE TIME HELPERS
@@ -1371,10 +1376,13 @@ const Notifications: React.FC<Props> = ({
   );
 };
 
-
 // custom react select components
-const CustomMultiValue = <OptionType,>(props: MultiValueProps<OptionType, true>) => {
-  const MultiValueComponent = components.MultiValue as React.ComponentType<MultiValueProps<OptionType, true>>;
+const CustomMultiValue = <OptionType,>(
+  props: MultiValueProps<OptionType, true>
+) => {
+  const MultiValueComponent = components.MultiValue as React.ComponentType<
+    MultiValueProps<OptionType, true>
+  >;
 
   return (
     <div className="border border-[#E2E8F0] bg-white m-1 px-2 py-1 flex gap-2 items-center rounded-lg">
@@ -1385,8 +1393,13 @@ const CustomMultiValue = <OptionType,>(props: MultiValueProps<OptionType, true>)
   );
 };
 
-const CustomMultiValueContainer = <OptionType,>(props: MultiValueGenericProps<OptionType, true>) => {
-  const MultiValueContainerComponent = components.MultiValueContainer as React.ComponentType<MultiValueGenericProps<OptionType, true>>;
+const CustomMultiValueContainer = <OptionType,>(
+  props: MultiValueGenericProps<OptionType, true>
+) => {
+  const MultiValueContainerComponent =
+    components.MultiValueContainer as React.ComponentType<
+      MultiValueGenericProps<OptionType, true>
+    >;
 
   return (
     <MultiValueContainerComponent {...props}>
@@ -1395,8 +1408,13 @@ const CustomMultiValueContainer = <OptionType,>(props: MultiValueGenericProps<Op
   );
 };
 
-const CustomMultiValueRemove = <OptionType,>(props: MultiValueRemoveProps<OptionType, true>) => {
-  const MultiValueRemoveComponent = components.MultiValueRemove as React.ComponentType<MultiValueRemoveProps<OptionType, true>>;
+const CustomMultiValueRemove = <OptionType,>(
+  props: MultiValueRemoveProps<OptionType, true>
+) => {
+  const MultiValueRemoveComponent =
+    components.MultiValueRemove as React.ComponentType<
+      MultiValueRemoveProps<OptionType, true>
+    >;
 
   return (
     <MultiValueRemoveComponent {...props}>

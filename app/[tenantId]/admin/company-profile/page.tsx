@@ -27,12 +27,15 @@ import useCompany from "@/hooks/useCompany";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 import Configuration from "./components/Configuration";
+import SMSSenderID from "@/app/(admin)/(pages)/company-setup/profile/_components/SMSSenderID";
 
 const Page = (props: any) => {
   const params: any = use(props.params);
   const tenant_id = params.tenantId;
 
   const { companyBranding, setCompanyBranding } = useCompany();
+
+  console.log(" ompan", companyBranding);
 
   const statuses = [
     { id: 2, name: "Active", value: "ACTIVE" },
@@ -42,6 +45,7 @@ const Page = (props: any) => {
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "Description", value: "description" },
     { id: 2, name: "Branding Settings", value: "branding_settings" },
+    { id: 3, name: "SMS Sender ID", value: "sms_sender_id" },
     // { id: 3, name: "Configuration", value: "configuration" },
   ]);
 
@@ -477,6 +481,13 @@ const Page = (props: any) => {
                   </div>
                 </div>
               </div>
+            )}
+
+            {activeFilter?.value === "sms_sender_id" && (
+              <SMSSenderID
+                company={companyData}
+                companyId={companyBranding?.id}
+              />
             )}
 
             {/* {activeFilter?.value === "configuration" && (
