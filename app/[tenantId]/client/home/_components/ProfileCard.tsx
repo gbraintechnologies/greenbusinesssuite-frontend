@@ -9,8 +9,6 @@ import { isRecordComplete } from "@/utils/isRecordComplete/isRecordComplete";
 const ProfileCard = ({ profile }: { profile: any }) => {
   const { companyBranding: company } = useCompany();
 
-  console.log("profile", profile);
-
   return (
     <div className="border border-[#E2E8F0] rounded-xl">
       <div className="px-8 flex justify-between items-start border-b border-[#E2E8F0] py-4">

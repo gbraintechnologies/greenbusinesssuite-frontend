@@ -21,6 +21,7 @@ import UploadAreaInput from "@/app/(admin)/(pages)/country-setup/components/Uplo
 import { AiOutlineDelete } from "react-icons/ai";
 import Image from "next/image";
 import ProfileCompleteness from "./_components/ProfileCompleteness";
+import { isRecordComplete } from "@/utils/isRecordComplete/isRecordComplete";
 
 function BusinessProfile() {
   const { user } = useUser();
@@ -249,7 +250,11 @@ function BusinessProfile() {
             <p>Manage your business information here</p>
           </div>
           <ProfileCompleteness
-            completed={initialValues && initialValues?.completed}
+            completed={isRecordComplete(profile[0], [
+              "socialMediaLink",
+              "tin",
+              "completed",
+            ])}
           />
         </div>
         <Formik
