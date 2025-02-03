@@ -391,6 +391,29 @@ function BusinessProfile() {
                     <ShowError name="typeOfBusiness" />
                   </div>
 
+                  {/* business registration */}
+                  <div className="input-holder">
+                    <label>Business Registration Number</label>
+                    <Field
+                      style={getStyles(errors, "businessRegistrationNo")}
+                      name="businessRegistrationNo"
+                      placeholder="Business Registration Number"
+                    />
+                    <ShowError name="businessOwnerName" />
+                  </div>
+
+                  {/* BUSINESS ADDRESS */}
+                  <div className="input-holder">
+                    <label>Business Address</label>
+                    <Field
+                      as="textarea"
+                      rows={2}
+                      style={getStyles(errors, "businessAddress")}
+                      name="businessAddress"
+                    />
+                    <ShowError name="businessAddress" />
+                  </div>
+
                   {/* email address */}
                   <div className="input-holder">
                     <label>Email Address</label>

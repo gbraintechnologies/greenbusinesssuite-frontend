@@ -1,13 +1,15 @@
 "use client";
 
 import React from "react";
-import { IoIosHelpCircleOutline } from "react-icons/io";
-import { Progress } from "@nextui-org/progress";
+
 import Link from "next/link";
 import useCompany from "@/hooks/useCompany";
+import { isRecordComplete } from "@/utils/isRecordComplete/isRecordComplete";
 
 const ProfileCard = ({ profile }: { profile: any }) => {
   const { companyBranding: company } = useCompany();
+
+  console.log("profile", profile);
 
   return (
     <div className="border border-[#E2E8F0] rounded-xl">
@@ -30,8 +32,13 @@ const ProfileCard = ({ profile }: { profile: any }) => {
           Profile Completeness
         </h1>
         <div className="mx-auto w-[50%]">
-          {profile && profile?.completed ? (
-            <p className="bg-green-100 rounded-full border-green-600 border p-1 text-sm text-green-700 mt-2">
+          {!!profile &&
+          isRecordComplete(profile[0], [
+            "socialMediaLink",
+            "tin",
+            "completed",
+          ]) ? (
+            <p className="bg-green-100 rounded-full border-green-600 border px-5 p-1 text-sm text-green-700 mt-2">
               Complete
             </p>
           ) : (
@@ -52,7 +59,8 @@ const ProfileCard = ({ profile }: { profile: any }) => {
           }}
         /> */}
       </div>
-      {profile && profile?.completed ? (
+      {!!profile &&
+      isRecordComplete(profile[0], ["socialMediaLink", "tin", "completed"]) ? (
         <></>
       ) : (
         <div className="bg-[#F8FAFC] p-4 ">

@@ -71,7 +71,9 @@ multipartMeshApi.interceptors.response.use(
       //  GET REFRESH TOKEN AND RETRY REQUEST
       axios
         .post(
-          `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
+          `${
+            process.env.NEXT_PUBLIC_API_URL
+          }/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
           null,
           config
         )
