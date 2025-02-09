@@ -21,6 +21,7 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
     form,
     updateIsTemplate,
     updateDeadline,
+    updateIsAnonymous,
   } = useForm();
 
   useEffect(() => {
@@ -128,6 +129,36 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
                 aria-hidden="true"
                 className={`${
                   form?.isTemplate ? "translate-x-6" : "translate-x-0"
+                }
+            pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+              />
+            </Switch>
+          </div>
+          {/*  */}
+          {/* Form Access */}
+          <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">
+            <div>
+              <p className="font-medium text-base">Form Public / Open</p>{" "}
+              <p className="text-xs font-light text-gray-500">
+                A public form is accessible to anyone with the link, whereas a
+                private form is restricted to the company's clients only.
+              </p>
+            </div>
+            <Switch
+              checked={form?.isAnonymous}
+              onChange={() => {
+                //  set form as template
+                updateIsAnonymous(!form?.isAnonymous);
+              }}
+              className={`${
+                form?.isAnonymous ? "bg-primary-green" : "bg-gray-500"
+              }
+          relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
+            >
+              <span
+                aria-hidden="true"
+                className={`${
+                  form?.isAnonymous ? "translate-x-6" : "translate-x-0"
                 }
             pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
               />

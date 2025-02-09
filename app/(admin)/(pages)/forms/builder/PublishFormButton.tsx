@@ -51,7 +51,17 @@ function PublishFormButton({
     }
 
     // assigning to company
-    let url = `${window.location.origin}/${tenantId}/invite-form?f=${form?.id}&c=${form?.companyId}`;
+
+    // Private form
+    let url = null;
+
+    if (form.isAnonymous) {
+      // PUBLIC FORM
+      url = `${window.location.origin}/${tenantId}/survey?f=${form?.id}&c=${form?.companyId}`;
+    } else {
+      // PRIVATE FORM
+      url = `${window.location.origin}/${tenantId}/invite-form?f=${form?.id}&c=${form?.companyId}`;
+    }
 
     // update form with url then publish
     services

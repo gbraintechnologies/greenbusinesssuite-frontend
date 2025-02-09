@@ -1,8 +1,7 @@
 import axios from "axios";
-import { getTenantID } from "./localService";
 import { headerT } from "@/types/headerType";
 
-export const noAuthApi = axios.create({
+const noAuthApi = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
 });
 
@@ -15,12 +14,9 @@ noAuthApi.interceptors.request.use(
       accept: "application/json",
     };
 
-    // Use tenantId if presentxsssss
     return {
       ...config,
-      headers: Boolean(getTenantID)
-        ? { ...headers, tenantid: getTenantID() }
-        : headers,
+      headers: headers,
     };
   },
   (error) => Promise.reject(error)

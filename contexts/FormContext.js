@@ -80,6 +80,11 @@ export const FormProvider = ({ children }) => {
     updateRemoteForm({ ...form, isTemplate: isTemplate });
   };
 
+  const updateIsAnonymous = (isAnonymous) => {
+    setForm((prev) => ({ ...prev, isAnonymous: isAnonymous }));
+    updateRemoteForm({ ...form, isAnonymous: isAnonymous });
+  };
+
   const updateActiveField = (section, data) => {
     if (!isEmpty(form)) {
       services
@@ -268,6 +273,7 @@ export const FormProvider = ({ children }) => {
         updateFormSectionsOrdering,
         selectForm,
         addFormSection,
+        updateIsAnonymous,
         removeForm,
         addFormField,
         formLayout,

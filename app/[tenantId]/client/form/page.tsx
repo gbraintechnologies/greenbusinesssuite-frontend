@@ -108,6 +108,8 @@ function FillFormHere() {
     }
   };
 
+  console.log("cient form merged", clientForm);
+
   // SKELETON LOADING FOR WHEN FORM ISN'T READY
   if (clientForm && clientForm?.formSections) {
     let layout = clientForm?.layout;
