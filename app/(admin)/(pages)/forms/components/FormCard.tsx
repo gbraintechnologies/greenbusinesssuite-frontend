@@ -181,21 +181,23 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
             }}
             className="text-lg w-full text-left font-medium"
           >
-            <div className="my-2 flex items-center gap-3 text-xs">
-              {/* ANONYMOUS */}
-              <span>
-                {isAnonymous ? (
-                  <span className="rounded-full text-orange-600 bg-orange-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
-                    <IoLockOpenOutline /> Public
-                  </span>
-                ) : (
-                  <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
-                    <IoLockClosedOutline /> Protected
-                  </span>
-                )}
-              </span>
-              {/* PUBLISHED STATUS */}
-              <span>
+            {name?.replace(/"/g, " ")}
+          </button>
+          <div className="my-2 flex items-center gap-3 text-xs">
+            {/* ANONYMOUS */}
+            <span>
+              {isAnonymous ? (
+                <span className="rounded-full text-orange-600 bg-orange-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                  <IoLockOpenOutline /> Public
+                </span>
+              ) : (
+                <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                  <IoLockClosedOutline /> Protected
+                </span>
+              )}
+            </span>
+            {/* PUBLISHED STATUS */}
+            {/* <span>
                 {publishStatus.toLowerCase() == "published" ? (
                   <span className="rounded-full text-green-600 bg-green-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
                     <PiEye /> Published
@@ -205,10 +207,8 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                     <PiEyeSlash /> Unpublished
                   </span>
                 )}
-              </span>
-            </div>
-            {name?.replace(/"/g, " ")}
-          </button>
+              </span> */}
+          </div>
           <div className="flex items-center justify-between mt-1">
             {addFormResponses ? (
               <p className="text-xs pr-4">

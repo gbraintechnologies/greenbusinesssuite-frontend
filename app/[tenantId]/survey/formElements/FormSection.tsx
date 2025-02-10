@@ -17,6 +17,7 @@ function FormSection({ section, viewOnly = false }: any) {
         {formFields?.map((field: any) => {
           return (
             <FormFieldValue
+              key={field.id}
               viewOnly={viewOnly}
               section={section}
               field={field}

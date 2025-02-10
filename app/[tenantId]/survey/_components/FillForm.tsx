@@ -58,8 +58,59 @@ function FillForm() {
           />
         </div>
 
-        {/* FORM SECTIONS FOR FILLING */}
         <div className="ml-0 lg:ml-[22rem] w-full mt-5 mb-56">
+          <div className="mx-auto min-h-screen w-full lg:w-[60%] mt-10 ">
+            {/* FORM TITLE */}
+            <div className="flex gap-2">
+              {companyBranding?.logo && (
+                <Image
+                  priority
+                  src={companyBranding?.logo}
+                  width={200}
+                  height={200}
+                  className="rounded-xl w-10 h-10"
+                  alt="company"
+                />
+              )}{" "}
+              <div>
+                <h1 className="text-2xl font-bold"> {clientForm?.name}</h1>
+                {clientForm.description && (
+                  <p className="text-gray-600 text-sm">
+                    {clientForm.description}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="my-5">
+              <Border />
+            </div>
+            {/* @ts-ignore */}
+            {clientForm?.formSections
+              ?.filter((item: any) => !item.isDeleted)
+              .sort((a: any, b: any) => a?.ordering - b?.ordering)
+              .map((section: any) => {
+                return (
+                  <div
+                    style={{ scrollMarginTop: "5rem" }}
+                    id={section?.id}
+                    key={section?.id}
+                    className="rounded-lg w-full mb-10"
+                  >
+                    <FormSection section={section} />
+                  </div>
+                );
+              })}
+
+            {/* submit form */}
+            <div className="mt-10">
+              <FormSubmitBtn />
+            </div>
+          </div>
+        </div>
+
+        {/* FORM SECTIONS FOR FILLING */}
+        <div className="hidden ml-0 lg:ml-[22rem] w-full mt-5 mb-56">
           {/* GENERAL LAYOUT FOR FORM SECTIONS*/}
           {layout.toLowerCase() == "general" && (
             <div className="mx-auto min-h-screen w-full lg:w-[60%] mt-10 ">

@@ -28,7 +28,7 @@ function FormSubmitBtn() {
               window.open("https://" + clientForm.redirectUrl, "_self");
             }
           } else {
-            window.close();
+            window.location.reload();
           }
         }, 3000);
       })
@@ -69,7 +69,7 @@ function FormSubmitBtn() {
                   window.open("https://" + clientForm.redirectUrl, "_self");
                 }
               } else {
-                window.close();
+                window.location.reload();
               }
             }}
             isDisabled={savingResponses}
