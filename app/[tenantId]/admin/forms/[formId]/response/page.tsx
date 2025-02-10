@@ -15,8 +15,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState, Fragment, use } from "react";
 import { BsArrowLeft } from "react-icons/bs";
 import FormResponse from "../../components/FormResponse/FormResponse";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -27,10 +26,9 @@ import { IoIosArrowDown } from "react-icons/io";
 import Tabs from "@/components/Tabs/Tabs";
 import Uploaded from "./components/Uploaded";
 import Issued from "./components/Issued";
-import { IFilter } from "@/types";
-import { useQueryState } from "nuqs";
 import useAuth from "@/hooks/useAuth";
 import html2pdf from "html2pdf.js";
+import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
 
 const page = (props: any) => {
   const params: any = use(props.params);
@@ -41,6 +39,10 @@ const page = (props: any) => {
   const searchParams = useSearchParams();
 
   const userId = searchParams.get("user") ? searchParams.get("user") : "";
+
+  const responseId = searchParams.get("responseId")
+    ? searchParams.get("responseId")
+    : "";
 
   const { auth } = useAuth();
 
@@ -59,9 +61,17 @@ const page = (props: any) => {
   //
   const [tabs, setTabs] = useState([
     { id: 0, name: "Responses", value: "Responses" },
-    { id: 1, name: "Uploaded", value: "Uploaded" },
-    { id: 2, name: "Issued", value: "Issued" },
   ]);
+
+  useEffect(() => {
+    if (!form?.isAnonymous) {
+      setTabs([
+        { id: 0, name: "Responses", value: "Responses" },
+        { id: 1, name: "Uploaded", value: "Uploaded" },
+        { id: 2, name: "Issued", value: "Issued" },
+      ]);
+    }
+  }, [form, isLoading]);
 
   // const [activeTabId, setActiveTabId] = useQueryState("tab", {
   //   parse: Number,
@@ -87,15 +97,25 @@ const page = (props: any) => {
     enabled: Boolean(formID && userId),
   });
 
+  // anonymous response
+  const { data: anonResponse } = useQuery({
+    queryKey: ["form anonymous", responseId, formID],
+    queryFn: services.retrieveAnonymousFormResponse(parseInt(responseId!)),
+    enabled: !!responseId,
+  });
+
   const [mergedForm, setMergedForm] = useState<any>(null);
   //
   useEffect(() => {
-    if (form && formUserResponse) {
+    if (!!form && !!formUserResponse) {
       setMergedForm(
         mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData)
       );
     }
-  }, [form, formUserResponse]);
+    if (!!form && !!anonResponse) {
+      setMergedForm(mergeForm(anonResponse?.id, form, anonResponse?.inputData));
+    }
+  }, [form, formUserResponse, anonResponse]);
 
   // PROCESSING STATUSES
   const [statuses] = useState([
@@ -182,7 +202,7 @@ const page = (props: any) => {
     }
   };
 
-  if (isLoading || isUserLoading) {
+  if (isLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
         <div>
@@ -200,8 +220,19 @@ const page = (props: any) => {
     <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 min-h-screen">
       {/* HEADER */}
       <div>
-        <h3 className="text-xl font-semibold">
+        <h3 className="text-xl font-semibold flex items-center gap-2">
           <span className="font-light text-gray-500">Forms /</span> {form?.name}{" "}
+          <div className="text-xs my-2">
+            {form?.isAnonymous ? (
+              <span className="rounded-full text-orange-600 bg-orange-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                <IoLockOpenOutline /> Public
+              </span>
+            ) : (
+              <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                <IoLockClosedOutline /> Protected
+              </span>
+            )}
+          </div>
         </h3>
       </div>
 
@@ -214,99 +245,101 @@ const page = (props: any) => {
       </button>
 
       {/* USER DATA */}
-      <div className="mt-8 flex  items-center justify-between w-[70%] ">
-        <div className="flex gap-2 items-center">
-          <div className="">
-            {userData?.custom_profile_values &&
-            userData?.custom_profile_values.find(
-              (item: any) => item.custom_profile_item_id === 1
-            )?.value?.length > 1 ? (
-              <Image
-                alt="profile"
-                src={
-                  userData.custom_profile_values.find(
-                    (item: any) => item.custom_profile_item_id === 1
-                  ).value
-                }
-                width={150}
-                height={150}
-                className="rounded-full w-24 h-24 object-cover"
-              />
-            ) : (
-              <div className="bg-gray-100 w-24 h-24 flex items-center justify-center font-light text-sm rounded-full">
-                <UserIcon />
+      {!form?.isAnonymous && (
+        <div className="mt-8 flex  items-center justify-between w-[70%] ">
+          <div className="flex gap-2 items-center">
+            <div className="">
+              {userData?.custom_profile_values &&
+              userData?.custom_profile_values.find(
+                (item: any) => item.custom_profile_item_id === 1
+              )?.value?.length > 1 ? (
+                <Image
+                  alt="profile"
+                  src={
+                    userData.custom_profile_values.find(
+                      (item: any) => item.custom_profile_item_id === 1
+                    ).value
+                  }
+                  width={150}
+                  height={150}
+                  className="rounded-full w-24 h-24 object-cover"
+                />
+              ) : (
+                <div className="bg-gray-100 w-24 h-24 flex items-center justify-center font-light text-sm rounded-full">
+                  <UserIcon />
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="font-medium text-sm">
+                {userData?.first_name} {userData?.last_name}
+              </p>
+              <p className="text-[#475569] text-sm font-normal">
+                {userData?.email}
+              </p>
+              <Link
+                href={`/${auth?.tenantId}/admin/customers/profile?id=${userId}`}
+                className="text-[#15803D] text-sm underline cursor-pointer w-auto"
+              >
+                Go to user profile
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* DOWNLOAD FORM */}
+            <button
+              className="flex items-center gap-2 bg-white border border-[#E2E8F0] drop-shadow-sm px-2 py-2 text-sm rounded-md"
+              onClick={downloadPDF}
+              disabled={pdfGenerating}
+            >
+              {pdfGenerating ? <LoadingIcon /> : <DownloadIcon />}
+              <p className="text-sm font-medium text-[#334155]">
+                {pdfGenerating ? "Generating..." : "Download"}
+              </p>
+            </button>
+
+            {/* CHANGE RESPONSE STATUS */}
+            {formUserResponse && formUserResponse[0]?.status && (
+              <div className="flex flex-col gap-3">
+                <Menu as={"div"} className={"z-20 relative inline-block"}>
+                  <Menu.Button className=" border border-[rgba(226, 232, 240, 1)]  text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
+                    {activeStatus?.name}
+                    <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
+                    <IoIosArrowDown />
+                  </Menu.Button>
+
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="z-50 absolute right-0 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] ring-1 ring-black/5 focus:outline-none">
+                      {statuses
+                        .filter((status) => status.id !== activeStatus?.id)
+                        .map((status) => (
+                          <Menu.Item key={status.id}>
+                            <button
+                              // disabled={status.id == activeStatus?.id}
+                              className="flex hover:text-primary-dark w-32 bg-gray-200 hover:bg-gray-50 border disabled:cursor-not-allowed border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg px-3 py-2"
+                              onClick={() => updateFormResponseStatus(status)}
+                            >
+                              {status.name}
+                            </button>
+                          </Menu.Item>
+                        ))}
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            <p className="font-medium text-sm">
-              {userData?.first_name} {userData?.last_name}
-            </p>
-            <p className="text-[#475569] text-sm font-normal">
-              {userData?.email}
-            </p>
-            <Link
-              href={`/${auth?.tenantId}/admin/customers/profile?id=${userId}`}
-              className="text-[#15803D] text-sm underline cursor-pointer w-auto"
-            >
-              Go to user profile
-            </Link>
-          </div>
         </div>
-
-        <div className="flex items-center gap-4">
-          {/* DOWNLOAD FORM */}
-          <button
-            className="flex items-center gap-2 bg-white border border-[#E2E8F0] drop-shadow-sm px-2 py-2 text-sm rounded-md"
-            onClick={downloadPDF}
-            disabled={pdfGenerating}
-          >
-            {pdfGenerating ? <LoadingIcon /> : <DownloadIcon />}
-            <p className="text-sm font-medium text-[#334155]">
-              {pdfGenerating ? "Generating..." : "Download"}
-            </p>
-          </button>
-
-          {/* CHANGE RESPONSE STATUS */}
-          {formUserResponse && formUserResponse[0]?.status && (
-            <div className="flex flex-col gap-3">
-              <Menu as={"div"} className={"z-20 relative inline-block"}>
-                <Menu.Button className=" border border-[rgba(226, 232, 240, 1)]  text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
-                  {activeStatus?.name}
-                  <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
-                  <IoIosArrowDown />
-                </Menu.Button>
-
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="z-50 absolute right-0 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] ring-1 ring-black/5 focus:outline-none">
-                    {statuses
-                      .filter((status) => status.id !== activeStatus?.id)
-                      .map((status) => (
-                        <Menu.Item key={status.id}>
-                          <button
-                            // disabled={status.id == activeStatus?.id}
-                            className="flex hover:text-primary-dark w-32 bg-gray-200 hover:bg-gray-50 border disabled:cursor-not-allowed border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg px-3 py-2"
-                            onClick={() => updateFormResponseStatus(status)}
-                          >
-                            {status.name}
-                          </button>
-                        </Menu.Item>
-                      ))}
-                  </Menu.Items>
-                </Transition>
-              </Menu>
-            </div>
-          )}
-        </div>
-      </div>
+      )}
 
       {/* FORM RESPONSE */}
       <div className="mt-6">

@@ -43,7 +43,6 @@ export const ClientPublicFormProvider = ({ children }) => {
         let field = section?.formFields[j];
         if (Boolean(field?.formFieldId)) {
           formFields.push({
-            id: field?.id,
             response: field?.response ? field?.response : "",
             formFieldId: field?.formFieldId,
             fieldName: field?.name,
@@ -58,46 +57,55 @@ export const ClientPublicFormProvider = ({ children }) => {
         }
       }
       formSections.push({
-        id: section?.id,
         formSectionId: section?.formSectionId,
         formDataFields: formFields,
       });
-    }
-
-    // submit files if any
-    for (const file of filesToSubmit) {
-      const formData = new FormData();
-      formData.append("file", file);
-      // @ts-ignore
-      let fileName = file?.name;
-      let companyId = clientForm?.companyId;
-      let formId = clientForm?.id;
-
-      try {
-        await services.uploadUserFile(
-          userId,
-          companyId,
-          formId,
-          formData,
-          fileName
-        );
-        toast.success(`Submitted ${fileName} successfully!`);
-      } catch (e) {
-        toast.error(`Error submitting ${fileName}`);
-      }
     }
 
     // submit responses
     let response = {
       formId: clientForm?.id,
       isCompleted: true,
-      companyId: clientForm?.companyId,
+      companyId: parseInt(clientForm?.companyId),
+      status: "PENDING",
       inputData: {
         formSections: formSections,
       },
       updatedOn: new Date(),
       createdOn: new Date(),
     };
+
+    //     {
+    //   "id": 0,
+    //   "formId": 0,
+    //   "isCompleted": true,
+    //   "companyId": 0,
+    //   "userId": 0,
+    //   "status": "PENDING",
+    //   "inputData": {
+    //     "id": 0,
+    //     "formSections": [
+    //       {
+    //         "id": 0,
+    //         "formSectionId": 0,
+    //         "formDataFields": [
+    //           {
+    //             "id": 0,
+    //             "formFieldId": 0,
+    //             "fieldName": "string",
+    //             "response": "string",
+    //             "isStatisticalField": true,
+    //             "statisticalFunction": "string",
+    //             "displayType": "string",
+    //             "statisticalField": true
+    //           }
+    //         ]
+    //       }
+    //     ]
+    //   },
+    //   "createdOn": "2025-02-10T15:06:37.485Z",
+    //   "updatedOn": "2025-02-10T15:06:37.485Z"
+    // }
 
     setSavingResponses(false);
 

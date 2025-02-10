@@ -20,7 +20,6 @@ import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
 import html2pdf from "html2pdf.js";
 
-
 export interface IResponse {
   email: string;
   rating: string;
@@ -57,7 +56,7 @@ const ResponseDataTable: React.FC<Props> = ({
 
   const captureAndGeneratePDF = (userData: any, responseId: string) => {
     const input = hiddenRef?.current;
-  
+
     if (input) {
       const options = {
         margin: 10,
@@ -65,9 +64,9 @@ const ResponseDataTable: React.FC<Props> = ({
         image: { type: "jpeg", quality: 0.75 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: 'avoid-all', before: '#newsection' }
+        pagebreak: { mode: "avoid-all", before: "#newsection" },
       };
-  
+
       html2pdf()
         .set(options)
         .from(input)
@@ -84,13 +83,13 @@ const ResponseDataTable: React.FC<Props> = ({
             minute: "2-digit",
           });
           const responseName = `${userData?.first_name} ${userData?.last_name}`;
-  
+
           // Loop through each page and add the text
           for (let i = 1; i <= totalPages; i++) {
-            pdf.setPage(i); 
+            pdf.setPage(i);
             pdf.setFontSize(8);
-            pdf.text(`Date Printed: ${date}`, 5, 5); 
-            pdf.text("|", 60, 5); 
+            pdf.text(`Date Printed: ${date}`, 5, 5);
+            pdf.text("|", 60, 5);
             pdf.text(`Response: ${responseName}`, 65, 5);
           }
         })
@@ -103,9 +102,6 @@ const ResponseDataTable: React.FC<Props> = ({
         });
     }
   };
-  
-  
-
 
   const downloadPDF = async (responseId: number, userData: any) => {
     try {
@@ -117,12 +113,12 @@ const ResponseDataTable: React.FC<Props> = ({
       );
 
       if (resData) {
-        console.log('response id ', responseId);
-        console.log('form ', form);
-        console.log('res data input data', resData[0]?.inputData);
+        console.log("response id ", responseId);
+        console.log("form ", form);
+        console.log("res data input data", resData[0]?.inputData);
         const mergedForm = mergeForm(responseId, form, resData[0]?.inputData);
 
-        console.log('merged form', mergedForm);
+        console.log("merged form", mergedForm);
 
         renderToHiddenElement(mergedForm, userData, responseId);
       }
@@ -178,24 +174,28 @@ const ResponseDataTable: React.FC<Props> = ({
                   };
                 } else {
                   return {
-                    id: index, 
+                    id: index,
                     data: response,
-                    userData: null, 
+                    userData: null,
                   };
                 }
               } catch (error) {
-                toast.error(`Error fetching user data for userId: ${response?.userId}`);
-                console.error(`Error fetching user data for userId: ${response?.userId}`, error);
+                toast.error(
+                  `Error fetching user data for userId: ${response?.userId}`
+                );
+                console.error(
+                  `Error fetching user data for userId: ${response?.userId}`,
+                  error
+                );
                 return {
                   id: index,
                   data: response,
-                  userData: null, 
+                  userData: null,
                 };
               }
             })
           );
 
-          
           setRows(preparedRows.filter((item) => item?.id !== null));
         } catch (error) {
           toast.error("Error fetching user details for responses");
@@ -256,36 +256,44 @@ const ResponseDataTable: React.FC<Props> = ({
       type: "actions",
       getActions: (params: any) => [
         <div className="flex gap-2 items-center">
-          <div className="">
-            {params.row.userData.custom_profile_values &&
-            params.row.userData.custom_profile_values.find(
-              (item: any) => item.custom_profile_item_id === 1
-            )?.value?.length > 1 ? (
-              <Image
-                alt="profile"
-                src={
-                  params.row.userData.custom_profile_values.find(
-                    (item: any) => item.custom_profile_item_id === 1
-                  ).value
-                }
-                width={150}
-                height={150}
-                className="rounded-full w-10 h-10 object-cover"
-              />
-            ) : (
-              <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
-                <UserIcon />
+          {!!params?.row?.userData ? (
+            <>
+              {" "}
+              <div className="">
+                {params.row.userData.custom_profile_values &&
+                params.row.userData.custom_profile_values.find(
+                  (item: any) => item.custom_profile_item_id === 1
+                )?.value?.length > 1 ? (
+                  <Image
+                    alt="profile"
+                    src={
+                      params.row.userData.custom_profile_values.find(
+                        (item: any) => item.custom_profile_item_id === 1
+                      ).value
+                    }
+                    width={150}
+                    height={150}
+                    className="rounded-full w-10 h-10 object-cover"
+                  />
+                ) : (
+                  <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
+                    <UserIcon />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <div key={params.row.id} className="flex flex-col gap-2">
-            <p className="font-medium text-sm">
-              {params.row.userData?.first_name} {params.row.userData?.last_name}
-            </p>
-            <p className="text-[#475569] -mt-2 text-sm font-normal">
-              {params.row.userData?.email}
-            </p>
-          </div>
+              <div key={params.row.id} className="flex flex-col gap-2">
+                <p className="font-medium text-sm">
+                  {params.row.userData?.first_name}{" "}
+                  {params.row.userData?.last_name}
+                </p>
+                <p className="text-[#475569] -mt-2 text-sm font-normal">
+                  {params.row.userData?.email}
+                </p>
+              </div>
+            </>
+          ) : (
+            <div>Anonymous</div>
+          )}
         </div>,
       ],
     },
@@ -335,11 +343,20 @@ const ResponseDataTable: React.FC<Props> = ({
               <DownloadIcon />
             )}
           </button>
-          <Link
-            href={`/${auth?.tenantId}/admin/forms/${form?.id}/response?user=${params.row.userData?.id}`}
-          >
-            <EyeIcon />
-          </Link>
+
+          {form.isAnonymous ? (
+            <Link
+              href={`/${auth?.tenantId}/admin/forms/${form?.id}/response?responseId=${params.row.data.id}`}
+            >
+              <EyeIcon />
+            </Link>
+          ) : (
+            <Link
+              href={`/${auth?.tenantId}/admin/forms/${form?.id}/response?user=${params.row.userData?.id}`}
+            >
+              <EyeIcon />
+            </Link>
+          )}
         </div>,
       ],
     },

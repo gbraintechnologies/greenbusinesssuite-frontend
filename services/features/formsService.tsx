@@ -321,6 +321,11 @@ export const retrieveFormUserResponses = (
       .then((res) => res.data);
 };
 
+export const retrieveAnonymousFormResponse = (responseId: number) => {
+  return () =>
+    authApi.get(`forms/response/${responseId}`).then((res) => res.data);
+};
+
 export const retrieveFormUserResponseRaw = (
   userId: number | string | undefined | null,
   formId: number | string

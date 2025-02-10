@@ -24,6 +24,7 @@ import { IFilter } from "@/types";
 import DatePicker from "@/components/DatePicker/DatePicker";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
 
 function SingleFormCompany(props: any) {
   const params: any = use(props.params);
@@ -139,9 +140,20 @@ function SingleFormCompany(props: any) {
         {/* HEADER */}
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-semibold">
+            <h3 className="text-xl flex items-center gap-4 font-semibold">
               <span className="font-light text-gray-500">Forms /</span>{" "}
               {form?.name}{" "}
+              <span className="text-sm">
+                {form?.isAnonymous ? (
+                  <span className="rounded-full text-orange-600 bg-orange-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                    <IoLockOpenOutline /> Public
+                  </span>
+                ) : (
+                  <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                    <IoLockClosedOutline /> Protected
+                  </span>
+                )}
+              </span>
             </h3>
           </div>
 

@@ -11,7 +11,7 @@ noAuthApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
     let headers: headerT = {
-      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Type": "application/json",
       accept: "application/json",
     };
 

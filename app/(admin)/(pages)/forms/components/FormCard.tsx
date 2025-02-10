@@ -26,6 +26,8 @@ import DeleteForm from "../actions/DeleteForm";
 import { toast } from "sonner";
 import RenameForm from "../actions/RenameForm";
 import services from "@/services";
+import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
+import { PiEye, PiEyeSlash } from "react-icons/pi";
 
 type Props = {
   form: any;
@@ -33,16 +35,7 @@ type Props = {
   onClick?: () => void;
 };
 function FormCard({ form, onClick, addFormResponses = false }: Props) {
-  let {
-    id,
-    name,
-    updatedOn,
-    url,
-    publishStatus,
-    description,
-    deadline,
-    createdOn,
-  } = form;
+  let { id, name, updatedOn, url, publishStatus, isAnonymous } = form;
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -188,6 +181,32 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
             }}
             className="text-lg w-full text-left font-medium"
           >
+            <div className="my-2 flex items-center gap-3 text-xs">
+              {/* ANONYMOUS */}
+              <span>
+                {isAnonymous ? (
+                  <span className="rounded-full text-orange-600 bg-orange-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                    <IoLockOpenOutline /> Public
+                  </span>
+                ) : (
+                  <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                    <IoLockClosedOutline /> Protected
+                  </span>
+                )}
+              </span>
+              {/* PUBLISHED STATUS */}
+              <span>
+                {publishStatus.toLowerCase() == "published" ? (
+                  <span className="rounded-full text-green-600 bg-green-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                    <PiEye /> Published
+                  </span>
+                ) : (
+                  <span className="rounded-full text-red-600 bg-red-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                    <PiEyeSlash /> Unpublished
+                  </span>
+                )}
+              </span>
+            </div>
             {name?.replace(/"/g, " ")}
           </button>
           <div className="flex items-center justify-between mt-1">

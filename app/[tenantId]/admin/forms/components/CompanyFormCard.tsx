@@ -16,6 +16,7 @@ import { toast } from "sonner";
 
 import services from "@/services";
 import useCompany from "@/hooks/useCompany";
+import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
 
 type Props = {
   form: any;
@@ -23,7 +24,7 @@ type Props = {
   onClick?: () => void;
 };
 function FormCard({ form, onClick, addFormResponses = true }: Props) {
-  let { id, name, url, publishStatus } = form;
+  let { id, name, url, publishStatus, isAnonymous } = form;
 
   const router = useRouter();
 
@@ -109,6 +110,17 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
           <FormPreviewIcon />
         </button>
         <div className="p-3">
+          <div className="text-xs my-2">
+            {isAnonymous ? (
+              <span className="rounded-full text-orange-600 bg-orange-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                <IoLockOpenOutline /> Public
+              </span>
+            ) : (
+              <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+                <IoLockClosedOutline /> Protected
+              </span>
+            )}
+          </div>
           <button
             onClick={() => {
               router.push(`/${company?.company_identifier}/admin/forms/${id}`);
