@@ -5,6 +5,10 @@ import useClientPublicForm from "@/hooks/useClientPublicForm";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import FillForm from "./FillForm";
+import useCompany from "@/hooks/useCompany";
+import Image from "next/image";
+import { HiOutlineDocument } from "react-icons/hi2";
+import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
 
 function ProcessForm({ form: data }: { form: any }) {
   const searchParams = useSearchParams();
@@ -16,35 +20,35 @@ function ProcessForm({ form: data }: { form: any }) {
 
   const [loading, setLoading] = useState(false);
 
-  //setting the status
-  const [status, setStatus] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
 
-  //form deadline
-  const [formDeadline, setFormDeadline] = useState();
+  const { companyBranding } = useCompany();
 
   useEffect(() => {
     if (!!data) {
+      setLoading(true);
       // CHECK PUBLISH STATUS: PUBLISH | UNPUBLISHED
-      // if (data?.publishStatus !== "PUBLISHED") {
-      //   setLoading(false);
-      //   setStatus("unpublished");
-      //   return;
-      // }
+      if (data?.publishStatus.toLowerCase() == "unpublished") {
+        setLoading(false);
+        setMessage(data?.name + " form is no longer accepting responses");
+        return;
+      }
       // CHECK IF DEADLINE OR DATE IS OVER
-      // TODO: CHECK DEADLINE
-      // if (data?.deadline !== null) {
-      //   if (new Date() > new Date(data?.deadline)) {
-      //     setFormDeadline(data?.deadline);
-      //     setLoading(false);
-      //     setStatus("late");
-      //     return;
-      //   }
-      // }
+      if (data?.deadline !== null) {
+        if (new Date() > new Date(data?.deadline)) {
+          setMessage(
+            data?.name +
+              " form stopped accepting responses on " +
+              FormatDateShort(data?.deadline)
+          );
+          setLoading(false);
+          return;
+        }
+      }
 
       // STRIP DATA TO IDS AND REPONSES
-      // input data should contain all the form sections for reconstruction
-      // @ts-ignore
-      let formSections = [];
+
+      let formSections: any = [];
 
       for (let i = 0; i < data?.formSections?.length; i++) {
         let section = data?.formSections[i];
@@ -89,21 +93,48 @@ function ProcessForm({ form: data }: { form: any }) {
         status: "PENDING",
         companyId: companyId,
       });
+
+      setLoading(false);
     }
   }, [data]);
 
-  // TODO: show modals for deadline and unpublished
+  if (loading)
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <div className="flex items-center justify-center gap-2 flex-col">
+          <LoadingIcon />
+          <p className="mt-2 text-lg font-bold">Loading</p>
+          <p>Please wait..</p>
+        </div>
+      </div>
+    );
 
   return (
     <div>
-      {clientForm ? (
-        <FillForm />
-      ) : (
-        <div className="w-screen h-screen flex items-center justify-center">
-          <div className="flex items-center justify-center gap-2 flex-col">
-            <LoadingIcon />
-            <p className="mt-2 text-lg font-bold">Loading</p>
-            <p>Please wait..</p>
+      {clientForm && <FillForm />}
+
+      {/* FORM INACCESSIBLE FOR ONE REASON OR ANOTHER */}
+      {message && (
+        <div className="flex items-center h-screen w-screen justify-center">
+          <div className="-mt-32">
+            {" "}
+            {companyBranding?.logo && (
+              <Image
+                priority
+                src={companyBranding?.logo}
+                width={200}
+                height={200}
+                className="rounded-xl w-24 h-24"
+                alt="company"
+              />
+            )}
+            <div className="px-10 py-5 bg-gray-100 rounded-xl">
+              <HiOutlineDocument size={30} />
+              <h1 className="text-black font-bold text-2xl mt-3">
+                Form Unaccessible
+              </h1>
+              <p className="mt-1 font-light text-lg">{message}</p>
+            </div>
           </div>
         </div>
       )}

@@ -9,17 +9,20 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 
-import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import StepsNav from "../../client/form/components/StepsNav";
 import FormFillingLoader from "../../client/form/components/FormFillingLoader";
 import useClientPublicForm from "@/hooks/useClientPublicForm";
 import FormSection from "../formElements/FormSection";
 import Border from "@/components/Border/Border";
 import FormSubmitBtn from "../FormSubmitBtn";
+import useCompany from "@/hooks/useCompany";
+import Image from "next/image";
 
 function FillForm() {
   const [swiperInstance, setSwiperInstance] = useState<any>();
   const [swiperPosition, setSwiperPosition] = useState("first");
+
+  const { companyBranding } = useCompany();
 
   const { clientForm } = useClientPublicForm();
 
@@ -61,9 +64,27 @@ function FillForm() {
           {layout.toLowerCase() == "general" && (
             <div className="mx-auto min-h-screen w-full lg:w-[60%] mt-10 ">
               {/* FORM TITLE */}
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                {clientForm?.name}
-              </h1>
+              <div className="flex gap-2">
+                {companyBranding?.logo && (
+                  <Image
+                    priority
+                    src={companyBranding?.logo}
+                    width={200}
+                    height={200}
+                    className="rounded-xl w-10 h-10"
+                    alt="company"
+                  />
+                )}{" "}
+                <div>
+                  <h1 className="text-2xl font-bold"> {clientForm?.name}</h1>
+                  {clientForm.description && (
+                    <p className="text-gray-600 text-sm">
+                      {clientForm.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+
               <div className="my-5">
                 <Border />
               </div>

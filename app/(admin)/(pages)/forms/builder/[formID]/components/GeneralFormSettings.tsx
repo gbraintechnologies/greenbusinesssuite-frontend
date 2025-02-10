@@ -11,6 +11,7 @@ import { HiOutlineDocument } from "react-icons/hi";
 // components
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 import FieldOptions from "./FieldOptions";
+import { toast } from "sonner";
 
 function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
   const {
@@ -19,6 +20,7 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
     activeField,
     setActiveField,
     form,
+    updateRedirectUrl,
     updateIsTemplate,
     updateDeadline,
     updateIsAnonymous,
@@ -32,8 +34,10 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
   //   return <FieldOptions refetch={refetch} />;
   // }
 
+  const [redirectUrl, setRedirectUrl] = useState(form?.redirectUrl);
+
   return (
-    <div className="bg-white min-h-[80vh]  border-l-2 border-gray-200 p-3">
+    <div className="bg-white min-h-[100vh]  border-l-2 border-gray-200 p-3">
       <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
         <button
           onClick={() => setActiveTab("general")}
@@ -136,7 +140,7 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
           </div>
           {/*  */}
           {/* Form Access */}
-          <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">
+          <div className="bg-[#F8FAFC] py-3 mt-5 px-5  rounded-lg flex gap-3 items-center justify-between">
             <div>
               <p className="font-medium text-base">Form Public / Open</p>{" "}
               <p className="text-xs font-light text-gray-500">
@@ -163,6 +167,31 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
             pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
               />
             </Switch>
+          </div>
+          {/* Redirect URL */}
+          <div className="bg-[#F8FAFC] py-3 mt-5 px-5  rounded-lg flex gap-3 items-center justify-between">
+            <div>
+              <p className="font-medium text-base">Redirect URL</p>{" "}
+              <p className="text-xs font-light text-gray-500">
+                The website / URL the user should be redirected to after
+                successfully filling a form
+              </p>
+              <input
+                value={redirectUrl}
+                className="w-full mt-4 rounded-xl"
+                placeholder="Redirect URL"
+                onChange={(e) => setRedirectUrl(e.target.value)}
+              />
+              <button
+                onClick={() => {
+                  toast.loading("Please wait...");
+                  updateRedirectUrl(redirectUrl);
+                }}
+                className="mt-3 bg-black text-white px-4 py-2 text-sm  w-full rounded-xl"
+              >
+                Apply
+              </button>
+            </div>
           </div>
         </>
       )}

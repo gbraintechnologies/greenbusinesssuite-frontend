@@ -80,6 +80,14 @@ export const FormProvider = ({ children }) => {
     updateRemoteForm({ ...form, isTemplate: isTemplate });
   };
 
+  const updateRedirectUrl = (redirectUrl) => {
+    setForm((prev) => ({ ...prev, redirectUrl: redirectUrl }));
+    updateRemoteForm({ ...form, redirectUrl: redirectUrl });
+    setTimeout(() => {
+      toast.success("Redirect URL Set successfully");
+    }, 1000);
+  };
+
   const updateIsAnonymous = (isAnonymous) => {
     setForm((prev) => ({ ...prev, isAnonymous: isAnonymous }));
     updateRemoteForm({ ...form, isAnonymous: isAnonymous });
@@ -270,6 +278,7 @@ export const FormProvider = ({ children }) => {
         updateActiveField,
         view,
         setView,
+        updateRedirectUrl,
         updateFormSectionsOrdering,
         selectForm,
         addFormSection,

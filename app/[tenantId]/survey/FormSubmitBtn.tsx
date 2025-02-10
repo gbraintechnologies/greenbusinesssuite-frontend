@@ -2,22 +2,38 @@
 
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import useClientPublicForm from "@/hooks/useClientPublicForm";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
+
+import Modal from "@/components/Modal/Modal";
 
 function FormSubmitBtn() {
   const { savingResponses, submitAndCompletePublicForm, clientForm } =
     useClientPublicForm();
 
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const submit = () => {
+    setLoading(true);
     submitAndCompletePublicForm()
       .then((res: any) => {
-        toast.success("Success!");
+        setShowModal(true);
+        setLoading(false);
         setTimeout(() => {
-          window.open(clientForm.redirectUrl, "_self");
-        }, 2000);
+          if (clientForm?.redirectUrl) {
+            if (clientForm?.redirectUrl.startsWith("https://")) {
+              window.open(clientForm.redirectUrl, "_self");
+            } else {
+              window.open("https://" + clientForm.redirectUrl, "_self");
+            }
+          } else {
+            window.close();
+          }
+        }, 3000);
       })
       .catch((e: any) => {
+        setLoading(false);
         toast.error("Error submitting form");
       });
   };
@@ -26,11 +42,43 @@ function FormSubmitBtn() {
     <>
       <CompanyThemedButton
         onPress={submit}
+        isLoading={loading}
         isDisabled={savingResponses}
         className="w-full"
       >
-        {savingResponses ? "Submitting. Please wait..." : "Submit"}
+        {loading ? "Submitting. Please wait..." : "Submit"}
       </CompanyThemedButton>
+
+      {/* confirmation modal */}
+      <Modal
+        isOpen={showModal}
+        setIsOpen={setShowModal}
+        title="Form submission successful"
+      >
+        <div className="px-5 pb-10">
+          <p className="mb-10">
+            Thank you! Your form submission has been successfully sent. You'll
+            be redirect in 3 seconds.
+          </p>
+          <CompanyThemedButton
+            onPress={() => {
+              if (clientForm?.redirectUrl) {
+                if (clientForm?.redirectUrl.startsWith("https://")) {
+                  window.open(clientForm.redirectUrl, "_self");
+                } else {
+                  window.open("https://" + clientForm.redirectUrl, "_self");
+                }
+              } else {
+                window.close();
+              }
+            }}
+            isDisabled={savingResponses}
+            className="w-full mt-5"
+          >
+            All done
+          </CompanyThemedButton>
+        </div>
+      </Modal>
     </>
   );
 }
