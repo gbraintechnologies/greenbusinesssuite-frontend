@@ -12,6 +12,7 @@ import SetupLoader from "@/components/SetupLoader/SetupLoader";
 import { notFound } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
+import SessionExpiredModal from "@/components/GlobalModal/GlobalModal";
 
 interface layoutProps {
   children: React.ReactNode;
@@ -106,5 +107,11 @@ export default function Layout(props: layoutProps) {
     );
   }
 
-  return <Suspense>{children}</Suspense>;
+  return (
+    <Suspense>
+      <SessionExpiredModal />
+
+      {children}
+    </Suspense>
+  );
 }

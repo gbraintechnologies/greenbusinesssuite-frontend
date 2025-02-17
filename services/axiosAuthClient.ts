@@ -45,9 +45,6 @@ authApi.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If the error status is 401 and there is no originalRequest._retry flag,
-    // it means the token has expired and we need to refresh it
-    // 403 error means the server understands but refuses to authorize because token is expired
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -106,18 +103,7 @@ authApi.interceptors.response.use(
         })
         .catch((e) => {
           toast.dismiss();
-          toast.warning("Login to continue", {
-            description: "Your session has expired. Please login to continue.",
-          });
-
-          // @ts-ignore
-          // localStorage.clear();
-          // if (Boolean(getTenantID())) {
-          //   window.location.replace(`/${getTenantID()}`);
-          // } else {
-          //   window.location.replace("/");
-          // }
-          // window.location.reload();
+          window.dispatchEvent(new Event("sessionExpired"));
         });
     }
 

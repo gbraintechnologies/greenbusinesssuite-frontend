@@ -26,6 +26,7 @@ import UserIcon from "@/public/icons/UserIcon";
 import useAuth from "@/hooks/useAuth";
 import FormsNavIcon from "@/public/icons/FormsNavIcon";
 import { LuSend } from "react-icons/lu";
+import SessionExpiredModal from "@/components/GlobalModal/GlobalModal";
 
 export default function AdminLayout({
   children,
@@ -155,6 +156,7 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-[90vh]">
+      <SessionExpiredModal />
       {pathname.includes("auth") ? (
         <>{children}</>
       ) : (
