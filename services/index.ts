@@ -36,6 +36,8 @@ import * as companyAdminBusinessProfile from "./features/companyAdminBusinessPro
 
 import * as external from "./features/externalFormService";
 
+import * as branding from "./features/brandingService";
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   ...localService,
@@ -57,4 +59,5 @@ export default {
   ...businessProfile,
   ...companyAdminBusinessProfile,
   ...external,
+  ...branding,
 };

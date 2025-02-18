@@ -27,6 +27,7 @@ import useAuth from "@/hooks/useAuth";
 import FormsNavIcon from "@/public/icons/FormsNavIcon";
 import { LuSend } from "react-icons/lu";
 import SessionExpiredModal from "@/components/GlobalModal/GlobalModal";
+import { BsBoxSeam } from "react-icons/bs";
 
 export default function AdminLayout({
   children,
@@ -85,6 +86,11 @@ export default function AdminLayout({
       name: "Forms",
       icon: <FormsNavIcon />,
       link: "/forms",
+    },
+    {
+      name: "(Temp) Branding",
+      icon: <BsBoxSeam />,
+      link: "/branding",
     },
     {
       name: "Companies",
