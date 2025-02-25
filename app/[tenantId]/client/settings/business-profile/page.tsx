@@ -250,11 +250,15 @@ function BusinessProfile() {
             <p>Manage your business information here</p>
           </div>
           <ProfileCompleteness
-            completed={isRecordComplete(profile[0], [
-              "socialMediaLink",
-              "tin",
-              "completed",
-            ])}
+            completed={
+              profile && Array.isArray(profile)
+                ? isRecordComplete(profile[0], [
+                    "socialMediaLink",
+                    "tin",
+                    "completed",
+                  ])
+                : false
+            }
           />
         </div>
         <Formik

@@ -13,6 +13,7 @@ function Auth(props: any) {
   useEffect(() => {
     router.push(`/${tenantId}/auth/login`);
   }, []);
+
   return (
     <div className="w-screen h-screen bg-gradient-to-r from-[#64748B1A] via-[#fff] to-[#F8FAFC] background-animate flex items-center justify-center">
       <SetupLoader />

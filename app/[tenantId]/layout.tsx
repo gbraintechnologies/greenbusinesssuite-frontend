@@ -93,11 +93,11 @@ export default function Layout(props: layoutProps) {
     if (!Boolean(auth?.access_token) && pathname === `/${tenantId}`) {
       router.push(`/${tenantId}/auth`);
     }
-  }, [auth, tenantId]);
+  }, [auth, tenantId, companyBranding]);
 
   useEffect(() => {
     addAuthData({ tenantId: tenantId });
-  }, [tenantId]);
+  }, [tenantId, companyBranding]);
 
   if (!Boolean(companyBranding)) {
     return (
