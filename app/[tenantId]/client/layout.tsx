@@ -96,7 +96,7 @@ export default function ClientLayout({
 
     // assign
     setNavigation(temp);
-  }, [company]);
+  }, [company, user]);
 
   if (companyInfo && companyInfo?.status?.toLowerCase() === "inactive") {
     return (
