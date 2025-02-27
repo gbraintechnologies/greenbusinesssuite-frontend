@@ -1,7 +1,7 @@
 "use client";
 
 // Next & React imports
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 
 import SettingsSideNav from "./components/SettingsSideNav";
 
@@ -10,7 +10,6 @@ export default function SettingsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Redirect to login if not authenticated
   return (
     <Suspense>
       <div className="w-full h-full">

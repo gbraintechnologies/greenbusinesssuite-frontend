@@ -24,6 +24,7 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
     updateIsTemplate,
     updateDeadline,
     updateIsAnonymous,
+    updateAllowMultipleResponses,
   } = useForm();
 
   useEffect(() => {
@@ -34,10 +35,12 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
   //   return <FieldOptions refetch={refetch} />;
   // }
 
+  console.log("form", form);
+
   const [redirectUrl, setRedirectUrl] = useState(form?.redirectUrl);
 
   return (
-    <div className="bg-white min-h-[100vh]  border-l-2 border-gray-200 p-3">
+    <div className="bg-white min-h-[100vh]   p-3">
       <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
         <button
           onClick={() => setActiveTab("general")}
@@ -163,6 +166,34 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
                 aria-hidden="true"
                 className={`${
                   form?.isAnonymous ? "translate-x-6" : "translate-x-0"
+                }
+            pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+              />
+            </Switch>
+          </div>
+          {/* multiple responses: for private forms */}
+          <div className="bg-[#F8FAFC] py-3 mt-5 px-5  rounded-lg flex gap-3 items-center justify-between">
+            <div>
+              <p className="font-medium text-base">Allow Multiple Responses</p>{" "}
+              <p className="text-xs font-light text-gray-500">
+                Allow a single client to submit multple responses to the form
+              </p>
+            </div>
+            <Switch
+              checked={form?.multipleForms}
+              onChange={() => {
+                //  set form as template
+                updateAllowMultipleResponses(!form?.multipleForms);
+              }}
+              className={`${
+                form?.multipleForms ? "bg-primary-green" : "bg-gray-500"
+              }
+          relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
+            >
+              <span
+                aria-hidden="true"
+                className={`${
+                  form?.multipleForms ? "translate-x-6" : "translate-x-0"
                 }
             pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
               />

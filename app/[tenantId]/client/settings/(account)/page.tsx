@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 import Modal from "@/components/Modal/Modal";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+
 import useUser from "@/hooks/useUser";
 
 //

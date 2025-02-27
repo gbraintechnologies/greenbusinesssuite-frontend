@@ -57,7 +57,7 @@ function FormEditing(props: any) {
   }
 
   return (
-    <div className="w-full min-h-[100vh] flex  justify-between">
+    <div className="w-full min-h-[100vh] flex justify-between">
       <div className="w-[76%] min-h-screen">
         {view === "builder" && (
           <Builder
@@ -70,7 +70,7 @@ function FormEditing(props: any) {
         {view === "connect" && <Connect />}
       </div>
 
-      <div className="w-[24%] overflow-y-scroll no-scrollbar fixed right-1">
+      <div className="w-[24%] bg-white max-h-[100vh] pb-32   border-l-2 border-gray-200 fixed    right-4 overflow-y-scroll ">
         <GeneralFormSettings
           activeTab={activeTab}
           setActiveTab={setActiveTab}

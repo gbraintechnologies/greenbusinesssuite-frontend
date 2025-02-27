@@ -93,6 +93,11 @@ export const FormProvider = ({ children }) => {
     updateRemoteForm({ ...form, isAnonymous: isAnonymous });
   };
 
+  const updateAllowMultipleResponses = (allowMultipleResponses) => {
+    setForm((prev) => ({ ...prev, multipleForms: allowMultipleResponses }));
+    updateRemoteForm({ ...form, multipleForms: allowMultipleResponses });
+  };
+
   const updateActiveField = (section, data) => {
     if (!isEmpty(form)) {
       services
@@ -276,6 +281,7 @@ export const FormProvider = ({ children }) => {
         activeField,
         setActiveField,
         updateActiveField,
+        updateAllowMultipleResponses,
         view,
         setView,
         updateRedirectUrl,
