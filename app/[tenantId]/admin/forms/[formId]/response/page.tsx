@@ -92,9 +92,9 @@ const page = (props: any) => {
     isLoading: userResponseLoading,
     refetch,
   } = useQuery({
-    queryKey: ["form", userId, formID],
-    queryFn: services.retrieveFormUserResponses(userId, formID),
-    enabled: Boolean(formID && userId),
+    queryKey: ["form response", userId, formID],
+    queryFn: services.getFormUserResponseById(responseId!),
+    enabled: !!responseId,
   });
 
   // anonymous response
@@ -109,7 +109,7 @@ const page = (props: any) => {
   useEffect(() => {
     if (!!form && !!formUserResponse) {
       setMergedForm(
-        mergeForm(formUserResponse[0]?.id, form, formUserResponse[0]?.inputData)
+        mergeForm(formUserResponse?.id, form, formUserResponse?.inputData)
       );
     }
     if (!!form && !!anonResponse) {

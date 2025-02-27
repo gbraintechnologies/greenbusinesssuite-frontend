@@ -41,8 +41,6 @@ const ResponseDataTable: React.FC<Props> = ({
   exportToExcel,
   form,
 }) => {
-  const [aggregatedResponses, setAggregatedResponses] = useState([]);
-
   const [activeResponseId, setActiveResponseId] = useState<any>();
 
   const { auth } = useAuth();
@@ -107,20 +105,15 @@ const ResponseDataTable: React.FC<Props> = ({
     try {
       setPdfGenerating(true);
       setActiveResponseId(responseId);
-      const resData = await services.retrieveFormUserResponseRaw(
-        userData?.id,
-        form?.id
-      );
+
+      const resData = await services.retrieveFormUserResponseRaw(responseId);
 
       if (resData) {
-        console.log("response id ", responseId);
-        console.log("form ", form);
-        console.log("res data input data", resData[0]?.inputData);
-        const mergedForm = mergeForm(responseId, form, resData[0]?.inputData);
+        const mergedForm = mergeForm(responseId, form, resData);
 
-        console.log("merged form", mergedForm);
-
-        renderToHiddenElement(mergedForm, userData, responseId);
+        renderToHiddenElement(mergedForm, userData, resData?.id);
+      } else {
+        throw new Error("No data found");
       }
     } catch (error) {
       toast.error("An error occurred while generating PDF");
@@ -352,7 +345,7 @@ const ResponseDataTable: React.FC<Props> = ({
             </Link>
           ) : (
             <Link
-              href={`/${auth?.tenantId}/admin/forms/${form?.id}/response?user=${params.row.userData?.id}`}
+              href={`/${auth?.tenantId}/admin/forms/${form?.id}/response?user=${params.row.userData?.id}&responseId=${params.row.data.id}`}
             >
               <EyeIcon />
             </Link>

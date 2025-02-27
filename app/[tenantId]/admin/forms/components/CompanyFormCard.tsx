@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import services from "@/services";
 import useCompany from "@/hooks/useCompany";
 import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
+import { PiNotePencilBold } from "react-icons/pi";
 
 type Props = {
   form: any;
@@ -80,7 +81,6 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
 
   let color = colors[getRandomInt(0, 4)];
 
-  // TODO:  UPDATE TO FETCH VALUE FROM BACKEND DIRECTLY
   const getFormResponses = async () => {
     const responses = await services.getFormResponsesById(id);
     setFormResponsesCount(responses.data?.content?.length);
@@ -105,27 +105,36 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
               // background: `linear-gradient(45deg, ${color?.a} 0%, ${color?.b} 100%)`,
             }
           }
-          className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          className={`flex relative  bg-gradient-to-br from-indigo-950 to bg-gray-900  w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >
-          <FormPreviewIcon />
-        </button>
-        <div className="p-3">
-          <div className="text-xs my-2">
+          <div className="opacity-10 absolute scale-150 top-[35%] left-[35%]">
+            <FormPreviewIcon />
+          </div>
+          <div className=" text-xs my-2 absolute top-2 left-4 flex flex-col items-start justify-start gap-2">
             {isAnonymous ? (
-              <span className="rounded-full text-orange-600 bg-orange-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+              <span className="rounded-full text-white bg-orange-600 font-medium   py-1 px-4 flex items-center gap-1 w-fit">
                 <IoLockOpenOutline /> Public
               </span>
             ) : (
-              <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+              <span className="rounded-full text-white bg-indigo-600 font-medium   py-1 px-4 flex items-center gap-1 w-fit">
                 <IoLockClosedOutline /> Protected
               </span>
             )}
+            <span>
+              {form?.multipleForms && (
+                <span className="rounded-full truncate text-white bg-fuchsia-600 font-normal py-1 px-4 flex items-center gap-1 w-fit">
+                  <PiNotePencilBold /> Allows Multiple Responses
+                </span>
+              )}
+            </span>
           </div>
+        </button>
+        <div className="p-3 flex flex-col justify-between">
           <button
             onClick={() => {
               router.push(`/${company?.company_identifier}/admin/forms/${id}`);
             }}
-            className="text-lg w-full text-left font-medium"
+            className="text-lg w-full text-left font-semibold"
           >
             {name?.replace(/"/g, " ")}
           </button>
@@ -148,7 +157,7 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
+                <Menu.Items className="absolute z-[999999]  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
                   {options.map((option: any, idx: any) => {
                     return (
                       <Menu.Item>

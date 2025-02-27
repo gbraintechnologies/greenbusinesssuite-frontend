@@ -1,8 +1,8 @@
 const FormPreviewIcon = ({ fill }: any) => {
   return (
     <svg
-      width="83"
-      height="45"
+      width="100"
+      height="65"
       viewBox="0 0 83 45"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

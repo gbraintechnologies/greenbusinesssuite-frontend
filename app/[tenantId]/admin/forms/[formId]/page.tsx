@@ -25,6 +25,7 @@ import DatePicker from "@/components/DatePicker/DatePicker";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
+import { PiNotePencilBold } from "react-icons/pi";
 
 function SingleFormCompany(props: any) {
   const params: any = use(props.params);
@@ -49,13 +50,6 @@ function SingleFormCompany(props: any) {
 
   const [limit, setLimit] = useState(20);
 
-  // const handleTabChange = (filter: IFilter) => {
-  //   setActiveFilter(filter);
-  //   setActiveFilterId(filter.id);
-  // };
-
-  //
-
   let formID = params.formId;
 
   //
@@ -66,17 +60,6 @@ function SingleFormCompany(props: any) {
     queryFn: services.getFormByIdDefault(formID),
     enabled: Boolean(formID),
   });
-
-  // useEffect(() => {
-  //   services
-  //     .deleteResponse(4)
-  //     .then((res) => {
-  //       console.log("res", res);
-  //     })
-  //     .catch((e) => {
-  //       console.log("error deleting", e);
-  //     });
-  // }, []);
 
   const {
     data: formResponseData,
@@ -151,6 +134,13 @@ function SingleFormCompany(props: any) {
                 ) : (
                   <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
                     <IoLockClosedOutline /> Protected
+                  </span>
+                )}
+              </span>
+              <span className="text-sm">
+                {form?.multipleForms && (
+                  <span className="rounded-full text-fuchsia-700 bg-fuchsia-600 bg-opacity-10 font-normal py-1 px-4 flex items-center gap-1 w-fit">
+                    <PiNotePencilBold /> Allows Multiple Responses
                   </span>
                 )}
               </span>
