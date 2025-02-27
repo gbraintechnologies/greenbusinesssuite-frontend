@@ -35,8 +35,6 @@ const Page = (props: any) => {
 
   const { companyBranding, setCompanyBranding } = useCompany();
 
-  console.log(" ompan", companyBranding);
-
   const statuses = [
     { id: 2, name: "Active", value: "ACTIVE" },
     { id: 3, name: "Inactive", value: "INACTIVE" },

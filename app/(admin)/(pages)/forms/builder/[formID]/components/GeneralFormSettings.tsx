@@ -200,30 +200,32 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
             </Switch>
           </div>
           {/* Redirect URL */}
-          <div className="bg-[#F8FAFC] py-3 mt-5 px-5  rounded-lg flex gap-3 items-center justify-between">
-            <div>
-              <p className="font-medium text-base">Redirect URL</p>{" "}
-              <p className="text-xs font-light text-gray-500">
-                The website / URL the user should be redirected to after
-                successfully filling a form
-              </p>
-              <input
-                value={redirectUrl}
-                className="w-full mt-4 rounded-xl"
-                placeholder="Redirect URL"
-                onChange={(e) => setRedirectUrl(e.target.value)}
-              />
-              <button
-                onClick={() => {
-                  toast.loading("Please wait...");
-                  updateRedirectUrl(redirectUrl);
-                }}
-                className="mt-3 bg-black text-white px-4 py-2 text-sm  w-full rounded-xl"
-              >
-                Apply
-              </button>
+          {form.isAnonymous && (
+            <div className="bg-[#F8FAFC] py-3 mt-5 px-5  rounded-lg flex gap-3 items-center justify-between">
+              <div>
+                <p className="font-medium text-base">Redirect URL</p>{" "}
+                <p className="text-xs font-light text-gray-500">
+                  The website / URL the user should be redirected to after
+                  successfully filling a form
+                </p>
+                <input
+                  value={redirectUrl}
+                  className="w-full mt-4 rounded-xl"
+                  placeholder="Redirect URL"
+                  onChange={(e) => setRedirectUrl(e.target.value)}
+                />
+                <button
+                  onClick={() => {
+                    toast.loading("Please wait...");
+                    updateRedirectUrl(redirectUrl);
+                  }}
+                  className="mt-3 bg-black text-white px-4 py-2 text-sm  w-full rounded-xl"
+                >
+                  Apply
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
 

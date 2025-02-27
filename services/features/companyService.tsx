@@ -114,7 +114,7 @@ export const editCompanyBranding = (
   categorySpecificModuleIds: string[]
 ) => {
   return defaultMeshApi.put(`/company-branding/update`, {
-    id: id,
+    // id: id,
     tenancyId: tenantId,
     companyId: companyId,
     logo: logo,
