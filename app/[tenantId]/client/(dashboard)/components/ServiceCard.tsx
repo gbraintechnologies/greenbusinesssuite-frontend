@@ -33,7 +33,7 @@ function ServiceCard({ form }: Props) {
   const queryClient = useQueryClient();
 
   const startApplication = () => {
-    toast.error("Creating application. Please wait...");
+    toast.loading("Creating application. Please wait...");
 
     if (form) {
       // CHECK IF DEADLINE OR DATE IS OVER
@@ -88,12 +88,13 @@ function ServiceCard({ form }: Props) {
       services
         .acceptInvite(id, user?.id, Number(company?.id), inputData)
         .then(async (res) => {
+          console.log("res", res);
           toast.success("Successfully started application!");
           // console.log("accept res", res?.data);
           queryClient.invalidateQueries();
           // start application
           router.push(
-            `/${company?.company_identifier}/client/form?id=${form?.id}&company=${company?.id}`
+            `/${company?.company_identifier}/client/form?id=${form?.id}&response=${res.data}`
           );
 
           // send email notification to company admin

@@ -234,7 +234,7 @@ function FormCard({ form: formResponse, type = "uncompleted" }: Props) {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
+                  <Menu.Items className="absolute z-[999999]  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
                     {options &&
                       // @ts-ignore
                       options?.map((option: any, idx: any) => {

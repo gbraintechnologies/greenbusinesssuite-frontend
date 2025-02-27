@@ -106,7 +106,7 @@ export const ClientFormProvider = ({ children }) => {
 
         toast.dismiss();
         toast.success("Saved responses!");
-        router.back();
+
         setFilesToSubmit([]);
       })
       .catch((e) => {

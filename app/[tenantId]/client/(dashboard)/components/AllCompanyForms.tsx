@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //
 import useCompany from "@/hooks/useCompany";
@@ -24,14 +24,18 @@ function AllCompanyForms() {
 
   //pagination
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(8);
 
   //timeline
   const [selectedTimeline, setSelectedTimeline] = useState<
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
-  const { data: forms, isLoading: isFormsLoading } = useQuery({
+  const {
+    data: forms,
+    isLoading: isFormsLoading,
+    refetch,
+  } = useQuery({
     queryKey: [
       "get company forms for ",
       Number(companyData?.id),
@@ -47,13 +51,20 @@ function AllCompanyForms() {
     ),
   });
 
-  const { data: allUserResponses, isLoading: responsesLoading } = useQuery({
+  const {
+    data: allUserResponses,
+    isLoading: responsesLoading,
+    refetch: refetchUserResponses,
+  } = useQuery({
     queryKey: ["all user responses", user?.id],
     queryFn: services.getAllUserFormResponses(user?.id),
     enabled: Boolean(user?.id),
   });
 
-  console.log("responses ", allUserResponses);
+  useEffect(() => {
+    refetch();
+    refetchUserResponses();
+  }, []);
 
   return (
     <div className="mt-5">
@@ -84,8 +95,14 @@ function AllCompanyForms() {
           </div>
           {forms?.content
             ?.filter((item: any) => item.publishStatus == "PUBLISHED")
-            ?.filter((item: any) => item.multipleForms == false).length ===
-          0 ? (
+            ?.filter(
+              (item: any) =>
+                item.multipleForms == true ||
+                allUserResponses.some(
+                  (response: any) =>
+                    parseInt(response.formId) !== parseInt(item.id)
+                )
+            )?.length === 0 ? (
             <div className="flex items-center justify-center flex-col min-h-[20vh]">
               <IoLaptopOutline size={50} />
               <p className="mt-2 text-lg font-semibold">

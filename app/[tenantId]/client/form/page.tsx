@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // service
 import { useQuery } from "@tanstack/react-query";
@@ -26,9 +26,13 @@ import useUser from "@/hooks/useUser";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import FormFillingLoader from "./components/FormFillingLoader";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
+import useCompany from "@/hooks/useCompany";
 
 function FillFormHere() {
   const { user } = useUser();
+
+  const router = useRouter();
+  const { companyBranding: company } = useCompany();
 
   const [swiperInstance, setSwiperInstance] = useState<any>();
   const [swiperPosition, setSwiperPosition] = useState("first");
@@ -136,11 +140,12 @@ function FillFormHere() {
             {/* SAVE AND CONTINUE LATER */}
             <button
               disabled={savingResponses}
-              className=" fixed right-10 z-50 bg-white top-20 px-4 py-2 rounded-full border border-gray-600 text-gray-600"
+              className="fixed right-10 z-50 bg-white top-20 px-4 py-2 rounded-full border border-gray-600 text-gray-600"
               onClick={() => {
                 toast.loading("Saving, please wait...");
 
                 saveResponsesRemote(user?.id);
+                router.push(`/${company?.company_identifier}/client`);
               }}
             >
               Save and continue later

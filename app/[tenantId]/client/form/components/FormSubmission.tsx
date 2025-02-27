@@ -4,15 +4,16 @@ import Modal from "@/components/Modal/Modal";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-import formSubmitted from "@/public/icons/FormSubmitted.svg";
-
-//
 import { toast } from "sonner";
-import Image from "next/image";
+
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import services from "@/services";
+import { HiDocumentCheck } from "react-icons/hi2";
+import useCompany from "@/hooks/useCompany";
+import { Button } from "@nextui-org/button";
+import { useQuery } from "@tanstack/react-query";
 
 function FormSubmission({
   showOnlySubmitButton = false,
@@ -21,9 +22,12 @@ function FormSubmission({
 }) {
   //
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const { companyBranding: company } = useCompany();
 
   // succes modal
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   //
   const router = useRouter();
@@ -36,8 +40,108 @@ function FormSubmission({
     submitAndCompleteForm,
     savingResponses,
     clientForm,
+    removeClientForm,
     setSavingResponses,
   } = useClientForm();
+
+  const { data: form } = useQuery({
+    queryKey: ["form", clientForm.id],
+    queryFn: services.getFormById(clientForm?.id),
+    enabled: Boolean(clientForm?.id) && Boolean(user),
+  });
+
+  const startAnotherApplication = () => {
+    toast.success("Creating application. Please wait...");
+
+    setLoading(true);
+
+    if (form) {
+      // CHECK IF DEADLINE OR DATE IS OVER
+
+      if (form?.deadline !== null) {
+        if (new Date() > new Date(form?.deadline)) {
+          setLoading(false);
+          toast.error("The deadline for applying to this sevice is over");
+          return;
+        }
+      }
+
+      // STRIP DATA TO IDS AND REPONSES
+      // input data should contain all the form sections for reconstruction
+      // @ts-ignore
+      let formSections = [];
+
+      for (let i = 0; i < form?.formSections?.length; i++) {
+        let section = form?.formSections[i];
+
+        // SKIP DELETED SECTIONS
+        if (!section?.isDeleted) {
+          let formFields = [];
+          for (let j = 0; j < section?.formFields?.length; j++) {
+            let field = section?.formFields[j];
+            formFields.push({
+              // id: field?.id,
+              response: field?.response ? field?.response : "",
+              formFieldId: field?.id,
+              fieldName: field?.name,
+              isStatisticalField: field?.isStatisticalField
+                ? field?.isStatisticalField
+                : false,
+              statisticalFunction: field?.statisticalFunction
+                ? field?.statisticalFunction
+                : "",
+              displayType: field?.displayType ? field?.displayType : "",
+            });
+          }
+          formSections.push({
+            // id: section?.id,
+            formSectionId: section?.id,
+            formDataFields: formFields,
+          });
+        }
+      }
+
+      // stripping out data under formsections and form fields
+      let inputData = {
+        formSections: formSections,
+      };
+      // ASSIGN TO USER UPON LOGIN THEN CLEAR SESSION STORAGE
+      services
+        .acceptInvite(form?.id, user?.id, Number(company?.id), inputData)
+        .then(async (res) => {
+          toast.success("Successfully started application!");
+
+          setLoading(false);
+          removeClientForm();
+
+          // start application
+          router.push(
+            `/${company?.company_identifier}/client/form?id=${form?.id}&response=${res.data}`
+          );
+
+          // send email notification to company admin
+          await services
+            .sendFormEmailNotification(
+              user?.id,
+              Number(company?.id),
+              Number(form?.id)
+            )
+            .then((res: any) => {
+              // console.log("email sent ", res);
+            })
+            .catch((error: any) => {
+              // console.log("Error ", error);
+            });
+        })
+        .catch((e: any) => {
+          toast.error(
+            "There was an error processing your invite to this form. The form is either unaccessible or you have already accepted this form."
+          );
+          setLoading(false);
+          console.log("error accepting form", e);
+        });
+    }
+  };
 
   const finish = () => {
     toast.dismiss();
@@ -120,7 +224,7 @@ function FormSubmission({
         {showOnlySubmitButton ? (
           <CompanyThemedButton
             className="bg-black text-white px-4 rounded-lg py-2"
-            onClick={() => {
+            onPress={() => {
               setShowConfirmationModal(true);
             }}
           >
@@ -136,7 +240,7 @@ function FormSubmission({
             </button>
             <CompanyThemedButton
               className="bg-black text-white px-4 rounded-lg py-2"
-              onClick={() => {
+              onPress={() => {
                 setShowConfirmationModal(true);
               }}
             >
@@ -173,7 +277,7 @@ function FormSubmission({
             <CompanyThemedButton
               disabled={savingResponses}
               className=" disabled:bg-gray-700 disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-              onClick={() => {
+              onPress={() => {
                 finish();
               }}
             >
@@ -189,33 +293,47 @@ function FormSubmission({
         title=""
         hideClose={true}
       >
-        <div className="flex -mt-12 flex-col gap-10 items-center justify-center">
-          <Image
-            src={formSubmitted}
-            alt="form submitted"
-            width={300}
-            className="w-full"
-            height={200}
-          />
+        <div className="flex -mt-12 flex-col gap-10 items-center justify-center pb-10">
+          <div
+            className="min-h-[18rem] w-full flex items-center justify-center"
+            style={{ backgroundColor: company?.color }}
+          >
+            <div className="w-40 h-40 bg-white bg-opacity-10 rounded-full flex items-center justify-center">
+              <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center">
+                <HiDocumentCheck size={50} />
+              </div>
+            </div>
+          </div>
           <div className="px-5 flex flex-col items-center text-center justify-center text-[#334155]">
-            <h4 className="text-center mx-auto text-xl font-semibold mb-4">
+            <h4 className="text-center mx-auto text-2xl font-semibold mb-1">
               {" "}
-              Your form submission was successful
+              Submission Successful
             </h4>
             <p className="text-sm font-light w-[70%] text-gray-700">
-              Efficiency, Personalization, and Insights Await as You Import and
-              Harness Customer Data for Strategic Growth
+              Your form submission was successful and has been sent to the
+              company.
             </p>
           </div>
-
-          <CompanyThemedButton
-            className="bg-black py-3 text-center w-[80%] mb-10  text-white px-4 hover:opacity-95 rounded-xl"
-            onClick={() => {
-              router.back();
-            }}
-          >
-            Done
-          </CompanyThemedButton>
+          <div className="flex items-center gap-4 w-[90%]">
+            {clientForm?.multipleForms && (
+              <Button
+                isDisabled={loading}
+                isLoading={loading}
+                onPress={startAnotherApplication}
+                className="w-full bg-white rounded-xl border border-gray-200"
+              >
+                {loading ? "Please wait..." : "Submit another response"}
+              </Button>
+            )}
+            <CompanyThemedButton
+              className="bg-black py-3 text-center w-full  text-white px-4 hover:opacity-95 rounded-xl"
+              onPress={() => {
+                router.back();
+              }}
+            >
+              Done
+            </CompanyThemedButton>
+          </div>
         </div>
       </Modal>
     </div>
