@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import RenameForm from "../actions/RenameForm";
 import services from "@/services";
 import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
-import { PiEye, PiEyeSlash } from "react-icons/pi";
+import { PiEye, PiEyeSlash, PiNotePencilBold } from "react-icons/pi";
 
 type Props = {
   form: any;
@@ -164,15 +164,29 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                   router.push(`/forms/${id}`);
                 }
           }
-          style={
-            {
-              // backgroundColor: color?.a,
-              // background: `linear-gradient(45deg, ${color?.a} 0%, ${color?.b} 100%)`,
-            }
-          }
-          className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          className={`flex relative  bg-gradient-to-br from-indigo-950 to bg-gray-900  w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >
-          <FormPreviewIcon />
+          <div className="opacity-10 absolute scale-150 top-[35%] left-[35%]">
+            <FormPreviewIcon />
+          </div>
+          <div className=" text-xs my-2 absolute top-2 left-4 flex flex-col items-start justify-start gap-2">
+            {isAnonymous ? (
+              <span className="rounded-full text-white bg-orange-600 font-medium   py-1 px-4 flex items-center gap-1 w-fit">
+                <IoLockOpenOutline /> Public
+              </span>
+            ) : (
+              <span className="rounded-full text-white bg-indigo-600 font-medium   py-1 px-4 flex items-center gap-1 w-fit">
+                <IoLockClosedOutline /> Protected
+              </span>
+            )}
+            <span>
+              {form?.multipleForms && (
+                <span className="rounded-full truncate text-white bg-fuchsia-600 font-normal py-1 px-4 flex items-center gap-1 w-fit">
+                  <PiNotePencilBold /> Allows Multiple Responses
+                </span>
+              )}
+            </span>
+          </div>
         </button>
         <div className="p-3">
           <button

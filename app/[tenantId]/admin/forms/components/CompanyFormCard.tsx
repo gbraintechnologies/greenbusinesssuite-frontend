@@ -99,12 +99,6 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
           onClick={() =>
             router.push(`/${company?.company_identifier}/admin/forms/${id}`)
           }
-          style={
-            {
-              // backgroundColor: color?.a,
-              // background: `linear-gradient(45deg, ${color?.a} 0%, ${color?.b} 100%)`,
-            }
-          }
           className={`flex relative  bg-gradient-to-br from-indigo-950 to bg-gray-900  w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >
           <div className="opacity-10 absolute scale-150 top-[35%] left-[35%]">
