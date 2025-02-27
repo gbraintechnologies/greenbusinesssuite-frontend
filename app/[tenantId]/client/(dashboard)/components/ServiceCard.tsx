@@ -140,7 +140,7 @@ function ServiceCard({ form }: Props) {
             onClick={startApplication}
             className="mt-5 text-sm hover:text-black text-gray-600 py-2 rounded-xl flex w-full gap-3 items-center "
           >
-            Start Application
+            Start New Application
             <BsArrowRight />
           </button>
         </div>

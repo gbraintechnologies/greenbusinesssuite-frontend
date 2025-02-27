@@ -23,7 +23,7 @@ function CompletedForms({
             <div>
               <LoadingIcon />
               <p className="mt-2 text-xs text-gray-500">
-                Fetching all applications
+                Fetching all complete applications
               </p>
             </div>
           </div>

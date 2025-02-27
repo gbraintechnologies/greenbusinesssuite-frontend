@@ -38,61 +38,48 @@ function FillFormHere() {
 
   let formId = search.get("id");
 
-  let companyId = search.get("company");
+  let responseId = search.get("response");
 
   // GET USER RESPONSE
   const {
-    data: formUserResponse,
+    data: formResponse,
     isLoading,
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["form", user?.id, formId],
-    queryFn: services.retrieveFormUserResponses(user?.id, formId),
-    enabled: Boolean(formId && user?.id),
+    queryKey: ["form response", responseId],
+    queryFn: services.getFormUserResponseById(responseId!),
+    enabled: Boolean(responseId),
   });
 
   // GET ALL FORM DETAILS
-  const { data: formData } = useQuery({
+  const { data: formData, refetch: formRefectch } = useQuery({
     queryKey: ["form", formId],
     queryFn: services.getFormById(formId),
     enabled: Boolean(formId) && Boolean(user),
   });
 
-  const [mergedForm, setMergedForm] = useState(null);
-
   // refetch user response and merge on mount
   useEffect(() => {
     refetch();
+    formRefectch();
+    selectClientForm(null);
   }, []);
 
   //
-  useEffect(() => {
-    if (!isRefetching && formData && formUserResponse) {
-      setMergedForm(
-        mergeForm(
-          formUserResponse[0]?.id,
-          formData,
-          formUserResponse[0]?.inputData
-        )
-      );
-    }
-  }, [isRefetching, formData, formUserResponse]);
 
   // store form in LS
   const { selectClientForm, clientForm, saveResponsesRemote, savingResponses } =
     useClientForm();
 
   useEffect(() => {
-    if (Boolean(mergedForm) && companyId && !Boolean(clientForm)) {
+    if (!isRefetching && formData && formResponse) {
       selectClientForm({
-        // @ts-ignore
-        ...mergedForm,
-        companyId: companyId,
+        ...mergeForm(formResponse.id, formData, formResponse?.inputData),
         isCompleted: false,
       });
     }
-  }, [mergedForm, companyId]);
+  }, [isRefetching, formData, formResponse]);
 
   const [activeSection, setActiveSection] = useState(null);
 
@@ -107,8 +94,6 @@ function FillFormHere() {
       });
     }
   };
-
-  console.log("cient form merged", clientForm);
 
   // SKELETON LOADING FOR WHEN FORM ISN'T READY
   if (clientForm && clientForm?.formSections) {

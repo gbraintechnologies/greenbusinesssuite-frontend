@@ -10,6 +10,10 @@ import UnCompletedForms from "../components/UncompletedForms";
 import UncompletedCard from "../components/UncompletedCard";
 
 //
+
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+
+//
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
@@ -20,6 +24,7 @@ import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import AllCompanyForms from "../components/AllCompanyForms";
+import { SlArrowDown } from "react-icons/sl";
 
 const Page = () => {
   const [filters] = useState([
@@ -43,10 +48,15 @@ const Page = () => {
   //
   const { removeClientForm } = useClientForm();
 
+  // animation
+  const [parent] = useAutoAnimate();
+
   // current client
   const { user } = useUser();
 
   const [userStatus, setUserStatus] = useState("");
+
+  const [showAllUncomplete, setShowAllUncomplete] = useState(false);
 
   const [activeFilter, setActiveFilter] = useState({
     id: 1,
@@ -54,115 +64,35 @@ const Page = () => {
     value: "completed",
   });
 
+  useEffect(() => {
+    removeClientForm();
+  }, []);
+
   const { data: formsStats, isLoading: areStatsLoading } = useQuery({
     queryKey: ["get forms statistics for user", user?.id],
     queryFn: services.getFormStatisticsForUser(user?.id),
     enabled: Boolean(user?.id),
   });
 
-  // const { data: allUserForms, isLoading: allUserFormsLoading } = useQuery({
-  //   queryKey: ["all user forms", user?.id],
-  //   queryFn: services.getAllFormsByUserId(user?.id),
-  //   enabled: Boolean(user?.id),
-  // });
-
   const {
-    data: uncompletedFormsIds,
-    isLoading: areUncompletedFormsIdsLoading,
-    refetch: refetchUncompleted,
+    data: completedFormResponses,
+    isLoading: completedFormResponsesLoading,
+    refetch: refetchCompleted,
   } = useQuery({
-    queryKey: ["get uncompleted forms id", user?.id],
-    queryFn: services.getUncompletedFormIdsByUserId(user?.id),
+    queryKey: ["user completed forms", user?.id],
+    queryFn: services.getUserCompletedForms(user?.id),
     enabled: Boolean(user?.id),
   });
 
   const {
-    data: completedFormsIds,
-    isLoading: areCompletedFormsIdLoading,
-    refetch,
+    data: uncompletedFormResponses,
+    isLoading: uncompletedFormResponsesLoading,
+    refetch: refetchUnCompleted,
   } = useQuery({
-    queryKey: ["get completed forms by user", user?.id],
-    queryFn: services.getCompletedFormIdsByUserId(user?.id),
+    queryKey: ["user uncompleted forms", user?.id],
+    queryFn: services.getUserUncompletedForms(user?.id),
     enabled: Boolean(user?.id),
   });
-
-  const [completedForms, setCompletedForms] = useState([]);
-  const [uncompletedForms, setUncompletedForms] = useState([]);
-
-  const [completedFormsLoading, setCompletedFormsLoading] = useState(false);
-
-  const [uncompletedFormsLoading, setUncompletedFormsLoading] = useState(false);
-
-  async function getResponseForForm(id: number, type: string) {
-    let form = await services.getFormByIdRawForUser(id);
-    let response = await services.retrieveFormUserResponseRaw(user?.id, id);
-
-    let newForm = mergeForm(
-      response[0]?.id,
-      form?.data,
-      response[0]?.inputData
-    );
-
-    if (type === "completed") {
-      setCompletedForms((prev: any) => {
-        if (!prev.some((f: any) => f.id === newForm.id)) {
-          return [...prev, newForm];
-        }
-        return prev;
-      });
-    } else {
-      setUncompletedForms((prev: any) => {
-        if (!prev.some((f: any) => f.id === newForm.id)) {
-          return [...prev, newForm];
-        }
-        return prev;
-      });
-    }
-  }
-
-  // completed forms ids processing
-  useEffect(() => {
-    if (completedFormsIds) {
-      setCompletedForms([]);
-      setCompletedFormsLoading(true);
-
-      // Create a new array for completed forms
-      const formsPromises = completedFormsIds.map((id: any) =>
-        getResponseForForm(id, "completed")
-      );
-
-      Promise.all(formsPromises).finally(() => {
-        setCompletedFormsLoading(false);
-      });
-    }
-  }, [completedFormsIds]);
-
-  useEffect(() => {
-    if (uncompletedFormsIds) {
-      setUncompletedForms([]);
-
-      setUncompletedFormsLoading(true);
-
-      // Create a new array for completed forms
-      const formsPromises = uncompletedFormsIds.map((id: any) =>
-        getResponseForForm(id, "uncompleted")
-      );
-
-      Promise.all(formsPromises).finally(() => {
-        setUncompletedFormsLoading(false);
-      });
-    }
-  }, [completedFormsIds]);
-
-  useEffect(() => {
-    // Deselect any active form
-    setCompletedForms([]);
-    setUncompletedForms([]);
-    removeClientForm();
-    refetch();
-    refetchUncompleted();
-    // window.location.reload();
-  }, []);
 
   useEffect(() => {
     setUserStatus(user?.user_status);
@@ -173,15 +103,45 @@ const Page = () => {
       <LoadingIcon />
     </div>
   ) : (
-    <div className="px-5 pb-20 pt-5 min-h-screen bg-[#F8FAFC]">
+    <div ref={parent} className="px-5 pb-20 pt-5 min-h-screen bg-[#F8FAFC]">
       <div className="text-slate-900 font-semibold text-xl mb-2">Services</div>
 
-      <div className="mt-4 grid grid-col-1 gap-3">
-        {uncompletedFormsIds &&
-          uncompletedForms?.map((form: any) => {
-            return <UncompletedCard key={form?.id} form={form} />;
-          })}
+      <div ref={parent} className="mt-4 grid grid-col-1 gap-3">
+        {uncompletedFormResponses?.length >= 1 && !showAllUncomplete ? (
+          <div className="flex flex-col items-center justify-center">
+            <UncompletedCard
+              key={uncompletedFormResponses[0]?.id}
+              form={uncompletedFormResponses[0]}
+            />
+            {uncompletedFormResponses.length > 1 && (
+              <button
+                onClick={() => setShowAllUncomplete(!showAllUncomplete)}
+                className="text-xs font-medium text-center text-gray-600 flex items-center gap-2 bg-white px-7 -mt-2 shadow-xl border border-gray-100 w-fit py-2 rounded-xl"
+              >
+                {" "}
+                <SlArrowDown size={15} />
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3 items-center justify-center">
+            {uncompletedFormResponses?.map((form: any) => {
+              return <UncompletedCard key={form?.id} form={form} />;
+            })}
+            {uncompletedFormResponses?.length > 1 && (
+              <button
+                onClick={() => setShowAllUncomplete(!showAllUncomplete)}
+                className="text-xs font-medium text-center text-gray-600 flex items-center gap-2 bg-white px-7 -mt-5 shadow-xl border border-gray-100 w-fit py-2 rounded-xl"
+              >
+                {" "}
+                <SlArrowDown className="rotate-180" size={15} />
+              </button>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* STATISTICS */}
       <div className="mt-6">
         <StatsBlock
           stats={[
@@ -211,20 +171,17 @@ const Page = () => {
         </div>
         <div className="mt-4">
           {activeFilter.id === 0 && <AllCompanyForms />}
+
           {activeFilter.id === 1 && (
             <CompletedForms
-              forms={completedForms}
-              isFormsLoading={
-                areCompletedFormsIdLoading || completedFormsLoading
-              }
+              forms={completedFormResponses}
+              isFormsLoading={completedFormResponsesLoading}
             />
           )}
           {activeFilter.id === 2 && (
             <UnCompletedForms
-              forms={uncompletedForms}
-              isFormsLoading={
-                areUncompletedFormsIdsLoading || uncompletedFormsLoading
-              }
+              forms={uncompletedFormResponses}
+              isFormsLoading={uncompletedFormResponsesLoading}
             />
           )}
         </div>

@@ -24,7 +24,7 @@ function AllCompanyForms() {
 
   //pagination
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
 
   //timeline
   const [selectedTimeline, setSelectedTimeline] = useState<
@@ -47,25 +47,13 @@ function AllCompanyForms() {
     ),
   });
 
-  const {
-    data: completedFormsIds,
-    isLoading: areCompletedFormsIdLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["get completed forms by user", user?.id],
-    queryFn: services.getCompletedFormIdsByUserId(user?.id),
+  const { data: allUserResponses, isLoading: responsesLoading } = useQuery({
+    queryKey: ["all user responses", user?.id],
+    queryFn: services.getAllUserFormResponses(user?.id),
     enabled: Boolean(user?.id),
   });
 
-  const {
-    data: uncompletedFormsIds,
-    isLoading: areUncompletedFormsIdsLoading,
-    refetch: refetchUncompleted,
-  } = useQuery({
-    queryKey: ["get uncompleted forms id", user?.id],
-    queryFn: services.getUncompletedFormIdsByUserId(user?.id),
-    enabled: Boolean(user?.id),
-  });
+  console.log("responses ", allUserResponses);
 
   return (
     <div className="mt-5">
@@ -95,10 +83,9 @@ function AllCompanyForms() {
             </div>
           </div>
           {forms?.content
-            ?.filter((item: any) => !uncompletedFormsIds.includes(item?.id))
-            ?.filter((item: any) => !completedFormsIds.includes(item?.id))
             ?.filter((item: any) => item.publishStatus == "PUBLISHED")
-            .length === 0 ? (
+            ?.filter((item: any) => item.multipleForms == false).length ===
+          0 ? (
             <div className="flex items-center justify-center flex-col min-h-[20vh]">
               <IoLaptopOutline size={50} />
               <p className="mt-2 text-lg font-semibold">
@@ -114,13 +101,16 @@ function AllCompanyForms() {
               <div className="grid grid-cols-4 gap-5">
                 {forms &&
                   forms?.content
-                    ?.filter(
-                      (item: any) => !uncompletedFormsIds.includes(item?.id)
-                    )
-                    ?.filter(
-                      (item: any) => !completedFormsIds.includes(item?.id)
-                    )
                     ?.filter((item: any) => item.publishStatus == "PUBLISHED")
+                    ?.filter(
+                      (item: any) =>
+                        item.multipleForms == true ||
+                        allUserResponses.some(
+                          (response: any) =>
+                            parseInt(response.formId) !== parseInt(item.id)
+                        )
+                    )
+
                     .map((form: any) => {
                       return <ServiceCard key={form.id} form={form} />;
                     })}

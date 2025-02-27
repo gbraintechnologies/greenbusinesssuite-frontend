@@ -25,21 +25,20 @@ function FillFormHere() {
 
   //
   const search = useSearchParams();
-
   let formId = search.get("id");
 
-  let companyId = search.get("company");
+  let responseId = search.get("response");
 
   // GET USER RESPONSE
   const {
-    data: formUserResponse,
+    data: formResponse,
     isLoading,
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["form", user?.id, formId],
-    queryFn: services.retrieveFormUserResponses(user?.id, formId),
-    enabled: Boolean(formId && user?.id),
+    queryKey: ["form response", responseId],
+    queryFn: services.getFormUserResponseById(responseId!),
+    enabled: Boolean(responseId),
   });
 
   // GET ALL FORM DETAILS
@@ -56,32 +55,27 @@ function FillFormHere() {
     refetch();
   }, []);
 
+  useEffect(() => {
+    if (!isRefetching && formData && formResponse) {
+      setMergedForm(
+        mergeForm(formResponse.id, formData, formResponse?.inputData)
+      );
+    }
+  }, [isRefetching, formData, formResponse]);
+
   //
   useEffect(() => {
-    if (!isRefetching && formData && formUserResponse) {
-      setMergedForm(
-        mergeForm(
-          formUserResponse[0]?.id,
-          formData,
-          formUserResponse[0]?.inputData
-        )
-      );
+    if (Boolean(mergedForm) && responseId && !Boolean(clientForm)) {
       selectClientForm({
         // @ts-ignore
-        ...mergeForm(
-          formUserResponse[0]?.id,
-          formData,
-          formUserResponse[0]?.inputData
-        ),
-        companyId: companyId,
+        ...mergedForm,
         isCompleted: false,
       });
     }
-  }, [isRefetching, formData, formUserResponse]);
+  }, [mergedForm, responseId]);
 
   // store form in LS
-  const { selectClientForm, clientForm, saveResponsesRemote, savingResponses } =
-    useClientForm();
+  const { selectClientForm, clientForm } = useClientForm();
 
   const [activeSection, setActiveSection] = useState(null);
 
