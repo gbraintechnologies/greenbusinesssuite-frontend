@@ -66,6 +66,8 @@ const page = () => {
     enabled: Boolean(selectedFormId),
   });
 
+  console.log("user form ids", userFormsIds);
+
   async function getFormDetails(id: number) {
     let form = await services.getFormByIdRawForUser(id);
 
@@ -88,15 +90,12 @@ const page = () => {
     try {
       setResponsesLoading(true);
 
-      const data = await services.retrieveFormUserResponseRaw(
-        userId,
-        selectedFormId
-      );
+      const data = await services.retrieveFormUserResponseRaw(userId);
 
       let mergedForm =
         selectedFormId &&
         data &&
-        mergeForm(data[0]?.id, selectedForm, data[0]?.inputData);
+        mergeForm(data?.id, selectedForm, data?.inputData);
 
       setMergedForm(mergedForm);
     } catch (error) {
@@ -183,7 +182,7 @@ const page = () => {
           ]}
         />
       </div>
-      <div className="mt-5 max-w-md hide-input-borders">
+      {/* <div className="mt-5 max-w-md hide-input-borders">
         <Dropdown>
           <DropdownTrigger>
             <button className="border min-w-48 outline-none shadow-md border-[#E2E8F0] bg-slate-50 py-0  rounded-lg my-2">
@@ -215,34 +214,9 @@ const page = () => {
             ))}
           </DropdownMenu>
         </Dropdown>
+      </div> */}
 
-        {/* <Autocomplete
-          variant="flat"
-          className="bg-white flex mt-3 items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
-          placeholder={selectedForm?.name}
-          scrollShadowProps={{
-            isEnabled: false,
-          }}
-          onInputChange={(value) => {
-            console.log("value", value);
-            setSelectedFormId(value);
-          }}
-        >
-          <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
-            {formsList?.map((form: any) => (
-              <AutocompleteItem
-                key={form?.id}
-                value={form?.id}
-                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-              >
-                {form?.name}
-              </AutocompleteItem>
-            ))}
-          </AutocompleteSection>
-        </Autocomplete> */}
-      </div>
-
-      <div className="mt-4">
+      {/* <div className="mt-4">
         {responsesLoading ? (
           <div className="h-[10rem] flex items-center justify-center">
             <LoadingIcon />
@@ -250,7 +224,7 @@ const page = () => {
         ) : (
           <FormResponse mergedForm={mergedForm} ref={pdfRef} />
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

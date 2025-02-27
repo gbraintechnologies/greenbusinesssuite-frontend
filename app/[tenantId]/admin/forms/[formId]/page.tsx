@@ -19,8 +19,7 @@ import ResponseDataTable from "../components/ResponseTable/ResponseDataTable";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import PublishFormButton from "@/app/(admin)/(pages)/forms/builder/PublishFormButton";
 import Analytics from "./_analytics/Analytics";
-import { useQueryState } from "nuqs";
-import { IFilter } from "@/types";
+
 import DatePicker from "@/components/DatePicker/DatePicker";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";

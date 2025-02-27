@@ -3,9 +3,7 @@ import Barchart from "@/components/BarChart/BarChart";
 import BarList from "@/components/BarList/BarList";
 import Donutchart from "@/components/DonutChart/DonutChart";
 import Single from "@/components/Single/Single";
-import React, { useEffect } from "react";
-
-import { LuChartLine } from "react-icons/lu";
+import React from "react";
 
 // display types
 
