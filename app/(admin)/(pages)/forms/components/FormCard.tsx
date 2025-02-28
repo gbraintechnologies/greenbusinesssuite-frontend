@@ -199,7 +199,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
           </button>
           <div className="my-2 flex items-center gap-3 text-xs">
             {/* ANONYMOUS */}
-            <span>
+            {/* <span>
               {isAnonymous ? (
                 <span className="rounded-full text-orange-600 bg-orange-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
                   <IoLockOpenOutline /> Public
@@ -209,7 +209,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                   <IoLockClosedOutline /> Protected
                 </span>
               )}
-            </span>
+            </span> */}
             {/* PUBLISHED STATUS */}
             {/* <span>
                 {publishStatus.toLowerCase() == "published" ? (
@@ -249,7 +249,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
+                <Menu.Items className="absolute z-[99999999]  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
                   {options.map((option: any, idx: any) => {
                     return (
                       <Menu.Item key={idx}>
