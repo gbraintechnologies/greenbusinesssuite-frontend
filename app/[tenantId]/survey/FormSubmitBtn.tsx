@@ -58,7 +58,7 @@ function FormSubmitBtn() {
         <div className="px-5 pb-10">
           <p className="mb-10">
             Thank you! Your form submission has been successfully sent. You'll
-            be redirect in 3 seconds.
+            be redirected in 3 seconds.
           </p>
           <CompanyThemedButton
             onPress={() => {

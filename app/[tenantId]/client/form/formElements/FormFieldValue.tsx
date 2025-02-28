@@ -35,6 +35,7 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
 function FormFieldValue({ field, section, viewOnly }: any) {
+  console.log("field", field);
   // functions
   const {
     saveSingleResponse,
@@ -539,19 +540,20 @@ function FormFieldValue({ field, section, viewOnly }: any) {
               aria-label="Dynamic Actions"
               className="bg-white shadow-sm rounded-lg w-60"
             >
-              {field.choiceValue.map((value: any) => {
-                return (
-                  <DropdownItem
-                    key={value}
-                    onClick={() =>
-                      saveSingleResponse(section?.id, field?.id, value)
-                    }
-                    className="flex hover:bg-gray-100 px-4  items-center flex-row gap-2"
-                  >
-                    <p className="text-base">{value}</p>
-                  </DropdownItem>
-                );
-              })}
+              {field?.choiceValue &&
+                field?.choiceValue?.map((value: any) => {
+                  return (
+                    <DropdownItem
+                      key={value}
+                      onClick={() =>
+                        saveSingleResponse(section?.id, field?.id, value)
+                      }
+                      className="flex hover:bg-gray-100 px-4  items-center flex-row gap-2"
+                    >
+                      <p className="text-base">{value}</p>
+                    </DropdownItem>
+                  );
+                })}
             </DropdownMenu>
           </Dropdown>
         </div>
@@ -570,47 +572,48 @@ function FormFieldValue({ field, section, viewOnly }: any) {
           <p className="mt-2 text-sm">{placeHolder}</p>
 
           <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
-            {field.choiceValue.map((value: any) => {
-              // values user selected
-              let selected =
-                field.response == null || field.response == ""
-                  ? []
-                  : [...field?.response?.split(",")];
+            {field?.choiceValue &&
+              field?.choiceValue?.map((value: any) => {
+                // values user selected
+                let selected =
+                  field.response == null || field.response == ""
+                    ? []
+                    : [...field?.response?.split(",")];
 
-              return (
-                <div className="flex  items-center flex-row gap-2">
-                  <input
-                    className="form-check-input"
-                    disabled={viewOnly}
-                    checked={selected.includes(value)}
-                    onChange={(e) => {
-                      // speical case for checkboxes - using comma to store all values in string
+                return (
+                  <div className="flex  items-center flex-row gap-2">
+                    <input
+                      className="form-check-input"
+                      disabled={viewOnly}
+                      checked={selected.includes(value)}
+                      onChange={(e) => {
+                        // speical case for checkboxes - using comma to store all values in string
 
-                      let update = selected;
+                        let update = selected;
 
-                      if (update.includes(value)) {
-                        update = update.filter(
-                          (item) => item !== e.target.value
+                        if (update.includes(value)) {
+                          update = update.filter(
+                            (item) => item !== e.target.value
+                          );
+                        } else {
+                          update.push(value);
+                        }
+
+                        saveSingleResponse(
+                          section?.id,
+                          field?.id,
+                          update.join(",")
                         );
-                      } else {
-                        update.push(value);
-                      }
+                      }}
+                      key={value}
+                      value={value}
+                      type="checkbox"
+                    />
 
-                      saveSingleResponse(
-                        section?.id,
-                        field?.id,
-                        update.join(",")
-                      );
-                    }}
-                    key={value}
-                    value={value}
-                    type="checkbox"
-                  />
-
-                  <p className="text-base">{value}</p>
-                </div>
-              );
-            })}
+                    <p className="text-base">{value}</p>
+                  </div>
+                );
+              })}
           </div>
         </div>
       );
