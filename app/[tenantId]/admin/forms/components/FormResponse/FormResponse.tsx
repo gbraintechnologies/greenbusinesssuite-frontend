@@ -56,28 +56,31 @@ const renderFormResponse = (formField: any) => {
             disabled
           />
           <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
-            {formField.choiceValue.map((value: any) => {
-              // values user selected
-              let selected =
-                formField.response == null || formField.response == ""
-                  ? []
-                  : [...formField?.response?.split(",")];
+            {formField &&
+              formField?.choiceValue?.map((value: any) => {
+                // values user selected
+                let selected =
+                  formField.response == null || formField.response == ""
+                    ? []
+                    : [...formField?.response?.split(",")];
 
-              return (
-                <div className="flex  items-center flex-row gap-2">
-                  <input
-                    className="form-check-input"
-                    disabled
-                    checked={selected.includes(value)}
-                    key={value}
-                    value={value}
-                    type="checkbox"
-                  />
+                return (
+                  <div className="flex  items-center flex-row gap-2">
+                    <input
+                      className="form-check-input"
+                      disabled
+                      checked={selected.includes(value)}
+                      key={value}
+                      value={value}
+                      type="checkbox"
+                    />
 
-                  <p className="text-sm font-normal text-slate-700">{value}</p>
-                </div>
-              );
-            })}
+                    <p className="text-sm font-normal text-slate-700">
+                      {value}
+                    </p>
+                  </div>
+                );
+              })}
           </div>
         </>
       );

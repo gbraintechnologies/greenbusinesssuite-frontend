@@ -59,6 +59,7 @@ function ProcessForm({ form: data }: { form: any }) {
           for (let j = 0; j < section?.formFields?.length; j++) {
             let field = section?.formFields[j];
             formFields.push({
+              ...field,
               id: field?.id,
               response: "",
               formFieldId: field?.id,

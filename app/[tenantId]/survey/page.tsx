@@ -12,9 +12,9 @@ function Survey() {
 
   const formId = searchParams.get("f");
 
-  const companyId = searchParams.get("c");
+  // const companyId = searchParams.get("c");
 
-  const { data, error } = useQuery({
+  const { data } = useQuery({
     queryKey: ["form", formId],
     queryFn: services.getFormByIdExternal(formId),
     enabled: Boolean(formId),
