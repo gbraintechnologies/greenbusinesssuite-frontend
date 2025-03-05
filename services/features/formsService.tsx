@@ -152,9 +152,7 @@ export const getFormsByUserId = (userId: string | null) => {
     throw new Error("User ID is required");
   }
   return () =>
-    authApi
-      .get(`/forms/response/user/form-ids/${userId}`)
-      .then((res) => res.data);
+    authApi.get(`/forms/response/user/${userId}`).then((res) => res.data);
 };
 
 export const getFormResponseById = (

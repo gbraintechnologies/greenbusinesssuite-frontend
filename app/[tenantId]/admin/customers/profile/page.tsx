@@ -1,4 +1,5 @@
 "use client";
+
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 
@@ -10,18 +11,12 @@ import {
   AutocompleteSection,
 } from "@nextui-org/autocomplete";
 
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@nextui-org/dropdown";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { BiChevronDown } from "react-icons/bi";
+
 import FormResponse from "../../forms/components/FormResponse/FormResponse";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import { IoIosArrowBack } from "react-icons/io";
@@ -33,13 +28,13 @@ const page = () => {
 
   const userId = searchParams.get("id") ? searchParams.get("id") : "";
 
-  const [selectedFormId, setSelectedFormId] = useState<any>();
+  const [selectedFormResponseId, setSelectedFormResponseId] = useState<any>();
 
-  const [formsList, setFormsList] = useState<any>([]);
-
-  const [mergedForm, setMergedForm] = useState<any>();
+  const [formsResponseList, setFormsResponseList] = useState<any>([]);
 
   const [responsesLoading, setResponsesLoading] = useState<boolean>(false);
+
+  const [selectedResponse, setSelectedResponse] = useState<any>();
 
   const pdfRef = React.useRef(null);
 
@@ -49,7 +44,7 @@ const page = () => {
     enabled: Boolean(userId),
   });
 
-  const { data: userFormsIds, isLoading: areFormsLoading } = useQuery({
+  const { data: userForms, isLoading: areUserFormsLoading } = useQuery({
     queryKey: ["get forms for ", Number(userId)],
     queryFn: services.getFormsByUserId(userId),
   });
@@ -60,59 +55,69 @@ const page = () => {
     enabled: Boolean(userId),
   });
 
-  const { data: selectedForm, isLoading } = useQuery({
-    queryKey: ["form", parseInt(selectedFormId)],
-    queryFn: services.getFormById(selectedFormId),
-    enabled: Boolean(selectedFormId),
-  });
+  async function mergeAllResponsesWithForms(response: any) {
+    setResponsesLoading(true);
+    try {
+      let form = await services.getFormByIdRawForUser(response.formId);
 
-  console.log("user form ids", userFormsIds);
-
-  async function getFormDetails(id: number) {
-    let form = await services.getFormByIdRawForUser(id);
-
-    setFormsList((prev: any) => [...prev, form?.data]);
+      if (form) {
+        setFormsResponseList((prev: any) => [
+          ...prev,
+          mergeForm(response?.id, form?.data, response?.inputData),
+        ]);
+      }
+      setResponsesLoading(false);
+    } catch (e) {
+      // console.log("error in merging all responses", e);
+    }
   }
 
   useEffect(() => {
-    if (userFormsIds) {
+    if (userForms) {
       // initialize to 0 to prevent duplicates
-      setFormsList([]);
+      setFormsResponseList([]);
 
       // populate list
-      for (let i = 0; i < userFormsIds?.length; i++) {
-        getFormDetails(userFormsIds[i]);
+      for (let i = 0; i < userForms?.length; i++) {
+        mergeAllResponsesWithForms(userForms[i]);
       }
     }
-  }, [userFormsIds]);
+  }, [userForms]);
 
-  const fetchSelectedFormsResponse = async () => {
-    try {
-      setResponsesLoading(true);
+  // const fetchSelectedFormsResponse = async () => {
+  //   try {
+  //     setResponsesLoading(true);
 
-      const data = await services.retrieveFormUserResponseRaw(userId);
+  //     const formUserResponse = userForms?.find(
+  //       (item: any) => item.formId == selectedFormId
+  //     );
 
-      let mergedForm =
-        selectedFormId &&
-        data &&
-        mergeForm(data?.id, selectedForm, data?.inputData);
+  //     let mergedForm = mergeForm(
+  //       formUserResponse?.id,
+  //       selectedForm,
+  //       formUserResponse?.inputData
+  //     );
 
-      setMergedForm(mergedForm);
-    } catch (error) {
-    } finally {
-      setResponsesLoading(false);
-    }
-  };
+  //     setMergedForm(mergedForm);
+  //   } catch (error) {
+  //   } finally {
+  //     setResponsesLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (!!selectedForm && !isLoading) fetchSelectedFormsResponse();
+  // }, [selectedFormId, selectedForm, isLoading]);
 
   useEffect(() => {
-    if (userFormsIds?.length > 0) {
-      setSelectedFormId(userFormsIds[0]);
+    if (!!selectedFormResponseId) {
+      setSelectedResponse(
+        formsResponseList.find(
+          (item: any) => item.responseId == selectedFormResponseId
+        )
+      );
     }
-  }, [userFormsIds]);
-
-  useEffect(() => {
-    if (!!selectedForm && !isLoading) fetchSelectedFormsResponse();
-  }, [selectedFormId, selectedForm, isLoading]);
+  }, [selectedFormResponseId]);
 
   if (isUserLoading || areStatsLoading) {
     return (
@@ -124,6 +129,7 @@ const page = () => {
       </div>
     );
   }
+
   return (
     <div className="px-5 pb-20 bg-[#F8FAFC] pt-4 min-h-[100vh]">
       <button
@@ -182,8 +188,33 @@ const page = () => {
           ]}
         />
       </div>
-      {/* <div className="mt-5 max-w-md hide-input-borders">
-        <Dropdown>
+      <div className="mt-5 max-w-md hide-input-borders">
+        <Autocomplete
+          isDisabled={formsResponseList < 1}
+          variant="flat"
+          isLoading={responsesLoading}
+          className="bg-white flex items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
+          scrollShadowProps={{
+            isEnabled: false,
+          }}
+          defaultSelectedKey={formsResponseList[0]?.responseId}
+          onSelectionChange={(key) => {
+            setSelectedFormResponseId(key);
+          }}
+        >
+          <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
+            {formsResponseList?.map((form: any) => (
+              <AutocompleteItem
+                key={form?.responseId}
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
+                {form?.name}
+              </AutocompleteItem>
+            ))}
+          </AutocompleteSection>
+        </Autocomplete>
+
+        {/* <Dropdown>
           <DropdownTrigger>
             <button className="border min-w-48 outline-none shadow-md border-[#E2E8F0] bg-slate-50 py-0  rounded-lg my-2">
               <div className="flex gap-2 w-full justify-between items-center py-0 px-3">
@@ -207,24 +238,32 @@ const page = () => {
               <DropdownItem
                 key="view"
                 className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                onClick={() => setSelectedFormId(form?.id)}
+                onPress={() => setSelectedFormId(form?.id)}
               >
                 {form?.name}
               </DropdownItem>
             ))}
           </DropdownMenu>
-        </Dropdown>
-      </div> */}
+        </Dropdown> */}
+      </div>
 
-      {/* <div className="mt-4">
+      <div className="mt-4 mb-4">
+        {selectedResponse?.name && (
+          <div className="bg-white p-4 rounded-xl mb-5">
+            <p>Selected Form Response</p>
+            <h4 className="text-xl font-semibold">
+              {selectedResponse?.name} Response
+            </h4>
+          </div>
+        )}
         {responsesLoading ? (
           <div className="h-[10rem] flex items-center justify-center">
             <LoadingIcon />
           </div>
         ) : (
-          <FormResponse mergedForm={mergedForm} ref={pdfRef} />
+          <FormResponse mergedForm={selectedResponse} ref={pdfRef} />
         )}
-      </div> */}
+      </div>
     </div>
   );
 };

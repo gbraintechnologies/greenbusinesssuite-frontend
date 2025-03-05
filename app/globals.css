@@ -69,6 +69,10 @@ input[type="number"] {
   width: 30em;
 }
 
+.bg-default-100 {
+  @apply !bg-white;
+}
+
 .circle {
   background-image: url("/svg/mesh_backgroundcircle.svg");
   background-repeat: no-repeat;
