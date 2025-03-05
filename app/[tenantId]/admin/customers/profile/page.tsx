@@ -73,6 +73,12 @@ const page = () => {
   }
 
   useEffect(() => {
+    if (!!formsResponseList?.length) {
+      setSelectedFormResponseId(formsResponseList[0]?.responseId);
+    }
+  }, [formsResponseList]);
+
+  useEffect(() => {
     if (userForms) {
       // initialize to 0 to prevent duplicates
       setFormsResponseList([]);
@@ -251,9 +257,7 @@ const page = () => {
         {selectedResponse?.name && (
           <div className="bg-white p-4 rounded-xl mb-5">
             <p>Selected Form Response</p>
-            <h4 className="text-xl font-semibold">
-              {selectedResponse?.name} Response
-            </h4>
+            <h4 className="text-xl font-semibold">{selectedResponse?.name}</h4>
           </div>
         )}
         {responsesLoading ? (

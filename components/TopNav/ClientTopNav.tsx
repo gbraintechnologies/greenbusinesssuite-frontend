@@ -1,6 +1,6 @@
 //
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 // hooks
 import useUser from "@/hooks/useUser";
@@ -8,13 +8,28 @@ import useUser from "@/hooks/useUser";
 //
 import Image from "next/image";
 import useCompany from "@/hooks/useCompany";
+import Modal from "../Modal/Modal";
+import { AiOutlineLogout } from "react-icons/ai";
+import useAuth from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 function TopNav() {
   //
   const { user } = useUser();
 
   //
-  const { companyBranding: company } = useCompany();
+  const {
+    companyAdmin,
+    removeCompanyAdmin,
+    companyBranding: company,
+  } = useCompany();
+
+  const { removeAuth } = useAuth();
+
+  const router = useRouter();
+
+  const [showLogOutModal, setShowLogOutModal] = useState(false);
 
   return (
     <nav
@@ -24,7 +39,7 @@ function TopNav() {
       {" "}
       <div className="flex items-center gap-3">
         <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
-          <Link href={`/${company?.company_identifier}/client`}>
+          <Link href={`/${company?.company_identifier}/client/home`}>
             {company?.logo ? (
               <Image
                 width={300}
@@ -56,7 +71,6 @@ function TopNav() {
         </p>
       </div>
       <div className="flex items-center gap-3">
-        <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20"></div>
         <Link href={`/${company?.company_identifier}/client/settings`}>
           {user?.custom_profile_values &&
           user?.custom_profile_values.find(
@@ -81,7 +95,51 @@ function TopNav() {
             </button>
           )}
         </Link>
+        <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20" />
+        <button
+          onClick={() => {
+            setShowLogOutModal(true);
+          }}
+          className="bg-white text-sm text-red-600 flex items-center gap-2 w-full mb-1 py-[6px] px-4 rounded-xl font-medium "
+        >
+          <AiOutlineLogout size={18} /> Log out
+        </button>
       </div>
+      {/*  */}
+      <Modal
+        isOpen={showLogOutModal}
+        setIsOpen={setShowLogOutModal}
+        title="Log out of your account"
+      >
+        <div>
+          <p className="px-5 mt-5 text-[#334155]">
+            This action would log you out of this account and require you to log
+            in again to gain access to your account
+          </p>
+
+          <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              onClick={() => setShowLogOutModal(false)}
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              onClick={() => {
+                setShowLogOutModal(false);
+
+                removeCompanyAdmin();
+                removeAuth();
+                toast.success("Logged out");
+                router.push(`/${company?.company_identifier}/auth`);
+              }}
+            >
+              Yes, log out
+            </button>
+          </div>
+        </div>
+      </Modal>
     </nav>
   );
 }

@@ -5,12 +5,21 @@ import React, { useEffect, useState } from "react";
 // hooks
 import useAdmin from "@/hooks/useAdmin";
 import Image from "next/image";
+import Modal from "../Modal/Modal";
+import useAuth from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { AiOutlineLogout } from "react-icons/ai";
 
 function TopNav({ settingsLink }: { settingsLink?: string }) {
   //
-  const { admin } = useAdmin();
+  const { admin, setAdmin } = useAdmin();
+  const { removeAuth } = useAuth();
 
   const [isClient, setIsClient] = useState(false);
+  const [showLogOutModal, setShowLogOutModal] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
@@ -44,7 +53,6 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20"></div>
         <Link href={settingsLink ?? "/settings"}>
           {admin?.custom_profile_values &&
           admin?.custom_profile_values.find(
@@ -71,7 +79,49 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
                 </button>
               )}
         </Link>
+        <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20" />
+        <button
+          onClick={() => {
+            setShowLogOutModal(true);
+          }}
+          className="bg-white text-sm text-red-600 flex items-center gap-2 w-full mb-1 py-[6px] px-4 rounded-xl font-medium "
+        >
+          <AiOutlineLogout size={18} /> Log out
+        </button>
       </div>
+      <Modal
+        isOpen={showLogOutModal}
+        setIsOpen={setShowLogOutModal}
+        title="Log out of your account"
+      >
+        <div>
+          <p className="px-5 mt-5 text-[#334155]">
+            This action would log you out of this account and require you to log
+            in again to gain access to your account
+          </p>
+
+          <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+            <button
+              onClick={() => setShowLogOutModal(false)}
+              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              onClick={() => {
+                setShowLogOutModal(false);
+
+                removeAuth();
+                toast.success("Logged out");
+                router.push("/");
+              }}
+            >
+              Yes, log out
+            </button>
+          </div>
+        </div>
+      </Modal>
     </nav>
   );
 }
