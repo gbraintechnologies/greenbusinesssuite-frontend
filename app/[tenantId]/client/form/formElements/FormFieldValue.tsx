@@ -35,7 +35,6 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
 function FormFieldValue({ field, section, viewOnly }: any) {
-  console.log("field", field);
   // functions
   const {
     saveSingleResponse,
@@ -189,8 +188,8 @@ function FormFieldValue({ field, section, viewOnly }: any) {
               <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
                 {jurisdictions?.countries.map((type: any) => (
                   <AutocompleteItem
-                    key={type}
-                    value={type}
+                    key={type?.countryName}
+                    value={type?.countryName}
                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                   >
                     {type?.countryName}
