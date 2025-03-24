@@ -87,11 +87,11 @@ export default function AdminLayout({
       icon: <FormsNavIcon />,
       link: "/forms",
     },
-    // {
-    //   name: "(Temp) Branding",
-    //   icon: <BsBoxSeam />,
-    //   link: "/branding",
-    // },
+    {
+      name: "(Temp) Branding",
+      icon: <BsBoxSeam />,
+      link: "/branding",
+    },
     {
       name: "Companies",
       icon: <PiBuildingsBold size={20} />,
