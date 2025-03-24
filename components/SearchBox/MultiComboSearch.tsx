@@ -12,7 +12,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 
 export default function MultiComboSearch({
   data,
-  placeholder = "Search and select users...",
+  placeholder = "Search by user first name or last name..",
   search,
   setSearch,
   sendToAllUsers = "false",
