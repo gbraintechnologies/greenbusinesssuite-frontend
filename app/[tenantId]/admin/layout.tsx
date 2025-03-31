@@ -12,7 +12,7 @@ import TopNav from "@/components/TopNav/CompanyTopNav";
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdOutlineDashboard } from "react-icons/md";
-import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import { TbBrandGoogleAnalytics, TbCreditCardRefund } from "react-icons/tb";
 import { FaUsers } from "react-icons/fa";
 import { MdOutlineSupervisedUserCircle } from "react-icons/md";
 import { RiListSettingsFill } from "react-icons/ri";
@@ -96,6 +96,38 @@ export default function CompanyLayout(props: any) {
       link: `/${company?.company_identifier}/admin/customers`,
     },
     {
+      name: "Payments & Billing",
+      linkedModule: AvailableModules.FormBuilder,
+      icon: <TbCreditCardRefund size={20} />,
+      link: null,
+      subNavigation: [
+        {
+          name: "Billings",
+          linkedModule: AvailableModules.FormBuilder,
+          icon: null,
+          link: `/${company?.company_identifier}/admin/billings`,
+        },
+        {
+          name: "Payments",
+          linkedModule: AvailableModules.FormBuilder,
+          icon: null,
+          link: `/${company?.company_identifier}/admin/payments`,
+        },
+        {
+          name: "Discounted Services",
+          linkedModule: AvailableModules.FormBuilder,
+          icon: null,
+          link: `/${company?.company_identifier}/admin/discounted-services`,
+        },
+        {
+          name: "Invoices",
+          linkedModule: AvailableModules.FormBuilder,
+          icon: null,
+          link: `/${company?.company_identifier}/admin/invoices`,
+        },
+      ],
+    },
+    {
       name: "Notifications Center",
       linkedModule: AvailableModules.Notifications,
       icon: <LuSend size={20} />,
@@ -121,6 +153,7 @@ export default function CompanyLayout(props: any) {
         },
       ],
     },
+
     {
       name: "Company Profile",
       linkedModule: AvailableModules.CompanyProfile,
@@ -189,7 +222,7 @@ export default function CompanyLayout(props: any) {
 
             <div
               className={`${
-                pathname.includes("settings") ? "ml-0" : "ml-[20rem]"
+                pathname.includes("settings") ? "ml-0" : "md:ml-[20rem]"
               } w-full`}
             >
               {children}

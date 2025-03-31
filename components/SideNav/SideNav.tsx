@@ -26,7 +26,7 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
           if (item.subNavigation) {
             return (
               <React.Fragment key={index}>
-                <Disclosure defaultOpen >
+                <Disclosure defaultOpen>
                   {({ open }) => (
                     <>
                       <Disclosure.Button className="flex mt-2 w-full justify-between items-center">
@@ -102,33 +102,41 @@ function SideNav({ navigation, type = "normal", thirdPartyApps = [] }: any) {
 
       {/* THIRD PARTY APPS */}
       {type === "normal" && (
-        <ul className="mt-8">
-          <li className="text-xs font-light text-gray-500 mb-2">
-            THIRD PARTY APPS
-          </li>
-          {thirdPartyApps.map((item: any, index: number) => {
-            return (
-              <Link
-                key={index}
-                className="cursor-pointer"
-                href={Array.isArray(item.link) ? item.link[0] : item.link}
-              >
-                <button
-                  disabled
-                  className={`${
-                    (Array.isArray(item.link) &&
-                      item.link.includes(pathname)) ||
-                    (typeof item.link == "string" && item.link == pathname)
-                      ? "bg-[#E2E8F0] text-[#1E293B] font-semibold"
-                      : " text-gray-600"
-                  } flex items-center cursor-pointer disabled:cursor-not-allowed gap-3 w-full my-2 mb-1 py-2 px-3 rounded-xl font-medium `}
-                >
-                  {item.icon} <p>{item.name}</p>
-                </button>
-              </Link>
-            );
-          })}
-        </ul>
+        <>
+          {thirdPartyApps && thirdPartyApps?.length > 0 && (
+            <>
+              {" "}
+              <ul className="mt-8">
+                <li className="text-xs font-light text-gray-500 mb-2">
+                  THIRD PARTY APPS
+                </li>
+                {thirdPartyApps.map((item: any, index: number) => {
+                  return (
+                    <Link
+                      key={index}
+                      className="cursor-pointer"
+                      href={Array.isArray(item.link) ? item.link[0] : item.link}
+                    >
+                      <button
+                        disabled
+                        className={`${
+                          (Array.isArray(item.link) &&
+                            item.link.includes(pathname)) ||
+                          (typeof item.link == "string" &&
+                            item.link == pathname)
+                            ? "bg-[#E2E8F0] text-[#1E293B] font-semibold"
+                            : " text-gray-600"
+                        } flex items-center cursor-pointer disabled:cursor-not-allowed gap-3 w-full my-2 mb-1 py-2 px-3 rounded-xl font-medium `}
+                      >
+                        {item.icon} <p>{item.name}</p>
+                      </button>
+                    </Link>
+                  );
+                })}
+              </ul>{" "}
+            </>
+          )}
+        </>
       )}
     </aside>
   );
