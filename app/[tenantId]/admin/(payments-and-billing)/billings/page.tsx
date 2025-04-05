@@ -11,6 +11,9 @@ import { TimelineType, TimelineValues } from "@/types";
 import Pagination from "@/components/Pagination/Pagination";
 import OneOffBills from "./_components/OneOffBills";
 import RecurringBills from "./_components/RecurringBills";
+import { useDisclosure } from "@nextui-org/modal";
+import SideModal from "@/components/Modal/SideModal";
+import CreateBill from "./_components/CreateBill";
 
 function Billings() {
   //pagination
@@ -28,46 +31,58 @@ function Billings() {
   ]);
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
   return (
-    <div className=" mt-10 pb-10 ">
-      <div className="px-5 flex justify-between">
-        <h3 className="font-semibold mb-8 text-xl">Billings</h3>
+    <>
+      <div className=" mt-10 pb-10 ">
+        <div className="px-5 flex justify-between">
+          <h3 className="font-semibold mb-8 text-xl">Billings</h3>
 
-        <CompanyThemedButton>Create New Bill</CompanyThemedButton>
-      </div>
+          <CompanyThemedButton onPress={onOpen}>
+            Create New Bill
+          </CompanyThemedButton>
+        </div>
 
-      <div className="px-5 flex justify-between mb-3">
-        <DatePicker
-          selectedTimeline={selectedTimeline}
-          setSelectedTimeline={setSelectedTimeline}
-        />
-        <div className="flex items-center gap-2">
-          <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
-
-          <Pagination
-            limit={limit}
-            variant="no-text"
-            page={page}
-            currentData={[]}
-            setPage={setPage}
+        <div className="px-5 flex justify-between mb-3">
+          <DatePicker
+            selectedTimeline={selectedTimeline}
+            setSelectedTimeline={setSelectedTimeline}
           />
+          <div className="flex items-center gap-2">
+            <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
+
+            <Pagination
+              limit={limit}
+              variant="no-text"
+              page={page}
+              currentData={[]}
+              setPage={setPage}
+            />
+          </div>
+        </div>
+
+        <div className="px-5 flex items-center w-full justify-center">
+          <Tabs
+            filters={tabs}
+            setActiveFilter={setActiveTab}
+            activeFilter={activeTab}
+            tabQueryKey="tabId"
+          />
+        </div>
+
+        <div className="mt-5">
+          {activeTab.id == 0 && <OneOffBills />}
+          {activeTab.id == 1 && <RecurringBills />}
         </div>
       </div>
 
-      <div className="px-5 flex items-center w-full justify-center">
-        <Tabs
-          filters={tabs}
-          setActiveFilter={setActiveTab}
-          activeFilter={activeTab}
-          tabQueryKey="tabId"
-        />
-      </div>
+      {/* MODAL FOR CREATING BILL */}
 
-      <div className="mt-5">
-        {activeTab.id == 0 && <OneOffBills />}
-        {activeTab.id == 1 && <RecurringBills />}
-      </div>
-    </div>
+      <SideModal onClose={onClose} onOpenChange={onOpenChange} isOpen={isOpen}>
+        <CreateBill />
+      </SideModal>
+    </>
   );
 }
 

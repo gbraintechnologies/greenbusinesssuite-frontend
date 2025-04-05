@@ -34,7 +34,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
   return (
     <nav
       style={{ backgroundColor: company?.color }}
-      className="h-[3.5rem] z-[100] fixed top-0  w-full flex justify-between items-center px-5"
+      className="h-[3.5rem] z-40 fixed top-0  w-full flex justify-between items-center px-5"
     >
       <div className="flex items-center gap-3">
         <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
