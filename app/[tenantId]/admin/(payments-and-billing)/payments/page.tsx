@@ -2,14 +2,16 @@
 
 import React, { useState } from "react";
 
-import Tabs from "@/components/Tabs/Tabs";
-
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import DatePicker from "@/components/DatePicker/DatePicker";
 import { TimelineType, TimelineValues } from "@/types";
 import Pagination from "@/components/Pagination/Pagination";
-import PaymentsList from "./_components/page";
+import PaymentsList from "./_components/PaymentsList";
+import SideModal from "@/components/Modal/SideModal";
+import CreatePayment from "./_components/CreatePayment";
+import { useDisclosure } from "@nextui-org/modal";
+import ViewPayment from "./_components/ViewPayment";
 
 function Payments() {
   //pagination
@@ -20,12 +22,22 @@ function Payments() {
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isOpen2,
+    onOpen: onOpen2,
+    onClose: onClose2,
+    onOpenChange: onOpenChange2,
+  } = useDisclosure();
+
+  const [selectedPayment, setSelectedPayment] = useState(null);
+
   return (
     <div className="mt-10 pb-10 ">
       <div className=" px-5 flex justify-between">
         <h3 className="font-semibold mb-8 text-xl">Payments</h3>
 
-        <CompanyThemedButton>Add Payment</CompanyThemedButton>
+        <CompanyThemedButton onPress={onOpen}>Add Payment</CompanyThemedButton>
       </div>
 
       <div className=" px-5 flex justify-between mb-3">
@@ -60,8 +72,23 @@ function Payments() {
       </div>
 
       <div className="mt-5">
-        <PaymentsList />
+        <PaymentsList
+          setSelectedPayment={setSelectedPayment}
+          onOpen={onOpen2}
+        />
       </div>
+
+      <SideModal onClose={onClose} onOpenChange={onOpenChange} isOpen={isOpen}>
+        <CreatePayment />
+      </SideModal>
+
+      <SideModal
+        onClose={onClose2}
+        onOpenChange={onOpenChange2}
+        isOpen={isOpen2}
+      >
+        <ViewPayment payment={selectedPayment} />
+      </SideModal>
     </div>
   );
 }

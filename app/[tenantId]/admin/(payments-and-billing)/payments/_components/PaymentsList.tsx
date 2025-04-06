@@ -13,8 +13,15 @@ import {
 import Link from "next/link";
 import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { VscEye } from "react-icons/vsc";
 
-function PaymentsList() {
+function PaymentsList({
+  setSelectedPayment,
+  onOpen,
+}: {
+  setSelectedPayment: any;
+  onOpen: any;
+}) {
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -102,30 +109,14 @@ function PaymentsList() {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <Dropdown>
-          <DropdownTrigger>
-            <Button variant="light">
-              {" "}
-              <BsThreeDots size={20} />
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
-            aria-label="Static Actions"
-          >
-            <DropdownItem
-              key="view"
-              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-            >
-              <Link
-                href={`/${companyBranding?.company_identifier}/admin/billings/bill?id=${params?.row?.id}&type=one-off-bill`}
-                className="w-full block"
-              >
-                View
-              </Link>
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>,
+        <button
+          onClick={() => {
+            setSelectedPayment(params.row);
+            onOpen();
+          }}
+        >
+          <VscEye size={20} />
+        </button>,
       ],
     },
   ];

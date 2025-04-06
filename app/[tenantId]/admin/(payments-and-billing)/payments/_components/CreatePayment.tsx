@@ -13,37 +13,44 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { Select, SelectItem } from "@nextui-org/select";
 
-import "./index.css";
+import "../../billings/_components/index.css";
 
 function CreateBill() {
   const labelStyle = "text-sm text-gray-500 mb-2 block";
   const inputStyle =
     "border border-gray-300 rounded-lg p-2 w-full disabled:bg-gray-100 disabled:cursor-not-allowed";
 
-  const { companyBranding: companyData } = useCompany();
-
+  const { companyBranding: company } = useCompany();
   //pagination
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(50);
 
+  const { data: customers, isLoading } = useQuery({
+    queryKey: ["all customers", company?.id, page, limit],
+    queryFn: services.companyCustomersWithFormCount(company?.id, page, limit),
+    select: (data) => data?.userFormStatList,
+  });
+
   const [selectedForm, setSelectedForm] = useState<any>(null);
 
   const [amount, setAmount] = useState<any>(0);
-  const [selectedBillingType, setSelectedBillingType] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [transactionId, setTransactionId] = useState("");
 
-  const billingTypes = ["one-off-bill", "recurring"];
-  const status = ["active", "inactive"];
+  const status: any = [];
 
   const { data: formss, isLoading: isFormsLoading } = useQuery({
-    queryKey: ["get company forms for ", Number(companyData?.id), page, limit],
-    queryFn: services.getFormsByCompanyId(companyData?.id, page, limit),
+    queryKey: ["get company forms for ", Number(company?.id), page, limit],
+    queryFn: services.getFormsByCompanyId(company?.id, page, limit),
   });
   let forms: any = [];
 
+  const paymentMethods = ["mobile-money", "card"];
+
   return (
     <div className="flex flex-col gap-5">
-      <h4 className="text-lg font-semibold">Create New Bill</h4>
+      <h4 className="text-lg font-semibold">Add Payment</h4>
 
       {/* Select Service */}
       <div>
@@ -74,67 +81,44 @@ function CreateBill() {
       </div>
 
       <div>
-        <label className={labelStyle}>Billing Type</label>
+        <label className={labelStyle}>Application Fee</label>
+        <h4 className="text-lg font-semibold">Ghs 150.00</h4>
+      </div>
+
+      <div>
+        <label className={labelStyle}>Select Customer</label>
         <Select
-          onChange={(e) => setSelectedBillingType(e.target.value)}
+          onChange={(e) => setSelectedCustomer(e.target.value)}
           className="w-full border border-gray-200 rounded-xl"
         >
-          {billingTypes.map((option) => (
+          {status.map((option: any) => (
             <SelectItem key={option}>{option}</SelectItem>
           ))}
         </Select>
       </div>
 
       <div>
-        <label className={labelStyle}>Currency</label>
-        <input
-          type="text"
-          min={0}
-          disabled
-          value="Ghs"
-          // onChange={(e) => setAmount(e.target.value)}
-          className={inputStyle}
-        />
-      </div>
-
-      <div>
-        <label className={labelStyle}>Amount</label>
-        <input
-          type="number"
-          min={0}
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className={inputStyle}
-        />
-      </div>
-
-      <div>
-        {" "}
-        <label className={labelStyle}>Payment Methods</label>
-        <div className="flex items-center gap-2">
-          <input type="checkbox" value="Mobile" name="mobile_money" />
-          Mobile Money
-        </div>
-        <div className="flex items-center gap-2">
-          <input type="checkbox" value="card" name="card" />
-          Credit / Debit Card
-        </div>
-      </div>
-
-      <div>
-        {" "}
-        <label className={labelStyle}>Status</label>
+        <label className={labelStyle}>Payment Method</label>
         <Select
-          onChange={(e) => setSelectedStatus(e.target.value)}
+          onChange={(e) => setSelectedPaymentMethod(e.target.value)}
           className="w-full border border-gray-200 rounded-xl"
         >
-          {status.map((option) => (
+          {paymentMethods.map((option: any) => (
             <SelectItem key={option}>{option}</SelectItem>
           ))}
         </Select>
       </div>
 
-      <CompanyThemedButton>Create Bill</CompanyThemedButton>
+      <div>
+        <label className={labelStyle}>Transaction ID</label>
+        <input
+          value={transactionId}
+          onChange={(e) => setTransactionId(e.target.value)}
+          className={inputStyle}
+        />
+      </div>
+
+      <CompanyThemedButton>Add Payment</CompanyThemedButton>
     </div>
   );
 }

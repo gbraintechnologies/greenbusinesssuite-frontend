@@ -14,7 +14,15 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 
-function OneOffBills() {
+function OneOffBills({
+  setSelectedBill,
+  onOpen,
+  onOpenDiscountModal,
+}: {
+  setSelectedBill: any;
+  onOpen: any;
+  onOpenDiscountModal: any;
+}) {
   const [rows, setRows] = useState([
     {
       id: "BID-345345",
@@ -84,16 +92,63 @@ function OneOffBills() {
             className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
             aria-label="Static Actions"
           >
+            {/* VIEW */}
             <DropdownItem
+              onPress={() => {
+                setSelectedBill(params.row);
+                onOpen();
+              }}
               key="view"
               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
             >
-              <Link
-                href={`/${companyBranding?.company_identifier}/admin/billings/bill?id=${params?.row?.id}&type=one-off-bill`}
-                className="w-full block"
-              >
-                View
-              </Link>
+              View
+            </DropdownItem>
+
+            {/* EDIT */}
+            <DropdownItem
+              onPress={() => {
+                setSelectedBill(params.row);
+                onOpen();
+              }}
+              key="edit"
+              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+            >
+              Edit
+            </DropdownItem>
+            {/* ADD DISCOUNT */}
+            <DropdownItem
+              onPress={() => {
+                setSelectedBill(params.row);
+                onOpenDiscountModal();
+              }}
+              key="add-discount"
+              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+            >
+              Add Discount
+            </DropdownItem>
+
+            {/* DEACTIVATE */}
+            <DropdownItem
+              onPress={() => {
+                setSelectedBill(params.row);
+                onOpen();
+              }}
+              key="deactivate"
+              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+            >
+              Deactivate
+            </DropdownItem>
+
+            {/* DELETE */}
+            <DropdownItem
+              onPress={() => {
+                setSelectedBill(params.row);
+                onOpen();
+              }}
+              key="delete"
+              className="items-center w-full p-3 rounded-md text-sm text-red-600 hover:bg-[#F1F5F9]"
+            >
+              Delete
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>,

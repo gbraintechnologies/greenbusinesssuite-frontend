@@ -10,44 +10,24 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import Link from "next/link";
 import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 
-function RecurringBills({
-  setSelectedBill,
+function DiscountedServicesList({
+  setSelectedService,
   onOpen,
 }: {
-  setSelectedBill: any;
+  setSelectedService: any;
   onOpen: any;
 }) {
   const [rows, setRows] = useState([
     {
-      id: "BID-345345",
+      id: "Business Registration",
       date: "27th March, 2025",
       service: "Business Registration",
+      discount: "45%",
       amount: 56,
-      status: "active",
-    },
-    {
-      id: "BID-3451235",
-      date: "24th March, 2025",
-      service: "Tax Submission",
-      amount: 240,
-      status: "active",
-    },
-    {
-      id: "BID-345345",
-      date: "27th March, 2025",
-      service: "Business Registration",
-      amount: 56,
-      status: "active",
-    },
-    {
-      id: "BID-3451235",
-      date: "24th March, 2025",
-      service: "Tax Submission",
-      amount: 240,
+      discountAmount: 20,
       status: "active",
     },
   ]);
@@ -58,16 +38,14 @@ function RecurringBills({
   const columns = [
     {
       field: "id",
-      headerName: "Bill ID",
+      headerName: "Service Name",
       align: "left",
       headerAlign: "left",
       flex: 1,
     },
-    { field: "date", headerName: "Date Created", flex: 1 },
-    { field: "service", headerName: "Service Name", flex: 1 },
     {
       field: "amount",
-      headerName: "Amount",
+      headerName: "Original Amount",
       type: "actions",
       flex: 1,
       getActions: (params: any) => [
@@ -76,14 +54,16 @@ function RecurringBills({
         </div>,
       ],
     },
+
+    { field: "discount", headerName: "Discount", flex: 1 },
     {
-      field: "status",
-      headerName: "Status",
+      field: "discountAmount",
+      headerName: "Discounted Price",
       type: "actions",
       flex: 1,
       getActions: (params: any) => [
         <div key={params.row.id} className="">
-          <StatusPill status="Active" />
+          Ghs {params?.row?.amount}
         </div>,
       ],
     },
@@ -107,60 +87,24 @@ function RecurringBills({
             {/* VIEW */}
             <DropdownItem
               onPress={() => {
-                setSelectedBill(params.row);
+                setSelectedService(params.row);
                 onOpen();
               }}
               key="view"
               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
             >
-              View
-            </DropdownItem>
-
-            {/* EDIT */}
-            <DropdownItem
-              onPress={() => {
-                setSelectedBill(params.row);
-                onOpen();
-              }}
-              key="edit"
-              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-            >
               Edit
-            </DropdownItem>
-            {/* ADD DISCOUNT */}
-            <DropdownItem
-              onPress={() => {
-                setSelectedBill(params.row);
-                onOpen();
-              }}
-              key="add-discount"
-              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-            >
-              Add Discount
-            </DropdownItem>
-
-            {/* DEACTIVATE */}
-            <DropdownItem
-              onPress={() => {
-                setSelectedBill(params.row);
-                onOpen();
-              }}
-              key="deactivate"
-              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-            >
-              Deactivate
             </DropdownItem>
 
             {/* DELETE */}
             <DropdownItem
               onPress={() => {
-                setSelectedBill(params.row);
-                onOpen();
+                //
               }}
               key="delete"
               className="items-center w-full p-3 rounded-md text-sm text-red-600 hover:bg-[#F1F5F9]"
             >
-              Delete
+              Remove Discount
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>,
@@ -175,4 +119,4 @@ function RecurringBills({
   );
 }
 
-export default RecurringBills;
+export default DiscountedServicesList;

@@ -14,11 +14,20 @@ import RecurringBills from "./_components/RecurringBills";
 import { useDisclosure } from "@nextui-org/modal";
 import SideModal from "@/components/Modal/SideModal";
 import CreateBill from "./_components/CreateBill";
+import ViewBill from "./_components/ViewBill";
+import AddDiscount from "./_components/AddDiscount";
 
 function Billings() {
   //pagination
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
+
+  // Bill Functions
+  const [selectedBill, setSelectedBill] = useState(null);
+  const deleteBill = () => {
+    //
+  };
+
   //timeline
   const [selectedTimeline, setSelectedTimeline] = useState<
     { label: TimelineValues; value: TimelineType } | undefined
@@ -32,6 +41,20 @@ function Billings() {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
+  const {
+    isOpen: isOpen2,
+    onOpen: onOpen2,
+    onClose: onClose2,
+    onOpenChange: onOpenChange2,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpen3,
+    onOpen: onOpen3,
+    onClose: onClose3,
+    onOpenChange: onOpenChange3,
+  } = useDisclosure();
 
   return (
     <>
@@ -72,8 +95,19 @@ function Billings() {
         </div>
 
         <div className="mt-5">
-          {activeTab.id == 0 && <OneOffBills />}
-          {activeTab.id == 1 && <RecurringBills />}
+          {activeTab.id == 0 && (
+            <OneOffBills
+              setSelectedBill={setSelectedBill}
+              onOpen={onOpen2}
+              onOpenDiscountModal={onOpen3}
+            />
+          )}
+          {activeTab.id == 1 && (
+            <RecurringBills
+              setSelectedBill={setSelectedBill}
+              onOpen={onOpen2}
+            />
+          )}
         </div>
       </div>
 
@@ -81,6 +115,24 @@ function Billings() {
 
       <SideModal onClose={onClose} onOpenChange={onOpenChange} isOpen={isOpen}>
         <CreateBill />
+      </SideModal>
+
+      {/* VIEW BILL */}
+      <SideModal
+        onClose={onClose2}
+        onOpenChange={onOpenChange2}
+        isOpen={isOpen2}
+      >
+        <ViewBill bill={selectedBill} />
+      </SideModal>
+
+      {/* ADD DISCOUNT */}
+      <SideModal
+        onClose={onClose3}
+        onOpenChange={onOpenChange3}
+        isOpen={isOpen3}
+      >
+        <AddDiscount bill={selectedBill} />
       </SideModal>
     </>
   );
