@@ -3,6 +3,8 @@
 import DataTable from "@/components/DataTable/DataTable";
 import StatusPill from "@/components/StatusPill/StatusPill";
 import useCompany from "@/hooks/useCompany";
+
+import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
 import { Button } from "@nextui-org/button";
 import {
   Dropdown,
@@ -10,48 +12,29 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import Link from "next/link";
-import React, { useState } from "react";
+
+import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 
 function RecurringBills({
   setSelectedBill,
   onOpen,
+  onOpenDiscountModal,
+  bills,
+  isLoading,
+  deleteBill,
+  updateBill,
+  onOpenEdit,
 }: {
   setSelectedBill: any;
   onOpen: any;
+  onOpenDiscountModal: any;
+  bills: any;
+  isLoading: boolean;
+  deleteBill: any;
+  updateBill: any;
+  onOpenEdit: any;
 }) {
-  const [rows, setRows] = useState([
-    {
-      id: "BID-345345",
-      date: "27th March, 2025",
-      service: "Business Registration",
-      amount: 56,
-      status: "active",
-    },
-    {
-      id: "BID-3451235",
-      date: "24th March, 2025",
-      service: "Tax Submission",
-      amount: 240,
-      status: "active",
-    },
-    {
-      id: "BID-345345",
-      date: "27th March, 2025",
-      service: "Business Registration",
-      amount: 56,
-      status: "active",
-    },
-    {
-      id: "BID-3451235",
-      date: "24th March, 2025",
-      service: "Tax Submission",
-      amount: 240,
-      status: "active",
-    },
-  ]);
-
   const { companyBranding } = useCompany();
 
   // columns
@@ -63,8 +46,16 @@ function RecurringBills({
       headerAlign: "left",
       flex: 1,
     },
-    { field: "date", headerName: "Date Created", flex: 1 },
-    { field: "service", headerName: "Service Name", flex: 1 },
+    {
+      field: "createdOn",
+      headerName: "Date Created",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <p>{FormatDateShort(params?.row?.createdOn)}</p>,
+      ],
+    },
+    { field: "serviceName", headerName: "Service Name", flex: 1 },
     {
       field: "amount",
       headerName: "Amount",
@@ -72,7 +63,7 @@ function RecurringBills({
       flex: 1,
       getActions: (params: any) => [
         <div key={params.row.id} className="">
-          Ghs {params?.row?.amount}
+          {params?.row.currency} {params?.row?.amount}
         </div>,
       ],
     },
@@ -82,8 +73,8 @@ function RecurringBills({
       type: "actions",
       flex: 1,
       getActions: (params: any) => [
-        <div key={params.row.id} className="">
-          <StatusPill status="Active" />
+        <div key={params.row.id}>
+          <StatusPill status={params?.row?.status} />
         </div>,
       ],
     },
@@ -120,7 +111,7 @@ function RecurringBills({
             <DropdownItem
               onPress={() => {
                 setSelectedBill(params.row);
-                onOpen();
+                onOpenEdit();
               }}
               key="edit"
               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
@@ -131,7 +122,7 @@ function RecurringBills({
             <DropdownItem
               onPress={() => {
                 setSelectedBill(params.row);
-                onOpen();
+                onOpenDiscountModal();
               }}
               key="add-discount"
               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
@@ -140,22 +131,32 @@ function RecurringBills({
             </DropdownItem>
 
             {/* DEACTIVATE */}
-            <DropdownItem
-              onPress={() => {
-                setSelectedBill(params.row);
-                onOpen();
-              }}
-              key="deactivate"
-              className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-            >
-              Deactivate
-            </DropdownItem>
+            {params.row.status.toLowerCase() == "active" ? (
+              <DropdownItem
+                onPress={() => {
+                  updateBill({ ...params.row, status: "INACTIVE" });
+                }}
+                key="deactivate"
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
+                Deactivate
+              </DropdownItem>
+            ) : (
+              <DropdownItem
+                onPress={() => {
+                  updateBill({ ...params.row, status: "ACTIVE" });
+                }}
+                key="activate"
+                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+              >
+                Activate
+              </DropdownItem>
+            )}
 
             {/* DELETE */}
             <DropdownItem
               onPress={() => {
-                setSelectedBill(params.row);
-                onOpen();
+                deleteBill(params.row.id);
               }}
               key="delete"
               className="items-center w-full p-3 rounded-md text-sm text-red-600 hover:bg-[#F1F5F9]"
@@ -170,7 +171,11 @@ function RecurringBills({
 
   return (
     <div>
-      <DataTable isLoading={false} rows={rows} columns={columns} />
+      <DataTable
+        isLoading={isLoading}
+        rows={bills ? bills : []}
+        columns={columns}
+      />
     </div>
   );
 }

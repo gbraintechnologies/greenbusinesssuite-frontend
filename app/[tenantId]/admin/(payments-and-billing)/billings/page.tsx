@@ -16,17 +16,54 @@ import SideModal from "@/components/Modal/SideModal";
 import CreateBill from "./_components/CreateBill";
 import ViewBill from "./_components/ViewBill";
 import AddDiscount from "./_components/AddDiscount";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import services from "@/services";
+import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+import { toast } from "sonner";
+import EditBill from "./_components/EditBill";
 
 function Billings() {
   //pagination
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
+  const queryClient = useQueryClient();
 
   // Bill Functions
   const [selectedBill, setSelectedBill] = useState(null);
-  const deleteBill = () => {
-    //
+  const deleteBill = (id: any) => {
+    toast.loading("Deleting bill...");
+    services
+      .deleteBill(id)
+      .then((res) => {
+        toast.dismiss();
+        toast.success("Successfully deleted bill");
+        queryClient.invalidateQueries();
+      })
+      .catch((e) => {
+        toast.error("Error deleting bill");
+        toast.dismiss();
+      });
   };
+
+  const updateBill = (data: any) => {
+    toast.loading("Updating bill...");
+    services
+      .updateBill(data)
+      .then((res) => {
+        toast.dismiss();
+        toast.success("Successfully updated bill");
+        queryClient.invalidateQueries();
+      })
+      .catch((e) => {
+        toast.error("Error updating bill");
+        toast.dismiss();
+      });
+  };
+
+  const { data: bills, isLoading } = useQuery({
+    queryKey: ["all bills ", page, limit],
+    queryFn: services.getAllBills(page, limit),
+  });
 
   //timeline
   const [selectedTimeline, setSelectedTimeline] = useState<
@@ -55,6 +92,25 @@ function Billings() {
     onClose: onClose3,
     onOpenChange: onOpenChange3,
   } = useDisclosure();
+
+  const {
+    isOpen: isOpen4,
+    onOpen: onOpen4,
+    onClose: onClose4,
+    onOpenChange: onOpenChange4,
+  } = useDisclosure();
+
+  const { data: billsOneOff, isLoading: isLoadingOneOff } = useQuery({
+    queryKey: ["ONE OFF BILLS "],
+    queryFn: services.getAllOneOffBill(),
+  });
+
+  const { data: billsRecurring, isLoading: isLoadingRecurringBills } = useQuery(
+    {
+      queryKey: ["ONE OFF BILLS "],
+      queryFn: services.getAllRecurringBills(),
+    }
+  );
 
   return (
     <>
@@ -97,14 +153,31 @@ function Billings() {
         <div className="mt-5">
           {activeTab.id == 0 && (
             <OneOffBills
+              // bills={billsOneOff}
+              // isLoading={isLoadingOneOff}
+              deleteBill={deleteBill}
+              updateBill={updateBill}
+              bills={bills?.content?.filter(
+                (item: any) => item.billingType == "ONE_OFF_BILL"
+              )}
+              isLoading={isLoading}
               setSelectedBill={setSelectedBill}
               onOpen={onOpen2}
+              onOpenEdit={onOpen4}
               onOpenDiscountModal={onOpen3}
             />
           )}
           {activeTab.id == 1 && (
             <RecurringBills
+              deleteBill={deleteBill}
+              updateBill={updateBill}
+              bills={bills?.content?.filter(
+                (item: any) => item.billingType !== "ONE_OFF_BILL"
+              )}
+              onOpenEdit={onOpen4}
+              isLoading={isLoading}
               setSelectedBill={setSelectedBill}
+              onOpenDiscountModal={onOpen3}
               onOpen={onOpen2}
             />
           )}
@@ -114,7 +187,7 @@ function Billings() {
       {/* MODAL FOR CREATING BILL */}
 
       <SideModal onClose={onClose} onOpenChange={onOpenChange} isOpen={isOpen}>
-        <CreateBill />
+        <CreateBill onClose={onClose} />
       </SideModal>
 
       {/* VIEW BILL */}
@@ -132,7 +205,15 @@ function Billings() {
         onOpenChange={onOpenChange3}
         isOpen={isOpen3}
       >
-        <AddDiscount bill={selectedBill} />
+        <AddDiscount onClose={onClose3} bill={selectedBill} />
+      </SideModal>
+
+      <SideModal
+        onClose={onClose4}
+        onOpenChange={onOpenChange4}
+        isOpen={isOpen4}
+      >
+        <EditBill onClose={onClose4} bill={selectedBill} />
       </SideModal>
     </>
   );

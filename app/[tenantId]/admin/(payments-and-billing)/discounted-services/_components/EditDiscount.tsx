@@ -6,22 +6,19 @@ import { useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
-function AddDiscount({
-  bill,
+function EditDiscount({
+  discount,
   onClose,
 }: {
-  bill: {
-    amount: number;
+  discount: {
+    id: number;
+    discountType: string;
+    serviceName: string;
+    discountValue: number;
+    isActive: boolean;
     createdOn: Date;
     updatedOn: Date;
-    currency: string;
-    id: string;
-    serviceName: string;
-    paymentMethods: string[];
-    billingType: string;
-    formId: number;
-    status: string;
-  } | null;
+  };
   onClose: any;
 }) {
   //
@@ -32,37 +29,40 @@ function AddDiscount({
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
 
-  const [amount, setAmount] = useState<any>(0);
+  const [amount, setAmount] = useState<any>(discount?.discountValue);
 
-  const discountTypes = ["Percentage", "Amount"];
+  const discountTypes = ["percentage", "amount"];
 
-  const [selectedDiscountType, setSelectedDiscountType] = useState("Amount");
+  const [selectedDiscountType, setSelectedDiscountType] = useState(
+    discount?.discountType?.toLowerCase()
+  );
 
   const createDiscount = () => {
     setLoading(true);
     services
-      .applyDiscount(bill?.id, {
+      .updateDiscount({
+        id: discount.id,
         discountType: selectedDiscountType.toUpperCase(),
-        serviceName: bill?.serviceName,
-        discountValue: parseFloat(amount),
-        isActive: true,
+        serviceName: discount.serviceName,
+        discountValue: amount,
+        isActive: discount.isActive,
       })
       .then((res) => {
         queryClient.invalidateQueries();
         setLoading(false);
         onClose();
-        toast.success("Discount created");
+        toast.success("Discount updated");
       })
       .catch((e) => {
         console.log("error creating", e);
         setLoading(false);
-        toast.error("Error creating discount");
+        toast.error("Error updating discount");
       });
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <h4>Add Discount - {bill?.serviceName}</h4>
+      <h4>Edit Discount</h4>
 
       <div>
         <label className={labelStyle} htmlFor="Discount Type">
@@ -101,10 +101,10 @@ function AddDiscount({
         isDisabled={loading || amount == 0}
         onPress={createDiscount}
       >
-        {loading ? "Please wait.." : "Add Discount"}
+        {loading ? "Please wait.." : "Edit Discount"}
       </CompanyThemedButton>
     </div>
   );
 }
 
-export default AddDiscount;
+export default EditDiscount;

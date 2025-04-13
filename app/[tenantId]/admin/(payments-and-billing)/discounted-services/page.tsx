@@ -8,14 +8,14 @@ import React, { useState } from "react";
 import DiscountedServicesList from "./_components/DiscountedServicesList";
 import { useDisclosure } from "@nextui-org/modal";
 import SideModal from "@/components/Modal/SideModal";
-import ViewSelectedService from "./_components/ViewSelectedService";
+import EditDiscount from "./_components/EditDiscount";
 
 function DiscountedServices() {
   //pagination
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
 
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedService, setSelectedService] = useState<any>(null);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
   const [selectedTimeline, setSelectedTimeline] = useState<
@@ -53,7 +53,7 @@ function DiscountedServices() {
       </div>
 
       <SideModal onClose={onClose} onOpenChange={onOpenChange} isOpen={isOpen}>
-        <ViewSelectedService service={selectedService} />
+        <EditDiscount onClose={onClose} discount={selectedService} />
       </SideModal>
     </>
   );

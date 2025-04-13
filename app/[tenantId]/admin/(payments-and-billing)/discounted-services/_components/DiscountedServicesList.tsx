@@ -1,8 +1,8 @@
 "use client";
 
 import DataTable from "@/components/DataTable/DataTable";
-import StatusPill from "@/components/StatusPill/StatusPill";
 import useCompany from "@/hooks/useCompany";
+import services from "@/services";
 import { Button } from "@nextui-org/button";
 import {
   Dropdown,
@@ -10,8 +10,10 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { toast } from "sonner";
 
 function DiscountedServicesList({
   setSelectedService,
@@ -20,24 +22,36 @@ function DiscountedServicesList({
   setSelectedService: any;
   onOpen: any;
 }) {
-  const [rows, setRows] = useState([
-    {
-      id: "Business Registration",
-      date: "27th March, 2025",
-      service: "Business Registration",
-      discount: "45%",
-      amount: 56,
-      discountAmount: 20,
-      status: "active",
-    },
-  ]);
+  //pagination
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(20);
+  const queryClient = useQueryClient();
 
-  const { companyBranding } = useCompany();
+  const { data: discounts, isLoading } = useQuery({
+    queryKey: ["discounts", page, limit],
+    queryFn: services.getAllDiscounts(page, limit),
+  });
+
+  const deleteDiscount = (id: any) => {
+    toast.loading("Removing discount");
+    services
+      .deleteDiscount(id)
+      .then((res) => {
+        toast.dismiss();
+        toast.success("Discount removed");
+      })
+      .catch((e) => {
+        toast.dismiss();
+        toast.error("Error deleting discount");
+      });
+  };
+
+  console.log("discounts", discounts?.content);
 
   // columns
   const columns = [
     {
-      field: "id",
+      field: "serviceName",
       headerName: "Service Name",
       align: "left",
       headerAlign: "left",
@@ -50,20 +64,32 @@ function DiscountedServicesList({
       flex: 1,
       getActions: (params: any) => [
         <div key={params.row.id} className="">
-          Ghs {params?.row?.amount}
+          {/* Ghs {params?.row?.discountValue} */}-
         </div>,
       ],
     },
 
-    { field: "discount", headerName: "Discount", flex: 1 },
+    {
+      field: "discount",
+      headerName: "Discount",
+      type: "actions",
+      flex: 1,
+      getActions: (params: any) => [
+        <div key={params.row.id} className="">
+          {params.row.discountType.toLowerCase() == "amount" && "GHS "}{" "}
+          {params?.row?.discountValue}
+          {params?.row?.discountType.toLowerCase() == "percentage" && "%"}{" "}
+        </div>,
+      ],
+    },
     {
       field: "discountAmount",
       headerName: "Discounted Price",
       type: "actions",
       flex: 1,
       getActions: (params: any) => [
-        <div key={params.row.id} className="">
-          Ghs {params?.row?.amount}
+        <div key={params?.row?.id} className="">
+          -
         </div>,
       ],
     },
@@ -99,7 +125,7 @@ function DiscountedServicesList({
             {/* DELETE */}
             <DropdownItem
               onPress={() => {
-                //
+                deleteDiscount(params.row.id);
               }}
               key="delete"
               className="items-center w-full p-3 rounded-md text-sm text-red-600 hover:bg-[#F1F5F9]"
@@ -114,7 +140,13 @@ function DiscountedServicesList({
 
   return (
     <div>
-      <DataTable isLoading={false} rows={rows} columns={columns} />
+      {discounts?.content && (
+        <DataTable
+          isLoading={isLoading}
+          rows={discounts?.content}
+          columns={columns}
+        />
+      )}
     </div>
   );
 }

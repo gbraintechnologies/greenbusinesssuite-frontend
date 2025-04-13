@@ -38,6 +38,8 @@ import * as external from "./features/externalFormService";
 
 import * as branding from "./features/brandingService";
 
+import * as payments from "./features/paymentService";
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   ...localService,
@@ -60,4 +62,5 @@ export default {
   ...companyAdminBusinessProfile,
   ...external,
   ...branding,
+  ...payments,
 };
