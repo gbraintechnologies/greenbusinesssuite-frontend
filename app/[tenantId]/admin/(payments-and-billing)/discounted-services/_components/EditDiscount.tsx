@@ -15,6 +15,7 @@ function EditDiscount({
     discountType: string;
     serviceName: string;
     discountValue: number;
+    discountPercentage: number;
     isActive: boolean;
     createdOn: Date;
     updatedOn: Date;
@@ -29,7 +30,13 @@ function EditDiscount({
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
 
-  const [amount, setAmount] = useState<any>(discount?.discountValue);
+  console.log("discount", discount);
+
+  const [amount, setAmount] = useState<any>(
+    discount?.discountType.toLowerCase() == "percentage"
+      ? discount?.discountPercentage
+      : discount?.discountValue
+  );
 
   const discountTypes = ["percentage", "amount"];
 
@@ -37,7 +44,7 @@ function EditDiscount({
     discount?.discountType?.toLowerCase()
   );
 
-  const createDiscount = () => {
+  const updateDiscount = () => {
     setLoading(true);
     services
       .updateDiscount({
@@ -87,7 +94,10 @@ function EditDiscount({
         })}
       </div>
       <div>
-        <label className={labelStyle}>Discount Amount</label>
+        <label className={labelStyle}>
+          Discount{" "}
+          {selectedDiscountType == "percentage" ? "Percentage" : "Amount"}
+        </label>
         <input
           type="number"
           min={0}
@@ -99,7 +109,7 @@ function EditDiscount({
       <CompanyThemedButton
         isLoading={loading}
         isDisabled={loading || amount == 0}
-        onPress={createDiscount}
+        onPress={updateDiscount}
       >
         {loading ? "Please wait.." : "Edit Discount"}
       </CompanyThemedButton>

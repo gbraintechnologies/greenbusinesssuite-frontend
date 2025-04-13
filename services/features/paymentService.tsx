@@ -49,7 +49,7 @@ export const getAllDiscounts = (
 ) => {
   return () =>
     authApi
-      .get(`/discounts/all/${pageNumber}/${pageSize}/${timeLine}`)
+      .get(`/discounts/service-data/${pageNumber}/${pageSize}/${timeLine}`)
       .then((res) => res.data);
 };
 

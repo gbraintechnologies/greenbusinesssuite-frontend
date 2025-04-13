@@ -1,7 +1,7 @@
 "use client";
 
 import DataTable from "@/components/DataTable/DataTable";
-import useCompany from "@/hooks/useCompany";
+import Loader from "@/components/Loader/Loader";
 import services from "@/services";
 import { Button } from "@nextui-org/button";
 import {
@@ -64,7 +64,7 @@ function DiscountedServicesList({
       flex: 1,
       getActions: (params: any) => [
         <div key={params.row.id} className="">
-          {/* Ghs {params?.row?.discountValue} */}-
+          Ghs {params?.row?.originalAmount}
         </div>,
       ],
     },
@@ -76,9 +76,12 @@ function DiscountedServicesList({
       flex: 1,
       getActions: (params: any) => [
         <div key={params.row.id} className="">
-          {params.row.discountType.toLowerCase() == "amount" && "GHS "}{" "}
-          {params?.row?.discountValue}
-          {params?.row?.discountType.toLowerCase() == "percentage" && "%"}{" "}
+          {params.row.discountType.toLowerCase() == "amount" && (
+            <>GHS {params?.row?.discountAmount}</>
+          )}{" "}
+          {params?.row?.discountType.toLowerCase() == "percentage" && (
+            <>{params?.row?.discountPercentage}%</>
+          )}{" "}
         </div>,
       ],
     },
@@ -89,7 +92,7 @@ function DiscountedServicesList({
       flex: 1,
       getActions: (params: any) => [
         <div key={params?.row?.id} className="">
-          -
+          Ghs {params?.row?.discountedPrice}
         </div>,
       ],
     },
@@ -140,6 +143,11 @@ function DiscountedServicesList({
 
   return (
     <div>
+      {isLoading && <Loader />}
+
+      {discounts?.content?.length == 0 && !isLoading && (
+        <div>No discounts available</div>
+      )}
       {discounts?.content && (
         <DataTable
           isLoading={isLoading}
