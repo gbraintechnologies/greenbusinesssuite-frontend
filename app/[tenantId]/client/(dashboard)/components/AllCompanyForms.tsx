@@ -97,11 +97,12 @@ function AllCompanyForms() {
             ?.filter((item: any) => item.publishStatus == "PUBLISHED")
             ?.filter(
               (item: any) =>
-                item.multipleForms == true ||
-                allUserResponses.some(
-                  (response: any) =>
-                    parseInt(response.formId) !== parseInt(item.id)
-                )
+                item?.multipleForms == true ||
+                (allUserResponses &&
+                  allUserResponses?.some(
+                    (response: any) =>
+                      parseInt(response?.formId) !== parseInt(item?.id)
+                  ))
             )?.length === 0 ? (
             <div className="flex items-center justify-center flex-col min-h-[20vh]">
               <IoLaptopOutline size={50} />
@@ -121,11 +122,12 @@ function AllCompanyForms() {
                     ?.filter((item: any) => item.publishStatus == "PUBLISHED")
                     ?.filter(
                       (item: any) =>
-                        item.multipleForms == true ||
-                        allUserResponses.some(
-                          (response: any) =>
-                            parseInt(response.formId) !== parseInt(item.id)
-                        )
+                        item?.multipleForms == true ||
+                        (allUserResponses &&
+                          allUserResponses?.some(
+                            (response: any) =>
+                              parseInt(response.formId) !== parseInt(item.id)
+                          ))
                     )
 
                     .map((form: any) => {
