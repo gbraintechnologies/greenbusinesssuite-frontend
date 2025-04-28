@@ -23,18 +23,11 @@ function FormSubmission({
   //
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const { companyBranding: company } = useCompany();
-
-  // succes modal
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  const [loading, setLoading] = useState(false);
-
-  //
   const router = useRouter();
-
   const { user } = useUser();
-
   //
+  const inputStyle =
+    "border border-gray-300 rounded-lg p-2 w-full disabled:bg-gray-100 disabled:cursor-not-allowed";
 
   const {
     submitAndCompleteForm,
@@ -43,6 +36,21 @@ function FormSubmission({
     removeClientForm,
     setSavingResponses,
   } = useClientForm();
+
+  // succes modal
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const [phone, setPhone] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const { data: bill, error } = useQuery({
+    queryKey: ["bill by formid"],
+    queryFn: services.getBillByFormId(clientForm?.id),
+    enabled: Boolean(clientForm?.id) && Boolean(user),
+  });
+
+  console.log("bill", bill?.amount);
 
   const { data: form } = useQuery({
     queryKey: ["form", clientForm.id],
@@ -109,6 +117,7 @@ function FormSubmission({
       services
         .acceptInvite(form?.id, user?.id, Number(company?.id), inputData)
         .then(async (res) => {
+          toast.dismiss();
           toast.success("Successfully started application!");
 
           setLoading(false);
@@ -137,10 +146,34 @@ function FormSubmission({
           toast.error(
             "There was an error processing your invite to this form. The form is either unaccessible or you have already accepted this form."
           );
+          toast.dismiss();
           setLoading(false);
           console.log("error accepting form", e);
         });
     }
+  };
+
+  const completePayment = () => {
+    services
+      .submitPaymentRequest({
+        billId: bill?.id,
+        amount: bill?.amount,
+        paymentMethod: "MOBILE_MONEY",
+        status: "PENDING",
+        serviceName: form?.name,
+        customerEmail: user?.email,
+        customerName: user?.first_name + " " + user?.last_name,
+        phoneNumber: phone,
+      })
+      .then((res) => {
+        toast.success("Payment success. Submitting form...");
+        finish();
+      })
+      .catch((e) => {
+        toast.error(
+          "There was an error submitting your payment request. Please try again."
+        );
+      });
   };
 
   const finish = () => {
@@ -228,7 +261,10 @@ function FormSubmission({
               setShowConfirmationModal(true);
             }}
           >
-            Submit
+            Submit{" "}
+            {!!bill &&
+              bill?.status?.toLowerCase() == "active" &&
+              " & Make Payment"}
           </CompanyThemedButton>
         ) : (
           <>
@@ -244,7 +280,10 @@ function FormSubmission({
                 setShowConfirmationModal(true);
               }}
             >
-              Submit
+              Submit{" "}
+              {!!bill &&
+                bill?.status?.toLowerCase() == "active" &&
+                " & Make Payment"}
             </CompanyThemedButton>
           </>
         )}
@@ -261,30 +300,80 @@ function FormSubmission({
         setIsOpen={setShowConfirmationModal}
         title="Form Submission"
       >
-        <div>
-          <p className="px-5 mt-5 text-[#334155]">
-            Are you sure you want to submit this form? you cannot make any
-            changes once it has been submitted.
-          </p>
+        <>
+          {!!bill && bill?.status?.toLowerCase() == "active" ? (
+            <div className="px-5 text-[#334155] mb-5">
+              <div className="mb-5">
+                <h4 className="font-light text-sm">Application Fee</h4>
+                <p className=" mt-1 font-light text-xl">
+                  {bill?.currency}{" "}
+                  <span className="font-bold text-3xl">{bill?.amount}</span>
+                </p>
+                <div className="flex flex-col gap-4 mt-5">
+                  <div>
+                    <label className="font-light text-gray-600 text-sm mb-2 block">
+                      Payment Method
+                    </label>
+                    <input
+                      type="text"
+                      min={0}
+                      disabled
+                      value="Mobile Money"
+                      // onChange={(e) => setAmount(e.target.value)}
+                      className={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label className="font-light text-gray-600 text-sm mb-2 block">
+                      Phone Number
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className={inputStyle}
+                    />
+                  </div>
+                </div>
+              </div>
+              <CompanyThemedButton
+                isDisabled={savingResponses || phone?.toString()?.length < 5}
+                className=" disabled:bg-gray-700 w-full disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                onPress={() => {
+                  completePayment();
+                }}
+              >
+                Complete Payment
+              </CompanyThemedButton>
+            </div>
+          ) : (
+            <div>
+              <p className="px-5 mt-5 text-[#334155]">
+                Are you sure you want to submit this form? you cannot make any
+                changes once it has been submitted.
+              </p>
 
-          <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
-            <button
-              onClick={() => setShowConfirmationModal(false)}
-              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
-            >
-              Cancel
-            </button>
-            <CompanyThemedButton
-              disabled={savingResponses}
-              className=" disabled:bg-gray-700 disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-              onPress={() => {
-                finish();
-              }}
-            >
-              {savingResponses ? "Please wait..." : "Yes, submit form"}
-            </CompanyThemedButton>
-          </div>
-        </div>
+              <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+                <button
+                  onClick={() => setShowConfirmationModal(false)}
+                  className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+                >
+                  Cancel
+                </button>
+                <CompanyThemedButton
+                  isDisabled={savingResponses}
+                  className=" disabled:bg-gray-700 disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                  onPress={() => {
+                    finish();
+                  }}
+                >
+                  {savingResponses ? "Please wait..." : "Yes, submit form"}
+                </CompanyThemedButton>
+              </div>
+            </div>
+          )}
+        </>
       </Modal>
 
       <Modal

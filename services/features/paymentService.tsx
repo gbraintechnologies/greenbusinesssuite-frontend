@@ -16,6 +16,15 @@ export const createBill = (data: any) => {
   return authApi.post("/bills", data);
 };
 
+export const submitPaymentRequest = (data: any) => {
+  return authApi.post("/payments", data);
+};
+
+export const getBillByFormId = (id: any) => {
+  return () =>
+    authApi.get(`/bills/find-by-form_id/${id}`).then((res) => res.data);
+};
+
 export const deleteBill = (id: any) => {
   return authApi.delete(`/bills/${id}`);
 };
