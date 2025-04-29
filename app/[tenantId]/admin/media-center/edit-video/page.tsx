@@ -18,7 +18,6 @@ import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import { useQuery } from "@tanstack/react-query";
 import { S3BucketFileUpload } from "@/services/features/mediaService";
 
-
 const UploadVideoScheme = Yup.object().shape({
   altText: Yup.string().optional(),
   videoHead: Yup.string(),
@@ -28,7 +27,7 @@ const UploadVideoScheme = Yup.object().shape({
 function EditVideo({ params }: any) {
   const tenantId = params.tenantId;
   const router = useRouter();
-  const searchParams = useSearchParams();  // Access the search params
+  const searchParams = useSearchParams(); // Access the search params
   const videoId = searchParams.get("id");
 
   const { data, isLoading, refetch } = useQuery({
@@ -37,14 +36,19 @@ function EditVideo({ params }: any) {
     enabled: !!videoId,
   });
 
-  useEffect(() => { }, [data, refetch])
+  useEffect(() => {}, [data, refetch]);
 
   const handleFormSubmit = async (
-    values: { altText: string; videoHead?: string; Url?: string; thumbnail?: File | null },
+    values: {
+      altText: string;
+      videoHead?: string;
+      Url?: string;
+      thumbnail?: File | null;
+    },
     { setSubmitting }: FormikHelpers<any>
   ) => {
     const { altText, videoHead, Url, thumbnail } = values;
-    const loading = toast.loading("Updating Video. Please wait...");
+    const loading = toast.info("Updating Video. Please wait...");
 
     try {
       let thumbnailUrl = data?.thumbnail || "";
@@ -88,7 +92,6 @@ function EditVideo({ params }: any) {
       toast.dismiss(loading);
     }
   };
-
 
   if (isLoading) return <LoadingIcon />;
 
@@ -163,7 +166,11 @@ function EditVideo({ params }: any) {
 
               <div className="input-holder">
                 <label htmlFor="videoHead">Video Heading</label>
-                <Field id="videoHead" name="videoHead" className="w-full px-4 py-2 rounded-md" />
+                <Field
+                  id="videoHead"
+                  name="videoHead"
+                  className="w-full px-4 py-2 rounded-md"
+                />
                 <ShowError name="videoHead" />
               </div>
 
@@ -186,7 +193,10 @@ function EditVideo({ params }: any) {
               </div>
 
               <div className="input-holder">
-                <label htmlFor="altText" className="flex justify-between items-center">
+                <label
+                  htmlFor="altText"
+                  className="flex justify-between items-center"
+                >
                   Alt Text
                   {/* Optional text aligned to the right */}
                   <span className="text-sm text-gray-500 ml-2">Optional</span>
@@ -200,7 +210,6 @@ function EditVideo({ params }: any) {
                 />
                 <ShowError name="altText" />
               </div>
-
             </div>
           </Form>
         )}

@@ -18,7 +18,6 @@ import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import { useQuery } from "@tanstack/react-query";
 import { S3BucketFileUpload } from "@/services/features/mediaService";
 
-
 const UploadAdScheme = Yup.object().shape({
   altText: Yup.string().optional(),
   adDescription: Yup.string(),
@@ -28,7 +27,7 @@ const UploadAdScheme = Yup.object().shape({
 function EditAd({ params }: any) {
   const tenantId = params.tenantId;
   const router = useRouter();
-  const searchParams = useSearchParams();  // Access the search params
+  const searchParams = useSearchParams(); // Access the search params
   const AdId = searchParams.get("id");
 
   const { data, isLoading, refetch } = useQuery({
@@ -37,14 +36,19 @@ function EditAd({ params }: any) {
     enabled: !!AdId,
   });
 
-  useEffect(() => { }, [data, refetch])
+  useEffect(() => {}, [data, refetch]);
 
   const handleFormSubmit = async (
-    values: { altText: string; adDescription?: string; Url?: string; thumbnail?: File | null },
+    values: {
+      altText: string;
+      adDescription?: string;
+      Url?: string;
+      thumbnail?: File | null;
+    },
     { setSubmitting }: FormikHelpers<any>
   ) => {
     const { altText, adDescription, Url, thumbnail } = values;
-    const loading = toast.loading("Updating Ad. Please wait...");
+    const loading = toast.info("Updating Ad. Please wait...");
 
     try {
       let thumbnailUrl = data?.thumbnail || "";
@@ -87,7 +91,6 @@ function EditAd({ params }: any) {
       toast.dismiss(loading);
     }
   };
-
 
   if (isLoading) return <LoadingIcon />;
 
@@ -143,7 +146,6 @@ function EditAd({ params }: any) {
                     </>
                   )}
                 </CompanyThemedButton>
-
               </div>
             </div>
 
@@ -161,12 +163,9 @@ function EditAd({ params }: any) {
                 />
               </div>
 
-
               {/* Category Description */}
               <div className="input-holder mt-5">
-                <label htmlFor="adDescription">
-                  Ad Description
-                </label>
+                <label htmlFor="adDescription">Ad Description</label>
                 <Field
                   id="adDescription"
                   as="textarea"
@@ -179,7 +178,10 @@ function EditAd({ params }: any) {
               </div>
 
               <div className="input-holder">
-                <label htmlFor="altText" className="flex justify-between items-center">
+                <label
+                  htmlFor="altText"
+                  className="flex justify-between items-center"
+                >
                   Alt Text
                   {/* Optional text aligned to the right */}
                   <span className="text-sm text-gray-500 ml-2">Optional</span>
@@ -195,7 +197,10 @@ function EditAd({ params }: any) {
               </div>
 
               <div className="input-holder relative">
-                <label htmlFor="Url" className="flex justify-between items-center">
+                <label
+                  htmlFor="Url"
+                  className="flex justify-between items-center"
+                >
                   URL
                   {/* Optional text aligned to the right */}
                   <span className="text-sm text-gray-500 ml-2">Optional</span>
@@ -215,7 +220,6 @@ function EditAd({ params }: any) {
                 </div>
                 <ShowError name="Url" />
               </div>
-
             </div>
           </Form>
         )}

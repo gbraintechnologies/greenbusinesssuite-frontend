@@ -53,7 +53,7 @@ function Forms() {
       func: () => {
         // create form then push to builder with id of form
         setLoading(true);
-        toast.loading("Creating form...");
+        toast.info("Creating form...");
         services
           .createNewForm({
             name: "Untitled",
@@ -169,9 +169,11 @@ function Forms() {
                 forms?.content
                   ?.filter((form: any) => form.isTemplate !== true)
                   ?.map((form: any) => {
-                    return <React.Fragment key={form?.id}>
-                      <FormCard key={form.id} form={form} />
+                    return (
+                      <React.Fragment key={form?.id}>
+                        <FormCard key={form.id} form={form} />
                       </React.Fragment>
+                    );
                   })}
             </div>
           )}

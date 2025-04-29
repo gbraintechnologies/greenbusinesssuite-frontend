@@ -11,7 +11,7 @@ function DeleteForm({ setShow, id }: any) {
   const queryClient = useQueryClient();
 
   const runDelete = () => {
-    toast.loading("Deleting..");
+    toast.info("Deleting..");
     services
       .deleteForm(id)
       .then((res) => {

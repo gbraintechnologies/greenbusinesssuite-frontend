@@ -44,7 +44,7 @@ function StepsNav({
                       activeSection?.id === section?.id
                         ? "bg-[#f6f6f6]"
                         : "bg-[#cbd0d7]"
-                    } w-7 h-7 text-xs rounded-full flex items-center justify-center font-light `}
+                    } min-w-fit w-7 h-7 shrink-0 text-xs rounded-full   flex items-center justify-center font-light`}
                   >
                     {idx + 1}
                   </div>

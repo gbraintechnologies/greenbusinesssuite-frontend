@@ -223,7 +223,7 @@ function FormSubmission({
 
     // Only submit if all required fields are completed
     if (completedRequired) {
-      toast.loading("Submitting form. Please wait...");
+      toast.info("Submitting form. Please wait...");
 
       submitAndCompleteForm(user?.id)
         .then((res: any) => {

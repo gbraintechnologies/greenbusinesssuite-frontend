@@ -101,7 +101,7 @@ function NewUser() {
       user_status: "ACTIVE",
     };
 
-    let loading = toast.loading("Creating user. Please wait...");
+    let loading = toast.info("Creating user. Please wait...");
 
     // upload image first, then use image url when creating user
     const profilePicURL =

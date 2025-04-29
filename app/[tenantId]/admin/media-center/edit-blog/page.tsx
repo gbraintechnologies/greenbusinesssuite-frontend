@@ -22,7 +22,7 @@ const UploadBlogScheme = Yup.object().shape({
   altText: Yup.string().optional(),
   blogHead: Yup.string().required("Blog Heading is required"),
   Url: Yup.string().url("Invalid URL").optional(),
-  thumbnail: Yup.mixed().required("Thumbnail is required") // Ensure thumbnail is required
+  thumbnail: Yup.mixed().required("Thumbnail is required"), // Ensure thumbnail is required
 });
 
 function EditBlog({ params }: any) {
@@ -37,14 +37,19 @@ function EditBlog({ params }: any) {
     enabled: !!blogId,
   });
 
-  useEffect(() => { }, [data]);
+  useEffect(() => {}, [data]);
 
   const handleFormSubmit = async (
-    values: { altText: string; blogHead?: string; Url?: string; thumbnail?: File | null },
+    values: {
+      altText: string;
+      blogHead?: string;
+      Url?: string;
+      thumbnail?: File | null;
+    },
     { setSubmitting }: FormikHelpers<any>
   ) => {
     const { altText, blogHead, Url, thumbnail } = values;
-    const loading = toast.loading("Updating Blog. Please wait...");
+    const loading = toast.info("Updating Blog. Please wait...");
 
     try {
       let thumbnailUrl = data?.thumbnail || "";
@@ -153,7 +158,7 @@ function EditBlog({ params }: any) {
                   News Thumbnail
                 </label>
                 <ThumbnailUpload
-                  initialImage={data?.thumbnail} 
+                  initialImage={data?.thumbnail}
                   onImageChange={(file: File | null) => {
                     setFieldValue("thumbnail", file);
                   }}
@@ -162,7 +167,11 @@ function EditBlog({ params }: any) {
 
               <div className="input-holder">
                 <label htmlFor="blogHead">News Heading</label>
-                <Field id="blogHead" name="blogHead" className="w-full px-4 py-2 rounded-md" />
+                <Field
+                  id="blogHead"
+                  name="blogHead"
+                  className="w-full px-4 py-2 rounded-md"
+                />
                 <ShowError name="blogHead" />
               </div>
 
@@ -188,7 +197,11 @@ function EditBlog({ params }: any) {
               {/* Alt Text */}
               <div className="input-holder">
                 <label htmlFor="altText">Alt Text</label>
-                <Field id="altText" name="altText" className="w-full px-4 py-2 rounded-md" />
+                <Field
+                  id="altText"
+                  name="altText"
+                  className="w-full px-4 py-2 rounded-md"
+                />
                 <ShowError name="altText" />
               </div>
             </div>

@@ -675,7 +675,7 @@ const Notifications: React.FC<Props> = ({
 
       // console.log("SENDING SMS", data);
 
-      let loadingToast = toast.loading("Sending sms. Please wait...");
+      let loadingToast = toast.info("Sending sms. Please wait...");
       services
         .sendSMS(data)
         .then((res) => {
@@ -768,7 +768,7 @@ const Notifications: React.FC<Props> = ({
         isHtml: true,
       };
 
-      let loadingToast = toast.loading("Sending email...");
+      let loadingToast = toast.info("Sending email...");
 
       if (!!files?.length) {
         data = {

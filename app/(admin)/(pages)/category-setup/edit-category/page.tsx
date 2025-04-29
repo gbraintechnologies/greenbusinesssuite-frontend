@@ -46,7 +46,7 @@ function EditCategory() {
   ) => {
     const { categoryName, categoryDescription } = values;
 
-    const loading = toast.loading("Updating Category. Please wait...");
+    const loading = toast.info("Updating Category. Please wait...");
 
     try {
       if (data) {

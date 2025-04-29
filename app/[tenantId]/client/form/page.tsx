@@ -104,7 +104,7 @@ function FillFormHere() {
     let layout = clientForm?.layout;
     return (
       <div className="relative flex-col min-h-screen bg-[#F8FAFC] flex md:flex-row gap-5 p-2">
-        <div className="hidden md:block w-[21rem] fixed bg-[#E2E8F0]  rounded-lg p-5 h-[91vh] ">
+        <div className="hidden md:block w-[21rem] fixed bg-[#E2E8F0]  rounded-lg p-5 h-[91vh]  overflow-y-auto pb-20 ">
           <StepsNav
             layout={layout}
             swiperInstance={swiperInstance}
@@ -142,7 +142,7 @@ function FillFormHere() {
               disabled={savingResponses}
               className="fixed right-10 z-50 bg-white top-20 px-4 py-2 rounded-full border border-gray-600 text-gray-600"
               onClick={() => {
-                toast.loading("Saving, please wait...");
+                toast.info("Saving, please wait...");
 
                 saveResponsesRemote(user?.id);
                 router.push(`/${company?.company_identifier}/client`);

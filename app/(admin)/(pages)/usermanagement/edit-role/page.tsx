@@ -95,7 +95,7 @@ function EditRole() {
   ) => {
     const { roleName, roleDescription, permissions } = values;
 
-    let loading = toast.loading("Updating role. Please wait...");
+    let loading = toast.info("Updating role. Please wait...");
 
     try {
       console.log("Role update payload:", {

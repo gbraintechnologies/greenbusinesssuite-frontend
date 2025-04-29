@@ -265,11 +265,11 @@ const Notifications: React.FC<Props> = ({ setShow }) => {
   const sendMessage = () => {
     //
     if (activeFilter.id == 0) {
-      toast.loading("Sending sms...");
+      toast.info("Sending sms...");
       //
     } else {
       // EMAIL NOTIFICATION
-      toast.loading("Sending email...");
+      toast.info("Sending email...");
 
       let data = {
         sender: admin?.email,

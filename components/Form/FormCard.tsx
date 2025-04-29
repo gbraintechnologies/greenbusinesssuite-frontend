@@ -82,7 +82,7 @@ function FormCard({
     {
       title: "Duplicate",
       func: () => {
-        toast.loading("Duplicating form");
+        toast.info("Duplicating form");
         services
           .duplicateForm(id)
           .then((res: any) => {

@@ -216,7 +216,7 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
                 />
                 <button
                   onClick={() => {
-                    toast.loading("Please wait...");
+                    toast.info("Please wait...");
                     updateRedirectUrl(redirectUrl);
                   }}
                   className="mt-3 bg-black text-white px-4 py-2 text-sm  w-full rounded-xl"

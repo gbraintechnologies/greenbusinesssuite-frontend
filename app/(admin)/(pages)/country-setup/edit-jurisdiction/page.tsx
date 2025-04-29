@@ -308,7 +308,7 @@ function EditJurisdiction() {
   };
 
   const handleParentChildrenUpdate = async (data: any) => {
-    let loadingToast = toast.loading("Please wait...");
+    let loadingToast = toast.info("Please wait...");
 
     try {
       const payload = mapRowsToPayload(data);
@@ -333,7 +333,7 @@ function EditJurisdiction() {
   };
 
   const handleAddButton = async () => {
-    let loadingToast = toast.loading("Please wait...");
+    let loadingToast = toast.info("Please wait...");
 
     const existingParentLevels: ParentLevel[] =
       data?.addressingScheme?.parentLevels || [];

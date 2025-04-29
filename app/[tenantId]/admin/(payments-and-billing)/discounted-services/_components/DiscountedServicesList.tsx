@@ -33,7 +33,7 @@ function DiscountedServicesList({
   });
 
   const deleteDiscount = (id: any) => {
-    toast.loading("Removing discount");
+    toast.info("Removing discount");
     services
       .deleteDiscount(id)
       .then((res) => {

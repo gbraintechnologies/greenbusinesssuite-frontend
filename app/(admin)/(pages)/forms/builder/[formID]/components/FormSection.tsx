@@ -64,7 +64,7 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
   };
 
   const moveUp = () => {
-    toast.loading("Moving section up. Please wait...");
+    toast.info("Moving section up. Please wait...");
     let sections = form?.formSections;
 
     const index = sections.findIndex(
@@ -81,7 +81,7 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
   };
 
   const moveDown = () => {
-    toast.loading("Moving section down. Please wait...");
+    toast.info("Moving section down. Please wait...");
     let sections = form?.formSections;
     const index = sections.findIndex(
       (sectionL: any) => sectionL.id === section?.id

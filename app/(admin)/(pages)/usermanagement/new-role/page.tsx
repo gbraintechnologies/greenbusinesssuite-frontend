@@ -54,7 +54,7 @@ function NewRole() {
   ) => {
     const { roleName, roleDescription, permissions } = values;
 
-    let loading = toast.loading("Creating role. Please wait...");
+    let loading = toast.info("Creating role. Please wait...");
 
     try {
       // console.log("Role creation payload:", {

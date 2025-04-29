@@ -50,7 +50,7 @@ function CompanyAdmins({ companyId }: any) {
   const [loading, setLoading] = useState(false);
 
   const assignAdmin = () => {
-    toast.loading("Assigning...", {
+    toast.info("Assigning...", {
       description: "Assigning new administrator, please wait",
     });
     setLoading(true);

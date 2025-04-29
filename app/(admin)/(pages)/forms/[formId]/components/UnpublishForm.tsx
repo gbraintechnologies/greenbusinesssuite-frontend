@@ -17,7 +17,7 @@ function UnpublishForm({ setShow, loading, setLoading, form }: any) {
   const unpublishFormAction = () => {
     setLoading(true);
     //
-    toast.loading(`Unpublishing ${form.name}`);
+    toast.info(`Unpublishing ${form.name}`);
     services
       .unpublishForm(form?.id)
       .then((res) => {

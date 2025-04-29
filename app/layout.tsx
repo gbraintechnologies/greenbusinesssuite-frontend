@@ -26,6 +26,7 @@ import AdminContextProvider from "@/lib/AdminContextProvider/AdminContextProvide
 import UserContextProvider from "@/lib/UserContextProvider/UserContextProvider";
 import AuthContextProvider from "@/lib/AuthContextProvider/AuthContextProvider";
 import CompanyContextProvider from "@/lib/CompanyContextProvider/CompanyContextProvider";
+import { BsCloudSleet } from "react-icons/bs";
 
 export default function RootLayout({
   children,
@@ -67,9 +68,12 @@ export default function RootLayout({
                 <UserContextProvider>{children}</UserContextProvider>
               </CompanyContextProvider>
               <Toaster
-                duration={1000}
-                // closeButton
-                expand
+                toastOptions={{
+                  duration: 2000,
+                  closeButton: true,
+                }}
+                duration={2000}
+                closeButton
                 position="top-right"
               />
             </AdminContextProvider>

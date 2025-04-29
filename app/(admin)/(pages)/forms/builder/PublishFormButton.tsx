@@ -38,7 +38,7 @@ function PublishFormButton({
   const [loading, setLoading] = useState(false);
 
   const publishForm = () => {
-    toast.loading(`Publishing ${form?.name}`);
+    toast.info(`Publishing ${form?.name}`);
     setLoading(true);
 
     // checking for company assignment

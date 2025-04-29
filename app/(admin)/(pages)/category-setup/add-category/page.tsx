@@ -26,7 +26,7 @@ function AddCategory() {
   ) => {
     const { categoryName, categoryDescription } = values;
 
-    const loading = toast.loading("Creating Category. Please wait...");
+    const loading = toast.info("Creating Category. Please wait...");
 
     try {
       await services.createSpecificCategory({

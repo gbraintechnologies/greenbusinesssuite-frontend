@@ -51,7 +51,7 @@ function AdCard({ ad, tenantId, refetchData }: Props) {
 
   const handleDelete = async () => {
     try {
-      const loading = toast.loading("Deleting ad...");
+      const loading = toast.info("Deleting ad...");
       await deleteMediaTypeByID(id);
       toast.success("Ad deleted successfully!");
       toast.dismiss(loading);

@@ -176,7 +176,7 @@ function EditSector() {
   };
 
   const handleParentChildrenUpdate = async (data: UpdatedRow) => {
-    let loadingToast = toast.loading("Please wait...");
+    let loadingToast = toast.info("Please wait...");
     try {
       const payload = mapRowsToPayload(data);
 
@@ -295,7 +295,7 @@ function EditSector() {
   ];
 
   const handleAddButton = async () => {
-    let loadingToast = toast.loading("Adding new sector...");
+    let loadingToast = toast.info("Adding new sector...");
     try {
       const formData = getValues();
       const { id, countryName, sectors } = formData;

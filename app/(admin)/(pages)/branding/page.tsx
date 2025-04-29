@@ -17,7 +17,7 @@ function page() {
   const queryClient = useQueryClient();
 
   const deleteBranding = (id: any) => {
-    toast.loading("Deleting...");
+    toast.info("Deleting...");
     setLoading(true);
     services
       .deleteBranding(id)

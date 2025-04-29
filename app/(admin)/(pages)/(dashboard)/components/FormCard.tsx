@@ -67,7 +67,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
     {
       title: "Duplicate",
       func: () => {
-        toast.loading("Duplicating form");
+        toast.info("Duplicating form");
         services
           .duplicateForm(id)
           .then((res) => {

@@ -16,186 +16,187 @@ import ThumbnailUpload from "../component/ThumbnailUpload";
 import { MdOutlineInsertLink } from "react-icons/md";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
-
 const UploadVideoScheme = Yup.object().shape({
-    altText: Yup.string().optional(),
-    videoHead: Yup.string(),
-    Url: Yup.string().url("Invalid URL").optional(),
+  altText: Yup.string().optional(),
+  videoHead: Yup.string(),
+  Url: Yup.string().url("Invalid URL").optional(),
 });
 
 interface VideoFormValues {
-    altText: string;
-    videoHead: string;
-    Url: string;
-    thumbnail: File | null;
+  altText: string;
+  videoHead: string;
+  Url: string;
+  thumbnail: File | null;
 }
 
 function UploadVideo({ params }: any) {
-    const tenantId = params.tenantId;
-    const router = useRouter();
-    const [thumbnail, setThumbnail] = useState<File | null>(null);
-    const [isActive, setIsActive] = useState<boolean>(false);
-    const searchParams = useSearchParams();
-    const videoType = searchParams.get("type");
+  const tenantId = params.tenantId;
+  const router = useRouter();
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const searchParams = useSearchParams();
+  const videoType = searchParams.get("type");
 
-    useEffect(() => {
-    }, [videoType]);
+  useEffect(() => {}, [videoType]);
 
-     const handleFormSubmit = async (
-            values: VideoFormValues,
-            { setSubmitting, resetForm }: FormikHelpers<VideoFormValues>
-        ) => {
-            const { altText, videoHead, Url } = values;
-            const formValuesWithThumbnail = { ...values, thumbnail: thumbnail };
-    
-            const loading = toast.loading("Saving Video. Please wait...");
-    
-    
-            try {
-                const formData = new FormData();
-                formData.append("mediaType", videoType || "VIDEOS");
-                formData.append("altText", altText || "");
-                formData.append("heading", videoHead || "");
-                formData.append("url", Url || "");
-                formData.append("isActive", String(isActive));
-    
-                if (thumbnail) {
-                    formData.append("thumbnail", thumbnail);
-                }
-                console.log("Form Values with Thumbnail:", formValuesWithThumbnail);
-                
-                await services.mediaUpload(formData);
-                toast.success("Video uploaded successfully!");
-                resetForm();
-                setThumbnail(null); 
-                router.push(`/${tenantId}/admin/media-center`);
-            } catch (error) {
-                console.error("Error uploading Video:", error);
-                toast.error("An error occurred while uploading the Video.");
-            } finally {
-                setSubmitting(false);
-                toast.dismiss(loading);
-            }
-        };
+  const handleFormSubmit = async (
+    values: VideoFormValues,
+    { setSubmitting, resetForm }: FormikHelpers<VideoFormValues>
+  ) => {
+    const { altText, videoHead, Url } = values;
+    const formValuesWithThumbnail = { ...values, thumbnail: thumbnail };
 
-    return (
-        <div className="px-5 pb-20">
-            <Formik
-                initialValues={{
-                    altText: "",
-                    videoHead: "",
-                    Url: "",
-                    thumbnail: thumbnail,
-                }}
-                validationSchema={UploadVideoScheme}
-                onSubmit={handleFormSubmit}
-            >
-                {({ errors, isSubmitting }) => (
-                    <Form>
-                        {/* Header */}
-                        <div className="w-full text-primary-dark flex pt-4 justify-between">
-                            <div>
-                                <div className="flex items-center gap-3 mb-10">
-                                    <Link
-                                        href={`/${tenantId}/admin/media-center`}
-                                        className="bg-white border border-gray-200 flex items-center justify-center text-black text-sm p-2 hover:bg-gray-100 hover:opacity-95  gap-2 rounded-xl"
-                                    >
-                                        <IoArrowBackSharp />
-                                    </Link>
-                                    <h3 className="font-semibold text-xl">Upload Video</h3>
-                                </div>
-                            </div>
-                            <div className="flex gap-3">
-                                <Link href={`/${tenantId}/admin/media-center`}>
-                                    <button
-                                        type="button"
-                                        className="bg-gray-50 border border-gray-200 shadow-sm py-2 flex text-primary-dark text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-                                    >
-                                        Cancel
-                                    </button>
-                                </Link>
-                                <CompanyThemedButton
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="disabled:bg-gray-400 h-10 flex items-center justify-center text-white text-sm px-4 hover:opacity-95 gap-2 rounded-xl"
-                                >
-                                    {isSubmitting ? (
-                                        <>
-                                            <LoadingIcon />
-                                            Saving
-                                        </>
-                                    ) : (
-                                        <>
-                                            <HiOutlineInboxArrowDown /> Save
-                                        </>
-                                    )}
-                                </CompanyThemedButton>
+    const loading = toast.info("Saving Video. Please wait...");
 
-                            </div>
-                        </div>
+    try {
+      const formData = new FormData();
+      formData.append("mediaType", videoType || "VIDEOS");
+      formData.append("altText", altText || "");
+      formData.append("heading", videoHead || "");
+      formData.append("url", Url || "");
+      formData.append("isActive", String(isActive));
 
-                        {/* Form Body */}
-                        <div className="max-w-2xl rounded-lg py-5 pb-3">
-                            <div className="">
-                                <label className="block text-base font-medium text-gray-700 mb-2">
-                                    Video Thumbnail
-                                </label>
-                                <ThumbnailUpload onImageChange={setThumbnail} />
-                            </div>
+      if (thumbnail) {
+        formData.append("thumbnail", thumbnail);
+      }
+      console.log("Form Values with Thumbnail:", formValuesWithThumbnail);
 
-                            <div className="input-holder">
-                                <label htmlFor="blogHead" className="flex justify-between items-center">
-                                    Video Heading
-                                </label>
-                                <Field
-                                    id="videoHead"
-                                    name="videoHead"
-                                    placeholder="Type description here"
-                                    style={getStyles(errors, "videoHead")}
-                                    className="w-full border border-gray-200 px-4 py-2 rounded-md"
-                                />
-                                <ShowError name="videoHead" />
-                            </div>
+      await services.mediaUpload(formData);
+      toast.success("Video uploaded successfully!");
+      resetForm();
+      setThumbnail(null);
+      router.push(`/${tenantId}/admin/media-center`);
+    } catch (error) {
+      console.error("Error uploading Video:", error);
+      toast.error("An error occurred while uploading the Video.");
+    } finally {
+      setSubmitting(false);
+      toast.dismiss(loading);
+    }
+  };
 
-                            <div className="input-holder relative">
-                                <label htmlFor="Url">URL</label>
-                                <div className="relative w-full">
-                                    <Field
-                                        id="Url"
-                                        name="Url"
-                                        placeholder="Paste link here"
-                                        style={getStyles(errors, "Url")}
-                                        className="w-full px-4 py-2 rounded-md pr-10"
-                                    />
+  return (
+    <div className="px-5 pb-20">
+      <Formik
+        initialValues={{
+          altText: "",
+          videoHead: "",
+          Url: "",
+          thumbnail: thumbnail,
+        }}
+        validationSchema={UploadVideoScheme}
+        onSubmit={handleFormSubmit}
+      >
+        {({ errors, isSubmitting }) => (
+          <Form>
+            {/* Header */}
+            <div className="w-full text-primary-dark flex pt-4 justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-10">
+                  <Link
+                    href={`/${tenantId}/admin/media-center`}
+                    className="bg-white border border-gray-200 flex items-center justify-center text-black text-sm p-2 hover:bg-gray-100 hover:opacity-95  gap-2 rounded-xl"
+                  >
+                    <IoArrowBackSharp />
+                  </Link>
+                  <h3 className="font-semibold text-xl">Upload Video</h3>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Link href={`/${tenantId}/admin/media-center`}>
+                  <button
+                    type="button"
+                    className="bg-gray-50 border border-gray-200 shadow-sm py-2 flex text-primary-dark text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                  >
+                    Cancel
+                  </button>
+                </Link>
+                <CompanyThemedButton
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="disabled:bg-gray-400 h-10 flex items-center justify-center text-white text-sm px-4 hover:opacity-95 gap-2 rounded-xl"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <LoadingIcon />
+                      Saving
+                    </>
+                  ) : (
+                    <>
+                      <HiOutlineInboxArrowDown /> Save
+                    </>
+                  )}
+                </CompanyThemedButton>
+              </div>
+            </div>
 
-                                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
-                                        <MdOutlineInsertLink size={24} />
-                                    </div>
-                                </div>
-                                <ShowError name="Url" />
-                            </div>
-                            <div className="input-holder">
-                                <label htmlFor="altText" className="flex justify-between items-center">
-                                    Alt Text
-                                    {/* Optional text aligned to the right */}
-                                    <span className="text-sm text-gray-500 ml-2">Optional</span>
-                                </label>
-                                <Field
-                                    id="altText"
-                                    name="altText"
-                                    placeholder="Type alternate text here"
-                                    style={getStyles(errors, "altText")}
-                                    className="w-full border border-gray-200 px-4 py-2 rounded-md"
-                                />
-                                <ShowError name="altText" />
-                            </div>
+            {/* Form Body */}
+            <div className="max-w-2xl rounded-lg py-5 pb-3">
+              <div className="">
+                <label className="block text-base font-medium text-gray-700 mb-2">
+                  Video Thumbnail
+                </label>
+                <ThumbnailUpload onImageChange={setThumbnail} />
+              </div>
 
-                        </div>
-                    </Form>
-                )}
-            </Formik>
-        </div>
-    );
+              <div className="input-holder">
+                <label
+                  htmlFor="blogHead"
+                  className="flex justify-between items-center"
+                >
+                  Video Heading
+                </label>
+                <Field
+                  id="videoHead"
+                  name="videoHead"
+                  placeholder="Type description here"
+                  style={getStyles(errors, "videoHead")}
+                  className="w-full border border-gray-200 px-4 py-2 rounded-md"
+                />
+                <ShowError name="videoHead" />
+              </div>
+
+              <div className="input-holder relative">
+                <label htmlFor="Url">URL</label>
+                <div className="relative w-full">
+                  <Field
+                    id="Url"
+                    name="Url"
+                    placeholder="Paste link here"
+                    style={getStyles(errors, "Url")}
+                    className="w-full px-4 py-2 rounded-md pr-10"
+                  />
+
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
+                    <MdOutlineInsertLink size={24} />
+                  </div>
+                </div>
+                <ShowError name="Url" />
+              </div>
+              <div className="input-holder">
+                <label
+                  htmlFor="altText"
+                  className="flex justify-between items-center"
+                >
+                  Alt Text
+                  {/* Optional text aligned to the right */}
+                  <span className="text-sm text-gray-500 ml-2">Optional</span>
+                </label>
+                <Field
+                  id="altText"
+                  name="altText"
+                  placeholder="Type alternate text here"
+                  style={getStyles(errors, "altText")}
+                  className="w-full border border-gray-200 px-4 py-2 rounded-md"
+                />
+                <ShowError name="altText" />
+              </div>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  );
 }
 
 export default UploadVideo;

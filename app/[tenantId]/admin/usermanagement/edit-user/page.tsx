@@ -114,7 +114,7 @@ function page() {
       user_status: data?.user_status,
     };
 
-    let loading = toast.loading("Editing user. Please wait...");
+    let loading = toast.info("Editing user. Please wait...");
 
     // upload image first, then use image url when creating user
     const profilePicURL =

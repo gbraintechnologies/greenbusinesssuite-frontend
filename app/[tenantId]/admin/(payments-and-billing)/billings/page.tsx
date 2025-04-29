@@ -31,7 +31,7 @@ function Billings() {
   // Bill Functions
   const [selectedBill, setSelectedBill] = useState(null);
   const deleteBill = (id: any) => {
-    toast.loading("Deleting bill...");
+    toast.info("Deleting bill...");
     services
       .deleteBill(id)
       .then((res) => {
@@ -46,7 +46,7 @@ function Billings() {
   };
 
   const updateBill = (data: any) => {
-    toast.loading("Updating bill...");
+    toast.info("Updating bill...");
     services
       .updateBill(data)
       .then((res) => {

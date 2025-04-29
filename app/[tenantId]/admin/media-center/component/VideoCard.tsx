@@ -78,7 +78,7 @@ function VideoCard({ video, tenantId, refetchData }: Props) {
 
   const handleDelete = async () => {
     try {
-      const loading = toast.loading("Deleting video...");
+      const loading = toast.info("Deleting video...");
       await deleteMediaTypeByID(id);
       toast.success("Video deleted successfully!");
       toast.dismiss(loading);

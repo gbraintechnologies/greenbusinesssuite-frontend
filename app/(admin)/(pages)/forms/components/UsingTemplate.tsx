@@ -49,7 +49,7 @@ function UsingTemplate({ setShowTemplateModal }: any) {
 
   const useTemplate = (form: any) => {
     setShowTemplateModal(false);
-    toast.loading("Creating form using template....");
+    toast.info("Creating form using template....");
     setLoading(true);
 
     services

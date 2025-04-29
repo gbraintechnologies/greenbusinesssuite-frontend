@@ -203,7 +203,7 @@ export const FormProvider = ({ children }) => {
     //     deletedOn: new Date(),
     //   };
     // }
-    toast.loading("Deleting section...");
+    toast.info("Deleting section...");
     services
       .deleteSection(data?.id)
       .then((res) => {

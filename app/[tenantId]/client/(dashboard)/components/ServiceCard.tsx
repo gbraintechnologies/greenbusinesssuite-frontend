@@ -33,7 +33,7 @@ function ServiceCard({ form }: Props) {
   const queryClient = useQueryClient();
 
   const startApplication = () => {
-    toast.loading("Creating application. Please wait...");
+    toast.info("Creating application. Please wait...");
 
     if (form) {
       // CHECK IF DEADLINE OR DATE IS OVER

@@ -76,7 +76,7 @@ function BlogCard({ blog, tenantId, refetchData }: Props) {
 
   const handleDelete = async () => {
     try {
-      const loading = toast.loading("Deleting News...");
+      const loading = toast.info("Deleting News...");
       await deleteMediaTypeByID(id);
       toast.success("News deleted successfully!");
       toast.dismiss(loading);
