@@ -14,6 +14,8 @@ import { HiDocumentCheck } from "react-icons/hi2";
 import useCompany from "@/hooks/useCompany";
 import { Button } from "@nextui-org/button";
 import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
+import success from "@/public/icons/success.svg";
 
 function FormSubmission({
   showOnlySubmitButton = false,
@@ -22,6 +24,11 @@ function FormSubmission({
 }) {
   //
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
+  const [requestStatus, setRequestStatus] = useState<"pending" | "success">(
+    "pending"
+  );
+
   const { companyBranding: company } = useCompany();
   const router = useRouter();
   const { user } = useUser();
@@ -49,8 +56,6 @@ function FormSubmission({
     queryFn: services.getBillByFormId(clientForm?.id),
     enabled: Boolean(clientForm?.id) && Boolean(user),
   });
-
-  console.log("bill", bill?.amount);
 
   const { data: form } = useQuery({
     queryKey: ["form", clientForm.id],
@@ -154,20 +159,48 @@ function FormSubmission({
   };
 
   const completePayment = () => {
+    setLoading(true);
+
+    // UPDATES
+    // AIR, TIG, VOD, MTN, MAS, BNK, VIS;
     services
       .submitPaymentRequest({
         billId: bill?.id,
-        amount: bill?.amount,
         paymentMethod: "MOBILE_MONEY",
         status: "PENDING",
+        network: "MTN",
         serviceName: form?.name,
         customerEmail: user?.email,
         customerName: user?.first_name + " " + user?.last_name,
         phoneNumber: phone,
       })
       .then((res) => {
-        toast.success("Payment success. Submitting form...");
-        finish();
+        console.log("res", res);
+        setLoading(false);
+        const data: {
+          paymentId: string;
+          status: "FAILED" | "SUCCESS";
+          responseCode: string;
+          responseDescription: string;
+          transactionId: string;
+          paymentMethod: string;
+        } = res.data;
+
+        if (data.status == "FAILED") {
+          // TODO: Remove after fix:
+          setRequestStatus("success");
+          // setShowConfirmationModal(false);
+          toast.error(
+            data?.responseDescription
+              ? data.responseDescription
+              : "A system error occured processing your payment"
+          );
+          return;
+        }
+
+        setRequestStatus("success");
+        // toast.success("Payment success. Submitting form...");
+        // finish();
       })
       .catch((e) => {
         toast.error(
@@ -277,6 +310,7 @@ function FormSubmission({
             <CompanyThemedButton
               className="bg-black text-white px-4 rounded-lg py-2"
               onPress={() => {
+                setRequestStatus("pending");
                 setShowConfirmationModal(true);
               }}
             >
@@ -298,55 +332,86 @@ function FormSubmission({
       <Modal
         isOpen={showConfirmationModal}
         setIsOpen={setShowConfirmationModal}
-        title="Form Submission"
+        title=""
       >
         <>
           {!!bill && bill?.status?.toLowerCase() == "active" ? (
-            <div className="px-5 text-[#334155] mb-5">
-              <div className="mb-5">
-                <h4 className="font-light text-sm">Application Fee</h4>
-                <p className=" mt-1 font-light text-xl">
-                  {bill?.currency}{" "}
-                  <span className="font-bold text-3xl">{bill?.amount}</span>
-                </p>
-                <div className="flex flex-col gap-4 mt-5">
-                  <div>
-                    <label className="font-light text-gray-600 text-sm mb-2 block">
-                      Payment Method
-                    </label>
-                    <input
-                      type="text"
-                      min={0}
-                      disabled
-                      value="Mobile Money"
-                      // onChange={(e) => setAmount(e.target.value)}
-                      className={inputStyle}
-                    />
+            <>
+              {requestStatus == "pending" && (
+                <div className="px-5 text-[#334155] mb-5">
+                  <div className="mb-5">
+                    <h4 className="font-light text-sm">Application Fee</h4>
+                    <p className=" mt-1 font-light text-xl">
+                      {bill?.currency}{" "}
+                      <span className="font-bold text-3xl">{bill?.amount}</span>
+                    </p>
+                    <div className="flex flex-col gap-4 mt-5">
+                      <div>
+                        <label className="font-light text-gray-600 text-sm mb-2 block">
+                          Payment Method
+                        </label>
+                        <input
+                          type="text"
+                          min={0}
+                          disabled
+                          value="Mobile Money"
+                          // onChange={(e) => setAmount(e.target.value)}
+                          className={inputStyle}
+                        />
+                      </div>
+                      <div>
+                        <label className="font-light text-gray-600 text-sm mb-2 block">
+                          Phone Number
+                        </label>
+                        <input
+                          type="number"
+                          min={0}
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className={inputStyle}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <label className="font-light text-gray-600 text-sm mb-2 block">
-                      Phone Number
-                    </label>
-                    <input
-                      type="number"
-                      min={0}
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className={inputStyle}
-                    />
-                  </div>
+                  <CompanyThemedButton
+                    isLoading={loading}
+                    isDisabled={
+                      savingResponses ||
+                      loading ||
+                      phone?.toString()?.length < 5
+                    }
+                    className=" disabled:bg-gray-700 w-full disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+                    onPress={() => {
+                      completePayment();
+                    }}
+                  >
+                    Complete Payment
+                  </CompanyThemedButton>
                 </div>
-              </div>
-              <CompanyThemedButton
-                isDisabled={savingResponses || phone?.toString()?.length < 5}
-                className=" disabled:bg-gray-700 w-full disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-                onPress={() => {
-                  completePayment();
-                }}
-              >
-                Complete Payment
-              </CompanyThemedButton>
-            </div>
+              )}
+
+              {requestStatus == "success" && (
+                <div className="-mt-10 flex flex-col items-center justify-center gap-2 mb-10">
+                  <Image src={success} width={150} height={100} alt="success" />
+                  <h5 className="text-2xl font-bold">
+                    Payment Request submitted
+                  </h5>
+                  <p className="-mt-1 text-gray-700 font-light w-full md:w-[50%] text-center mx-auto">
+                    You will get a pop-up on your phone to complete the payment.
+                  </p>
+
+                  <Button
+                    onPress={() => {
+                      finish();
+                      // setShowConfirmationModal(false)
+                    }}
+                    className="bg-green-800 text-white px-20 mt-10"
+                  >
+                    Done
+                  </Button>
+                </div>
+              )}
+            </>
           ) : (
             <div>
               <p className="px-5 mt-5 text-[#334155]">

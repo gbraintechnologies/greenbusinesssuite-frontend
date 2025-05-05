@@ -68,7 +68,7 @@ function AllCompanyForms() {
 
   return (
     <div className="mt-5">
-      {isFormsLoading ? (
+      {isFormsLoading || responsesLoading ? (
         <div className="h-[20rem] flex items-center justify-center">
           <div>
             <LoadingIcon />
@@ -123,6 +123,7 @@ function AllCompanyForms() {
                     ?.filter(
                       (item: any) =>
                         item?.multipleForms == true ||
+                        allUserResponses?.length == 0 ||
                         (allUserResponses &&
                           allUserResponses?.some(
                             (response: any) =>

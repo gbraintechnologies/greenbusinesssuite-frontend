@@ -102,7 +102,7 @@ export default function CompanyLayout(props: any) {
       link: null,
       subNavigation: [
         {
-          name: "Billings",
+          name: "Billing",
           linkedModule: AvailableModules.FormBuilder,
           icon: null,
           link: `/${company?.company_identifier}/admin/billings`,

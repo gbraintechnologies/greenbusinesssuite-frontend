@@ -12,6 +12,8 @@ import SideModal from "@/components/Modal/SideModal";
 import CreatePayment from "./_components/CreatePayment";
 import { useDisclosure } from "@nextui-org/modal";
 import ViewPayment from "./_components/ViewPayment";
+import { useQuery } from "@tanstack/react-query";
+import services from "@/services";
 
 function Payments() {
   //pagination
@@ -31,6 +33,13 @@ function Payments() {
   } = useDisclosure();
 
   const [selectedPayment, setSelectedPayment] = useState(null);
+
+  const { data: paymentsSummary, isLoading } = useQuery({
+    queryKey: ["Payments Summary"],
+    queryFn: services.getPaymentSummary(),
+  });
+
+  console.log("payments summary", paymentsSummary);
 
   return (
     <div className="mt-10 pb-10 ">
@@ -63,12 +72,12 @@ function Payments() {
       <div className="mx-5  mt-5 border border-gray-200 rounded-xl p-4 grid grid-cols-2 divide-x-2 divide-gray-200 gap-10">
         <div className="flex flex-col gap-8 px-4">
           <p className="text-gray-500 text-lg">Total Revenue</p>
-          <h2 className="text-3xl font-bold">Ghs 34,590</h2>
+          <h2 className="text-3xl font-bold">Ghs {paymentsSummary}</h2>
         </div>
-        <div className="flex flex-col gap-8 px-4">
+        {/* <div className="flex flex-col gap-8 px-4">
           <p className="text-gray-500 text-lg">Total Applications</p>
           <h2 className="text-3xl font-bold">2,498</h2>
-        </div>
+        </div> */}
       </div>
 
       <div className="mt-5">

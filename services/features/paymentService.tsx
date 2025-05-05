@@ -65,3 +65,29 @@ export const getAllDiscounts = (
 export const updateDiscount = (data: any) => {
   return authApi.put(`/discounts/update`, data);
 };
+
+export const getAllPayments = (
+  pageNumber: number,
+  pageSize: number,
+  timeLine: TimelineType = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(`/payments/all/${pageNumber}/${pageSize}/${timeLine}`)
+      .then((res) => res.data);
+};
+
+export const getAllInvoices = (
+  pageNumber: number,
+  pageSize: number,
+  timeLine: TimelineType = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(`/invoices/all/${pageNumber}/${pageSize}/${timeLine}`)
+      .then((res) => res.data);
+};
+
+export const getPaymentSummary = () => {
+  return () => authApi.get(`/payments/revenue`).then((res) => res.data);
+};

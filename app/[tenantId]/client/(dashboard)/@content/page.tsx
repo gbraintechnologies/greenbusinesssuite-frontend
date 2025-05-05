@@ -113,15 +113,16 @@ const Page = () => {
               key={uncompletedFormResponses[0]?.id}
               form={uncompletedFormResponses[0]}
             />
-            {uncompletedFormResponses.length > 1 && (
-              <button
-                onClick={() => setShowAllUncomplete(!showAllUncomplete)}
-                className="text-xs font-medium text-center text-gray-600 flex items-center gap-2 bg-white px-7 -mt-2 shadow-xl border border-gray-100 w-fit py-2 rounded-xl"
-              >
-                {" "}
-                <SlArrowDown size={15} />
-              </button>
-            )}
+            {uncompletedFormResponses.length > 1 &&
+              !!uncompletedFormResponsesLoading && (
+                <button
+                  onClick={() => setShowAllUncomplete(!showAllUncomplete)}
+                  className="text-xs font-medium text-center text-gray-600 flex items-center gap-2 bg-white px-7 -mt-2 shadow-xl border border-gray-100 w-fit py-2 rounded-xl"
+                >
+                  {" "}
+                  <SlArrowDown size={15} />
+                </button>
+              )}
           </div>
         ) : (
           <div className="flex flex-col gap-3 items-center justify-center">

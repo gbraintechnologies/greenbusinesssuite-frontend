@@ -1,18 +1,11 @@
 "use client";
 
 import DataTable from "@/components/DataTable/DataTable";
-import StatusPill from "@/components/StatusPill/StatusPill";
-import useCompany from "@/hooks/useCompany";
-import { Button } from "@nextui-org/button";
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@nextui-org/dropdown";
-import Link from "next/link";
+import services from "@/services";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 import React, { useState } from "react";
-import { BsThreeDots } from "react-icons/bs";
+
 import { VscEye } from "react-icons/vsc";
 
 function PaymentsList({
@@ -22,54 +15,16 @@ function PaymentsList({
   setSelectedPayment: any;
   onOpen: any;
 }) {
-  const [rows, setRows] = useState([
-    {
-      id: 1,
-      billId: "BID-345345",
-      transactionId: "TASDF897234",
-      paymentMethod: "Debit Card",
-      customer: "Kwame Sintim",
-      date: "27th March, 2025",
-      service: "Business Registration",
-      amount: 56,
-      status: "active",
-    },
-    {
-      id: 2,
-      billId: "BID-345345",
-      transactionId: "TASDF897234",
-      paymentMethod: "Debit Card",
-      customer: "Kwame Sintim",
-      date: "27th March, 2025",
-      service: "Business Registration",
-      amount: 56,
-      status: "active",
-    },
-    {
-      id: 3,
-      billId: "BID-345345",
-      transactionId: "TASDF897234",
-      paymentMethod: "Debit Card",
-      customer: "Kwame Sintim",
-      date: "27th March, 2025",
-      service: "Business Registration",
-      amount: 56,
-      status: "active",
-    },
-    {
-      id: 4,
-      billId: "BID-345345",
-      transactionId: "TASDF897234",
-      paymentMethod: "Debit Card",
-      customer: "Kwame Sintim",
-      date: "27th March, 2025",
-      service: "Business Registration",
-      amount: 56,
-      status: "active",
-    },
-  ]);
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(20);
+  const queryClient = useQueryClient();
 
-  const { companyBranding } = useCompany();
+  const { data: payments, isLoading } = useQuery({
+    queryKey: ["all payments", page, limit],
+    queryFn: services.getAllPayments(page, limit),
+  });
+
+  console.log("paymnets", payments);
 
   // columns
   const columns = [
@@ -123,7 +78,11 @@ function PaymentsList({
 
   return (
     <div>
-      <DataTable isLoading={false} rows={rows} columns={columns} />
+      <DataTable
+        isLoading={isLoading}
+        rows={payments?.content}
+        columns={columns}
+      />
     </div>
   );
 }

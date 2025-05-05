@@ -88,7 +88,6 @@ function ServiceCard({ form }: Props) {
       services
         .acceptInvite(id, user?.id, Number(company?.id), inputData)
         .then(async (res) => {
-          console.log("res", res);
           toast.success("Successfully started application!");
           // console.log("accept res", res?.data);
           queryClient.invalidateQueries();

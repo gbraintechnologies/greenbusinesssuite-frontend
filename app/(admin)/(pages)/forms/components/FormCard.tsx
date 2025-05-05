@@ -134,7 +134,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
       .hardDeleteForm(id)
       .then((res) => {
         toast.dismiss();
-        console.log("res", res.data);
+
         toast.success(res.data);
         queryClient.invalidateQueries({
           queryKey: ["all forms"],

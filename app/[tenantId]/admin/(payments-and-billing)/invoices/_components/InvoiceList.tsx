@@ -3,6 +3,8 @@
 import DataTable from "@/components/DataTable/DataTable";
 
 import useCompany from "@/hooks/useCompany";
+import services from "@/services";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import React, { useState } from "react";
 
@@ -15,18 +17,16 @@ function InvoiceList({
   setSelectedInvoice: any;
   onOpen: any;
 }) {
-  const [rows, setRows] = useState([
-    {
-      id: 1,
-      invoiceId: "BID-345345",
-      customer: "Kwame Sintim",
-      date: "27th March, 2025",
-      service: "Business Registration",
-      amount: 56,
-    },
-  ]);
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(20);
+  const queryClient = useQueryClient();
 
-  const { companyBranding } = useCompany();
+  const { data: invoices, isLoading } = useQuery({
+    queryKey: ["all payments", page, limit],
+    queryFn: services.getAllInvoices(page, limit),
+  });
+
+  console.log("invoices", invoices);
 
   // columns
   const columns = [
@@ -73,7 +73,11 @@ function InvoiceList({
 
   return (
     <div>
-      <DataTable isLoading={false} rows={rows} columns={columns} />
+      <DataTable
+        isLoading={isLoading}
+        rows={invoices?.content}
+        columns={columns}
+      />
     </div>
   );
 }
