@@ -60,7 +60,6 @@ function PendingPayment({
         phoneNumber: phone,
       })
       .then((res) => {
-        console.log("Submitted payment request", res);
         setLoading(false);
 
         const data: {
@@ -83,7 +82,7 @@ function PendingPayment({
         }
 
         setRequestStatus("success");
-        toast.success("Payment success. Form submitted.");
+        toast.success("Payment success.");
       })
       .catch((e) => {
         toast.error(
