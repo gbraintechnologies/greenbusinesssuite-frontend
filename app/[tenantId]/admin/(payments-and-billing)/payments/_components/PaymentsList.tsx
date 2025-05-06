@@ -2,6 +2,7 @@
 
 import DataTable from "@/components/DataTable/DataTable";
 import services from "@/services";
+import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import React, { useState } from "react";
@@ -29,7 +30,7 @@ function PaymentsList({
   // columns
   const columns = [
     {
-      field: "billId",
+      field: "id",
       headerName: "Bill ID",
       align: "left",
       headerAlign: "left",
@@ -42,18 +43,38 @@ function PaymentsList({
       headerAlign: "left",
       flex: 1,
     },
-    { field: "date", headerName: "Date Paid", flex: 1 },
-    { field: "service", headerName: "Service Name", flex: 1 },
-    { field: "customer", headerName: "Customer", flex: 1 },
-    { field: "paymentMethod", headerName: "Payment Method", flex: 1 },
     {
-      field: "amount",
+      field: "datePaid",
+      headerName: "Date Paid",
+      type: "actions",
+      flex: 1,
+      getActions: (params: any) => [
+        <div key={params.row.id} className="">
+          {FormatDateShort(params?.row?.datePaid)}
+        </div>,
+      ],
+    },
+    { field: "serviceName", headerName: "Service Name", flex: 1 },
+    { field: "customerName", headerName: "Customer", flex: 1 },
+    {
+      field: "paymentMethod",
+      headerName: "Payment Method",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id} className="">
+          {params?.row?.paymentMethod.replaceAll("_", " ")}
+        </div>,
+      ],
+    },
+    {
+      field: "amountPaid",
       headerName: "Amount",
       type: "actions",
       flex: 1,
       getActions: (params: any) => [
         <div key={params.row.id} className="">
-          Ghs {params?.row?.amount}
+          Ghs {params?.row?.amountPaid}
         </div>,
       ],
     },
@@ -80,7 +101,7 @@ function PaymentsList({
     <div>
       <DataTable
         isLoading={isLoading}
-        rows={payments?.content}
+        rows={payments ? payments?.content : []}
         columns={columns}
       />
     </div>

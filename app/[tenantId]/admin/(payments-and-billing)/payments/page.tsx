@@ -39,8 +39,6 @@ function Payments() {
     queryFn: services.getPaymentSummary(),
   });
 
-  console.log("payments summary", paymentsSummary);
-
   return (
     <div className="mt-10 pb-10 ">
       <div className=" px-5 flex justify-between">

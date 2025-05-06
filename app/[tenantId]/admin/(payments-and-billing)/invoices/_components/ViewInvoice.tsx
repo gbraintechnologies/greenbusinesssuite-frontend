@@ -1,4 +1,5 @@
 import Border from "@/components/Border/Border";
+import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
 import React from "react";
 
 function ViewInvoice({
@@ -6,14 +7,12 @@ function ViewInvoice({
 }: {
   invoice: {
     id: string;
-    billId: string;
+    invoiceNumber: string;
     transactionId: string;
-    paymentMethod: string;
-    customer: string;
-    date: string;
-    service: string;
+    customerName: string;
+    createdOn: Date;
+    serviceName: string;
     amount: number;
-    status: string;
   } | null;
 }) {
   const labelStyle = "text-sm text-gray-500 mb-1 block";
@@ -22,27 +21,27 @@ function ViewInvoice({
 
   return (
     <div className="flex flex-col gap-4">
-      <h4 className="text-lg font-semibold">Viewing invoice {invoice?.id}</h4>
+      <h4 className="text-lg font-semibold">Viewing Invoice {invoice?.id}</h4>
 
       {/* Select Service */}
       <div>
-        <label className={labelStyle}>Transaction ID</label>
-        <p>{invoice?.transactionId}</p>
+        <label className={labelStyle}>Invoice Number</label>
+        <p>{invoice?.invoiceNumber}</p>
         <Border hasTopBottomMargin={false} />
       </div>
       <div>
-        <label className={labelStyle}>Timestamp</label>
-        <p>{invoice?.date}</p>
+        <label className={labelStyle}>Created On</label>
+        <p>{FormatDateShort(invoice?.createdOn)}</p>
         <Border hasTopBottomMargin={false} />
       </div>
       <div>
         <label className={labelStyle}>Service name</label>
-        <p>{invoice?.service}</p>
+        <p>{invoice?.serviceName}</p>
         <Border hasTopBottomMargin={false} />
       </div>
       <div>
         <label className={labelStyle}>Customer</label>
-        <p>{invoice?.customer}</p>
+        <p>{invoice?.customerName}</p>
         <Border hasTopBottomMargin={false} />
       </div>
 

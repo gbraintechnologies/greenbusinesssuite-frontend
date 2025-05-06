@@ -4,6 +4,7 @@ import DataTable from "@/components/DataTable/DataTable";
 
 import useCompany from "@/hooks/useCompany";
 import services from "@/services";
+import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import React, { useState } from "react";
@@ -22,24 +23,36 @@ function InvoiceList({
   const queryClient = useQueryClient();
 
   const { data: invoices, isLoading } = useQuery({
-    queryKey: ["all payments", page, limit],
+    queryKey: ["all invoices", page, limit],
     queryFn: services.getAllInvoices(page, limit),
   });
-
-  console.log("invoices", invoices);
 
   // columns
   const columns = [
     {
-      field: "invoiceId",
-      headerName: "Invoice ID",
+      field: "invoiceNumber",
+      headerName: "Invoice Number",
       align: "left",
       headerAlign: "left",
       flex: 1,
     },
-    { field: "customer", headerName: "Customer", flex: 1 },
-    { field: "date", headerName: "Date Paid", flex: 1 },
-    { field: "service", headerName: "Service Name", flex: 1 },
+    {
+      field: "customerName",
+      headerName: "CustomerName",
+      flex: 1,
+    },
+    {
+      field: "createdOn",
+      headerName: "Created On",
+      type: "actions",
+      flex: 1,
+      getActions: (params: any) => [
+        <div key={params.row.id} className="">
+          {FormatDateShort(params?.row?.createdOn)}
+        </div>,
+      ],
+    },
+    { field: "serviceName", headerName: "Service Name", flex: 1 },
 
     {
       field: "amount",
@@ -75,7 +88,7 @@ function InvoiceList({
     <div>
       <DataTable
         isLoading={isLoading}
-        rows={invoices?.content}
+        rows={invoices ? invoices?.content : []}
         columns={columns}
       />
     </div>

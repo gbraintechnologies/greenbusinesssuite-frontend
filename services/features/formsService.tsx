@@ -106,6 +106,13 @@ export const getFormUserResponseById = (id: string) => {
     authApi.get(`/forms/response/user-data/${id}`).then((res) => res.data);
 };
 
+export const getFormUserResponseByIdWithPaymentDetails = (id: string) => {
+  return () =>
+    authApi
+      .get(`/forms/response/user-data/with-pay-details/${id}`)
+      .then((res) => res.data);
+};
+
 export const retrieveFormUserResponseRaw = (id: any) => {
   return authApi.get(`/forms/response/user-data/${id}`).then((res) => res.data);
 };

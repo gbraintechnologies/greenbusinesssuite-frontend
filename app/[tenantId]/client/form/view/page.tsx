@@ -19,6 +19,7 @@ import useUser from "@/hooks/useUser";
 // utils
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import { IoIosArrowForward } from "react-icons/io";
+import PendingPayment from "./PendingPayment";
 
 function FillFormHere() {
   const { user } = useUser();
@@ -37,9 +38,11 @@ function FillFormHere() {
     isRefetching,
   } = useQuery({
     queryKey: ["form response", responseId],
-    queryFn: services.getFormUserResponseById(responseId!),
+    queryFn: services.getFormUserResponseByIdWithPaymentDetails(responseId!),
     enabled: Boolean(responseId),
   });
+
+  console.log("form re", formResponse);
 
   // GET ALL FORM DETAILS
   const { data: formData } = useQuery({
@@ -56,9 +59,13 @@ function FillFormHere() {
   }, []);
 
   useEffect(() => {
-    if (!isRefetching && formData && formResponse) {
+    if (!isRefetching && formData && formResponse?.responseData) {
       setMergedForm(
-        mergeForm(formResponse.id, formData, formResponse?.inputData)
+        mergeForm(
+          formResponse?.responseData?.id,
+          formData,
+          formResponse?.responseData?.inputData
+        )
       );
     }
   }, [isRefetching, formData, formResponse]);
@@ -128,6 +135,13 @@ function FillFormHere() {
           <div className="ml-[22rem] w-full mt-5 mb-56">
             {/* FORM SECTIONS FOR FILLING */}
             <div className="mx-auto min-h-screen w-[60%] mt-10 ">
+              {formResponse?.paymentDetails && (
+                <PendingPayment
+                  responseId={formResponse?.responseData?.id}
+                  paymentDetails={formResponse?.paymentDetails}
+                />
+              )}
+
               {/* @ts-ignore */}
               {clientForm?.formSections
                 ?.filter((item: any) => !item.isDeleted)

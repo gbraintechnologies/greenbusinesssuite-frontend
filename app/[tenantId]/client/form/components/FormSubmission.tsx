@@ -16,6 +16,8 @@ import { Button } from "@nextui-org/button";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import success from "@/public/icons/success.svg";
+import Border from "@/components/Border/Border";
+import { Select, SelectItem } from "@nextui-org/select";
 
 function FormSubmission({
   showOnlySubmitButton = false,
@@ -28,6 +30,7 @@ function FormSubmission({
   const [requestStatus, setRequestStatus] = useState<"pending" | "success">(
     "pending"
   );
+  const [network, setNetwork] = useState("MTN");
 
   const { companyBranding: company } = useCompany();
   const router = useRouter();
@@ -158,7 +161,7 @@ function FormSubmission({
     }
   };
 
-  const completePayment = () => {
+  const completePayment = (responseId: any) => {
     setLoading(true);
 
     // UPDATES
@@ -168,15 +171,18 @@ function FormSubmission({
         billId: bill?.id,
         paymentMethod: "MOBILE_MONEY",
         status: "PENDING",
-        network: "MTN",
+        network,
+        responseId: responseId,
         serviceName: form?.name,
         customerEmail: user?.email,
         customerName: user?.first_name + " " + user?.last_name,
         phoneNumber: phone,
       })
       .then((res) => {
-        console.log("res", res);
+        console.log("Submitted payment request", res);
         setLoading(false);
+        setSavingResponses(false);
+
         const data: {
           paymentId: string;
           status: "FAILED" | "SUCCESS";
@@ -187,20 +193,17 @@ function FormSubmission({
         } = res.data;
 
         if (data.status == "FAILED") {
-          // TODO: Remove after fix:
-          setRequestStatus("success");
-          // setShowConfirmationModal(false);
           toast.error(
             data?.responseDescription
               ? data.responseDescription
               : "A system error occured processing your payment"
           );
+          setSavingResponses(false);
           return;
         }
 
         setRequestStatus("success");
-        // toast.success("Payment success. Submitting form...");
-        // finish();
+        toast.success("Payment success. Form submitted.");
       })
       .catch((e) => {
         toast.error(
@@ -209,7 +212,7 @@ function FormSubmission({
       });
   };
 
-  const finish = () => {
+  const finish = async () => {
     toast.dismiss();
     // Check if all required fields are filled
     let data = clientForm;
@@ -251,30 +254,35 @@ function FormSubmission({
       }
     }
 
-    setSavingResponses(false);
-    setShowConfirmationModal(false);
-
     // Only submit if all required fields are completed
     if (completedRequired) {
       toast.info("Submitting form. Please wait...");
 
       submitAndCompleteForm(user?.id)
-        .then((res: any) => {
-          toast.dismiss();
-          setSavingResponses(false);
+        .then(async (res: any) => {
+          console.log("response id", res?.data?.id);
 
-          services
-            .notifyCompanyAdminOfFormCompletion(user?.id, clientForm?.id)
-            .then((res) => {
-              // admin notified
-            })
-            .catch((e) => {
-              console.log("error", e);
-            });
+          // phone must be entered for paid forms
+          if (phone?.length > 5) {
+            await completePayment(res?.data?.id);
+            return;
+          } else {
+            toast.dismiss();
+            setSavingResponses(false);
 
-          toast.dismiss();
-          setShowConfirmationModal(false);
-          setShowSuccessModal(true);
+            services
+              .notifyCompanyAdminOfFormCompletion(user?.id, clientForm?.id)
+              .then((res) => {
+                // admin notified
+              })
+              .catch((e) => {
+                console.log("error", e);
+              });
+
+            toast.dismiss();
+            setShowConfirmationModal(false);
+            setShowSuccessModal(true);
+          }
         })
         .catch((e: any) => {
           toast.dismiss();
@@ -335,89 +343,108 @@ function FormSubmission({
         title=""
       >
         <>
-          {!!bill && bill?.status?.toLowerCase() == "active" ? (
+          {!!bill &&
+          bill?.status?.toLowerCase() == "active" &&
+          requestStatus == "success" ? (
             <>
-              {requestStatus == "pending" && (
-                <div className="px-5 text-[#334155] mb-5">
-                  <div className="mb-5">
-                    <h4 className="font-light text-sm">Application Fee</h4>
-                    <p className=" mt-1 font-light text-xl">
-                      {bill?.currency}{" "}
-                      <span className="font-bold text-3xl">{bill?.amount}</span>
-                    </p>
-                    <div className="flex flex-col gap-4 mt-5">
-                      <div>
-                        <label className="font-light text-gray-600 text-sm mb-2 block">
-                          Payment Method
-                        </label>
-                        <input
-                          type="text"
-                          min={0}
-                          disabled
-                          value="Mobile Money"
-                          // onChange={(e) => setAmount(e.target.value)}
-                          className={inputStyle}
-                        />
-                      </div>
-                      <div>
-                        <label className="font-light text-gray-600 text-sm mb-2 block">
-                          Phone Number
-                        </label>
-                        <input
-                          type="number"
-                          min={0}
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          className={inputStyle}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <CompanyThemedButton
-                    isLoading={loading}
-                    isDisabled={
-                      savingResponses ||
-                      loading ||
-                      phone?.toString()?.length < 5
-                    }
-                    className=" disabled:bg-gray-700 w-full disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-                    onPress={() => {
-                      completePayment();
-                    }}
-                  >
-                    Complete Payment
-                  </CompanyThemedButton>
-                </div>
-              )}
+              <div className="-mt-10 flex flex-col items-center justify-center gap-2 mb-10">
+                <Image src={success} width={150} height={100} alt="success" />
+                <h5 className="text-2xl font-bold">
+                  Payment Request submitted
+                </h5>
+                <p className="-mt-1 text-gray-700 font-light w-full md:w-[50%] text-center mx-auto">
+                  You will get a pop-up on your phone to complete the payment.
+                </p>
 
-              {requestStatus == "success" && (
-                <div className="-mt-10 flex flex-col items-center justify-center gap-2 mb-10">
-                  <Image src={success} width={150} height={100} alt="success" />
-                  <h5 className="text-2xl font-bold">
-                    Payment Request submitted
-                  </h5>
-                  <p className="-mt-1 text-gray-700 font-light w-full md:w-[50%] text-center mx-auto">
-                    You will get a pop-up on your phone to complete the payment.
-                  </p>
-
-                  <Button
-                    onPress={() => {
-                      finish();
-                      // setShowConfirmationModal(false)
-                    }}
-                    className="bg-green-800 text-white px-20 mt-10"
-                  >
-                    Done
-                  </Button>
-                </div>
-              )}
+                <Button
+                  onPress={() => {
+                    setShowConfirmationModal(false);
+                    router.push(`/${company?.company_identifier}/client?tab=1`);
+                  }}
+                  className="bg-green-800 text-white px-20 mt-10"
+                >
+                  Done
+                </Button>
+              </div>
             </>
           ) : (
             <div>
-              <p className="px-5 mt-5 text-[#334155]">
+              <h4 className="mx-5 text-xl font-bold -mt-10">
+                Submit Form{" "}
+                {!!bill &&
+                  bill?.status?.toLowerCase() == "active" &&
+                  "& Make Payment"}
+              </h4>
+              <p className="px-5 mt-2 text-[#334155]">
                 Are you sure you want to submit this form? you cannot make any
                 changes once it has been submitted.
               </p>
+              {!!bill && bill?.status?.toLowerCase() == "active" && (
+                <>
+                  <Border />
+
+                  <div className="px-5 text-[#334155] mb-5">
+                    <div className="mb-5">
+                      <h4 className="font-light text-sm">Application Fee</h4>
+                      <p className=" mt-1 font-light text-xl">
+                        {bill?.currency}{" "}
+                        <span className="font-bold text-3xl">
+                          {bill?.amount}
+                        </span>
+                      </p>
+                      <div className="flex flex-col gap-4 mt-5">
+                        <div>
+                          <label className="font-light text-gray-600 text-sm mb-2 block">
+                            Payment Method
+                          </label>
+                          <input
+                            type="text"
+                            min={0}
+                            disabled
+                            value="Mobile Money"
+                            // onChange={(e) => setAmount(e.target.value)}
+                            className={inputStyle}
+                          />
+                        </div>
+                        <div>
+                          <label className="font-light text-gray-600 text-sm mb-2 block">
+                            Network
+                          </label>
+                          <Select
+                            placeholder="Network"
+                            value={network}
+                            defaultSelectedKeys={["MTN"]}
+                            onChange={(e) => setNetwork(e.target.value)}
+                            className="w-full border border-gray-200 rounded-lg"
+                          >
+                            {[
+                              { name: "MTN", code: "MTN" },
+                              { name: "TELCEL", code: "VOD" },
+                              { name: "AIRTELTIGO", code: "AIR" },
+                            ].map((item) => (
+                              <SelectItem key={item.code}>
+                                {item.name}
+                              </SelectItem>
+                            ))}
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="font-light text-gray-600 text-sm mb-2 block">
+                            Phone Number
+                          </label>
+                          <input
+                            type="number"
+                            min={0}
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            className={inputStyle}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
                 <button
@@ -427,13 +454,28 @@ function FormSubmission({
                   Cancel
                 </button>
                 <CompanyThemedButton
-                  isDisabled={savingResponses}
+                  isDisabled={
+                    savingResponses ||
+                    loading ||
+                    (!!bill &&
+                      bill?.status?.toLowerCase() == "active" &&
+                      phone?.toString()?.length < 5)
+                  }
                   className=" disabled:bg-gray-700 disabled:cursor-not-allowed py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
                   onPress={() => {
                     finish();
                   }}
                 >
-                  {savingResponses ? "Please wait..." : "Yes, submit form"}
+                  {savingResponses ? (
+                    "Please wait..."
+                  ) : (
+                    <>
+                      Submit
+                      {!!bill &&
+                        bill?.status?.toLowerCase() == "active" &&
+                        " & Pay"}
+                    </>
+                  )}
                 </CompanyThemedButton>
               </div>
             </div>
