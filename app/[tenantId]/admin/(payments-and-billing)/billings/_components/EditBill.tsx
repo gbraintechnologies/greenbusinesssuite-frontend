@@ -163,7 +163,7 @@ function EditBill({
           />
           Mobile Money
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={paymentMethods.includes("CREDIT_DEBIT_CARD")}
@@ -183,8 +183,8 @@ function EditBill({
             name="CREDIT_DEBIT_CARD"
           />
           Credit / Debit Card
-        </div>
-        <div className="flex items-center gap-2">
+        </div> */}
+        {/* <div className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={paymentMethods.includes("BANK_TRANSFER")}
@@ -204,7 +204,7 @@ function EditBill({
             name="BANK_TRANSFER"
           />
           Bank Transfer
-        </div>
+        </div> */}
       </div>
 
       <div>

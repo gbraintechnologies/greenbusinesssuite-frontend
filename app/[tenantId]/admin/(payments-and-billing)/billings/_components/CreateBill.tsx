@@ -32,14 +32,16 @@ function CreateBill({ onClose }: { onClose: any }) {
 
   const [amount, setAmount] = useState<any>(0);
   const [selectedBillingType, setSelectedBillingType] = useState("");
-  const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<string[]>([
+    "MOBILE_MONEY",
+  ]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const queryClient = useQueryClient();
 
   const billingTypes = ["One off bill", "Recurring bill"];
   const status = ["Active", "Inactive"];
 
-  const { data: forms, isLoading: isFormsLoading } = useQuery({
+  const { data: forms, isLoading } = useQuery({
     queryKey: ["get company forms for ", Number(companyData?.id), page, limit],
     queryFn: services.getFormsByCompanyId(companyData?.id, page, limit),
   });
@@ -47,13 +49,13 @@ function CreateBill({ onClose }: { onClose: any }) {
   const [loading, setLoading] = useState(false);
 
   const createBill = () => {
-    //
     setLoading(true);
     services
       .createBill({
         formId: selectedForm,
-        serviceName: forms.filter((item: any) => item?.id == selectedForm)[0]
-          ?.name,
+        serviceName: forms?.content.filter(
+          (item: any) => item?.id == selectedForm
+        )[0]?.name,
         billingType: selectedBillingType.toUpperCase().replaceAll(" ", "_"),
         currency: "GHS",
         amount: amount,
@@ -83,7 +85,7 @@ function CreateBill({ onClose }: { onClose: any }) {
         <label className={labelStyle}>Select Service</label>
         <Autocomplete
           variant="flat"
-          // isLoading={isFormsLoading}
+          isLoading={isLoading}
           className="bg-white flex  items-center justify-between shadow-none border rounded-xl px-2 w-full text-left"
           scrollShadowProps={{
             isEnabled: false,
@@ -93,8 +95,9 @@ function CreateBill({ onClose }: { onClose: any }) {
           }}
         >
           <AutocompleteSection className="shadow-md bg-white border border-[#F1F5F9] rounded-lg w-full flex flex-col gap-3">
-            {forms &&
-              forms
+            {!isLoading &&
+              !!forms?.content &&
+              forms?.content
                 ?.filter((item: any) => item.isAnonymous == false)
                 .map((form: any) => (
                   <AutocompleteItem
@@ -148,6 +151,7 @@ function CreateBill({ onClose }: { onClose: any }) {
         <label className={labelStyle}>Payment Methods</label>
         <div className="flex items-center gap-2">
           <input
+            disabled
             checked={paymentMethods.includes("MOBILE_MONEY")}
             onChange={(e) => {
               const isChecked = e.target.checked;
@@ -167,7 +171,7 @@ function CreateBill({ onClose }: { onClose: any }) {
           />
           Mobile Money
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={paymentMethods.includes("CREDIT_DEBIT_CARD")}
@@ -208,7 +212,7 @@ function CreateBill({ onClose }: { onClose: any }) {
             name="BANK_TRANSFER"
           />
           Bank Transfer
-        </div>
+        </div> */}
       </div>
 
       <div>
