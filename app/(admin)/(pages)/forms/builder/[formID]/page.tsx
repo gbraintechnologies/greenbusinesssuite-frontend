@@ -19,6 +19,7 @@ import Connect from "./views/Connect";
 
 //
 import GeneralFormSettings from "./components/GeneralFormSettings";
+import Loader from "@/components/Loader/Loader";
 
 function FormEditing(props: any) {
   const params: any = use(props.params);
@@ -26,7 +27,7 @@ function FormEditing(props: any) {
     typeof window !== "undefined" && window.scrollTo(0, 0);
   }, []);
 
-  const { view, selectForm } = useForm();
+  const { view, selectForm, isFormUpdating } = useForm();
 
   const [activeTab, setActiveTab] = useState("general");
 
@@ -57,7 +58,16 @@ function FormEditing(props: any) {
   }
 
   return (
-    <div className="w-full min-h-[100vh] flex justify-between">
+    <div className="w-full min-h-[100vh] flex justify-between relative">
+      {isFormUpdating && (
+        <div className="absolute top-0 left-0 z-[50] w-full h-[100vh] inset-0 flex flex-col gap-2 items-center justify-center  backdrop-blur-md bg-black bg-opacity-10">
+          <AiOutlineLoading3Quarters size={30} className="animate-spin" />
+          <p className="text-lg font-bold">Updating Form</p>
+          <p className="text-sm font-light">
+            Please wait a moment while the form is updated
+          </p>
+        </div>
+      )}
       <div className="w-[76%] min-h-screen">
         {view === "builder" && (
           <Builder

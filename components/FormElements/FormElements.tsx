@@ -17,7 +17,7 @@ import { FaRegAddressBook } from "react-icons/fa6";
 let template = {
   name: "",
   description: "",
-  isStatistical: false,
+  isStatisticalField: false,
   statisticalFunction: null,
   displayType: null,
   label: "",

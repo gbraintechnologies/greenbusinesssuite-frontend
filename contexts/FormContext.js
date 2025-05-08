@@ -21,6 +21,8 @@ export const FormProvider = ({ children }) => {
   // layout
   const [formLayout, setFormLayout] = useState(form?.layout);
 
+  const [isFormUpdating, setIsFormUpdating] = useState(false);
+
   // loaders for updates
   const [loadingSection, setLoadingSection] = useState(false);
   const [loadingField, setLoadingField] = useState(false);
@@ -59,11 +61,11 @@ export const FormProvider = ({ children }) => {
             queryKey: ["form", form?.id],
           });
           toast.dismiss();
-          // TODO: REMOVE AFTER TESTS
-          // toast.success("updated remote");
+          setIsFormUpdating(false);
         })
         .catch((e) => {
           toast.dismiss();
+          setIsFormUpdating(false);
           // toast.error("Error occured");
           console.log("error updating remote form:", e);
         });
@@ -157,7 +159,7 @@ export const FormProvider = ({ children }) => {
   };
 
   const updateFormSectionsOrdering = (sections) => {
-    //
+    setIsFormUpdating(true);
     updateRemoteForm({
       ...form,
       formSections: [...sections],
@@ -274,6 +276,8 @@ export const FormProvider = ({ children }) => {
       value={{
         form,
         loadingField,
+        isFormUpdating,
+        setIsFormUpdating,
         loadingSection,
         updateNameAndDescription,
         removeSection,
