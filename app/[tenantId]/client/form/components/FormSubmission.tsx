@@ -260,8 +260,6 @@ function FormSubmission({
 
       submitAndCompleteForm(user?.id)
         .then(async (res: any) => {
-          console.log("response id", res?.data?.id);
-
           // phone must be entered for paid forms
           if (phone?.length > 5) {
             await completePayment(res?.data?.id);

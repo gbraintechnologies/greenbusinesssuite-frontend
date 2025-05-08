@@ -134,11 +134,11 @@ export const ClientFormProvider = ({ children }) => {
       let formFields = [];
       for (let j = 0; j < section?.formFields?.length; j++) {
         let field = section?.formFields[j];
-        if (Boolean(field?.formFieldId)) {
+        if (Boolean(field?.id)) {
           formFields.push({
             id: field?.id,
             response: field?.response ? field?.response : "",
-            formFieldId: field?.formFieldId,
+            formFieldId: field?.id,
             fieldName: field?.name,
             isStatisticalField: field?.isStatisticalField
               ? field?.isStatisticalField
@@ -152,7 +152,7 @@ export const ClientFormProvider = ({ children }) => {
       }
       formSections.push({
         id: section?.id,
-        formSectionId: section?.formSectionId,
+        formSectionId: section?.id,
         formDataFields: formFields,
       });
     }
