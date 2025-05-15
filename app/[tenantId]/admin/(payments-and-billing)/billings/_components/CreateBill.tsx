@@ -60,7 +60,7 @@ function CreateBill({ onClose }: { onClose: any }) {
         currency: "GHS",
         amount: amount,
         frequency: "WEEKLY",
-        paymentMethods: paymentMethods,
+        paymentMethod: paymentMethods.toString(),
         status: selectedStatus.toUpperCase(),
       })
       .then((res) => {
