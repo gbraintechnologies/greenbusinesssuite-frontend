@@ -178,7 +178,7 @@ function PendingPayment({
                       >
                         {[
                           { name: "MTN", code: "MTN" },
-                          { name: "TELCEL", code: "VOD" },
+                          { name: "TELECEL", code: "VOD" },
                           { name: "AIRTELTIGO", code: "AIR" },
                         ].map((item) => (
                           <SelectItem key={item.code}>{item.name}</SelectItem>

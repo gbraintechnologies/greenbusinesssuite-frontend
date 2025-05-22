@@ -130,15 +130,14 @@ const page = (props: any) => {
     if (!formUserResponse) return;
     const status = statuses.find(
       (status) =>
-        status.value.toLowerCase() ===
-        formUserResponse[0]?.status?.toLowerCase()
+        status.value.toLowerCase() === formUserResponse?.status?.toLowerCase()
     );
     setActiveStatus(status);
   }, [formUserResponse]);
 
   const updateFormResponseStatus = (status: any) => {
     services
-      .updateResponseStatus(status.value, formUserResponse[0]?.id)
+      .updateResponseStatus(status.value, formUserResponse?.id)
       .then((res) => {
         //
         toast.success("Response status updated!");
@@ -300,7 +299,7 @@ const page = (props: any) => {
             </button>
 
             {/* CHANGE RESPONSE STATUS */}
-            {formUserResponse && formUserResponse[0]?.status && (
+            {formUserResponse && formUserResponse?.status && (
               <div className="flex flex-col gap-3">
                 <Menu as={"div"} className={"z-20 relative inline-block"}>
                   <Menu.Button className=" border border-[rgba(226, 232, 240, 1)]  text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
