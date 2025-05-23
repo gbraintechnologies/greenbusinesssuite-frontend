@@ -139,7 +139,6 @@ const page = (props: any) => {
     services
       .updateResponseStatus(status.value, formUserResponse?.id)
       .then((res) => {
-        //
         toast.success("Response status updated!");
         setActiveStatus(status);
         refetch();

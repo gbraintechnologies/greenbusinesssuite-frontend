@@ -38,7 +38,27 @@ function StatusPill({
     );
   }
 
+  if (status.toLowerCase().includes("pend")) {
+    return (
+      <span
+        className={`text-blue-700 bg-blue-100  ${textTransform} text-xs px-5 rounded-full py-1`}
+      >
+        {status.toLowerCase().replaceAll("_", " ")}
+      </span>
+    );
+  }
+
   if (success === false) {
+    return (
+      <span
+        className={`text-red-700 bg-red-50 ${textTransform} text-xs px-5 rounded-full py-1`}
+      >
+        {status.toLowerCase().replaceAll("_", " ")}
+      </span>
+    );
+  }
+
+  if (status.toLowerCase().includes("fail")) {
     return (
       <span
         className={`text-red-700 bg-red-50 ${textTransform} text-xs px-5 rounded-full py-1`}

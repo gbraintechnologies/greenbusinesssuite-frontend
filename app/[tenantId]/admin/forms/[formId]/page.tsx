@@ -233,7 +233,10 @@ function SingleFormCompany(props: any) {
         {activeFilter.id == 1 && (
           <div className="mt-4">
             <ResponseDataTable
-              responseData={formResponseData?.content}
+              responseData={formResponseData?.content?.map((item: any) => ({
+                ...item.formData,
+                paymentStatus: item?.paymentStatus,
+              }))}
               isResponseLoading={isResponseLoading}
               exportToExcel={exportToExcel}
               form={form}

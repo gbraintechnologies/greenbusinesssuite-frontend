@@ -95,7 +95,8 @@ const ResponseDataTable: React.FC<Props> = ({
         .then(() => {
           setPdfGenerating(false);
         })
-        .catch(() => {
+        .catch((e: any) => {
+          console.log("error", e);
           setPdfGenerating(false);
         });
     }
@@ -109,7 +110,7 @@ const ResponseDataTable: React.FC<Props> = ({
       const resData = await services.retrieveFormUserResponseRaw(responseId);
 
       if (resData) {
-        const mergedForm = mergeForm(responseId, form, resData);
+        const mergedForm = mergeForm(responseId, form, resData?.inputData);
 
         renderToHiddenElement(mergedForm, userData, resData?.id);
       } else {
@@ -117,6 +118,7 @@ const ResponseDataTable: React.FC<Props> = ({
       }
     } catch (error) {
       toast.error("An error occurred while generating PDF");
+      console.log("error", error);
       setPdfGenerating(false);
     } finally {
       setPdfGenerating(false);
@@ -301,6 +303,21 @@ const ResponseDataTable: React.FC<Props> = ({
             <StatusPill status="complete" />
           ) : (
             <StatusPill status="incomplete" />
+          )}
+        </div>,
+      ],
+    },
+    {
+      field: "paymentStatus",
+      headerName: "Payment Status",
+      flex: 1,
+      type: "actions",
+      getActions: (params: any) => [
+        <div key={params.row.id}>
+          {params.row.data?.paymentStatus ? (
+            <StatusPill status={params.row.data.paymentStatus} />
+          ) : (
+            <p>-</p>
           )}
         </div>,
       ],
