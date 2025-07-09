@@ -1,41 +1,35 @@
 # Stage 1: Build the Next.js application
-FROM node:18-alpine AS build
+FROM node:18-alpine AS builder
 
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json (if it exists)
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN yarn install
 
-# Copy rest of the files
+# Copy the rest of the application files
 COPY . .
 
-# Build the app
-RUN npm run build
+# Build the application for production (static export)
+RUN yarn build
 
-# Stage 2: Runtime
-FROM node:18-alpine AS runtime
+# Stage 2: Serve the application with a lightweight server
+FROM node:18-alpine AS runner
 
+# Set the working directory in the container
 WORKDIR /app
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+# Copy only the necessary build artifacts from the builder stage
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/public ./public
 
-# Copy standalone output and static assets
-COPY --from=build /app/public ./public
-COPY --from=build /app/.next/standalone ./
-COPY --from=build /app/.next/static ./.next/static
-
-RUN chown -R nextjs:nodejs /app
-
-USER nextjs
-
+# Expose port 3000
 EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
 
-# Run the precompiled standalone server
-CMD ["node", "server.js"]
+# Start Nginx in the foreground
+CMD ["yarn", "start"]
