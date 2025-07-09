@@ -1,35 +1,41 @@
-FROM public.ecr.aws/i4n1u1e7/ent_core_node:18.19.1-alpine AS base 
+# Stage 1: Build the Next.js application
+FROM node:18-alpine AS build
 
-RUN apk add --no-cache libc6-compat
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files to the container
-COPY package.json ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Install the dependencies
-RUN npm install -g pnpm
-RUN pnpm install
-RUN pnpm install sharp
+# Install dependencies
+RUN npm ci
 
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-
-ENV NEXT_PUBLIC_APP_ID=1
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-
-# Copy the entire application code to the container
+# Copy rest of the files
 COPY . .
 
-# Build the Next.js application
-RUN NEXT_PUBLIC_API_URL=NEXT_PUBLIC_API_URL NEXT_PUBLIC_APP_ID=NEXT_PUBLIC_APP_ID npm run build
+# Build the app
+RUN npm run build
 
-# # Expose the port that the application will run on
+# Stage 2: Runtime
+FROM node:18-alpine AS runtime
+
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copy standalone output and static assets
+COPY --from=build /app/public ./public
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
 EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-RUN ["chmod", "+x", "./entrypoint.sh"]
-ENTRYPOINT ["./entrypoint.sh"]
-
-# # Define the command to start the application
-CMD ["npm", "start"]
+# Run the precompiled standalone server
+CMD ["node", "server.js"]
