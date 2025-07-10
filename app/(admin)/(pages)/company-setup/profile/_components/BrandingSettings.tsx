@@ -1,7 +1,7 @@
 import Loader from "@/components/Loader/Loader";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import React from "react";
-import { SketchPicker } from "react-color";
+// import { SketchPicker } from "react-color";
 
 const BrandingSettings = ({
   brandingLoading,
