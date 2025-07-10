@@ -471,10 +471,11 @@ const Page = (props: any) => {
                       </button>
                     )}
                     {showColorPicker && (
-                      <SketchPicker
-                        color={color}
-                        onChangeComplete={handleChangeComplete}
-                      />
+                      <></>
+                      // <SketchPicker
+                      //   color={color}
+                      //   onChangeComplete={handleChangeComplete}
+                      // />
                     )}
                   </div>
                 </div>
