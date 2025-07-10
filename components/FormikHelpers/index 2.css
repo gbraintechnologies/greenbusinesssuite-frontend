@@ -1,0 +1,4 @@
+.input-holder input:not([type="checkbox"]):not([type="radio"]),
+textarea {
+  @apply border w-full focus:ring-0 py-2 px-5 border-none outline-none  rounded-lg my-1 shadow-none;
+}
