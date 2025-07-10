@@ -83,9 +83,7 @@ pipeline {
                             
                             docker build \\
                                 --build-arg NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL}" \\
-                                --build-arg NEXTAUTH_SECRET="${NEXTAUTH_SECRET}" \\
                                 --build-arg NEXTAUTH_URL="${NEXTAUTH_URL}" \\
-                                --build-arg NEXT_PUBLIC_S3_BUCKET_URL="${NEXT_PUBLIC_S3_BUCKET_URL}" \\
                                 --build-arg NODE_ENV="${NODE_ENV}" \\
                                 -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}:${TAG} .
                         '''
