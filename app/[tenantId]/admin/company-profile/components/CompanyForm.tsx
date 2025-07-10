@@ -200,8 +200,7 @@ const CompanyForm: React.FC<Props> = ({
   color,
   setColor,
 }) => {
-
-  const {companyBranding} = useCompany();
+  const { companyBranding } = useCompany();
 
   const [industries, setIndustries] = useState<any>([]);
 
@@ -900,10 +899,11 @@ const CompanyForm: React.FC<Props> = ({
                     </button>
                   )}
                   {showColorPicker && (
-                    <SketchPicker
-                      color={color}
-                      onChangeComplete={handleChangeComplete}
-                    />
+                    <></>
+                    // <SketchPicker
+                    //   color={color}
+                    //   onChangeComplete={handleChangeComplete}
+                    // />
                   )}
                 </div>
               </div>
