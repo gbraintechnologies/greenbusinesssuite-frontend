@@ -29,7 +29,6 @@ import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import WriteIcon from "@/public/icons/WriteIcon";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
-// import { SketchPicker } from "react-color";
 import { useRouter } from "next/navigation";
 import {
   Autocomplete,
@@ -937,13 +936,7 @@ const CompanyForm: React.FC<Props> = ({
                 <p className="p-2">{color}</p>
               </button>
             )}
-            {showColorPicker && (
-              <></>
-              // <SketchPicker
-              //   color={color}
-              //   onChangeComplete={handleChangeComplete}
-              // />
-            )}
+            {showColorPicker && <></>}
           </div>
         </div>
       </Form>

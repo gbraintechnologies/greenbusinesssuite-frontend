@@ -1,7 +1,6 @@
 import Loader from "@/components/Loader/Loader";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import React from "react";
-// import { SketchPicker } from "react-color";
 
 const BrandingSettings = ({
   brandingLoading,
@@ -149,13 +148,7 @@ const BrandingSettings = ({
                   </button>
                 )}
 
-                {showColorPicker && (
-                  <></>
-                  // <SketchPicker
-                  //   color={color}
-                  //   onChangeComplete={handleChangeComplete}
-                  // />
-                )}
+                {showColorPicker && <></>}
               </div>
             </div>
           </div>

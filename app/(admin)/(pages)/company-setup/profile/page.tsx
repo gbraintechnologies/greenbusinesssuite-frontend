@@ -24,7 +24,7 @@ import Modal from "@/components/Modal/Modal";
 import { IFilter, TimelineType, TimelineValues } from "@/types";
 import EmptyList from "@/components/Form/EmptyList";
 import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
-// import { SketchPicker } from "react-color";
+
 import UploadIcon from "@/public/icons/UploadIcon";
 import WriteIcon from "@/public/icons/WriteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
