@@ -29,7 +29,7 @@ import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import WriteIcon from "@/public/icons/WriteIcon";
 import DeleteIcon from "@/public/icons/DeleteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { SketchPicker } from "react-color";
+// import { SketchPicker } from "react-color";
 import { useRouter } from "next/navigation";
 import {
   Autocomplete,

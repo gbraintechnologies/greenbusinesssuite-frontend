@@ -15,7 +15,7 @@ import UserIcon from "@/public/icons/UserIcon";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { IFilter, TimelineType, TimelineValues } from "@/types";
 
-import { SketchPicker } from "react-color";
+// import { SketchPicker } from "react-color";
 
 import WriteIcon from "@/public/icons/WriteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
