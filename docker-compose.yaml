@@ -1,5 +1,5 @@
 services:
-  faithhq-frontend:
+  mesh-business-frontend:
     image: 692327579998.dkr.ecr.us-east-1.amazonaws.com/mesh-business-frontend:${TAG}
     container_name: mesh-business-frontend
     restart: unless-stopped
@@ -12,5 +12,5 @@ services:
       - mesh-business-network
   
 networks:
-  faithhq-network:
+  mesh-business-network:
     driver: bridge
