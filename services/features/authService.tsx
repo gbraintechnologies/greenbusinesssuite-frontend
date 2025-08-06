@@ -3,11 +3,10 @@ import authApi from "../axiosAuthClient";
 import noAuthApi2 from "../axiosNoAuthClient2";
 
 export const login = (username: any, password: any) => {
-  var formData = new FormData();
-  formData.append("username", username);
-  formData.append("password", password);
-
-  return noAuthApi.post("/users/login_for_token", formData);
+  return noAuthApi.post("/auth/sign-in", {
+    email: username,
+    password,
+  });
 };
 
 export const currentLoggedIn = (token: any) => {
@@ -44,8 +43,8 @@ export const setPassword = ({
 
 // STEP 1
 export const attemptPasswordReset = (email: any) => {
-  return noAuthApi2.post("/users/noauth/attempt_password_reset/", {
-    user_email: email,
+  return noAuthApi2.post("/auth/forgot-password", {
+    email: email,
   });
 };
 

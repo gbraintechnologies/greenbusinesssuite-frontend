@@ -11,7 +11,7 @@
 export const getToken = () => {
   if (typeof window !== "undefined") {
     const auth = window.localStorage.getItem("auth");
-    return auth ? JSON.parse(auth)?.access_token : null;
+    return auth ? JSON.parse(auth)?.accessToken : null;
   }
   return null;
 };
@@ -43,7 +43,7 @@ export const getTenantID = () => {
 export const getUserUUID = () => {
   if (typeof window !== "undefined") {
     const auth = window.localStorage.getItem("auth");
-    return auth ? JSON.parse(auth)?.user_uuid : null;
+    return auth ? JSON.parse(auth)?.id : null;
   }
   return null;
 };
@@ -51,7 +51,7 @@ export const getUserUUID = () => {
 export const getRefreshToken = () => {
   if (typeof window !== "undefined") {
     const auth = window.localStorage.getItem("auth");
-    return auth ? JSON.parse(auth)?.refresh_token : null;
+    return auth ? JSON.parse(auth)?.refreshToken : null;
   }
   return null;
 };

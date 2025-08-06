@@ -13,9 +13,11 @@ function Layout({ children, managecompanies }: any) {
   return (
     <div>
       {children}
-      {checkPermission(PermissionTypes.READ_ALL_USERS) &&
+      {/* TODO: ENABLE AFTER PERMISIONS */}
+      {/* {checkPermission(PermissionTypes.READ_ALL_USERS) &&
         pathname == "/company-setup" &&
-        managecompanies}
+        managecompanies} */}
+      {managecompanies}
     </div>
   );
 }

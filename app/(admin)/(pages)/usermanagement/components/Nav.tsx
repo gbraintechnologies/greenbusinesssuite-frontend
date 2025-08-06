@@ -15,10 +15,9 @@ function Nav() {
   const { checkPermission } = useAdmin();
 
   return (
-    <div className="w-full text-[#0F172A] px-5 flex justify-between">
+    <div className="w-full text-[#0F172A] px-5 flex justify-between mb-4">
       <div>
-        <h3 className="font-semibold text-xl">User Management</h3>
-        <p className="font-light">Manage all users</p>
+        <h3 className="font-semibold text-2xl">User Management</h3>
       </div>
 
       <div className="flex items-center gap-2">

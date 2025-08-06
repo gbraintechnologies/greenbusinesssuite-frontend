@@ -19,9 +19,11 @@ function Layout({
   return (
     <div>
       {children}
-      {checkPermission(PermissionTypes.READ_ALL_USERS) &&
+      {/* TODO: Enable after permission checks */}
+      {/* {checkPermission(PermissionTypes.READ_ALL_USERS) &&
         pathname == "/usermanagement" &&
-        manageusers}
+        manageusers} */}
+      {manageusers}
     </div>
   );
 }

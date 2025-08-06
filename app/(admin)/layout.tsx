@@ -11,17 +11,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const { admin, addAdminData } = useAdmin();
 
-  const { data: role, isLoading } = useQuery({
-    queryKey: ["permissions", admin],
-    queryFn: services.RoleByID(admin?.profiles[0]?.role_id),
-    enabled: Boolean(admin),
-  });
+  // const { data: role, isLoading } = useQuery({
+  //   queryKey: ["permissions", admin],
+  //   queryFn: services.RoleByID(admin?.profiles[0]?.role_id),
+  //   enabled: Boolean(admin),
+  // });
 
-  useEffect(() => {
-    if (role) {
-      addAdminData(role);
-    }
-  }, [role, isLoading]);
+  // useEffect(() => {
+  //   if (role) {
+  //     addAdminData(role);
+  //   }
+  // }, [role, isLoading]);
 
   return <Suspense>{children}</Suspense>;
 }

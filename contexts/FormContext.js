@@ -50,7 +50,7 @@ export const FormProvider = ({ children }) => {
   // UPDATE REMOTE FORM FIRST
   const updateRemoteForm = (updatedForm) => {
     // only when there's an active form selected
-    if (!isEmpty(form)) {
+    if (form != {}) {
       services
         .updateForm({ ...updatedForm, updatedOn: new Date() })
         .then((res) => {
@@ -101,7 +101,7 @@ export const FormProvider = ({ children }) => {
   };
 
   const updateActiveField = (section, data) => {
-    if (!isEmpty(form)) {
+    if (form != {}) {
       services
         .updateFormField({ ...data, updatedOn: new Date() })
         .then((res) => {

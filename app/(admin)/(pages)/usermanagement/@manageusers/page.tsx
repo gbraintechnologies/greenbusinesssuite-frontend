@@ -8,7 +8,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 
 // icons
-import { BsThreeDots } from "react-icons/bs";
+import { BsEye, BsThreeDots } from "react-icons/bs";
 import SearchIcon from "@/public/icons/SearchIcon";
 import Image from "next/image";
 
@@ -32,6 +32,9 @@ import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 import { MeshRoles } from "@/config/roles.app";
+import Table from "@/components/Table/Table";
+import { user } from "@nextui-org/theme";
+import Status from "@/components/Status/Status";
 
 function UserManagement() {
   const [filters, setFilters] = useState([
@@ -70,6 +73,8 @@ function UserManagement() {
     queryKey: ["all users", page, limit],
     queryFn: services.allUsers(page * limit, limit),
   });
+
+  console.log("users", data);
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
     queryKey: ["all users", searchTerm],
@@ -135,140 +140,141 @@ function UserManagement() {
     }
   };
 
-  const columns = [
-    {
-      field: "name",
-      headerName: "Name",
-      type: "actions",
-      align: "left",
-      headerAlign: "left",
-      flex: 3,
-      getActions: (params: any) => [
-        <div className="flex py-3 gap-4 my-3" key={params.row.data.id}>
-          {params.row.data.custom_profile_values &&
-          params.row.data.custom_profile_values.find(
-            (item: any) => item.custom_profile_item_id === 1
-          )?.value?.length > 1 ? (
-            <Image
-              alt="profile"
-              src={
-                params.row.data.custom_profile_values.find(
-                  (item: any) => item.custom_profile_item_id === 1
-                ).value
-              }
-              width={100}
-              height={100}
-              className="rounded-full w-10 h-10 object-cover"
-            />
-          ) : (
-            <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
-              <UserIcon />
-            </div>
-          )}
-          <div>
-            <p className="font-medium">
-              {params.row.data.first_name} {params.row.data.last_name}
-            </p>
-            <p className="opacity-80 text-sm">{params.row.data.email}</p>
-          </div>
-        </div>,
-      ],
-    },
-    { field: "role", headerName: "Role", flex: 1 },
-    {
-      field: "status",
-      headerName: "Status",
-      flex: 1,
-      type: "actions",
-      getActions: (params: any) => [
-        <div key={params.row.id} className="w-2/12">
-          <StatusPill status={params.row.data?.user_status} />
-        </div>,
-      ],
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      type: "actions",
-      getActions: (params: any) => [
-        <Dropdown>
-          <DropdownTrigger>
-            <Button variant="light">
-              {" "}
-              <BsThreeDots size={20} />
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
-            aria-label="Static Actions"
-          >
-            {checkPermission(PermissionTypes.READ_USER) && (
-              <DropdownItem
-                key="view"
-                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-              >
-                <Link
-                  href={"/usermanagement/profile?id=" + params.row.data.id}
-                  className="w-full block"
-                >
-                  View User
-                </Link>
-              </DropdownItem>
-            )}
-            {checkPermission(PermissionTypes.EDIT_USER) && (
-              <DropdownItem
-                key="edit"
-                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-              >
-                <Link
-                  href={"/usermanagement/edit-user?id=" + params.row.data.id}
-                  className="w-full block"
-                >
-                  Edit User
-                </Link>
-              </DropdownItem>
-            )}
-            {checkPermission(PermissionTypes.EDIT_USER) &&
-              (params.row.data?.user_status?.toLowerCase() === "inactive" ||
-              params.row.data?.user_status?.toLowerCase() === "blacklisted" ? (
-                <DropdownItem
-                  key={"edit"}
-                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                >
-                  <button
-                    onClick={() => editUserStatus(params.row.data, "ACTIVE")}
-                  >
-                    Activate User
-                  </button>
-                </DropdownItem>
-              ) : (
-                <DropdownItem
-                  key={"deactivate"}
-                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                >
-                  <button
-                    onClick={() => editUserStatus(params.row.data, "INACTIVE")}
-                  >
-                    Deactivate User
-                  </button>
-                </DropdownItem>
-              ))}
-            {checkPermission(PermissionTypes.BLACKLIST_USER) && (
-              <DropdownItem
-                key={"blacklist"}
-                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-              >
-                <button onClick={() => blacklistUser(params.row.data.id)}>
-                  Blacklist User
-                </button>
-              </DropdownItem>
-            )}
-          </DropdownMenu>
-        </Dropdown>,
-      ],
-    },
-  ];
+  // const columns = [
+  //   {
+  //     field: "name",
+  //     headerName: "Name",
+  //     type: "actions",
+  //     align: "left",
+  //     headerAlign: "left",
+  //     flex: 3,
+  //     getActions: (params: any) => [
+  //       <div className="flex py-3 gap-4 my-3" key={params.row.data.id}>
+  //         {/* {params.row.data.custom_profile_values &&
+  //         params.row.data.custom_profile_values.find(
+  //           (item: any) => item.custom_profile_item_id === 1
+  //         )?.value?.length > 1 ? (
+  //           <Image
+  //             alt="profile"
+  //             src={
+  //               params.row.data.custom_profile_values.find(
+  //                 (item: any) => item.custom_profile_item_id === 1
+  //               ).value
+  //             }
+  //             width={100}
+  //             height={100}
+  //             className="rounded-full w-10 h-10 object-cover"
+  //           />
+  //         ) : (
+
+  //         )} */}
+  //         <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
+  //           <UserIcon />
+  //         </div>
+  //         <div>
+  //           <p className="font-medium">
+  //             {params.row.data.firstName} {params.row.data.lastName}
+  //           </p>
+  //           <p className="opacity-80 text-sm">{params.row.data.email}</p>
+  //         </div>
+  //       </div>,
+  //     ],
+  //   },
+  //   { field: "role", headerName: "Role", flex: 1 },
+  //   {
+  //     field: "status",
+  //     headerName: "Status",
+  //     flex: 1,
+  //     type: "actions",
+  //     getActions: (params: any) => [
+  //       <div key={params.row.id} className="w-2/12">
+  //         <StatusPill status={params.row.data?.user_status} />
+  //       </div>,
+  //     ],
+  //   },
+  //   {
+  //     field: "actions",
+  //     headerName: "Actions",
+  //     flex: 1,
+  //     type: "actions",
+  //     getActions: (params: any) => [
+  //       <Dropdown>
+  //         <DropdownTrigger>
+  //           <Button variant="light">
+  //             {" "}
+  //             <BsThreeDots size={20} />
+  //           </Button>
+  //         </DropdownTrigger>
+  //         <DropdownMenu
+  //           className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
+  //           aria-label="Static Actions"
+  //         >
+  //           {checkPermission(PermissionTypes.READ_USER) && (
+  //             <DropdownItem
+  //               key="view"
+  //               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+  //             >
+  //               <Link
+  //                 href={"/usermanagement/profile?id=" + params.row.data.id}
+  //                 className="w-full block"
+  //               >
+  //                 View User
+  //               </Link>
+  //             </DropdownItem>
+  //           )}
+  //           {checkPermission(PermissionTypes.EDIT_USER) && (
+  //             <DropdownItem
+  //               key="edit"
+  //               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+  //             >
+  //               <Link
+  //                 href={"/usermanagement/edit-user?id=" + params.row.data.id}
+  //                 className="w-full block"
+  //               >
+  //                 Edit User
+  //               </Link>
+  //             </DropdownItem>
+  //           )}
+  //           {checkPermission(PermissionTypes.EDIT_USER) &&
+  //             (params.row.data?.user_status?.toLowerCase() === "inactive" ||
+  //             params.row.data?.user_status?.toLowerCase() === "blacklisted" ? (
+  //               <DropdownItem
+  //                 key={"edit"}
+  //                 className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+  //               >
+  //                 <button
+  //                   onClick={() => editUserStatus(params.row.data, "ACTIVE")}
+  //                 >
+  //                   Activate User
+  //                 </button>
+  //               </DropdownItem>
+  //             ) : (
+  //               <DropdownItem
+  //                 key={"deactivate"}
+  //                 className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+  //               >
+  //                 <button
+  //                   onClick={() => editUserStatus(params.row.data, "INACTIVE")}
+  //                 >
+  //                   Deactivate User
+  //                 </button>
+  //               </DropdownItem>
+  //             ))}
+  //           {checkPermission(PermissionTypes.BLACKLIST_USER) && (
+  //             <DropdownItem
+  //               key={"blacklist"}
+  //               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
+  //             >
+  //               <button onClick={() => blacklistUser(params.row.data.id)}>
+  //                 Blacklist User
+  //               </button>
+  //             </DropdownItem>
+  //           )}
+  //         </DropdownMenu>
+  //       </Dropdown>,
+  //     ],
+  //   },
+  // ];
 
   const [rows, setRows] = useState([]);
 
@@ -289,72 +295,61 @@ function UserManagement() {
     if (activeFilter.value === "all") {
       setAggregatedUsers(data);
     } else {
+      console.log("in else");
       let temp: any = [];
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].user_status.toLowerCase() === activeFilter.value) {
-          temp.push(data[i]);
-        }
-      }
+      // for (let i = 0; i < data.length; i++) {
+      //   if (data[i].user_status.toLowerCase() === activeFilter.value) {
+      //     temp.push(data[i]);
+      //   }
+      // }
 
       setAggregatedUsers(temp);
     }
   }, [activeFilter]);
 
   // ROLE FILTERS
-  useEffect(() => {
-    if (Boolean(activeRoleFilter.length) && data) {
-      setSearchTerm("");
-      let temp: any = [];
-      for (let i = 0; i < data?.length; i++) {
-        if (
-          Boolean(
-            activeRoleFilter.find(
-              // @ts-ignore
-              (item: any) => item.id === data[i]?.profiles[0]?.role_id
-            )
-          )
-        ) {
-          temp.push(data[i]);
-        }
-      }
+  // useEffect(() => {
+  //   if (Boolean(activeRoleFilter?.length) && data) {
+  //     setSearchTerm("");
+  //     let temp: any = [];
+  //     for (let i = 0; i < data?.length; i++) {
+  //       if (
+  //         Boolean(
+  //           activeRoleFilter.find(
+  //             // @ts-ignore
+  //             (item: any) => item.id === data[i]?.profiles[0]?.role_id
+  //           )
+  //         )
+  //       ) {
+  //         temp.push(data[i]);
+  //       }
+  //     }
 
-      setAggregatedUsers(temp);
-    } else {
-      setAggregatedUsers(data);
-    }
-  }, [activeRoleFilter]);
+  //     setAggregatedUsers(temp);
+  //   } else {
+  //     setAggregatedUsers(data);
+  //   }
+  // }, [activeRoleFilter]);
 
-  // Prepare Rows
-  useEffect(() => {
-    let temp: any = [];
+  const StatusComponent = (item: any) => {
+    return <Status status={item?.status} />;
+  };
 
-    if (aggregatedUsers && roles) {
-      for (let i = 0; i < aggregatedUsers.length; i++) {
-        let user = aggregatedUsers[i];
-        let userRole = "Unassigned";
-        // APP ID ===1 == MESH SUITE APP
-        // @ts-ignore
-        const meshRole = user?.profiles.find((item: any) => item.app_id === 1);
-        if (meshRole) {
-          for (let i = 0; i < roles?.length; i++) {
-            if (roles[i].id === meshRole?.role_id) {
-              userRole = roles[i].role_name;
-            }
-          }
-        }
-        // @ts-ignore
-        temp.push({ id: user?.id, data: user, role: userRole });
-      }
-      setRows(temp);
-    }
-  }, [aggregatedUsers, roles]);
+  const ActionsComponent = (item: any) => {
+    return (
+      <button className="bg-white text-black">
+        <BsEye />
+      </button>
+    );
+  };
 
   return (
     <div className="w-full pb-20 ">
       <Nav />
 
+      {/* TODO: Enable after integrations */}
       {/* Search and filters */}
-      <div className="flex items-center px-5 justify-between my-4">
+      {/* <div className="flex items-center px-5 justify-between my-4">
         <div className="bg-gray-100 text-sm p-1 rounded-lg">
           {filters.map((filter: any) => {
             return (
@@ -395,13 +390,32 @@ function UserManagement() {
             setSelected={setActiveRoleFilter}
           />
         </div>
-      </div>
+      </div> */}
 
       {/* Table */}
-      <DataTable
-        isLoading={isLoading || searchLoading}
-        rows={rows}
-        columns={columns}
+      <Table
+        columns={[
+          { name: "ID", uid: "id" },
+          { name: "Name", uid: "name" },
+          { name: "Email", uid: "email" },
+          { name: "Phone", uid: "phone" },
+          { name: "STATUS", uid: "status" },
+          { name: "VIEW", uid: "actions" },
+        ]}
+        data={
+          data
+            ? data?.map((user: any) => ({
+                ...user,
+                name: `${user?.firstName} ${user?.lastName}`,
+              }))
+            : []
+        }
+        hasSearch={false}
+        isLoading={isLoading}
+        title="Users"
+        page={1}
+        statusComponent={StatusComponent}
+        actionsComponent={ActionsComponent}
       />
       {/* Pagination */}
       <div className="w-full flex justify-between">

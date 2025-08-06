@@ -16,6 +16,10 @@ export const AdminProvider = ({ children }) => {
     setAdmin((prev) => ({ ...prev, ...data }));
   };
 
+  useEffect(() => {
+    // get user permissions
+  }, []);
+
   const [permissions, setPermissions] = useState(
     UserFromLS ? UserFromLS?.permissions : null
   );
