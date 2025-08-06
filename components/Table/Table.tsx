@@ -1,0 +1,241 @@
+"use client";
+
+import React, { JSX } from "react";
+import {
+  Table as NextUITable,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  getKeyValue,
+} from "@nextui-org/table";
+
+import { Pagination } from "@nextui-org/pagination";
+
+import { Input } from "@nextui-org/input";
+
+// icons
+import { LuSearch } from "react-icons/lu";
+import { FaSpinner } from "react-icons/fa6";
+import { AiOutlineLoading } from "react-icons/ai";
+
+function Table({
+  isLoading,
+  title = "",
+  data,
+  columns,
+  hasSearch = false,
+  setPage,
+  searchPlaceholder,
+  searchValue,
+  searchType,
+  rowsPerPage = 25,
+  setSearchValue,
+  actionsComponent,
+  statusComponent,
+  downloadComponent,
+  page,
+  topNav,
+  totalPages,
+}: {
+  isLoading: boolean;
+  data: any[];
+  title: string;
+  hasSearch: boolean;
+  topNav?: () => JSX.Element;
+  columns: { name: string; uid: string; sortable?: boolean }[];
+  page: number;
+  rowsPerPage?: number;
+  setPage?: any;
+  actionsComponent?: (item: any) => JSX.Element;
+  statusComponent?: (item: any) => JSX.Element;
+  downloadComponent?: (item: any) => JSX.Element;
+  searchType?: "email" | "text";
+  searchPlaceholder?: string;
+  searchValue?: string;
+  setSearchValue?: any;
+  totalPages?: number;
+}) {
+  // PAGINATION STUFF
+  const tableData: any = React.useMemo(() => {
+    return data;
+  }, [page, data]);
+
+  const handleClear = () => {
+    setPage(1);
+    setSearchValue("");
+  };
+
+  const pages = totalPages
+    ? totalPages
+    : Math.ceil(data && data?.length / rowsPerPage);
+
+  const bottomContent = React.useMemo(() => {
+    return (
+      <>
+        {pages > 1 && (
+          <Pagination
+            showControls
+            classNames={{
+              cursor: "bg-foreground text-background",
+            }}
+            color="default"
+            page={page}
+            total={pages}
+            variant="light"
+            onChange={setPage}
+          />
+        )}
+      </>
+    );
+  }, [data?.length, page, pages, hasSearch]);
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <p className="text-lg font-semibold text-nowrap">{title && title}</p>
+
+          <div className="w-full  flex flex-col md:flex-row items-center justify-start md:justify-end md:items-end gap-4">
+            {hasSearch && (
+              <Input
+                isClearable
+                classNames={{
+                  base: "w-full md:max-w-[22rem]",
+                  inputWrapper: "border-1",
+                }}
+                type={searchType}
+                placeholder={searchPlaceholder}
+                startContent={<LuSearch />}
+                value={searchValue}
+                variant="bordered"
+                onChange={(e) => {
+                  setSearchValue(e.target.value);
+                }}
+                onClear={handleClear}
+              />
+            )}
+            {topNav && topNav()}
+            <>
+              {pages > 1 && (
+                <Pagination
+                  showControls
+                  classNames={{
+                    cursor: "bg-foreground text-background",
+                  }}
+                  color="default"
+                  page={page}
+                  total={pages}
+                  variant="light"
+                  onChange={setPage}
+                />
+              )}
+            </>
+          </div>
+        </div>
+      </div>
+    );
+  }, [data.length, searchValue]);
+
+  const classNames = React.useMemo(
+    () => ({
+      base: "pb-20 overflow-x-auto no-scrollbar rounded-none",
+      th: ["bg-gray-100", "text-black", "border-none", "rounded-none", "py-4"],
+      tr: ["!rounded-none", "!shadow-none"],
+      td: [
+        // changing the rows border radius
+        // first
+        "group-data-[first=true]/tr:first:before:rounded-none",
+        "group-data-[first=true]/tr:last:before:rounded-none",
+        // middle
+        "group-data-[middle=true]/tr:before:rounded-none",
+        // last
+        "group-data-[last=true]/tr:first:before:rounded-none",
+        "group-data-[last=true]/tr:last:before:rounded-none",
+        "py-5",
+      ],
+    }),
+    []
+  );
+
+  return (
+    <div className="px-5">
+      <NextUITable
+        radius="none"
+        layout="auto"
+        isHeaderSticky
+        fullWidth
+        removeWrapper
+        aria-label={title}
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        checkboxesProps={{
+          classNames: {
+            wrapper:
+              "after:bg-foreground after:text-background text-background",
+          },
+        }}
+        classNames={classNames}
+        selectionMode="none"
+        topContent={topContent}
+        topContentPlacement="outside"
+      >
+        <TableHeader columns={columns}>
+          {(column: any) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+
+        <TableBody
+          items={tableData ? tableData : []}
+          loadingContent={<AiOutlineLoading className="animate-spin" />}
+          emptyContent={<div>No {title} found</div>}
+          isLoading={isLoading}
+        >
+          {(item: any) => (
+            <TableRow key={item?.id + Math.random()}>
+              {(columnKey) => (
+                <>
+                  {columnKey == "actions" && (
+                    <TableCell>
+                      {actionsComponent && actionsComponent(item)}
+                    </TableCell>
+                  )}
+
+                  {columnKey == "status" && (
+                    <TableCell className="flex justify-start">
+                      {statusComponent && statusComponent(item)}
+                    </TableCell>
+                  )}
+
+                  {columnKey == "download" && (
+                    <TableCell>
+                      {downloadComponent && downloadComponent(item)}
+                    </TableCell>
+                  )}
+
+                  {columnKey !== "actions" &&
+                    columnKey !== "status" &&
+                    columnKey !== "download" && (
+                      <TableCell className="mr-1 text-left">
+                        {getKeyValue(item, columnKey)}
+                      </TableCell>
+                    )}
+                </>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </NextUITable>
+    </div>
+  );
+}
+
+export default Table;

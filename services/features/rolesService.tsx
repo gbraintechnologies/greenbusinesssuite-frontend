@@ -4,6 +4,10 @@ export const getMeshBusinessSuiteRoles = (id: any) => {
   return () => authApi.get(`/apps/roles_by_app/${id}`).then((res) => res.data);
 };
 
+export const getLoggedInUserPermissions = () => {
+  return () => authApi.get(`/users/me`).then((res) => res.data);
+};
+
 export const createRole = ({ name, description }: any) => {
   return authApi.post("/apps/roles/create", {
     role_name: name,
