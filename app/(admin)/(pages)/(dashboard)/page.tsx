@@ -8,8 +8,6 @@ import services from "@/services";
 
 // css
 import "./index.css";
-import { Button } from "@nextui-org/button";
-import { toast } from "sonner";
 
 function Dashboard() {
   // Data

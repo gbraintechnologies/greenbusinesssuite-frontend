@@ -27,7 +27,6 @@ import useAuth from "@/hooks/useAuth";
 import FormsNavIcon from "@/public/icons/FormsNavIcon";
 import { LuSend } from "react-icons/lu";
 import SessionExpiredModal from "@/components/GlobalModal/GlobalModal";
-import { BsBoxSeam } from "react-icons/bs";
 
 export default function AdminLayout({
   children,
@@ -40,38 +39,36 @@ export default function AdminLayout({
   const { admin, removeAdmin } = useAdmin();
   const { auth, removeAuth } = useAuth();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Redirect to login if not authenticated1
   useEffect(() => {
-    if (admin === null || !Boolean(auth?.access_token)) {
+    if (admin === null || !Boolean(auth?.accessToken)) {
       router.push("/auth");
     } else {
-      let role = admin?.profiles[0]?.role_id;
-
+      // let role = admin?.profiles[0]?.role_id;
       // CHECK ROLES AND ROUTE TO RIGHT DESTINATIONS
       // LOGICIEL ADMIN ROLE ID: 1
-      if (role == 1) {
-        setLoading(false);
-        return;
-      }
-      // COMPANY ADMIN ROLE ID: 6
-      if (role == 6) {
-        setLoading(false);
-        if (pathname.includes("/settings")) {
-          return;
-        }
-        setLoading(true);
-        redirect("/company");
-      }
-
-      setLoading(true);
-
-      // else
-      removeAdmin();
-      removeAuth();
-      //
-      router.push("/login");
+      // TODO: Enable
+      // if (role == 1) {
+      //   setLoading(false);
+      //   return;
+      // }
+      // // COMPANY ADMIN ROLE ID: 6
+      // if (role == 6) {
+      //   setLoading(false);
+      //   if (pathname.includes("/settings")) {
+      //     return;
+      //   }
+      //   setLoading(true);
+      //   redirect("/company");
+      // }
+      // setLoading(true);
+      // // else
+      // removeAdmin();
+      // removeAuth();
+      // //
+      // router.push("/login");
     }
   }, [admin, pathname]);
 

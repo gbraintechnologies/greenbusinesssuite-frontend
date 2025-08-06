@@ -1,13 +1,12 @@
 import { CompanyInfo, CompanyObject, CustomField } from "@/types";
 import authApi from "../axiosAuthClient";
 import meshApi from "../meshAuthClient";
-import meshNoAuthApi from "../meshNoAuthClient";
 import defaultMeshApi from "../defaultMeshClient";
 
 export const getAllCompanies = (offset: number = 0, limit: number = 50) => {
   return () =>
     authApi
-      .get(`/companies/all_companies?offset=${offset}&limit=${limit}`)
+      .get(`/companies/filter/status?status=ALL&page=0&size=10`)
       .then((res) => res.data);
 };
 

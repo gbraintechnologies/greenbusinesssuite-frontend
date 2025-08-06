@@ -76,43 +76,46 @@ function LogIn() {
     },
   });
 
-  const fetchCurrentUser = async (token: string) => {
-    try {
-      return await currentLoggedIn(token);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  // const fetchCurrentUser = async (token: string) => {
+  //   try {
+  //     return await currentLoggedIn(token);
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
 
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const token: any = await login(data.username, data.password);
+
+      console.log("token", token);
       if (token?.status === 200) {
         addAuthData(token?.data);
+        addAdminData(token?.data);
 
-        const user = await fetchCurrentUser(token.data?.access_token);
+        toast.success("Logged in");
+        router.push("/");
 
-        if (
-          user?.data?.user_status === "NEWLY_CREATED" ||
-          user?.data?.user_status === "TEMP_CREDENTIALS"
-        ) {
-          addAdminData(user?.data);
-          toast("Create your password");
-          router.push(`/auth/create-password?temp=${data.password}`);
-          return;
-          // route to admin / company dashboard
-        } else if (user?.data?.profiles[0]?.role_id === 1) {
-          addAdminData(user?.data);
-          toast.success("Logged in");
-          router.push("/");
-          return;
-        } else {
-          removeAuth();
-          toast.error("Access denied. Contact your administrator");
-        }
-        // else {
+        // TODO: Refactoring
+        // const user = await fetchCurrentUser(token.data?.access_token);
+
+        // if (
+        //   user?.data?.user_status === "NEWLY_CREATED" ||
+        //   user?.data?.user_status === "TEMP_CREDENTIALS"
+        // ) {
+        //   addAdminData(user?.data);
+        //   toast("Create your password");
+        //   router.push(`/auth/create-password?temp=${data.password}`);
+        //   return;
+        //   // route to admin / company dashboard
+        // } else if (user?.data?.profiles[0]?.role_id === 1) {
+        //   addAdminData(user?.data);
         //   toast.success("Logged in");
-        //   router.push("/company");
+        //   router.push("/");
+        //   return;
+        // } else {
+        //   removeAuth();
+        //   toast.error("Access denied. Contact your administrator");
         // }
       }
     } catch (error) {
