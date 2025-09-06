@@ -135,7 +135,7 @@ pipeline {
                             echo "Deploying ${env.BRANCH_NAME} to ${env.DEPLOY_SERVER}"
                             
                             scp -o StrictHostKeyChecking=no ${COMPOSE_FILE} nginx.conf ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}/
-                            scp -o StrictHostKeyChecking=no .env.deployment ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}/.env.deployment-frontend
+                            scp -o StrictHostKeyChecking=no .env.deployment-frontend ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}/.env.deployment-frontend
 
                             ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_SERVER} "cd ${DEPLOY_PATH} && \
                                 export TAG=${TAG} && \
