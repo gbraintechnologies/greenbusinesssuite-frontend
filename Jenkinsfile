@@ -27,7 +27,7 @@ pipeline {
                         env.REPO_NAME = 'mesh-business-frontend-prod'
                         env.DEPLOY_PATH = '/home/production/frontend'  
                         env.DEPLOY_USER = 'lloyd'            
-                        env.DEPLOY_SERVER = '136.243.111.91'      
+                        env.DEPLOY_SERVER = '95.216.10.73'      
                         env.COMPOSE_FILE = 'docker-compose-prod.yaml'
                         env.ENV_FILE = 'mesh-business-frontend-prod'
                         env.DEPLOY_TYPE = 'docker-compose-frontend'
@@ -45,6 +45,7 @@ pipeline {
                     echo "REPO_NAME: ${env.REPO_NAME}"
                     echo "DEPLOY_TYPE: ${env.DEPLOY_TYPE}"
                     echo "DEPLOY_SERVER: ${env.DEPLOY_SERVER}"
+                    echo "AWS_ACCOUNT_ID: ${env.AWS_ACCOUNT_ID}"
                 }
             }
         }
