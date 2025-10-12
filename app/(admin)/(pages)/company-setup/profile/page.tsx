@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import "./index.css";
+
 import UpdateInfo from "@/public/svg/updateInfo.svg";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -21,7 +21,7 @@ import FormCard from "@/components/Form/FormCard";
 import AssignForm from "../components/AssignForm";
 import Modal from "@/components/Modal/Modal";
 
-import { IFilter, TimelineType, TimelineValues } from "@/types";
+import { Company, IFilter, TimelineType, TimelineValues } from "@/types";
 import EmptyList from "@/components/Form/EmptyList";
 import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
 
@@ -40,6 +40,10 @@ import BrandingSettings from "./_components/BrandingSettings";
 import AssignedForms from "./_components/AssignedForms";
 import Description from "./_components/Description";
 import SMSSenderID from "./_components/SMSSenderID";
+import { TbPhotoCircle } from "react-icons/tb";
+
+// @ts-ignore
+import "./index.css";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -104,86 +108,88 @@ const Page = () => {
 
   const id = searchParams.get("id");
 
-  const { data: companyData, isLoading } = useQuery({
+  const { data: companyData, isLoading } = useQuery<Company>({
     queryKey: ["company", parseInt(id as string)],
     queryFn: services.getCompanyById(Number(id)),
   });
 
-  const companyDescription =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 1
-    )?.value ?? "";
+  console.log("company info", companyData);
 
-  const companyAdminName =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 2
-    )?.value ?? "";
+  // const companyDescription =
+  //   companyData?.company_custom_values?.find(
+  //     (field: any) => field.custom_profile_item_id == 1
+  //   )?.value ?? "";
 
-  const companyAdminEmail =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 3
-    )?.value ?? "";
+  // const companyAdminName =
+  //   companyData?.company_custom_values?.find(
+  //     (field: any) => field.custom_profile_item_id == 2
+  //   )?.value ?? "";
 
-  const companySubSector =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 4
-    )?.value ?? "";
+  // const companyAdminEmail =
+  //   companyData?.company_custom_values?.find(
+  //     (field: any) => field.custom_profile_item_id == 3
+  //   )?.value ?? "";
 
-  const companyParentAddressId =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 5
-    )?.value ?? "";
+  // const companySubSector =
+  //   companyData?.company_custom_values?.find(
+  //     (field: any) => field.custom_profile_item_id == 4
+  //   )?.value ?? "";
 
-  const companyChildAddressId =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 6
-    )?.value ?? "";
+  // const companyParentAddressId =
+  //   companyData?.company_custom_values?.find(
+  //     (field: any) => field.custom_profile_item_id == 5
+  //   )?.value ?? "";
 
-  const companySectorId =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 7
-    )?.value ?? "";
+  // const companyChildAddressId =
+  //   companyData?.company_custom_values?.find(
+  //     (field: any) => field.custom_profile_item_id == 6
+  //   )?.value ?? "";
 
-  const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
-    queryKey: [
-      "get assigned forms for ",
-      Number(companyData?.id),
-      page,
-      limit,
-      selectedTimeline?.value,
-    ],
-    queryFn: services.getFormsByCompanyId(
-      companyData?.id,
-      page,
-      limit,
-      selectedTimeline?.value
-    ),
-    enabled: !!companyData?.id,
-  });
+  // const companySectorId =
+  //   companyData?.company_custom_values?.find(
+  //     (field: any) => field.custom_profile_item_id == 7
+  //   )?.value ?? "";
 
-  const { data: country, isLoading: isCountryLoading } = useQuery({
-    queryKey: ["country", companyData?.company_address],
-    queryFn: () => services.getCountryInfoByName(companyData?.company_address),
-    enabled: !!companyData?.company_address,
-  });
+  // const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
+  //   queryKey: [
+  //     "get assigned forms for ",
+  //     Number(companyData?.id),
+  //     page,
+  //     limit,
+  //     selectedTimeline?.value,
+  //   ],
+  //   queryFn: services.getFormsByCompanyId(
+  //     companyData?.id,
+  //     page,
+  //     limit,
+  //     selectedTimeline?.value
+  //   ),
+  //   enabled: !!companyData?.id,
+  // });
 
-  const { data: industry, isLoading: isIndustryLoading } = useQuery({
-    queryKey: ["industry", companyData?.industry],
-    queryFn: services.getSubSectorByID(
-      Number(companySectorId),
-      Number(companyData?.industry)
-    ),
-    enabled:
-      !!companyData?.industry &&
-      !!companySectorId &&
-      isConvertibleToNumber(companyData?.industry),
-  });
+  // const { data: country, isLoading: isCountryLoading } = useQuery({
+  //   queryKey: ["country", companyData?.company_address],
+  //   queryFn: () => services.getCountryInfoByName(companyData?.company_address),
+  //   enabled: !!companyData?.company_address,
+  // });
 
-  const { data: companyBranding, isLoading: brandingLoading } = useQuery({
-    queryKey: ["get company branding info", companyData?.company_identifier],
-    queryFn: services.getCompanyBranding(companyData?.company_identifier),
-    enabled: !!companyData?.company_identifier,
-  });
+  // const { data: industry, isLoading: isIndustryLoading } = useQuery({
+  //   queryKey: ["industry", companyData?.industry],
+  //   queryFn: services.getSubSectorByID(
+  //     Number(companySectorId),
+  //     Number(companyData?.industry)
+  //   ),
+  //   enabled:
+  //     !!companyData?.industry &&
+  //     !!companySectorId &&
+  //     isConvertibleToNumber(companyData?.industry),
+  // });
+
+  // const { data: companyBranding, isLoading: brandingLoading } = useQuery({
+  //   queryKey: ["get company branding info", companyData?.companyIdentifier],
+  //   queryFn: services.getCompanyBranding(companyData?.companyIdentifier!),
+  //   enabled: !!companyData?.companyIdentifier,
+  // });
 
   const [formsLoading, setFormsLoading] = useState<boolean>(false);
 
@@ -193,76 +199,76 @@ const Page = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (!companyData) return;
-    const status = statuses.find(
-      (status) =>
-        status.value.toLowerCase() === companyData?.status?.toLowerCase()
-    );
-    setActiveStatus(status);
-    setParentAddressScheme(
-      country?.addressingScheme?.parentLevels?.find(
-        (entry: any) => entry?.id == companyParentAddressId
-      )
-    );
-    setBackgroundImageUrl(companyData?.company_logo);
+  // useEffect(() => {
+  //   if (!companyData) return;
+  //   const status = statuses.find(
+  //     (status) =>
+  //       status.value.toLowerCase() === companyData?.status?.toLowerCase()
+  //   );
+  //   setActiveStatus(status);
+  //   setParentAddressScheme(
+  //     country?.addressingScheme?.parentLevels?.find(
+  //       (entry: any) => entry?.id == companyParentAddressId
+  //     )
+  //   );
+  //   setBackgroundImageUrl(companyData?.company_logo);
 
-    if (companyBranding) {
-      setColor(companyBranding?.color);
-      setSmallLogoUrl(companyBranding?.logo);
-    }
-  }, [companyData, country, companyBranding]);
+  //   if (companyBranding) {
+  //     setColor(companyBranding?.color);
+  //     setSmallLogoUrl(companyBranding?.logo);
+  //   }
+  // }, [companyData, country, companyBranding]);
 
-  const editCompanyStatus = async (status: any) => {
-    let companyDataInfo = { ...companyData, status: status.value };
+  // const editCompanyStatus = async (status: any) => {
+  //   let companyDataInfo = { ...companyData, status: status.value };
 
-    const keyToDelete = "company_custom_values";
+  //   const keyToDelete = "company_custom_values";
 
-    let customFields = companyDataInfo[keyToDelete];
+  //   let customFields = companyDataInfo[keyToDelete];
 
-    delete companyDataInfo[keyToDelete];
+  //   delete companyDataInfo[keyToDelete];
 
-    try {
-      await services.editCompanyWithCustomFields(
-        companyData.id,
-        companyDataInfo,
-        customFields
-      );
-      setActiveStatus(status);
-      toast.success("Company status updated successfully");
-    } catch (error) {
-      toast.error("Failed to update company status");
-    }
-  };
+  //   try {
+  //     await services.editCompanyWithCustomFields(
+  //       companyData.id,
+  //       companyDataInfo,
+  //       customFields
+  //     );
+  //     setActiveStatus(status);
+  //     toast.success("Company status updated successfully");
+  //   } catch (error) {
+  //     toast.error("Failed to update company status");
+  //   }
+  // };
 
-  const editCompanyBranding = async () => {
-    if (!smallLogoUrl) {
-      toast.error("Logo is required");
-      return;
-    }
-    try {
-      const companySmallLogoURL =
-        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+  // const editCompanyBranding = async () => {
+  //   if (!smallLogoUrl) {
+  //     toast.error("Logo is required");
+  //     return;
+  //   }
+  //   try {
+  //     const companySmallLogoURL =
+  //       companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
-      await services.editCompanyBranding(
-        companyBranding?.id,
-        companyData?.id,
-        companyData?.company_identifier,
-        companySmallLogo
-          ? companySmallLogoURL?.file_url
-          : companyBranding?.logo,
-        color,
-        companyData?.company_name,
-        companyBranding?.modules?.map((module: any) => module?.id),
-        companyBranding?.categorySpecificModules?.map(
-          (module: any) => module?.id
-        )
-      );
-      toast.success("Company branding updated successfully");
-    } catch (error) {
-      toast.error("Failed to update company branding");
-    }
-  };
+  //     await services.editCompanyBranding(
+  //       companyBranding?.id,
+  //       companyData?.id,
+  //       companyData?.company_identifier,
+  //       companySmallLogo
+  //         ? companySmallLogoURL?.file_url
+  //         : companyBranding?.logo,
+  //       color,
+  //       companyData?.company_name,
+  //       companyBranding?.modules?.map((module: any) => module?.id),
+  //       companyBranding?.categorySpecificModules?.map(
+  //         (module: any) => module?.id
+  //       )
+  //     );
+  //     toast.success("Company branding updated successfully");
+  //   } catch (error) {
+  //     toast.error("Failed to update company branding");
+  //   }
+  // };
   if (isLoading) {
     // if (isLoading || areFormsLoading || isCountryLoading) {
     return (
@@ -302,28 +308,31 @@ const Page = () => {
 
         <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
           <div className="flex gap-5 items-center justify-center">
-            {companyData?.company_logo ? (
-              <Image
-                src={companyData?.company_logo}
-                width={144}
-                height={144}
-                className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
-                alt="Company Logo"
-              />
+            {companyData?.companyLogo ? (
+              <></>
             ) : (
+              // <Image
+              //   src={companyData?.companyLogo}
+              //   width={144}
+              //   height={144}
+              //   className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
+              //   alt="Company Logo"
+              // />
               <div className="rounded-full w-36 h-36 border bg-[rgba(226, 232, 240, 1)] flex items-center justify-center ">
-                <UserIcon width="50" height="50" />
+                <TbPhotoCircle size={70} />
               </div>
             )}
-            {companyData?.company_name && (
+            {companyData?.companyName && (
               <div className="flex flex-col gap-3">
                 <div className="label">Company Name</div>
-                <div className="header">{companyData?.company_name}</div>
+                <div className="text-4xl font-bold">
+                  {companyData?.companyName}
+                </div>
               </div>
             )}
           </div>
           <div className="flex gap-6 items-center">
-            {companyData?.company_identifier && (
+            {companyData?.companyIdentifier && (
               <div className="flex flex-col gap-3">
                 <div className="label">Company Dashboard</div>
 
@@ -332,12 +341,12 @@ const Page = () => {
                   onClick={() => {
                     const currentHost = window.location.origin;
                     const url =
-                      currentHost + `/${companyData?.company_identifier}/auth`;
+                      currentHost + `/${companyData?.companyIdentifier}/auth`;
 
                     navigator.clipboard.writeText(url).then(() => {
                       toast.dismiss();
                       toast.success(
-                        `${companyData?.company_name} dashboard link copied!`
+                        `${companyData?.companyName} dashboard link copied!`
                       );
                     });
                   }}
@@ -372,7 +381,7 @@ const Page = () => {
                           <Menu.Item key={status.id}>
                             <button
                               className="flex hover:text-primary-dark w-24 hover:bg-gray-50 text-sm bg-white items-center h-9 rounded-lg px-3 py-2"
-                              onClick={() => editCompanyStatus(status)}
+                              // onClick={() => editCompanyStatus(status)}
                             >
                               {status.name}
                             </button>
@@ -388,7 +397,7 @@ const Page = () => {
 
         {/* TABS FOR DESCRIPTION  / ASSIGNED FORMS */}
         <div className="mt-10">
-          <div className="flex justify-center items-center">
+          <div className="flex justify-start items-center">
             <Tabs
               filters={filters}
               setActiveFilter={setActiveFilter}
@@ -399,20 +408,22 @@ const Page = () => {
           {/* RENDERING BASED ON FILTER */}
           <div>
             {activeFilter.value === "description" && (
-              <Description
-                companyData={companyData}
-                companyChildAddressId={companyChildAddressId}
-                companyDescription={companyDescription}
-                companySubSector={companySubSector}
-                country={country}
-                industry={industry}
-                parentAddressScheme={parentAddressScheme}
-              />
+              <></>
+              // <Description
+              //   companyData={companyData}
+              //   companyChildAddressId={companyChildAddressId}
+              //   companyDescription={companyDescription}
+              //   companySubSector={companySubSector}
+              //   country={country}
+              //   industry={industry}
+              //   parentAddressScheme={parentAddressScheme}
+              // />
             )}
 
             {activeFilter.value === "assigned_forms" && (
               <AssignedForms
-                assignedForms={assignedForms}
+                // assignedForms={assignedForms}
+                assignedForms={[]}
                 selectedTimeline={selectedTimeline}
                 setSelectedTimeline={setSelectedTimeline}
                 page={page}
@@ -424,16 +435,17 @@ const Page = () => {
             )}
 
             {activeFilter.value === "branding_settings" && (
-              <BrandingSettings
-                color={color}
-                setCompanySmallLogo={setCompanySmallLogo}
-                companySmallLogo={companySmallLogo}
-                smallLogoUrl={smallLogoUrl}
-                showColorPicker={showColorPicker}
-                setShowColorPicker={setShowColorPicker}
-                handleChangeComplete={handleChangeComplete}
-                brandingLoading={brandingLoading}
-              />
+              <></>
+              // <BrandingSettings
+              //   color={color}
+              //   setCompanySmallLogo={setCompanySmallLogo}
+              //   companySmallLogo={companySmallLogo}
+              //   smallLogoUrl={smallLogoUrl}
+              //   showColorPicker={showColorPicker}
+              //   setShowColorPicker={setShowColorPicker}
+              //   handleChangeComplete={handleChangeComplete}
+              //   brandingLoading={brandingLoading}
+              // />
             )}
 
             {activeFilter?.value === "administrators" && (
@@ -441,7 +453,7 @@ const Page = () => {
             )}
 
             {activeFilter?.value === "configuration" && (
-              <Configuration tenantId={companyData?.company_identifier} />
+              <Configuration tenantId={companyData?.companyIdentifier!} />
             )}
 
             {activeFilter?.value === "sms_sender_id" && (
@@ -457,11 +469,12 @@ const Page = () => {
         size="big"
         title="Select form to assign to organisation"
       >
-        <AssignForm
-          companyId={companyData?.id}
+        <></>
+        {/* <AssignForm
+          companyId={companyData?.id ? companyData?.id : null}
           setShow={setShowAssignModal}
           queryClient={queryClient}
-        />
+        /> */}
       </Modal>
     </>
   );

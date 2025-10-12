@@ -1,5 +1,5 @@
 import React, { ComponentProps } from "react";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import useCompany from "@/hooks/useCompany";
 
 type Props = ComponentProps<typeof Button>;

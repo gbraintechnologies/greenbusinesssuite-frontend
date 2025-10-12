@@ -28,8 +28,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/react";
 
 function isObjEmpty(obj: any) {
   return Object.keys(obj).length === 0;

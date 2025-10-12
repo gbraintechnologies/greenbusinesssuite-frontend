@@ -16,7 +16,7 @@ import Select, {
   MultiValueProps,
   MultiValueRemoveProps,
 } from "react-select";
-import { Checkbox } from "@nextui-org/checkbox";
+import { Checkbox } from "@heroui/checkbox";
 
 // DATE TIME HELPERS
 
@@ -36,8 +36,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { DatePicker } from "@nextui-org/date-picker";
+} from "@heroui/dropdown";
+import { DatePicker } from "@heroui/date-picker";
 
 // ICONS
 import { BiChevronDown } from "react-icons/bi";

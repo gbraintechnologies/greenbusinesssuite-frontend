@@ -14,7 +14,7 @@ import services from "@/services";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Countrieses } from "../components/Countries";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
+import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { createCurrency } from "@/services/features/currencyService";
 
 const schema = yup.object({
@@ -85,7 +85,6 @@ function AddCurrency() {
     }
   }, [countriesData]);
 
-
   const handleAddLevel = () => {
     if (
       denomination.amount.trim() === "" ||
@@ -105,7 +104,10 @@ function AddCurrency() {
       setDenominations(updatedDenominations);
     } else {
       // Add a new denomination
-      const newId = denominations.length > 0 ? denominations[denominations.length - 1].id + 1 : 1;
+      const newId =
+        denominations.length > 0
+          ? denominations[denominations.length - 1].id + 1
+          : 1;
       const newDenomination = {
         ...denomination,
         id: newId,
@@ -116,7 +118,6 @@ function AddCurrency() {
     // Reset the denomination input fields
     setDenomination({ id: 0, name: "", amount: "", denominationType: "" });
   };
-
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -129,15 +130,11 @@ function AddCurrency() {
   };
 
   const handleEdit = (id: number) => {
-    const selectedDenomination = denominations.find(
-      (d) => d.id === id
-    );
+    const selectedDenomination = denominations.find((d) => d.id === id);
     if (selectedDenomination) {
       setDenomination(selectedDenomination);
     }
   };
-
-
 
   const handleDelete = (index: number) => {
     setDenominations((prevDenominations) => {
@@ -167,14 +164,12 @@ function AddCurrency() {
 
       router.push("/currency-setup");
     } catch (error: any) {
-
       if (error.response?.status === 404) {
         toast.error("Currency already exists", {
           position: "top-center",
           duration: 3000,
         });
-      }
-      else {
+      } else {
         console.error("Error occurred:", error);
         toast.error("An unexpected error occurred", {
           position: "top-center",
@@ -225,7 +220,10 @@ function AddCurrency() {
           <div>
             <div className="new-input half hide-input-borders">
               <label className="text-sm">Country</label>
-              <div className="mt-1 flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]" style={{ width: "30%" }}>
+              <div
+                className="mt-1 flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]"
+                style={{ width: "30%" }}
+              >
                 <Autocomplete
                   variant="bordered"
                   className="w-full "
@@ -237,7 +235,8 @@ function AddCurrency() {
                   popoverProps={{
                     offset: 10,
                     classNames: {
-                      content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                      content:
+                        "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
                     },
                   }}
                   onSelectionChange={(key: Key | null) => {
@@ -327,11 +326,12 @@ function AddCurrency() {
                 denomination.amount.trim() === "" ||
                 denomination.denominationType.trim() === ""
               }
-              className={`bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100 ${denomination.amount.trim() === "" ||
+              className={`bg-white py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center shadow-sm rounded-xl hover:bg-gray-100 ${
+                denomination.amount.trim() === "" ||
                 denomination.denominationType.trim() === ""
-                ? "cursor-not-allowed opacity-50"
-                : ""
-                }`}
+                  ? "cursor-not-allowed opacity-50"
+                  : ""
+              }`}
             >
               Add
             </button>

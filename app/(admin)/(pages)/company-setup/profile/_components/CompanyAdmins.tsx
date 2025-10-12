@@ -2,7 +2,7 @@
 
 import ComboSearch from "@/components/SearchBox/ComboSearch";
 import services from "@/services";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";

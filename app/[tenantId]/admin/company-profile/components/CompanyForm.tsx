@@ -18,8 +18,8 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Dropdown,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/react/dropdown";
+import { Button } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { toast } from "sonner";
@@ -33,7 +33,7 @@ import {
   Autocomplete,
   AutocompleteItem,
   AutocompleteSection,
-} from "@nextui-org/autocomplete";
+} from "@heroui/react/autocomplete";
 import { Countrie } from "@/app/(admin)/(pages)/country-setup/components/Countries";
 import useCompany from "@/hooks/useCompany";
 

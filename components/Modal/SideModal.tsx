@@ -1,6 +1,6 @@
 "use client";
 
-import { Modal, ModalBody, ModalContent } from "@nextui-org/modal";
+import { Modal, ModalBody, ModalContent } from "@heroui/modal";
 
 export default function SideModal({
   isOpen,

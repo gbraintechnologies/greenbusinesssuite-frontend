@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import Pagination from "@/components/Pagination/Pagination";
-import { Modal, ModalContent, useDisclosure } from "@nextui-org/modal";
+import { Modal, ModalContent, useDisclosure } from "@heroui/modal";
 import EyeIcon from "@/public/icons/EyeIcon";
 
 import { FormatDateWithSuffix } from "@/utils/FormatDate/FormatDate";
@@ -44,7 +44,6 @@ function page() {
   const [activeNotification, setActiveNotification] = useState<any>();
 
   const [recurringType, setRecurringType] = useState<any>();
-
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -89,24 +88,24 @@ function page() {
       enabled: activeFilter.id == 1,
     });
 
-    const {
-      data: recurringMessagesByType,
-      isLoading: recurringMessagesByTypeLoading,
-    } = useQuery({
-      queryKey: [
-        "all recurring messages by type",
-        recurringMessagesPage,
-        recurringMessagesLimit,
-        recurringType,
-      ],
-      queryFn: services.getRecurringMessagesByType(
-        recurringType,
-        recurringMessagesPage,
-        recurringMessagesLimit
-      ),
-      select: (data) => data?.content,
-      enabled:  recurringType?.length > 0,
-    });
+  const {
+    data: recurringMessagesByType,
+    isLoading: recurringMessagesByTypeLoading,
+  } = useQuery({
+    queryKey: [
+      "all recurring messages by type",
+      recurringMessagesPage,
+      recurringMessagesLimit,
+      recurringType,
+    ],
+    queryFn: services.getRecurringMessagesByType(
+      recurringType,
+      recurringMessagesPage,
+      recurringMessagesLimit
+    ),
+    select: (data) => data?.content,
+    enabled: recurringType?.length > 0,
+  });
 
   // set messages to rows
   useEffect(() => {
@@ -129,54 +128,54 @@ function page() {
     }
   }, [messages, activeFilter, recurringMessages]);
 
-    // setting recurring messages by type
-    useEffect(() => {
-      if (activeFilter.id == 0) {
-        if (recurringType?.length > 0 && recurringMessagesByType) {
-          setMessageHistoryRows(
-            recurringMessagesByType.map((message: any) => ({
-              id: message.id,
-              data: message,
-            }))
-          );
-        }
+  // setting recurring messages by type
+  useEffect(() => {
+    if (activeFilter.id == 0) {
+      if (recurringType?.length > 0 && recurringMessagesByType) {
+        setMessageHistoryRows(
+          recurringMessagesByType.map((message: any) => ({
+            id: message.id,
+            data: message,
+          }))
+        );
       }
-      if (activeFilter.id == 1) {
-        if (recurringType?.length > 0 && recurringMessagesByType) {
-          setRecurringRows(
-            recurringMessagesByType.map((message: any) => ({
-              id: message.id,
-              data: message,
-            }))
-          );
-        }
+    }
+    if (activeFilter.id == 1) {
+      if (recurringType?.length > 0 && recurringMessagesByType) {
+        setRecurringRows(
+          recurringMessagesByType.map((message: any) => ({
+            id: message.id,
+            data: message,
+          }))
+        );
       }
-    }, [recurringType, recurringMessagesByType]);
+    }
+  }, [recurringType, recurringMessagesByType]);
 
-//reset filter when tab changes
+  //reset filter when tab changes
   useEffect(() => {
     setRecurringType(null);
-  },[activeFilter])
+  }, [activeFilter]);
 
-    const handleSelectAll = () => {
-      if (activeFilter.id == 0) {
-        if (messages.length > 0) {
-          setMessageHistoryRows(
-            messages.map((message: any) => ({ id: message.id, data: message }))
-          );
-        }
+  const handleSelectAll = () => {
+    if (activeFilter.id == 0) {
+      if (messages.length > 0) {
+        setMessageHistoryRows(
+          messages.map((message: any) => ({ id: message.id, data: message }))
+        );
       }
-      if (activeFilter.id == 1) {
-        if (recurringMessages?.length > 0) {
-          setRecurringRows(
-            recurringMessages.map((message: any) => ({
-              id: message.id,
-              data: message,
-            }))
-          );
-        }
+    }
+    if (activeFilter.id == 1) {
+      if (recurringMessages?.length > 0) {
+        setRecurringRows(
+          recurringMessages.map((message: any) => ({
+            id: message.id,
+            data: message,
+          }))
+        );
       }
-    };
+    }
+  };
 
   const messageHistoryColumns = [
     {
@@ -187,7 +186,9 @@ function page() {
       headerAlign: "left",
       flex: 3,
       getActions: (params: any) => [
-        <div className="w-full">{FormatDateWithSuffix(params.row.data?.createdOn)}</div>,
+        <div className="w-full">
+          {FormatDateWithSuffix(params.row.data?.createdOn)}
+        </div>,
       ],
     },
 
@@ -345,17 +346,15 @@ function page() {
             setActiveFilter={setActiveFilter}
             filters={filters}
           />
-          <div
-            className={ "flex gap-1 items-center"}
-          >
-          <SendMessage type="company-admin" />
-              <RecurringTypeFilter
-                selected={recurringType}
-                setSelected={setRecurringType}
-                setPage={setRecurringMessagesPage}
-                handleSelectAll={handleSelectAll}
-                activeFilterId={activeFilter.id}
-              />
+          <div className={"flex gap-1 items-center"}>
+            <SendMessage type="company-admin" />
+            <RecurringTypeFilter
+              selected={recurringType}
+              setSelected={setRecurringType}
+              setPage={setRecurringMessagesPage}
+              handleSelectAll={handleSelectAll}
+              activeFilterId={activeFilter.id}
+            />
           </div>
         </div>
         <DataTable

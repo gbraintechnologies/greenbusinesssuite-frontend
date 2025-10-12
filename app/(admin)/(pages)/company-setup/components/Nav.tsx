@@ -10,21 +10,19 @@ function Nav() {
   const { checkPermission } = useAdmin();
 
   return (
-    <div className="w-full text-[#0F172A] px-5  flex justify-between">
+    <div className="w-full text-[#0F172A] px-5 items-center  flex justify-between">
       <div>
-        <h3 className="font-semibold text-xl">Companies</h3>
-        <p className="text-[rgba(71, 85, 105, 1)] font-normal text-base">
-          All companies onboarded
-        </p>
+        <h3 className="header-2">Companies</h3>
       </div>
 
-      {checkPermission(PermissionTypes.CREATE_COMPANY) && (
-        <Link href={"/company-setup/create"}>
-          <button className="bg-primary-green flex text-white text-sm px-4 py-3 hover:opacity-95 items-center gap-2 rounded-xl">
-            <GoPlusCircle size={15} /> Add New{" "}
-          </button>
-        </Link>
-      )}
+      {/* {checkPermission(PermissionTypes.CREATE_COMPANY) && ( */}
+      {/* TODO: Enable after company permissions up */}
+      <Link href={"/company-setup/create"}>
+        <button className="bg-primary-green flex text-white text-sm px-4 py-3 hover:opacity-95 items-center gap-2 rounded-xl">
+          <GoPlusCircle size={15} /> Add New{" "}
+        </button>
+      </Link>
+      {/* )} */}
     </div>
   );
 }

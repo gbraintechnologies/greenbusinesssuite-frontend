@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import React, { useLayoutEffect } from "react";
 import UserRole from "../components/UserRole";
-import { GridColDef } from "@mui/x-data-grid";
 import StatusPill from "@/components/StatusPill/StatusPill";
 import { BsArrowDown } from "react-icons/bs";
 import DataTable from "@/components/DataTable/DataTable";
@@ -48,7 +47,7 @@ const page = () => {
     { id: 96945 },
   ];
 
-  const columns: GridColDef[] = [
+  const columns: any[] = [
     {
       field: "name",
       renderHeader: () => (

@@ -19,9 +19,10 @@ function Layout({
   return (
     <div>
       {children}
-      {checkPermission(PermissionTypes.READ_ALL_CURRENCIES) &&
-        pathname == "/currency-setup" &&
-        managecurrency}
+      {/* {checkPermission(PermissionTypes.READ_ALL_CURRENCIES) && */}
+      {pathname == "/currency-setup" && managecurrency}
+
+      {/* } */}
     </div>
   );
 }

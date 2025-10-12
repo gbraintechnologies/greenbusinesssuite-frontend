@@ -11,7 +11,7 @@ import { TimelineType, TimelineValues } from "@/types";
 import Pagination from "@/components/Pagination/Pagination";
 import OneOffBills from "./_components/OneOffBills";
 import RecurringBills from "./_components/RecurringBills";
-import { useDisclosure } from "@nextui-org/modal";
+import { useDisclosure } from "@heroui/modal";
 import SideModal from "@/components/Modal/SideModal";
 import CreateBill from "./_components/CreateBill";
 import ViewBill from "./_components/ViewBill";

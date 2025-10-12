@@ -7,7 +7,7 @@ import React from "react";
 // icons
 import { IoIosArrowBack } from "react-icons/io";
 
-import { Modal, ModalContent, useDisclosure } from "@nextui-org/modal";
+import { Modal, ModalContent, useDisclosure } from "@heroui/modal";
 
 //
 import Link from "next/link";

@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
 import useUser from "@/hooks/useUser";
 import useCompany from "@/hooks/useCompany";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 
 const schema = yup.object({
   username: yup.string().required("Email is required"),
@@ -144,12 +144,15 @@ function LogIn() {
   return (
     <div>
       <div className="max-h-screen h-screen flex overflow-hidden">
-        <div className="loginFrame flex px-4 md:flex flex-[2] items-center justify-center bg-white p-6 rounded-[20px] shadow-2xl py-12">
+        <div className=" flex px-4 md:flex flex-[2] items-center justify-center bg-white p-6 rounded-[20px] shadow-2xl py-20">
           <form
-            className="flex flex-col max-w-[414px] w-full gap-y-6 shadow-2xl py-12 bg-white p-6 rounded-[20px]"
+            className="flex flex-col  w-full md:max-w-lg gap-y-6 shadow-md border bg-white py-20 p-6 rounded-[20px]"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <h6 className="font-bold text-xl">Sign in</h6>
+            <h6 className="font-bold text-3xl">Welcome Back! Sign in</h6>
+            <p className="text-gray-500 text-sm -mt-4">
+              Enter your credentials to log into your account
+            </p>
             <div>
               <TextInput
                 label="Email address"
@@ -185,20 +188,10 @@ function LogIn() {
             <Button
               className="bg-primary-green text-white rounded-lg"
               type="submit"
+              isLoading={isSubmitting}
               disabled={isSubmitting}
             >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  {" "}
-                  <AiOutlineLoading3Quarters
-                    size={16}
-                    className="animate-spin"
-                  />{" "}
-                  Signing in
-                </span>
-              ) : (
-                "Sign in"
-              )}
+              Sign In
             </Button>
           </form>
         </div>

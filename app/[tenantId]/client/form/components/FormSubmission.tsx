@@ -12,12 +12,12 @@ import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import services from "@/services";
 import { HiDocumentCheck } from "react-icons/hi2";
 import useCompany from "@/hooks/useCompany";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import success from "@/public/icons/success.svg";
 import Border from "@/components/Border/Border";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@heroui/select";
 
 function FormSubmission({
   showOnlySubmitButton = false,

@@ -14,9 +14,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { createCountry, csvUploads } from "@/services/features/jurisdictionsService";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
-
+import {
+  createCountry,
+  csvUploads,
+} from "@/services/features/jurisdictionsService";
+import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 
 const schema = yup.object().shape({
   countryName: yup.string().required(),
@@ -103,19 +105,28 @@ function NewIndividual() {
         parentLevelName: data.parentLevelName,
         childLevelName: data.childLevelName,
         inputType: selectedOption === "Dropdown" ? "DROP_DOWN" : "FREE_INPUT",
-        parentNames: []
+        parentNames: [],
       };
 
       await createCountry(Payload);
 
-      toast.success("Jurisdiction created successfully", { position: "top-center", duration: 3000 });
+      toast.success("Jurisdiction created successfully", {
+        position: "top-center",
+        duration: 3000,
+      });
       router.push("/country-setup");
     } catch (error: any) {
       if (error.response?.status === 404) {
-        toast.error("Country already exists", { position: "top-center", duration: 3000 });
+        toast.error("Country already exists", {
+          position: "top-center",
+          duration: 3000,
+        });
       } else {
         console.error("Error occurred:", error);
-        toast.error("An unexpected error occurred", { position: "top-center", duration: 3000 });
+        toast.error("An unexpected error occurred", {
+          position: "top-center",
+          duration: 3000,
+        });
       }
     }
   };
@@ -132,7 +143,10 @@ function NewIndividual() {
         formData.append("file", IDImage);
         await csvUploads(formData);
 
-        toast.success("CSV file uploaded successfully", { position: "top-center", duration: 3000 });
+        toast.success("CSV file uploaded successfully", {
+          position: "top-center",
+          duration: 3000,
+        });
 
         // After CSV upload, route back to the country setup page
         router.push("/country-setup");
@@ -144,8 +158,8 @@ function NewIndividual() {
       // Case 2: If there's no CSV file, process form data and route to /region-input
       const items = dropdownItems
         .split(",")
-        .map(item => item.trim())
-        .filter(item => item); // Ensure no empty items
+        .map((item) => item.trim())
+        .filter((item) => item); // Ensure no empty items
 
       const data = getValues(); // Fetch form values using react-hook-form's getValues
 
@@ -160,23 +174,33 @@ function NewIndividual() {
 
       const parentId = await createCountry(Payload);
 
-      toast.success("Parent Level created successfully", { position: "top-center", duration: 3000 });
+      toast.success("Parent Level created successfully", {
+        position: "top-center",
+        duration: 3000,
+      });
 
       router.push(`/country-setup/region-input?id=${parentId.data}`);
     } catch (error: any) {
       if (error.response?.status === 404) {
-        toast.error("Country already exists", { position: "top-center", duration: 3000 });
+        toast.error("Country already exists", {
+          position: "top-center",
+          duration: 3000,
+        });
       } else if (error instanceof Error) {
-        toast.error(`An error occurred: ${error.message}`, { position: "top-center", duration: 3000 });
+        toast.error(`An error occurred: ${error.message}`, {
+          position: "top-center",
+          duration: 3000,
+        });
       } else {
-        toast.error("An unexpected error occurred", { position: "top-center", duration: 3000 });
+        toast.error("An unexpected error occurred", {
+          position: "top-center",
+          duration: 3000,
+        });
       }
     } finally {
       setIsSubmitting(false); // Ensure submitting state is reset
     }
   };
-
-
 
   return (
     <div className="w-full p-5">
@@ -195,7 +219,10 @@ function NewIndividual() {
           <div>
             <div className="mb-2 relative new-input half hide-input-borders">
               <label className="text-xs">Country</label>
-              <div className="mt-1 flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]" style={{ width: "30%" }}>
+              <div
+                className="mt-1 flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]"
+                style={{ width: "30%" }}
+              >
                 <Autocomplete
                   variant="bordered"
                   className="w-full"
@@ -241,11 +268,11 @@ function NewIndividual() {
                 </Autocomplete>
               </div>
               {errors.countryName && (
-                <p className="text-red-500 text-sm mt-1">{errors.countryName.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.countryName.message}
+                </p>
               )}
             </div>
-
-
           </div>
           <div>
             <h4 className="font-bold text-black-400">Addressing Scheme</h4>
@@ -285,8 +312,9 @@ function NewIndividual() {
             <div className="flex space-x-4">
               <div
                 onClick={() => handleOptionClick("Free Input")}
-                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${selectedOption === "Free Input" ? "border-green-500" : ""
-                  }`}
+                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${
+                  selectedOption === "Free Input" ? "border-green-500" : ""
+                }`}
                 style={{
                   backgroundColor:
                     selectedOption === "Free Input" ? "#E5FFEF" : "",
@@ -311,8 +339,9 @@ function NewIndividual() {
 
               <div
                 onClick={() => handleOptionClick("Dropdown")}
-                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${selectedOption === "Dropdown" ? "border-green-500" : ""
-                  }`}
+                className={`relative border border-dashed py-3 rounded-[11px] h-[90px] w-[230px] cursor-pointer ${
+                  selectedOption === "Dropdown" ? "border-green-500" : ""
+                }`}
                 style={{
                   backgroundColor:
                     selectedOption === "Dropdown" ? "#E5FFEF" : "",

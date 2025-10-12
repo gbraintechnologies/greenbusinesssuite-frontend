@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 import Dropdown from "./components/Dropdown";
 import DatePicker from "@/components/DatePicker/DatePicker";
-import { GridColDef } from "@mui/x-data-grid";
 import Image from "next/image";
 import UserIcon from "@/public/icons/UserIcon";
 import StatusPill from "@/components/StatusPill/StatusPill";
@@ -51,7 +50,7 @@ function AuditTrail() {
     }
   }, [data]);
 
-  const columns: GridColDef[] = [
+  const columns: any[] = [
     {
       field: "name",
       renderHeader: () => (

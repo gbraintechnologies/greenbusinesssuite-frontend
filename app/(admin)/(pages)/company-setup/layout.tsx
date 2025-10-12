@@ -17,7 +17,7 @@ function Layout({ children, managecompanies }: any) {
       {/* {checkPermission(PermissionTypes.READ_ALL_USERS) &&
         pathname == "/company-setup" &&
         managecompanies} */}
-      {managecompanies}
+      {pathname == "/company-setup" && managecompanies}
     </div>
   );
 }

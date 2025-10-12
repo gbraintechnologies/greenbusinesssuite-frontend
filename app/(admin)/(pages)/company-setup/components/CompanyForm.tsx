@@ -18,8 +18,8 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Dropdown,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { Countrie } from "../../country-setup/components/Countries";
@@ -34,7 +34,7 @@ import {
   Autocomplete,
   AutocompleteItem,
   AutocompleteSection,
-} from "@nextui-org/autocomplete";
+} from "@heroui/autocomplete";
 import { GrFormNextLink } from "react-icons/gr";
 
 export interface ICompany {
@@ -284,7 +284,9 @@ const CompanyForm: React.FC<Props> = ({
     } catch (err: any) {
       setCurrencyId("");
       toast.error(
-        err?.response?.data ?? "An error occurred. Please try again later."
+        // err?.response?.data ??
+
+        "An error occurred. Please try again later."
       );
       console.log("error ", err);
     }
@@ -435,7 +437,7 @@ const CompanyForm: React.FC<Props> = ({
             <CiCircleInfo size={20} />{" "}
             <p className="text-sm">
               A company can only be created in a country that has a currency set
-              up. If the selected country doesn’t have a currency yet, please
+              up. If the selected country doesn't have a currency yet, please
               ensure you set one up before proceeding.
             </p>
           </div>

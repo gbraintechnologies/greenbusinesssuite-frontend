@@ -19,9 +19,9 @@ function Layout({
   return (
     <div>
       {children}
-      {checkPermission(PermissionTypes.READ_ALL_JURISDICTIONS) &&
-        pathname == "/country-setup" &&
-        managecountry}
+      {/* {checkPermission(PermissionTypes.READ_ALL_JURISDICTIONS) && */}
+      {pathname == "/country-setup" && managecountry}
+      {/* } */}
     </div>
   );
 }

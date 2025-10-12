@@ -2,7 +2,7 @@
 import useCompany from "@/hooks/useCompany";
 import services from "@/services";
 import formatBytes from "@/utils/FormatBytes/formatBytes";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";

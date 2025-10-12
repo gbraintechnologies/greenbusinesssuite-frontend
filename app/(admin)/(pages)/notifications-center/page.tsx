@@ -9,7 +9,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import Pagination from "@/components/Pagination/Pagination";
-import { Modal, ModalContent, useDisclosure } from "@nextui-org/modal";
+import { Modal, ModalContent, useDisclosure } from "@heroui/modal";
 import EyeIcon from "@/public/icons/EyeIcon";
 import Notifications from "./_components/Notifications";
 import { FormatDateWithSuffix } from "@/utils/FormatDate/FormatDate";
@@ -148,11 +148,10 @@ function page() {
     }
   }, [recurringType, recurringMessagesByType]);
 
-
   //reset filter when tab changes
   useEffect(() => {
     setRecurringType(null);
-  },[activeFilter])
+  }, [activeFilter]);
 
   const handleSelectAll: any = () => {
     if (activeFilter.id == 0) {

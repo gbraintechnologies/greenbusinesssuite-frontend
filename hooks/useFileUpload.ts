@@ -16,7 +16,7 @@ const useFileUpload = () => {
 
       const response = await axios({
         baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
-        url: "/userapps/v1.0/resources/upload_file/",
+        url: `/mesh-suite/v1.0/s3/resource/upload/${file?.name}`,
         method: "POST",
         data: formData,
         headers: {

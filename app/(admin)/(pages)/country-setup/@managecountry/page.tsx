@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Nav from "../components/Nav";
-import { IconButton, Menu, MenuItem } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { BsThreeDots } from "react-icons/bs";
@@ -57,24 +56,24 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 
   return (
     <>
-      <IconButton onClick={handleClick}>
+      {/* <IconButton onClick={handleClick}>
         <BsThreeDots size={20} />
-      </IconButton>
-      {checkPermission(PermissionTypes.EDIT_JURISDICTION) && (
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-          PaperProps={{
-            sx: {
-              width: 150,
-            },
-          }}
-        >
-          <MenuItem onClick={handleEdit}>Edit</MenuItem>
-          <MenuItem onClick={handleDelete}>Delete</MenuItem>
-        </Menu>
-      )}
+      </IconButton> */}
+      {/* {checkPermission(PermissionTypes.EDIT_JURISDICTION) && ( */}
+      {/* <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        PaperProps={{
+          sx: {
+            width: 150,
+          },
+        }}
+      >
+        <MenuItem onClick={handleEdit}>Edit</MenuItem>
+        <MenuItem onClick={handleDelete}>Delete</MenuItem>
+      </Menu> */}
+      {/*  )} */}
     </>
   );
 };
@@ -137,12 +136,12 @@ function CountrySetup() {
       flex: 3,
       getActions: (params: any) => [
         <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
-          <label>
+          {/* <label>
             <input
               type="checkbox"
               className="mr-4 styled-checkbox flex items-center justify-center"
             />
-          </label>
+          </label> */}
           <div className="w-10 h-10 flex items-center justify-center">
             <span className="">
               <img

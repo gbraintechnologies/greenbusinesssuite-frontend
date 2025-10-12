@@ -3,13 +3,13 @@
 import DataTable from "@/components/DataTable/DataTable";
 import Loader from "@/components/Loader/Loader";
 import services from "@/services";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";

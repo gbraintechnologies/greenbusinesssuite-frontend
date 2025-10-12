@@ -8,10 +8,10 @@ import {
   Autocomplete,
   AutocompleteItem,
   AutocompleteSection,
-} from "@nextui-org/autocomplete";
+} from "@heroui/react/autocomplete";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@heroui/react/select";
 
 import "../../billings/_components/index.css";
 

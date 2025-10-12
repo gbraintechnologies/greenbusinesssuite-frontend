@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Field } from "formik";
-import { AutocompleteItem, Autocomplete } from "@nextui-org/autocomplete";
+import { AutocompleteItem, Autocomplete } from "@heroui/autocomplete";
 
 import "./index.css";
 function FormikSelect(props: any) {

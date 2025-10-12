@@ -12,13 +12,13 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { DatePicker } from "@nextui-org/date-picker";
+} from "@heroui/dropdown";
+import { DatePicker } from "@heroui/date-picker";
 import { BiChevronDown } from "react-icons/bi";
 import { MdAttachFile } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 import { toast } from "sonner";
 import useAdmin from "@/hooks/useAdmin";

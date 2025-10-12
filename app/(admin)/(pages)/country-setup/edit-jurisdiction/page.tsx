@@ -19,7 +19,7 @@ import SelectCountryEdit from "../components/selectCountryEdit";
 import { RiDeleteBin6Line, RiArrowGoBackLine } from "react-icons/ri";
 import { BsDot } from "react-icons/bs";
 import { toast } from "sonner";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import { GoPlusCircle } from "react-icons/go";
 import {
   deletecountryWithAssoc,

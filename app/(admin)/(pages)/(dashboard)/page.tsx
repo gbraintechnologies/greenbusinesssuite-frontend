@@ -39,7 +39,7 @@ function Dashboard() {
         <div className="stats-holder">
           <div className="stats-section">
             <p>All Companies</p>
-            <h4 className="stats-content">{companies?.length}</h4>
+            <h4 className="stats-content">{companies?.totalElements}</h4>
           </div>
 
           {/*  */}

@@ -27,7 +27,7 @@ import MeshSuiteLogo from "@/public/icons/MeshSuitLogoGray";
 // hooks
 import useAdmin from "@/hooks/useAdmin";
 import useUser from "@/hooks/useUser";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import Image from "next/image";
 import CompanyLogo from "@/components/ThemeLogo/CompanyLogo";
 
