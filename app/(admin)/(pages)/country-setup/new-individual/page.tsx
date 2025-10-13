@@ -247,7 +247,7 @@ function NewIndividual() {
                   {Countries()?.map((country: any) => (
                     <AutocompleteItem
                       key={country.name.common} // Unique identifier for the key
-                      value={country.name.common} // Pass the country name as value
+                      // value={country.name.common} // Pass the country name as value
                       textValue={country.name.common} // Provide plain text for accessibility
                       className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
                       startContent={

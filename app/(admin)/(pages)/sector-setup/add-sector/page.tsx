@@ -237,7 +237,7 @@ function AddSector() {
                   {countriesData?.map((country: any) => (
                     <AutocompleteItem
                       key={country}
-                      value={country}
+                      // value={country}
                       className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
                       startContent={
                         <img

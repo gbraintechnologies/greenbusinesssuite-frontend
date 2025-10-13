@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
-import { IconButton, Menu, MenuItem } from "@mui/material";
 import { BsThreeDots } from "react-icons/bs";
 import SearchIcon from "@/public/icons/SearchIcon";
 import DataTable from "@/components/DataTable/DataTable";
@@ -16,6 +15,12 @@ import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/react";
 
 interface Currency {
   id: number;
@@ -59,25 +64,21 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 
   return (
     <>
-      <IconButton onClick={handleClick}>
-        <BsThreeDots size={20} />
-      </IconButton>
-      {checkPermission(PermissionTypes.EDIT_CURRENCY) && (
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-          PaperProps={{
-            sx: {
-              width: 150,
-            },
-          }}
-        >
-          <MenuItem onClick={handleEdit}>Edit</MenuItem>
-          <MenuItem onClick={handleDelete}>Delete</MenuItem>
-
-        </Menu>
-      )}
+      {/* {checkPermission(PermissionTypes.EDIT_CURRENCY) && ( */}
+      <Dropdown>
+        <DropdownTrigger>
+          <BsThreeDots size={20} />
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Static Actions">
+          <DropdownItem onPress={handleEdit} key="new">
+            Edit
+          </DropdownItem>
+          <DropdownItem onPress={handleDelete} key="copy" color="danger">
+            Delete
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+      {/* )} */}
     </>
   );
 };
@@ -111,12 +112,12 @@ function CurrencySetup() {
         currency: item.currency,
         symbol: item.symbol,
         countryName: item.countryName,
-        denominations: item.denominations,  // You can handle the denominations if needed
+        denominations: item.denominations, // You can handle the denominations if needed
         createdOn: item.createdOn,
         updatedOn: item.updatedOn,
-        isDeleted: item.isDeleted
+        isDeleted: item.isDeleted,
       }));
-      setRows(mappedRows);  // Update the rows with search results
+      setRows(mappedRows); // Update the rows with search results
     } else if (currencies?.content?.length) {
       // Map the original data (currencies) to the row format
       const mappedRows = currencies.content.map((currency: any) => ({
@@ -124,15 +125,14 @@ function CurrencySetup() {
         currency: currency.currency,
         symbol: currency.symbol,
         countryName: currency.countryName,
-        denominations: currency.denominations,  // Include denominations if needed
+        denominations: currency.denominations, // Include denominations if needed
         createdOn: currency.createdOn,
         updatedOn: currency.updatedOn,
-        isDeleted: currency.isDeleted
+        isDeleted: currency.isDeleted,
       }));
-      setRows(mappedRows);  // Maintain original data structure for rows
+      setRows(mappedRows); // Maintain original data structure for rows
     }
   }, [searchData, currencies, searchTerm]);
-  
 
   const handleDeleteSuccess = async () => {
     try {

@@ -18,7 +18,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Dropdown,
-} from "@heroui/react/dropdown";
+} from "@heroui/react";
 import { Button } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
@@ -33,7 +33,7 @@ import {
   Autocomplete,
   AutocompleteItem,
   AutocompleteSection,
-} from "@heroui/react/autocomplete";
+} from "@heroui/react";
 import { Countrie } from "@/app/(admin)/(pages)/country-setup/components/Countries";
 import useCompany from "@/hooks/useCompany";
 

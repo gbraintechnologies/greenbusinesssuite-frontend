@@ -471,7 +471,7 @@ const CompanyForm: React.FC<Props> = ({
                 {countries?.map((country: any) => (
                   <AutocompleteItem
                     key={country}
-                    value={country}
+                    // value={country}
                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
                     startContent={
                       <img
@@ -536,7 +536,7 @@ const CompanyForm: React.FC<Props> = ({
                         ?.map((subJurisdiction: any) => (
                           <AutocompleteItem
                             key={subJurisdiction.id}
-                            value={subJurisdiction.parentName}
+                            // value={subJurisdiction.parentName}
                             className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                           >
                             {subJurisdiction?.parentName}
@@ -588,7 +588,7 @@ const CompanyForm: React.FC<Props> = ({
                           ?.map((subLevel: any) => (
                             <AutocompleteItem
                               key={subLevel}
-                              value={subLevel}
+                              // value={subLevel}
                               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                             >
                               {subLevel}
@@ -636,7 +636,7 @@ const CompanyForm: React.FC<Props> = ({
                     {industries?.sectors?.map((industry: any) => (
                       <AutocompleteItem
                         key={industry.id}
-                        value={industry.parentSector}
+                        // value={industry.parentSector}
                         className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                       >
                         {industry.parentSector}
@@ -681,7 +681,7 @@ const CompanyForm: React.FC<Props> = ({
                         ?.subSector?.map((sector: any) => (
                           <AutocompleteItem
                             key={sector}
-                            value={sector}
+                            // value={sector}
                             className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                           >
                             {sector}

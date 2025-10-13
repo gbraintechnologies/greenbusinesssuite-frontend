@@ -4,14 +4,16 @@ import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import useCompany from "@/hooks/useCompany";
 import services from "@/services";
+
+import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
 import {
+  Select,
+  SelectItem,
   Autocomplete,
   AutocompleteItem,
   AutocompleteSection,
-} from "@heroui/react/autocomplete";
-import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
-import { Select, SelectItem } from "@heroui/react/select";
+} from "@heroui/react";
 
 import "../../billings/_components/index.css";
 
