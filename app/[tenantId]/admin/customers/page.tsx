@@ -11,8 +11,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/react";
 
 import { BsThreeDots } from "react-icons/bs";
 

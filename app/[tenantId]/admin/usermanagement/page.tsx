@@ -22,8 +22,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/react";
 import { toast } from "sonner";
 import Link from "next/link";
 import Pagination from "@/components/Pagination/Pagination";

@@ -6,11 +6,11 @@
   @apply flex flex-col w-full mb-5;
 }
 
-.new-input input{
+.new-input input {
   border: none !important;
 }
 
-.new-input input:focus{
+.new-input input:focus {
   border: none !important;
 }
 

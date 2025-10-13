@@ -3,8 +3,7 @@ import { getTenantID } from "./localService";
 import { headerT } from "@/types/headerType";
 
 const noAuthApi = axios.create({
-  // baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
-  baseURL: "https://api-staging.meshsuites.com/mesh-suite/v1.0",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
 });
 
 // REQUEST INTERCEPTOR
@@ -15,6 +14,8 @@ noAuthApi.interceptors.request.use(
       "Content-Type": "application/json",
       accept: "*/*",
     };
+
+    console.log("ten", getTenantID());
 
     // Use tenantId if presentxsssss
     return {

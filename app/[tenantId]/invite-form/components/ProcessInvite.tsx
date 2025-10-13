@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import useCompany from "@/hooks/useCompany";
 import Image from "next/image";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 

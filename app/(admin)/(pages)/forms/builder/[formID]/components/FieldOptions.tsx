@@ -15,23 +15,23 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 
 import {
   Autocomplete,
   AutocompleteItem,
   AutocompleteSection,
-} from "@nextui-org/autocomplete";
+} from "@heroui/autocomplete";
 
 // icons
 
 import { IoIosArrowDown } from "react-icons/io";
 import ChoiceValuesEditing from "./ChoiceValuesEditing";
-import { capitalize } from "@mui/material";
 import services from "@/services";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import AddressValues from "./AddressValues";
+import { capitalize } from "@/utils/Capitalize/capitalize";
 
 function FieldOptions({ refetch }: any) {
   const { activeField, updateActiveField, form } = useForm();
@@ -337,7 +337,7 @@ function FieldOptions({ refetch }: any) {
                     {jurisdictions?.countries.map((type: any) => (
                       <AutocompleteItem
                         key={type?.id}
-                        value={type?.id}
+                        // value={type?.id}
                         className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                       >
                         {type?.countryName}

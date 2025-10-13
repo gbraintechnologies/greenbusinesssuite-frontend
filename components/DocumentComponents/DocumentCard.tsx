@@ -15,12 +15,7 @@ import FormatDate from "@/utils/FormatDate/FormatDate";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import {
-  Modal,
-  ModalContent,
-  ModalBody,
-  useDisclosure,
-} from "@nextui-org/modal";
+import { Modal, ModalContent, ModalBody, useDisclosure } from "@heroui/modal";
 
 //
 import services from "@/services";

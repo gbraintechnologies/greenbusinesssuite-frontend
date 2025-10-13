@@ -15,7 +15,7 @@ import {
   ModalHeader,
   ModalBody,
   useDisclosure,
-} from "@nextui-org/modal";
+} from "@heroui/modal";
 import UploadFileToIssue from "./UploadFileToIssue";
 import useCompany from "@/hooks/useCompany";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";

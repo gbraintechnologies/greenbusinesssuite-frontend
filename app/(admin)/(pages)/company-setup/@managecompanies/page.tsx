@@ -4,22 +4,20 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 import StatusPill from "@/components/StatusPill/StatusPill";
-import { BsThreeDots } from "react-icons/bs";
+import { BsEye, BsThreeDots } from "react-icons/bs";
 import DataTable from "@/components/DataTable/DataTable";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 import { CompanyInfo } from "@/types";
 import Link from "next/link";
 
-import { GridColDef } from "@mui/x-data-grid";
-
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/react";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
@@ -30,6 +28,10 @@ import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 
 import Tabs from "@/components/Tabs/Tabs";
+import Table from "@/components/Table/Table";
+import Status from "@/components/Status/Status";
+import { SlEye } from "react-icons/sl";
+import { useRouter } from "next/navigation";
 
 export interface IFilter {
   id: number;
@@ -53,6 +55,8 @@ interface IRow {
 }
 function CompanySetup() {
   const queryClient = useQueryClient();
+
+  const router = useRouter();
 
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 1, name: "All", value: "all" },
@@ -98,11 +102,30 @@ function CompanySetup() {
     queryFn: services.getAllCompanies(page * limit, limit),
   });
 
-  const { data: searchData, isLoading: searchLoading } = useQuery({
-    queryKey: ["all users", searchTerm],
-    queryFn: services.searchCompany(searchTerm),
-    enabled: Boolean(searchTerm),
-  });
+  console.log("comp", companies);
+
+  // const { data: searchData, isLoading: searchLoading } = useQuery({
+  //   queryKey: ["all users", searchTerm],
+  //   queryFn: services.searchCompany(searchTerm),
+  //   enabled: Boolean(searchTerm),
+  // });
+
+  const StatusComponent = (item: any) => {
+    return <Status status={item?.status} />;
+  };
+
+  const ActionsComponent = (item: any) => {
+    return (
+      <button
+        onClick={() => {
+          router.push(`/company-setup/profile?id=${item?.id}`);
+        }}
+        className="bg-white text-black"
+      >
+        <SlEye />
+      </button>
+    );
+  };
 
   const editCompanyStatus = async (companyData: any, status: string) => {
     let companyDataInfo = { ...companyData, status: status };
@@ -129,210 +152,6 @@ function CompanySetup() {
     }
   };
 
-  //Status Filter
-  useEffect(() => {
-    if (activeFilter.value === "all") {
-      setAggregatedCompanies(companies);
-    } else {
-      const filteredCompanies = companies.filter(
-        (company: any) =>
-          company.status.toLowerCase() === activeFilter.value.toLowerCase()
-      );
-      setAggregatedCompanies(filteredCompanies);
-    }
-  }, [activeFilter, companies]);
-
-  //Search Filter
-  useEffect(() => {
-    if (searchTerm.length > 0 && searchData) {
-      setAggregatedCompanies(searchData);
-    }
-
-    if (companies && searchTerm.length < 1) {
-      setActiveRoleFilter([]);
-      setAggregatedCompanies(companies);
-    }
-  }, [searchTerm, companies, searchData]);
-
-  useEffect(() => {
-    if (aggregatedCompanies?.length > 0) {
-      setRows(aggregatedCompanies);
-    }
-  }, [aggregatedCompanies]);
-
-  useEffect(() => {
-    if (aggregatedCompanies?.length > 0) {
-      const preparedRows = aggregatedCompanies
-        .filter((item: any) => {
-          return !item.is_deleted;
-        })
-        .map((company: Partial<CompanyInfo>) => {
-          return {
-            id: company.id,
-            data: company,
-          };
-        });
-      setRows(preparedRows);
-    } else {
-      setRows([]);
-    }
-  }, [aggregatedCompanies]);
-
-  const columns: GridColDef[] = [
-    {
-      field: "name",
-      headerName: "Company Name",
-      type: "actions",
-      align: "left",
-      headerAlign: "left",
-      flex: 3,
-      getActions: (params: any) => [
-        <div
-          className="flex py-3 gap-4 my-3 items-center"
-          key={params.row.data?.id}
-        >
-          {params.row.data?.company_logo?.length > 1 ? (
-            <Link href={`/company-setup/profile?id=${params.row.data?.id}`}>
-              <Image
-                alt="profile"
-                src={params.row.data?.company_logo}
-                width={100}
-                height={100}
-                className="w-10 h-10 object-cover"
-              />
-            </Link>
-          ) : (
-            <Link href={`/company-setup/profile?id=${params.row.data?.id}`}>
-              <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
-                <RiImageCircleLine size={20} />
-              </div>
-            </Link>
-          )}
-          <div>
-            <Link href={`/company-setup/profile?id=${params.row.data?.id}`}>
-              <p className="font-medium text-sm">
-                {params.row.data?.company_name}
-              </p>
-            </Link>
-          </div>
-        </div>,
-      ],
-    },
-    {
-      field: "contactPerson",
-      headerName: "Contact Person",
-      flex: 2,
-      headerAlign: "left",
-      align: "left",
-      type: "actions",
-      getActions: (params: any) => [
-        <div key={params.row.id} className="flex flex-col gap-2">
-          <p className="font-medium text-sm">
-            {params.row.data?.primary_contact_name}
-          </p>
-          <p className="text-[#475569] text-sm font-normal">
-            {params.row.data?.primary_contact_email}
-          </p>
-        </div>,
-      ],
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      flex: 1,
-      type: "actions",
-      getActions: (params: any) => [
-        <div key={params.row.id} className="w-2/12">
-          <StatusPill status={params.row.data?.status ?? ""} />
-        </div>,
-      ],
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      type: "actions",
-      getActions: (params: any) => [
-        <>
-          {/* TODO: NEW: USING THE DROPDOWN COMPONENT FROM NEXTUI: SUPPORTS
-          DYNAMIC POSITIONING OF MENU TO AVOID CLIPPING WHEN ELEMENT IS AT AN
-          EDGE */}
-          <Dropdown>
-            <DropdownTrigger>
-              <Button variant="light">
-                {" "}
-                <BsThreeDots size={20} />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              className="shadow-md bg-white border border-[#F1F5F9]  -mt-4 rounded-lg flex flex-col gap-3"
-              aria-label="Static Actions"
-            >
-              <DropdownItem
-                key="view"
-                className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-              >
-                <Link
-                  href={"/company-setup/profile?id=" + params.row.data.id}
-                  className="w-full block"
-                >
-                  View Company
-                </Link>
-              </DropdownItem>
-              {/* {checkPermission(PermissionTypes.EDIT_COMPANY) && (
-                <DropdownItem
-                  key="edit"
-                  className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                >
-                  <Link
-                    href={
-                      "/company-setup/profile/edit?id=" + params.row.data.id
-                    }
-                    className="w-full block"
-                  >
-                    Edit Company
-                  </Link>
-                </DropdownItem>
-              )} */}
-              {/* {checkPermission(PermissionTypes.EDIT_COMPANY) &&
-                (params.row.data?.status?.toLowerCase() === "active" ? (
-                  <DropdownItem
-                    aria-label="deactivate"
-                    key="deactivate"
-                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                  >
-                    <button
-                      onClick={() =>
-                        editCompanyStatus(params.row.data, "INACTIVE")
-                      }
-                    >
-                      Deactivate Company
-                    </button>
-                  </DropdownItem>
-                ) : (
-                  <DropdownItem
-                    aria-label="activate"
-                    key="activate"
-                    className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
-                  >
-                    <button
-                      onClick={() =>
-                        editCompanyStatus(params.row.data, "ACTIVE")
-                      }
-                    >
-                      Activate Company
-                    </button>
-                  </DropdownItem>
-                ))} */}
-            </DropdownMenu>
-          </Dropdown>
-        </>,
-      ],
-    },
-  ];
-
-  const roles: any = [];
-
   return (
     <>
       <div className="w-full pb-20 ">
@@ -340,11 +159,11 @@ function CompanySetup() {
         <div className="flex items-center px-5 justify-between my-4">
           {/* FILTERS AND SEARCHBOX */}
           <div>
-            <Tabs
+            {/* <Tabs
               filters={filters}
               setActiveFilter={setActiveFilter}
               activeFilter={activeFilter}
-            />
+            /> */}
           </div>
           <div className="flex gap-4">
             {/* <button
@@ -365,22 +184,33 @@ function CompanySetup() {
           </div>
         </div>
 
-        <DataTable
-          isLoading={isLoading || searchLoading}
-          rows={rows}
-          columns={columns}
+        <Table
+          columns={[
+            { name: "ID", uid: "id" },
+            { name: "Name", uid: "companyName" },
+            { name: "Email", uid: "primaryContactEmail" },
+            { name: "Phone", uid: "primaryContactPhoneNumber" },
+            { name: "STATUS", uid: "status" },
+            { name: "VIEW", uid: "actions" },
+          ]}
+          data={
+            companies
+              ? companies?.content?.map((company: any) => ({
+                  ...company,
+                }))
+              : []
+          }
+          hasSearch={false}
+          isLoading={isLoading}
+          totalPages={companies?.totalPages}
+          rowsPerPage={limit}
+          showTopPagination={false}
+          page={companies?.page}
+          // setLimit={setLimit}
+          setPage={setPage}
+          statusComponent={StatusComponent}
+          actionsComponent={ActionsComponent}
         />
-        {/*PAGINATION */}
-
-        <div className="w-full flex justify-between">
-          <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
-          <Pagination
-            currentData={companies}
-            limit={limit}
-            page={page}
-            setPage={setPage}
-          />
-        </div>
       </div>
       {/* <Modal
         isOpen={showNotificationsModal}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import React, { useState } from "react";
 import Image from "next/image";
 import success from "@/public/icons/success.svg";
@@ -10,7 +10,7 @@ import useCompany from "@/hooks/useCompany";
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 import services from "@/services";
 import { toast } from "sonner";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@heroui/select";
 
 function PendingPayment({
   paymentDetails,

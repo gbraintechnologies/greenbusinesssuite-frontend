@@ -7,7 +7,7 @@ import { Fragment } from "react";
 import { GoPlusCircle } from "react-icons/go";
 import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 

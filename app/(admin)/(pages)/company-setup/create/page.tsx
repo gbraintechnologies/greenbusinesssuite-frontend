@@ -1,5 +1,5 @@
 "use client";
-import "./index.css";
+
 import Modal from "@/components/Modal/Modal";
 import { Formik, FormikHelpers } from "formik";
 import { useRouter } from "next/navigation";
@@ -7,13 +7,15 @@ import { useState, useEffect } from "react";
 import * as Yup from "yup";
 import useFileUpload from "@/hooks/useFileUpload";
 import { toast } from "sonner";
-import { createCompanyWithCustomFields } from "@/services/features/companyService";
-import { CompanyInfo } from "@/types";
+import { Company, CompanyInfo } from "@/types";
 import CompanyForm from "../components/CompanyForm";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
 import CompanyConfig from "../components/CompanyConfig";
+
+// @ts-ignore
+import "./index.css";
 
 interface ICompany {
   companyName: string;
@@ -85,7 +87,7 @@ const CreateCompany = () => {
 
   const [smallLogoUrl, setSmallLogoUrl] = useState("");
 
-  const [color, setColor] = useState<string>("");
+  const [color, setColor] = useState<string>("#025043");
 
   const [initialLoad, setInitialLoad] = useState<boolean>(false);
 
@@ -176,10 +178,10 @@ const CreateCompany = () => {
       return;
     }
 
-    if (!selectedParentLevel?.value) {
-      toast.error("Sub Jurisdiction is required");
-      return;
-    }
+    // if (!selectedParentLevel?.value) {
+    //   toast.error("Sub Jurisdiction is required");
+    //   return;
+    // }
 
     if (!selectedChildLevel?.value) {
       toast.error("Sub Level is required");
@@ -202,13 +204,13 @@ const CreateCompany = () => {
   const createCompanyWithConfiguration = async (values: Partial<ICompany>) => {
     setSubmitting(true);
 
-    if (!currencyId) {
-      toast.error(
-        `Please set up the currency for ${selectedCountry?.label} to proceed`
-      );
-      setSubmitting(false);
-      return;
-    }
+    // if (!currencyId) {
+    //   toast.error(
+    //     `Please set up the currency for ${selectedCountry?.label} to proceed`
+    //   );
+    //   setSubmitting(false);
+    //   return;
+    // }
     // phone number required
     if (!(phone.length > 4)) {
       toast.error("Phone number is required");
@@ -267,27 +269,44 @@ const CreateCompany = () => {
       return;
     }
 
-    // if (selectedCategoryModules?.length < 1) {
-    //   toast.error("Select one or more category modules to proceed");
-    //   setSubmitting(false);
-    //   return;
-    // }
+    if (selectedCategoryModules?.length < 1) {
+      toast.error("Select one or more category modules to proceed");
+      setSubmitting(false);
+      return;
+    }
 
     const companyLogoURL =
       companyLogo && (await handleFileUpload(companyLogo as File));
 
+    console.log("all values collected", values);
     //
-    const data: CompanyInfo = {
-      company_name: values.companyName as string,
-      primary_contact_name: `${values.contactFirstName} ${values.contactLastName}`,
-      primary_contact_email: values.contactEmail as string,
-      primary_contact_phone_number: phone,
-      company_logo: companyLogoURL?.file_url || "",
+    const data: Company = {
+      companyName: values.companyName as string,
+      status: "ACTIVE",
+      description: values.companyDescription as string,
+      primaryContactName: `${values.contactFirstName} ${values.contactLastName}`,
+      primaryContactEmail: values.contactEmail as string,
+      primaryContactPhoneNumber: phone,
+      companyLogo: companyLogoURL?.file_url || "",
+      companyAddress: selectedCountry?.value as string,
+      companyDigitalAddress: "GA-2342-23",
       industry: selectedIndustry?.value as string,
-      company_address: selectedCountry?.value as string,
-      primary_currency: currencyId,
-      company_code: String(Math.floor(Math.random() * 10000)).padStart(4, "0"),
-      company_sms_sender_id: values.companySmsSenderId as string,
+      companyMerchantMomoNumber: "",
+      companyBankName: "Standard Chartered",
+      taxId: "345",
+      // startOfDayTime: "2025-08-11" as any,
+      // endOfDayTime: "2025-08-11" as any,
+      primaryCurrency: "GHC",
+      secondaryCurrency: ["USD"],
+      companyAdminId: 1,
+      companyCode: String(Math.floor(Math.random() * 10000)).padStart(4, "0"),
+      // tenantId: "",
+      // buildStatus: "",
+      // driverName: "",
+      // dbUrl: "",
+      // companyIdentifier: "",
+      assignedFormIds: [],
+      // values.companySmsSenderId as string,
     };
 
     const custom_fields = [
@@ -332,93 +351,59 @@ const CreateCompany = () => {
       },
     ];
 
-    console.log("dataaaa ", data);
+    console.log("COMPANY CREATION DATA ", data);
 
-    // const adminData = {
-    //   email: values.adminEmail as string,
-    //   username: ((values.adminFirstName?.toLowerCase() as string) +
-    //     values.adminLastName?.toLowerCase()) as string,
-    //   first_name: values.adminFirstName as string,
-    //   last_name: values.adminLastName as string,
-    //   phone_number: "+233",
-    //   mobile_phone_number: "+233",
-    //   user_status: "ACTIVE",
-    // };
+    toast.success("Company created successfully");
 
-    try {
-      const selectedCoreModuleIds = selectedCoreModules.reduce(
-        (acc: any, module: any) => {
-          if (module?.id) {
-            acc.push(module.id);
-          }
-          return acc;
-        },
-        []
-      );
+    // TODO: COMPANY IDENTIFIER DOESN'T EXIST HERE
+    // try {
+    //   const selectedCoreModuleIds = selectedCoreModules.reduce(
+    //     (acc: any, module: any) => {
+    //       if (module?.id) {
+    //         acc.push(module.id);
+    //       }
+    //       return acc;
+    //     },
+    //     []
+    //   );
 
-      const selectedCategoryModuleIds = selectedCategoryModules.reduce(
-        (acc: any, module: any) => {
-          if (module?.id) {
-            acc.push(module.id);
-          }
-          return acc;
-        },
-        []
-      );
+    //   const selectedCategoryModuleIds = selectedCategoryModules.reduce(
+    //     (acc: any, module: any) => {
+    //       if (module?.id) {
+    //         acc.push(module.id);
+    //       }
+    //       return acc;
+    //     },
+    //     []
+    //   );
 
-      const companyData = await createCompanyWithCustomFields(
-        data,
-        custom_fields
-      );
+    //   let companyData: any = null;
+    //   services.createCompany({ data: data }).then((res) => {
+    //     companyData = res?.data;
+    //   });
 
-      const companySmallLogoURL =
-        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+    //   const companySmallLogoURL =
+    //     companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
-      await services.createCompanyBranding(
-        companyData?.id,
-        companyData?.company_identifier,
-        companySmallLogoURL?.file_url,
-        color,
-        companyData?.company_name,
-        selectedCoreModuleIds,
-        selectedCategoryModuleIds
-      );
+    //   await services.createCompanyBranding(
+    //     companyData?.id,
+    //     companyData?.company_identifier,
+    //     companySmallLogoURL?.file_url,
+    //     color,
+    //     companyData?.company_name,
+    //     selectedCoreModuleIds,
+    //     selectedCategoryModuleIds
+    //   );
 
-      toast.success("Company created successfully");
+    //   toast.success("Company created successfully");
 
-      // const custom_profiles = [
-      //   {
-      //     custom_profile_item_id: 2,
-      //     value: await createCompanyResponse?.id,
-      //   },
-      // ];
-
-      // TODO: No need to create new admin
-      // const createUserResponse = await services.createUserWithCustomProfiles(
-      //   adminData,
-      //   custom_profiles
-      // );
-      // toast.success("Admin created successfully successfully");
-
-      // ROLE ID: 6 for company admin
-      // await services.assignRoleToUser(createUserResponse.data.id, 6);
-
-      // setPhone("");
-      // setSelectedIndustry(undefined);
-      // setSelectedCountry(undefined);
-      // setCompanyLogo(null);
-      // setCompanySmallLogo(null);
-      // setSmallLogoUrl("");
-      // setBackgroundImageUrl("");
-      // resetForm();
-
-      // go to the configuration setup page
-      router.back();
-    } catch (error) {
-      toast.error("An error occurred");
-    } finally {
-      setSubmitting(false);
-    }
+    //   // go to the configuration setup page
+    //   router.back();
+    // } catch (error) {
+    //   toast.error("An error occurred");
+    // } finally {
+    //   setSubmitting(false);
+    // }
   };
 
   return (

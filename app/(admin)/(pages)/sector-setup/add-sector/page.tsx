@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import ExcelIcon from "@/public/icons/ExcelIcon";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { createSector, csvUpload } from "@/services/features/sectorService";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
+import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 
 type Key = any;
 
@@ -66,7 +66,6 @@ function AddSector() {
       setCountries([]);
     }
   }, [countriesData]);
-
 
   const handleDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -140,19 +139,19 @@ function AddSector() {
       .split(",")
       .map((item) => item.trim())
       .filter((item) => item);
-  
+
     const payload = {
       countryName: data.countryName,
       parentSector: items,
     };
-  
+
     try {
       const response = await createSector(payload);
       toast.success("Sector saved successfully", {
         position: "top-center",
         duration: 3000,
       });
-  
+
       router.push(`/sector-setup/parentsector-inputs?id=${response.data}`);
     } catch (error: any) {
       if (error.response?.status === 404) {
@@ -162,7 +161,9 @@ function AddSector() {
         });
       } else {
         toast.error(
-          `An error occurred: ${error.response?.data?.message || error.message}`,
+          `An error occurred: ${
+            error.response?.data?.message || error.message
+          }`,
           {
             position: "top-center",
             duration: 3000,
@@ -171,7 +172,6 @@ function AddSector() {
       }
     }
   };
-  
 
   return (
     <div className="w-full p-5">
@@ -207,7 +207,10 @@ function AddSector() {
           <div>
             <div className="new-input half hide-input-borders">
               <label className="text-xs">Country</label>
-              <div className="mt-1 flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]" style={{ width: "30%" }}>
+              <div
+                className="mt-1 flex w-full bg-slate-50 h-auto rounded-lg border border-[#E2E8F0]"
+                style={{ width: "30%" }}
+              >
                 <Autocomplete
                   variant="bordered"
                   className="w-full "
@@ -219,7 +222,8 @@ function AddSector() {
                   popoverProps={{
                     offset: 10,
                     classNames: {
-                      content: "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
+                      content:
+                        "shadow-md bg-white border border-[#F1F5F9] p-0 rounded-lg min-w-72 flex flex-col gap-3",
                     },
                   }}
                   onSelectionChange={(key: Key | null) => {
@@ -233,7 +237,7 @@ function AddSector() {
                   {countriesData?.map((country: any) => (
                     <AutocompleteItem
                       key={country}
-                      value={country}
+                      // value={country}
                       className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
                       startContent={
                         <img

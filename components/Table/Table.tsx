@@ -9,11 +9,11 @@ import {
   TableRow,
   TableCell,
   getKeyValue,
-} from "@nextui-org/table";
+} from "@heroui/table";
 
-import { Pagination } from "@nextui-org/pagination";
+import { Pagination } from "@heroui/pagination";
 
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 
 // icons
 import { LuSearch } from "react-icons/lu";
@@ -29,7 +29,9 @@ function Table({
   setPage,
   searchPlaceholder,
   searchValue,
+  showTopPagination = true,
   searchType,
+  totalPages,
   rowsPerPage = 25,
   setSearchValue,
   actionsComponent,
@@ -37,11 +39,11 @@ function Table({
   downloadComponent,
   page,
   topNav,
-  totalPages,
 }: {
   isLoading: boolean;
   data: any[];
-  title: string;
+  showTopPagination?: Boolean;
+  title?: string;
   hasSearch: boolean;
   topNav?: () => JSX.Element;
   columns: { name: string; uid: string; sortable?: boolean }[];
@@ -67,14 +69,10 @@ function Table({
     setSearchValue("");
   };
 
-  const pages = totalPages
-    ? totalPages
-    : Math.ceil(data && data?.length / rowsPerPage);
-
   const bottomContent = React.useMemo(() => {
     return (
       <>
-        {pages > 1 && (
+        {totalPages && totalPages > 1 && (
           <Pagination
             showControls
             classNames={{
@@ -82,14 +80,14 @@ function Table({
             }}
             color="default"
             page={page}
-            total={pages}
+            total={totalPages}
             variant="light"
             onChange={setPage}
           />
         )}
       </>
     );
-  }, [data?.length, page, pages, hasSearch]);
+  }, [data?.length, page, totalPages, hasSearch]);
 
   const topContent = React.useMemo(() => {
     return (
@@ -118,7 +116,7 @@ function Table({
             )}
             {topNav && topNav()}
             <>
-              {pages > 1 && (
+              {showTopPagination && totalPages && totalPages > 1 && (
                 <Pagination
                   showControls
                   classNames={{
@@ -126,7 +124,7 @@ function Table({
                   }}
                   color="default"
                   page={page}
-                  total={pages}
+                  total={totalPages}
                   variant="light"
                   onChange={setPage}
                 />
@@ -141,7 +139,14 @@ function Table({
   const classNames = React.useMemo(
     () => ({
       base: "pb-20 overflow-x-auto no-scrollbar rounded-none",
-      th: ["bg-gray-100", "text-black", "border-none", "rounded-none", "py-4"],
+      th: [
+        "bg-gray-50",
+        "text-black",
+        "border-none",
+        "rounded-none",
+        "py-4",
+        "uppercase",
+      ],
       tr: ["!rounded-none", "!shadow-none"],
       td: [
         // changing the rows border radius

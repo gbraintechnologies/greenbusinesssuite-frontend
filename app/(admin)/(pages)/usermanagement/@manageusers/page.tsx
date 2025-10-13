@@ -24,8 +24,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/react";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
@@ -33,7 +33,7 @@ import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 import { MeshRoles } from "@/config/roles.app";
 import Table from "@/components/Table/Table";
-import { user } from "@nextui-org/theme";
+import { user } from "@heroui/theme";
 import Status from "@/components/Status/Status";
 
 function UserManagement() {

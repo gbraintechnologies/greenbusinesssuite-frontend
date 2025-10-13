@@ -13,13 +13,13 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 
 import {
   Autocomplete,
   AutocompleteItem,
   AutocompleteSection,
-} from "@nextui-org/autocomplete";
+} from "@heroui/autocomplete";
 
 // icons
 import { IoCloseCircleOutline } from "react-icons/io5";
@@ -189,7 +189,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                 {jurisdictions?.countries.map((type: any) => (
                   <AutocompleteItem
                     key={type?.countryName}
-                    value={type?.countryName}
+                    // value={type?.countryName}
                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                   >
                     {type?.countryName}
@@ -274,7 +274,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                   (type: any) => (
                     <AutocompleteItem
                       key={type.id}
-                      value={type.id}
+                      // value={type.id}
                       className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                     >
                       {type?.parentName}
@@ -353,7 +353,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                       ?.childLevels?.map((value: any) => (
                         <AutocompleteItem
                           key={value}
-                          value={value}
+                          // value={value}
                           className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                         >
                           {value}

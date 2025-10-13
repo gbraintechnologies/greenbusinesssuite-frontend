@@ -5,13 +5,13 @@ import StatusPill from "@/components/StatusPill/StatusPill";
 import useCompany from "@/hooks/useCompany";
 
 import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";

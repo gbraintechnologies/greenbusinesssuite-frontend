@@ -1,5 +1,5 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 
 interface Props {
   limit: number;

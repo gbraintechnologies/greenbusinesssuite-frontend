@@ -6,7 +6,6 @@ import EyeIcon from "@/public/icons/EyeIcon";
 import ListIcon from "@/public/icons/ListIcon";
 import UserIcon from "@/public/icons/UserIcon";
 import services from "@/services";
-import { GridColDef } from "@mui/x-data-grid";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -207,7 +206,7 @@ const ResponseDataTable: React.FC<Props> = ({
     fetchUserData();
   }, [responseData]);
 
-  const columns: GridColDef[] = [
+  const columns: any[] = [
     {
       field: "name",
       renderHeader: () => (

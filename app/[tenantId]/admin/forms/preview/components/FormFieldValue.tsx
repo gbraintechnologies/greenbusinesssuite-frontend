@@ -10,7 +10,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 
 // icons
 import { IoCloseCircleOutline } from "react-icons/io5";

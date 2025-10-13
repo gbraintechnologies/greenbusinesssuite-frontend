@@ -23,7 +23,7 @@ import {
   deleteBySubSectorID,
   deleteBySectorID,
 } from "@/services/features/sectorService";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 import { GoPlusCircle } from "react-icons/go";
 
 const schema = yup.object().shape({

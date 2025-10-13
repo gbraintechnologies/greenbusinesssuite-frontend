@@ -9,7 +9,7 @@ import {
   Autocomplete,
   AutocompleteItem,
   AutocompleteSection,
-} from "@nextui-org/autocomplete";
+} from "@heroui/autocomplete";
 
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";

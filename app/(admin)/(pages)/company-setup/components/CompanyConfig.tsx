@@ -5,7 +5,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 import React, { useState, useEffect } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
@@ -22,8 +22,8 @@ const CompanyConfig = ({
   setSelectedCategory,
   setSelectedCategoryModules,
   setSelectedCoreModules,
-  selectedCoreModules=[],
-  selectedCategoryModules=[],
+  selectedCoreModules = [],
+  selectedCategoryModules = [],
   selectedCategory,
   submitting,
 }: {
@@ -37,7 +37,6 @@ const CompanyConfig = ({
   setSelectedCategory: any;
   submitting: boolean;
 }) => {
-
   // Query to fetch all categories
   const { data: allCategories, isLoading: isLoadingAllCategories } = useQuery({
     queryKey: ["all_categories"],
@@ -66,7 +65,6 @@ const CompanyConfig = ({
     moduleData: any,
     isChecked: boolean
   ) => {
-
     // Update the selected core modules state based on the checkbox change
     setSelectedCoreModules((prevSelected: any) => {
       if (isChecked) {
@@ -98,7 +96,10 @@ const CompanyConfig = ({
 
   // Set the selected category to the first category in the list
   useEffect(() => {
-    if (allCategories && (!selectedCategory || typeof selectedCategory == "undefined")) {
+    if (
+      allCategories &&
+      (!selectedCategory || typeof selectedCategory == "undefined")
+    ) {
       setSelectedCategory(allCategories[0]);
     }
   }, [allCategories]);
@@ -203,16 +204,19 @@ const CompanyConfig = ({
               <div className="mt-3 grid grid-cols-3 gap-2 w-full">
                 {allCoreModules?.map((module: any, index: number) => {
                   return (
-                  <ModuleCard
-                    key={index + "core"}
-                    moduleData={module}
-                    companyAdminPortal={module?.adminFeatures}
-                    clientPortal={module?.clientFeatures}
-                    index={index + "core"}
-                    onCheckboxChange={handleCoreModulesCheckboxChange}
-                    defaultChecked={selectedCoreModules?.some((selected: any) => selected?.id === module.id)}
-                  />
-                )})}
+                    <ModuleCard
+                      key={index + "core"}
+                      moduleData={module}
+                      companyAdminPortal={module?.adminFeatures}
+                      clientPortal={module?.clientFeatures}
+                      index={index + "core"}
+                      onCheckboxChange={handleCoreModulesCheckboxChange}
+                      defaultChecked={selectedCoreModules?.some(
+                        (selected: any) => selected?.id === module.id
+                      )}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <NoItems
@@ -244,7 +248,9 @@ const CompanyConfig = ({
                       clientPortal={module?.clientFeatures}
                       index={index + "category"}
                       onCheckboxChange={handleCategoryModulesCheckboxChange}
-                      defaultChecked={selectedCategoryModules?.some((selected: any) => selected?.id === module.id)}
+                      defaultChecked={selectedCategoryModules?.some(
+                        (selected: any) => selected?.id === module.id
+                      )}
                     />
                   )
                 )}

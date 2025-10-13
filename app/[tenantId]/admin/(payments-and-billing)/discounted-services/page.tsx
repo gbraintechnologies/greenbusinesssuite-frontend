@@ -6,7 +6,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import { TimelineType, TimelineValues } from "@/types";
 import React, { useState } from "react";
 import DiscountedServicesList from "./_components/DiscountedServicesList";
-import { useDisclosure } from "@nextui-org/modal";
+import { useDisclosure } from "@heroui/modal";
 import SideModal from "@/components/Modal/SideModal";
 import EditDiscount from "./_components/EditDiscount";
 

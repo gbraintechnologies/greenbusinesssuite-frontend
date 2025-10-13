@@ -8,7 +8,7 @@ import { TimelineType, TimelineValues } from "@/types";
 
 import SideModal from "@/components/Modal/SideModal";
 import CreatePayment from "./_components/CreatePayment";
-import { useDisclosure } from "@nextui-org/modal";
+import { useDisclosure } from "@heroui/modal";
 import ViewPayment from "./_components/ViewInvoice";
 import InvoiceList from "./_components/InvoiceList";
 import Pagination from "@/components/Pagination/Pagination";

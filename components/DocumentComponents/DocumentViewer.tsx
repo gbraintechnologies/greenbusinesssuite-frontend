@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 //
 import { startWithCapital } from "@/utils/Capitalize/startWithCapital";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/react";
 
 import { FaLinkSlash } from "react-icons/fa6";
 

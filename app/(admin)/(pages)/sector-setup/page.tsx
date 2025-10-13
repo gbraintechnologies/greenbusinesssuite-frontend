@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { IconButton, Menu, MenuItem } from "@mui/material";
 import { BsThreeDots } from "react-icons/bs";
 import SearchIcon from "@/public/icons/SearchIcon";
 import DataTable from "@/components/DataTable/DataTable";
@@ -13,6 +12,12 @@ import { deleteBySectorID } from "@/services/features/sectorService";
 import { Countrieses } from "./components/Countries";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/react";
 
 interface FlattenedRowData {
   id: number;
@@ -57,22 +62,19 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
 
   return (
     <>
-      <IconButton onClick={handleClick}>
-        <BsThreeDots size={20} />
-      </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        PaperProps={{
-          sx: {
-            width: 150,
-          },
-        }}
-      >
-        <MenuItem onClick={handleEdit}>Edit</MenuItem>
-        <MenuItem onClick={handleDelete}>Delete</MenuItem>
-      </Menu>
+      <Dropdown>
+        <DropdownTrigger>
+          <BsThreeDots size={20} />
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Static Actions">
+          <DropdownItem onPress={handleEdit} key="new">
+            Edit
+          </DropdownItem>
+          <DropdownItem onPress={handleDelete} key="copy" color="danger">
+            Delete
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     </>
   );
 };
@@ -93,40 +95,40 @@ const SectorSetup: React.FC = () => {
   });
 
   const { data: searchData } = useQuery({
-    queryKey: ["searchCountry", searchTerm], 
+    queryKey: ["searchCountry", searchTerm],
     queryFn: () => services.getCountryByName(searchTerm),
     enabled: !!searchTerm,
-});
+  });
 
-useEffect(() => {
-  if (searchTerm && searchData && searchData.length > 0) {
+  useEffect(() => {
+    if (searchTerm && searchData && searchData.length > 0) {
       // Map searchData to the flattened structure
       const mappedRows = searchData.map((country: any) => ({
-          id: country.id,
-          rowId: country.id,
-          countryId: country.id,
-          countryName: country.countryName,
-          parentSectorCount: country.sectors.length, // Count of sectors
-          subSectorCount: country.sectors.reduce(
-              (total: number, sector: any) => total + (sector.subSector ? sector.subSector.length : 0),
-              0 // Count total sub-sectors
-          ),
+        id: country.id,
+        rowId: country.id,
+        countryId: country.id,
+        countryName: country.countryName,
+        parentSectorCount: country.sectors.length, // Count of sectors
+        subSectorCount: country.sectors.reduce(
+          (total: number, sector: any) =>
+            total + (sector.subSector ? sector.subSector.length : 0),
+          0 // Count total sub-sectors
+        ),
       }));
       setRows(mappedRows);
-  } else if (sectors?.content) {
+    } else if (sectors?.content) {
       // Flatten the original sectors data
       const flattenedData = sectors.content.map((sector: any) => ({
-          id: sector.id,
-          rowId: sector.id,
-          countryId: sector.id,
-          countryName: sector.countryName,
-          parentSectorCount: sector.parentSectorCount,
-          subSectorCount: sector.subSectorCount,
+        id: sector.id,
+        rowId: sector.id,
+        countryId: sector.id,
+        countryName: sector.countryName,
+        parentSectorCount: sector.parentSectorCount,
+        subSectorCount: sector.subSectorCount,
       }));
       setRows(flattenedData);
-  }
-}, [searchData, sectors, searchTerm]);
-
+    }
+  }, [searchData, sectors, searchTerm]);
 
   const handleDeleteSuccess = async () => {
     try {

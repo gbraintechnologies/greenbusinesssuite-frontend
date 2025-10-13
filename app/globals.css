@@ -65,10 +65,6 @@ input[type="number"] {
   width: 100%;
 }
 
-.loginFrame {
-  width: 30em;
-}
-
 .bg-default-100 {
   @apply !bg-white;
 }
@@ -180,4 +176,8 @@ textarea {
 
 .css-13cymwt-control {
   background-color: #f8fafc !important;
+}
+
+.header-2 {
+  @apply font-semibold text-xl md:text-2xl;
 }

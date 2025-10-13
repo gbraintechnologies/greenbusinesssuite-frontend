@@ -1,4 +1,4 @@
-import {nextui} from '@nextui-org/theme';
+import {heroui} from '@heroui/theme';
 import type { Config } from "tailwindcss";
 
 const colors = require("tailwindcss/colors");
@@ -9,8 +9,8 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@nextui-org/theme/dist/components/(button|dropdown|modal|ripple|spinner|menu|divider|popover).js",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/theme/dist/components/(button|dropdown|modal|ripple|spinner|menu|divider|popover).js",
   ],
   theme: {
     transparent: "transparent",
@@ -143,6 +143,6 @@ const config: Config = {
       `ui-selected:text-${customColor}`,
     ]),
   ],
-  plugins: [require("@headlessui/tailwindcss"),require("@tailwindcss/forms"),nextui()],
+  plugins: [require("@headlessui/tailwindcss"),require("@tailwindcss/forms"),heroui()],
 };
 export default config;

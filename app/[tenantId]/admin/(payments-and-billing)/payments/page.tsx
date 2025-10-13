@@ -10,7 +10,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import PaymentsList from "./_components/PaymentsList";
 import SideModal from "@/components/Modal/SideModal";
 import CreatePayment from "./_components/CreatePayment";
-import { useDisclosure } from "@nextui-org/modal";
+import { useDisclosure } from "@heroui/react";
 import ViewPayment from "./_components/ViewPayment";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";

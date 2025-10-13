@@ -1,4 +1,4 @@
-import { CompanyInfo, CompanyObject, CustomField } from "@/types";
+import { Company, CompanyInfo, CompanyObject, CustomField } from "@/types";
 import authApi from "../axiosAuthClient";
 import meshApi from "../meshAuthClient";
 import defaultMeshApi from "../defaultMeshClient";
@@ -6,24 +6,16 @@ import defaultMeshApi from "../defaultMeshClient";
 export const getAllCompanies = (offset: number = 0, limit: number = 50) => {
   return () =>
     authApi
-      .get(`/companies/filter/status?status=ALL&page=0&size=10`)
+      .get(`/companies?page=${offset}&size=${limit}`)
       .then((res) => res.data);
 };
 
 export const getCompanyById = (id: number) => {
-  return () => authApi.get(`/companies-by-id/${id}`).then((res) => res.data);
+  return () => authApi.get(`/companies/${id}`).then((res) => res.data);
 };
 
-export const createCompanyWithCustomFields = async (
-  data: CompanyInfo,
-  custom_fields: CustomField[]
-) => {
-  return await authApi
-    .post("/companies/create_with_custom_fields/", {
-      company_data: data,
-      custom_fields,
-    })
-    .then((res) => res.data);
+export const createCompany = ({ data }: { data: Company }) => {
+  return authApi.post("/companies/create", data);
 };
 
 export const editCompanyWithCustomFields = async (

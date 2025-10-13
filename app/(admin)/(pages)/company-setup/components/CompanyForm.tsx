@@ -18,8 +18,8 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Dropdown,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import { Countrie } from "../../country-setup/components/Countries";
@@ -34,7 +34,7 @@ import {
   Autocomplete,
   AutocompleteItem,
   AutocompleteSection,
-} from "@nextui-org/autocomplete";
+} from "@heroui/autocomplete";
 import { GrFormNextLink } from "react-icons/gr";
 
 export interface ICompany {
@@ -284,7 +284,9 @@ const CompanyForm: React.FC<Props> = ({
     } catch (err: any) {
       setCurrencyId("");
       toast.error(
-        err?.response?.data ?? "An error occurred. Please try again later."
+        // err?.response?.data ??
+
+        "An error occurred. Please try again later."
       );
       console.log("error ", err);
     }
@@ -435,7 +437,7 @@ const CompanyForm: React.FC<Props> = ({
             <CiCircleInfo size={20} />{" "}
             <p className="text-sm">
               A company can only be created in a country that has a currency set
-              up. If the selected country doesn’t have a currency yet, please
+              up. If the selected country doesn't have a currency yet, please
               ensure you set one up before proceeding.
             </p>
           </div>
@@ -469,7 +471,7 @@ const CompanyForm: React.FC<Props> = ({
                 {countries?.map((country: any) => (
                   <AutocompleteItem
                     key={country}
-                    value={country}
+                    // value={country}
                     className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[rgb(241,245,249)]"
                     startContent={
                       <img
@@ -534,7 +536,7 @@ const CompanyForm: React.FC<Props> = ({
                         ?.map((subJurisdiction: any) => (
                           <AutocompleteItem
                             key={subJurisdiction.id}
-                            value={subJurisdiction.parentName}
+                            // value={subJurisdiction.parentName}
                             className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                           >
                             {subJurisdiction?.parentName}
@@ -586,7 +588,7 @@ const CompanyForm: React.FC<Props> = ({
                           ?.map((subLevel: any) => (
                             <AutocompleteItem
                               key={subLevel}
-                              value={subLevel}
+                              // value={subLevel}
                               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                             >
                               {subLevel}
@@ -634,7 +636,7 @@ const CompanyForm: React.FC<Props> = ({
                     {industries?.sectors?.map((industry: any) => (
                       <AutocompleteItem
                         key={industry.id}
-                        value={industry.parentSector}
+                        // value={industry.parentSector}
                         className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                       >
                         {industry.parentSector}
@@ -679,7 +681,7 @@ const CompanyForm: React.FC<Props> = ({
                         ?.subSector?.map((sector: any) => (
                           <AutocompleteItem
                             key={sector}
-                            value={sector}
+                            // value={sector}
                             className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                           >
                             {sector}

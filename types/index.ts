@@ -39,6 +39,35 @@ export interface CompanyInfo {
   company_sms_sender_id?: string;
 }
 
+export interface Company {
+  id?: number;
+  companyName: string;
+  status: "ACTIVE" | "INACTIVE";
+  description: string;
+  primaryContactName: string;
+  primaryContactEmail: string;
+  primaryContactPhoneNumber: string;
+  companyLogo: string;
+  companyAddress: string;
+  companyDigitalAddress?: string;
+  industry: string;
+  companyMerchantMomoNumber?: string;
+  companyBankName?: string;
+  taxId?: string;
+  startOfDayTime?: Date;
+  endOfDayTime?: Date;
+  primaryCurrency?: string;
+  secondaryCurrency?: string[];
+  companyAdminId?: number;
+  companyCode?: string;
+  buildStatus?: string;
+  driverName?: string;
+  dbUrl?: string;
+  companyIdentifier?: string;
+  assignedFormIds?: number[];
+  tenantId?: string | number;
+}
+
 export interface CustomField {
   custom_profile_item_id: number;
   value: string;
