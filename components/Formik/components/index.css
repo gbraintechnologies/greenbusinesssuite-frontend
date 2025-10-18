@@ -1,0 +1,3 @@
+.text-primary-foreground {
+  @apply !text-white;
+}

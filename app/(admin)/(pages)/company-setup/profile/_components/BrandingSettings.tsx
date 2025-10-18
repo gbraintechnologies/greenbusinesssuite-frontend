@@ -1,6 +1,11 @@
 import Loader from "@/components/Loader/Loader";
+import useFileUpload from "@/hooks/useFileUpload";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
-import React from "react";
+import services from "@/services";
+import { Button } from "@heroui/react";
+import React, { useRef, useEffect, useState } from "react";
+import { HexColorPicker } from "react-colorful";
+import { toast } from "sonner";
 
 const BrandingSettings = ({
   brandingLoading,
@@ -11,6 +16,8 @@ const BrandingSettings = ({
   showColorPicker,
   setShowColorPicker,
   handleChangeComplete,
+  companyBranding,
+  companyData,
 }: {
   brandingLoading: boolean;
   companySmallLogo: any;
@@ -20,7 +27,95 @@ const BrandingSettings = ({
   showColorPicker: boolean;
   setShowColorPicker: any;
   handleChangeComplete: any;
+  companyBranding: any;
+  companyData: any;
 }) => {
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+  const { handleFileUpload } = useFileUpload();
+
+  // Close color picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        colorPickerRef.current &&
+        !colorPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowColorPicker(false);
+      }
+    };
+
+    if (showColorPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showColorPicker, setShowColorPicker]);
+
+  const [loading, setLoading] = useState(false);
+
+  const createBranding = async () => {
+    if (!smallLogoUrl) {
+      toast.error("Logo is required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const companySmallLogoURL =
+        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+
+      await services
+        .createCompanyBranding(
+          companyData?.id!,
+          companyData?.companyIdentifier!,
+          companySmallLogoURL,
+          color,
+          companyData?.companyName!,
+          [],
+          []
+        )
+        .then((res) => {
+          setLoading(false);
+          toast.success("Branding saved successfully");
+        });
+    } catch (e) {
+      setLoading(false);
+      toast.error("An error occured");
+    }
+  };
+
+  const editCompanyBranding = async () => {
+    if (!smallLogoUrl) {
+      toast.error("Logo is required");
+      return;
+    }
+    try {
+      setLoading(true);
+      const companySmallLogoURL =
+        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+
+      await services.editCompanyBranding(
+        companyBranding?.id,
+        companyData?.id,
+        companyData?.companyIdentifier,
+        companySmallLogo ? companySmallLogoURL : companyBranding?.logo,
+        color,
+        companyData?.companyName!,
+        companyBranding?.modules?.map((module: any) => module?.id),
+        companyBranding?.categorySpecificModules?.map(
+          (module: any) => module?.id
+        )
+      );
+      setLoading(false);
+      toast.success("Company branding updated successfully");
+    } catch (error) {
+      toast.error("Failed to update company branding");
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <>
@@ -34,17 +129,27 @@ const BrandingSettings = ({
                   Branding Settings
                 </h3>
                 <p className="text-sm text-[#667085]">
-                  Set your default branding elements to determine how the
-                  interface appears to customers.
+                  Set your default branding elements to control the appearance
+                  of the company dashboard to users.
                 </p>
               </div>
-              {/* <button
-                    type="button"
-                    className="bg-white disabled:bg-gray-400 py-3 text-black border w-24 flex items-center justify-center border-[rgba(226, 232, 240, 1)] text-sm hover:opacity-95 items-center gap-2 rounded-xl"
-                    onClick={editCompanyBranding}
-                  >
-                    Save
-                  </button> */}
+              <Button
+                color="primary"
+                className="px-10"
+                isLoading={loading}
+                isDisabled={loading}
+                onPress={() => {
+                  if (companyBranding == undefined) {
+                    // create
+                    createBranding();
+                  } else {
+                    // edit
+                    editCompanyBranding();
+                  }
+                }}
+              >
+                Save
+              </Button>
             </header>
 
             <div className="max-w-2xl">
@@ -69,7 +174,7 @@ const BrandingSettings = ({
                           e.target.files && e.target.files[0]
                         );
                       }}
-                      accept=".jpg, .png"
+                      accept=".jpg, .png, .avif"
                     />
                     <CloudUploadIcon />
                     <p>Upload</p>
@@ -138,7 +243,7 @@ const BrandingSettings = ({
                   <button
                     className="mt-2 flex items-center my-2 bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer"
                     type="button"
-                    // onClick={() => setShowColorPicker(!showColorPicker)}
+                    onClick={() => setShowColorPicker(!showColorPicker)}
                   >
                     <div
                       className="w-5 h-8 rounded-tl-md rounded-bl-md"
@@ -148,7 +253,39 @@ const BrandingSettings = ({
                   </button>
                 )}
 
-                {showColorPicker && <></>}
+                {showColorPicker && (
+                  <div className="relative mt-4">
+                    <div
+                      ref={colorPickerRef}
+                      className="absolute z-10 bg-white p-4 rounded-lg shadow-lg border border-[#E2E8F0]"
+                    >
+                      <HexColorPicker
+                        color={color}
+                        onChange={(newColor) =>
+                          handleChangeComplete({ hex: newColor })
+                        }
+                      />
+                      <div className="mt-3 flex items-center justify-between gap-3">
+                        <input
+                          type="text"
+                          value={color}
+                          onChange={(e) =>
+                            handleChangeComplete({ hex: e.target.value })
+                          }
+                          className="px-3 py-2 border border-[#E2E8F0] rounded-md text-sm w-32"
+                          placeholder="#000000"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowColorPicker(false)}
+                          className="px-4 py-2 bg-primary-green text-white text-sm rounded-md hover:opacity-90"
+                        >
+                          Done
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

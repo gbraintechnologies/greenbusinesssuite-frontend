@@ -6,6 +6,7 @@ import { Field, Form, Formik } from "formik";
 import Image from "next/image";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HiOutlineInboxArrowDown } from "react-icons/hi2";
+import { HexColorPicker } from "react-colorful";
 
 // icons
 import { CiCircleInfo } from "react-icons/ci";
@@ -218,6 +219,27 @@ const CompanyForm: React.FC<Props> = ({
   const [sectorsLoading, setSectorsLoading] = useState<boolean>(false);
 
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+
+  // Close color picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        colorPickerRef.current &&
+        !colorPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowColorPicker(false);
+      }
+    };
+
+    if (showColorPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showColorPicker]);
 
   const { data: countries, isLoading: countriesLoading } = useQuery({
     queryKey: ["all countries"],
@@ -938,7 +960,39 @@ const CompanyForm: React.FC<Props> = ({
                 <p className="p-2">{color}</p>
               </button>
             )}
-            {showColorPicker && <></>}
+            {showColorPicker && (
+              <div className="relative mt-4">
+                <div
+                  ref={colorPickerRef}
+                  className="absolute z-10 bg-white p-4 rounded-lg shadow-lg border border-[#E2E8F0]"
+                >
+                  <HexColorPicker
+                    color={color}
+                    onChange={(newColor) =>
+                      handleChangeComplete({ hex: newColor })
+                    }
+                  />
+                  <div className="mt-3 flex items-center justify-between gap-3">
+                    <input
+                      type="text"
+                      value={color}
+                      onChange={(e) =>
+                        handleChangeComplete({ hex: e.target.value })
+                      }
+                      className="px-3 py-2 border border-[#E2E8F0] rounded-md text-sm w-32"
+                      placeholder="#000000"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowColorPicker(false)}
+                      className="px-4 py-2 bg-primary-green text-white text-sm rounded-md hover:opacity-90"
+                    >
+                      Done
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </Form>

@@ -9,7 +9,6 @@ import {
   getTenantID,
 } from "./localService";
 
-import { toast } from "sonner";
 import { headerT } from "@/types/headerType";
 
 const authApi = axios.create({
@@ -22,7 +21,7 @@ authApi.interceptors.request.use(
   (config) => {
     let headers: headerT = {
       "Content-Type": "application/json",
-      // "user-uuid": getUserUUID(),
+      "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
     };
 
@@ -40,75 +39,75 @@ authApi.interceptors.request.use(
 );
 
 // RESPONSE INTERCEPTOR: listen for a 401 or 403 then refresh token
-// authApi.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     const originalRequest = error.config;
+authApi.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-//     if (error.response.status === 401 && !originalRequest._retry) {
-//       originalRequest._retry = true;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      console.log("refrsh token");
+      originalRequest._retry = true;
 
-//       let headers: headerT = {
-//         "Content-Type": "application/json",
-//         "user-uuid": getUserUUID(),
-//         // Authorization: `Bearer ${getToken()}`,
-//       };
+      let headers: headerT = {
+        "Content-Type": "application/json",
+        "user-uuid": getUserUUID(),
+        // Authorization: `Bearer ${getToken()}`,
+      };
 
-//       // Route to admin or tenant
-//       if (getCompanyID() !== 0) {
-//         headers = { ...headers, tenantid: getTenantID() };
-//       }
+      // Route to admin or tenant
+      if (getCompanyID() !== 0) {
+        headers = { ...headers, tenantid: getTenantID() };
+      }
 
-//       const config = {
-//         headers: {
-//           ...headers,
-//         },
-//       };
+      const config = {
+        headers: {
+          ...headers,
+        },
+      };
 
-//       //  GET REFRESH TOKEN AND RETRY REQUEST
-//       axios
-//         .post(
-//           `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0/auth/refresh-token`,
-//           {
-//             refreshToken: getRefreshToken(),
-//           },
-//           config
-//         )
-//         .then((res) => {
-//           const oldRefreshToken = getRefreshToken();
-//           const uuid = getUserUUID();
-//           const companyId = getCompanyID();
-//           const userId = getUserId();
+      //  GET REFRESH TOKEN AND RETRY REQUEST
+      axios
+        .post(
+          `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0/auth/refresh-token`,
+          {
+            refreshToken: getRefreshToken(),
+          },
+          config
+        )
+        .then((res) => {
+          const oldRefreshToken = getRefreshToken();
+          const uuid = getUserUUID();
+          const companyId = getCompanyID();
+          const userId = getUserId();
 
-//           localStorage.setItem(
-//             "auth",
-//             JSON.stringify({
-//               access_token: res?.data?.accessToken,
-//               company_id: companyId,
-//               refresh_token: res?.data?.refreshToken,
-//               user_id: userId,
-//               user_uuid: uuid,
-//             })
-//           );
+          localStorage.setItem(
+            "auth",
+            JSON.stringify({
+              access_token: res?.data?.accessToken,
+              company_id: companyId,
+              refresh_token: res?.data?.refreshToken,
+              user_id: userId,
+              user_uuid: uuid,
+            })
+          );
 
-//           // return
-//           return axios({
-//             ...originalRequest,
-//             headers: {
-//               // USE NEW TOKEN IN RETRY REQUEST
-//               ...headers,
-//               Authorization: `Bearer ${res?.data?.accessToken}`,
-//             },
-//           });
-//         })
-//         .catch((e) => {
-//           toast.dismiss();
-//           window.dispatchEvent(new Event("sessionExpired"));
-//         });
-//     }
+          // return
+          return axios({
+            ...originalRequest,
+            headers: {
+              // USE NEW TOKEN IN RETRY REQUEST
+              ...headers,
+              Authorization: `Bearer ${res?.data?.accessToken}`,
+            },
+          });
+        })
+        .catch((e) => {
+          window.dispatchEvent(new Event("sessionExpired"));
+        });
+    }
 
-//     return Promise.reject(error);
-//   }
-// );
+    return Promise.reject(error);
+  }
+);
 
 export default authApi;

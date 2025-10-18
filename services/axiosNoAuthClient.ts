@@ -15,8 +15,6 @@ noAuthApi.interceptors.request.use(
       accept: "*/*",
     };
 
-    console.log("ten", getTenantID());
-
     // Use tenantId if presentxsssss
     return {
       ...config,

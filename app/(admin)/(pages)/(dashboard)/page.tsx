@@ -8,6 +8,7 @@ import services from "@/services";
 
 // css
 import "./index.css";
+import { Spinner } from "@heroui/react";
 
 function Dashboard() {
   // Data
@@ -21,12 +22,12 @@ function Dashboard() {
     queryFn: services.allUsers(),
   });
 
-  const { data: publishedFormsCount } = useQuery({
+  const { data: publishedFormsCount, isLoading } = useQuery({
     queryKey: ["published forms count"],
     queryFn: services.publishedFormsCount(),
   });
 
-  const { data: unpublishedFormsCount } = useQuery({
+  const { data: unpublishedFormsCount, isLoading: unpubLoading } = useQuery({
     queryKey: ["unpublished forms count"],
     queryFn: services.unpublishedFormsCount(),
   });
@@ -39,23 +40,39 @@ function Dashboard() {
         <div className="stats-holder">
           <div className="stats-section">
             <p>All Companies</p>
-            <h4 className="stats-content">{companies?.totalElements}</h4>
+            <h4 className="stats-content">
+              {companies ? (
+                companies?.totalElements
+              ) : (
+                <Spinner color="default" />
+              )}
+            </h4>
           </div>
 
           {/*  */}
           {/* <div className="border-r border-gray-700 w-2" /> */}
           <div className="stats-section">
             <p>All Users</p>
-            <h4 className="stats-content">{users?.length}</h4>
+            <h4 className="stats-content">
+              {users ? users?.length : <Spinner color="default" />}
+            </h4>
           </div>
           <div className="stats-section">
             <p>Published Forms</p>
-            <h4 className="stats-content">{publishedFormsCount}</h4>
+            <h4 className="stats-content">
+              {!isLoading ? publishedFormsCount : <Spinner color="default" />}
+            </h4>
           </div>
 
           <div className="stats-section">
             <p>Unpublished Forms</p>
-            <h4 className="stats-content">{unpublishedFormsCount}</h4>
+            <h4 className="stats-content">
+              {!unpubLoading ? (
+                unpublishedFormsCount
+              ) : (
+                <Spinner color="default" />
+              )}
+            </h4>
           </div>
 
           {/*  */}

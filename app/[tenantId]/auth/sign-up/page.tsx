@@ -12,7 +12,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 // components
 import { toast } from "sonner";
-import Dropdown from "@/components/Dropdown/Dropdown";
 
 // services
 import services from "@/services";
@@ -90,16 +89,15 @@ function Page(props: any) {
     { resetForm, setSubmitting }: FormikHelpers<any>
   ) => {
     const userData = {
+      roleId: 0,
+      profile_image: "string",
       email: values.email as string,
-      // username: ((values.firstName?.toLowerCase() as string) +
-      //   values.lastName?.toLowerCase()) as string,
       username: values.email as string,
       password: values.password as string,
-      first_name: values.firstName as string,
-      last_name: values.lastName as string,
-      phone_number: phone,
-      mobile_phone_number: phone,
-      user_status: "ACTIVE",
+      firstName: values.firstName as string,
+      lastName: values.lastName as string,
+      phone: phone,
+      status: "ACTIVE",
     };
 
     services

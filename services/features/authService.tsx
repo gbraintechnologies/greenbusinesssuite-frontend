@@ -1,6 +1,5 @@
-import noAuthApi from "../axiosNoAuthClient";
 import authApi from "../axiosAuthClient";
-import noAuthApi2 from "../axiosNoAuthClient2";
+import noAuthApi from "../axiosNoAuthClient";
 
 export const login = (username: any, password: any) => {
   return noAuthApi.post("/auth/sign-in", {
@@ -43,14 +42,14 @@ export const setPassword = ({
 
 // STEP 1
 export const attemptPasswordReset = (email: any) => {
-  return noAuthApi2.post("/auth/forgot-password", {
+  return noAuthApi.post("/auth/forgot-password", {
     email: email,
   });
 };
 
-// STEP 2
+// STEP
 export const verifyResetAttempt = (code: string) => {
-  return noAuthApi2
+  return noAuthApi
     .get("/users/noauth/verify_password_reset/" + code)
     .then((res) => res.data);
 };
@@ -62,7 +61,7 @@ export const resetPassword = (
   userEmail: string,
   newPassword: string
 ) => {
-  return noAuthApi2
+  return noAuthApi
     .post("/users/noauth/reset_password/", {
       user_id: userId,
       user_email: userEmail,
@@ -74,22 +73,16 @@ export const resetPassword = (
 };
 
 export const notifyUserTempCred = (id: any, channel: string) => {
-  return noAuthApi2.post("/users/noauth/notify_user_temp_cred/", {
+  return noAuthApi.post("/noauth/notify_user_temp_cred/", {
     user_id: id,
     channel: channel,
   });
 };
 
 export const userSelfSignUp = (data: any) => {
-  return noAuthApi2.post("/users/self_create_account/", {
-    user_data: data,
-    role_data: {
-      app_id: 1,
-      role_id: 6,
-    },
-  });
+  return noAuthApi.post("/auth/sign-up", data);
 };
 
 export const confirmAccount = (token: any) => {
-  return noAuthApi2.put(`/users/confirm_account/${token}`);
+  return noAuthApi.put(`/confirm_account/${token}`);
 };

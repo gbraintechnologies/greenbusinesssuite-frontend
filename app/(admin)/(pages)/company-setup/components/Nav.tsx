@@ -5,6 +5,7 @@ import { GoPlusCircle } from "react-icons/go";
 import Link from "next/link";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
+import { Button } from "@heroui/react";
 
 function Nav() {
   const { checkPermission } = useAdmin();
@@ -18,9 +19,9 @@ function Nav() {
       {/* {checkPermission(PermissionTypes.CREATE_COMPANY) && ( */}
       {/* TODO: Enable after company permissions up */}
       <Link href={"/company-setup/create"}>
-        <button className="bg-primary-green flex text-white text-sm px-4 py-3 hover:opacity-95 items-center gap-2 rounded-xl">
-          <GoPlusCircle size={15} /> Add New{" "}
-        </button>
+        <Button className="bg-primary-green flex text-white text-sm px-4 py-3 hover:opacity-95 items-center gap-2 rounded-xl">
+          <GoPlusCircle size={20} /> Create New Company
+        </Button>
       </Link>
       {/* )} */}
     </div>
