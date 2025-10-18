@@ -137,8 +137,8 @@ button {
   @apply flex flex-col w-full mb-3;
 }
 
-.input-holder input:not([type="checkbox"]):not([type="radio"]),
-textarea {
+.input-holder input:not([type="checkbox"]):not([type="radio"]):not([data-slot="input"]),
+textarea:not([data-slot="input"]) {
   @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm;
 }
 

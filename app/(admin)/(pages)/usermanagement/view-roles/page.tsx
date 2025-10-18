@@ -5,7 +5,6 @@ import Link from "next/link";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import DataTable from "@/components/DataTable/DataTable";
-import DeleteIcon from "@/public/icons/DeleteIcon";
 import EditIconSetup from "@/public/icons/EditIconSetup";
 import { useRouter } from "next/navigation";
 import toSpace from "@/utils/UnderScore/UnderScore";

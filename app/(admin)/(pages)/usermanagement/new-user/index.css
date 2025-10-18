@@ -2,7 +2,7 @@
   @apply flex flex-col w-full mb-5;
 }
 
-.input-holder input:not([type="checkbox"]):not([type="radio"]) {
+.input-holder input:not([type="checkbox"]):not([type="radio"]):not([data-slot="input"]) {
   @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff]  focus:outline-[0.2px] rounded-lg my-0.5 shadow-sm;
 }
 

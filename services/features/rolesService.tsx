@@ -1,7 +1,7 @@
 import authApi from "../axiosAuthClient";
 
-export const getMeshBusinessSuiteRoles = (id: any) => {
-  return () => authApi.get(`/apps/roles_by_app/${id}`).then((res) => res.data);
+export const getMeshBusinessSuiteRoles = () => {
+  return () => authApi.get(`/roles/role-names`).then((res) => res.data);
 };
 
 export const getLoggedInUserPermissions = () => {
