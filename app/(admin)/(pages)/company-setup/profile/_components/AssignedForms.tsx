@@ -62,7 +62,7 @@ const AssignedForms = ({
           {formsLoading && <Loader text="Fetching forms" />}
           {/* NO ASSIGNED FORM */}
           {assignedForms?.content?.length === 0 && (
-            <div className="flex items-center justify-center py-5 w-full ">
+            <div className="flex items-center justify-center w-full border rounded-xl p-20">
               <EmptyList
                 text={
                   selectedTimeline?.value == "ALL"

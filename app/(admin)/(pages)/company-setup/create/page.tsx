@@ -1,506 +1,234 @@
 "use client";
 
-import Modal from "@/components/Modal/Modal";
-import { Formik, FormikHelpers } from "formik";
+import { Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import * as Yup from "yup";
-import useFileUpload from "@/hooks/useFileUpload";
 import { toast } from "sonner";
-import { Company, CompanyInfo } from "@/types";
-import CompanyForm from "../components/CompanyForm";
 import services from "@/services";
-import { useQuery } from "@tanstack/react-query";
-import { lowerCaseNoSpace } from "@/utils/LowerCaseNoSpace/LowerCaseNoSpace";
-import CompanyConfig from "../components/CompanyConfig";
 
 // @ts-ignore
 import "./index.css";
-
-interface ICompany {
-  companyName: string;
-  companyDescription: string;
-  industry: string;
-  jurisdiction: string;
-  companyLogo: string;
-  adminFirstName: string;
-  adminLastName: string;
-  adminEmail: string;
-  companySmsSenderId: string;
-  contactFirstName: string;
-  contactLastName: string;
-  contactEmail: string;
-  contactPhone: string;
-}
-
-const companySchema = Yup.object().shape({
-  companyName: Yup.string().required("Company name is required"),
-  companyDescription: Yup.string().required("Company description is required"),
-  companySmsSenderId: Yup.string().required("SMS Sender ID is required"),
-  // adminFirstName: Yup.string().required("First name is required"),
-  // adminLastName: Yup.string().required("Last name is required"),
-  // adminEmail: Yup.string().email("Invalid email").required("Email is required"),
-  contactFirstName: Yup.string().required("First name is required"),
-  contactLastName: Yup.string().required("Last name is required"),
-  contactEmail: Yup.string()
-    .email("Invalid email")
-    .required("Email is required"),
-});
+import FormikControl from "@/components/Formik/FormikControl";
+import { getStyles } from "@/components/Formik/formHelpers";
+import { IoIosArrowBack } from "react-icons/io";
+import { Button } from "@heroui/react";
+import Border from "@/components/Border/Border";
 
 const CreateCompany = () => {
-  const [showCancelModal, setShowCancelModal] = useState(false);
-
-  const [selectedIndustry, setSelectedIndustry] = useState<{
-    label: string;
-    value: string;
-  }>();
-
-  const [selectedCountry, setSelectedCountry] = useState<{
-    label: string;
-    value: string;
-  }>();
-
-  const [selectedParentLevel, setSelectedParentLevel] = useState<{
-    label: string;
-    value: string;
-  }>();
-
-  const [selectedChildLevel, setSelectedChildLevel] = useState<{
-    label: string;
-    value: string;
-  }>();
-
-  const [selectedSubSector, setSelectedSubSector] = useState<{
-    label: string;
-    value: string;
-  }>();
-
-  const [sectorId, setSectorId] = useState<number | string>("");
-
-  const [phone, setPhone] = useState("");
-
-  const [companyLogo, setCompanyLogo] = useState<File | null>(null);
-
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
-
-  const [companySmallLogo, setCompanySmallLogo] = useState<File | null>(null);
-
-  const [smallLogoUrl, setSmallLogoUrl] = useState("");
-
-  const [color, setColor] = useState<string>("#025043");
-
-  const [initialLoad, setInitialLoad] = useState<boolean>(false);
-
-  const [currencyId, setCurrencyId] = useState<string>("");
-
-  // multi-step form
-  const [step, setStep] = useState<number>(1);
-
-  // state for handling selected core modules
-  const [selectedCoreModules, setSelectedCoreModules] = useState<any>([]);
-
-  useEffect(() => {
-    console.log("selectedCoreModules", selectedCoreModules);
-  }, [selectedCoreModules]);
-
-  // state for handling selected category modules
-  const [selectedCategoryModules, setSelectedCategoryModules] = useState<any>(
-    []
-  );
-
-  // state for handling the selected category
-  const [selectedCategory, setSelectedCategory] = useState<any>();
-
   // state for handling the submitting state
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const router = useRouter();
 
-  const initialValues: Partial<ICompany> = {
+  const companySchema = Yup.object().shape({
+    companyName: Yup.string().min(5).required("Company name is required"),
+    industry: Yup.string().required("Industry is required"),
+    companyAddress: Yup.string().required("Address is required"),
+    primaryContactName: Yup.string().required(
+      "Contact Persion name is required"
+    ),
+    primaryContactEmail: Yup.string()
+      .email()
+      .required("Contact Persion email is required"),
+    primaryContactPhoneNumber: Yup.string().required(
+      "Contact Persion phone number is required"
+    ),
+    description: Yup.string().required("Company description is required"),
+    primaryCurrency: Yup.string().required("Currency is required"),
+  });
+
+  const initialValues: any = {
     companyName: "",
-    companyDescription: "",
-    contactFirstName: "",
-    contactLastName: "",
-    contactEmail: "",
+    description: "",
+    primaryContactName: "",
+    primaryContactEmail: "",
+    primaryContactPhoneNumber: "",
+    companyLogo: "",
+    companyAddress: "",
+    companyDigitalAddress: "",
+    industry: "",
+    companyMerchantMomoNumber: "",
+    companyBankName: "",
+    taxId: "",
+    primaryCurrency: "",
   };
 
-  const { handleFileUpload } = useFileUpload();
-
-  // checks on the company details screen before proceeding to the next step
-  const proccedToNextStep = async (
-    errors: any,
-    setTouched: any,
-    validateForm: any
-  ) => {
-    setTouched(
-      Object.keys(errors).reduce((acc: any, key: any) => {
-        acc[key] = true;
-        return acc;
-      }, {})
-    );
-
-    // Trigger validation and check if there are errors
-    const formErrors = await validateForm();
-    if (Object.keys(formErrors).length > 0) {
-      // Prevent moving to the next step if there are errors
-      console.log("Validation errors:", formErrors);
-      toast.error("Please fix the errors before proceeding.");
-      return;
-    }
-
-    if (!currencyId) {
-      toast.error(
-        `Please set up the currency for ${selectedCountry?.label} to proceed`
-      );
-      return;
-    }
-    // phone number required
-    if (!(phone.length > 4)) {
-      toast.error("Phone number is required");
-      return;
-    }
-
-    // company logo is required
-    if (!companyLogo) {
-      toast.error("Company logo is required");
-      return;
-    }
-
-    // company small logo is required
-    if (!companySmallLogo) {
-      toast.error("Company small logo is required");
-      return;
-    }
-
-    // country required
-    if (!selectedCountry?.value) {
-      toast.error("Jurisdiction is required");
-      return;
-    }
-
-    // if (!selectedParentLevel?.value) {
-    //   toast.error("Sub Jurisdiction is required");
-    //   return;
-    // }
-
-    if (!selectedChildLevel?.value) {
-      toast.error("Sub Level is required");
-      return;
-    }
-
-    if (!selectedIndustry?.value) {
-      toast.error("Industry is required");
-      return;
-    }
-
-    if (!selectedSubSector?.value) {
-      toast.error("Sub Sector is required");
-      return;
-    }
-
-    setStep(2);
-  };
-
-  const createCompanyWithConfiguration = async (values: Partial<ICompany>) => {
+  const createCompany = (values: any, reset: any) => {
     setSubmitting(true);
 
-    // if (!currencyId) {
-    //   toast.error(
-    //     `Please set up the currency for ${selectedCountry?.label} to proceed`
-    //   );
-    //   setSubmitting(false);
-    //   return;
-    // }
-    // phone number required
-    if (!(phone.length > 4)) {
-      toast.error("Phone number is required");
-      setSubmitting(false);
-      return;
-    }
-
-    // company logo is required
-    if (!companyLogo) {
-      toast.error("Company logo is required");
-      setSubmitting(false);
-      return;
-    }
-
-    // company small logo is required
-    if (!companySmallLogo) {
-      toast.error("Company small logo is required");
-      setSubmitting(false);
-      return;
-    }
-
-    // country required
-    if (!selectedCountry?.value) {
-      toast.error("Jurisdiction is required");
-      setSubmitting(false);
-      return;
-    }
-
-    if (!selectedParentLevel?.value) {
-      toast.error("Sub Jurisdiction is required");
-      setSubmitting(false);
-      return;
-    }
-
-    if (!selectedChildLevel?.value) {
-      toast.error("Sub Level is required");
-      setSubmitting(false);
-      return;
-    }
-
-    if (!selectedIndustry?.value) {
-      toast.error("Industry is required");
-      setSubmitting(false);
-      return;
-    }
-
-    if (!selectedSubSector?.value) {
-      toast.error("Sub Sector is required");
-      setSubmitting(false);
-      return;
-    }
-
-    if (selectedCoreModules?.length < 1) {
-      toast.error("Select one or more core modules to proceed");
-      setSubmitting(false);
-      return;
-    }
-
-    if (selectedCategoryModules?.length < 1) {
-      toast.error("Select one or more category modules to proceed");
-      setSubmitting(false);
-      return;
-    }
-
-    const companyLogoURL =
-      companyLogo && (await handleFileUpload(companyLogo as File));
-
-    console.log("all values collected", values);
-    //
-    const data: Company = {
-      companyName: values.companyName as string,
-      status: "ACTIVE",
-      description: values.companyDescription as string,
-      primaryContactName: `${values.contactFirstName} ${values.contactLastName}`,
-      primaryContactEmail: values.contactEmail as string,
-      primaryContactPhoneNumber: phone,
-      companyLogo: companyLogoURL?.file_url || "",
-      companyAddress: selectedCountry?.value as string,
-      companyDigitalAddress: "GA-2342-23",
-      industry: selectedIndustry?.value as string,
-      companyMerchantMomoNumber: "",
-      companyBankName: "Standard Chartered",
-      taxId: "345",
-      // startOfDayTime: "2025-08-11" as any,
-      // endOfDayTime: "2025-08-11" as any,
-      primaryCurrency: "GHC",
-      secondaryCurrency: ["USD"],
-      companyAdminId: 1,
-      companyCode: String(Math.floor(Math.random() * 10000)).padStart(4, "0"),
-      // tenantId: "",
-      // buildStatus: "",
-      // driverName: "",
-      // dbUrl: "",
-      // companyIdentifier: "",
-      assignedFormIds: [],
-      // values.companySmsSenderId as string,
-    };
-
-    const custom_fields = [
-      {
-        //Company Description
-        custom_profile_item_id: 1,
-        value: values.companyDescription as string,
-      },
-      {
-        //Admin Name
-        custom_profile_item_id: 2,
-        // @ts-ignore
-        // value: `${selectedAdminOption?.first_name} ${selectedAdminOption?.last_name}`,
-        value: "",
-      },
-      {
-        //Admin Email
-        custom_profile_item_id: 3,
-        // @ts-ignore
-        // value: selectedAdminOption?.email as string,
-        value: "",
-      },
-      {
-        // Sub Sector ID
-        custom_profile_item_id: 4,
-        value: selectedSubSector?.value as string,
-      },
-      {
-        // Parent Address Scheme ID
-        custom_profile_item_id: 5,
-        value: selectedParentLevel?.value as string,
-      },
-      {
-        //Child Address Scheme ID
-        custom_profile_item_id: 6,
-        value: selectedChildLevel?.value as string,
-      },
-      {
-        // Sector ID
-        custom_profile_item_id: 7,
-        value: sectorId as string,
-      },
-    ];
-
-    console.log("COMPANY CREATION DATA ", data);
-
-    toast.success("Company created successfully");
-
-    // TODO: COMPANY IDENTIFIER DOESN'T EXIST HERE
-    // try {
-    //   const selectedCoreModuleIds = selectedCoreModules.reduce(
-    //     (acc: any, module: any) => {
-    //       if (module?.id) {
-    //         acc.push(module.id);
-    //       }
-    //       return acc;
-    //     },
-    //     []
-    //   );
-
-    //   const selectedCategoryModuleIds = selectedCategoryModules.reduce(
-    //     (acc: any, module: any) => {
-    //       if (module?.id) {
-    //         acc.push(module.id);
-    //       }
-    //       return acc;
-    //     },
-    //     []
-    //   );
-
-    //   let companyData: any = null;
-    //   services.createCompany({ data: data }).then((res) => {
-    //     companyData = res?.data;
-    //   });
-
-    //   const companySmallLogoURL =
-    //     companySmallLogo && (await handleFileUpload(companySmallLogo as File));
-
-    //   await services.createCompanyBranding(
-    //     companyData?.id,
-    //     companyData?.company_identifier,
-    //     companySmallLogoURL?.file_url,
-    //     color,
-    //     companyData?.company_name,
-    //     selectedCoreModuleIds,
-    //     selectedCategoryModuleIds
-    //   );
-
-    //   toast.success("Company created successfully");
-
-    //   // go to the configuration setup page
-    //   router.back();
-    // } catch (error) {
-    //   toast.error("An error occurred");
-    // } finally {
-    //   setSubmitting(false);
-    // }
+    services
+      .createCompany({
+        data: { ...values, status: "ACTIVE" },
+      })
+      .then((res) => {
+        toast.message(res?.data?.message ?? "Company created successfully");
+        reset();
+        setSubmitting(false);
+        router.push(`/company-setup/profile?id=${res?.data?.id}`);
+      })
+      .catch((e) => {
+        setSubmitting(false);
+        console.log("error creating", e);
+        toast.error("Error creating company");
+      });
   };
 
   return (
-    <div className="px-5 pb-20">
+    <div className="pb-20">
       <Formik
         initialValues={initialValues}
-        validationSchema={companySchema}
-        onSubmit={createCompanyWithConfiguration}
-      >
-        {({ errors, validateForm, setTouched, values }) => {
-          return (
-            <>
-              <div className={`${step == 1 ? "block" : "hidden"}`}>
-                <CompanyForm
-                  headerText="Create A New Company"
-                  errors={errors}
-                  submitFn={async () =>
-                    await proccedToNextStep(errors, setTouched, validateForm)
-                  }
-                  initialValues={initialValues}
-                  setShowCancelModal={setShowCancelModal}
-                  companyLogo={companyLogo}
-                  setCompanyLogo={setCompanyLogo}
-                  companySmallLogo={companySmallLogo}
-                  setCompanySmallLogo={setCompanySmallLogo}
-                  smallLogoUrl={smallLogoUrl}
-                  setSmallLogoUrl={setSmallLogoUrl}
-                  backgroundImageUrl={backgroundImageUrl}
-                  setBackgroundImageUrl={setBackgroundImageUrl}
-                  phone={phone}
-                  setPhone={setPhone}
-                  selectedIndustry={selectedIndustry}
-                  setSelectedIndustry={setSelectedIndustry}
-                  selectedCountry={selectedCountry}
-                  setSelectedCountry={setSelectedCountry}
-                  selectedParentLevel={selectedParentLevel}
-                  setSelectedParentLevel={setSelectedParentLevel}
-                  selectedChildLevel={selectedChildLevel}
-                  setSelectedChildLevel={setSelectedChildLevel}
-                  selectedSubSector={selectedSubSector}
-                  setSelectedSubSector={setSelectedSubSector}
-                  sectorId={sectorId}
-                  setSectorId={setSectorId}
-                  initialLoad={initialLoad}
-                  setInitialLoad={setInitialLoad}
-                  color={color}
-                  setColor={setColor}
-                  currencyId={currencyId}
-                  setCurrencyId={setCurrencyId}
-                  step={step}
-                />
-
-                {/* CANCEL MODAL: DISCARD ALL CHANGES */}
-                <Modal
-                  isOpen={showCancelModal}
-                  setIsOpen={setShowCancelModal}
-                  title="Are you sure you want to discard all changes?"
-                >
-                  <div>
-                    <p className="px-5 mt-5 text-[#334155]">
-                      Discard changes would delete all the changes you have
-                      made. <br /> Nothing would be saved.
-                    </p>
-
-                    <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
-                      <button
-                        onClick={() => setShowCancelModal(false)}
-                        className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-                        onClick={() => {
-                          router.back();
-                        }}
-                      >
-                        Yes, discard changes
-                      </button>
-                    </div>
-                  </div>
-                </Modal>
-              </div>
-              <div className={`${step == 2 ? "block" : "hidden"}`}>
-                <CompanyConfig
-                  discardFn={() => setStep(step - 1)}
-                  saveFn={() => createCompanyWithConfiguration(values)}
-                  selectedCategory={selectedCategory}
-                  setSelectedCategory={setSelectedCategory}
-                  setSelectedCoreModules={setSelectedCoreModules}
-                  setSelectedCategoryModules={setSelectedCategoryModules}
-                  submitting={submitting}
-                />
-              </div>
-            </>
-          );
+        onSubmit={(values, { resetForm }) => {
+          console.log("values", values);
+          createCompany(values, resetForm);
         }}
+        validationSchema={companySchema}
+      >
+        {({ errors, values }) => (
+          <Form>
+            <div className="w-full text-primary-dark  flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div
+                  className="my-3 cursor-pointer flex text-sm items-center gap-2"
+                  onClick={() => router.back()}
+                >
+                  <IoIosArrowBack size={16} />
+                </div>
+                <h3 className="font-semibold text-xl">Create New Company</h3>
+              </div>
+              <Button
+                isDisabled={submitting}
+                isLoading={submitting}
+                type="submit"
+                color="primary"
+              >
+                Create Company
+              </Button>{" "}
+            </div>
+            <div className="flex flex-col mt-10">
+              <h4 className="header-4">Company Information</h4>
+              <Border hasTopBottomMargin={false} />
+              <div className="mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                  <FormikControl
+                    style={getStyles(errors, "companyName")}
+                    control="input"
+                    type="text"
+                    isRequired
+                    label="Name"
+                    name="companyName"
+                    placeholder="Company Name"
+                  />
+                  <FormikControl
+                    style={getStyles(errors, "industry")}
+                    control="input"
+                    type="text"
+                    isRequired
+                    label="Industry"
+                    name="industry"
+                    placeholder="Industry"
+                  />
+                  <FormikControl
+                    style={getStyles(errors, "companyAddress")}
+                    control="input"
+                    type="text"
+                    isRequired
+                    label="Address"
+                    name="companyAddress"
+                    placeholder="Address"
+                  />
+                  <FormikControl
+                    style={getStyles(errors, "companyDigitalAddress")}
+                    control="input"
+                    type="text"
+                    label="Digital Address"
+                    name="companyDigitalAddress"
+                    placeholder="Digital Address"
+                  />
+                </div>
+                <FormikControl
+                  style={getStyles(errors, "description")}
+                  control="textarea"
+                  rows={4}
+                  type="text"
+                  isRequired
+                  label="Description"
+                  name="description"
+                  placeholder="Description"
+                />
+              </div>
+
+              {/* CONTACT INFORMAITON */}
+              <div className="mt-5">
+                <h4 className="header-4">Contact Person</h4>
+                <Border hasTopBottomMargin={false} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <FormikControl
+                  style={getStyles(errors, "primaryContactName")}
+                  control="input"
+                  type="text"
+                  isRequired
+                  label="Primary Contact Name"
+                  name="primaryContactName"
+                />
+                <FormikControl
+                  style={getStyles(errors, "primaryContactEmail")}
+                  control="input"
+                  type="text"
+                  isRequired
+                  label="Primary Contact Email"
+                  name="primaryContactEmail"
+                />
+                <FormikControl
+                  style={getStyles(errors, "primaryContactPhoneNumber")}
+                  control="input"
+                  type="text"
+                  isRequired
+                  label="Primary Contact Phone Number"
+                  name="primaryContactPhoneNumber"
+                />
+              </div>
+
+              {/* TAX AND BANK INFORMATION */}
+
+              <div className="mt-5">
+                <h4 className="header-4">Tax & Bank Infomration</h4>
+                <Border hasTopBottomMargin={false} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <FormikControl
+                  style={getStyles(errors, "companyBankName")}
+                  control="input"
+                  type="text"
+                  label="Company Bank Name"
+                  name="companyBankName"
+                />
+                <FormikControl
+                  style={getStyles(errors, "primaryCurrency")}
+                  control="select"
+                  options={[
+                    { key: "GHC", value: "GHC" },
+                    { key: "USD", value: "USD" },
+                    { key: "JPY", value: "JPY" },
+                    { key: "EUR", value: "EUR" },
+                    { key: "GBP", value: "GBP" },
+                  ]}
+                  type="text"
+                  label="Currency"
+                  name="primaryCurrency"
+                />
+                <FormikControl
+                  style={getStyles(errors, "taxId")}
+                  control="input"
+                  type="text"
+                  label="Tax ID"
+                  name="taxId"
+                />
+              </div>
+            </div>
+          </Form>
+        )}
       </Formik>
     </div>
   );

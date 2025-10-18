@@ -1,4 +1,4 @@
-import {heroui} from '@heroui/theme';
+import { heroui } from "@heroui/theme";
 import type { Config } from "tailwindcss";
 
 const colors = require("tailwindcss/colors");
@@ -143,6 +143,19 @@ const config: Config = {
       `ui-selected:text-${customColor}`,
     ]),
   ],
-  plugins: [require("@headlessui/tailwindcss"),require("@tailwindcss/forms"),heroui()],
+  plugins: [
+    require("@headlessui/tailwindcss"),
+    require("@tailwindcss/forms"),
+    heroui({
+      themes: {
+        light: {
+          colors: {
+            primary: "#16A34A",
+            secondary: "#0F172A",
+          },
+        },
+      },
+    }),
+  ],
 };
 export default config;

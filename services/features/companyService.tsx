@@ -14,8 +14,12 @@ export const getCompanyById = (id: number) => {
   return () => authApi.get(`/companies/${id}`).then((res) => res.data);
 };
 
-export const createCompany = ({ data }: { data: Company }) => {
+export const createCompany = ({ data }: { data: any }) => {
   return authApi.post("/companies/create", data);
+};
+
+export const editCompany = ({ data }: { data: any }) => {
+  return authApi.put("/companies", data);
 };
 
 export const editCompanyWithCustomFields = async (

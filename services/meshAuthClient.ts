@@ -23,10 +23,10 @@ authApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
     let headers: headerT = {
-      // "Content-Type": "application/json",
-      // "user-uuid": getUserUUID(),
+      "Content-Type": "application/json",
+      "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
-      // tenantid: getTenantID(),
+      tenantid: getTenantID(),
     };
 
     // Route to admin or tenant

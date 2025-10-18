@@ -1,33 +1,16 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import Image from "next/image";
-
-import StatusPill from "@/components/StatusPill/StatusPill";
-import { BsEye, BsThreeDots } from "react-icons/bs";
-import DataTable from "@/components/DataTable/DataTable";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
-import { CompanyInfo } from "@/types";
-import Link from "next/link";
 
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
-import { Button } from "@heroui/react";
 import { toast } from "sonner";
-import Pagination from "@/components/Pagination/Pagination";
-import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
-import { RiImageCircleLine } from "react-icons/ri";
+
 import Nav from "../components/Nav";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import useAdmin from "@/hooks/useAdmin";
 import { PermissionTypes } from "@/types/permissionTypes";
 
-import Tabs from "@/components/Tabs/Tabs";
 import Table from "@/components/Table/Table";
 import Status from "@/components/Status/Status";
 import { SlEye } from "react-icons/sl";
@@ -76,24 +59,11 @@ function CompanySetup() {
     value: "all",
   });
 
-  const [activeRoleFilter, setActiveRoleFilter] = useState([]);
-
   const [searchTerm, setSearchTerm] = useState("");
-
-  const [selectedRow, setSelectedRow] = useState();
-
-  const [aggregatedCompanies, setAggregatedCompanies] = useState([]);
-
-  const [rows, setRows] = useState<
-    { id: number | undefined; data: Partial<CompanyInfo> }[]
-  >([]);
 
   const [page, setPage] = useState(0);
 
   const [limit, setLimit] = useState(8);
-
-  const [showNotificationsModal, setShowNotificationsModal] =
-    useState<boolean>(false);
 
   const { checkPermission } = useAdmin();
 
@@ -101,14 +71,6 @@ function CompanySetup() {
     queryKey: ["companies", page, limit],
     queryFn: services.getAllCompanies(page * limit, limit),
   });
-
-  console.log("comp", companies);
-
-  // const { data: searchData, isLoading: searchLoading } = useQuery({
-  //   queryKey: ["all users", searchTerm],
-  //   queryFn: services.searchCompany(searchTerm),
-  //   enabled: Boolean(searchTerm),
-  // });
 
   const StatusComponent = (item: any) => {
     return <Status status={item?.status} />;
@@ -205,8 +167,7 @@ function CompanySetup() {
           totalPages={companies?.totalPages}
           rowsPerPage={limit}
           showTopPagination={false}
-          page={companies?.page}
-          // setLimit={setLimit}
+          page={companies?.page ?? 0}
           setPage={setPage}
           statusComponent={StatusComponent}
           actionsComponent={ActionsComponent}

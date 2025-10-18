@@ -178,6 +178,50 @@ textarea {
   background-color: #f8fafc !important;
 }
 
+.header-0 {
+  @apply text-5xl md:text-6xl font-bold mb-2;
+}
+
+.header-05 {
+  @apply text-4xl md:text-5xl font-bold mb-2;
+}
+
+.header-1 {
+  @apply text-3xl md:text-4xl font-bold mb-2;
+}
+
 .header-2 {
-  @apply font-semibold text-xl md:text-2xl;
+  @apply text-2xl font-bold mb-2;
+}
+
+.header-3 {
+  @apply text-xl font-bold mb-2;
+}
+
+.header-4 {
+  @apply text-lg font-bold mb-2;
+}
+
+.header-5 {
+  @apply text-base font-bold mb-2;
+}
+
+.labelStyle {
+  @apply block text-left mb-2  text-gray-500;
+}
+
+.holderStyle {
+  @apply flex flex-col gap-1 w-full mx-auto;
+}
+
+.bg-default-100 {
+  @apply bg-white !important;
+}
+
+.inputStyle {
+  @apply border disabled:bg-gray-100 bg-none bg-transparent disabled:cursor-not-allowed focus:outline-none p-2 rounded-lg;
+}
+
+.inputStyleRounded {
+  @apply border disabled:bg-gray-100 bg-none bg-transparent disabled:cursor-not-allowed focus:outline-none px-5 text-lg tracking-wider  h-12 p-2 rounded-full;
 }

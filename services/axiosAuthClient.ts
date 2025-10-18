@@ -9,7 +9,6 @@ import {
   getTenantID,
 } from "./localService";
 
-import { toast } from "sonner";
 import { headerT } from "@/types/headerType";
 
 const authApi = axios.create({
@@ -22,7 +21,7 @@ authApi.interceptors.request.use(
   (config) => {
     let headers: headerT = {
       "Content-Type": "application/json",
-      // "user-uuid": getUserUUID(),
+      "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
     };
 

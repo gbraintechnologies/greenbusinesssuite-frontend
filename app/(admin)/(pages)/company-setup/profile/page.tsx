@@ -1,49 +1,38 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
-import UpdateInfo from "@/public/svg/updateInfo.svg";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IoIosArrowBack, IoIosArrowDown } from "react-icons/io";
-import Tabs from "@/components/Tabs/Tabs";
+
 import services from "@/services";
 
 import { Menu, Transition } from "@headlessui/react";
-import Link from "next/link";
+
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "sonner";
-import UserIcon from "@/public/icons/UserIcon";
-import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import { GoPlusCircle } from "react-icons/go";
 
-import FormCard from "@/components/Form/FormCard";
-import AssignForm from "../components/AssignForm";
+import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
+
 import Modal from "@/components/Modal/Modal";
 
 import { Company, IFilter, TimelineType, TimelineValues } from "@/types";
-import EmptyList from "@/components/Form/EmptyList";
-import { isConvertibleToNumber } from "@/utils/IsNumber/IsNumber";
 
-import UploadIcon from "@/public/icons/UploadIcon";
-import WriteIcon from "@/public/icons/WriteIcon";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import CompanyAdmins from "./_components/CompanyAdmins";
-import DatePicker from "@/components/DatePicker/DatePicker";
-import Pagination from "@/components/Pagination/Pagination";
-import useFileUpload from "@/hooks/useFileUpload";
+
 import { VscLink } from "react-icons/vsc";
-import Loader from "@/components/Loader/Loader";
+
 import Configuration from "./_components/Configuration";
 import BrandingSettings from "./_components/BrandingSettings";
 import AssignedForms from "./_components/AssignedForms";
-import Description from "./_components/Description";
+
 import SMSSenderID from "./_components/SMSSenderID";
 import { TbPhotoCircle } from "react-icons/tb";
 
 // @ts-ignore
 import "./index.css";
+import { Spinner, Tab } from "@heroui/react";
+import GlobalTabs from "@/components/GlobalTabs/GlobalTabs";
+import Profile from "../components/Profile";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
@@ -76,7 +65,7 @@ const Page = () => {
 
   const [smallLogoUrl, setSmallLogoUrl] = useState<string>("");
 
-  const [color, setColor] = useState<string>("");
+  const [color, setColor] = useState<string>("#1d1d1d");
 
   const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
 
@@ -102,8 +91,6 @@ const Page = () => {
     }
   }, [companySmallLogo]);
 
-  const logoPresentOnLoad = true;
-
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
@@ -113,164 +100,38 @@ const Page = () => {
     queryFn: services.getCompanyById(Number(id)),
   });
 
-  console.log("company info", companyData);
-
-  // const companyDescription =
-  //   companyData?.company_custom_values?.find(
-  //     (field: any) => field.custom_profile_item_id == 1
-  //   )?.value ?? "";
-
-  // const companyAdminName =
-  //   companyData?.company_custom_values?.find(
-  //     (field: any) => field.custom_profile_item_id == 2
-  //   )?.value ?? "";
-
-  // const companyAdminEmail =
-  //   companyData?.company_custom_values?.find(
-  //     (field: any) => field.custom_profile_item_id == 3
-  //   )?.value ?? "";
-
-  // const companySubSector =
-  //   companyData?.company_custom_values?.find(
-  //     (field: any) => field.custom_profile_item_id == 4
-  //   )?.value ?? "";
-
-  // const companyParentAddressId =
-  //   companyData?.company_custom_values?.find(
-  //     (field: any) => field.custom_profile_item_id == 5
-  //   )?.value ?? "";
-
-  // const companyChildAddressId =
-  //   companyData?.company_custom_values?.find(
-  //     (field: any) => field.custom_profile_item_id == 6
-  //   )?.value ?? "";
-
-  // const companySectorId =
-  //   companyData?.company_custom_values?.find(
-  //     (field: any) => field.custom_profile_item_id == 7
-  //   )?.value ?? "";
-
-  // const { data: assignedForms, isLoading: areFormsLoading } = useQuery({
-  //   queryKey: [
-  //     "get assigned forms for ",
-  //     Number(companyData?.id),
-  //     page,
-  //     limit,
-  //     selectedTimeline?.value,
-  //   ],
-  //   queryFn: services.getFormsByCompanyId(
-  //     companyData?.id,
-  //     page,
-  //     limit,
-  //     selectedTimeline?.value
-  //   ),
-  //   enabled: !!companyData?.id,
-  // });
-
-  // const { data: country, isLoading: isCountryLoading } = useQuery({
-  //   queryKey: ["country", companyData?.company_address],
-  //   queryFn: () => services.getCountryInfoByName(companyData?.company_address),
-  //   enabled: !!companyData?.company_address,
-  // });
-
-  // const { data: industry, isLoading: isIndustryLoading } = useQuery({
-  //   queryKey: ["industry", companyData?.industry],
-  //   queryFn: services.getSubSectorByID(
-  //     Number(companySectorId),
-  //     Number(companyData?.industry)
-  //   ),
-  //   enabled:
-  //     !!companyData?.industry &&
-  //     !!companySectorId &&
-  //     isConvertibleToNumber(companyData?.industry),
-  // });
-
-  // const { data: companyBranding, isLoading: brandingLoading } = useQuery({
-  //   queryKey: ["get company branding info", companyData?.companyIdentifier],
-  //   queryFn: services.getCompanyBranding(companyData?.companyIdentifier!),
-  //   enabled: !!companyData?.companyIdentifier,
-  // });
+  const { data: companyBranding, isLoading: brandingLoading } = useQuery({
+    queryKey: ["get company branding info", companyData?.companyIdentifier],
+    queryFn: services.getCompanyBranding(companyData?.companyIdentifier!),
+    enabled: !!companyData?.companyIdentifier,
+    retry: 1,
+  });
 
   const [formsLoading, setFormsLoading] = useState<boolean>(false);
 
-  const queryClient = useQueryClient();
-
-  const { handleFileUpload } = useFileUpload();
-
   const router = useRouter();
 
-  // useEffect(() => {
-  //   if (!companyData) return;
-  //   const status = statuses.find(
-  //     (status) =>
-  //       status.value.toLowerCase() === companyData?.status?.toLowerCase()
-  //   );
-  //   setActiveStatus(status);
-  //   setParentAddressScheme(
-  //     country?.addressingScheme?.parentLevels?.find(
-  //       (entry: any) => entry?.id == companyParentAddressId
-  //     )
-  //   );
-  //   setBackgroundImageUrl(companyData?.company_logo);
+  useEffect(() => {
+    if (!companyData) return;
+    const status = statuses.find(
+      (status) =>
+        status.value.toLowerCase() === companyData?.status?.toLowerCase()
+    );
+    setActiveStatus(status);
+    // setParentAddressScheme(
+    //   country?.addressingScheme?.parentLevels?.find(
+    //     (entry: any) => entry?.id == companyParentAddressId
+    //   )
+    // );
+    setBackgroundImageUrl(companyData?.companyLogo);
 
-  //   if (companyBranding) {
-  //     setColor(companyBranding?.color);
-  //     setSmallLogoUrl(companyBranding?.logo);
-  //   }
-  // }, [companyData, country, companyBranding]);
+    if (companyBranding) {
+      setColor(companyBranding?.color);
+      setSmallLogoUrl(companyBranding?.logo);
+    }
+  }, [companyData, companyBranding]);
 
-  // const editCompanyStatus = async (status: any) => {
-  //   let companyDataInfo = { ...companyData, status: status.value };
-
-  //   const keyToDelete = "company_custom_values";
-
-  //   let customFields = companyDataInfo[keyToDelete];
-
-  //   delete companyDataInfo[keyToDelete];
-
-  //   try {
-  //     await services.editCompanyWithCustomFields(
-  //       companyData.id,
-  //       companyDataInfo,
-  //       customFields
-  //     );
-  //     setActiveStatus(status);
-  //     toast.success("Company status updated successfully");
-  //   } catch (error) {
-  //     toast.error("Failed to update company status");
-  //   }
-  // };
-
-  // const editCompanyBranding = async () => {
-  //   if (!smallLogoUrl) {
-  //     toast.error("Logo is required");
-  //     return;
-  //   }
-  //   try {
-  //     const companySmallLogoURL =
-  //       companySmallLogo && (await handleFileUpload(companySmallLogo as File));
-
-  //     await services.editCompanyBranding(
-  //       companyBranding?.id,
-  //       companyData?.id,
-  //       companyData?.company_identifier,
-  //       companySmallLogo
-  //         ? companySmallLogoURL?.file_url
-  //         : companyBranding?.logo,
-  //       color,
-  //       companyData?.company_name,
-  //       companyBranding?.modules?.map((module: any) => module?.id),
-  //       companyBranding?.categorySpecificModules?.map(
-  //         (module: any) => module?.id
-  //       )
-  //     );
-  //     toast.success("Company branding updated successfully");
-  //   } catch (error) {
-  //     toast.error("Failed to update company branding");
-  //   }
-  // };
   if (isLoading) {
-    // if (isLoading || areFormsLoading || isCountryLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
         <div>
@@ -294,30 +155,19 @@ const Page = () => {
             </div>
             <h3 className="font-semibold text-xl">Company Profile</h3>
           </div>
-
-          {/* <div className="flex gap-3">
-            <Link
-              href={`/company-setup/profile/edit?id=${id}`}
-              className="bg-primary-green disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-            >
-              <Image src={UpdateInfo} alt="Update Info" />
-              Update Information
-            </Link>
-          </div> */}
         </div>
 
         <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
           <div className="flex gap-5 items-center justify-center">
-            {companyData?.companyLogo ? (
-              <></>
+            {companyBranding?.logo ? (
+              <img
+                src={companyBranding?.logo ?? ""}
+                width={144}
+                height={144}
+                className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
+                alt="Company Logo"
+              />
             ) : (
-              // <Image
-              //   src={companyData?.companyLogo}
-              //   width={144}
-              //   height={144}
-              //   className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
-              //   alt="Company Logo"
-              // />
               <div className="rounded-full w-36 h-36 border bg-[rgba(226, 232, 240, 1)] flex items-center justify-center ">
                 <TbPhotoCircle size={70} />
               </div>
@@ -325,17 +175,17 @@ const Page = () => {
             {companyData?.companyName && (
               <div className="flex flex-col gap-3">
                 <div className="label">Company Name</div>
-                <div className="text-4xl font-bold">
+                <div className="text-4xl -mt-2 font-bold">
                   {companyData?.companyName}
                 </div>
               </div>
             )}
           </div>
           <div className="flex gap-6 items-center">
-            {companyData?.companyIdentifier && (
-              <div className="flex flex-col gap-3">
-                <div className="label">Company Dashboard</div>
-
+            <div className="flex flex-col gap-3">
+              <div className="label">Company Dashboard</div>
+              {companyData?.companyIdentifier &&
+              companyData?.buildStatus?.toLowerCase() == "active" ? (
                 <button
                   className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center justify-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2"
                   onClick={() => {
@@ -353,8 +203,13 @@ const Page = () => {
                 >
                   <VscLink /> Copy Link{" "}
                 </button>
-              </div>
-            )}
+              ) : (
+                <div className="flex items-center text-xs text-gray-500 gap-2">
+                  <Spinner color="default" size="sm" />
+                  <p>Setting up...</p>
+                </div>
+              )}
+            </div>
             {companyData?.status && (
               <div className="flex flex-col gap-3">
                 <div className="label">Status</div>
@@ -397,33 +252,11 @@ const Page = () => {
 
         {/* TABS FOR DESCRIPTION  / ASSIGNED FORMS */}
         <div className="mt-10">
-          <div className="flex justify-start items-center">
-            <Tabs
-              filters={filters}
-              setActiveFilter={setActiveFilter}
-              activeFilter={activeFilter}
-            />
-          </div>
-
-          {/* RENDERING BASED ON FILTER */}
-          <div>
-            {activeFilter.value === "description" && (
-              <></>
-              // <Description
-              //   companyData={companyData}
-              //   companyChildAddressId={companyChildAddressId}
-              //   companyDescription={companyDescription}
-              //   companySubSector={companySubSector}
-              //   country={country}
-              //   industry={industry}
-              //   parentAddressScheme={parentAddressScheme}
-              // />
-            )}
-
-            {activeFilter.value === "assigned_forms" && (
+          <GlobalTabs defaultTab="assignedForms">
+            <Tab key="assignedForms" title="Assigned Forms">
               <AssignedForms
                 // assignedForms={assignedForms}
-                assignedForms={[]}
+                assignedForms={{ content: [] }}
                 selectedTimeline={selectedTimeline}
                 setSelectedTimeline={setSelectedTimeline}
                 page={page}
@@ -432,34 +265,34 @@ const Page = () => {
                 setShowAssignModal={setShowAssignModal}
                 formsLoading={formsLoading}
               />
-            )}
-
-            {activeFilter.value === "branding_settings" && (
-              <></>
-              // <BrandingSettings
-              //   color={color}
-              //   setCompanySmallLogo={setCompanySmallLogo}
-              //   companySmallLogo={companySmallLogo}
-              //   smallLogoUrl={smallLogoUrl}
-              //   showColorPicker={showColorPicker}
-              //   setShowColorPicker={setShowColorPicker}
-              //   handleChangeComplete={handleChangeComplete}
-              //   brandingLoading={brandingLoading}
-              // />
-            )}
-
-            {activeFilter?.value === "administrators" && (
+            </Tab>
+            <Tab key="branding" title="Branding">
+              <BrandingSettings
+                color={color}
+                setCompanySmallLogo={setCompanySmallLogo}
+                companySmallLogo={companySmallLogo}
+                smallLogoUrl={smallLogoUrl}
+                showColorPicker={showColorPicker}
+                setShowColorPicker={setShowColorPicker}
+                handleChangeComplete={handleChangeComplete}
+                brandingLoading={brandingLoading}
+                companyBranding={companyBranding}
+                companyData={companyData}
+              />
+            </Tab>
+            <Tab key="admins" title="Administrators">
               <CompanyAdmins companyId={id} />
-            )}
-
-            {activeFilter?.value === "configuration" && (
-              <Configuration tenantId={companyData?.companyIdentifier!} />
-            )}
-
-            {activeFilter?.value === "sms_sender_id" && (
+            </Tab>
+            <Tab key="senderId" title="Sender ID">
               <SMSSenderID company={companyData} companyId={id} />
-            )}
-          </div>
+            </Tab>
+            <Tab key="configuration" title="Configuration">
+              <Configuration tenantId={companyData?.companyIdentifier!} />
+            </Tab>
+            <Tab key="companyProfile" title="Company Profile">
+              <Profile companyData={companyData} isLoading={isLoading} />
+            </Tab>
+          </GlobalTabs>
         </div>
       </div>
       {/**ASSIGN FORM MODAL */}

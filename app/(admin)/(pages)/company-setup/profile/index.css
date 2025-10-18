@@ -13,3 +13,23 @@
   @apply text-[#0F172A] text-sm font-medium;
 }
 
+/* Color picker styles */
+.react-colorful {
+  width: 250px;
+}
+
+.react-colorful__saturation {
+  border-radius: 8px 8px 0 0;
+  border-bottom: none;
+}
+
+.react-colorful__hue {
+  border-radius: 0 0 8px 8px;
+  margin-top: 12px;
+}
+
+.react-colorful__pointer {
+  width: 20px;
+  height: 20px;
+}
+
