@@ -88,7 +88,6 @@ function LogIn() {
     try {
       const token: any = await login(data.username, data.password);
 
-      console.log("token", token);
       if (token?.status === 200) {
         addAuthData(token?.data);
         addAdminData(token?.data);
@@ -146,7 +145,7 @@ function LogIn() {
       <div className="max-h-screen h-screen flex overflow-hidden">
         <div className=" flex px-4 md:flex flex-[2] items-center justify-center bg-white p-6 rounded-[20px] shadow-2xl py-20">
           <form
-            className="flex flex-col  w-full md:max-w-lg gap-y-6 shadow-md border bg-white py-20 p-6 rounded-[20px]"
+            className="flex flex-col  w-full md:max-w-lg gap-y-6  border bg-white py-20 p-6 rounded-[20px]"
             onSubmit={handleSubmit(onSubmit)}
           >
             <h6 className="font-bold text-3xl">Welcome Back! Sign in</h6>

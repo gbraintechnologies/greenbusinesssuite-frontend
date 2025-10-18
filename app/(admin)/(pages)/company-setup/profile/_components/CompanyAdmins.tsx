@@ -2,7 +2,7 @@
 
 import ComboSearch from "@/components/SearchBox/ComboSearch";
 import services from "@/services";
-import { Button } from "@heroui/react";
+import { Button, Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -91,13 +91,11 @@ function CompanyAdmins({ companyId }: any) {
   return (
     <div className="min-h-[40vh] py-5">
       {/* Check if company is done building: DB CREATED AND PROVISIONED FOR IT  */}
-      {!companyDataLoading &&
-      companyData &&
-      companyData?.status !== "ACTIVE" ? (
-        <div className="h-40 flex items-start justify-start">
+      {companyData && companyData?.buildStatus != "ACTIVE" ? (
+        <div className="border rounded-xl p-20  flex items-center justify-center">
           <div className="flex flex-col text-gray-700 items-center justify-center gap-2">
-            <MdOutlineSettingsSuggest className="" size={40} />
-            <p className="text-gray-400 text-sm">
+            <Spinner size="lg" color="primary" />
+            <p className="text-gray-500 mt-2">
               [ Company is being setup, please wait... ]
             </p>
           </div>

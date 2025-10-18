@@ -73,16 +73,16 @@ export const resetPassword = (
 };
 
 export const notifyUserTempCred = (id: any, channel: string) => {
-  return noAuthApi.post("/users/noauth/notify_user_temp_cred/", {
+  return noAuthApi.post("/noauth/notify_user_temp_cred/", {
     user_id: id,
     channel: channel,
   });
 };
 
 export const userSelfSignUp = (data: any) => {
-  return noAuthApi.post("/users/auth/sign-up", data);
+  return noAuthApi.post("/auth/sign-up", data);
 };
 
 export const confirmAccount = (token: any) => {
-  return noAuthApi.put(`/users/confirm_account/${token}`);
+  return noAuthApi.put(`/confirm_account/${token}`);
 };

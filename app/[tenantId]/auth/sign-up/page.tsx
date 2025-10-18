@@ -89,6 +89,8 @@ function Page(props: any) {
     { resetForm, setSubmitting }: FormikHelpers<any>
   ) => {
     const userData = {
+      roleId: 0,
+      profile_image: "string",
       email: values.email as string,
       username: values.email as string,
       password: values.password as string,
