@@ -49,7 +49,7 @@ export const publishedFomsOfCompany = (companyId: number) => {
 
 export const assignFormToCompany = (
   formId: number | string,
-  companyId: string
+  companyId: string | number
 ) => {
   return authApi.put(`/forms/builder/company/${formId}/${companyId}`);
 };

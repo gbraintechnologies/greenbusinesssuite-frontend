@@ -32,19 +32,13 @@ import * as Yup from "yup";
 
 import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 
-import BigUserIcon from "@/public/icons/BigUserIcon";
-
-// hooks
-import useFileUpload from "@/hooks/useFileUpload";
-
 // css
 import "./index.css";
 
 //
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
-import Dropdown from "@/components/Dropdown/Dropdown";
 import { useQuery } from "@tanstack/react-query";
-import { MeshRoles } from "@/config/roles.app";
+import { Autocomplete, AutocompleteItem } from "@heroui/react";
 
 function NewUser() {
   const [loading, setLoading] = useState(false);
@@ -53,105 +47,80 @@ function NewUser() {
   const [selectedRole, setSelectedRole] = useState(null);
 
   // Get ALL MESH BUSINESS SUITE ROLES
-  const { data, isLoading, refetch } = useQuery({
+  const { data: roles, isLoading } = useQuery({
     queryKey: ["mesh roles"],
-    enabled: false,
-    // ID OF MESH APP IS 1 IN DB
-    queryFn: services.getMeshBusinessSuiteRoles(1),
+    queryFn: services.getMeshBusinessSuiteRoles(),
   });
 
-  // FETCH ROLES ON MOUNT
-  useEffect(() => {
-    refetch();
-  }, []);
+  console.log("roles", roles);
 
-  const [roles, setRoles] = useState([]);
-
-  useEffect(() => {
-    if (data) {
-      let temp = [];
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].role_name.toLowerCase() == "client") {
-          // do not add clients
-        }
-
-        if (MeshRoles.includes(data[i]?.role_name?.toLowerCase())) {
-          temp.push({
-            id: data[i].id,
-            value: data[i].id,
-            label: data[i].role_name,
-          });
-        }
-      }
-      // @ts-ignore
-      setRoles(temp);
-    }
-  }, [data, isLoading]);
-
-  const { handleFileUpload, loadingFile } = useFileUpload();
+  console.log("selected role", selectedRole);
 
   const createNewUser = async (values: any, resetForm: any) => {
+    console.log("selected role", selectedRole);
     let data = {
       email: values.email,
       username: values.email,
-      first_name: values.firstname,
-      last_name: values.lastname,
-      phone_number: phone,
-      mobile_phone_number: phone,
-      user_status: "ACTIVE",
+      firstName: values.firstname,
+      lastName: values.lastname,
+      password: "password",
+      roleId: 3, // what role is this?
+      profile_image: "",
+      phone: phone,
+      status: "ACTIVE",
     };
+    //     {
+    //   "username": "string",
+    //   "status": "ACTIVE",
+    //   "firstName": "string",
+    //   "lastName": "string",
+    //   "email": "string",
+    //   "password": "string",
+    //   "phone": "string",
+    //   "roleId": 0,
+    //   "profile_image": "string"
+    // }
 
     let loading = toast.info("Creating user. Please wait...");
 
-    // upload image first, then use image url when creating user
-    const profilePicURL =
-      profileImage && (await handleFileUpload(profileImage as File));
-
-    const custom_profiles = [
-      {
-        custom_profile_item_id: 1,
-        value: profilePicURL?.file_url || "",
-      },
-    ];
-
     setLoading(true);
     services
-      .createUserWithCustomProfiles(data, custom_profiles)
+      .createUser(data)
       .then((res: any) => {
         setLoading(false);
+        console.log("CREATE USER RES", res);
 
         toast.dismiss(loading);
 
         // ASSIGN ROLE TO CREATED USER
-        services
-          //@ts-ignore
-          .assignRoleToUser(res.data.id, selectedRole?.value)
-          .then((res) => {
-            toast.success(
-              // @ts-ignore
-              `Assigned ${selectedRole?.label} role to ${data.first_name}`
-            );
-          })
-          .catch((e: any) => {
-            //
-            console.log("error asinging", e);
-          });
+        // services
+        //   //@ts-ignore
+        //   .assignRoleToUser(res.data.id, selectedRole?.value)
+        //   .then((res) => {
+        //     toast.success(
+        //       // @ts-ignore
+        //       `Assigned ${selectedRole?.label} role to ${data.first_name}`
+        //     );
+        //   })
+        //   .catch((e: any) => {
+        //     //
+        //     console.log("error asinging", e);
+        //   });
 
         // NOTIFY USER OF TEMP CREDENTIALS
-        services
-          .notifyUserTempCred(res?.data?.id, "EMAIL")
-          .then((res) => {
-            resetForm();
-            setProfileImage(null);
-            setPhone("");
-            setSelectedRole(null);
-            toast.success(`Temporary password sent to ${data.email}`);
-            toast.success("Created user successfully");
-            console.log("notify user", res);
-          })
-          .catch((e) => {
-            console.log("error notifying", e);
-          });
+        // services
+        //   .notifyUserTempCred(res?.data?.id, "EMAIL")
+        //   .then((res) => {
+        //     resetForm();
+
+        //     setPhone("");
+        //     setSelectedRole(null);
+        //     toast.success(`Temporary password sent to ${data.email}`);
+        //     toast.success("Created user successfully");
+        //   })
+        //   .catch((e) => {
+        //     console.log("error notifying", e);
+        //   });
       })
       .catch((e) => {
         setLoading(false);
@@ -171,10 +140,6 @@ function NewUser() {
   const router = useRouter();
 
   const [showCancelModal, setShowCancelModal] = useState(false);
-
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-
-  // status:  ACTIVE, INACTIVE
 
   // formik
   let initialValues = {
@@ -198,8 +163,6 @@ function NewUser() {
       .required("Email address is required"),
   });
 
-  const inputFileRef = React.useRef(undefined);
-
   return (
     <div className="pb-40 px-5">
       {/* Form */}
@@ -219,7 +182,7 @@ function NewUser() {
                   className="my-3 cursor-pointer flex text-sm items-center gap-2"
                   onClick={() => router.back()}
                 >
-                  <IoIosArrowBack size={12} />
+                  <IoIosArrowBack size={20} />
                 </div>
                 <h3 className="font-semibold text-xl">
                   Create new user account
@@ -251,48 +214,6 @@ function NewUser() {
                   )}
                 </button>
               </div>
-            </div>
-
-            {/* profile picture */}
-            <div className="relative w-[140px] h-[140px] rounded-full">
-              {profileImage ? (
-                <div className="rounded-full overflow-hidden w-[140px] h-[140px]">
-                  <Image
-                    src={URL.createObjectURL(profileImage)}
-                    alt="profile"
-                    width={140}
-                    height={140}
-                    className="rounded-full h-full w-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="rounded-full  flex items-center justify-center w-[140px] h-[140px] bg-slate-50">
-                  <BigUserIcon />
-                </div>
-              )}
-
-              <input
-                type="file"
-                // @ts-ignore
-                ref={inputFileRef}
-                accept=".jpg, .png, .jpeg"
-                className="hidden"
-                onChange={(e) => {
-                  setProfileImage(e.target.files && e.target.files[0]);
-                }}
-              />
-
-              <button
-                type="button"
-                onClick={() => {
-                  // @ts-ignore
-                  inputFileRef?.current?.click();
-                }}
-                className="absolute flex items-center gap-1 border hover:bg-gray-100 border-gray-300 text-sm bg-white rounded-lg px-3 py-1 bottom-4 -right-8"
-              >
-                <MdOutlineEdit />
-                Edit
-              </button>
             </div>
 
             {/* FORM */}
@@ -342,13 +263,19 @@ function NewUser() {
                 <PhoneSelector phone={phone} setPhone={setPhone} />
               </div>
 
-              <div className="input-holder">
-                <label>Roles</label>
-                <Dropdown
-                  selected={selectedRole}
-                  setSelected={setSelectedRole}
-                  options={roles}
-                />
+              <div>
+                <Autocomplete
+                  isLoading={isLoading}
+                  className="w-full"
+                  variant="bordered"
+                  placeholder="Role"
+                  labelPlacement="outside"
+                  label="Select a Role"
+                >
+                  {roles?.map((role: string) => (
+                    <AutocompleteItem key={role}>{role}</AutocompleteItem>
+                  ))}
+                </Autocomplete>
               </div>
             </div>
           </Form>

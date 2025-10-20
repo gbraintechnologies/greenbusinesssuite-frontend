@@ -14,6 +14,13 @@ export const getCompanyById = (id: number) => {
   return () => authApi.get(`/companies/${id}`).then((res) => res.data);
 };
 
+export const getCompanyAssignedForms = (id: number) => {
+  return () =>
+    authApi
+      .get(`/forms/builder/search-assign-forms/${id}/1/2000/ALL`)
+      .then((res) => res.data);
+};
+
 export const createCompany = ({ data }: { data: any }) => {
   return authApi.post("/companies/create", data);
 };
@@ -58,16 +65,11 @@ export const getCustomFieldsForCompany = (companyId: number) => {
       .then((res) => res.data);
 };
 
-export const searchCompany = (searchTerm: string) => {
-  return () =>
-    authApi.get(`/companies-by-filter/${searchTerm}`).then((res) => res.data);
-};
-
 // company Administration
 export const assignAdminToCompany = (adminID: number, companyID: number) => {
-  return authApi.put("/company/assign_admin_to_company", {
-    company_admin_id: adminID,
-    company_id: companyID,
+  return authApi.put("/companies/admin", {
+    id: companyID,
+    newAdminUserId: adminID,
   });
 };
 

@@ -107,3 +107,31 @@ export type TimelineValues =
   | "This week"
   | "This month"
   | "This year";
+
+export interface CompanyType {
+  id: number;
+  description: string;
+  companyName: string;
+  status: string;
+  primaryContactName: string;
+  primaryContactEmail: string;
+  primaryContactPhoneNumber: string;
+  companyLogo: string;
+  companyAddress: string;
+  companyDigitalAddress: string;
+  industry: string;
+  companyMerchantMomoNumber: string;
+  companyBankName: string;
+  taxId: string;
+  startOfDayTime: null;
+  endOfDayTime: null;
+  primaryCurrency: string;
+  secondaryCurrency: any[];
+  companyAdminId: number;
+  companyCode: null;
+  buildStatus: string;
+  driverName: string;
+  dbUrl: string;
+  companyIdentifier: string;
+  assignedFormIds: any[];
+}

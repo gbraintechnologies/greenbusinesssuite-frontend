@@ -10,11 +10,11 @@ export const allUsersRaw = (offset: number = 0, limit: number = 20) => {
 };
 
 export const userByID = (id: any) => {
-  return () => authApi.get(`/users/user_by_id/${id}`).then((res) => res.data);
+  return () => authApi.get(`/users/${id}`).then((res) => res.data);
 };
 
 export const userByIDRaw = (id: any) => {
-  return authApi.get(`/users/user_by_id/${id}`).then((res) => res.data);
+  return authApi.get(`/users/${id}`).then((res) => res.data);
 };
 
 export const searchUsers = (filter_word: any) => {
@@ -35,7 +35,7 @@ export const allUsersByRole = (role_id: any, role_name: any) => {
 };
 
 export const createUser = (data: any) => {
-  return authApi.post("/users/create", data);
+  return authApi.post("/auth/sign-up", data);
 };
 
 export const blacklistUser = (userId: string) => {
