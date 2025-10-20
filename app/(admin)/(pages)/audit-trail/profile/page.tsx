@@ -28,7 +28,7 @@ const page = () => {
   } = useQuery({
     queryKey: ["mesh roles"],
     // ID OF MESH APP IS 1 IN DB
-    queryFn: services.getMeshBusinessSuiteRoles(1),
+    queryFn: services.getMeshBusinessSuiteRoles(),
   });
 
   const [role, setRole] = React.useState("");

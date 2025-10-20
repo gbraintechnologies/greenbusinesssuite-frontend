@@ -58,7 +58,7 @@ function NewUser() {
     queryKey: ["mesh roles"],
     enabled: false,
     // ID OF MESH APP IS 1 IN DB
-    queryFn: services.getMeshBusinessSuiteRoles(1),
+    queryFn: services.getMeshBusinessSuiteRoles(),
   });
 
   // FETCH ROLES ON MOUNT

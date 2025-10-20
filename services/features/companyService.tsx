@@ -10,6 +10,10 @@ export const getAllCompanies = (offset: number = 0, limit: number = 50) => {
       .then((res) => res.data);
 };
 
+export const searchCompany = (searchTerm: string) => {
+  return () => authApi.get(`/companies`).then((res) => res.data);
+};
+
 export const getCompanyById = (id: number) => {
   return () => authApi.get(`/companies/${id}`).then((res) => res.data);
 };

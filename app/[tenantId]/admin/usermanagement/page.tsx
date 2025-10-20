@@ -77,7 +77,7 @@ function UserManagement(props: any) {
   const { data: roles, isLoading: rolesLoading } = useQuery({
     queryKey: ["mesh roles"],
     // ID OF MESH APP IS 1 IN DB
-    queryFn: services.getMeshBusinessSuiteRoles(1),
+    queryFn: services.getMeshBusinessSuiteRoles(),
   });
 
   useEffect(() => {
