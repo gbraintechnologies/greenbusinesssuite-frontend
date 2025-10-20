@@ -15,7 +15,7 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 
 import Modal from "@/components/Modal/Modal";
 
-import { Company, IFilter, TimelineType, TimelineValues } from "@/types";
+import { CompanyType, IFilter, TimelineType, TimelineValues } from "@/types";
 
 import CompanyAdmins from "./_components/CompanyAdmins";
 
@@ -98,10 +98,18 @@ const Page = () => {
 
   const id = searchParams.get("id");
 
-  const { data: companyData, isLoading } = useQuery<Company>({
+  const { data: companyData, isLoading } = useQuery<CompanyType>({
     queryKey: ["company", parseInt(id as string)],
     queryFn: services.getCompanyById(Number(id)),
   });
+
+  const { data: assignedForms, isLoading: assignedFormsLoading } =
+    useQuery<CompanyType>({
+      queryKey: ["company assigned forms", parseInt(id as string)],
+      queryFn: services.getCompanyAssignedForms(Number(id)),
+    });
+
+  console.log("assigned forms", assignedForms);
 
   const { data: companyBranding, isLoading: brandingLoading } = useQuery({
     queryKey: ["get company branding info", companyData?.companyIdentifier],
@@ -144,6 +152,7 @@ const Page = () => {
       </div>
     );
   }
+
   return (
     <>
       <div className="px-5 pb-10">
@@ -258,8 +267,9 @@ const Page = () => {
           <GlobalTabs defaultTab="assignedForms">
             <Tab key="assignedForms" title="Assigned Forms">
               <AssignedForms
-                // assignedForms={assignedForms}
-                assignedForms={{ content: [] }}
+                assignedForms={assignedForms}
+                // assignedForms={{ content: [] }}
+                companyData={companyData}
                 selectedTimeline={selectedTimeline}
                 setSelectedTimeline={setSelectedTimeline}
                 page={page}

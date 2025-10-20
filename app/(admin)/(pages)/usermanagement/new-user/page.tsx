@@ -54,80 +54,92 @@ function NewUser() {
 
   console.log("roles", roles);
 
+  console.log("selected role", selectedRole);
+
   const createNewUser = async (values: any, resetForm: any) => {
+    console.log("selected role", selectedRole);
     let data = {
       email: values.email,
       username: values.email,
-      first_name: values.firstname,
-      last_name: values.lastname,
-      phone_number: phone,
-      mobile_phone_number: phone,
-      user_status: "ACTIVE",
+      firstName: values.firstname,
+      lastName: values.lastname,
+      password: "password",
+      roleId: 3, // what role is this?
+      profile_image: "",
+      phone: phone,
+      status: "ACTIVE",
     };
+    //     {
+    //   "username": "string",
+    //   "status": "ACTIVE",
+    //   "firstName": "string",
+    //   "lastName": "string",
+    //   "email": "string",
+    //   "password": "string",
+    //   "phone": "string",
+    //   "roleId": 0,
+    //   "profile_image": "string"
+    // }
 
     let loading = toast.info("Creating user. Please wait...");
 
     setLoading(true);
-    // services
-    //   .createUserWithCustomProfiles(data, custom_profiles)
-    //   .then((res: any) => {
-    //     setLoading(false);
+    services
+      .createUser(data)
+      .then((res: any) => {
+        setLoading(false);
+        console.log("CREATE USER RES", res);
 
-    //     toast.dismiss(loading);
+        toast.dismiss(loading);
 
-    //     // ASSIGN ROLE TO CREATED USER
-    //     services
-    //       //@ts-ignore
-    //       .assignRoleToUser(res.data.id, selectedRole?.value)
-    //       .then((res) => {
-    //         toast.success(
-    //           // @ts-ignore
-    //           `Assigned ${selectedRole?.label} role to ${data.first_name}`
-    //         );
-    //       })
-    //       .catch((e: any) => {
-    //         //
-    //         console.log("error asinging", e);
-    //       });
+        // ASSIGN ROLE TO CREATED USER
+        // services
+        //   //@ts-ignore
+        //   .assignRoleToUser(res.data.id, selectedRole?.value)
+        //   .then((res) => {
+        //     toast.success(
+        //       // @ts-ignore
+        //       `Assigned ${selectedRole?.label} role to ${data.first_name}`
+        //     );
+        //   })
+        //   .catch((e: any) => {
+        //     //
+        //     console.log("error asinging", e);
+        //   });
 
-    //     // NOTIFY USER OF TEMP CREDENTIALS
-    //     services
-    //       .notifyUserTempCred(res?.data?.id, "EMAIL")
-    //       .then((res) => {
-    //         resetForm();
-    //         setProfileImage(null);
-    //         setPhone("");
-    //         setSelectedRole(null);
-    //         toast.success(`Temporary password sent to ${data.email}`);
-    //         toast.success("Created user successfully");
-    //         console.log("notify user", res);
-    //       })
-    //       .catch((e) => {
-    //         console.log("error notifying", e);
-    //       });
-    //   })
-    //   .catch((e) => {
-    //     setLoading(false);
-    //     toast.dismiss(loading);
-    //     toast.dismiss();
+        // NOTIFY USER OF TEMP CREDENTIALS
+        // services
+        //   .notifyUserTempCred(res?.data?.id, "EMAIL")
+        //   .then((res) => {
+        //     resetForm();
 
-    //     if (Array.isArray(e?.response?.data?.detail)) {
-    //       e?.response?.data?.detail?.map((error: any) => {
-    //         toast.error(error.msg);
-    //       });
-    //     } else {
-    //       toast.error(e?.response?.data?.detail);
-    //     }
-    //   });
+        //     setPhone("");
+        //     setSelectedRole(null);
+        //     toast.success(`Temporary password sent to ${data.email}`);
+        //     toast.success("Created user successfully");
+        //   })
+        //   .catch((e) => {
+        //     console.log("error notifying", e);
+        //   });
+      })
+      .catch((e) => {
+        setLoading(false);
+        toast.dismiss(loading);
+        toast.dismiss();
+
+        if (Array.isArray(e?.response?.data?.detail)) {
+          e?.response?.data?.detail?.map((error: any) => {
+            toast.error(error.msg);
+          });
+        } else {
+          toast.error(e?.response?.data?.detail);
+        }
+      });
   };
 
   const router = useRouter();
 
   const [showCancelModal, setShowCancelModal] = useState(false);
-
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-
-  // status:  ACTIVE, INACTIVE
 
   // formik
   let initialValues = {
@@ -150,8 +162,6 @@ function NewUser() {
       .email("Invalid email")
       .required("Email address is required"),
   });
-
-  const inputFileRef = React.useRef(undefined);
 
   return (
     <div className="pb-40 px-5">
