@@ -33,12 +33,15 @@ import "./index.css";
 import { Spinner, Tab } from "@heroui/react";
 import GlobalTabs from "@/components/GlobalTabs/GlobalTabs";
 import Profile from "../components/Profile";
+import AssignForm from "../components/AssignForm";
 
 const Page = () => {
   const [statuses, setStatuses] = useState([
     { id: 2, name: "Active", value: "ACTIVE" },
     { id: 3, name: "Inactive", value: "INACTIVE" },
   ]);
+
+  const queryClient = useQueryClient();
 
   const [filters, setFilters] = useState<IFilter[]>([
     { id: 0, name: "Description", value: "description" },
@@ -302,12 +305,11 @@ const Page = () => {
         size="big"
         title="Select form to assign to organisation"
       >
-        <></>
-        {/* <AssignForm
+        <AssignForm
           companyId={companyData?.id ? companyData?.id : null}
           setShow={setShowAssignModal}
           queryClient={queryClient}
-        /> */}
+        />
       </Modal>
     </>
   );

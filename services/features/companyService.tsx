@@ -58,11 +58,6 @@ export const getCustomFieldsForCompany = (companyId: number) => {
       .then((res) => res.data);
 };
 
-export const searchCompany = (searchTerm: string) => {
-  return () =>
-    authApi.get(`/companies-by-filter/${searchTerm}`).then((res) => res.data);
-};
-
 // company Administration
 export const assignAdminToCompany = (adminID: number, companyID: number) => {
   return authApi.put("/company/assign_admin_to_company", {

@@ -12,7 +12,7 @@ import React, { useEffect } from "react";
 import { toast } from "sonner";
 
 type Props = {
-  companyId: string;
+  companyId: string | number | null;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   queryClient: any;
 };
@@ -57,7 +57,7 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
   const assignFormToCompany = async () => {
     setLoading(true);
     try {
-      await services.assignFormToCompany(selected, companyId);
+      await services.assignFormToCompany(selected, companyId!);
       // invalidate form data
       queryClient.invalidateQueries({
         queryKey: ["get assigned forms for ", Number(companyId)],
@@ -109,24 +109,26 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
           <>
             <div className="grid grid-cols-4 my-4 gap-4 h-full overflow-y-scroll">
               {allForms?.content &&
-                allForms?.content?.map((form: any) => {
-                  return (
-                    <div
-                      className={
-                        selected === form.id
-                          ? "rounded-lg border-2 border-green-400 drop-shadow-main h-fit w-auto "
-                          : " "
-                      }
-                    >
-                      <FormCard
-                        key={form.id}
-                        form={form}
-                        noMetaData={true}
-                        onClick={() => setSelected(form.id)}
-                      />
-                    </div>
-                  );
-                })}
+                allForms?.content
+                  ?.filter((item: any) => !item?.isTemplate)
+                  ?.map((form: any) => {
+                    return (
+                      <div
+                        className={
+                          selected === form.id
+                            ? "rounded-lg border-2 border-green-400 drop-shadow-main h-fit w-auto "
+                            : " "
+                        }
+                      >
+                        <FormCard
+                          key={form.id}
+                          form={form}
+                          noMetaData={true}
+                          onClick={() => setSelected(form.id)}
+                        />
+                      </div>
+                    );
+                  })}
             </div>
           </>
         )}
