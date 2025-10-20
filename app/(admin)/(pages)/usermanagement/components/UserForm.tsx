@@ -83,7 +83,7 @@ const UserForm = ({
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["mesh roles"],
     // ID OF MESH APP IS 1 IN DB
-    queryFn: services.getMeshBusinessSuiteRoles(1),
+    queryFn: services.getMeshBusinessSuiteRoles(),
   });
 
   const [roles, setRoles] = useState([]);
