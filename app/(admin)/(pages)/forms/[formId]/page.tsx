@@ -26,6 +26,7 @@ import PublishFormButton from "../builder/PublishFormButton";
 import { toast } from "sonner";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import Image from "next/image";
+import { CompanyType } from "@/types";
 
 function FormDetail(props: any) {
   const params: any = use(props.params);
@@ -46,11 +47,12 @@ function FormDetail(props: any) {
     enabled: Boolean(formID),
   });
 
-  const { data: companyData, isLoading: isLoadingCompanyInfo } = useQuery({
-    queryKey: ["company", parseInt(form?.companyId as string)],
-    queryFn: services.getCompanyById(Number(form?.companyId)),
-    enabled: Boolean(form?.companyId),
-  });
+  const { data: companyData, isLoading: isLoadingCompanyInfo } =
+    useQuery<CompanyType>({
+      queryKey: ["company", parseInt(form?.companyId as string)],
+      queryFn: services.getCompanyById(Number(form?.companyId)),
+      enabled: Boolean(form?.companyId),
+    });
 
   const { data: formStatusCount } = useQuery({
     queryKey: ["Get forms status count"],
@@ -127,7 +129,7 @@ function FormDetail(props: any) {
             </button>
 
             <PublishFormButton
-              tenantId={companyData?.company_identifier}
+              tenantId={companyData?.companyIdentifier!}
               showUnpublishModal={showUnpublishModal}
               setShowUnpublishModal={setShowUnpublishModal}
               formID={form?.id}
@@ -166,26 +168,15 @@ function FormDetail(props: any) {
               ) : (
                 <div>
                   <div className="flex items-center gap-5">
-                    {companyData?.company_logo?.length < 10 ? (
-                      <div className="rounded-full w-20 h-20 flex items-center justify-center object-cover border bg-gray-50 border-[rgba(226, 232, 240, 1)]">
-                        <RiImageCircleLine size={40} />
-                      </div>
-                    ) : (
-                      <Image
-                        // @ts-ignore
-                        src={companyData?.company_logo}
-                        width={144}
-                        height={144}
-                        className="rounded-full w-20 h-20 object-cover border border-[rgba(226, 232, 240, 1)]"
-                        alt="Company Logo"
-                      />
-                    )}
-                    {/* @ts-ignore */}
-                    {companyData?.company_name && (
+                    <div className="rounded-full w-20 h-20 flex items-center justify-center object-cover border bg-gray-50 border-[rgba(226, 232, 240, 1)]">
+                      <RiImageCircleLine size={40} />
+                    </div>
+
+                    {companyData?.companyName && (
                       <div className="flex flex-col gap-0">
                         <div className="text-xl  font-bold">
                           {/* @ts-ignore */}
-                          {companyData?.company_name}
+                          {companyData?.companyName}
                         </div>
                       </div>
                     )}
@@ -196,7 +187,7 @@ function FormDetail(props: any) {
           )}
 
           {/* statistics */}
-          {/* <div className="mt-10">
+          <div className="mt-10">
             <p className="font-semibold mb-5">Submission Statistics</p>
             <StatsBlock
               stats={[
@@ -209,12 +200,12 @@ function FormDetail(props: any) {
                   value: formStatusCount?.completedCount,
                 },
                 {
-                  label: " submissions",
+                  label: "Submissions",
                   value: formStatusCount?.unCompletedCount,
                 },
               ]}
             />
-          </div> */}
+          </div>
         </div>
 
         {/* ASSIGN TO NEW COMPANY MODAL */}
