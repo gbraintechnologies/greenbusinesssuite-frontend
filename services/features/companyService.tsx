@@ -21,7 +21,7 @@ export const getCompanyById = (id: number) => {
 export const getCompanyAssignedForms = (id: number) => {
   return () =>
     authApi
-      .get(`/forms/builder/search-assign-forms/${id}/1/2000/ALL`)
+      .get(`/forms/builder/search-assign-forms/${id}/0/2000/ALL`)
       .then((res) => res.data);
 };
 

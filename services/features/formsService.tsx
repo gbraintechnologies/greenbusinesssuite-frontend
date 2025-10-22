@@ -74,7 +74,7 @@ export const getFormByIdRawForUser = (id: any) => {
 
 export const getFormsByCompanyId = (
   companyId: string,
-  page: string | number,
+  page: string | number = 0,
   size: string | number,
   timeLine: TimelineType = "ALL"
 ) => {
