@@ -1,14 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-
-//
-import { MdOutlineEdit } from "react-icons/md";
+import React, { useState } from "react";
 
 //
 import services from "@/services";
-
-import Image from "next/image";
 
 import { IoIosArrowBack } from "react-icons/io";
 
@@ -44,7 +39,7 @@ function NewUser() {
   const [loading, setLoading] = useState(false);
 
   const [phone, setPhone] = useState("");
-  const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedRole, setSelectedRole] = useState<any>(null);
 
   // Get ALL MESH BUSINESS SUITE ROLES
   const { data: roles, isLoading } = useQuery({
@@ -52,19 +47,17 @@ function NewUser() {
     queryFn: services.getMeshBusinessSuiteRoles(),
   });
 
-  console.log("roles", roles);
-
-  console.log("selected role", selectedRole);
-
   const createNewUser = async (values: any, resetForm: any) => {
-    console.log("selected role", selectedRole);
+    if (selectedRole == null) {
+      return;
+    }
     let data = {
       email: values.email,
       username: values.email,
       firstName: values.firstname,
       lastName: values.lastname,
       password: "password",
-      roleId: 3, // what role is this?
+      roleId: selectedRole,
       profile_image: "",
       phone: phone,
       status: "ACTIVE",
@@ -88,7 +81,6 @@ function NewUser() {
       .createUser(data)
       .then((res: any) => {
         setLoading(false);
-        console.log("CREATE USER RES", res);
 
         toast.dismiss(loading);
 
@@ -271,9 +263,14 @@ function NewUser() {
                   placeholder="Role"
                   labelPlacement="outside"
                   label="Select a Role"
+                  onSelectionChange={(e) => {
+                    setSelectedRole(e);
+                  }}
                 >
-                  {roles?.map((role: string) => (
-                    <AutocompleteItem key={role}>{role}</AutocompleteItem>
+                  {roles?.content?.map((role: any) => (
+                    <AutocompleteItem key={role?.id}>
+                      {role?.roleName}
+                    </AutocompleteItem>
                   ))}
                 </Autocomplete>
               </div>

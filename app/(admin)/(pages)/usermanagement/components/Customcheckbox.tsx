@@ -5,6 +5,7 @@ interface CustomCheckboxProps {
   name: string;
   label: string;
   subtext: string;
+  moduleName: string;
 }
 
 // CustomCheckbox component
@@ -12,6 +13,7 @@ export const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
   name,
   label,
   subtext,
+  moduleName,
 }) => {
   const [field, , helpers] = useField(name);
 
@@ -31,12 +33,11 @@ export const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
         />
       </div>
       <div className="flex flex-col">
-        <p className="font-semibold text-slate-900">
-          {label}
+        <p className="  font-semibold uppercase">
+          {moduleName.replaceAll("_", " ")}
         </p>
-        <p  className="text-sm text-slate-600">
-          {subtext}
-        </p>
+        {/* <p className="font-semibold text-slate-900">{label}</p> */}
+        <p className="text-sm text-slate-600">{subtext}</p>
       </div>
     </label>
   );

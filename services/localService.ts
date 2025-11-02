@@ -40,6 +40,14 @@ export const getTenantID = () => {
   return null;
 };
 
+export const getSessionTenantID = () => {
+  if (typeof window !== "undefined") {
+    const auth = window.sessionStorage.getItem("company-branding");
+    return auth ? JSON.parse(auth)?.company_identifier : null;
+  }
+  return null;
+};
+
 export const getUserUUID = () => {
   if (typeof window !== "undefined") {
     const auth = window.localStorage.getItem("auth");

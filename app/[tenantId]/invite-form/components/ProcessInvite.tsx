@@ -52,7 +52,7 @@ function ProcessInvite({ tenantId }: any) {
   const { data, error } = useQuery({
     queryKey: ["form", formId],
     queryFn: services.getFormByIdDefault(formId),
-    enabled: Boolean(formId) && Boolean(auth?.access_token),
+    enabled: Boolean(formId) && Boolean(auth?.accessToken),
   });
 
   // if(Boolean(error)){
@@ -61,7 +61,7 @@ function ProcessInvite({ tenantId }: any) {
   // }
 
   // PROMPT TO LOGIN / CREATE ACCOUNT TO FILL FORM IF NOT AUTHENTICATED
-  if (!Boolean(auth?.access_token) || !Boolean(user?.id)) {
+  if (!Boolean(auth?.accessToken) || !Boolean(user?.id)) {
     return (
       <div className="h-[100vh] w-full flex items-center justify-center bg-[#F1F5F9]">
         <div className="flex -mt-[20vh] items-center text-center justify-center flex-col gap-2">
@@ -104,7 +104,7 @@ function ProcessInvite({ tenantId }: any) {
     );
   }
 
-  // GET RIGHT COMPANY NAME FROM COMPANIES ENDPOINT
+  // // GET RIGHT COMPANY NAME FROM COMPANIES ENDPOINT
 
   const [message, setMessage] = useState("");
 

@@ -9,9 +9,6 @@ import { usePathname, useRouter } from "next/navigation";
 import SideNav from "@/components/SideNav/SideNav";
 import TopNav from "@/components/TopNav/ClientTopNav";
 
-// toast
-import { toast } from "sonner";
-
 // icons
 import ClientDashboardIcon from "@/public/icons/ClientDashboardIcon";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -37,20 +34,19 @@ export default function ClientLayout({
 
   const { user } = useUser();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const { companyBranding: company, company: companyInfo } = useCompany();
 
   useEffect(() => {
     // Redirect to login if not authenticated
     // if on a an authenticated page and isn't logged in
-    if (!Boolean(user) && !pathname.includes("auth")) {
-      router.push(`/${company?.company_identifier}/auth`);
-
-      toast.error("Please login to continue");
-    } else {
-      setLoading(false);
-    }
+    // if (!Boolean(user) && !pathname.includes("auth")) {
+    //   router.push(`/${company?.company_identifier}/auth`);
+    //   toast.error("Please login to continue");
+    // } else {
+    //   setLoading(false);
+    // }
   }, [user]);
 
   const [navigation, setNavigation] = useState([]);
@@ -78,10 +74,16 @@ export default function ClientLayout({
   ];
 
   useEffect(() => {
-    let enabled_modules = company.companyModules;
+    let enabled_modules = [
+      ...company.companyModules,
+      // ...company.modules,
+      // ...company.categorySpecificModules,
+    ];
+
     let temp: any = [];
 
     all_navigation.forEach((item) => {
+      console.log("checking item", item);
       if (enabled_modules.includes(item.linkedModule)) {
         temp.push(item);
       }

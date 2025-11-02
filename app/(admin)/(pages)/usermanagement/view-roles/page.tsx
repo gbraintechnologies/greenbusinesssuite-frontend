@@ -1,19 +1,14 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import Link from "next/link";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
-import DataTable from "@/components/DataTable/DataTable";
-import EditIconSetup from "@/public/icons/EditIconSetup";
 import { useRouter } from "next/navigation";
-import toSpace from "@/utils/UnderScore/UnderScore";
-
 import { IoIosArrowBack } from "react-icons/io";
 import { Button } from "@heroui/react";
-import useAdmin from "@/hooks/useAdmin";
-import { PermissionTypes } from "@/types/permissionTypes";
-import { MeshRoles } from "@/config/roles.app";
+import Table from "@/components/Table/Table";
+import { BsEye } from "react-icons/bs";
 
 interface Permission {
   app_id: number;
@@ -42,104 +37,25 @@ interface RowData {
 
 function ViewRoles() {
   const router = useRouter();
-  const [rows, setRows] = useState<RowData[]>([]);
-  const [limit, setLimit] = useState(15);
 
-  const { checkPermission } = useAdmin();
-
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["all user roles", limit],
-    queryFn: services.allUserRoles(limit),
+  const { data: roles, isLoading } = useQuery({
+    queryKey: ["mesh roles"],
+    queryFn: services.getMeshBusinessSuiteRoles(),
   });
 
-  useEffect(() => {
-    if (data) {
-      const transformedData = data
-        .filter((role: Role) =>
-          MeshRoles.includes(role.role_name?.toLowerCase())
-        )
-        .map((role: Role) => ({
-          id: role.id,
-          roleName: role.role_name,
-          roleDescription: role.role_description,
-          permissions: role.permissions
-            .map((p) => p.permission_name)
-            .join(", "),
-        }));
-
-      setRows(transformedData);
-    }
-    refetch();
-  }, [data, refetch]);
-
-  const columns = [
-    {
-      field: "roleName",
-      headerName: "Name of Role",
-      flex: 1,
-      renderCell: (params: any) => (
-        <div className="flex py-3 gap-4 my-3 items-center h-12">
-          <div className="h-10 capitalize flex items-center justify-center">
-            {params.value}
-          </div>
-        </div>
-      ),
-    },
-    {
-      field: "roleDescription",
-      headerName: "Role Description",
-      flex: 1,
-      renderCell: (params: any) => (
-        <div
-          className="flex flex-col gap-2 my-2 h-12"
-          style={{ whiteSpace: "normal", wordBreak: "break-word" }}
-        >
-          <p className="font-medium text-sm">{params.value}</p>
-        </div>
-      ),
-    },
-    {
-      field: "permissions",
-      headerName: "Permissions",
-      flex: 4,
-      renderCell: (params: any) => (
-        <div
-          className="flex flex-col gap-2 my-2 h-12"
-          style={{ whiteSpace: "normal", wordBreak: "break-word" }}
-        >
-          <p className="font-medium text-sm">{toSpace(params.value)}</p>
-        </div>
-      ),
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      renderCell: (params: any) => (
-        <div className="flex items-center justify-end h-12">
-          {checkPermission(PermissionTypes.UPDATE_ROLE) && (
-            <button
-              type="button"
-              className="rounded-full"
-              style={{ right: "-10px" }}
-              onClick={() =>
-                router.push(`/usermanagement/edit-role?roleId=${params.row.id}`)
-              }
-            >
-              <EditIconSetup />
-            </button>
-          )}
-          {/* <button
-            type="button"
-            className="rounded-full"
-            style={{ right: "-10px" }}
-          >
-            <DeleteIcon />
-          </button> */}
-        </div>
-      ),
-    },
-  ];
+  const ActionsComponent = (role: any) => {
+    return (
+      <button
+        type="button"
+        className="rounded-full"
+        onClick={() =>
+          router.push(`/usermanagement/edit-role?roleId=${role?.id}`)
+        }
+      >
+        <BsEye />
+      </button>
+    );
+  };
 
   return (
     <div className="w-full p-5">
@@ -167,7 +83,28 @@ function ViewRoles() {
         </div>
       </div>
       <div className="w-full mt-10">
-        <DataTable rows={rows} isLoading={isLoading} columns={columns} />
+        <Table
+          columns={[
+            { name: "ID", uid: "id" },
+            { name: "Name", uid: "roleName" },
+            { name: "Description", uid: "description" },
+
+            { name: "VIEW", uid: "actions" },
+          ]}
+          data={
+            roles
+              ? roles?.content?.map((role: any) => ({
+                  ...role,
+                }))
+              : []
+          }
+          hasSearch={false}
+          isLoading={isLoading}
+          title="Roles & Permissions"
+          page={1}
+          // statusComponent={StatusComponent}
+          actionsComponent={ActionsComponent}
+        />
       </div>
     </div>
   );

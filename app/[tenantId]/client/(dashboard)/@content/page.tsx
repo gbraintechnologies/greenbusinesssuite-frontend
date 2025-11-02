@@ -22,7 +22,6 @@ import services from "@/services";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import useClientForm from "@/hooks/useClientForm";
 import useUser from "@/hooks/useUser";
-import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
 import AllCompanyForms from "../components/AllCompanyForms";
 import { SlArrowDown } from "react-icons/sl";
 

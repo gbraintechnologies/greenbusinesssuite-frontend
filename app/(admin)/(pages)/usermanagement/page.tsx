@@ -59,8 +59,6 @@ function UserManagement() {
     queryFn: services.allUsers(page * limit, limit),
   });
 
-  console.log("users", data);
-
   const { data: searchData, isLoading: searchLoading } = useQuery({
     queryKey: ["all users", searchTerm],
     queryFn: services.searchUsers(searchTerm),
@@ -70,16 +68,6 @@ function UserManagement() {
   const [aggregatedUsers, setAggregatedUsers] = useState([]);
 
   // Get ALL MESH BUSINESS SUITE ROLES
-  const {
-    data: roles,
-    isLoading: rolesLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["mesh roles"],
-    enabled: false,
-    // ID OF MESH APP IS 1 IN DB
-    queryFn: services.getMeshBusinessSuiteRoles(),
-  });
 
   // AGGREGATE USERS FROM DIFFERENT ENDPOINTS
   useEffect(() => {

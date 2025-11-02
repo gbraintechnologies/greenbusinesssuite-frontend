@@ -88,20 +88,20 @@ function Page(props: any) {
     },
     { resetForm, setSubmitting }: FormikHelpers<any>
   ) => {
-    const userData = {
-      roleId: 0,
-      profile_image: "string",
-      email: values.email as string,
-      username: values.email as string,
-      password: values.password as string,
-      firstName: values.firstName as string,
-      lastName: values.lastName as string,
+    let data = {
+      email: values.email,
+      username: values.email,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      password: "password",
+      roleId: 4,
+      profile_image: "",
       phone: phone,
       status: "ACTIVE",
     };
 
     services
-      .userSelfSignUp(userData)
+      .userSelfSignUp(data)
       .then((res) => {
         // console.log("create user response", createUserResponse);
 

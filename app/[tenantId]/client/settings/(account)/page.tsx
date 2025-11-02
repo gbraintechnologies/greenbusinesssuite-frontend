@@ -42,13 +42,13 @@ function Account() {
     mode: "onChange",
     defaultValues: {
       id: user?.id,
-      firstName: user?.first_name,
-      lastName: user?.last_name,
-      phone: user?.phone_number,
-      status: user?.user_status,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      phone: user?.phoneNumber,
+      status: user?.status,
       email: user?.email,
       username: user?.email,
-      mobile_phone: user?.mobile_phone_number,
+      mobile_phone: user?.phoneNumber,
     },
   });
 

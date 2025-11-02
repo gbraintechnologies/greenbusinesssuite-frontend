@@ -57,6 +57,10 @@ function LogIn() {
       removeCompanyAdmin();
       removeUser();
     }
+
+    // Clear session storage always
+    sessionStorage.clear();
+    localStorage.clear();
   }, []);
 
   const [loginError, setLoginError] = useState<string | null>(null);
