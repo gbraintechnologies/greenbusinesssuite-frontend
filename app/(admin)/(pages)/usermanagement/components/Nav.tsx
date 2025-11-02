@@ -36,13 +36,6 @@ function Nav() {
         >
           View all roles
         </Button>
-        <Button
-          as={Link}
-          href="/usermanagement/new-role"
-          className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl"
-        >
-          New role
-        </Button>
       </div>
     </div>
   );

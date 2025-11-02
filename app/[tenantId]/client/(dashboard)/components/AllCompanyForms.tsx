@@ -9,7 +9,6 @@ import { TimelineType, TimelineValues } from "@/types";
 import services from "@/services";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
-
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import ServiceCard from "./ServiceCard";
 
@@ -37,7 +36,7 @@ function AllCompanyForms() {
     refetch,
   } = useQuery({
     queryKey: [
-      "get company forms for ",
+      "get company forms for",
       Number(companyData?.id),
       page,
       limit,
@@ -98,16 +97,16 @@ function AllCompanyForms() {
             ?.filter(
               (item: any) =>
                 item?.multipleForms == true ||
-                (allUserResponses &&
-                  allUserResponses?.some(
-                    (response: any) =>
-                      parseInt(response?.formId) !== parseInt(item?.id)
-                  ))
+                !allUserResponses ||
+                allUserResponses.length === 0 ||
+                !allUserResponses.some(
+                  (response: any) =>
+                    parseInt(response?.formId) === parseInt(item?.id)
+                )
             )?.length === 0 ? (
             <div className="flex items-center justify-center flex-col min-h-[20vh]">
               <IoLaptopOutline size={50} />
               <p className="mt-2 text-lg font-semibold">
-                {" "}
                 No Available Services
               </p>
               <p className="text-gray-500 max-w-sm mx-auto text-center">
@@ -123,12 +122,12 @@ function AllCompanyForms() {
                     ?.filter(
                       (item: any) =>
                         item?.multipleForms == true ||
-                        allUserResponses?.length == 0 ||
-                        (allUserResponses &&
-                          allUserResponses?.some(
-                            (response: any) =>
-                              parseInt(response.formId) !== parseInt(item.id)
-                          ))
+                        !allUserResponses ||
+                        allUserResponses.length === 0 ||
+                        !allUserResponses.some(
+                          (response: any) =>
+                            parseInt(response.formId) === parseInt(item.id)
+                        )
                     )
 
                     .map((form: any) => {

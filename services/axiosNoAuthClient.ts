@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getTenantID } from "./localService";
+import { getSessionTenantID, getTenantID } from "./localService";
 import { headerT } from "@/types/headerType";
 
 const noAuthApi = axios.create({
@@ -16,11 +16,11 @@ noAuthApi.interceptors.request.use(
       accept: "*/*",
     };
 
-    // Use tenantId if presentxsssss
+    // Use tenantId if presentssss
     return {
       ...config,
-      headers: Boolean(getTenantID)
-        ? { ...headers, tenantid: getTenantID() }
+      headers: Boolean(getSessionTenantID())
+        ? { ...headers, tenantid: getSessionTenantID() }
         : headers,
     };
   },

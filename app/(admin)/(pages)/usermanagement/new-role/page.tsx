@@ -56,39 +56,20 @@ function NewRole() {
 
     let loading = toast.info("Creating role. Please wait...");
 
-    try {
-      // console.log("Role creation payload:", {
-      //   name: roleName,
-      //   description: roleDescription,
-      // });
-
-      const createRoleResponse = await services.createRole({
+    services
+      .createRole({
         name: roleName,
         description: roleDescription,
+      })
+      .then((res) => {
+        toast.dismiss(loading);
+        toast.success("Role created successfully");
+        router.push("/usermanagement/view-roles");
+      })
+      .catch((e) => {
+        toast.dismiss(loading);
+        toast.error("Error creating role");
       });
-
-      const roleId = createRoleResponse.data.id;
-
-      if (permissions) {
-        const permissionIds = Object.keys(permissions)
-          .filter((key) => permissions[key])
-          .map((key) => Number(key));
-
-        const permissionsPayload = {
-          permission_ids: permissionIds,
-        };
-
-        await services.updateMultiPermissionForRole(permissionsPayload, roleId);
-      }
-
-      toast.dismiss(loading);
-      toast.success("Role created successfully");
-      router.push("/usermanagement");
-    } catch (error) {
-      toast.dismiss(loading);
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   return (
@@ -168,7 +149,7 @@ function NewRole() {
               </div>
 
               {/* PERMISSIONS */}
-              <div className="max-w-2xl">
+              {/* <div className="max-w-2xl">
                 <h3 className="font-semibold text-xl">Permissions</h3>
                 <label className="text-sm mb-1 text-slate-500">
                   This grants access to certain functions the user can perform.
@@ -196,7 +177,7 @@ function NewRole() {
                     <p>No permissions available</p>
                   )}
                 </div>
-              </div>
+              </div> */}
             </Form>
           );
         }}

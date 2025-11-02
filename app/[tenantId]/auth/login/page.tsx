@@ -71,26 +71,26 @@ function CompanyAdminAuth(props: any) {
   type typeOfSchema = yup.InferType<typeof schema>;
 
   // clear all other users if necessary
-  useEffect(() => {
-    if (companyAdmin !== null && Boolean(auth?.access_token)) {
-      // go to dashboard without logging if data & auth is present
-      // go to dashboard without logging if data & auth is present
-      // take care of edge case of new user
-      if (
-        companyAdmin?.user_status !== "NEWLY_CREATED" ||
-        companyAdmin?.user_status !== "TEMP_CREDENTIALS"
-      ) {
-        toast.success("Logged in");
-        router.push(`/${tenantId}/admin`);
-      }
-    } else {
-      removeAdmin();
-      removeAuth();
-      removeCompanyAdmin();
-      removeUser();
-      addAuthData({ tenantId: tenantId });
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (companyAdmin !== null && Boolean(auth?.access_token)) {
+  //     // go to dashboard without logging if data & auth is present
+  //     // go to dashboard without logging if data & auth is present
+  //     // take care of edge case of new user
+  //     if (
+  //       companyAdmin?.user_status !== "NEWLY_CREATED" ||
+  //       companyAdmin?.user_status !== "TEMP_CREDENTIALS"
+  //     ) {
+  //       toast.success("Logged in");
+  //       router.push(`/${tenantId}/admin`);
+  //     }
+  //   } else {
+  //     removeAdmin();
+  //     removeAuth();
+  //     removeCompanyAdmin();
+  //     removeUser();
+  //     addAuthData({ tenantId: tenantId });
+  //   }
+  // }, []);
 
   const {
     register,
@@ -105,48 +105,50 @@ function CompanyAdminAuth(props: any) {
     },
   });
 
-  const fetchCurrentUser = async (token: string) => {
-    try {
-      return await currentLoggedIn(token);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const onSubmit = async (data: typeOfSchema) => {
     try {
-      const token: any = await login(data.username, data.password);
+      const loginData: {
+        status: number;
+        data: {
+          id: number;
+          email: string;
+          firstName: string;
+          lastName: string;
+          accessToken: string;
+          refreshToken: string;
+          tenantId: string;
+        };
+      } = await login(data.username, data.password);
 
-      if (token?.status === 200) {
-        addAuthData(token.data);
+      if (loginData?.status === 200) {
+        addAuthData(loginData.data);
 
-        const user = await fetchCurrentUser(token.data?.access_token);
-        const userStatus = user?.data?.user_status;
-        const userRole = user?.data?.profiles[0]?.role_id;
+        let userRole = "CLIENT";
 
+        // TODO: CHECK FOR ADMIN TEMP PASSWORD
         // all newly created accounts have to verify
-        if (userStatus === "NEWLY_CREATED") {
-          toast("Verify your account");
-          router.push(`/${tenantId}/auth/verify-account`);
-          return;
-        }
+        // if (userStatus === "NEWLY_CREATED") {
+        //   toast("Verify your account");
+        //   router.push(`/${tenantId}/auth/verify-account`);
+        //   return;
+        // }
 
-        // all temp credentials have to create a password
-        if (userStatus === "TEMP_CREDENTIALS") {
-          toast("Create your password");
-          router.push(
-            `/${tenantId}/auth/create-password?temp=${data.password}`
-          );
-          return;
-        }
+        // // all temp credentials have to create a password
+        // if (userStatus === "TEMP_CREDENTIALS") {
+        //   toast("Create your password");
+        //   router.push(
+        //     `/${tenantId}/auth/create-password?temp=${data.password}`
+        //   );
+        //   return;
+        // }
 
         // check role and navigate to right dashboard
-        if (userRole !== 6) {
-          addCompanyAdminData(user?.data);
+        if (userRole == "ADMIN") {
+          addCompanyAdminData(loginData?.data);
           toast.success("Logged in");
           router.push(`/${tenantId}/admin`);
         } else {
-          addUserData(user?.data);
+          addUserData(loginData?.data);
           toast.success("Logged in");
 
           // send to form processing if redirect exists
