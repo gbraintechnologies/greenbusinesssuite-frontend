@@ -16,16 +16,20 @@ import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import removeIds from "@/utils/RemoveIds/RemoveIds";
 import { toast } from "sonner";
+import Modal from "@/components/Modal/HeroModal";
+import { Button, Input, Textarea, useDisclosure } from "@heroui/react";
+import { MdOutlineModeEditOutline } from "react-icons/md";
 
 function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
   const { form, addFormSection, updateFormSectionsOrdering } = useForm();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const { data: formStatusCount } = useQuery({
     queryKey: ["Get forms status count"],
     queryFn: services.getFormStatusCountById(Number(form?.id)),
     enabled: Boolean(form?.id),
   });
-
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   //
   let [localSection, setLocalSection] = useState(section);
 
@@ -40,7 +44,13 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
       localSection?.name?.length !== 0 ||
       localSection?.description?.length !== 0
     ) {
+      setIsUpdating(true);
       updateSection(localSection);
+
+      setTimeout(() => {
+        setIsUpdating(false);
+        onClose();
+      }, 3000);
     }
   };
 
@@ -98,20 +108,25 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
   };
 
   return (
-    <div
-      onMouseEnter={() => setShowSectionActions(true)}
-      onMouseLeave={() => setShowSectionActions(false)}
-      className="form-section"
-    >
-      <div className="flex gap-2">
-        <div className="flex-1">
-          <h5 className="font-bold text-lg">
+    <>
+      <Modal
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onOpenChange={onOpenChange}
+        title="Update Section"
+        size="4xl"
+        content={
+          <div className="grid grid-cols-1 gap-5">
             {" "}
-            <input
+            <Input
+              variant="bordered"
+              label="Title"
+              type="text"
+              labelPlacement="outside"
               value={localSection?.name}
               placeholder="Section title"
               className="outline-none focus:outline-none w-full input-custom"
-              onBlur={runUpdates}
+              // onBlur={runUpdates}
               onChange={(e) => {
                 setLocalSection((prev: any) => ({
                   ...prev,
@@ -119,14 +134,16 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
                 }));
               }}
             />
-          </h5>
-          <p className="font-extralight text-sm mb-5">
-            {" "}
-            <input
+            <Textarea
+              minRows={5}
+              variant="bordered"
+              label="Description"
+              labelPlacement="outside"
+              maxLength={254}
               value={localSection?.description}
               placeholder="Section description"
-              className="outline-none focus:outline-none w-full input-custom"
-              onBlur={runUpdates}
+              className="outline-none focus:outline-none w-full input-custom font-extralight text-sm"
+              // onBlur={runUpdates}
               onChange={(e) => {
                 setLocalSection((prev: any) => ({
                   ...prev,
@@ -134,151 +151,180 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
                 }));
               }}
             />
-          </p>
-        </div>
-      </div>
-
-      {/* FORM FIELDS */}
-      {localSection?.isTable ? (
-        <div className="flex flex-row gap-1">
-          {localSection?.formFields
-            ?.filter((item: any) => !item.isDeleted)
-            .map((field: any) => {
-              return (
-                <FormField
-                  activeTab={activeTab}
-                  setActiveTab={setActiveTab}
-                  section={section}
-                  field={field}
-                />
-              );
-            })}
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-5">
-          {localSection?.formFields
-            ?.filter((item: any) => !item.isDeleted)
-            .map((field: any, idx: any) => {
-              return (
-                <FormField
-                  key={idx}
-                  activeTab={activeTab}
-                  setActiveTab={setActiveTab}
-                  section={section}
-                  field={field}
-                />
-              );
-            })}
-        </div>
-      )}
-
+            <Button
+              color="primary"
+              className="text-white"
+              isLoading={isUpdating}
+              disabled={isUpdating}
+              onPress={runUpdates}
+            >
+              Update Section
+            </Button>
+          </div>
+        }
+      />
       <div
-        className={`${
-          localSection.formFields.length === 0
-            ? "bg-[#F8FAFC] p-3 my-4 min-h-48  rounded-2xl "
-            : " text-center mx-auto mt-5 w-full"
-        } flex flex-col items-center justify-center`}
+        onMouseEnter={() => setShowSectionActions(true)}
+        onMouseLeave={() => setShowSectionActions(false)}
+        className="form-section"
       >
-        {localSection.formFields.length == 0 && (
-          <div className="mb-10 mx-auto text-center">
-            <h4 className="font-bold mb-1">
-              Click the button to add new elements
-            </h4>
-            <p className="text-sm">
-              Optimize each section by including only closely related items.
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <h5 className="font-bold text-xl"> {section?.name}</h5>
+            <p className="font-light text-gray-400 text-sm mb-5">
+              {section?.description ? section?.description : "No description"}
             </p>
           </div>
-        )}
+          <button
+            onClick={onOpen}
+            className="border w-fit h-fit flex items-center gap-2 px-3 rouned-xl text-sm py-2 rounded-lg hover:text-white hover:bg-black"
+          >
+            <MdOutlineModeEditOutline /> Update
+          </button>
+        </div>
 
-        {/* ONLY ALLOW FORMS WITHOUT RESPONSES TO BE EDITED */}
-        {formStatusCount && formStatusCount?.totalCount > 0 ? (
-          <div className="bg-red-50 px-3 py-1 rounded-lg text-lg flex justify-center items-center flex-row gap-2">
-            <CiCircleInfo size={20} />{" "}
-            <p className="text-xs mt-1 font-light italic">
-              No new fields can be added to this form once it has started
-              accepting responses.{" "}
-            </p>
+        {/* FORM FIELDS */}
+        {localSection?.isTable ? (
+          <div className="flex flex-row gap-1">
+            {localSection?.formFields
+              ?.filter((item: any) => !item.isDeleted)
+              .map((field: any) => {
+                return (
+                  <FormField
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    section={section}
+                    field={field}
+                  />
+                );
+              })}
           </div>
         ) : (
-          <FormElementSelector section={section} />
+          <div className="grid grid-cols-2 gap-5">
+            {localSection?.formFields
+              ?.filter((item: any) => !item.isDeleted)
+              .map((field: any, idx: any) => {
+                return (
+                  <FormField
+                    key={idx}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    section={section}
+                    field={field}
+                  />
+                );
+              })}
+          </div>
+        )}
+
+        <div
+          className={`${
+            localSection.formFields.length === 0
+              ? "bg-[#F8FAFC] p-3 my-4 min-h-48  rounded-2xl "
+              : " text-center mx-auto mt-5 w-full"
+          } flex flex-col items-center justify-center`}
+        >
+          {localSection.formFields.length == 0 && (
+            <div className="mb-10 mx-auto text-center">
+              <h4 className="font-bold mb-1">
+                Click the button to add new elements
+              </h4>
+              <p className="text-sm">
+                Optimize each section by including only closely related items.
+              </p>
+            </div>
+          )}
+
+          {/* ONLY ALLOW FORMS WITHOUT RESPONSES TO BE EDITED */}
+          {formStatusCount && formStatusCount?.totalCount > 0 ? (
+            <div className="bg-red-50 px-3 py-1 rounded-lg text-lg flex justify-center items-center flex-row gap-2">
+              <CiCircleInfo size={20} />{" "}
+              <p className="text-xs mt-1 font-light italic">
+                No new fields can be added to this form once it has started
+                accepting responses.{" "}
+              </p>
+            </div>
+          ) : (
+            <FormElementSelector section={section} />
+          )}
+        </div>
+
+        {/* DELETE ICON && DUPLICATE BUTTON */}
+        {showSectionActions && (
+          <div
+            className="bg-white flex flex-col py-2 items-center justify-center shadow-xl p-1 rounded-lg absolute top-3 -right-5"
+            onMouseEnter={() => setShowSectionActions(true)}
+            // onMouseLeave={() => setShowSectionActions(false)}
+          >
+            {" "}
+            <button
+              onClick={handleDelete}
+              className="bg-white hover:bg-red-100 p-2 rounded-xl "
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20.5001 6H3.5"
+                  stroke="#DC2626"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5"
+                  stroke="#DC2626"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M9.5 11L10 16"
+                  stroke="#DC2626"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M14.5 11L14 16"
+                  stroke="#DC2626"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
+                  stroke="#DC2626"
+                  strokeWidth="1.5"
+                />
+              </svg>
+            </button>
+            <div className="w-full my-3 px-5 border-[0.6px] border-t-[#CFCFCF]"></div>
+            <button
+              onClick={handleSectionDuplicate}
+              className="bg-white hover:bg-blue-100  p-2 rounded-xl"
+            >
+              <VscCopy size={20} />
+            </button>
+            <div className="w-full my-3 px-5 border-[0.6px] border-t-[#CFCFCF]"></div>
+            <button
+              disabled={section?.ordering == 0}
+              onClick={moveUp}
+              className="bg-white hover:bg-orange-100 disabled:cursor-not-allowed  p-2 rounded-xl mb-2"
+            >
+              <PiCaretUp size={20} />
+            </button>
+            <button
+              disabled={section?.ordering === form?.formSections?.length - 1}
+              onClick={moveDown}
+              className="bg-white hover:bg-orange-100 disabled:cursor-not-allowed  p-2 rounded-xl mb-2"
+            >
+              <PiCaretDown size={20} />
+            </button>
+          </div>
         )}
       </div>
-
-      {/* DELETE ICON && DUPLICATE BUTTON */}
-      {showSectionActions && (
-        <div
-          className="bg-white flex flex-col py-2 items-center justify-center shadow-xl p-1 rounded-lg absolute top-3 -right-5"
-          onMouseEnter={() => setShowSectionActions(true)}
-          // onMouseLeave={() => setShowSectionActions(false)}
-        >
-          {" "}
-          <button
-            onClick={handleDelete}
-            className="bg-white hover:bg-red-100 p-2 rounded-xl "
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M20.5001 6H3.5"
-                stroke="#DC2626"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <path
-                d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5"
-                stroke="#DC2626"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <path
-                d="M9.5 11L10 16"
-                stroke="#DC2626"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <path
-                d="M14.5 11L14 16"
-                stroke="#DC2626"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <path
-                d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
-                stroke="#DC2626"
-                strokeWidth="1.5"
-              />
-            </svg>
-          </button>
-          <div className="w-full my-3 px-5 border-[0.6px] border-t-[#CFCFCF]"></div>
-          <button
-            onClick={handleSectionDuplicate}
-            className="bg-white hover:bg-blue-100  p-2 rounded-xl"
-          >
-            <VscCopy size={20} />
-          </button>
-          <div className="w-full my-3 px-5 border-[0.6px] border-t-[#CFCFCF]"></div>
-          <button
-            disabled={section?.ordering == 0}
-            onClick={moveUp}
-            className="bg-white hover:bg-orange-100 disabled:cursor-not-allowed  p-2 rounded-xl mb-2"
-          >
-            <PiCaretUp size={20} />
-          </button>
-          <button
-            disabled={section?.ordering === form?.formSections?.length - 1}
-            onClick={moveDown}
-            className="bg-white hover:bg-orange-100 disabled:cursor-not-allowed  p-2 rounded-xl mb-2"
-          >
-            <PiCaretDown size={20} />
-          </button>
-        </div>
-      )}
-    </div>
+    </>
   );
 }
 

@@ -123,6 +123,7 @@ function CompanyAdminAuth(props: any) {
       if (loginData?.status === 200) {
         addAuthData(loginData.data);
 
+        // CHECK FOR USER ROLE
         let userRole = "CLIENT";
 
         // TODO: CHECK FOR ADMIN TEMP PASSWORD

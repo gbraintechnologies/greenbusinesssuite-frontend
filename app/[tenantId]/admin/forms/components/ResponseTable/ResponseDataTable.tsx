@@ -18,6 +18,7 @@ import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
 import html2pdf from "html2pdf.js";
+import { getSessionTenantID } from "@/services/localService";
 
 export interface IResponse {
   email: string;
@@ -355,13 +356,19 @@ const ResponseDataTable: React.FC<Props> = ({
 
           {form.isAnonymous ? (
             <Link
-              href={`/${auth?.tenantId}/admin/forms/${form?.id}/response?responseId=${params.row.data.id}`}
+              href={`/${getSessionTenantID()}/admin/forms/${
+                form?.id
+              }/response?responseId=${params.row.data.id}`}
             >
               <EyeIcon />
             </Link>
           ) : (
             <Link
-              href={`/${auth?.tenantId}/admin/forms/${form?.id}/response?user=${params.row.userData?.id}&responseId=${params.row.data.id}`}
+              href={`/${getSessionTenantID()}/admin/forms/${
+                form?.id
+              }/response?user=${params.row.userData?.id}&responseId=${
+                params.row.data.id
+              }`}
             >
               <EyeIcon />
             </Link>

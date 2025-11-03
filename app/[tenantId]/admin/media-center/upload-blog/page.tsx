@@ -62,7 +62,6 @@ function UploadBlog({ params }: any) {
       if (thumbnail) {
         formData.append("thumbnail", thumbnail);
       }
-      console.log("Form Values with Thumbnail:", formValuesWithThumbnail);
 
       await services.mediaUpload(formData);
       toast.success("News uploaded successfully!");
