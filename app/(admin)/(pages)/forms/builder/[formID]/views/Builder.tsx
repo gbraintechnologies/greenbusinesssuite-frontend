@@ -1,35 +1,19 @@
 import { useRouter } from "next/navigation";
-
-// icons
 import { GoArrowLeft } from "react-icons/go";
 import { CiCirclePlus } from "react-icons/ci";
-import { MdContentCopy } from "react-icons/md";
-import { PiTableFill } from "react-icons/pi";
-
-// hooks
+import { MdOutlineModeEditOutline } from "react-icons/md";
 import useForm from "@/hooks/useForm";
-
-//
 import React, { useEffect, useState } from "react";
-
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-
-//
 import { FormatDateTime } from "@/utils/FormatDate/FormatDate";
 import FormSection from "../components/FormSection";
-
-//
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
 import { toast } from "sonner";
 import Loader from "@/components/BeatLoader/Loader";
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@heroui/dropdown";
-import { Button } from "@heroui/react";
+
+import { Button, Input, Textarea, useDisclosure } from "@heroui/react";
+import Modal from "@/components/Modal/HeroModal";
 
 function isObjEmpty(obj: any) {
   return Object.keys(obj).length === 0;
@@ -48,6 +32,8 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
   // animation
   const [parent] = useAutoAnimate();
 
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
   const {
     form,
     selectForm,
@@ -56,6 +42,18 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
     loadingSection,
   } = useForm();
 
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [isUpdatingMeta, setIsUpdatingMeta] = useState(false);
+
+  //
+  useEffect(() => {
+    if (!isObjEmpty(form)) {
+      setName(form?.name);
+      setDescription(form.description);
+    }
+  }, [form]);
+
   const { data: formStatusCount } = useQuery({
     queryKey: ["Get forms status count"],
     queryFn: services.getFormStatusCountById(Number(form?.id)),
@@ -63,10 +61,6 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
   });
 
   // local variables
-  const [formName, setFormName] = useState(form?.name);
-  const [formDesc, setFormDesc] = useState(
-    form?.description ? form?.description : "No description set"
-  );
 
   // set data to form if empty
   useEffect(() => {
@@ -76,118 +70,86 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
   }, [data]);
 
   // update name and description
-  useEffect(() => {
-    if (!isObjEmpty(form)) {
-      setFormDesc(form?.description ? form?.description : "No description set");
-      setFormName(form?.name);
-    }
-  }, [form]);
 
   // RENDERING FORM BUILDER
   if (!isObjEmpty(form)) {
     const { updatedOn, createdOn, formSections, id } = form;
 
-    const rename = () => {
-      toast.dismiss();
-      services
-        .renameForm(id, formName)
-        .then((res) => {
-          updateNameAndDescription({ name: formName, description: formDesc });
-          queryClient.invalidateQueries({
-            queryKey: ["all forms"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["form", id],
-          });
-        })
-        .catch((e) => {
-          toast.dismiss();
-          toast.error("Error renaming form");
-          console.log("error ", e);
-        });
-    };
-
-    const updateDesc = () => {
-      updateNameAndDescription({ name: formName, description: formDesc });
-    };
-
     return (
-      <div className="pt-10 pb-[20rem] gap-10 relative flex px-10">
-        <div className={`w-1/6`}>
-          <button
-            className="px-4 py-2 flex items-center gap-2 text-sm rounded-lg bg-white border border-gray-200"
-            onClick={() => {
-              router.back();
-            }}
-          >
-            <GoArrowLeft />
-            Exit Builder
-          </button>
-        </div>
-        <div className={`w-5/6`}>
-          {/* HEADER: TITLE, DESCRIPTION & LAST UPDATED */}
-          <div className="boxshadow w-full mb-10">
-            <div className="p-5">
-              <h5 className="font-semibold text-lg w-full">
-                <input
-                  value={formName?.replace(/"/g, " ")}
-                  className="outline-none focus:outline-none w-full input-custom"
-                  onBlur={rename}
-                  onChange={(e) => setFormName(e.target.value)}
-                />
-              </h5>
+      <>
+        <div className="pt-10 pb-[20rem] gap-10 relative flex px-10">
+          <div className={`w-1/6`}>
+            <button
+              className="px-4 py-2 flex items-center gap-2 text-sm rounded-lg bg-white border border-gray-200"
+              onClick={() => {
+                router.back();
+              }}
+            >
+              <GoArrowLeft />
+              Exit Builder
+            </button>
+          </div>
+          <div className={`w-5/6`}>
+            {/* HEADER: TITLE, DESCRIPTION & LAST UPDATED */}
+            <div className="border border-gray-300 rounded-xl flex gap-10 p-5 justify-between bg-white w-full mb-10">
+              <div className="flex-1">
+                <h5 className="font-semibold text-xl w-full">
+                  {form?.name?.replace(/"/g, " ")}
+                </h5>
 
-              <div className="flex gap-5 justify-between items-center">
-                <p className="font-light text-sm flex-1">
-                  {" "}
-                  <input
-                    value={formDesc}
-                    className="outline-none focus:outline-none w-full input-custom"
-                    onBlur={updateDesc}
-                    onChange={(e) => setFormDesc(e.target.value)}
-                  />
-                </p>
+                <div className="flex gap-5 justify-between items-center">
+                  <p className="font-light text-sm flex-1">
+                    {form?.description}
+                  </p>
+                </div>
 
-                <p className="text-primary-green text-sm flex gap-2 items-center">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-green opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-green"></span>
-                  </span>
-                  <span>
-                    {" "}
-                    Changes saved{" "}
-                    {FormatDateTime(updatedOn ? updatedOn : createdOn)}
-                  </span>
-                </p>
+                <div className="mt-10">
+                  <p className="text-primary-green text-sm flex gap-2 items-center">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-green opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-green"></span>
+                    </span>
+                    <span>
+                      {" "}
+                      Changes saved{" "}
+                      {FormatDateTime(updatedOn ? updatedOn : createdOn)}
+                    </span>
+                  </p>
+                </div>
               </div>
+              <button
+                onClick={onOpen}
+                className="border h-fit w-fit flex items-center gap-2 px-3 rouned-xl mt-2 text-sm py-2 rounded-lg hover:text-white hover:bg-black"
+              >
+                <MdOutlineModeEditOutline /> Update
+              </button>
             </div>
-          </div>
 
-          {/* FORM SECTIONS */}
-          <div ref={parent} className="mt-5">
-            {formSections
-              ?.filter((item: any) => !item.isDeleted)
-              .sort((a: any, b: any) => a?.ordering - b?.ordering)
-              ?.map((section: any, idx: any) => {
-                return (
-                  <FormSection
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                    refetch={refetch}
-                    key={idx}
-                    section={section}
-                  />
-                );
-              })}
-          </div>
+            {/* FORM SECTIONS */}
+            <div ref={parent} className="mt-5">
+              {formSections
+                ?.filter((item: any) => !item.isDeleted)
+                .sort((a: any, b: any) => a?.ordering - b?.ordering)
+                ?.map((section: any, idx: any) => {
+                  return (
+                    <FormSection
+                      activeTab={activeTab}
+                      setActiveTab={setActiveTab}
+                      refetch={refetch}
+                      key={idx}
+                      section={section}
+                    />
+                  );
+                })}
+            </div>
 
-          {/* Add New Section */}
-          {formStatusCount && formStatusCount?.totalCount > 0 ? (
-            <></>
-          ) : (
-            <div className="flex justify-end items-end w-full">
-              {/* SECTION / TABLE ADDITION */}
-              {/* <Dropdown>
+            {/* Add New Section */}
+            {formStatusCount && formStatusCount?.totalCount > 0 ? (
+              <></>
+            ) : (
+              <div className="flex justify-end items-end w-full">
+                {/* SECTION / TABLE ADDITION */}
+                {/* <Dropdown>
                 <DropdownTrigger>
                   <Button
                     className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
@@ -272,39 +234,98 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
                 </DropdownMenu>
               </Dropdown> */}
 
-              {/* RAW SECTION ADDITION */}
-              <Button
-                className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
-                isDisabled={loadingSection}
-                onClick={() => {
-                  let template = {
-                    name: "",
-                    description: "",
-                    instruction: "",
-                    formFields: [],
-                    isDeleted: false,
-                    createdOn: new Date(),
-                    updatedOn: new Date(),
-                    deletedOn: null,
-                  };
+                {/* RAW SECTION ADDITION */}
+                <Button
+                  className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
+                  isDisabled={loadingSection}
+                  onClick={() => {
+                    let template = {
+                      name: "",
+                      description: "",
+                      instruction: "",
+                      formFields: [],
+                      isDeleted: false,
+                      createdOn: new Date(),
+                      updatedOn: new Date(),
+                      deletedOn: null,
+                    };
 
-                  addFormSection(template);
+                    addFormSection(template);
+                  }}
+                  variant="bordered"
+                >
+                  {loadingSection ? (
+                    <Loader color="#1d1d1d" />
+                  ) : (
+                    <>
+                      {" "}
+                      <CiCirclePlus size={18} /> Add section
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* MODALS */}
+
+        <Modal
+          isOpen={isOpen}
+          onOpen={onOpen}
+          onOpenChange={onOpenChange}
+          title="Update Details"
+          size="4xl"
+          content={
+            <div>
+              <div className="mb-10 grid grid-cols-1 gap-4">
+                <Input
+                  className="border rounded-xl"
+                  label="Name"
+                  variant="bordered"
+                  maxLength={254}
+                  labelPlacement="outside"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Name of form"
+                />
+                <Textarea
+                  variant="bordered"
+                  label="Description"
+                  maxLength={254}
+                  labelPlacement="outside"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Description"
+                  minRows={7}
+                />
+              </div>
+
+              <Button
+                isLoading={isUpdatingMeta}
+                isDisabled={isUpdatingMeta}
+                color="primary"
+                className="text-white w-full"
+                onPress={async () => {
+                  setIsUpdatingMeta(true);
+
+                  updateNameAndDescription({
+                    name,
+                    description,
+                  });
+
+                  setTimeout(() => {
+                    onClose();
+                    setIsUpdatingMeta(false);
+                  }, 2000);
                 }}
-                variant="bordered"
               >
-                {loadingSection ? (
-                  <Loader color="#1d1d1d" />
-                ) : (
-                  <>
-                    {" "}
-                    <CiCirclePlus size={18} /> Add section
-                  </>
-                )}
+                Update Details
               </Button>
             </div>
-          )}
-        </div>
-      </div>
+          }
+        />
+      </>
     );
   }
 }

@@ -21,10 +21,6 @@ export default function Modal({
     setIsOpen(false);
   }
 
-  function openModal() {
-    setIsOpen(true);
-  }
-
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative   z-[100]" onClose={closeModal}>

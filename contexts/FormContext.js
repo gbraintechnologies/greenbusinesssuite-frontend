@@ -58,7 +58,7 @@ export const FormProvider = ({ children }) => {
           setLoadingField(false);
           setLoadingSection(false);
           queryClient.invalidateQueries({
-            queryKey: ["form", form?.id],
+            queryKey: ["form"],
           });
           toast.dismiss();
           setIsFormUpdating(false);
@@ -131,7 +131,7 @@ export const FormProvider = ({ children }) => {
   };
 
   const updateNameAndDescription = (data) => {
-    updateRemoteForm({ ...form, ...data });
+    return updateRemoteForm({ ...form, ...data });
   };
 
   const removeForm = () => {

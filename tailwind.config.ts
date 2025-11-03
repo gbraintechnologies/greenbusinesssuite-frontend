@@ -145,7 +145,9 @@ const config: Config = {
   ],
   plugins: [
     require("@headlessui/tailwindcss"),
-    require("@tailwindcss/forms"),
+    require("@tailwindcss/forms")({
+      strategy: 'class', // only generate classes instead of base styles
+    }),
     heroui({
       themes: {
         light: {

@@ -121,7 +121,7 @@ button {
 
 /* FORM GLOBAL STYLES */
 .form-section {
-  @apply bg-white min-h-72 relative shadow p-5 rounded-xl mb-10;
+  @apply bg-white border border-gray-300 min-h-72 relative  p-5 rounded-xl mb-10;
 }
 
 .form-section h4 {
@@ -137,7 +137,8 @@ button {
   @apply flex flex-col w-full mb-3;
 }
 
-.input-holder input:not([type="checkbox"]):not([type="radio"]):not([data-slot="input"]),
+.input-holder
+  input:not([type="checkbox"]):not([type="radio"]):not([data-slot="input"]),
 textarea:not([data-slot="input"]) {
   @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm;
 }
