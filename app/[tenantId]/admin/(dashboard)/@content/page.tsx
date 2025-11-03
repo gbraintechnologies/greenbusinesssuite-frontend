@@ -17,6 +17,8 @@ function CompanyDashboard() {
 
   const [adminStatus, setAdminStatus] = React.useState("");
 
+  console.log("comlany admin", companyAdmin);
+
   // reports
   const { data: uniqueUsersCount } = useQuery({
     queryKey: ["unique users count", company?.id],

@@ -9,9 +9,7 @@ import { FormatDateTime } from "@/utils/FormatDate/FormatDate";
 import FormSection from "../components/FormSection";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "@/services";
-import { toast } from "sonner";
 import Loader from "@/components/BeatLoader/Loader";
-
 import { Button, Input, Textarea, useDisclosure } from "@heroui/react";
 import Modal from "@/components/Modal/HeroModal";
 
@@ -50,7 +48,7 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
   useEffect(() => {
     if (!isObjEmpty(form)) {
       setName(form?.name);
-      setDescription(form.description);
+      setDescription(form?.description);
     }
   }, [form]);
 

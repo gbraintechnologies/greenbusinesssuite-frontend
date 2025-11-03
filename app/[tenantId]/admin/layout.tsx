@@ -54,18 +54,17 @@ export default function CompanyLayout(props: any) {
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    // setLoading(true);
-    // if (!Boolean(auth) || !Boolean(companyAdmin)) {
-    //   router.push(`/${params?.tenantId}/auth`);
-    // } else {
-    //   // CHECK COMPANY ADMIN ROLE: 6
-    //   // clients with role 6 shouldn't access this dashboard
-    //   if (true) {
-    //     router.push(`/${params?.tenantId}/client`);
-    //     return;
-    //   }
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    if (!Boolean(auth) || !Boolean(companyAdmin)) {
+      router.push(`/${params?.tenantId}/auth`);
+    } else {
+      // TODO:
+      // CHECK COMPANY ADMIN ROLE: 1
+      // clients with role 2 shouldn't access this dashboard
+      setLoading(false);
+    }
+
+    setLoading(false);
   }, [companyAdmin, auth, pathname]);
 
   // COMPANY ADMIN NAVIGATION

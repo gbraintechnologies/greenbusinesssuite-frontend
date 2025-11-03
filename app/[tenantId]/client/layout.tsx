@@ -83,7 +83,6 @@ export default function ClientLayout({
     let temp: any = [];
 
     all_navigation.forEach((item) => {
-      console.log("checking item", item);
       if (enabled_modules.includes(item.linkedModule)) {
         temp.push(item);
       }
