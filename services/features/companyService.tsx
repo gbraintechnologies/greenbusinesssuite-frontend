@@ -2,6 +2,8 @@ import { Company, CompanyInfo, CompanyObject, CustomField } from "@/types";
 import authApi from "../axiosAuthClient";
 import meshApi from "../meshAuthClient";
 import defaultMeshApi from "../defaultMeshClient";
+import axios from "axios";
+import { getToken, getUserUUID } from "../localService";
 
 export const getAllCompanies = (offset: number = 0, limit: number = 50) => {
   return () =>
@@ -75,6 +77,26 @@ export const assignAdminToCompany = (adminID: number, companyID: number) => {
     id: companyID,
     newAdminUserId: adminID,
   });
+};
+
+export const assignAndCreateAdminWithTenantId = ({
+  data,
+  tenantId,
+}: {
+  data: any;
+  tenantId: string;
+}) => {
+  const customAxios = axios.create({
+    baseURL: `https://api-staging.meshsuites.com/mesh-suite/v1.0`,
+    headers: {
+      "Content-Type": "application/json",
+      "user-uuid": getUserUUID(),
+      Authorization: `Bearer ${getToken()}`,
+      tenantid: tenantId,
+    },
+  });
+
+  return customAxios.put("/companies/admin", data);
 };
 
 export const getSupportStaffAssignedCompanies = (userId: any) => {
