@@ -7,6 +7,7 @@ import {
   getUserUUID,
   getUserId,
   getTenantID,
+  getSessionTenantID,
 } from "./localService";
 
 import { toast } from "sonner";
@@ -25,7 +26,7 @@ authApi.interceptors.request.use(
       "Content-Type": "application/json",
       "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
-      tenantid: getTenantID(),
+      tenantid: getSessionTenantID(),
     };
 
     // Route to admin or tenant
@@ -61,7 +62,7 @@ authApi.interceptors.response.use(
 
       // Route to admin or tenant
       if (getCompanyID() !== 0) {
-        headers = { ...headers, tenantid: getTenantID() };
+        headers = { ...headers, tenantid: getSessionTenantID() };
       }
 
       const config = {
@@ -80,7 +81,6 @@ authApi.interceptors.response.use(
           config
         )
         .then((res) => {
-          const oldRefreshToken = getRefreshToken();
           const uuid = getUserUUID();
           const companyId = getCompanyID();
           const userId = getUserId();
@@ -88,11 +88,11 @@ authApi.interceptors.response.use(
           localStorage.setItem(
             "auth",
             JSON.stringify({
-              access_token: res?.data?.accessToken,
+              accessToken: res?.data?.accessToken,
               company_id: companyId,
-              refresh_token: res?.data?.refreshToken,
+              refreshToken: res?.data?.refreshToken,
               user_id: userId,
-              user_uuid: uuid,
+              id: uuid,
             })
           );
 
@@ -102,7 +102,7 @@ authApi.interceptors.response.use(
             headers: {
               // USE NEW TOKEN IN RETRY REQUEST
               ...headers,
-              Authorization: `Bearer ${res?.data?.access_token}`,
+              Authorization: `Bearer ${res?.data?.accessToken}`,
             },
           });
         })

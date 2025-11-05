@@ -30,6 +30,7 @@ import useUser from "@/hooks/useUser";
 import { Button } from "@heroui/react";
 import Image from "next/image";
 import CompanyLogo from "@/components/ThemeLogo/CompanyLogo";
+import { getSessionTenantID } from "@/services/localService";
 
 //
 
@@ -66,6 +67,7 @@ function CompanyAdminAuth(props: any) {
       .string()
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
+    tenantid: yup.string(),
   });
 
   type typeOfSchema = yup.InferType<typeof schema>;
@@ -102,9 +104,10 @@ function CompanyAdminAuth(props: any) {
     defaultValues: {
       username: "",
       password: "",
+      tenantid: getSessionTenantID(),
     },
   });
-
+  console.log("tenan", getSessionTenantID());
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const loginData: {
@@ -117,14 +120,20 @@ function CompanyAdminAuth(props: any) {
           accessToken: string;
           refreshToken: string;
           tenantId: string;
+          roleName: string;
+          roleId: number;
         };
-      } = await login(data.username, data.password);
+      } = await login({
+        username: data.username,
+        password: data.password,
+        tenantid: getSessionTenantID(),
+      });
 
       if (loginData?.status === 200) {
         addAuthData(loginData.data);
 
         // CHECK FOR USER ROLE
-        let userRole = "CLIENT";
+        let userRole = loginData?.data?.roleName.toUpperCase() ?? "CLIENT";
 
         // TODO: CHECK FOR ADMIN TEMP PASSWORD
         // all newly created accounts have to verify

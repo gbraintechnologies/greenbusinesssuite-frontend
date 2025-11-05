@@ -16,6 +16,7 @@ function Uploaded() {
   // GET ALL FORM DETAILS
 
   const { user } = useUser();
+
   const {
     data: uploaded,
     isLoading: loading,

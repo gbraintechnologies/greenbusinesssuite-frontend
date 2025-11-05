@@ -1,5 +1,5 @@
 "use client";
-import { getTenantID } from "@/services/localService";
+import { getSessionTenantID, getTenantID } from "@/services/localService";
 import { useEffect, useState } from "react";
 import { PiSignOutBold } from "react-icons/pi";
 
@@ -17,13 +17,15 @@ const SessionExpiredModal = () => {
   }, []);
 
   const logOutAndReset = () => {
-    localStorage.clear();
-    if (Boolean(getTenantID())) {
-      window.location.replace(`/${getTenantID()}`);
+    if (Boolean(getSessionTenantID())) {
+      window.location.replace(`/${getSessionTenantID()}/auth/login`);
+      localStorage.clear();
+      sessionStorage.clear();
     } else {
       window.location.replace("/");
+      localStorage.clear();
+      sessionStorage.clear();
     }
-    window.location.reload();
   };
 
   return isOpen ? (

@@ -72,7 +72,7 @@ export default function Layout(props: layoutProps) {
       };
 
       // if company branding is null, assign
-      if (!!companyBranding) {
+      if (!companyBranding) {
         setCompanyBranding(newBranding);
       } else {
         // assign if elements are different (i/e have been changed / updated)

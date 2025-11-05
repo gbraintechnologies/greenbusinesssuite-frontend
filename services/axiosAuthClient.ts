@@ -84,11 +84,11 @@ authApi.interceptors.response.use(
           localStorage.setItem(
             "auth",
             JSON.stringify({
-              access_token: res?.data?.accessToken,
+              accessToken: res?.data?.accessToken,
               company_id: companyId,
-              refresh_token: res?.data?.refreshToken,
+              refreshToken: res?.data?.refreshToken,
               user_id: userId,
-              user_uuid: uuid,
+              id: uuid,
             })
           );
 
