@@ -11,6 +11,7 @@ import useAuth from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import mergeForm from "@/utils/MergeFormFields/MergeFormFields";
+import { getSessionTenantID } from "@/services/localService";
 
 const UncompletedCard = ({ form: formResponse }: any) => {
   const router = useRouter();
@@ -48,7 +49,9 @@ const UncompletedCard = ({ form: formResponse }: any) => {
         <CompanyThemedButton
           onPress={() => {
             router.push(
-              `/${auth?.tenantId}/client/form?id=${form?.id}&response=${formResponse?.id}`
+              `/${getSessionTenantID()}/client/form?id=${form?.id}&response=${
+                formResponse?.id
+              }`
             );
           }}
           className="bg-black flex text-white text-xs md:text-sm px-4 py-2 hover:opacity-95 items-center gap-2 rounded-lg"

@@ -90,7 +90,10 @@ function LogIn() {
 
   const onSubmit = async (data: typeOfSchema) => {
     try {
-      const token: any = await login(data.username, data.password);
+      const token: any = await login({
+        username: data.username,
+        password: data.password,
+      });
 
       if (token?.status === 200) {
         addAuthData(token?.data);

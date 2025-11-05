@@ -1,10 +1,11 @@
 import authApi from "../axiosAuthClient";
 import noAuthApi from "../axiosNoAuthClient";
 
-export const login = (username: any, password: any) => {
+export const login = ({ username, password, tenantid }: any) => {
   return noAuthApi.post("/auth/sign-in", {
     email: username,
     password,
+    tenantId: tenantid,
   });
 };
 

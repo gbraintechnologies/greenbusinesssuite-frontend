@@ -54,11 +54,18 @@ function FormSubmission({
 
   const [loading, setLoading] = useState(false);
 
-  const { data: bill, error } = useQuery({
-    queryKey: ["bill by formid"],
-    queryFn: services.getBillByFormId(clientForm?.id),
-    enabled: Boolean(clientForm?.id) && Boolean(user),
-  });
+  // const { data: bill, error } = useQuery({
+  //   queryKey: ["bill by formid"],
+  //   queryFn: services.getBillByFormId(clientForm?.id),
+  //   enabled: Boolean(clientForm?.id) && Boolean(user),
+  // });
+
+  const bill = {
+    status: "INACTIVE",
+    id: 0,
+    currency: "GHS",
+    amount: 0,
+  };
 
   const { data: form } = useQuery({
     queryKey: ["form", clientForm.id],

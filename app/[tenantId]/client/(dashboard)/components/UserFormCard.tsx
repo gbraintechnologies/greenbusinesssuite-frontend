@@ -26,6 +26,7 @@ import FormResponse from "./FormResponse/FormResponse";
 import StatusPill from "@/components/StatusPill/StatusPillText";
 import useAuth from "@/hooks/useAuth";
 import html2pdf from "html2pdf.js";
+import { getSessionTenantID } from "@/services/localService";
 
 type Props = {
   form: any;
@@ -127,7 +128,9 @@ function FormCard({ form: formResponse, type = "uncompleted" }: Props) {
       title: "View",
       func: () => {
         router.push(
-          `/${auth?.tenantId}/client/form/view?id=${formResponse?.formId}&response=${formResponse?.id}`
+          `/${getSessionTenantID()}/client/form/view?id=${
+            formResponse?.formId
+          }&response=${formResponse?.id}`
         );
       },
     },
