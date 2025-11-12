@@ -1,11 +1,12 @@
 import authApi from "../axiosAuthClient";
 import noAuthApi from "../axiosNoAuthClient";
+import { getSessionTenantID } from "../localService";
 
 export const login = ({ username, password, tenantid }: any) => {
   return noAuthApi.post("/auth/sign-in", {
     email: username,
     password,
-    tenantId: tenantid,
+    // tenantId: tenantid,
   });
 };
 
@@ -13,16 +14,8 @@ export const currentLoggedIn = (token: any) => {
   return authApi.post(`/users/current_logged_in/?token=${token}`);
 };
 
-export const changePassword = ({
-  user_id,
-  current_password,
-  new_password,
-}: any) => {
-  return authApi.post("/users/change_password/", {
-    user_id,
-    current_password,
-    new_password,
-  });
+export const changePassword = (data: any) => {
+  return authApi.put("/users/change-password", data);
 };
 
 export const updateUser = (user_id: any, userData: any) => {
@@ -81,7 +74,10 @@ export const notifyUserTempCred = (id: any, channel: string) => {
 };
 
 export const userSelfSignUp = (data: any) => {
-  return noAuthApi.post("/auth/sign-up", data);
+  return noAuthApi.post("/auth/sign-up", {
+    ...data,
+    tenantId: getSessionTenantID(),
+  });
 };
 
 export const confirmAccount = (token: any) => {

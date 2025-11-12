@@ -63,7 +63,7 @@ function CompanySetup() {
 
   const [page, setPage] = useState(0);
 
-  const [limit, setLimit] = useState(8);
+  const [limit, setLimit] = useState(20);
 
   const { checkPermission } = useAdmin();
 

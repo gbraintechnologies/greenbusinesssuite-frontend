@@ -107,7 +107,7 @@ function CompanyAdminAuth(props: any) {
       tenantid: getSessionTenantID(),
     },
   });
-  console.log("tenan", getSessionTenantID());
+
   const onSubmit = async (data: typeOfSchema) => {
     try {
       const loginData: {

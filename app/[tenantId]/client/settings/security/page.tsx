@@ -52,9 +52,9 @@ function Security() {
       return;
     }
     const payload = {
-      user_id: data.user_id,
-      current_password: data.current_password,
-      new_password: data.new_password,
+      currentPassword: data.current_password,
+      newPassword: data.new_password,
+      confirmPassword: data.new_password,
     };
     await changePassword(payload);
 
