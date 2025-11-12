@@ -58,7 +58,6 @@ function EditBlog({ params }: any) {
         const formData = new FormData();
         formData.append("file", thumbnail);
 
-        console.log("FormData being sent to S3:", formData);
         const response = await S3BucketFileUpload(formData, thumbnail.name);
 
         if (response?.data) {

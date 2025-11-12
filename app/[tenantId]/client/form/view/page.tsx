@@ -42,8 +42,6 @@ function FillFormHere() {
     enabled: Boolean(responseId),
   });
 
-  console.log("form re", formResponse);
-
   // GET ALL FORM DETAILS
   const { data: formData } = useQuery({
     queryKey: ["form", formId],

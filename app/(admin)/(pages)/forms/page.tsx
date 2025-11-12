@@ -108,8 +108,6 @@ function Forms() {
     selectForm({});
   }, []);
 
-  // console.log("forms", forms);
-
   return (
     <div className="px-5 pb-10">
       <h3 className="font-semibold mb-8 text-xl">Forms</h3>

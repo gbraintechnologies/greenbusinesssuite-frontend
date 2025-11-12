@@ -35,8 +35,6 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
   //   return <FieldOptions refetch={refetch} />;
   // }
 
-  console.log("form", form);
-
   const [redirectUrl, setRedirectUrl] = useState(form?.redirectUrl);
 
   return (

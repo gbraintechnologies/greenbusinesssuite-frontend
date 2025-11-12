@@ -139,13 +139,7 @@ function CompanyAdmins({ companyId }: any) {
         toast.dismiss(loading);
         toast.dismiss();
 
-        if (Array.isArray(e?.response?.data?.detail)) {
-          e?.response?.data?.detail?.map((error: any) => {
-            toast.error(error.msg);
-          });
-        } else {
-          toast.error(e?.response?.data?.detail);
-        }
+        toast.error("Error creating company administrator");
       });
   };
 

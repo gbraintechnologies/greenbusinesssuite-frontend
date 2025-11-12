@@ -68,9 +68,8 @@ function ParentSectorInputs() {
     sectors: [],
   });
   const [rawInputs, setRawInputs] = useState<string[]>(
-    formData.sectors.map(sector => sector.subSector.join(", "))
+    formData.sectors.map((sector) => sector.subSector.join(", "))
   );
-
 
   useEffect(() => {
     console.log("Initial Entries:", initialEntries);
@@ -80,8 +79,7 @@ function ParentSectorInputs() {
     }
   }, [initialEntries, reset]);
 
-  useEffect(() => {
-  }, [formData]);
+  useEffect(() => {}, [formData]);
 
   const handleChange = (index: number, value: string) => {
     const updatedSectors = [...formData.sectors];
@@ -102,11 +100,8 @@ function ParentSectorInputs() {
     setValue(`sectors.${index}.subSector`, updatedSectors[index].subSector);
   };
 
-
   const onSubmitHandler = async (data: FormData) => {
     try {
-      console.log("Form Data Before Payload Construction:", getValues());
-
       const payload = {
         id: data.id,
         countryName: data.countryName,
