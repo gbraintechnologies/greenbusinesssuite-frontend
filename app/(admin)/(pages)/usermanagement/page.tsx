@@ -35,11 +35,14 @@ import Table from "@/components/Table/Table";
 import { user } from "@heroui/theme";
 import Status from "@/components/Status/Status";
 import Nav from "./components/Nav";
+import { useRouter } from "next/navigation";
 
 function UserManagement() {
   const [activeRoleFilter, setActiveRoleFilter] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
+
+  const router = useRouter();
 
   const queryClient = useQueryClient();
 
@@ -87,7 +90,10 @@ function UserManagement() {
 
   const ActionsComponent = (item: any) => {
     return (
-      <button className="bg-white text-black">
+      <button
+        onClick={() => router.push(`/usermanagement/profile?id=${item?.id}`)}
+        className="bg-white text-black"
+      >
         <BsEye />
       </button>
     );
