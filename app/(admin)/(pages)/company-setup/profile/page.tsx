@@ -222,7 +222,7 @@ const Page = () => {
                 </div>
               )}
             </div>
-            {companyData?.status && (
+            {/* {companyData?.status && (
               <div className="flex flex-col gap-3">
                 <div className="label">Status</div>
                 <Menu as={"div"} className={"z-20 relative inline-block"}>
@@ -258,7 +258,7 @@ const Page = () => {
                   </Transition>
                 </Menu>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 

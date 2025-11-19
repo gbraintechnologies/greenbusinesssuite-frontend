@@ -17,14 +17,24 @@ const page = () => {
 
   const id = search.get("id");
 
-  const { data: userData, isLoading } = useQuery({
+  const { data: userData, isLoading } = useQuery<{
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    createdAt: Date;
+    updatedAt: Date;
+    status: string;
+    companyIdentifier: string;
+  }>({
     queryKey: ["get user by id ", id],
     queryFn: services.userByID(id),
   });
 
   const initialValues = {
-    firstname: userData?.first_name,
-    lastname: userData?.last_name,
+    firstname: userData?.firstName,
+    lastname: userData?.lastName,
     email: userData?.email,
   };
 
@@ -37,16 +47,12 @@ const page = () => {
   const router = useRouter();
 
   useEffect(() => {
-    let phone = userData?.mobile_phone_number;
+    let phone = userData?.phone;
     phone?.charAt(0) == "0" ? (phone = phone.replace("0", "233")) : phone;
-    setPhone(phone);
-
-    setProfilePic(
-      userData?.custom_profile_values?.find(
-        (item: any) => item?.custom_profile_item_id === 1
-      )?.value
-    );
+    setPhone(phone ? phone : "");
   }, [userData]);
+
+  console.log("user data", userData);
 
   if (isLoading) {
     return (
@@ -76,7 +82,7 @@ const page = () => {
           profileImage={profileImage}
           setProfileImage={setProfileImage}
           readonly={true}
-          roleId={userData?.profiles[0]?.role_id}
+          roleId={"11"}
           profilePic={profilePic}
           setProfilePic={setProfilePic}
           profilePicPresentOnLoad={true}

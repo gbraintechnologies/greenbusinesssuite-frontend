@@ -80,7 +80,7 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
             <button
               className="px-4 py-2 flex items-center gap-2 text-sm rounded-lg bg-white border border-gray-200"
               onClick={() => {
-                router.back();
+                router.push("/forms");
               }}
             >
               <GoArrowLeft />

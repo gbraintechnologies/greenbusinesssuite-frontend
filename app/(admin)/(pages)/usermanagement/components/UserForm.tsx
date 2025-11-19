@@ -65,49 +65,7 @@ const UserForm = ({
 }: Props) => {
   const inputFileRef = React.useRef(undefined);
 
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>();
-
-  const [selectedRole, setSelectedRole] = useState<any>(null);
-
-  const { handleFileUpload, loadingFile } = useFileUpload();
-  useEffect(() => {
-    if (profileImage) {
-      const url = URL.createObjectURL(profileImage);
-      setProfilePic(url);
-
-      return () => URL.revokeObjectURL(url);
-    }
-  }, [profileImage]);
-
-  // Get ALL MESH BUSINESS SUITE ROLES
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["mesh roles"],
-    // ID OF MESH APP IS 1 IN DB
-    queryFn: services.getMeshBusinessSuiteRoles(),
-  });
-
-  const [roles, setRoles] = useState([]);
-
-  useEffect(() => {
-    if (data) {
-      let temp = [];
-      for (let i = 0; i < data.length; i++) {
-        temp.push({
-          id: data[i].id,
-          value: data[i].id,
-          label: data[i].role_name,
-        });
-      }
-
-      if (roleId && temp.length > 0) {
-        setSelectedRole(temp.find((role: any) => role.id === roleId));
-      }
-      // @ts-ignore
-      setRoles(temp);
-    }
-  }, [data, isLoading, roleId]);
-
-  if (!isLoading && typeof initialValues?.email !== "undefined") {
+  if (typeof initialValues?.email !== "undefined") {
     return (
       <>
         <Formik
@@ -155,8 +113,8 @@ const UserForm = ({
               </div>
 
               {/* profile picture */}
-              <div className="relative w-[140px] h-[140px] rounded-full">
-                {profilePic ? (
+              <div className="relative rounded-full">
+                {/* {profilePic ? (
                   <div className="rounded-full overflow-hidden w-[140px] h-[140px]">
                     <label
                       className="rounded-full block bg-slate-50 w-[140px] h-[140px] object-cover"
@@ -175,7 +133,7 @@ const UserForm = ({
                   <div className="rounded-full  flex items-center justify-center w-[140px] h-[140px] bg-slate-50">
                     <BigUserIcon />
                   </div>
-                )}
+                )} */}
 
                 {!readonly && (
                   <>
@@ -262,7 +220,7 @@ const UserForm = ({
                   </div>
                 </div>
 
-                <div className="input-holder">
+                {/* <div className="input-holder">
                   <label>Roles</label>
                   <Dropdown
                     selected={selectedRole}
@@ -270,7 +228,7 @@ const UserForm = ({
                     options={roles}
                     disabled={true}
                   />
-                </div>
+                </div> */}
               </div>
             </Form>
           )}
