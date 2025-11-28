@@ -18,27 +18,27 @@ const multipartMeshApi = axios.create({
 });
 
 // REQUEST INTERCEPTOR
-// multipartMeshApi.interceptors.request.use(
-//   // @ts-ignore
-//   (config) => {
-//     let headers: headerT = {
-//       "Content-Type": "multipart/form-data",
-//       "user-uuid": getUserUUID(),
-//       Authorization: `Bearer ${getToken()}`,
-//     };
+multipartMeshApi.interceptors.request.use(
+  // @ts-ignore
+  (config) => {
+    let headers: headerT = {
+      "Content-Type": "multipart/form-data",
+      "user-uuid": getUserUUID(),
+      Authorization: `Bearer ${getToken()}`,
+    };
 
-//     // Route to admin or tenant
-//     if (getCompanyID() !== 0) {
-//       headers = { ...headers, tenantid: getTenantID() };
-//     }
+    // Route to admin or tenant
+    if (getCompanyID() !== 0) {
+      headers = { ...headers, tenantid: getTenantID() };
+    }
 
-//     return {
-//       ...config,
-//       headers: headers,
-//     };
-//   },
-//   (error) => Promise.reject(error)
-// );
+    return {
+      ...config,
+      headers: headers,
+    };
+  },
+  (error) => Promise.reject(error)
+);
 
 // RESPONSE INTERCEPTOR: listen for a 401 or 403 then refresh token
 // multipartMeshApi.interceptors.response.use(
