@@ -12,7 +12,9 @@ import StepsNav from "./components/StepsNav";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
+// @ts-ignore
 import "swiper/css";
+// @ts-ignore
 import "swiper/css/pagination";
 
 // componetns
@@ -247,7 +249,7 @@ function FillFormHere() {
                                     ? "disabled"
                                     : "block"
                                 }  w-9 place-content-center  hover:bg-gray-50 disabled:cursor-not-allowed  ml-5`}
-                                onClick={() => swiperInstance?.slideNext()}
+                                onPress={() => swiperInstance?.slideNext()}
                               >
                                 Next
                               </CompanyThemedButton>
