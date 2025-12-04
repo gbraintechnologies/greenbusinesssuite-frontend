@@ -54,18 +54,13 @@ function FormSubmission({
 
   const [loading, setLoading] = useState(false);
 
-  // const { data: bill, error } = useQuery({
-  //   queryKey: ["bill by formid"],
-  //   queryFn: services.getBillByFormId(clientForm?.id),
-  //   enabled: Boolean(clientForm?.id) && Boolean(user),
-  // });
+  const { data: bill, error } = useQuery({
+    queryKey: ["bill by formid"],
+    queryFn: services.getBillByFormId(clientForm?.id),
+    enabled: Boolean(clientForm?.id) && Boolean(user),
+  });
 
-  const bill = {
-    status: "INACTIVE",
-    id: 0,
-    currency: "GHS",
-    amount: 0,
-  };
+  console.log("bill", bill);
 
   const { data: form } = useQuery({
     queryKey: ["form", clientForm.id],
@@ -182,7 +177,7 @@ function FormSubmission({
         responseId: responseId,
         serviceName: form?.name,
         customerEmail: user?.email,
-        customerName: user?.first_name + " " + user?.last_name,
+        customerName: user?.firstName + " " + user?.lastName,
         phoneNumber: phone,
       })
       .then((res) => {
