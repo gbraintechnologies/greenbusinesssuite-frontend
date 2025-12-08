@@ -14,3 +14,4 @@ services:
 networks:
   mesh-business-network:
     driver: bridge
+    internal: true
