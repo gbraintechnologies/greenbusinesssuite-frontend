@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 
 // global css
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Mesh Suite",
@@ -26,7 +26,6 @@ import AdminContextProvider from "@/lib/AdminContextProvider/AdminContextProvide
 import UserContextProvider from "@/lib/UserContextProvider/UserContextProvider";
 import AuthContextProvider from "@/lib/AuthContextProvider/AuthContextProvider";
 import CompanyContextProvider from "@/lib/CompanyContextProvider/CompanyContextProvider";
-import { BsCloudSleet } from "react-icons/bs";
 
 export default function RootLayout({
   children,

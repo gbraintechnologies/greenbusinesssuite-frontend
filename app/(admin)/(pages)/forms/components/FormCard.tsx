@@ -28,6 +28,7 @@ import RenameForm from "../actions/RenameForm";
 import services from "@/services";
 import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
 import { PiEye, PiEyeSlash, PiNotePencilBold } from "react-icons/pi";
+import { capitalize } from "@/utils/Capitalize/capitalize";
 
 type Props = {
   form: any;
@@ -170,6 +171,14 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
             <FormPreviewIcon />
           </div>
           <div className=" text-xs my-2 absolute top-2 left-4 flex flex-col items-start justify-start gap-2">
+            <span
+              className={`${
+                publishStatus == "PUBLISHED" ? "bg-green-700" : "bg-slate-500"
+              } rounded-full truncate text-white  font-normal py-1 px-4 flex items-center gap-1 w-fit`}
+            >
+              <PiNotePencilBold /> {capitalize(publishStatus)}
+            </span>
+
             {isAnonymous ? (
               <span className="rounded-full text-white bg-orange-600 font-medium   py-1 px-4 flex items-center gap-1 w-fit">
                 <IoLockOpenOutline /> Public
