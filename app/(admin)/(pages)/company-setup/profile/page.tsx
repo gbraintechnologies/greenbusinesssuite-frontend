@@ -109,8 +109,6 @@ const Page = () => {
       queryFn: services.getCompanyAssignedForms(Number(id)),
     });
 
-  console.log("assigned forms", assignedForms);
-
   const { data: companyBranding, isLoading: brandingLoading } = useQuery({
     queryKey: ["get company branding info", companyData?.companyIdentifier],
     queryFn: services.getCompanyBranding(companyData?.companyIdentifier!),
