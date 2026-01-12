@@ -6,7 +6,7 @@ import React from "react";
 function CompanyLogo() {
   const { companyBranding } = useCompany();
   return (
-    <div className="w-20 bg-white roundex-xl h-20">
+    <div className="w-20 bg-white rounded-xl h-20">
       <Link href={`/${companyBranding?.company_identifier}`}>
         {companyBranding?.logo && (
           <Image

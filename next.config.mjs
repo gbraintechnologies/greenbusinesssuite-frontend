@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "http",
@@ -17,6 +18,12 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "mesh-business-suite.s3.amazonaws.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "amazonaws.com",
         port: "",
         pathname: "/**",
       },
