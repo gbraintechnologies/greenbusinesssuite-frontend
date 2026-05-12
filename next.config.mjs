@@ -3,6 +3,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
     remotePatterns: [
+	 {
+        protocol: "https",
+        hostname: "eu2.contabostorage.com",
+        pathname: "/**",
+      },
       {
         protocol: "http",
         hostname: "localhost",
@@ -31,6 +36,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "*.s3.amazonaws.com",
         port: "",
+        pathname: "/**",
+      },
+	   {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3000",
         pathname: "/**",
       },
     ],
