@@ -1,21 +1,20 @@
 import axios from "axios";
 
 import {
-  getToken,
-  getRefreshToken,
   getCompanyID,
-  getUserUUID,
-  getUserId,
-  getTenantID,
+  getRefreshToken,
   getSessionTenantID,
+  getToken,
+  getUserId,
+  getUserUUID,
 } from "./localService";
 
-import { toast } from "sonner";
+import { meshBaseURL } from "@/lib/api";
 import { headerT } from "@/types/headerType";
+import { toast } from "sonner";
 
 const authApi = axios.create({
-  // baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
-  baseURL: `https://api-staging.meshsuites.com/mesh-suite/v1.0`,
+  baseURL: meshBaseURL,
 });
 
 // REQUEST INTERCEPTOR
@@ -39,7 +38,7 @@ authApi.interceptors.request.use(
       headers: headers,
     };
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // RESPONSE INTERCEPTOR: listen for a 401 or 403 then refresh token
@@ -78,7 +77,7 @@ authApi.interceptors.response.use(
           {
             refreshToken: getRefreshToken(),
           },
-          config
+          config,
         )
         .then((res) => {
           const uuid = getUserUUID();
@@ -93,7 +92,7 @@ authApi.interceptors.response.use(
               refreshToken: res?.data?.refreshToken,
               user_id: userId,
               id: uuid,
-            })
+            }),
           );
 
           // return
@@ -113,7 +112,7 @@ authApi.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default authApi;

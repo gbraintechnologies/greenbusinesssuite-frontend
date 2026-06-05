@@ -1,9 +1,10 @@
-import { Company, CompanyInfo, CompanyObject, CustomField } from "@/types";
-import authApi from "../axiosAuthClient";
-import meshApi from "../meshAuthClient";
-import defaultMeshApi from "../defaultMeshClient";
+import { meshBaseURL } from "@/lib/api";
+import { CompanyInfo, CustomField } from "@/types";
 import axios from "axios";
+import authApi from "../axiosAuthClient";
+import defaultMeshApi from "../defaultMeshClient";
 import { getToken, getUserUUID } from "../localService";
+import meshApi from "../meshAuthClient";
 
 export const getAllCompanies = (offset: number = 0, limit: number = 50) => {
   return () =>
@@ -38,7 +39,7 @@ export const editCompany = ({ data }: { data: any }) => {
 export const editCompanyWithCustomFields = async (
   companyId: number | undefined,
   data: CompanyInfo,
-  custom_fields?: CustomField[]
+  custom_fields?: CustomField[],
 ) => {
   return await authApi.put(`/companies/edit_with_custom_fields/${companyId}`, {
     company_data: data,
@@ -49,7 +50,7 @@ export const editCompanyWithCustomFields = async (
 export const editCompanySMSSenderIDWithCustomFields = async (
   companyId: number | undefined,
   data: CompanyInfo,
-  custom_fields?: CustomField[]
+  custom_fields?: CustomField[],
 ) => {
   return await authApi.put(`/companies/edit_with_custom_fields/${companyId}`, {
     company_data: data,
@@ -87,7 +88,7 @@ export const assignAndCreateAdminWithTenantId = ({
   tenantId: string;
 }) => {
   const customAxios = axios.create({
-    baseURL: `https://api-staging.meshsuites.com/mesh-suite/v1.0`,
+    baseURL: meshBaseURL,
     headers: {
       "Content-Type": "application/json",
       "user-uuid": getUserUUID(),
@@ -112,7 +113,7 @@ export const createCompanyBranding = (
   color: string,
   companyName: string,
   moduleIds: string[],
-  categorySpecificModuleIds: string[]
+  categorySpecificModuleIds: string[],
 ) => {
   return meshApi.post("/company-branding/create", {
     tenancyId: tenantId,
@@ -134,7 +135,7 @@ export const editCompanyBranding = (
   color: string,
   companyName: string,
   coreModuleIds: string[],
-  categorySpecificModuleIds: string[]
+  categorySpecificModuleIds: string[],
 ) => {
   return defaultMeshApi.put(`/company-branding/update`, {
     // id: id,

@@ -1,9 +1,9 @@
-import axios from "axios";
+import { meshBaseURL } from "@/lib/api";
 import { headerT } from "@/types/headerType";
+import axios from "axios";
 
 const noAuthApi = axios.create({
-  // baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
-  baseURL: "https://api-staging.meshsuites.com/mesh-suite/v1.0",
+  baseURL: meshBaseURL,
 });
 
 // REQUEST INTERCEPTOR
@@ -20,7 +20,7 @@ noAuthApi.interceptors.request.use(
       headers: headers,
     };
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 export default noAuthApi;

@@ -1,20 +1,17 @@
 import axios from "axios";
 
 import {
-  getToken,
-  getRefreshToken,
-  getUserUUID,
   getCompanyID,
-  getUserId,
   getTenantID,
+  getToken,
+  getUserUUID,
 } from "./localService";
 
-import { toast } from "sonner";
+import { meshBaseURL } from "@/lib/api";
 import { headerT } from "@/types/headerType";
 
 const multipartMeshApi = axios.create({
-  // baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
-  baseURL: "https://api-staging.meshsuites.com/mesh-suite/v1.0",
+  baseURL: meshBaseURL,
 });
 
 // REQUEST INTERCEPTOR
@@ -37,7 +34,7 @@ multipartMeshApi.interceptors.request.use(
       headers: headers,
     };
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // RESPONSE INTERCEPTOR: listen for a 401 or 403 then refresh token

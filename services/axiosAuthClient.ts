@@ -1,19 +1,19 @@
 import axios from "axios";
 
 import {
-  getToken,
-  getRefreshToken,
-  getUserUUID,
   getCompanyID,
-  getUserId,
+  getRefreshToken,
   getTenantID,
+  getToken,
+  getUserId,
+  getUserUUID,
 } from "./localService";
 
+import { meshBaseURL } from "@/lib/api";
 import { headerT } from "@/types/headerType";
 
 const authApi = axios.create({
-  // baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0`,
-  baseURL: `https://api-staging.meshsuites.com/mesh-suite/v1.0`,
+  baseURL: meshBaseURL,
 });
 
 // REQUEST INTERCEPTOR
@@ -36,7 +36,7 @@ authApi.interceptors.request.use(
       headers: headers,
     };
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // RESPONSE INTERCEPTOR: listen for a 401 or 403 then refresh token
@@ -73,7 +73,7 @@ authApi.interceptors.response.use(
           {
             refreshToken: getRefreshToken(),
           },
-          config
+          config,
         )
         .then((res) => {
           const oldRefreshToken = getRefreshToken();
@@ -89,7 +89,7 @@ authApi.interceptors.response.use(
               refreshToken: res?.data?.refreshToken,
               user_id: userId,
               id: uuid,
-            })
+            }),
           );
 
           // return
@@ -108,7 +108,7 @@ authApi.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default authApi;
