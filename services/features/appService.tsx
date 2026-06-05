@@ -9,10 +9,10 @@ export const allApps = () => {
 export const refreshToken = () => {
   axios
     .post(
-      `https://api-mesh-suite-staging.meshapps.io/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/userapps/v1.0/users/refresh_token/?token=${getRefreshToken()}`,
       {
         "Content-Type": "application/json",
-      }
+      },
     )
     .then((res) => {
       const oldRefreshToken = getRefreshToken();
@@ -22,7 +22,7 @@ export const refreshToken = () => {
         JSON.stringify({
           access_token: res?.data?.access_token,
           refresh_token: oldRefreshToken,
-        })
+        }),
       );
 
       // return
@@ -47,10 +47,10 @@ export const allPermissions = (limit: number = 400, offset: number = 0) => {
 
 export const updateMultiPermissionForRole = (
   payload: { permission_ids: number[] },
-  roleID: number
+  roleID: number,
 ) => {
   return authApi.post(
     `/apps/permissions/update_multi_permissions_for_role/${roleID}`,
-    payload
+    payload,
   );
 };

@@ -1,6 +1,7 @@
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 
+import { meshBaseURL } from "@/lib/api";
 import { getToken } from "@/services/localService";
 
 const useFileUpload = () => {
@@ -15,9 +16,7 @@ const useFileUpload = () => {
       formData.append("file", file);
 
       const response = await axios({
-        // baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
-        // todo: Replace with env variables when issue is resolved
-        baseURL: `https://api-staging.meshsuites.com/mesh-suite/v1.0`,
+        baseURL: meshBaseURL,
         url: `/s3/resource/upload/${file?.name}`,
         method: "POST",
         data: formData,
