@@ -1,9 +1,8 @@
 import axios from "axios";
-
 import { getToken } from "./localService";
-
 import { meshBaseURL } from "@/lib/api";
 import { headerT } from "@/types/headerType";
+import { attachRefreshInterceptor } from "./tokenRefresh";
 
 const multipartDefaultMeshApi = axios.create({
   baseURL: meshBaseURL,
@@ -13,98 +12,17 @@ const multipartDefaultMeshApi = axios.create({
 multipartDefaultMeshApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
-    let headers: headerT = {
+    const headers: headerT = {
       "Content-Type": "multipart/form-data",
-      // "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
     };
 
-    // Route to admin or tenant
-    // if (getCompanyID() !== 0) {
-    //   headers = { ...headers, tenantid: getTenantID() };
-    // }
-
-    return {
-      ...config,
-      headers: headers,
-    };
+    return { ...config, headers };
   },
   (error) => Promise.reject(error),
 );
 
-// RESPONSE INTERCEPTOR: listen for a 401 or 403 then refresh token
-// multipartDefaultMeshApi.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     const originalRequest = error.config;
-
-//     // If the error status is 401 and there is no originalRequest._retry flag,
-//     // it means the token has expired and we need to refresh it
-//     // 403 error means the server understands but refuses to authorize because token is expired
-//     if (error.response.status === 401 && !originalRequest._retry) {
-//       originalRequest._retry = true;
-
-//       let headers: headerT = {
-//         "Content-Type": "application/json",
-//         "user-uuid": getUserUUID(),
-//         // Authorization: `Bearer ${getToken()}`,
-//       };
-
-//       // Route to admin or tenant
-//       if (getCompanyID() !== 0) {
-//         headers = { ...headers, tenantid: getTenantID() };
-//       }
-
-//       const config = {
-//         headers: {
-//           ...headers,
-//         },
-//       };
-
-//       //  GET REFRESH TOKEN AND RETRY REQUEST
-//       axios
-//         .post(
-//           `${process.env.NEXT_PUBLIC_API_URL}/mesh-suite/v1.0/auth/refresh-token`,
-//           {
-//             refreshToken: getRefreshToken(),
-//           },
-//           config
-//         )
-//         .then((res) => {
-//           const oldRefreshToken = getRefreshToken();
-//           const uuid = getUserUUID();
-//           const companyId = getCompanyID();
-//           const userId = getUserId();
-
-//           localStorage.setItem(
-//             "auth",
-//             JSON.stringify({
-//               access_token: res?.data?.accessToken,
-//               company_id: companyId,
-//               refresh_token: res?.data?.refreshToken,
-//               user_id: userId,
-//               user_uuid: uuid,
-//             })
-//           );
-
-//           // return
-//           return axios({
-//             ...originalRequest,
-//             headers: {
-//               // USE NEW TOKEN IN RETRY REQUEST
-//               ...headers,
-//               Authorization: `Bearer ${res?.data?.access_token}`,
-//             },
-//           });
-//         })
-//         .catch((e) => {
-//           toast.dismiss();
-//           window.dispatchEvent(new Event("sessionExpired"));
-//         });
-//     }
-
-//     return Promise.reject(error);
-//   }
-// );
+// RESPONSE INTERCEPTOR: handles 401 token refresh and retry
+attachRefreshInterceptor(multipartDefaultMeshApi);
 
 export default multipartDefaultMeshApi;

@@ -1,13 +1,3 @@
-// export const getToken = () => {
-//   // @ts-ignore
-//   let user = JSON.parse(localStorage.getItem("auth"));
-//   if (user !== null) {
-//     return user?.access_token;
-//   } else {
-//     return 0;
-//   }
-// };
-
 export const getToken = () => {
   if (typeof window !== "undefined") {
     const auth = window.localStorage.getItem("auth");
@@ -62,6 +52,20 @@ export const getRefreshToken = () => {
     return auth ? JSON.parse(auth)?.refreshToken : null;
   }
   return null;
+};
+
+export const setAuth = (accessToken: string, refreshToken: string) => {
+  if (typeof window !== "undefined") {
+    const existing = JSON.parse(window.localStorage.getItem("auth") || "{}");
+    window.localStorage.setItem(
+      "auth",
+      JSON.stringify({
+        ...existing,
+        accessToken,
+        refreshToken,
+      })
+    );
+  }
 };
 
 export const setSessionStorage = (key: any, value: any) => {
