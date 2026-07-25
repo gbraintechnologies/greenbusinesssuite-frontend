@@ -25,9 +25,9 @@ function Analytics() {
 
   return (
     <div className="pb-40">
-      <div className="mt-4 border border-[#E2E8F0] bg-white  rounded-lg  pt-3">
-        <div className="flex justify-between items-center border-b px-5 border-[#E2E8F0] pb-4">
-          <div className="font-semibold ">Response Insights</div>
+      <div className="mt-4 rounded-2xl border border-slate-200 bg-white pt-3 shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-100 px-5 pb-4">
+          <div className="font-semibold text-slate-900">Response Insights</div>
         </div>
 
         {genderStatsLoading && (

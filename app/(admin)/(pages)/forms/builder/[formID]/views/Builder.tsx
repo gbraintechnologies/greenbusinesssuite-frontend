@@ -47,8 +47,8 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
   //
   useEffect(() => {
     if (!isObjEmpty(form)) {
-      setName(form?.name);
-      setDescription(form?.description);
+      setName(form?.name ?? "");
+      setDescription(form?.description ?? "");
     }
   }, [form]);
 
@@ -75,10 +75,10 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
 
     return (
       <>
-        <div className="pt-10 pb-[20rem] gap-10 relative flex px-10">
-          <div className={`w-1/6`}>
+        <div className="relative flex flex-col gap-4 px-3 pb-[12rem] pt-4 sm:px-5 md:flex-row md:gap-10 md:px-10 md:pb-[20rem] md:pt-10">
+          <div className="w-full md:w-1/6">
             <button
-              className="px-4 py-2 flex items-center gap-2 text-sm rounded-lg bg-white border border-gray-200"
+              className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-sm sm:px-4 sm:text-sm"
               onClick={() => {
                 router.push("/forms");
               }}
@@ -87,22 +87,22 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
               Exit Builder
             </button>
           </div>
-          <div className={`w-5/6`}>
+          <div className="min-w-0 w-full md:w-5/6">
             {/* HEADER: TITLE, DESCRIPTION & LAST UPDATED */}
-            <div className="border border-gray-300 rounded-xl flex gap-10 p-5 justify-between bg-white w-full mb-10">
-              <div className="flex-1">
-                <h5 className="font-semibold text-xl w-full">
+            <div className="mb-5 flex w-full flex-col gap-4 rounded-xl border border-gray-300 bg-white p-4 sm:p-5 md:mb-10 md:flex-row md:justify-between md:gap-10">
+              <div className="min-w-0 flex-1">
+                <h5 className="w-full break-words text-lg font-semibold sm:text-xl">
                   {form?.name?.replace(/"/g, " ")}
                 </h5>
 
-                <div className="flex gap-5 justify-between items-center">
-                  <p className="font-light text-sm flex-1">
+                <div className="flex items-center justify-between gap-5">
+                  <p className="min-w-0 flex-1 break-words text-sm font-light">
                     {form?.description}
                   </p>
                 </div>
 
-                <div className="mt-10">
-                  <p className="text-primary-green text-sm flex gap-2 items-center">
+                <div className="mt-4 sm:mt-10">
+                  <p className="flex items-start gap-2 text-xs text-primary-green sm:items-center sm:text-sm">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-green opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-green"></span>
@@ -117,14 +117,14 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
               </div>
               <button
                 onClick={onOpen}
-                className="border h-fit w-fit flex items-center gap-2 px-3 rouned-xl mt-2 text-sm py-2 rounded-lg hover:text-white hover:bg-black"
+                className="flex h-fit w-fit items-center gap-2 rounded-lg border px-3 py-2 text-xs hover:bg-black hover:text-white sm:mt-2 sm:text-sm"
               >
                 <MdOutlineModeEditOutline /> Update
               </button>
             </div>
 
             {/* FORM SECTIONS */}
-            <div ref={parent} className="mt-5">
+            <div ref={parent} className="mt-4 sm:mt-5">
               {formSections
                 ?.filter((item: any) => !item.isDeleted)
                 .sort((a: any, b: any) => a?.ordering - b?.ordering)
@@ -145,7 +145,7 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
             {formStatusCount && formStatusCount?.totalCount > 0 ? (
               <></>
             ) : (
-              <div className="flex justify-end items-end w-full">
+              <div className="flex w-full items-end justify-end">
                 {/* SECTION / TABLE ADDITION */}
                 {/* <Dropdown>
                 <DropdownTrigger>
@@ -234,7 +234,7 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
 
                 {/* RAW SECTION ADDITION */}
                 <Button
-                  className="bg-white border text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90  border-gray-200 px-3 py-2 w-40 rounded-lg flex items-center justify-center gap-2"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90 sm:w-40"
                   isDisabled={loadingSection}
                   onClick={() => {
                     let template = {

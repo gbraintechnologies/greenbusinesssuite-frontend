@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 // components
 import SideNav from "@/components/SideNav/SideNav";
 import TopNav from "@/components/TopNav/ClientTopNav";
+import { MobileNavProvider } from "@/contexts/MobileNavContext";
 
 // icons
 import ClientDashboardIcon from "@/public/icons/ClientDashboardIcon";
@@ -126,32 +127,41 @@ export default function ClientLayout({
               ) : (
                 <>
                   {" "}
-                  <TopNav />
-                  <div className="flex flex-row h-[93.8vh] mt-[3.5rem]">
-                    {!pathname.includes("settings") &&
-                      pathname !== "/client/form" && (
-                        <div className="hidden md:flex h-full  overflow-y-scroll no-scrollbar">
-                          <SideNav type="client" navigation={navigation} />
-                        </div>
-                      )}
+                  <MobileNavProvider
+                    hasSideNav={
+                      !pathname.includes("settings") &&
+                      !pathname.includes("/client/form")
+                    }
+                  >
+                    <TopNav />
+                    <div className="mt-[3.5rem] flex min-h-[calc(100vh-3.5rem)] flex-row">
+                      {!pathname.includes("settings") &&
+                        pathname !== "/client/form" && (
+                          <SideNav
+                            type="client"
+                            navigation={navigation}
+                            homeHref={
+                              company?.company_identifier
+                                ? `/${company.company_identifier}/client/home`
+                                : "/"
+                            }
+                            brandTitle={company?.name ?? "MeshSuite"}
+                            brandSubtitle="Client Portal"
+                          />
+                        )}
 
-                    <div
-                      className={`${
-                        pathname.includes("settings") ||
-                        pathname.includes("/client/form")
-                          ? "ml-0"
-                          : "ml-[20rem]"
-                      } hidden md:block w-full`}
-                    >
-                      {children}
+                      <div
+                        className={`${
+                          pathname.includes("settings") ||
+                          pathname.includes("/client/form")
+                            ? "ml-0"
+                            : "md:ml-[17.5rem]"
+                        } w-full min-w-0`}
+                      >
+                        {children}
+                      </div>
                     </div>
-                    <div className="flex items-center p-20 text-center mx-auto justify-center h-[70vh] md:hidden">
-                      <p>
-                        Please visit this page on your laptop to access Mesh
-                        Suite
-                      </p>
-                    </div>
-                  </div>
+                  </MobileNavProvider>
                 </>
               )}
             </>

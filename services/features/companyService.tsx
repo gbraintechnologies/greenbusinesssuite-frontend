@@ -3,6 +3,7 @@ import { CompanyInfo, CustomField } from "@/types";
 import axios from "axios";
 import authApi from "../axiosAuthClient";
 import defaultMeshApi from "../defaultMeshClient";
+import noAuthApi from "../axiosNoAuthClient";
 import { getToken, getUserUUID } from "../localService";
 import meshApi from "../meshAuthClient";
 
@@ -156,4 +157,59 @@ export const getCompanyBranding = (tenantId: string) => {
       .get(`/company-branding/find-by-tenancy-id/${tenantId}`)
       .then((res) => res.data);
   // return () => meshApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`).then((res) => res.data);
+};
+
+export const updateCompanyStatus = (data: { id: number; status: string }) => {
+  return authApi.put("/companies/status", data);
+};
+
+export const filterCompaniesByStatus = (status: string) => {
+  return () =>
+    authApi.get(`/companies/filter/status?status=${status}`).then((res) => res.data);
+};
+
+export const getCompanyByName = (name: string) => {
+  return () =>
+    authApi
+      .get(`/companies/get-company-by-name/${encodeURIComponent(name)}`)
+      .then((res) => res.data);
+};
+
+/** Resolve a company record by its public identifier (tenancy slug). */
+export const getCompanyByIdentifier = (identifier: string) => {
+  return async () => {
+    const matchIdentifier = (company: any) =>
+      String(company?.companyIdentifier || company?.company_identifier || "")
+        .toLowerCase() === identifier.toLowerCase();
+
+    const extractList = (payload: any) =>
+      Array.isArray(payload) ? payload : payload?.content ?? [];
+
+    // Public/no-auth first — login pages often have no session token
+    try {
+      const res = await noAuthApi.get(`/companies?page=0&size=1000`);
+      const found = extractList(res.data).find(matchIdentifier);
+      if (found) return found;
+    } catch {
+      // continue
+    }
+
+    // Authenticated fallback (platform admin session in same browser)
+    try {
+      const res = await authApi.get(`/companies?page=0&size=1000`);
+      const found = extractList(res.data).find(matchIdentifier);
+      if (found) return found;
+    } catch {
+      // continue
+    }
+
+    return null;
+  };
+};
+
+export const updateCompanyAssignedForms = (data: {
+  id: number;
+  assignedFormIds: number[];
+}) => {
+  return authApi.put("/companies/forms", data);
 };

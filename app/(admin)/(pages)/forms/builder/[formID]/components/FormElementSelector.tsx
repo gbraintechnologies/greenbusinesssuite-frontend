@@ -48,12 +48,12 @@ export default function FormElementSelector({ section }: any) {
   }
 
   return (
-    <div className="w-72 mx-auto text-center">
+    <div className="mx-auto w-full max-w-72 text-center">
       <Menu as="div" className="relative inline-block text-center">
         <div>
           <Menu.Button
             disabled={loadingField}
-            className="bg-white  z-30 text-sm shadow-sm hover:bg-black hover:text-white border border-gray-200 w-40 px-3 py-2 rounded-lg flex items-center justify-center gap-2"
+            className="z-30 mx-auto flex w-40 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-sm hover:bg-black hover:text-white"
           >
             {loadingField ? <Loader color="#1d1d1d" /> : "Add form element"}
           </Menu.Button>
@@ -67,7 +67,7 @@ export default function FormElementSelector({ section }: any) {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute z-[100] -right-[30%] mt-2 w-72 origin-top divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+          <Menu.Items className="absolute left-1/2 z-[100] mt-2 w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2 origin-top divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
             <div className="px-1 py-1 ">
               {elements.map((item: any, idx: any) => {
                 return (

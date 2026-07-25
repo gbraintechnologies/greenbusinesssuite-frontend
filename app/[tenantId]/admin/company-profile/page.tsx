@@ -289,14 +289,19 @@ const Page = (props: any) => {
                   className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center justify-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2"
                   onClick={() => {
                     const currentHost = window.location.origin;
+                    const companyName = encodeURIComponent(
+                      companyData?.company_name ||
+                        companyData?.companyName ||
+                        ""
+                    );
                     const url =
                       currentHost +
-                      `/${companyData?.company_identifier}/auth/login`;
+                      `/${companyData?.company_identifier}/auth/login?c=${companyName}`;
 
                     navigator.clipboard.writeText(url).then(() => {
                       toast.dismiss();
                       toast.success(
-                        `${companyData?.company_name} dashboard link copied!`
+                        `${companyData?.company_name || companyData?.companyName} dashboard link copied!`
                       );
                     });
                   }}

@@ -203,7 +203,7 @@ function FormCard({
                   <Menu.Items className="absolute  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
                     {options.map((option: any, idx: any) => {
                       return (
-                        <Menu.Item>
+                        <Menu.Item key={option.title}>
                           <div>
                             <button
                               className={`${

@@ -205,7 +205,7 @@ const CompanyConfig = ({
                 {allCoreModules?.map((module: any, index: number) => {
                   return (
                     <ModuleCard
-                      key={index + "core"}
+                      key={`core-${module?.id ?? index}`}
                       moduleData={module}
                       companyAdminPortal={module?.adminFeatures}
                       clientPortal={module?.clientFeatures}
@@ -242,7 +242,7 @@ const CompanyConfig = ({
                 {allCategorySpecificModules?.map(
                   (module: any, index: number) => (
                     <ModuleCard
-                      key={index + "category"}
+                      key={`category-${module?.id ?? index}`}
                       moduleData={module}
                       companyAdminPortal={module?.adminFeatures}
                       clientPortal={module?.clientFeatures}

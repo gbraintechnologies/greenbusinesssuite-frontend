@@ -2,18 +2,28 @@
 
 import services from "@/services";
 import { useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { toast } from "sonner";
+import Loader from "@/components/Loader/Loader";
 
 function SMSSenderID({ company, companyId }: any) {
-  const [senderId, setSenderId] = useState(company?.company_sms_sender_id);
+  const [senderId, setSenderId] = useState(company?.company_sms_sender_id ?? "");
 
   const queryClient = useQueryClient();
 
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    setSenderId(company?.company_sms_sender_id ?? "");
+  }, [company?.company_sms_sender_id]);
+
   const updateSenderID = () => {
+    if (!company || !companyId) {
+      toast.error("Company data is not available yet");
+      return;
+    }
+
     if (senderId == null || senderId?.length < 1) {
       toast.error("Please enter a senderID");
       return;
@@ -27,22 +37,29 @@ function SMSSenderID({ company, companyId }: any) {
           ...company,
           company_sms_sender_id: senderId,
         },
-        company.company_custom_values
+        company?.company_custom_values ?? []
       )
-      .then((res) => {
-        //
+      .then(() => {
         toast.success("Updated SMS Sender ID Successfully");
         setIsLoading(false);
         queryClient.invalidateQueries({
           queryKey: ["company", parseInt(companyId as string)],
         });
       })
-      .catch((e) => {
-        //
+      .catch(() => {
         toast.error("An error occured updating the Sender ID");
         setIsLoading(false);
       });
   };
+
+  if (!company) {
+    return (
+      <div className="mt-10">
+        <Loader text="Loading sender ID settings" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col max-w-xl  mt-10 gap-5">
       <div>
@@ -70,7 +87,7 @@ function SMSSenderID({ company, companyId }: any) {
 
         <p
           className={`${
-            company.company_sms_sender_id
+            company?.company_sms_sender_id
               ? "bg-primary-green text-primary-green border-primary-green text-xl"
               : "bg-red-500 text-red-600 border-red-600 text-base"
           }   border  bg-opacity-10  px-4 py-3 rounded-xl`}

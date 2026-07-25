@@ -48,12 +48,12 @@ function CompanyForms() {
   });
 
   return (
-    <div className="px-5 pb-20 mt-4 py-2 min-h-screen">
+    <div className="mt-4 min-h-screen px-3 py-2 pb-20 sm:px-5">
       <Nav headerLeftTitle="Assigned Forms" />
 
       <div className="mt-5">
         {isFormsLoading ? (
-          <div className="h-[20rem] flex items-center justify-center">
+          <div className="flex h-[20rem] items-center justify-center">
             <div>
               <LoadingIcon />
               <p className="mt-2 text-xs text-gray-500">
@@ -64,12 +64,12 @@ function CompanyForms() {
         ) : (
           // ALL COMPANY FORMS
           <>
-            <div className="flex justify-between mb-3">
+            <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <DatePicker
                 selectedTimeline={selectedTimeline}
                 setSelectedTimeline={setSelectedTimeline}
               />
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
 
                 <Pagination
@@ -87,7 +87,7 @@ function CompanyForms() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-4 gap-5">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
                   {forms &&
                     forms?.content?.map((form: any) => {
                       return <FormCard key={form.id} form={form} />;

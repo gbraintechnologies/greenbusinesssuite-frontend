@@ -91,3 +91,42 @@ export const getAllInvoices = (
 export const getPaymentSummary = () => {
   return () => authApi.get(`/payments/revenue`).then((res) => res.data);
 };
+
+export const getPaymentSummaryByTimeline = (timeline: TimelineType = "ALL") => {
+  return () =>
+    authApi.get(`/payments/revenue/${timeline}`).then((res) => res.data);
+};
+
+export const getPaymentById = (id: string | number) => {
+  return () => authApi.get(`/payments/${id}`).then((res) => res.data);
+};
+
+export const getInvoiceById = (id: string | number) => {
+  return () => authApi.get(`/invoices/${id}`).then((res) => res.data);
+};
+
+export const getInvoiceByNumber = (invoiceNumber: string) => {
+  return () =>
+    authApi.get(`/invoices/number/${invoiceNumber}`).then((res) => res.data);
+};
+
+export const getBillById = (id: string | number) => {
+  return () => authApi.get(`/bills/${id}`).then((res) => res.data);
+};
+
+export const getPaymentsByService = (serviceName: string) => {
+  return () =>
+    authApi.get(`/payments/service/${serviceName}`).then((res) => res.data);
+};
+
+export const getPaymentsByMethod = (paymentMethod: string) => {
+  return () =>
+    authApi
+      .get(`/payments/method/${paymentMethod}`)
+      .then((res) => res.data);
+};
+
+export const getPaymentsByCustomer = (customerName: string) => {
+  return () =>
+    authApi.get(`/payments/customer/${customerName}`).then((res) => res.data);
+};

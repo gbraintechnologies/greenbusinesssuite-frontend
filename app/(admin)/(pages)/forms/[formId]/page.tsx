@@ -4,7 +4,6 @@ import React, { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 
 import { VscEmptyWindow } from "react-icons/vsc";
-import { RiImageCircleLine } from "react-icons/ri";
 
 // icons
 import { FiEdit2 } from "react-icons/fi";
@@ -21,24 +20,21 @@ import services from "@/services";
 import AssignForm from "./components/AssignForm";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import PublishFormButton from "../builder/PublishFormButton";
+import CompanyBrandAvatar from "@/components/CompanyBrand/CompanyBrandAvatar";
 
 // toast
 import { toast } from "sonner";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
-import Image from "next/image";
 import { CompanyType } from "@/types";
 
 function FormDetail(props: any) {
   const params: any = use(props.params);
   let formID = params.formId;
 
-  //
   const [showUnpublishModal, setShowUnpublishModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
 
-  //
   const router = useRouter();
-
   const queryClient = useQueryClient();
 
   const { data: form, isLoading } = useQuery({
@@ -59,14 +55,13 @@ function FormDetail(props: any) {
     queryFn: services.getFormStatusCountById(Number(formID)),
   });
 
-  // scroll to top
   useEffect(() => {
     typeof window !== "undefined" && window.scrollTo(0, 0);
   }, []);
 
   if (isLoading) {
     return (
-      <div className="h-[20rem] flex items-center justify-center">
+      <div className="flex h-[20rem] items-center justify-center">
         <div>
           <LoadingIcon />
           <p className="mt-2 text-xs text-gray-500">Fetching form details</p>
@@ -75,22 +70,27 @@ function FormDetail(props: any) {
     );
   }
 
-  // use props in data directly to avoid lags in changes in react query cache
-  if (form) {
-    return (
-      <div className="">
-        {/* HEADER */}
-        <div className="flex items-center justify-between px-5">
-          <div>
-            <h3 className="text-xl font-semibold">
-              <span className="font-light text-gray-500">Forms / </span>
-              {form?.name}
-            </h3>
-          </div>
+  if (!form) return null;
 
-          <div className="flex gap-2 items-center">
+  return (
+    <div className="px-3 pb-20 pt-2 sm:px-5">
+      {/* HEADER */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-slate-400 sm:hidden">Forms</p>
+          <h3 className="break-words text-lg font-semibold text-slate-900 sm:text-xl">
+            <span className="hidden font-light text-gray-500 sm:inline">
+              Forms /{" "}
+            </span>
+            {form?.name}
+          </h3>
+        </div>
+
+        <div className="-mx-1 overflow-x-auto no-scrollbar px-1 sm:mx-0 sm:overflow-visible sm:px-0">
+          <div className="flex w-max items-center gap-2 sm:w-auto sm:flex-wrap sm:justify-end">
             {Boolean(form?.url) && (
               <button
+                type="button"
                 onClick={() => {
                   if (form?.publishStatus.toLowerCase() === "published") {
                     navigator.clipboard.writeText(form?.url).then(() => {
@@ -102,7 +102,7 @@ function FormDetail(props: any) {
                   toast.dismiss();
                   toast.error("Publish form first to access a shareable link");
                 }}
-                className="btn-outline"
+                className="btn-outline shrink-0 whitespace-nowrap text-xs sm:text-sm"
               >
                 <VscLink /> Copy Form Link
               </button>
@@ -110,20 +110,21 @@ function FormDetail(props: any) {
 
             {!Boolean(form?.companyId) && (
               <button
+                type="button"
                 onClick={() => setShowAssignModal(true)}
-                className="btn-outline"
+                className="btn-outline shrink-0 whitespace-nowrap text-xs sm:text-sm"
               >
                 <VscLink /> Assign Form
               </button>
             )}
 
             <button
+              type="button"
               onClick={() => {
                 router.push(`/forms/builder/${formID}`);
               }}
-              className="btn-outline"
+              className="btn-outline shrink-0 whitespace-nowrap text-xs sm:text-sm"
             >
-              {" "}
               <FiEdit2 />
               Edit form
             </button>
@@ -136,93 +137,105 @@ function FormDetail(props: any) {
             />
           </div>
         </div>
+      </div>
 
-        <div className="px-10 py-10">
-          {/* company assigned */}
-          {companyData && (
-            <p className="font-semibold mb-5">Company Assigned</p>
-          )}
-          {isLoadingCompanyInfo ? (
-            <div className="bg-gray-200 rounded-lg p-5 animate-pulse h-28"></div>
-          ) : (
-            <div className="bg-gray-50 rounded-lg p-5">
-              {companyData === null ||
-              form?.companyId === null ||
-              form?.companyId === 0 ? (
-                <div className="flex gap-4 items-center">
-                  <div className="rounded-full bg-gray-100 p-4 w-24 h-24 flex items-center justify-center">
-                    {" "}
-                    <VscEmptyWindow size={40} />
-                  </div>
-                  <div>
-                    <p className="text-lg font-semibold"> Unassigned Form</p>
-                    <p className="mb-4">Assign a company to form</p>
-                    <button
-                      onClick={() => setShowAssignModal(true)}
-                      className="btn-outline"
-                    >
-                      <VscLink /> Assign Company
-                    </button>
-                  </div>
+      <div className="mt-5 sm:mt-8 sm:px-5">
+        {/* company assigned */}
+        {companyData && (
+          <p className="mb-3 text-sm font-semibold text-slate-900 sm:mb-5 sm:text-base">
+            Company Assigned
+          </p>
+        )}
+        {isLoadingCompanyInfo ? (
+          <div className="h-24 animate-pulse rounded-xl bg-gray-200 sm:h-28 sm:rounded-lg sm:p-5" />
+        ) : (
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:rounded-lg sm:border-0 sm:bg-gray-50 sm:p-5 sm:shadow-none">
+            {companyData === null ||
+            form?.companyId === null ||
+            form?.companyId === 0 ? (
+              <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gray-100 sm:h-24 sm:w-24 sm:p-4">
+                  <VscEmptyWindow size={32} className="sm:hidden" />
+                  <VscEmptyWindow size={40} className="hidden sm:block" />
                 </div>
-              ) : (
-                <div>
-                  <div className="flex items-center gap-5">
-                    <div className="rounded-full w-20 h-20 flex items-center justify-center object-cover border bg-gray-50 border-[rgba(226, 232, 240, 1)]">
-                      <RiImageCircleLine size={40} />
-                    </div>
-
-                    {companyData?.companyName && (
-                      <div className="flex flex-col gap-0">
-                        <div className="text-xl  font-bold">
-                          {/* @ts-ignore */}
-                          {companyData?.companyName}
-                        </div>
-                      </div>
+                <div className="min-w-0">
+                  <p className="text-base font-semibold sm:text-lg">
+                    Unassigned Form
+                  </p>
+                  <p className="mb-3 text-sm text-slate-500 sm:mb-4">
+                    Assign a company to form
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowAssignModal(true)}
+                    className="btn-outline"
+                  >
+                    <VscLink /> Assign Company
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 sm:gap-5">
+                <CompanyBrandAvatar
+                  logoUrl={companyData?.companyLogo}
+                  name={companyData?.companyName}
+                  size="md"
+                  shape="circle"
+                />
+                {companyData?.companyName && (
+                  <div className="min-w-0">
+                    <p className="truncate text-base font-bold text-slate-900 sm:text-xl">
+                      {companyData.companyName}
+                    </p>
+                    {companyData?.companyIdentifier && (
+                      <p className="mt-0.5 truncate text-xs text-slate-400">
+                        {companyData.companyIdentifier}
+                      </p>
                     )}
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* statistics */}
-          <div className="mt-10">
-            <p className="font-semibold mb-5">Submission Statistics</p>
-            <StatsBlock
-              stats={[
-                {
-                  label: "Total number of entries",
-                  value: formStatusCount?.totalCount,
-                },
-                {
-                  label: "Completed submissions",
-                  value: formStatusCount?.completedCount,
-                },
-                {
-                  label: "Submissions",
-                  value: formStatusCount?.unCompletedCount,
-                },
-              ]}
-            />
+                )}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
-        {/* ASSIGN TO NEW COMPANY MODAL */}
-        <Modal
-          isOpen={showAssignModal}
-          setIsOpen={setShowAssignModal}
-          title={`Assign company to form `}
-        >
-          <AssignForm
-            id={formID}
-            setShow={setShowAssignModal}
-            queryClient={queryClient}
+        {/* statistics */}
+        <div className="mt-6 sm:mt-10">
+          <p className="mb-3 text-sm font-semibold text-slate-900 sm:mb-5 sm:text-base">
+            Submission Statistics
+          </p>
+          <StatsBlock
+            stats={[
+              {
+                label: "Total number of entries",
+                value: formStatusCount?.totalCount ?? 0,
+              },
+              {
+                label: "Completed submissions",
+                value: formStatusCount?.completedCount ?? 0,
+              },
+              {
+                label: "Submissions",
+                value: formStatusCount?.unCompletedCount ?? 0,
+              },
+            ]}
           />
-        </Modal>
+        </div>
       </div>
-    );
-  }
+
+      <Modal
+        isOpen={showAssignModal}
+        setIsOpen={setShowAssignModal}
+        title={`Assign company to form `}
+      >
+        <AssignForm
+          id={formID}
+          setShow={setShowAssignModal}
+          queryClient={queryClient}
+        />
+      </Modal>
+    </div>
+  );
 }
 
 export default FormDetail;

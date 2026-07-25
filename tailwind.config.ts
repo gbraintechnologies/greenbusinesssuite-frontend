@@ -16,20 +16,44 @@ const config: Config = {
     transparent: "transparent",
     current: "currentColor",
     extend: {
+      fontFamily: {
+        sans: [
+          "var(--font-sans)",
+          "Plus Jakarta Sans",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+      },
       backgroundImage: {
         grid: "url('/patterns/gridpattern.svg')",
       },
       colors: {
-        "primary-green": "#16A34A",
+        brand: {
+          50: "#F5F3FF",
+          100: "#EDE9FE",
+          200: "#DDD6FE",
+          300: "#C4B5FD",
+          400: "#A78BFA",
+          500: "#8B5CF6",
+          600: "#7C3AED",
+          700: "#6D28D9",
+          800: "#5B21B6",
+          900: "#4C1D95",
+        },
+        "primary-green": "#7C3AED",
         "primary-dark": "#0F172A",
         "primary-red": "#DC2626",
+        surface: {
+          muted: "#F8FAFC",
+        },
         tremor: {
           brand: {
-            faint: colors.blue[50],
-            muted: colors.blue[200],
-            subtle: colors.blue[400],
-            DEFAULT: colors.blue[500],
-            emphasis: colors.blue[700],
+            faint: colors.violet[50],
+            muted: colors.violet[200],
+            subtle: colors.violet[400],
+            DEFAULT: colors.violet[500],
+            emphasis: colors.violet[700],
             inverted: colors.white,
           },
           background: {
@@ -152,7 +176,7 @@ const config: Config = {
       themes: {
         light: {
           colors: {
-            primary: "#16A34A",
+            primary: "#7C3AED",
             secondary: "#0F172A",
           },
         },

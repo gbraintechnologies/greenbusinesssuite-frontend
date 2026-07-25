@@ -1,0 +1,9 @@
+{
+  "name": "Mesh Suite",
+  "short_name": "Mesh Suite",
+  "icons": [],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/"
+}

@@ -1,5 +1,6 @@
 import Loader from "@/components/Loader/Loader";
 import useFileUpload from "@/hooks/useFileUpload";
+import CompanyBrandAvatar from "@/components/CompanyBrand/CompanyBrandAvatar";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import services from "@/services";
 import { Button } from "@heroui/react";
@@ -164,8 +165,17 @@ const BrandingSettings = ({
                   of 512KB. Supported formats are JPG and PNG only.
                 </p>
 
-                {!companySmallLogo && !smallLogoUrl && (
-                  <label className="mt-2 flex gap-2 items-center my-2 bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer">
+                <div className="my-3 flex items-end gap-4">
+                  {!smallLogoUrl && !companySmallLogo && (
+                    <CompanyBrandAvatar
+                      logoUrl={null}
+                      name={companyData?.companyName}
+                      size="md"
+                    />
+                  )}
+
+                  {!companySmallLogo && !smallLogoUrl && (
+                    <label className="mt-2 flex h-fit w-fit cursor-pointer items-center gap-2 rounded-md border border-[#E2E8F0] bg-white p-2 text-sm font-medium text-[#334155]">
                     <input
                       type="file"
                       className="hidden"
@@ -179,7 +189,8 @@ const BrandingSettings = ({
                     <CloudUploadIcon />
                     <p>Upload</p>
                   </label>
-                )}
+                  )}
+                </div>
 
                 {smallLogoUrl && (
                   <div
@@ -260,7 +271,7 @@ const BrandingSettings = ({
                       className="absolute z-10 bg-white p-4 rounded-lg shadow-lg border border-[#E2E8F0]"
                     >
                       <HexColorPicker
-                        color={color}
+                        color={color || "#1d1d1d"}
                         onChange={(newColor) =>
                           handleChangeComplete({ hex: newColor })
                         }
@@ -268,7 +279,7 @@ const BrandingSettings = ({
                       <div className="mt-3 flex items-center justify-between gap-3">
                         <input
                           type="text"
-                          value={color}
+                          value={color ?? ""}
                           onChange={(e) =>
                             handleChangeComplete({ hex: e.target.value })
                           }

@@ -1,33 +1,19 @@
 "use client";
 
-import React, { useEffect } from "react";
-
+import React, { Fragment, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
-
-// icons
 import { BsThreeDots } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-
-//
 import { useQueryClient } from "@tanstack/react-query";
-
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
-
-// utils
-import FormatDate, {
-  FormatDateShort,
-  FormatDateWithDayShort,
-} from "@/utils/FormatDate/FormatDate";
-
-// components
+import { FormatDateWithDayShort } from "@/utils/FormatDate/FormatDate";
 import Modal from "@/components/Modal/Modal";
 import DeleteForm from "../actions/DeleteForm";
 import { toast } from "sonner";
 import RenameForm from "../actions/RenameForm";
 import services from "@/services";
 import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
-import { PiEye, PiEyeSlash, PiNotePencilBold } from "react-icons/pi";
+import { PiNotePencilBold } from "react-icons/pi";
 import { capitalize } from "@/utils/Capitalize/capitalize";
 
 type Props = {
@@ -35,16 +21,15 @@ type Props = {
   addFormResponses?: boolean;
   onClick?: () => void;
 };
+
 function FormCard({ form, onClick, addFormResponses = false }: Props) {
-  let { id, name, updatedOn, url, publishStatus, isAnonymous } = form;
+  const { id, name, updatedOn, url, publishStatus, isAnonymous } = form;
 
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // modal controls for delete and rename
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
-
   const [formResponsesCount, setFormResponsesCount] = useState(0);
 
   const options = [
@@ -76,14 +61,11 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
         toast.info("Duplicating form");
         services
           .duplicateForm(id)
-          .then((res) => {
+          .then(() => {
             toast.dismiss();
             queryClient.invalidateQueries({
               queryKey: ["all forms"],
             });
-
-            // Push to builder after duplicating
-            //  router.push(`/forms/builder/${res}`);
           })
           .catch((e) => {
             toast.dismiss();
@@ -100,64 +82,22 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
     },
   ];
 
-  //  7 colors to pick at random from
-  const colors = [
-    { a: "#392F5A", b: "#584B81" },
-    { a: "#FFA245", b: "#FF8811" },
-    { a: "#FFCAD4", b: "#FEA7B7" },
-    { a: "#E2E8F0", b: "#E2E8F0" },
-    { a: "#F4D06F", b: "#F7CC5A" },
-  ];
-
-  function getRandomInt(min: any, max: any) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  let color = colors[getRandomInt(0, 4)];
-
-  const getFormResponses = async () => {
-    const responses = await services.getFormResponsesById(id);
-    setFormResponsesCount(responses.data?.length);
-  };
-
   useEffect(() => {
-    if (addFormResponses) {
-      getFormResponses();
-    }
-  }, []);
+    if (!addFormResponses) return;
 
-  // TODO: HARD DELETE
-  const hardDelete = (id: any) => {
-    toast.info("Deleting");
-    services
-      .hardDeleteForm(id)
-      .then((res) => {
-        toast.dismiss();
+    const getFormResponses = async () => {
+      const responses = await services.getFormResponsesById(id);
+      setFormResponsesCount(responses.data?.length);
+    };
 
-        toast.success(res.data);
-        queryClient.invalidateQueries({
-          queryKey: ["all forms"],
-        });
-      })
-      .catch((e) => {
-        toast.dismiss();
-        // toast.error(e?.response?.data);
-        console.log("delete error", e?.response?.data);
-      });
-  };
+    getFormResponses();
+  }, [addFormResponses, id]);
 
   return (
     <>
-      <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
-        {/* <button
-          onClick={() => hardDelete(id)}
-          className="bg-red-700 px-5 py-5 m-5 text-white"
-        >
-          Delete
-        </button> */}
+      <div className="relative z-0 w-full min-w-0 rounded-xl border border-slate-200 bg-white shadow-sm focus-within:z-50 sm:rounded-lg sm:border-0 sm:bg-[#F8FAFC] sm:shadow-md">
         <button
+          type="button"
           onClick={
             onClick
               ? () => onClick()
@@ -165,90 +105,76 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                   router.push(`/forms/${id}`);
                 }
           }
-          className={`flex relative  bg-gradient-to-br from-indigo-950 to bg-gray-900  w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          className="relative flex h-24 w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-indigo-950 to-gray-900 sm:h-[10rem] sm:rounded-t-lg"
         >
-          <div className="opacity-10 absolute scale-150 top-[35%] left-[35%]">
+          <div className="pointer-events-none absolute left-1/2 top-[35%] -translate-x-1/2 scale-100 opacity-10 sm:scale-150">
             <FormPreviewIcon />
           </div>
-          <div className=" text-xs my-2 absolute top-2 left-4 flex flex-col items-start justify-start gap-2">
+          <div className="absolute inset-x-2 top-1.5 z-10 flex max-w-[calc(100%-1rem)] flex-wrap gap-1 sm:inset-x-3 sm:top-2 sm:gap-1.5">
             <span
-              className={`${
+              className={`inline-flex max-w-full min-w-0 items-center gap-0.5 truncate rounded-full px-1.5 py-0.5 text-[9px] font-medium text-white sm:gap-1 sm:px-3 sm:py-1 sm:text-[11px] sm:font-normal ${
                 publishStatus == "PUBLISHED" ? "bg-green-700" : "bg-slate-500"
-              } rounded-full truncate text-white  font-normal py-1 px-4 flex items-center gap-1 w-fit`}
+              }`}
             >
-              <PiNotePencilBold /> {capitalize(publishStatus)}
+              <PiNotePencilBold className="shrink-0 text-[10px] sm:text-sm" />{" "}
+              <span className="truncate">{capitalize(publishStatus)}</span>
             </span>
 
             {isAnonymous ? (
-              <span className="rounded-full text-white bg-orange-600 font-medium   py-1 px-4 flex items-center gap-1 w-fit">
-                <IoLockOpenOutline /> Public
+              <span className="inline-flex max-w-full min-w-0 items-center gap-0.5 truncate rounded-full bg-orange-600 px-1.5 py-0.5 text-[9px] font-medium text-white sm:gap-1 sm:px-3 sm:py-1 sm:text-[11px]">
+                <IoLockOpenOutline className="shrink-0 text-[10px] sm:text-sm" />{" "}
+                Public
               </span>
             ) : (
-              <span className="rounded-full text-white bg-indigo-600 font-medium   py-1 px-4 flex items-center gap-1 w-fit">
-                <IoLockClosedOutline /> Protected
+              <span className="inline-flex max-w-full min-w-0 items-center gap-0.5 truncate rounded-full bg-indigo-600 px-1.5 py-0.5 text-[9px] font-medium text-white sm:gap-1 sm:px-3 sm:py-1 sm:text-[11px]">
+                <IoLockClosedOutline className="shrink-0 text-[10px] sm:text-sm" />{" "}
+                Protected
               </span>
             )}
-            <span>
-              {form?.multipleForms && (
-                <span className="rounded-full truncate text-white bg-fuchsia-600 font-normal py-1 px-4 flex items-center gap-1 w-fit">
-                  <PiNotePencilBold /> Allows Multiple Responses
-                </span>
-              )}
-            </span>
+
+            {form?.multipleForms && (
+              <span
+                className="hidden max-w-full min-w-0 items-center gap-1 truncate rounded-full bg-fuchsia-600 px-3 py-1 text-[11px] font-normal text-white sm:inline-flex"
+                title="Allows Multiple Responses"
+              >
+                <PiNotePencilBold className="shrink-0" /> Multiple responses
+              </span>
+            )}
           </div>
         </button>
-        <div className="p-3">
+
+        <div className="p-2.5 sm:p-3">
           <button
+            type="button"
             onClick={() => {
               router.push(`/forms/${id}`);
             }}
-            className="text-lg w-full text-left font-medium"
+            className="w-full truncate text-left text-sm font-semibold text-slate-900 sm:text-lg sm:font-medium"
           >
             {name?.replace(/"/g, " ")}
           </button>
-          <div className="my-2 flex items-center gap-3 text-xs">
-            {/* ANONYMOUS */}
-            {/* <span>
-              {isAnonymous ? (
-                <span className="rounded-full text-orange-600 bg-orange-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
-                  <IoLockOpenOutline /> Public
-                </span>
-              ) : (
-                <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
-                  <IoLockClosedOutline /> Protected
-                </span>
-              )}
-            </span> */}
-            {/* PUBLISHED STATUS */}
-            {/* <span>
-                {publishStatus.toLowerCase() == "published" ? (
-                  <span className="rounded-full text-green-600 bg-green-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
-                    <PiEye /> Published
-                  </span>
-                ) : (
-                  <span className="rounded-full text-red-600 bg-red-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
-                    <PiEyeSlash /> Unpublished
-                  </span>
-                )}
-              </span> */}
-          </div>
-          <div className="flex items-center justify-between mt-1">
+
+          <div className="mt-1.5 flex items-center justify-between gap-1 sm:mt-1">
             {addFormResponses ? (
-              <p className="text-xs pr-4">
-                <span className="font-bold ">{formResponsesCount}</span>{" "}
+              <p className="truncate pr-2 text-[10px] text-slate-500 sm:pr-4 sm:text-xs">
+                <span className="font-bold text-slate-700">
+                  {formResponsesCount}
+                </span>{" "}
                 responses
               </p>
             ) : (
-              <p className="text-xs font-light pr-4">
+              <p className="truncate pr-2 text-[10px] font-light text-slate-500 sm:pr-4 sm:text-xs">
                 Edited {FormatDateWithDayShort(updatedOn)}
               </p>
             )}
-            <Menu as="div" className="relative">
-              <div className="relative">
-                <Menu.Button className="relative">
-                  <BsThreeDots />
-                </Menu.Button>
-              </div>
+
+            <Menu as="div" className="relative shrink-0">
+              <Menu.Button
+                className="rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+                aria-label="Form actions"
+              >
+                <BsThreeDots />
+              </Menu.Button>
               <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"
@@ -258,29 +184,27 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute z-[99999999]  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
-                  {options.map((option: any, idx: any) => {
-                    return (
-                      <Menu.Item key={idx}>
-                        <div>
-                          <button
-                            className={`${
-                              option.title.toLowerCase() === "delete"
-                                ? "text-red-600"
-                                : " text-gray-500"
-                            } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
-                            onClick={() => option.func()}
-                          >
-                            {option.title}
-                          </button>
-
-                          {idx % 2 === 0 && (
-                            <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
-                          )}
-                        </div>
-                      </Menu.Item>
-                    );
-                  })}
+                <Menu.Items className="absolute bottom-full right-0 z-[100] mb-1 flex w-44 flex-col rounded-lg border border-slate-200 bg-white py-1 text-left shadow-lg">
+                  {options.map((option, idx) => (
+                    <Menu.Item key={idx}>
+                      {({ close }) => (
+                        <button
+                          type="button"
+                          className={`${
+                            option.title.toLowerCase() === "delete"
+                              ? "text-red-600 hover:bg-red-50"
+                              : "text-gray-600 hover:bg-gray-50"
+                          } w-full px-4 py-2.5 text-left text-sm`}
+                          onClick={() => {
+                            option.func();
+                            close();
+                          }}
+                        >
+                          {option.title}
+                        </button>
+                      )}
+                    </Menu.Item>
+                  ))}
                 </Menu.Items>
               </Transition>
             </Menu>
@@ -288,7 +212,6 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
         </div>
       </div>
 
-      {/* DELETE FORM MODAL */}
       <Modal
         isOpen={showDeleteModal}
         setIsOpen={setShowDeleteModal}
@@ -297,7 +220,6 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
         <DeleteForm id={id} setShow={setShowDeleteModal} />
       </Modal>
 
-      {/* Rename Modal */}
       <Modal
         isOpen={showRenameModal}
         setIsOpen={setShowRenameModal}

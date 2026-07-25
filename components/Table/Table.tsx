@@ -61,8 +61,25 @@ function Table({
 }) {
   // PAGINATION STUFF
   const tableData: any = React.useMemo(() => {
-    return data;
-  }, [page, data]);
+    return (data ?? []).map((item, index) => {
+      const rowKey = `row-${index}-${item?.id ?? "unknown"}`;
+
+      return {
+        ...item,
+        key: rowKey,
+        id: rowKey,
+        __originalId: item?.id,
+      };
+    });
+  }, [data]);
+
+  const getCellValue = (item: any, columnKey: React.Key) => {
+    if (columnKey === "id" && item?.__originalId != null) {
+      return item.__originalId;
+    }
+
+    return getKeyValue(item, columnKey as string | number);
+  };
 
   const handleClear = () => {
     setPage(1);
@@ -205,35 +222,23 @@ function Table({
           isLoading={isLoading}
         >
           {(item: any) => (
-            <TableRow key={item?.id + Math.random()}>
+            <TableRow key={item.key}>
               {(columnKey) => (
-                <>
-                  {columnKey == "actions" && (
-                    <TableCell>
-                      {actionsComponent && actionsComponent(item)}
-                    </TableCell>
-                  )}
-
-                  {columnKey == "status" && (
-                    <TableCell className="flex justify-start">
-                      {statusComponent && statusComponent(item)}
-                    </TableCell>
-                  )}
-
-                  {columnKey == "download" && (
-                    <TableCell>
-                      {downloadComponent && downloadComponent(item)}
-                    </TableCell>
-                  )}
-
+                <TableCell
+                  className={
+                    columnKey === "status"
+                      ? "flex justify-start mr-1 text-left"
+                      : "mr-1 text-left"
+                  }
+                >
+                  {columnKey === "actions" && actionsComponent?.(item)}
+                  {columnKey === "status" && statusComponent?.(item)}
+                  {columnKey === "download" && downloadComponent?.(item)}
                   {columnKey !== "actions" &&
                     columnKey !== "status" &&
-                    columnKey !== "download" && (
-                      <TableCell className="mr-1 text-left">
-                        {getKeyValue(item, columnKey)}
-                      </TableCell>
-                    )}
-                </>
+                    columnKey !== "download" &&
+                    getCellValue(item, columnKey)}
+                </TableCell>
               )}
             </TableRow>
           )}

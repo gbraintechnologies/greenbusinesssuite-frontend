@@ -1,29 +1,27 @@
 "use client";
 
-// icons
 import { GoPlusCircle } from "react-icons/go";
 import Link from "next/link";
-import useAdmin from "@/hooks/useAdmin";
-import { PermissionTypes } from "@/types/permissionTypes";
-import { Button } from "@heroui/react";
 
 function Nav() {
-  const { checkPermission } = useAdmin();
-
   return (
-    <div className="w-full text-[#0F172A] px-5 items-center  flex justify-between">
+    <div className="flex w-full items-center justify-between px-5 text-primary-dark">
       <div>
-        <h3 className="header-2">Companies</h3>
+        <h3 className="text-2xl font-semibold text-slate-900">Companies</h3>
+        <p className="mt-0.5 text-sm text-slate-500">
+          Manage organizations and tenants
+        </p>
       </div>
 
-      {/* {checkPermission(PermissionTypes.CREATE_COMPANY) && ( */}
-      {/* TODO: Enable after company permissions up */}
-      <Link href={"/company-setup/create"}>
-        <Button className="bg-primary-green flex text-white text-sm px-4 py-3 hover:opacity-95 items-center gap-2 rounded-xl">
-          <GoPlusCircle size={20} /> Create New Company
-        </Button>
+      <Link href="/company-setup/create">
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-brand-700"
+        >
+          <GoPlusCircle size={18} />
+          Create New Company
+        </button>
       </Link>
-      {/* )} */}
     </div>
   );
 }

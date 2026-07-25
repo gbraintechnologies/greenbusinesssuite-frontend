@@ -58,7 +58,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, IPasswordInput>(
             className={clsx(
               error ? "border border-red-500" : "",
               btnSize === "normal" ? "h-[46px]" : "h-[40px]",
-              `focus:ring-0 pr-10 border border-slate-300 focus:border focus:border-black rounded-[6px] mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${extraClasses}`
+              `focus:ring-2 focus:ring-brand-100 pr-10 border border-slate-300 focus:border-brand-500 rounded-xl mb-1 mt-[7px] outline-none focus:outline-none w-full px-4 py-3 font-medium text-slate-900 ${extraClasses}`
             )}
           />
           <div

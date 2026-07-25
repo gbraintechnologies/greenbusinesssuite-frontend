@@ -1,5 +1,4 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { Button } from "@heroui/react";
 
 interface Props {
   limit: number;
@@ -16,88 +15,75 @@ export default function Pagination({
   page = 1,
   currentData = [],
 }: Props) {
+  const canGoPrev = page > 0;
+  const canGoNext = (currentData?.length ?? 0) >= limit;
+
+  const prevButton = (
+    <button
+      type="button"
+      disabled={!canGoPrev}
+      onClick={() => setPage(page - 1)}
+      className="inline-flex h-9 w-9 items-center justify-center rounded-l-full border border-slate-200 bg-white text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+      aria-label="Previous page"
+    >
+      <FiChevronLeft className="size-5" />
+    </button>
+  );
+
+  const nextButton = (
+    <button
+      type="button"
+      disabled={!canGoNext}
+      onClick={() => setPage(page + 1)}
+      className="inline-flex h-9 w-9 items-center justify-center rounded-r-full border border-l-0 border-slate-200 bg-white text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+      aria-label="Next page"
+    >
+      <FiChevronRight className="size-5" />
+    </button>
+  );
+
   return (
     <>
       {variant === "mobile-full" && (
         <div>
-          <p className="block mb-3 text-sm text-gray-500">
-            {" "}
+          <p className="mb-3 block text-sm text-gray-500">
             Showing results for page {page + 1}
           </p>
           <div className="flex items-center">
-            <Button
-              isDisabled={page <= 0}
-              disabled={page <= 0}
-              onPress={() => setPage(page - 1)}
-              className="rounded-l-full test-sm w-24 disabled:cursor-not-allowed"
-              isIconOnly
-              variant="bordered"
+            <button
+              type="button"
+              disabled={!canGoPrev}
+              onClick={() => setPage(page - 1)}
+              className="inline-flex w-24 items-center justify-center gap-1 rounded-l-full border border-slate-200 bg-white py-2 text-sm text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <FiChevronLeft className="size-4" /> Previous
-            </Button>
-            <Button
-              onPress={() => setPage(page + 1)}
-              isDisabled={currentData.length < limit}
-              disabled={currentData.length <= limit}
-              className="rounded-r-full w-24 text-sm  disabled:cursor-not-allowed"
-              isIconOnly
-              variant="bordered"
+            </button>
+            <button
+              type="button"
+              disabled={!canGoNext}
+              onClick={() => setPage(page + 1)}
+              className="inline-flex w-24 items-center justify-center gap-1 rounded-r-full border border-l-0 border-slate-200 bg-white py-2 text-sm text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
             >
               Next <FiChevronRight className="size-4" />
-            </Button>
+            </button>
           </div>
         </div>
       )}
 
       {variant === "normal" && (
         <div className="flex items-center">
-          <span className="hidden md:block mr-4 text-sm text-gray-500">
-            {" "}
+          <span className="mr-4 hidden text-sm text-gray-500 md:block">
             Showing results for page {page + 1}
           </span>
-          <Button
-            isDisabled={page <= 0}
-            disabled={page <= 0}
-            onPress={() => setPage(page - 1)}
-            className="rounded-l-full disabled:cursor-not-allowed"
-            isIconOnly
-            variant="bordered"
-          >
-            <FiChevronLeft className="size-5" />
-          </Button>
-          <Button
-            onPress={() => setPage(page + 1)}
-            isDisabled={currentData.length < limit}
-            className="rounded-r-full border-l-0 disabled:cursor-not-allowed"
-            isIconOnly
-            variant="bordered"
-          >
-            <FiChevronRight className="size-5" />
-          </Button>
+          {prevButton}
+          {nextButton}
         </div>
       )}
 
       {variant === "no-text" && (
         <div className="flex items-center">
-          <Button
-            isDisabled={page <= 0}
-            disabled={page <= 0}
-            onPress={() => setPage(page - 1)}
-            className="rounded-l-full disabled:cursor-not-allowed"
-            isIconOnly
-            variant="bordered"
-          >
-            <FiChevronLeft className="size-5" />
-          </Button>
-          <Button
-            onPress={() => setPage(page + 1)}
-            isDisabled={currentData.length < limit}
-            className="rounded-r-full border-l-0 disabled:cursor-not-allowed"
-            isIconOnly
-            variant="bordered"
-          >
-            <FiChevronRight className="size-5" />
-          </Button>
+          {prevButton}
+          {nextButton}
         </div>
       )}
     </>

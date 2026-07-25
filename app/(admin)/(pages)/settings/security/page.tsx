@@ -1,152 +1,181 @@
 "use client";
-import { useRouter } from "next/navigation";
-import React from "react";
+
+import React, { useMemo } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import Button from "../components/Button";
-import PasswordInput from "../components/PasswordInput";
-import { FaRegCheckCircle } from "react-icons/fa";
-import { changePassword } from "@/services/features/authService";
 import { toast } from "sonner";
-import useAdmin from "@/hooks/useAdmin";
+import { FaRegCheckCircle } from "react-icons/fa";
+import { FiLock, FiShield } from "react-icons/fi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { changePassword } from "@/services/features/authService";
+import useAdmin from "@/hooks/useAdmin";
+import useAuth from "@/hooks/useAuth";
+import DashboardHeader from "@/components/Dashboard/DashboardHeader";
+import DashboardPanel from "@/components/Dashboard/DashboardPanel";
+import KpiCard from "@/components/Dashboard/KpiCard";
+import PasswordInput from "../components/PasswordInput";
 
 const schema = yup.object({
-  user_id: yup.number(),
-  current_password: yup.string(),
-  new_password: yup.string().min(6, "Password must be at least 6 characters"),
+  current_password: yup.string().required("Current password is required"),
+  new_password: yup
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .required("New password is required"),
   confirm_password: yup
     .string()
-    .min(6, "Password must be at least 6 characters"),
+    .oneOf([yup.ref("new_password")], "Passwords do not match")
+    .required("Confirm your new password"),
 });
 
+type FormValues = yup.InferType<typeof schema>;
+
 function Security() {
-  const router = useRouter();
   const { admin } = useAdmin();
-  type typeOfSchema = yup.InferType<typeof schema>;
+  const { removeAuth } = useAuth();
 
   const {
     register,
     handleSubmit,
+    watch,
+    reset,
     formState: { isSubmitting, errors },
-  } = useForm<typeOfSchema>({
+  } = useForm<FormValues>({
     resolver: yupResolver(schema),
     mode: "onChange",
     defaultValues: {
-      user_id: admin?.id,
       current_password: "",
       new_password: "",
+      confirm_password: "",
     },
   });
 
-  const onSubmit = async (data: typeOfSchema) => {
-    if (data.new_password !== data.confirm_password) {
-      toast.success("Password doesn't match", {
-        position: "top-center",
-        duration: 3000,
+  const newPassword = watch("new_password") || "";
+
+  const checks = useMemo(
+    () => [
+      {
+        label: "At least 6 characters",
+        ok: newPassword.length >= 6,
+      },
+      {
+        label: "Contains a number",
+        ok: /\d/.test(newPassword),
+      },
+      {
+        label: "Contains a letter",
+        ok: /[A-Za-z]/.test(newPassword),
+      },
+    ],
+    [newPassword]
+  );
+
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await changePassword({
+        currentPassword: data.current_password,
+        newPassword: data.new_password,
+        confirmPassword: data.confirm_password,
       });
 
-      return;
+      toast.success("Password changed successfully. Please sign in again.");
+      reset();
+      removeAuth();
+      // Soft redirect after token clear
+      window.location.href = "/";
+    } catch (error: any) {
+      const detail = error?.response?.data?.detail;
+      if (Array.isArray(detail)) {
+        detail.forEach((item: any) =>
+          toast.error(item?.msg || "Password change failed")
+        );
+      } else {
+        toast.error(detail || "Failed to change password");
+      }
     }
-    const payload = {
-      currentPassword: data.current_password,
-      newPassword: data.new_password,
-      confirmPassword: data.new_password,
-    };
-    await changePassword(payload);
-
-    toast.success("Password changed Successfully", {
-      position: "top-center",
-      duration: 3000,
-    });
-    router.push("/");
   };
 
   return (
     <div>
-      <div>
-        <h4 className="font-bold text-lg">Settings and Profile Management</h4>
-        <p className="text-sm font-light">From description</p>
-      </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div style={{ flex: 1 }} className="mt-10">
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              style={{ display: "flex", width: "600px" }}
-            >
-              <div style={{ flex: 1, marginRight: "10px" }}>
-                <div className="mt-6 w-[600px]">
-                  <PasswordInput
-                    label="Old password"
-                    placeholder="Enter your password"
-                    autoComplete="off"
-                    {...register("current_password")}
-                    error={errors.current_password?.message}
-                  />
-                </div>
-                <div className="mt-6 w-[600px]">
-                  <PasswordInput
-                    label="New password"
-                    placeholder="Enter your password"
-                    autoComplete="off"
-                    {...register("new_password")}
-                    error={errors.new_password?.message}
-                  />
-                </div>
+      <DashboardHeader
+        title="Security"
+        subtitle="Protect your account by updating your password regularly"
+      />
 
-                <div className="mt-3 w-[600px] mb-2">
-                  <PasswordInput
-                    label="Confirm password"
-                    placeholder="Enter your password"
-                    autoComplete="off"
-                    {...register("confirm_password")}
-                    error={errors.confirm_password?.message}
-                  />
-                </div>
-                <div className="text-gray-500 text-sm">
-                  <p className="mt-5">Password requirements</p>
-                  {/* <div className="flex items-center justify-start py-2">
-                  <FaRegCheckCircle fontSize={"small"} />
-                  <h1>&nbsp;one lower case character</h1>&nbsp;&nbsp;
-                  <FaRegCheckCircle fontSize={"small"} />
-                  <h1>&nbsp;one number</h1>&nbsp;&nbsp;
-                  <FaRegCheckCircle fontSize={"small"} />
-                  <h1>&nbsp;one uppercase character</h1>
-                </div> */}
-                  <div className="flex items-center justify-start py-2">
-                    <FaRegCheckCircle fontSize={"small"} />
-                    <h1>&nbsp;6 characters minimum</h1>&nbsp;&nbsp;
-                    {/* <FaRegCheckCircle fontSize={"small"} />
-                  <h1>&nbsp;one special character</h1>&nbsp;&nbsp; */}
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div className="float-right">
-            <Button
-              type="submit"
-              onClick={handleSubmit(onSubmit)}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  {" "}
-                  <AiOutlineLoading3Quarters
-                    size={16}
-                    className="animate-spin"
-                  />{" "}
-                  Saving Changes
-                </span>
-              ) : (
-                "Save Changes"
-              )}
-            </Button>
-          </div>
-        </div>
+      <div className="mb-5 grid grid-cols-2 gap-2.5 sm:mb-6 sm:gap-4">
+        <KpiCard
+          label="Signed in as"
+          value={admin?.email || "—"}
+          icon={<FiShield size={18} />}
+        />
+        <KpiCard
+          label="Password policy"
+          value="6+ characters"
+          icon={<FiLock size={18} />}
+          trend={{ value: "Minimum requirement", direction: "neutral" }}
+        />
       </div>
+
+      <DashboardPanel title="Change password">
+        <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-5">
+          <PasswordInput
+            label="Current password"
+            placeholder="Enter your current password"
+            {...register("current_password")}
+            error={errors.current_password?.message}
+            extraClasses="focus:border-brand-500"
+          />
+          <PasswordInput
+            label="New password"
+            placeholder="Enter a new password"
+            {...register("new_password")}
+            error={errors.new_password?.message}
+            extraClasses="focus:border-brand-500"
+          />
+          <PasswordInput
+            label="Confirm new password"
+            placeholder="Re-enter your new password"
+            {...register("confirm_password")}
+            error={errors.confirm_password?.message}
+            extraClasses="focus:border-brand-500"
+          />
+
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="mb-2 text-sm font-medium text-slate-700">
+              Password requirements
+            </p>
+            <ul className="space-y-1.5">
+              {checks.map((check) => (
+                <li
+                  key={check.label}
+                  className={`flex items-center gap-2 text-sm ${
+                    check.ok ? "text-emerald-600" : "text-slate-500"
+                  }`}
+                >
+                  <FaRegCheckCircle size={14} />
+                  {check.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex justify-end border-t border-slate-100 pt-5">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-brand-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isSubmitting && (
+                <AiOutlineLoading3Quarters
+                  size={16}
+                  className="animate-spin"
+                />
+              )}
+              Update password
+            </button>
+          </div>
+        </form>
+      </DashboardPanel>
     </div>
   );
 }

@@ -2,130 +2,96 @@
 
 import React from "react";
 
-//
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
-// css
-import "./index.css";
-import { Spinner } from "@heroui/react";
+import DashboardHeader from "@/components/Dashboard/DashboardHeader";
+import KpiCard from "@/components/Dashboard/KpiCard";
+import RecentCompaniesTable from "@/components/Dashboard/RecentCompaniesTable";
+import { formatNumber } from "@/utils/dashboard/formatters";
+import {
+  FiBriefcase,
+  FiFileText,
+  FiLayers,
+  FiUsers,
+} from "react-icons/fi";
 
 function Dashboard() {
-  // Data
-  const { data: companies } = useQuery({
+  const { data: companies, isLoading: companiesLoading } = useQuery({
     queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(),
+    queryFn: services.getAllCompanies(0, 1),
   });
 
-  const { data: users } = useQuery({
+  const { data: users, isLoading: usersLoading } = useQuery({
     queryKey: ["all users"],
     queryFn: services.allUsers(),
   });
 
-  const { data: publishedFormsCount, isLoading } = useQuery({
+  const { data: publishedFormsCount, isLoading: publishedLoading } = useQuery({
     queryKey: ["published forms count"],
     queryFn: services.publishedFormsCount(),
   });
 
-  const { data: unpublishedFormsCount, isLoading: unpubLoading } = useQuery({
-    queryKey: ["unpublished forms count"],
-    queryFn: services.unpublishedFormsCount(),
+  const { data: unpublishedFormsCount, isLoading: unpublishedLoading } =
+    useQuery({
+      queryKey: ["unpublished forms count"],
+      queryFn: services.unpublishedFormsCount(),
+    });
+
+  const { data: companiesPage, isLoading: companiesListLoading } = useQuery({
+    queryKey: ["dashboard recent companies"],
+    queryFn: services.getAllCompanies(0, 5),
   });
 
+  const recentCompanies = (companiesPage?.content ?? []).map((company: any) => ({
+    id: company.id,
+    serviceName: company.companyName,
+    customerName: company.primaryContactEmail,
+    amountPaid: company.status,
+    datePaid: company.createdOn,
+    paymentMethod: company.primaryContactPhoneNumber,
+  }));
+
   return (
-    <div>
-      <div className="px-5">
-        <h3 className="font-semibold text-xl">Dashboard</h3>
+    <div className="min-h-screen bg-surface-muted px-3 pb-20 pt-4 sm:px-5 sm:pt-5">
+      <DashboardHeader
+        title="Dashboard"
+        subtitle="Platform overview across all organizations"
+      />
 
-        <div className="stats-holder">
-          <div className="stats-section">
-            <p>All Companies</p>
-            <h4 className="stats-content">
-              {companies ? (
-                companies?.totalElements
-              ) : (
-                <Spinner color="default" />
-              )}
-            </h4>
-          </div>
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
+        <KpiCard
+          label="All Companies"
+          value={formatNumber(companies?.totalElements)}
+          isLoading={companiesLoading}
+          icon={<FiLayers size={18} />}
+        />
+        <KpiCard
+          label="All Users"
+          value={formatNumber(users?.length)}
+          isLoading={usersLoading}
+          icon={<FiUsers size={18} />}
+        />
+        <KpiCard
+          label="Published Forms"
+          value={formatNumber(publishedFormsCount)}
+          isLoading={publishedLoading}
+          icon={<FiFileText size={18} />}
+        />
+        <KpiCard
+          label="Unpublished Forms"
+          value={formatNumber(unpublishedFormsCount)}
+          isLoading={unpublishedLoading}
+          icon={<FiBriefcase size={18} />}
+        />
+      </div>
 
-          {/*  */}
-          {/* <div className="border-r border-gray-700 w-2" /> */}
-          <div className="stats-section">
-            <p>All Users</p>
-            <h4 className="stats-content">
-              {users ? users?.length : <Spinner color="default" />}
-            </h4>
-          </div>
-          <div className="stats-section">
-            <p>Published Forms</p>
-            <h4 className="stats-content">
-              {!isLoading ? publishedFormsCount : <Spinner color="default" />}
-            </h4>
-          </div>
-
-          <div className="stats-section">
-            <p>Unpublished Forms</p>
-            <h4 className="stats-content">
-              {!unpubLoading ? (
-                unpublishedFormsCount
-              ) : (
-                <Spinner color="default" />
-              )}
-            </h4>
-          </div>
-
-          {/*  */}
-          {/* <div className="border-r border-gray-700 w-2" /> */}
-          {/* <div className="stats-section">
-            <p>Number of active users</p>
-            <h4 className="stats-content">-</h4>
-          </div> */}
-        </div>
-
-        {/*  */}
-        {/* <div className="stats-holder">
-          <div className="stats-section">
-            <p>Number of inactive users</p>
-            <h4 className="stats-content">-</h4>
-          </div>
-
-          <div className="stats-section">
-            <p>Number of published forms</p>
-            <h4 className="stats-content">{publishedFormsCount}</h4>
-          </div>
-
-          <div className="stats-section">
-            <p>Number of unpublished forms</p>
-            <h4 className="stats-content">{unpublishedFormsCount}</h4>
-          </div>
-        </div> */}
-
-        {/* TEST TOAST AND REFRESHING TOKEN  */}
-        {/* <div className="my-20 flex items-center gap-10">
-          <Button
-            className="text-white bg-black px-4 py-2 rounded-xl"
-            onPress={() => {
-              //
-              toast.success("Sonner test");
-            }}
-          >
-            Sonner Test
-          </Button>
-
-          <Button
-            className="text-white bg-primary-dark px-4 py-2 rounded-xl"
-            onPress={() => {
-              toast.warning("Login to continue", {
-                description:
-                  "Your session has expired. Please login to continue",
-              });
-              services.refreshToken();
-            }}
-          >
-            Refresh TOken!
-          </Button>
-        </div> */}
+      <div className="mt-4 sm:mt-6">
+        <RecentCompaniesTable
+          companies={companiesPage?.content ?? []}
+          isLoading={companiesListLoading}
+          viewAllHref="/company-setup"
+        />
       </div>
     </div>
   );

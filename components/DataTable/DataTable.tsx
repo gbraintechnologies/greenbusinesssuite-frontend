@@ -37,7 +37,16 @@ function DataTable({
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return localRows.slice(start, end);
+    return localRows.slice(start, end).map((row: any, index: number) => {
+      const rowKey = `row-${start + index}-${row?.id ?? "unknown"}`;
+
+      return {
+        ...row,
+        key: rowKey,
+        id: rowKey,
+        __originalId: row?.id,
+      };
+    });
   }, [page, localRows, rowsPerPage]);
 
   const handleSelectionChange = (keys: any) => {
@@ -50,7 +59,7 @@ function DataTable({
   if (isLoading) {
     return (
       <div className="min-h-[60vh] w-full">
-        <div className="flex items-center text-left bg-gray-100 font-medium py-5 justify-between gap-5 px-5 mb-4 rounded-t-lg">
+        <div className="mb-4 hidden items-center justify-between gap-5 rounded-t-lg bg-gray-100 px-5 py-5 text-left font-medium sm:flex">
           {columns.map((column: any, index: number) => {
             return (
               <div className="text-left text-xs uppercase w-full" key={index}>
@@ -106,6 +115,7 @@ function DataTable({
           ) : null
         }
         classNames={{
+          base: "overflow-x-auto",
           wrapper: "min-h-[400px]",
         }}
       >
@@ -125,13 +135,15 @@ function DataTable({
         </TableHeader>
         <TableBody items={items} emptyContent="No data to display">
           {(item: any) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.key}>
               {columns.map((column: any, colIndex: number) => (
-                <TableCell key={column.field || colIndex}>
+                <TableCell key={`${item.key}-${column.field ?? colIndex}`}>
                   {column.getActions
                     ? column.getActions({ row: item })
                     : column.renderCell
                     ? column.renderCell({ row: item })
+                    : column.field === "id" && item.__originalId != null
+                    ? item.__originalId
                     : item[column.field]}
                 </TableCell>
               ))}

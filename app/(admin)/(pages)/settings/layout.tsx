@@ -1,8 +1,6 @@
 "use client";
 
-// Next & React imports
 import React from "react";
-
 import SettingsSideNav from "./components/SettingsSideNav";
 
 export default function SettingsLayout({
@@ -10,12 +8,11 @@ export default function SettingsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Redirect to login if not authenticated
   return (
-    <div className="w-full h-full">
-      <div className="flex flex-row">
+    <div className="min-h-screen bg-surface-muted px-5 pb-20 pt-5">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 lg:flex-row">
         <SettingsSideNav />
-        <div className="mt-4 p-2">{children}</div>
+        <div className="min-w-0 flex-1">{children}</div>
       </div>
     </div>
   );

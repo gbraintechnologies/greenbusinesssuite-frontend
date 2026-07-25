@@ -135,3 +135,38 @@ export interface CompanyType {
   companyIdentifier: string;
   assignedFormIds: any[];
 }
+
+export interface Payment {
+  id: string;
+  billId: string;
+  transactionId: string;
+  paymentMethod: string;
+  customerName: string;
+  datePaid: string;
+  serviceName: string;
+  amountPaid: number;
+  status: string;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  transactionId?: string;
+  customerName: string;
+  createdOn: string | Date;
+  serviceName: string;
+  amount: number;
+}
+
+export interface Bill {
+  amount: number;
+  createdOn: Date | string;
+  updatedOn: Date | string;
+  currency: string;
+  id: string;
+  serviceName: string;
+  paymentMethods: string[];
+  billingType: string;
+  formId: number;
+  status: string;
+}

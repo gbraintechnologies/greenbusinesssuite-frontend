@@ -2,32 +2,31 @@
 
 import DataTable from "@/components/DataTable/DataTable";
 import services from "@/services";
+import { TimelineType } from "@/types";
 import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import React, { useState } from "react";
 
 import { VscEye } from "react-icons/vsc";
 
 function PaymentsList({
-  setSelectedPayment,
+  setSelectedPaymentId,
   onOpen,
+  timeline = "ALL",
 }: {
-  setSelectedPayment: any;
-  onOpen: any;
+  setSelectedPaymentId: (id: string | number) => void;
+  onOpen: () => void;
+  timeline?: TimelineType;
 }) {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(20);
-  const queryClient = useQueryClient();
 
   const { data: payments, isLoading } = useQuery({
-    queryKey: ["all payments", page, limit],
-    queryFn: services.getAllPayments(page, limit),
+    queryKey: ["all payments", page, limit, timeline],
+    queryFn: services.getAllPayments(page, limit, timeline),
   });
 
-  console.log("paymnets", payments);
-
-  // columns
   const columns = [
     {
       field: "id",
@@ -86,8 +85,9 @@ function PaymentsList({
       type: "actions",
       getActions: (params: any) => [
         <button
+          key={`view-${params.row.id}`}
           onClick={() => {
-            setSelectedPayment(params.row);
+            setSelectedPaymentId(params.row.id);
             onOpen();
           }}
         >

@@ -1,11 +1,9 @@
 "use client";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { TbMessage } from "react-icons/tb";
 import DataTable from "@/components/DataTable/DataTable";
 import { IFilter, TimelineType, TimelineValues } from "@/types";
 import SendMessage from "./_components/SendMessagePrompt";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import Pagination from "@/components/Pagination/Pagination";
@@ -15,6 +13,9 @@ import Notifications from "./_components/Notifications";
 import { FormatDateWithSuffix } from "@/utils/FormatDate/FormatDate";
 import RecurringTypeFilter from "./_components/RecurringTypeFilter";
 import Tabs from "@/components/Tabs/Tabs";
+import { BsTrash } from "react-icons/bs";
+import ConfirmModal from "@/components/Modal/Modal";
+import DeleteNotification from "./actions/DeleteNotification";
 
 function page() {
   const [messageHistoryRows, setMessageHistoryRows] = useState<
@@ -38,6 +39,7 @@ function page() {
   >();
 
   const [activeNotification, setActiveNotification] = useState<any>();
+  const [notificationToDelete, setNotificationToDelete] = useState<any>(null);
 
   const [recurringType, setRecurringType] = useState<any>();
 
@@ -247,6 +249,8 @@ function page() {
       type: "actions",
       getActions: (params: any) => [
         <button
+          key={`view-${params.row.id}`}
+          type="button"
           className="outline-none"
           onClick={() => {
             setActiveNotification(params.row.data);
@@ -254,6 +258,15 @@ function page() {
           }}
         >
           <EyeIcon />
+        </button>,
+        <button
+          key={`delete-${params.row.id}`}
+          type="button"
+          className="ml-2 text-red-500 outline-none hover:text-red-700"
+          aria-label="Delete notification"
+          onClick={() => setNotificationToDelete(params.row.data)}
+        >
+          <BsTrash />
         </button>,
       ],
     },
@@ -338,6 +351,8 @@ function page() {
       type: "actions",
       getActions: (params: any) => [
         <button
+          key={`view-${params.row.id}`}
+          type="button"
           className="outline-none"
           onClick={() => {
             setActiveNotification(params.row.data);
@@ -345,6 +360,15 @@ function page() {
           }}
         >
           <EyeIcon />
+        </button>,
+        <button
+          key={`delete-${params.row.id}`}
+          type="button"
+          className="ml-2 text-red-500 outline-none hover:text-red-700"
+          aria-label="Delete notification"
+          onClick={() => setNotificationToDelete(params.row.data)}
+        >
+          <BsTrash />
         </button>,
       ],
     },
@@ -438,6 +462,26 @@ function page() {
           )}
         </ModalContent>
       </Modal>
+
+      <ConfirmModal
+        isOpen={Boolean(notificationToDelete)}
+        setIsOpen={(open) => {
+          if (!open) setNotificationToDelete(null);
+        }}
+        title={`Delete "${notificationToDelete?.subject ?? "notification"}"?`}
+      >
+        {notificationToDelete && (
+          <DeleteNotification
+            notificationId={
+              notificationToDelete.id ?? notificationToDelete.__originalId
+            }
+            subject={notificationToDelete.subject}
+            setShow={(open) => {
+              if (!open) setNotificationToDelete(null);
+            }}
+          />
+        )}
+      </ConfirmModal>
     </div>
   );
 }

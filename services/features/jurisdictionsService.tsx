@@ -43,3 +43,24 @@ export const getJurisdictionByIdRaw = (id: number) => {
 export const getCountryInfoByName = (countryName: string) => {
   return authApi.get(`/countries/name/${countryName}`).then((res) => res.data);
 };
+
+export const addParentLevel = (data: unknown) => {
+  return authApi.put(`/countries/add-parent-level`, data);
+};
+
+export const getChildLevelsByParentName = (parentName: string) => {
+  return () =>
+    authApi
+      .get(`/countries/child-levels/${parentName}`)
+      .then((res) => res.data);
+};
+
+export const getChildEntriesByParentAndCountry = (
+  parentName: string,
+  countryId: string | number
+) => {
+  return () =>
+    authApi
+      .get(`/countries/child-entries/${parentName}/${countryId}`)
+      .then((res) => res.data);
+};

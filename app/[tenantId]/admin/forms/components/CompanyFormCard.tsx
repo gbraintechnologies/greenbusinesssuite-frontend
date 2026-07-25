@@ -95,58 +95,62 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
 
   return (
     <>
-      <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
+      <div className="w-full min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm sm:rounded-lg sm:border-0 sm:bg-[#F8FAFC] sm:shadow-md">
         <button
           onClick={() =>
             router.push(`/${company?.company_identifier}/admin/forms/${id}`)
           }
-          className={`flex relative  bg-gradient-to-br from-indigo-950 to bg-gray-900  w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          className="relative flex h-24 w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-indigo-950 to-gray-900 sm:h-[10rem] sm:rounded-t-lg"
         >
-          <div className="opacity-10 absolute scale-150 top-[35%] left-[35%]">
+          <div className="pointer-events-none absolute left-1/2 top-[35%] -translate-x-1/2 scale-100 opacity-10 sm:scale-150">
             <FormPreviewIcon />
           </div>
-          <div className=" text-xs my-2 absolute top-2 left-4 flex flex-col items-start justify-start gap-2">
+          <div className="absolute inset-x-2 top-1.5 z-10 flex max-w-[calc(100%-1rem)] flex-wrap gap-1 sm:inset-x-3 sm:top-2 sm:gap-1.5">
             <span
-              className={`${
+              className={`inline-flex max-w-full min-w-0 items-center gap-0.5 truncate rounded-full px-1.5 py-0.5 text-[9px] font-medium text-white sm:gap-1 sm:px-3 sm:py-1 sm:text-[11px] sm:font-normal ${
                 publishStatus == "PUBLISHED" ? "bg-green-700" : "bg-slate-500"
-              } rounded-full truncate text-white  font-normal py-1 px-4 flex items-center gap-1 w-fit`}
+              }`}
             >
-              <PiNotePencilBold /> {capitalize(publishStatus)}
+              <PiNotePencilBold className="shrink-0 text-[10px] sm:text-sm" />{" "}
+              <span className="truncate">{capitalize(publishStatus)}</span>
             </span>
             {isAnonymous ? (
-              <span className="rounded-full text-white bg-orange-600 font-medium   py-1 px-4 flex items-center gap-1 w-fit">
-                <IoLockOpenOutline /> Public
+              <span className="inline-flex max-w-full min-w-0 items-center gap-0.5 truncate rounded-full bg-orange-600 px-1.5 py-0.5 text-[9px] font-medium text-white sm:gap-1 sm:px-3 sm:py-1 sm:text-[11px]">
+                <IoLockOpenOutline className="shrink-0 text-[10px] sm:text-sm" />{" "}
+                Public
               </span>
             ) : (
-              <span className="rounded-full text-white bg-indigo-600 font-medium   py-1 px-4 flex items-center gap-1 w-fit">
-                <IoLockClosedOutline /> Protected
+              <span className="inline-flex max-w-full min-w-0 items-center gap-0.5 truncate rounded-full bg-indigo-600 px-1.5 py-0.5 text-[9px] font-medium text-white sm:gap-1 sm:px-3 sm:py-1 sm:text-[11px]">
+                <IoLockClosedOutline className="shrink-0 text-[10px] sm:text-sm" />{" "}
+                Protected
               </span>
             )}
-            <span>
-              {form?.multipleForms && (
-                <span className="rounded-full truncate text-white bg-fuchsia-600 font-normal py-1 px-4 flex items-center gap-1 w-fit">
-                  <PiNotePencilBold /> Allows Multiple Responses
-                </span>
-              )}
-            </span>
+            {form?.multipleForms && (
+              <span
+                className="hidden max-w-full min-w-0 items-center gap-1 truncate rounded-full bg-fuchsia-600 px-3 py-1 text-[11px] font-normal text-white sm:inline-flex"
+                title="Allows Multiple Responses"
+              >
+                <PiNotePencilBold className="shrink-0" /> Multiple responses
+              </span>
+            )}
           </div>
         </button>
-        <div className="p-3 flex flex-col justify-between">
+        <div className="flex flex-col justify-between p-2.5 sm:p-3">
           <button
             onClick={() => {
               router.push(`/${company?.company_identifier}/admin/forms/${id}`);
             }}
-            className="text-lg w-full text-left font-semibold"
+            className="w-full truncate text-left text-sm font-semibold text-slate-900 sm:text-lg"
           >
             {name?.replace(/"/g, " ")}
           </button>
-          <div className="flex items-center justify-between mt-1">
-            <p className="text-xs font-light pr-4">
+          <div className="mt-1.5 flex items-center justify-between gap-1 sm:mt-1">
+            <p className="truncate pr-2 text-[10px] font-light text-slate-500 sm:pr-4 sm:text-xs">
               {formResponsesCount} response(s)
             </p>
-            <Menu as="div" className="relative">
+            <Menu as="div" className="relative shrink-0">
               <div className="relative">
-                <Menu.Button className="relative">
+                <Menu.Button className="rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800">
                   <BsThreeDots />
                 </Menu.Button>
               </div>
@@ -159,25 +163,21 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute z-[999999]  w-40 right-1 -top-1 rounded-lg shadow-md flex flex-col bg-white text-left">
+                <Menu.Items className="absolute right-1 -top-1 z-[999999] flex w-40 flex-col rounded-lg bg-white text-left shadow-md">
                   {options.map((option: any, idx: any) => {
                     return (
-                      <Menu.Item>
+                      <Menu.Item key={option.title}>
                         <div>
                           <button
                             className={`${
                               option.title.toLowerCase() === "delete"
                                 ? "text-red-600"
                                 : " text-gray-500"
-                            } py-3  px-4 font-light hover:bg-gray-50 text-left w-full`}
+                            } w-full px-4 py-3 text-left font-light hover:bg-gray-50`}
                             onClick={() => option.func()}
                           >
                             {option.title}
                           </button>
-
-                          {/* {idx % 2 === 0 && (
-                            <div className="border-t-[1px] border-gray-200 mx-auto w-[80%] text-center" />
-                          )} */}
                         </div>
                       </Menu.Item>
                     );

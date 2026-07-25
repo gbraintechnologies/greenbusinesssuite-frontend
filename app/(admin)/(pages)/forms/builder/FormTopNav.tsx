@@ -15,8 +15,8 @@ function FormTopNav() {
   const { setView, view, form } = useForm();
 
   return (
-    <nav className="h-[3.5rem] z-[200] sticky top-0 bg-[#1E293B] w-full flex justify-between items-center px-5">
-      <div className="w-10 h-[60%] flex items-center justify-center rounded-lg bg-[#F1F5F9]">
+    <nav className="sticky top-0 z-[200] flex h-[3.5rem] w-full items-center justify-between gap-2 bg-[#1E293B] px-2 sm:px-5">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F1F5F9] sm:h-[60%] sm:w-10">
         <Link href="/">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -35,12 +35,12 @@ function FormTopNav() {
         </Link>
       </div>
 
-      <div className="bg-[#334155]  flex items-center gap-2 rounded-xl my-1 p-1 bg-opacity-50">
+      <div className="my-1 flex min-w-0 items-center gap-2 rounded-xl bg-[#334155] bg-opacity-50 p-1">
         <button
           onClick={() => setView("builder")}
           className={`${
             view === "builder" ? "bg-white font-medium" : "text-[#64748B] "
-          } p-1 rounded-lg px-10`}
+          } truncate rounded-lg p-1 px-3 text-xs sm:px-10 sm:text-sm`}
         >
           Form builder
         </button>
@@ -55,8 +55,8 @@ function FormTopNav() {
         </button> */}
       </div>
 
-      <div className="flex items-center gap-3">
-        <div className="border-r border-[0.8px] h-7 border-[#E2E8F0] border-opacity-20"></div>
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div className="hidden h-7 border-r border-[0.8px] border-[#E2E8F0] border-opacity-20 sm:block"></div>
         <Link href="/settings">
           {admin?.custom_profile_values &&
           admin?.custom_profile_values.find(

@@ -103,3 +103,33 @@ export const allCustomFields = () => {
   return () =>
     authApi.post("/users/get_custom_fields/").then((res) => res.data);
 };
+
+export const getLoggedInUser = () => {
+  return () => authApi.get(`/users/me`).then((res) => res.data);
+};
+
+export const getLoggedInUserAuthorities = () => {
+  return () => authApi.get(`/users/authorities`).then((res) => res.data);
+};
+
+export const deleteUser = (id: string | number) => {
+  return authApi.delete(`/users/${id}`);
+};
+
+export const updateUserStatus = (id: string | number, status: string) => {
+  return authApi.put(`/users/${id}/status`, { status });
+};
+
+export const updateUserCompanyIdentifier = (
+  id: string | number,
+  companyIdentifier: string
+) => {
+  return authApi.put(`/users/${id}/company-identifier`, { companyIdentifier });
+};
+
+export const updateUserPassword = (data: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  return authApi.put(`/users/change-password`, data);
+};

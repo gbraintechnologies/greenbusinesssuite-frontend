@@ -1,42 +1,29 @@
 "use client";
-import React from "react";
-import { IoIosAddCircleOutline } from "react-icons/io";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { IoIosAddCircleOutline, IoIosArrowBack } from "react-icons/io";
 import Link from "next/link";
 import services from "@/services";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { IoIosArrowBack } from "react-icons/io";
 import { Button } from "@heroui/react";
 import Table from "@/components/Table/Table";
-import { BsEye } from "react-icons/bs";
-
-interface Permission {
-  app_id: number;
-  permission_name: string;
-  description: string;
-  is_super_admin_only: boolean | null;
-  id: number;
-}
-
-interface Role {
-  role_name: string;
-  app_id: number;
-  role_description: string;
-  is_support: boolean;
-  is_admin_role: boolean;
-  id: number;
-  permissions: Permission[];
-}
-
-interface RowData {
-  id: number;
-  roleName: string;
-  roleDescription: string;
-  permissions: string;
-}
+import { BsEye, BsThreeDots, BsTrash } from "react-icons/bs";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/dropdown";
+import Modal from "@/components/Modal/Modal";
+import DeleteRole from "../actions/DeleteRole";
 
 function ViewRoles() {
   const router = useRouter();
+  const [roleToDelete, setRoleToDelete] = useState<{
+    id: number | string;
+    name: string;
+  } | null>(null);
 
   const { data: roles, isLoading } = useQuery({
     queryKey: ["mesh roles"],
@@ -44,37 +31,82 @@ function ViewRoles() {
   });
 
   const ActionsComponent = (role: any) => {
+    const roleId = role?.__originalId ?? role?.id;
+
     return (
-      <button
-        type="button"
-        className="rounded-full"
-        onClick={() =>
-          router.push(`/usermanagement/edit-role?roleId=${role?.id}`)
-        }
-      >
-        <BsEye />
-      </button>
+      <Dropdown>
+        <DropdownTrigger>
+          <Button
+            isIconOnly
+            size="sm"
+            variant="light"
+            className="min-w-8 text-slate-600"
+            aria-label="Role actions"
+          >
+            <BsThreeDots size={18} />
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu
+          aria-label="Role actions"
+          className="-mt-1 flex flex-col gap-1 rounded-lg border border-[#F1F5F9] bg-white shadow-md"
+        >
+          <DropdownItem
+            key="view"
+            className="rounded-md p-0 text-sm text-[#334155]"
+            textValue="View role"
+          >
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 px-3 py-2.5 text-left hover:bg-[#F1F5F9]"
+              onClick={() =>
+                router.push(`/usermanagement/edit-role?roleId=${roleId}`)
+              }
+            >
+              <BsEye /> View Role
+            </button>
+          </DropdownItem>
+          <DropdownItem
+            key="delete"
+            className="rounded-md p-0 text-sm text-red-600"
+            textValue="Delete role"
+          >
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-red-600 hover:bg-red-50"
+              onClick={() =>
+                setRoleToDelete({
+                  id: roleId,
+                  name: role?.role_name || role?.roleName || "this role",
+                })
+              }
+            >
+              <BsTrash /> Delete Role
+            </button>
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     );
   };
 
   return (
     <div className="w-full p-5">
       <div className="w-full">
-        <div className="w-full text-primary-dark flex justify-between">
+        <div className="flex w-full justify-between text-primary-dark">
           <div className="flex items-center gap-2">
-            <div
-              className="my-3 cursor-pointer flex text-sm items-center gap-2"
+            <button
+              type="button"
+              className="my-3 flex cursor-pointer items-center gap-2 text-sm"
               onClick={() => router.back()}
             >
               <IoIosArrowBack size={12} />
-            </div>
-            <h3 className="font-semibold text-xl">All Roles</h3>
+            </button>
+            <h3 className="text-xl font-semibold">All Roles</h3>
           </div>
-          <div className="flex gap-3 items-center justify-end">
+          <div className="flex items-center justify-end gap-3">
             <Link href="/usermanagement/new-role">
               <Button
                 type="button"
-                className="button bg-primary-green border border-gray-200 shadow-sm py-3 px-4 flex text-white text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+                className="button flex items-center gap-2 rounded-xl border border-gray-200 bg-primary-green px-4 py-3 text-sm text-white shadow-sm hover:opacity-95"
               >
                 <IoIosAddCircleOutline /> Add new role
               </Button>
@@ -82,30 +114,41 @@ function ViewRoles() {
           </div>
         </div>
       </div>
-      <div className="w-full mt-10">
+      <div className="mt-10 w-full">
         <Table
           columns={[
             { name: "ID", uid: "id" },
             { name: "Name", uid: "roleName" },
             { name: "Description", uid: "description" },
-
-            { name: "VIEW", uid: "actions" },
+            { name: "Actions", uid: "actions" },
           ]}
-          data={
-            roles
-              ? roles?.content?.map((role: any) => ({
-                  ...role,
-                }))
-              : []
-          }
+          data={roles ? roles?.content?.map((role: any) => ({ ...role })) : []}
           hasSearch={false}
           isLoading={isLoading}
           title="Roles & Permissions"
           page={1}
-          // statusComponent={StatusComponent}
           actionsComponent={ActionsComponent}
         />
       </div>
+
+      <Modal
+        isOpen={Boolean(roleToDelete)}
+        setIsOpen={(open) => {
+          if (!open) setRoleToDelete(null);
+        }}
+        title={`Delete "${roleToDelete?.name ?? "role"}"?`}
+      >
+        {roleToDelete && (
+          <DeleteRole
+            roleId={roleToDelete.id}
+            roleName={roleToDelete.name}
+            setShow={(open) => {
+              if (!open) setRoleToDelete(null);
+            }}
+            invalidateKeys={[["mesh roles"]]}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

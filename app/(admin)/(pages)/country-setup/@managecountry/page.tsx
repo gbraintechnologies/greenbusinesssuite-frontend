@@ -1,205 +1,177 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Nav from "../components/Nav";
-import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { GoPlusCircle } from "react-icons/go";
+import { FiGlobe, FiLayers, FiMap } from "react-icons/fi";
+import { toast } from "sonner";
 import services from "@/services";
-import { BsThreeDots } from "react-icons/bs";
-import SearchIcon from "@/public/icons/SearchIcon";
-import DataTable from "@/components/DataTable/DataTable";
-import "../index.css";
-import { Countrie } from "../components/Countries";
-import { useRouter } from "next/navigation";
+import DashboardHeader from "@/components/Dashboard/DashboardHeader";
+import DashboardPanel from "@/components/Dashboard/DashboardPanel";
+import KpiCard from "@/components/Dashboard/KpiCard";
+import CountriesTable, {
+  CountryRow,
+} from "@/components/Dashboard/CountriesTable";
+import SearchBox from "@/components/SearchBox/SearchBox";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
-import useAdmin from "@/hooks/useAdmin";
-import { PermissionTypes } from "@/types/permissionTypes";
+import { formatNumber } from "@/utils/dashboard/formatters";
 import { deletecountryWithAssoc } from "@/services/features/jurisdictionsService";
 
-interface RowData {
-  id: number;
-  name: string;
+function mapCountryRow(country: any): CountryRow {
+  return {
+    id: country.id,
+    name: country.countryName ?? country.name ?? "—",
+    parentLevels: country.addressingScheme?.parentLevels?.length,
+    childLevels: country.addressingScheme?.parentLevels?.reduce(
+      (sum: number, level: any) => sum + (level?.childLevels?.length ?? 0),
+      0
+    ),
+  };
 }
-
-interface ActionMenuProps {
-  row: RowData;
-  onDeleteSuccess: () => void;
-}
-
-const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const router = useRouter();
-  const { checkPermission } = useAdmin();
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleEdit = () => {
-    handleClose();
-    router.push(`/country-setup/edit-jurisdiction?id=${row.id}`);
-  };
-
-  const handleDelete = async () => {
-    handleClose();
-    try {
-      await deletecountryWithAssoc(row.id);
-      onDeleteSuccess();
-    } catch (error) {
-      console.error("Error deleting row:", error);
-    }
-  };
-
-  return (
-    <>
-      {/* <IconButton onClick={handleClick}>
-        <BsThreeDots size={20} />
-      </IconButton> */}
-      {/* {checkPermission(PermissionTypes.EDIT_JURISDICTION) && ( */}
-      {/* <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        PaperProps={{
-          sx: {
-            width: 150,
-          },
-        }}
-      >
-        <MenuItem onClick={handleEdit}>Edit</MenuItem>
-        <MenuItem onClick={handleDelete}>Delete</MenuItem>
-      </Menu> */}
-      {/*  )} */}
-    </>
-  );
-};
 
 function CountrySetup() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [rows, setRows] = useState<RowData[]>([]);
-  const { checkPermission } = useAdmin();
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(15);
 
-  const { data, isLoading, refetch } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
     queryKey: ["allCountries", page, limit],
     queryFn: services.allJurisdictions(page, limit),
   });
 
-  const { data: searchData } = useQuery({
+  const { data: searchData, isLoading: searchLoading } = useQuery({
     queryKey: ["searchCountry", searchTerm],
     queryFn: () => services.getCountryInfoByName(searchTerm),
-    enabled: !!searchTerm,
+    enabled: searchTerm.trim().length > 1,
   });
 
+  const isSearching = searchTerm.trim().length > 1;
+
   useEffect(() => {
-    if (searchTerm && searchData) {
-      const mappedRows = [
-        {
-          id: searchData.id,
-          name: searchData.countryName,
-        },
-      ];
-      setRows(mappedRows);
-    } else if (data?.countries) {
-      const mappedRows = data.countries.map((country: any) => ({
-        id: country.id,
-        name: country.countryName,
-      }));
-      setRows(mappedRows);
+    setPage(0);
+  }, [searchTerm, limit]);
+
+  const countryRows = useMemo(() => {
+    if (isSearching) {
+      if (!searchData) return [];
+      const list = Array.isArray(searchData) ? searchData : [searchData];
+      return list.filter(Boolean).map(mapCountryRow);
     }
-  }, [searchData, data, searchTerm]);
 
-  useEffect(() => {
-    refetch();
-  }, [page, limit, refetch]);
+    const list = data?.countries ?? data?.content ?? [];
+    return Array.isArray(list) ? list.map(mapCountryRow) : [];
+  }, [data, searchData, isSearching]);
 
-  const handleDeleteSuccess = async () => {
+  const totalCount =
+    data?.totalElements ??
+    data?.total ??
+    data?.countries?.length ??
+    countryRows.length;
+
+  const configuredCount = countryRows.filter(
+    (row) => (row.parentLevels ?? 0) > 0
+  ).length;
+
+  const handleDelete = async (id: number) => {
+    if (
+      !window.confirm(
+        "Delete this country jurisdiction and its associated levels?"
+      )
+    ) {
+      return;
+    }
+
     try {
-      await refetch();
+      await deletecountryWithAssoc(id);
+      toast.success("Country deleted successfully");
+      await queryClient.invalidateQueries({ queryKey: ["allCountries"] });
+      await queryClient.invalidateQueries({ queryKey: ["searchCountry"] });
     } catch (error) {
-      console.error("Error fetching updated data:", error);
+      console.error("Error deleting country:", error);
+      toast.error("Failed to delete country");
     }
   };
 
-  const columns = [
-    {
-      field: "country",
-      headerName: "Country",
-      type: "actions",
-      align: "left",
-      headerAlign: "left",
-      flex: 3,
-      getActions: (params: any) => [
-        <div className="flex py-3 gap-4 my-3 items-center" key={params.row.id}>
-          {/* <label>
-            <input
-              type="checkbox"
-              className="mr-4 styled-checkbox flex items-center justify-center"
-            />
-          </label> */}
-          <div className="w-10 h-10 flex items-center justify-center">
-            <span className="">
-              <img
-                src={Countrie(params.row.name)?.flags.png}
-                alt={Countrie(params.row.name)?.name.common}
-                style={{ height: "auto", width: "30px" }}
-              />
-            </span>
-          </div>
-          <div>
-            <p className="font-medium">{params.row.name}</p>
-          </div>
-        </div>,
-      ],
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      type: "actions",
-      renderCell: (params: any) => (
-        <ActionMenu row={params.row} onDeleteSuccess={handleDeleteSuccess} />
-      ),
-    },
-  ];
-
   return (
-    <div className="w-full pb-20">
-      <Nav />
-      <div className="flex items-center px-5 justify-between my-4">
-        {checkPermission(PermissionTypes.SEARCH_JURISDICTION) && (
-          <div className="flex items-center gap-3">
-            <div className="border shadow-sm border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
-              <SearchIcon />
-              <input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="outline-none text-sm focus:outline-none bg-white input-custom"
-                placeholder="Search by Country"
-              />
-            </div>
-          </div>
-        )}
-      </div>
-      <DataTable
-        isLoading={isLoading}
-        rows={rows} // Pass the mapped rows to the DataTable
-        columns={columns}
+    <div className="min-h-screen bg-surface-muted px-5 pb-20 pt-5">
+      <DashboardHeader
+        title="Country / Jurisdiction Setup"
+        subtitle="Configure countries, addressing schemes, and regional hierarchies"
+        action={
+          <Link href="/country-setup/new-individual">
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-brand-700 hover:shadow-md"
+            >
+              <GoPlusCircle size={18} />
+              Add New Country
+            </button>
+          </Link>
+        }
       />
-      <div className="w-full flex justify-between">
-        <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
-        <Pagination
-          currentData={data}
-          limit={limit}
-          page={page}
-          setPage={setPage}
+
+      <div className="mb-5 grid grid-cols-2 gap-2.5 [&>*:last-child:nth-child(odd)]:col-span-2 sm:mb-6 sm:grid-cols-3 sm:gap-4 sm:[&>*:last-child:nth-child(odd)]:col-span-1">
+        <KpiCard
+          label="Total Countries"
+          value={formatNumber(totalCount)}
+          isLoading={isLoading}
+          icon={<FiGlobe size={18} />}
+        />
+        <KpiCard
+          label="On this page"
+          value={formatNumber(countryRows.length)}
+          isLoading={isLoading || searchLoading}
+          icon={<FiMap size={18} />}
+          trend={{
+            value: isSearching ? "Search results" : "Current view",
+            direction: "neutral",
+          }}
+        />
+        <KpiCard
+          label="With hierarchy"
+          value={formatNumber(configuredCount)}
+          isLoading={isLoading || searchLoading}
+          icon={<FiLayers size={18} />}
+          trend={{ value: "Parent levels set", direction: "up" }}
         />
       </div>
+
+      <DashboardPanel title="All Jurisdictions">
+        <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="w-full min-w-[240px] sm:w-72">
+            <SearchBox
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              placeholder="Search by country name"
+            />
+          </div>
+
+          {!isSearching && (
+            <div className="flex flex-wrap items-center gap-3">
+              <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
+              <Pagination
+                limit={limit}
+                variant="no-text"
+                page={page}
+                currentData={countryRows}
+                setPage={setPage}
+              />
+            </div>
+          )}
+        </div>
+
+        <CountriesTable
+          countries={countryRows}
+          isLoading={isLoading || (isSearching && searchLoading)}
+          onDelete={handleDelete}
+          canEdit={true}
+          canDelete={true}
+        />
+      </DashboardPanel>
     </div>
   );
 }

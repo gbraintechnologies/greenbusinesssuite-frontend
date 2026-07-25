@@ -35,7 +35,11 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
   //   return <FieldOptions refetch={refetch} />;
   // }
 
-  const [redirectUrl, setRedirectUrl] = useState(form?.redirectUrl);
+  const [redirectUrl, setRedirectUrl] = useState(form?.redirectUrl ?? "");
+
+  useEffect(() => {
+    setRedirectUrl(form?.redirectUrl ?? "");
+  }, [form?.redirectUrl]);
 
   return (
     <div className="bg-white min-h-[100vh]   p-3">
@@ -102,9 +106,7 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
               clients
             </p>
             <input
-              value={
-                Boolean(form?.deadline) ? form?.deadline.split("T")[0] : null
-              }
+              value={form?.deadline ? form.deadline.split("T")[0] : ""}
               onChange={(e) => updateDeadline(e.target.value)}
               className="block mt-2 w-full border-gray-400 text-gray-500 border px-3 py-2 rounded-lg"
               type="date"
@@ -207,7 +209,7 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
                   successfully filling a form
                 </p>
                 <input
-                  value={redirectUrl}
+                  value={redirectUrl ?? ""}
                   className="w-full mt-4 rounded-xl"
                   placeholder="Redirect URL"
                   onChange={(e) => setRedirectUrl(e.target.value)}

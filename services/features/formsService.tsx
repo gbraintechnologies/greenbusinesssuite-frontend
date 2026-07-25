@@ -140,17 +140,24 @@ export const getUnassignedForms = (
       .then((res) => res.data);
 };
 
-export const getUncompletedFormsByUserId = (userId: string) => {
+export const getUncompletedFormsByUserId = (
+  page: string | number = 0,
+  size: string | number = 20,
+  timeline: TimelineType = "ALL",
+  unCompletedFormIds: string | number = 0
+) => {
   return () =>
     authApi
-      .get(`/forms/builder/user/uncompleted-forms/${userId}`)
+      .get(
+        `/forms/builder/user/uncompleted-forms/${page}/${size}/${timeline}/${unCompletedFormIds}`
+      )
       .then((res) => res.data);
 };
 
-export const getAllFormsByUserId = (userId: string) => {
+export const getFormsByIds = (formIds: string) => {
   return () =>
-    defaultMeshApi
-      .get(`/forms/builder/user-forms/${userId}`)
+    authApi
+      .get(`/forms/builder/user-forms-by/${formIds}`)
       .then((res) => res.data);
 };
 
@@ -249,8 +256,11 @@ export const regenerateAPIKey = (id: any) => {
   return authApi.put(`/forms/builder/generate/apikey/${id}`);
 };
 
-export const assignCompanyToForm = (company: any, id: any) => {
-  return authApi.post(`/forms/builder/${company}/duplicateForm`);
+export const assignCompanyToForm = (
+  formId: string | number,
+  companyId: string | number
+) => {
+  return authApi.put(`/forms/builder/company/${formId}/${companyId}`);
 };
 
 export const hardDeleteForm = (id: any) => {
@@ -320,18 +330,21 @@ export const saveResponse = ({
 
 export const retrieveFormUserResponses = (
   userId: number | string | null,
-  formId: any
+  companyId: number | string,
+  formId: number | string
 ) => {
   if (userId === null) {
     throw new Error("No User Id");
   }
   return () =>
     authApi
-      .get(`forms/response/data/user-form/${userId}/${formId}`)
+      .get(`/forms/response/user-form/${userId}/${companyId}/${formId}`)
       .then((res) => res.data);
 };
 
-export const retrieveAnonymousFormResponse = (responseId: number) => {
+export const retrieveAnonymousFormResponse = (responseId: number | string) => {
   return () =>
-    authApi.get(`forms/response/${responseId}`).then((res) => res.data);
+    authApi
+      .get(`/forms/response/user-data/${responseId}`)
+      .then((res) => res.data);
 };

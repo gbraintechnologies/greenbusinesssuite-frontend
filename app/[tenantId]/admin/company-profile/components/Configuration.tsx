@@ -72,6 +72,7 @@ const Configuration = ({ tenantId }: { tenantId: string }) => {
               {companyBranding?.categorySpecificModules?.map(
                 (module: any, index: number) => (
                   <ModuleCard
+                    key={`category-${module?.id ?? index}`}
                     moduleData={module}
                     companyAdminPortal={module?.adminFeatures}
                     clientPortal={module?.clientFeatures}
@@ -104,6 +105,7 @@ const Configuration = ({ tenantId }: { tenantId: string }) => {
               {companyBranding?.modules?.map(
                 (module: any, index: number) => (
                   <ModuleCard
+                    key={`core-${module?.id ?? index}`}
                     moduleData={module}
                     companyAdminPortal={module?.adminFeatures}
                     clientPortal={module?.clientFeatures}

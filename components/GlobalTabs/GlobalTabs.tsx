@@ -1,11 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Tabs, TabsProps } from "@heroui/react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-interface GlobalTabsProps
-  extends Omit<TabsProps, "selectedKey" | "onSelectionChange"> {
+interface GlobalTabsClassNames {
+  base?: string;
+  tabList?: string;
+  tab?: string;
+  panel?: string;
+}
+
+interface GlobalTabsProps {
   defaultTab?: string;
   queryParam?: string;
   /**
@@ -14,105 +19,123 @@ interface GlobalTabsProps
    * @default false
    */
   syncWithUrl?: boolean;
+  children: React.ReactNode;
+  classNames?: GlobalTabsClassNames;
+  "aria-label"?: string;
 }
 
-/**
- * GlobalTabs - A wrapper around NextUI's Tabs component with optional URL sync
- *
- * Features:
- * - Fast local state management (instant tab switching by default)
- * - Optional URL query parameter sync (set syncWithUrl={true})
- * - Maintains all NextUI Tabs props and children structure
- * - Pre-configured with default styling from globalTabStyle (can be overridden)
- *
- * Usage (Fast mode - default):
- * ```tsx
- * <GlobalTabs defaultTab="reports">
- *   <Tab key="reports" title="Reports">
- *     <ReportsContent />
- *   </Tab>
- *   <Tab key="settings" title="Settings">
- *     <SettingsContent />
- *   </Tab>
- * </GlobalTabs>
- * ```
- *
- * Usage (URL sync mode):
- * ```tsx
- * <GlobalTabs defaultTab="reports" syncWithUrl={true} queryParam="tab">
- *   <Tab key="reports" title="Reports">
- *     <ReportsContent />
- *   </Tab>
- *   <Tab key="settings" title="Settings">
- *     <SettingsContent />
- *   </Tab>
- * </GlobalTabs>
- * ```
- *
- * @param defaultTab - The default tab key to show (defaults to first child's key)
- * @param queryParam - The URL query parameter name (defaults to "tab", only used if syncWithUrl is true)
- * @param syncWithUrl - Whether to sync tab state with URL query params (default: false)
- * @param children - NextUI Tab components
- * @param ...props - All other NextUI Tabs props are passed through and can override defaults
- */
+interface TabDescriptor {
+  key: string;
+  title: React.ReactNode;
+  content: React.ReactNode;
+}
+
 function GlobalTabs({
   defaultTab,
   queryParam = "tab",
   syncWithUrl = false,
   children,
-  ...props
+  classNames,
+  "aria-label": ariaLabel = "Options",
 }: GlobalTabsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Initialize state based on mode
+  const tabs = useMemo<TabDescriptor[]>(() => {
+    return React.Children.toArray(children)
+      .filter((child): child is React.ReactElement => React.isValidElement(child))
+      .map((child, index) => {
+        const props = child.props as {
+          title?: React.ReactNode;
+          children?: React.ReactNode;
+        };
+
+        return {
+          // React prefixes keys of array children with ".$"
+          key:
+            child.key != null
+              ? String(child.key).replace(/^\.\$/, "")
+              : `tab-${index}`,
+          title: props.title,
+          content: props.children,
+        };
+      });
+  }, [children]);
+
+  const fallbackTab = defaultTab ?? tabs[0]?.key;
+
   const [selectedTab, setSelectedTab] = useState<string | undefined>(
-    syncWithUrl ? searchParams.get(queryParam) || defaultTab : defaultTab
+    syncWithUrl ? searchParams.get(queryParam) || fallbackTab : fallbackTab
   );
 
-  // Update local state when URL changes (only in URL sync mode)
   useEffect(() => {
+    if (!syncWithUrl) return;
     const tabFromUrl = searchParams.get(queryParam);
     if (tabFromUrl && tabFromUrl !== selectedTab) {
       setSelectedTab(tabFromUrl);
     }
-  }, [searchParams]);
+  }, [searchParams, queryParam, selectedTab, syncWithUrl]);
 
-  const handleTabChange = (key: React.Key) => {
-    const newTab = key.toString();
+  const activeTab =
+    tabs.find((tab) => tab.key === selectedTab) ?? tabs[0] ?? undefined;
 
-    // Always update local state (instant)
-    setSelectedTab(newTab);
+  const handleTabChange = (key: string) => {
+    setSelectedTab(key);
 
-    // Also update URL (with delay)
-    setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(queryParam, newTab);
-      router.push(`?${params.toString()}`, { scroll: false });
-    }, 100);
+    if (!syncWithUrl) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(queryParam, key);
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
   return (
-    <Tabs
-      fullWidth={false}
-      size="md"
-      color="primary"
-      radius="lg"
-      classNames={{
-        cursor: "w-full font-semibold",
-        tab: "px-5 py-5",
-        tabList: "border shadow-none",
-        base: "[data-selected=true]:text-white text-white font-semibold",
-        tabContent: "active:text-white",
-      }}
-      variant="bordered"
-      aria-label="Options"
-      {...props}
-      selectedKey={selectedTab}
-      onSelectionChange={handleTabChange}
-    >
-      {children}
-    </Tabs>
+    <div className={classNames?.base ?? "w-full max-w-full"}>
+      <div
+        role="tablist"
+        aria-label={ariaLabel}
+        className={
+          classNames?.tabList ??
+          "no-scrollbar flex w-full flex-nowrap gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-1"
+        }
+      >
+        {tabs.map((tab) => {
+          const isSelected = tab.key === activeTab?.key;
+
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={isSelected}
+              aria-controls={`panel-${tab.key}`}
+              id={`tab-${tab.key}`}
+              onClick={() => handleTabChange(tab.key)}
+              className={[
+                "h-10 shrink-0 whitespace-nowrap rounded-xl px-4 text-sm font-medium transition-colors",
+                isSelected
+                  ? "bg-brand-600 font-semibold text-white shadow-sm"
+                  : "text-slate-600 hover:bg-white hover:text-slate-900",
+                classNames?.tab ?? "",
+              ].join(" ")}
+            >
+              {tab.title}
+            </button>
+          );
+        })}
+      </div>
+
+      {activeTab && (
+        <div
+          role="tabpanel"
+          id={`panel-${activeTab.key}`}
+          aria-labelledby={`tab-${activeTab.key}`}
+          className={classNames?.panel ?? "px-0 pt-6"}
+        >
+          {activeTab.content}
+        </div>
+      )}
+    </div>
   );
 }
 

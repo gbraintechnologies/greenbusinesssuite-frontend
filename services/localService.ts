@@ -38,6 +38,23 @@ export const getSessionTenantID = () => {
   return null;
 };
 
+// Public pages (survey links) have no auth. The tenant comes from the route
+// and is stashed here so subsequent anonymous calls can send the tenant header.
+const PUBLIC_TENANT_KEY = "public-tenant-id";
+
+export const setPublicTenantID = (tenantId: string) => {
+  if (typeof window !== "undefined" && tenantId) {
+    window.sessionStorage.setItem(PUBLIC_TENANT_KEY, tenantId);
+  }
+};
+
+export const getPublicTenantID = () => {
+  if (typeof window !== "undefined") {
+    return window.sessionStorage.getItem(PUBLIC_TENANT_KEY);
+  }
+  return null;
+};
+
 export const getUserUUID = () => {
   if (typeof window !== "undefined") {
     const auth = window.localStorage.getItem("auth");

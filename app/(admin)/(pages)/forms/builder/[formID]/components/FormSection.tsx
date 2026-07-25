@@ -123,7 +123,7 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
               label="Title"
               type="text"
               labelPlacement="outside"
-              value={localSection?.name}
+              value={localSection?.name ?? ""}
               placeholder="Section title"
               className="outline-none focus:outline-none w-full input-custom"
               // onBlur={runUpdates}
@@ -140,7 +140,7 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
               label="Description"
               labelPlacement="outside"
               maxLength={254}
-              value={localSection?.description}
+              value={localSection?.description ?? ""}
               placeholder="Section description"
               className="outline-none focus:outline-none w-full input-custom font-extralight text-sm"
               // onBlur={runUpdates}
@@ -168,16 +168,18 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
         onMouseLeave={() => setShowSectionActions(false)}
         className="form-section"
       >
-        <div className="flex gap-2">
-          <div className="flex-1">
-            <h5 className="font-bold text-xl"> {section?.name}</h5>
-            <p className="font-light text-gray-400 text-sm mb-5">
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="min-w-0 flex-1">
+            <h5 className="break-words text-lg font-bold sm:text-xl">
+              {section?.name}
+            </h5>
+            <p className="mb-3 break-words text-sm font-light text-gray-400 sm:mb-5">
               {section?.description ? section?.description : "No description"}
             </p>
           </div>
           <button
             onClick={onOpen}
-            className="border w-fit h-fit flex items-center gap-2 px-3 rouned-xl text-sm py-2 rounded-lg hover:text-white hover:bg-black"
+            className="flex h-fit w-fit items-center gap-2 rounded-lg border px-3 py-2 text-xs hover:bg-black hover:text-white sm:text-sm"
           >
             <MdOutlineModeEditOutline /> Update
           </button>
@@ -185,7 +187,7 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
 
         {/* FORM FIELDS */}
         {localSection?.isTable ? (
-          <div className="flex flex-row gap-1">
+          <div className="flex flex-row gap-1 overflow-x-auto">
             {localSection?.formFields
               ?.filter((item: any) => !item.isDeleted)
               .map((field: any) => {
@@ -200,7 +202,7 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
               })}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-5">
+          <div className="builder-fields-grid grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
             {localSection?.formFields
               ?.filter((item: any) => !item.isDeleted)
               .map((field: any, idx: any) => {

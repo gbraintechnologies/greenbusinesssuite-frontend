@@ -8,24 +8,26 @@ import { redirect, usePathname, useRouter } from "next/navigation";
 // components
 import SideNav from "@/components/SideNav/SideNav";
 import TopNav from "@/components/TopNav/AdminTopNav";
+import { MobileNavProvider } from "@/contexts/MobileNavContext";
 import BuilderNav from "./forms/builder/FormTopNav";
 
 // hooks
 import useAdmin from "@/hooks/useAdmin";
+import useAuth from "@/hooks/useAuth";
 
 //
 import { FormProvider } from "../../../contexts/FormContext";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import {
+  FiGrid,
+  FiSend,
+  FiUsers,
+} from "react-icons/fi";
 import { PiBuildingsBold } from "react-icons/pi";
 import { BiTargetLock } from "react-icons/bi";
-import UserIcon from "@/public/icons/UserIcon";
-
-//
-import useAuth from "@/hooks/useAuth";
 import FormsNavIcon from "@/public/icons/FormsNavIcon";
-import { LuSend } from "react-icons/lu";
 import SessionExpiredModal from "@/components/GlobalModal/GlobalModal";
 
 export default function AdminLayout({
@@ -76,7 +78,7 @@ export default function AdminLayout({
   const navigation = [
     {
       name: "Dashboard",
-      icon: <UserIcon />,
+      icon: <FiGrid size={18} />,
       link: "/",
     },
     {
@@ -84,14 +86,9 @@ export default function AdminLayout({
       icon: <FormsNavIcon />,
       link: "/forms",
     },
-    // {
-    //   name: "(Temp) Branding",
-    //   icon: <BsBoxSeam />,
-    //   link: "/branding",
-    // },
     {
       name: "Companies",
-      icon: <PiBuildingsBold size={20} />,
+      icon: <PiBuildingsBold size={18} />,
       link: null,
       subNavigation: [
         {
@@ -112,7 +109,7 @@ export default function AdminLayout({
     },
     {
       name: "Notifications Center",
-      icon: <LuSend size={20} />,
+      icon: <FiSend size={18} />,
       link: "/notifications-center",
     },
     {
@@ -122,31 +119,26 @@ export default function AdminLayout({
       subNavigation: [
         {
           name: "Country setup",
-          icon: null, //<RiFlag2Fill size={20} />,
+          icon: null,
           link: "/country-setup",
         },
         {
           name: "Currency setup",
-          icon: null, //<AiOutlineMoneyCollect size={20} />,
+          icon: null,
           link: "/currency-setup",
         },
         {
           name: "Sector setup",
-          icon: null, //<FaLandMineOn size={20} />,
+          icon: null,
           link: "/sector-setup",
         },
       ],
     },
     {
       name: "User management",
-      icon: <UserIcon />,
+      icon: <FiUsers size={18} />,
       link: "/usermanagement",
     },
-    // {
-    //   name: "Audit trail",
-    //   icon: <PiListMagnifyingGlassBold size={18} />,
-    //   link: ["/audit-trail", "/audit-trail/profile"],
-    // },
   ];
 
   let thirdPartyApps: any = [
@@ -179,29 +171,31 @@ export default function AdminLayout({
                 </div>
               ) : (
                 // NORMAL VIEW
-                <div className="w-screen min-h-[90vh]">
-                  <TopNav />
-                  <div className="flex mt-[3.5rem]   flex-row min-h-[90vh] pb-40">
-                    <div className="hidden  md:flex h-full absolute  overflow-y-scroll no-scrollbar">
+                <MobileNavProvider
+                  hasSideNav={!pathname.includes("settings")}
+                >
+                  <div className="w-full min-h-[90vh] bg-surface-muted">
+                    <TopNav />
+                    <div className="mt-[3.5rem] flex min-h-[calc(100vh-3.5rem)] flex-row">
                       {!pathname.includes("settings") && (
                         <SideNav
                           thirdPartyApps={thirdPartyApps}
                           navigation={navigation}
                         />
-                      )}{" "}
-                    </div>
+                      )}
 
-                    <div
-                      className={`${
-                        pathname.includes("settings")
-                          ? "ml-0 w-full"
-                          : "ml-[20rem] w-full"
-                      }   pt-4 px-5`}
-                    >
-                      {children}
+                      <div
+                        className={`${
+                          pathname.includes("settings")
+                            ? "ml-0"
+                            : "md:ml-[17.5rem]"
+                        } w-full min-w-0 px-4 pt-4 sm:px-5`}
+                      >
+                        {children}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </MobileNavProvider>
               )}
             </>
           )}

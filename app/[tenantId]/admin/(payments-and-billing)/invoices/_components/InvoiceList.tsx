@@ -1,33 +1,32 @@
 "use client";
 
 import DataTable from "@/components/DataTable/DataTable";
-
-import useCompany from "@/hooks/useCompany";
 import services from "@/services";
+import { TimelineType } from "@/types";
 import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import React, { useState } from "react";
 
 import { VscEye } from "react-icons/vsc";
 
 function InvoiceList({
-  setSelectedInvoice,
+  setSelectedInvoiceId,
   onOpen,
+  timeline = "ALL",
 }: {
-  setSelectedInvoice: any;
-  onOpen: any;
+  setSelectedInvoiceId: (id: string | number) => void;
+  onOpen: () => void;
+  timeline?: TimelineType;
 }) {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(20);
-  const queryClient = useQueryClient();
 
   const { data: invoices, isLoading } = useQuery({
-    queryKey: ["all invoices", page, limit],
-    queryFn: services.getAllInvoices(page, limit),
+    queryKey: ["all invoices", page, limit, timeline],
+    queryFn: services.getAllInvoices(page, limit, timeline),
   });
 
-  // columns
   const columns = [
     {
       field: "invoiceNumber",
@@ -53,7 +52,6 @@ function InvoiceList({
       ],
     },
     { field: "serviceName", headerName: "Service Name", flex: 1 },
-
     {
       field: "amount",
       headerName: "Amount",
@@ -65,7 +63,6 @@ function InvoiceList({
         </div>,
       ],
     },
-
     {
       field: "actions",
       headerName: "Actions",
@@ -73,8 +70,9 @@ function InvoiceList({
       type: "actions",
       getActions: (params: any) => [
         <button
+          key={`view-${params.row.id}`}
           onClick={() => {
-            setSelectedInvoice(params.row);
+            setSelectedInvoiceId(params.row.id);
             onOpen();
           }}
         >

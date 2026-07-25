@@ -5,7 +5,8 @@ export const getMeshBusinessSuiteRoles = () => {
 };
 
 export const getLoggedInUserPermissions = () => {
-  return () => authApi.get(`/users/me`).then((res) => res.data);
+  return () =>
+    authApi.get(`/users/me/permissions`).then((res) => res.data);
 };
 
 export const createRole = ({ name, description }: any) => {
@@ -24,31 +25,32 @@ export const createRole = ({ name, description }: any) => {
   });
 };
 
-export const EditRole = ({ id, name, description }: any) => {
-  return authApi.post("/apps/roles/edit", {
-    id,
-    role_name: name,
-    app_id: 1,
-    role_description: description,
-    is_support: true,
-    is_admin_role: true,
+export const EditRole = ({ id, name, description, permissions }: any) => {
+  return authApi.put(`/roles/${id}`, {
+    roleName: name,
+    description: description,
+    permissions: permissions ?? [],
   });
+};
+
+export const updateRole = (id: number | string, data: unknown) => {
+  return authApi.put(`/roles/${id}`, data);
+};
+
+export const deleteRole = (roleId: number | string) => {
+  return authApi.delete(`/roles/${roleId}`);
+};
+
+export const getRoleNames = () => {
+  return () => authApi.get(`/roles/role-names`).then((res) => res.data);
 };
 
 export const assignRoleToUser = (userID: any, roleID: any) => {
-  return authApi.post("/users/create_user_profile", {
-    user_id: userID,
-    app_id: 1,
-    role_id: roleID,
-  });
+  return authApi.put(`/users/${userID}/role/${roleID}`);
 };
 
 export const updateUserRole = (userID: any, roleID: any) => {
-  return authApi.post("/users/create_user_profile", {
-    user_id: userID,
-    app_id: 1,
-    role_id: roleID,
-  });
+  return authApi.put(`/users/${userID}/role/${roleID}`);
 };
 
 export const allUserRoles = (limit: number = 100) => {

@@ -20,7 +20,7 @@ const CloudUploadIcon = () => {
         stroke="#1E293B"
         strokeWidth="1.5"
         strokeLinecap="round"
-        stroke-linejoin="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

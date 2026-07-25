@@ -32,11 +32,18 @@ function Payments() {
     onOpenChange: onOpenChange2,
   } = useDisclosure();
 
-  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [selectedPaymentId, setSelectedPaymentId] = useState<
+    string | number | null
+  >(null);
+
+  const timeline = selectedTimeline?.value ?? "ALL";
 
   const { data: paymentsSummary, isLoading } = useQuery({
-    queryKey: ["Payments Summary"],
-    queryFn: services.getPaymentSummary(),
+    queryKey: ["Payments Summary", timeline],
+    queryFn:
+      timeline === "ALL"
+        ? services.getPaymentSummary()
+        : services.getPaymentSummaryByTimeline(timeline),
   });
 
   return (
@@ -80,7 +87,8 @@ function Payments() {
 
       <div className="mt-5">
         <PaymentsList
-          setSelectedPayment={setSelectedPayment}
+          timeline={timeline}
+          setSelectedPaymentId={setSelectedPaymentId}
           onOpen={onOpen2}
         />
       </div>
@@ -94,7 +102,7 @@ function Payments() {
         onOpenChange={onOpenChange2}
         isOpen={isOpen2}
       >
-        <ViewPayment payment={selectedPayment} />
+        <ViewPayment paymentId={selectedPaymentId} />
       </SideModal>
     </div>
   );

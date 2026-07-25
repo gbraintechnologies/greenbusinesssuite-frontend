@@ -29,7 +29,7 @@ function Billings() {
   const queryClient = useQueryClient();
 
   // Bill Functions
-  const [selectedBill, setSelectedBill] = useState(null);
+  const [selectedBill, setSelectedBill] = useState<any>(null);
   const deleteBill = (id: any) => {
     toast.info("Deleting bill...");
     services
@@ -196,7 +196,7 @@ function Billings() {
         onOpenChange={onOpenChange2}
         isOpen={isOpen2}
       >
-        <ViewBill bill={selectedBill} />
+        <ViewBill billId={selectedBill?.id} />
       </SideModal>
 
       {/* ADD DISCOUNT */}

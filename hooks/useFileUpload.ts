@@ -4,9 +4,28 @@ import { useState } from "react";
 import { meshBaseURL } from "@/lib/api";
 import { getToken } from "@/services/localService";
 
+/**
+ * Normalizes the many shapes the S3 upload endpoint can return into a URL string.
+ * Handles: plain string, { file_url }, { fileUrl }, { url }, { data: {...} }.
+ */
+export function extractFileUrl(payload: any): string | null {
+  if (!payload) return null;
+  if (typeof payload === "string") return payload;
+  return (
+    payload.file_url ??
+    payload.fileUrl ??
+    payload.url ??
+    payload.location ??
+    payload.Location ??
+    payload?.data?.file_url ??
+    payload?.data?.fileUrl ??
+    payload?.data?.url ??
+    null
+  );
+}
+
 const useFileUpload = () => {
   const [loadingFile, setLoadingFile] = useState(false);
-  // const [error, setError] = useState(null);
 
   const handleFileUpload = async (file: File) => {
     try {
@@ -15,20 +34,23 @@ const useFileUpload = () => {
       const formData = new FormData();
       formData.append("file", file);
 
+      // Encode the filename so spaces/special chars don't break the URL
+      const safeName = encodeURIComponent(file?.name ?? "upload");
+
       const response = await axios({
         baseURL: meshBaseURL,
-        url: `/s3/resource/upload/${file?.name}`,
+        url: `/s3/resource/upload/${safeName}`,
         method: "POST",
         data: formData,
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${getToken()}`,
         },
       });
 
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.error("File upload failed", error);
+      return null;
     } finally {
       setLoadingFile(false);
     }

@@ -5,13 +5,12 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/dropdown";
-import React, { useEffect } from "react";
+import React from "react";
 
 // icons
 import { LuCalendar } from "react-icons/lu";
 import { BsChevronDown } from "react-icons/bs";
 import { FaCheck } from "react-icons/fa6";
-import DatePickerIcon from "@/public/icons/DatePickerIcon";
 
 type Props = {
   selectedTimeline: { label: TimelineValues; value: TimelineType } | undefined;
@@ -48,19 +47,18 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
     },
   ];
 
-  useEffect(() => {
-    if (setSelectedTimeline) {
-      // DEFAULT SHOULD BE ALL
-      setSelectedTimeline(timelines[1]);
-    }
-  }, []);
+  // Treat an omitted value as "All time" from the first render. Previously an
+  // effect changed undefined to a value after mount, triggering controlled-
+  // state warnings in components that consume this picker.
+  const activeTimeline = selectedTimeline ?? timelines[1];
+
   return (
     <div className="flex shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] bg-white border border-[#E2E8F0] w-fit rounded-lg">
       <Dropdown>
         <DropdownTrigger>
           <button className="flex justify-between outline-none items-center px-3 py-1 gap-2">
             <LuCalendar size={18} />
-            <div className="text-sm">{selectedTimeline?.label}</div>
+            <div className="text-sm">{activeTimeline.label}</div>
             <BsChevronDown color="#94A3B8" />
           </button>
         </DropdownTrigger>
@@ -76,7 +74,7 @@ const DatePicker = ({ selectedTimeline, setSelectedTimeline }: Props) => {
             >
               <div className="w-full flex items-center justify-between">
                 <p>{timeline.label}</p>
-                {selectedTimeline?.label == timeline?.label && (
+                {activeTimeline.label === timeline.label && (
                   <span className="">
                     <FaCheck size={15} color="black" />
                   </span>

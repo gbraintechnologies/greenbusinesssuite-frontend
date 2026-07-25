@@ -13,8 +13,7 @@ function Input(props: any) {
         {label} {isRequired && <RequiredMarker />}
       </label>
       <Field
-        isDisabled={isDisabled}
-        disabled={isDisabled}
+        disabled={Boolean(isDisabled)}
         className="inputStyle"
         id={name}
         name={name}

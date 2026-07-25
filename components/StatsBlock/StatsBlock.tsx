@@ -1,22 +1,29 @@
 import React from "react";
+import KpiCard from "@/components/Dashboard/KpiCard";
 
 interface IStat {
   label: string;
   value: string | number;
 }
+
 type Props = {
   stats: IStat[];
 };
+
 const StatsBlock: React.FC<Props> = ({ stats }) => {
   return (
-    <div className="bg-white flex justify-between py-3 rounded-lg border border-[#E2E8F0]">
+    <div className="grid grid-cols-2 gap-2.5 [&>*:last-child:nth-child(odd)]:col-span-2 sm:gap-4 sm:[&>*:last-child:nth-child(odd)]:col-span-1 xl:grid-cols-4">
       {stats.map((stat, index) => (
-        <div className={`flex flex-col gap-4 flex-1 pl-4 ${index !== 0 && " border-l border-[#E2E8F0]"}`} key={index}>
-          <div className="text-[#475569] text-sm">{stat.label}</div>
-          <div className="text-[#0F172A] font-semibold text-[22px]">
-            {stat.value}
-          </div>
-        </div>
+        <KpiCard
+          key={`${stat.label}-${index}`}
+          label={stat.label}
+          value={stat.value}
+          icon={
+            <span className="text-sm font-semibold text-brand-600">
+              {String(stat.value).slice(0, 1) || "—"}
+            </span>
+          }
+        />
       ))}
     </div>
   );

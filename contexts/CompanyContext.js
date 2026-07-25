@@ -1,38 +1,24 @@
 //
-import services from "@/services";
-import { useQuery } from "@tanstack/react-query";
 import React, { createContext, useEffect, useState } from "react";
 
 // @ts-ignore
 export const CompanyContext = createContext();
 
-// @ts-ignore
-const CompanyFromLS =
-  typeof window !== "undefined"
-    ? JSON.parse(localStorage.getItem("company-admin") || null)
-    : null;
-
-const CompanyBrandingFromSS =
-  typeof window !== "undefined"
-    ? JSON.parse(sessionStorage.getItem("company-branding") || null)
-    : null;
-
-// @ts-ignore
-const UserFromLS =
-  typeof window !== "undefined"
-    ? JSON.parse(localStorage.getItem("auth") || null)
-    : null;
+function readJson(storage, key) {
+  try {
+    const raw = storage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
 
 export const CompanyProvider = ({ children }) => {
-  //
-  const [auth, setAuth] = useState(UserFromLS);
-  const [companyAdmin, setCompanyAdmin] = useState(CompanyFromLS);
-
-  // raw company info
+  // Always start null so SSR HTML matches the client's first paint
+  const [companyAdmin, setCompanyAdmin] = useState(null);
   const [company, setCompany] = useState(null);
-
-  // company branding info
-  const [companyBranding, setCompanyBranding] = useState(CompanyBrandingFromSS);
+  const [companyBranding, setCompanyBranding] = useState(null);
+  const [storageReady, setStorageReady] = useState(false);
 
   const addCompanyAdminData = (data) => {
     setCompanyAdmin((prev) => ({ ...prev, ...data }));
@@ -42,13 +28,23 @@ export const CompanyProvider = ({ children }) => {
     setCompanyAdmin(null);
   };
 
+  // Hydrate from browser storage after mount (avoids hydration mismatch)
   useEffect(() => {
-    localStorage.setItem("company-admin", JSON.stringify(companyAdmin));
-  }, [companyAdmin]);
+    setCompanyAdmin(readJson(localStorage, "company-admin"));
+    setCompanyBranding(readJson(sessionStorage, "company-branding"));
+    setStorageReady(true);
+  }, []);
 
   useEffect(() => {
+    if (!storageReady) return;
+    localStorage.setItem("company-admin", JSON.stringify(companyAdmin));
+  }, [companyAdmin, storageReady]);
+
+  useEffect(() => {
+    if (!storageReady) return;
     sessionStorage.setItem("company-branding", JSON.stringify(companyBranding));
-  }, [companyBranding]);
+  }, [companyBranding, storageReady]);
+
   return (
     <CompanyContext.Provider
       value={{
@@ -59,6 +55,7 @@ export const CompanyProvider = ({ children }) => {
         setCompanyBranding,
         addCompanyAdminData,
         removeCompanyAdmin,
+        storageReady,
       }}
     >
       {children}
@@ -66,4 +63,4 @@ export const CompanyProvider = ({ children }) => {
   );
 };
 
-// ls undefinied in next: https://stackoverflow.com/questions/73853069/solve-referenceerror-localstorage-is-not-defined-in-next-js
+// ls undefined in next: https://stackoverflow.com/questions/73853069/solve-referenceerror-localstorage-is-not-defined-in-next-js

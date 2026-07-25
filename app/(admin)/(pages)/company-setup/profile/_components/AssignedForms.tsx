@@ -2,7 +2,6 @@ import DatePicker from "@/components/DatePicker/DatePicker";
 import EmptyList from "@/components/Form/EmptyList";
 import FormCard from "@/components/Form/FormCard";
 import Loader from "@/components/Loader/Loader";
-import NoDataIndicator from "@/components/NoDataIndicator/NoDataIndicator";
 import Pagination from "@/components/Pagination/Pagination";
 import { CompanyType } from "@/types";
 import React from "react";
@@ -31,23 +30,21 @@ const AssignedForms = ({
 }) => {
   return (
     <div>
-      {" "}
       <div className="min-h-[40vh]">
-        <div className="flex items-center justify-between mb-2 mt-2">
-          <div className=" w-full text-[#475569] font-medium my-4 text-base">
+        <div className="mb-3 mt-2 flex flex-col gap-3 sm:mb-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="my-1 w-full text-base font-medium text-[#475569] sm:my-4">
             Assigned Forms
           </div>
-          {/* ASSIGN NEW FORM */}
           <button
-            className=" bg-white border border-[rgba(226, 232, 240, 1)] flex max-w-64 text-sm px-4 py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg w-full "
+            type="button"
+            className="flex w-full max-w-none items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 sm:max-w-64 sm:rounded-lg sm:py-2"
             onClick={() => setShowAssignModal(true)}
           >
             <GoPlusCircle /> Assign New Form
           </button>
         </div>
 
-        {/* PAGINATION AND TIMELINE FILTER*/}
-        <div className="flex justify-between mb-3">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <DatePicker
             selectedTimeline={selectedTimeline}
             setSelectedTimeline={setSelectedTimeline}
@@ -61,11 +58,10 @@ const AssignedForms = ({
           />
         </div>
 
-        {/* LOADING FORMS */}
         {formsLoading && <Loader text="Fetching forms" />}
-        {/* NO ASSIGNED FORM */}
+
         {assignedForms?.content?.length === 0 && (
-          <div className="flex items-center justify-center w-full border rounded-xl p-20">
+          <div className="flex w-full items-center justify-center rounded-xl border border-slate-200 p-8 sm:p-20">
             <EmptyList
               text={
                 selectedTimeline?.value == "ALL"
@@ -76,18 +72,16 @@ const AssignedForms = ({
           </div>
         )}
 
-        {/**DISPLAYING ASSIGNED FORMS*/}
         {assignedForms && assignedForms?.content?.length > 0 && (
-          <>
-            <div className="grid grid-cols-4 gap-10 ">
-              {assignedForms &&
-                assignedForms?.content?.map((form: any) => {
-                  return (
-                    <FormCard key={form.id} form={form} noMetaData={true} />
-                  );
-                })}
-            </div>
-          </>
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 xl:grid-cols-4 xl:gap-6">
+            {assignedForms.content.map((form: any, index: number) => (
+              <FormCard
+                key={`${form.id}-${index}`}
+                form={form}
+                noMetaData={true}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>

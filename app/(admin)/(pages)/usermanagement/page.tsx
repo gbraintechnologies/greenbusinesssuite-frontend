@@ -3,21 +3,21 @@
 import React, { useEffect, useState } from "react";
 
 // services
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
 // icons
-import { BsEye, BsThreeDots } from "react-icons/bs";
-import SearchIcon from "@/public/icons/SearchIcon";
-import Image from "next/image";
-
-import UserIcon from "@/public/icons/UserIcon";
+import { BsEye, BsThreeDots, BsTrash } from "react-icons/bs";
 
 // shared components
-import DataTable from "@/components/DataTable/DataTable";
-import StatusPill from "@/components/StatusPill/StatusPill";
-
-import Link from "next/link";
+import Status from "@/components/Status/Status";
+import Table from "@/components/Table/Table";
+import Pagination from "@/components/Pagination/Pagination";
+import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import Modal from "@/components/Modal/Modal";
+import Nav from "./components/Nav";
+import DeleteUser from "./actions/DeleteUser";
+import { useRouter } from "next/navigation";
 import {
   Dropdown,
   DropdownItem,
@@ -25,44 +25,21 @@ import {
   DropdownTrigger,
 } from "@heroui/dropdown";
 import { Button } from "@heroui/react";
-import { toast } from "sonner";
-import Pagination from "@/components/Pagination/Pagination";
-import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
-import useAdmin from "@/hooks/useAdmin";
-import { PermissionTypes } from "@/types/permissionTypes";
-import { MeshRoles } from "@/config/roles.app";
-import Table from "@/components/Table/Table";
-import { user } from "@heroui/theme";
-import Status from "@/components/Status/Status";
-import Nav from "./components/Nav";
-import { useRouter } from "next/navigation";
 
 function UserManagement() {
-  const [activeRoleFilter, setActiveRoleFilter] = useState([]);
-
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(20);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
 
   const router = useRouter();
 
-  const queryClient = useQueryClient();
-
-  const [page, setPage] = useState(0);
-
-  const [limit, setLimit] = useState(20);
-
-  const { checkPermission } = useAdmin();
-
-  // fetch all users
-  const {
-    data,
-    isLoading,
-    refetch: refetchUsers,
-  } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["all users", page, limit],
     queryFn: services.allUsers(page * limit, limit),
   });
 
-  const { data: searchData, isLoading: searchLoading } = useQuery({
+  const { data: searchData } = useQuery({
     queryKey: ["all users", searchTerm],
     queryFn: services.searchUsers(searchTerm),
     enabled: Boolean(searchTerm),
@@ -70,16 +47,12 @@ function UserManagement() {
 
   const [aggregatedUsers, setAggregatedUsers] = useState([]);
 
-  // Get ALL MESH BUSINESS SUITE ROLES
-
-  // AGGREGATE USERS FROM DIFFERENT ENDPOINTS
   useEffect(() => {
     if (searchTerm.length > 1 && searchData) {
       setAggregatedUsers(searchData);
     }
 
     if (data && searchTerm.length < 1) {
-      setActiveRoleFilter([]);
       setAggregatedUsers(data);
     }
   }, [searchData, data, searchTerm]);
@@ -89,66 +62,74 @@ function UserManagement() {
   };
 
   const ActionsComponent = (item: any) => {
+    const userId = item?.__originalId ?? item?.id;
+    const displayName =
+      item?.name ||
+      `${item?.firstName ?? item?.first_name ?? ""} ${
+        item?.lastName ?? item?.last_name ?? ""
+      }`.trim();
+
     return (
-      <button
-        onClick={() => router.push(`/usermanagement/profile?id=${item?.id}`)}
-        className="bg-white text-black"
-      >
-        <BsEye />
-      </button>
+      <Dropdown>
+        <DropdownTrigger>
+          <Button
+            isIconOnly
+            size="sm"
+            variant="light"
+            className="min-w-8 text-slate-600"
+            aria-label="User actions"
+          >
+            <BsThreeDots size={18} />
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu
+          aria-label="User actions"
+          className="-mt-1 flex flex-col gap-1 rounded-lg border border-[#F1F5F9] bg-white shadow-md"
+        >
+          <DropdownItem
+            key="view"
+            className="rounded-md p-0 text-sm text-[#334155]"
+            textValue="View user"
+          >
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 px-3 py-2.5 text-left hover:bg-[#F1F5F9]"
+              onClick={() =>
+                router.push(`/usermanagement/profile?id=${userId}`)
+              }
+            >
+              <BsEye /> View User
+            </button>
+          </DropdownItem>
+          <DropdownItem
+            key="delete"
+            className="rounded-md p-0 text-sm text-red-600"
+            textValue="Delete user"
+          >
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-red-600 hover:bg-red-50"
+              onClick={() =>
+                setUserToDelete({
+                  id: userId,
+                  name: displayName || item?.email || "this user",
+                })
+              }
+            >
+              <BsTrash /> Delete User
+            </button>
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     );
   };
 
+  const tableData = (aggregatedUsers?.length ? aggregatedUsers : data) ?? [];
+
   return (
-    <div className="w-full pb-20 ">
+    <div className="w-full pb-20">
       <Nav />
 
-      {/* TODO: Enable after integrations */}
-      {/* Search and filters */}
-      {/* <div className="flex items-center px-5 justify-between my-4">
-        <div className="bg-gray-100 text-sm p-1 rounded-lg">
-          {filters.map((filter: any) => {
-            return (
-              <button
-                onClick={() => setActiveFilter(filter)}
-                className={`${
-                  activeFilter.id === filter.id
-                    ? "bg-white rounded-lg text-black"
-                    : "text-gray-500 font-light"
-                } px-5 py-1`}
-              >
-                {filter.name}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="flex items-center gap-3">
-          {checkPermission(PermissionTypes.READ_USER_SEARCH) && (
-            <div className="border  border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
-              <SearchIcon />
-              <input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="outline-none text-sm focus:outline-none bg-white custom-input input-custom"
-                placeholder="Search by name only"
-              />
-            </div>
-          )}
-          <RoleFilter
-            roles={
-              roles &&
-              roles?.filter((role: any) =>
-                MeshRoles?.includes(role?.role_name?.toLowerCase())
-              )
-            }
-            selected={activeRoleFilter}
-            setSelected={setActiveRoleFilter}
-          />
-        </div>
-      </div> */}
-
-      {/* Table */}
       <Table
         columns={[
           { name: "ID", uid: "id" },
@@ -156,13 +137,15 @@ function UserManagement() {
           { name: "Email", uid: "email" },
           { name: "Phone", uid: "phone" },
           { name: "STATUS", uid: "status" },
-          { name: "VIEW", uid: "actions" },
+          { name: "ACTIONS", uid: "actions" },
         ]}
         data={
-          data
-            ? data?.map((user: any) => ({
+          Array.isArray(tableData)
+            ? tableData.map((user: any) => ({
                 ...user,
-                name: `${user?.firstName} ${user?.lastName}`,
+                name: `${user?.firstName ?? user?.first_name ?? ""} ${
+                  user?.lastName ?? user?.last_name ?? ""
+                }`.trim(),
               }))
             : []
         }
@@ -173,8 +156,8 @@ function UserManagement() {
         statusComponent={StatusComponent}
         actionsComponent={ActionsComponent}
       />
-      {/* Pagination */}
-      <div className="w-full flex justify-between">
+
+      <div className="flex w-full justify-between">
         <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
           currentData={data}
@@ -183,6 +166,25 @@ function UserManagement() {
           setPage={setPage}
         />
       </div>
+
+      <Modal
+        isOpen={Boolean(userToDelete)}
+        setIsOpen={(open) => {
+          if (!open) setUserToDelete(null);
+        }}
+        title={`Delete "${userToDelete?.name ?? "user"}"?`}
+      >
+        {userToDelete && (
+          <DeleteUser
+            userId={userToDelete.id}
+            userName={userToDelete.name}
+            setShow={(open) => {
+              if (!open) setUserToDelete(null);
+            }}
+            invalidateKeys={[["all users", page, limit], ["all users"]]}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

@@ -1,7 +1,10 @@
 import { meshBaseURL } from "@/lib/api";
-import { headerT } from "@/types/headerType";
 import axios from "axios";
-import { getTenantID } from "./localService";
+import {
+  getPublicTenantID,
+  getSessionTenantID,
+  getTenantID,
+} from "./localService";
 
 export const noAuthApi = axios.create({
   baseURL: meshBaseURL,
@@ -9,22 +12,25 @@ export const noAuthApi = axios.create({
 
 // REQUEST INTERCEPTOR
 noAuthApi.interceptors.request.use(
-  // @ts-ignore
   (config) => {
-    let headers: headerT = {
-      "Content-Type": "application/json",
-      accept: "application/json",
-    };
+    config.headers.set("accept", "application/json");
+    if (!config.headers.get("Content-Type")) {
+      config.headers.set("Content-Type", "application/json");
+    }
 
-    // Use tenantId if presentxsssss
-    return {
-      ...config,
-      headers: Boolean(getTenantID)
-        ? { ...headers, tenantid: getTenantID() }
-        : headers,
-    };
+    // Public pages (e.g. survey links) have no stored auth, so fall back to the
+    // tenant from session branding. Callers may also pass `tenantid` explicitly.
+    if (!config.headers.get("tenantid")) {
+      const tenantId =
+        getTenantID() ?? getSessionTenantID() ?? getPublicTenantID();
+      if (tenantId) {
+        config.headers.set("tenantid", tenantId);
+      }
+    }
+
+    return config;
   },
-  (error) => Promise.reject(error),
+  (error) => Promise.reject(error)
 );
 
 export default noAuthApi;

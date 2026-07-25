@@ -109,22 +109,28 @@ function Forms() {
   }, []);
 
   return (
-    <div className="px-5 pb-10">
-      <h3 className="font-semibold mb-8 text-xl">Forms</h3>
+    <div className="px-3 pb-10 sm:px-5">
+      <h3 className="mb-4 text-xl font-semibold sm:mb-6 sm:text-2xl">Forms</h3>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-3">
         {actions.map((action, idx) => {
           return (
             <button
               disabled={loading}
               onClick={action.func}
-              className="flex gap-1 disabled:cursor-not-allowed disabled:opacity-90 items-center rounded-lg p-2 py-3 border-[#E2E8F0] border bg-[#F8FAFC]"
+              className="flex min-w-0 items-center gap-2 rounded-xl border border-slate-200 bg-white p-2.5 text-left shadow-sm transition-colors hover:border-brand-200 hover:bg-brand-50/40 disabled:cursor-not-allowed disabled:opacity-90 sm:gap-3 sm:rounded-lg sm:p-3 sm:py-3.5"
               key={idx}
             >
-              {action.icon}
-              <div className="text-left">
-                <h4 className="font-medium text-base">{action.title}</h4>
-                <p className="font-light text-sm">{action.desc}</p>
+              <span className="shrink-0 scale-90 sm:scale-100">
+                {action.icon}
+              </span>
+              <div className="min-w-0">
+                <h4 className="truncate text-xs font-semibold text-slate-900 sm:text-base">
+                  {action.title}
+                </h4>
+                <p className="mt-0.5 line-clamp-2 text-[10px] font-light leading-snug text-slate-500 sm:text-sm">
+                  {action.desc}
+                </p>
               </div>
             </button>
           );
@@ -132,9 +138,9 @@ function Forms() {
       </div>
 
       {/* recent forms  */}
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold mb-8 mt-10 text-lg">Recent Forms</h3>
-        <div className="flex gap-2 items-center">
+      <div className="mb-4 mt-6 flex flex-col gap-3 sm:mb-6 sm:mt-10 sm:flex-row sm:items-center sm:justify-between">
+        <h3 className="text-base font-semibold sm:text-lg">Recent Forms</h3>
+        <div className="flex flex-wrap items-center gap-2">
           <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
           <DatePicker
             selectedTimeline={selectedTimeline}
@@ -162,7 +168,7 @@ function Forms() {
               />
             </div>
           ) : (
-            <div className="grid grid-cols-4 gap-5">
+            <div className="grid min-w-0 grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
               {forms &&
                 forms?.content
                   ?.filter((form: any) => form.isTemplate !== true)

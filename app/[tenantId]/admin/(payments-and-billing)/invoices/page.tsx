@@ -5,25 +5,19 @@ import React, { useState } from "react";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import DatePicker from "@/components/DatePicker/DatePicker";
 import { TimelineType, TimelineValues } from "@/types";
-
-import SideModal from "@/components/Modal/SideModal";
-import CreatePayment from "./_components/CreatePayment";
-import { useDisclosure } from "@heroui/modal";
-import ViewPayment from "./_components/ViewInvoice";
-import InvoiceList from "./_components/InvoiceList";
 import Pagination from "@/components/Pagination/Pagination";
+import SideModal from "@/components/Modal/SideModal";
+import { useDisclosure } from "@heroui/modal";
 import ViewInvoice from "./_components/ViewInvoice";
+import InvoiceList from "./_components/InvoiceList";
 
-function Payments() {
-  //pagination
+function Invoices() {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
-  //timeline
   const [selectedTimeline, setSelectedTimeline] = useState<
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const {
     isOpen: isOpen2,
     onOpen: onOpen2,
@@ -31,7 +25,11 @@ function Payments() {
     onOpenChange: onOpenChange2,
   } = useDisclosure();
 
-  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<
+    string | number | null
+  >(null);
+
+  const timeline = selectedTimeline?.value ?? "ALL";
 
   return (
     <div className="mt-10 pb-10 ">
@@ -58,22 +56,22 @@ function Payments() {
       </div>
 
       <div className="mt-5">
-        <InvoiceList setSelectedInvoice={setSelectedInvoice} onOpen={onOpen2} />
+        <InvoiceList
+          timeline={timeline}
+          setSelectedInvoiceId={setSelectedInvoiceId}
+          onOpen={onOpen2}
+        />
       </div>
-
-      <SideModal onClose={onClose} onOpenChange={onOpenChange} isOpen={isOpen}>
-        <CreatePayment />
-      </SideModal>
 
       <SideModal
         onClose={onClose2}
         onOpenChange={onOpenChange2}
         isOpen={isOpen2}
       >
-        <ViewInvoice invoice={selectedInvoice} />
+        <ViewInvoice invoiceId={selectedInvoiceId} />
       </SideModal>
     </div>
   );
 }
 
-export default Payments;
+export default Invoices;

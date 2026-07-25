@@ -195,7 +195,11 @@ function CompanyAdminAuth(props: any) {
             <CompanyLogo />
           </div>
           <h2 className="font-bold text-center text-xl">
-            Sign in to {companyBranding?.name}
+            Sign in to{" "}
+            {companyBranding?.name ||
+              companyName ||
+              companyBranding?.company_identifier ||
+              "your account"}
           </h2>
           <p className="mb-2 text-center text-sm text-gray-500 -mt-3">
             Welcome back! Please sign in to continue

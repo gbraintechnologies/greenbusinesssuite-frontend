@@ -1,105 +1,154 @@
-import Link from "next/link";
-import React, { useState } from "react";
+"use client";
 
-// icons
+import Link from "next/link";
+import Image from "next/image";
+import React, { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { HiOutlineUser } from "react-icons/hi2";
 import { GoShieldLock } from "react-icons/go";
-import { AiOutlineLogout } from "react-icons/ai";
-
-import { usePathname, useRouter } from "next/navigation";
-
+import { FiKey, FiLogOut } from "react-icons/fi";
 import { toast } from "sonner";
 import Modal from "@/components/Modal/Modal";
-import Image from "next/image";
-
-// hooks
 import useAuth from "@/hooks/useAuth";
 import useAdmin from "@/hooks/useAdmin";
+
+function getAvatarUrl(admin: any) {
+  return (
+    admin?.custom_profile_values?.find(
+      (item: any) => item.custom_profile_item_id === 1
+    )?.value ??
+    admin?.customProfileValues?.find(
+      (item: any) => item.custom_profile_item_id === 1 || item.customProfileItemId === 1
+    )?.value ??
+    null
+  );
+}
+
+function getInitials(admin: any) {
+  const first = (admin?.first_name ?? admin?.firstName ?? "")[0] ?? "";
+  const last = (admin?.last_name ?? admin?.lastName ?? "")[0] ?? "";
+  return `${first}${last}`.toUpperCase() || "U";
+}
 
 function SettingsSideNav() {
   const { admin, setAdmin } = useAdmin();
   const { removeAuth } = useAuth();
-
   const router = useRouter();
+  const pathname = usePathname();
+  const [showLogOutModal, setShowLogOutModal] = useState(false);
 
   const navigation = [
     {
       name: "Account",
-      icon: <HiOutlineUser size={20} />,
+      description: "Profile & contact details",
+      icon: <HiOutlineUser size={18} />,
       link: "/settings",
     },
     {
       name: "Security",
-      icon: <GoShieldLock size={20} />,
+      description: "Password & sign-in",
+      icon: <GoShieldLock size={18} />,
       link: "/settings/security",
     },
+    {
+      name: "Access",
+      description: "Roles & permissions",
+      icon: <FiKey size={18} />,
+      link: "/settings/access",
+    },
   ];
-  const pathname = usePathname();
 
-  const [showLogOutModal, setShowLogOutModal] = useState(false);
+  const avatarUrl = getAvatarUrl(admin);
+  const displayName = [
+    admin?.first_name ?? admin?.firstName,
+    admin?.last_name ?? admin?.lastName,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <aside className="w-[20rem] sticky   px-5 p-2">
-      {/* USER INFORMATION & PICTURE */}
-      <div className="flex gap-3 items-center mb-5">
-        <div className="flex items-center">
-          {admin?.custom_profile_values &&
-          admin?.custom_profile_values.find(
-            (item: any) => item.custom_profile_item_id === 1
-          )?.value?.length > 1 ? (
-            <Image
-              alt="profile"
-              src={
-                admin?.custom_profile_values.find(
-                  (item: any) => item.custom_profile_item_id === 1
-                ).value
-              }
-              width={80}
-              height={80}
-              className="rounded-full w-16 h-16 object-cover"
-            />
-          ) : (
-            <button className="w-10 h-10 text-sm rounded-full flex items-center justify-center bg-[#F1F5F9]">
-              {admin?.first_name && admin?.first_name[0]?.toUpperCase()}
-              {admin?.last_name && admin?.last_name[0]?.toUpperCase()}
-            </button>
-          )}
+    <aside className="sticky top-20 h-fit w-full shrink-0 lg:w-72">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 bg-gradient-to-br from-brand-600 to-brand-700 px-5 py-6 text-white">
+          <div className="flex items-center gap-3">
+            {avatarUrl && String(avatarUrl).length > 1 ? (
+              <Image
+                alt="profile"
+                src={avatarUrl}
+                width={56}
+                height={56}
+                className="h-14 w-14 rounded-2xl object-cover ring-2 ring-white/30"
+                unoptimized
+              />
+            ) : (
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-base font-semibold ring-2 ring-white/30">
+                {getInitials(admin)}
+              </div>
+            )}
+            <div className="min-w-0">
+              <p className="truncate text-base font-semibold">
+                {displayName || "Your account"}
+              </p>
+              <p className="truncate text-xs text-white/75">
+                {admin?.email || "Personal settings"}
+              </p>
+            </div>
+          </div>
         </div>
-        <div>
-          <h4 className="font-bold text-lg">
-            {admin?.first_name} {admin?.last_name}
-          </h4>
-          <p className="text-sm font-light">Your personal account</p>
-        </div>
-      </div>
 
-      {/* SIDE NAVIGATION: SETTINGS */}
-      <ul>
-        {navigation.map((item) => {
-          return (
-            <Link key={item.name} href={item.link}>
-              <li
-                className={`${
-                  pathname === item.link
-                    ? "bg-[#E2E8F0] text-[#1E293B] font-semibold"
-                    : "text-gray-600 "
-                } flex items-center gap-3 w-full mb-1 py-2 px-3 rounded-xl font-medium `}
+        <nav className="space-y-1 p-3">
+          {navigation.map((item) => {
+            const active = pathname === item.link;
+            return (
+              <Link
+                key={item.name}
+                href={item.link}
+                className={`flex items-start gap-3 rounded-xl px-3 py-2.5 transition-all ${
+                  active
+                    ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
-                {item.icon} <p>{item.name}</p>
-              </li>
-            </Link>
-          );
-        })}
-      </ul>
+                <span
+                  className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                    active
+                      ? "bg-brand-600 text-white"
+                      : "bg-slate-100 text-slate-500"
+                  }`}
+                >
+                  {item.icon}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold">{item.name}</span>
+                  <span
+                    className={`block text-xs ${
+                      active ? "text-brand-600/80" : "text-slate-400"
+                    }`}
+                  >
+                    {item.description}
+                  </span>
+                </span>
+              </Link>
+            );
+          })}
 
-      <button
-        onClick={() => {
-          setShowLogOutModal(true);
-        }}
-        className="text-[#EF4444] flex items-center gap-3 w-full mb-1 py-2 px-3 rounded-xl font-medium "
-      >
-        <AiOutlineLogout size={20} /> Log out
-      </button>
+          <button
+            type="button"
+            onClick={() => setShowLogOutModal(true)}
+            className="mt-2 flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left text-red-600 transition-all hover:bg-red-50"
+          >
+            <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-500">
+              <FiLogOut size={18} />
+            </span>
+            <span>
+              <span className="block text-sm font-semibold">Log out</span>
+              <span className="block text-xs text-red-400">
+                End this session
+              </span>
+            </span>
+          </button>
+        </nav>
+      </div>
 
       <Modal
         isOpen={showLogOutModal}
@@ -107,26 +156,27 @@ function SettingsSideNav() {
         title="Log out of your account"
       >
         <div>
-          <p className="px-5 mt-5 text-[#334155]">
-            This action would log you out of this account and require you to log
-            in again to gain access to your account
+          <p className="mt-5 px-5 text-sm text-slate-600">
+            This will end your current session. You&apos;ll need to sign in again
+            to access your account.
           </p>
-
-          <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">
+          <div className="mt-5 flex justify-between border-t border-slate-200 bg-slate-50 p-5">
             <button
+              type="button"
               onClick={() => setShowLogOutModal(false)}
-              className="bg-gray-50 border border-gray-200 shadow-md px-8 py-2 flex text-primary-dark text-sm hover:opacity-95 items-center gap-2 rounded-xl"
+              className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
-              className="bg-primary-red py-3 shadow-md flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+              type="button"
+              className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-red-700"
               onClick={() => {
                 setShowLogOutModal(false);
-                router.push("/");
                 setAdmin(null);
                 removeAuth();
                 toast.success("Logged out");
+                router.push("/");
               }}
             >
               Yes, log out

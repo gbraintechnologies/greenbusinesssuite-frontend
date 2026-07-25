@@ -43,7 +43,6 @@ function CheckboxGroup(props: any) {
                 {options &&
                   options?.map((option: any) => (
                     <Checkbox
-                      disabled={isDisabled}
                       isDisabled={isDisabled}
                       value={option.value}
                     >

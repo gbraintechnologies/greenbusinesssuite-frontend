@@ -59,6 +59,16 @@ import { IoCheckmark } from "react-icons/io5";
 // endpoint docs? Not clear
 const MAX_NUMBER_OF_USERS = 1000000;
 
+// The companies endpoints return either a plain array or a paginated object
+const toCompanyList = (payload: any): any[] =>
+  Array.isArray(payload) ? payload : payload?.content ?? [];
+
+const getCompanyName = (company: any): string =>
+  company?.companyName ?? company?.company_name ?? "";
+
+const sortByCompanyName = (list: any[]) =>
+  [...list].sort((a, b) => getCompanyName(a).localeCompare(getCompanyName(b)));
+
 type Props = {
   // setShow: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: any;
@@ -386,45 +396,30 @@ const Notifications: React.FC<Props> = ({
 
   // setting filtered companies to companies on initial load
   useEffect(() => {
-    if (companies?.length > 0) {
-      setFilteredCompanies([
-        // TODO: IMPLEMENT ALL FUNCTIONALITY BY LOADING ALL COMPANIES INTO RECIPIENTS
-        // { company_name: "All", id: "all" },
-        ...companies.sort((a: any, b: any) =>
-          a.company_name.localeCompare(b.company_name)
-        ),
-      ]);
+    const companyList = toCompanyList(companies);
+    if (companyList.length > 0) {
+      setFilteredCompanies(sortByCompanyName(companyList));
     }
   }, [companies]);
 
   // use Effect to handle search functionality and exclude selected companies from filtered results
   // useEffect to handle search functionality and exclude selected companies from filtered results
   useEffect(() => {
+    const excludeSelected = (list: any[]) =>
+      list.filter(
+        (company: any) =>
+          !selectedCompanies.some(
+            (selected: any) => selected?.id === company.id
+          )
+      );
+
     if (searchTerm.length > 0 && searchData) {
       setFilteredCompanies(
-        searchData
-          .filter(
-            (company: any) =>
-              !selectedCompanies.some(
-                (selected: any) => selected?.id === company.id
-              )
-          )
-          .sort((a: any, b: any) =>
-            a.company_name.localeCompare(b.company_name)
-          )
+        sortByCompanyName(excludeSelected(toCompanyList(searchData)))
       );
     } else if (companies && searchTerm.length < 1) {
       setFilteredCompanies(
-        companies
-          .filter(
-            (company: any) =>
-              !selectedCompanies.some(
-                (selected: any) => selected.id === company.id
-              )
-          )
-          .sort((a: any, b: any) =>
-            a.company_name.localeCompare(b.company_name)
-          )
+        sortByCompanyName(excludeSelected(toCompanyList(companies)))
       );
     }
   }, [searchTerm, companies, searchData, selectedCompanies]);
@@ -579,7 +574,7 @@ const Notifications: React.FC<Props> = ({
       if (type === "company-admin") {
         if (companyData?.company_sms_sender_id == null) {
           toast.error(
-            `No sender id exists for ${companyData?.company_name} company. Please contact the super admin`
+            `No sender id exists for ${getCompanyName(companyData)} company. Please contact the super admin`
           );
           return;
         }
@@ -992,7 +987,7 @@ const Notifications: React.FC<Props> = ({
                     isMulti
                     options={filteredCompanies.map((company: any) => ({
                       value: company, // Store the entire company object in the value
-                      label: company.company_name,
+                      label: getCompanyName(company),
                     }))}
                     value={selectedCompaniesState}
                     onChange={handleCompanyChange}
@@ -1080,7 +1075,7 @@ const Notifications: React.FC<Props> = ({
                               }}
                             >
                               <p className="text-sm text-slate-900">
-                                {company?.company_name}{" "}
+                                {getCompanyName(company)}{" "}
                               </p>
                               <div
                                 className="cursor-pointer"
@@ -1131,7 +1126,7 @@ const Notifications: React.FC<Props> = ({
                             handleSelectionChange(company);
                           }}
                         >
-                          {company?.company_name}
+                          {getCompanyName(company)}
                         </div>
                       ))}
                       {filteredCompanies?.length < 1 && (

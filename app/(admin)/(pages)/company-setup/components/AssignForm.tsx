@@ -107,28 +107,26 @@ const AssignForm = ({ companyId, setShow, queryClient }: Props) => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-4 my-4 gap-4 h-full overflow-y-scroll">
+            <div className="my-4 grid h-full grid-cols-2 gap-2.5 overflow-y-auto sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
               {allForms?.content &&
-                allForms?.content
-                  ?.filter((item: any) => !item?.isTemplate)
-                  ?.map((form: any) => {
-                    return (
-                      <div
-                        className={
-                          selected === form.id
-                            ? "rounded-lg border-2 border-green-400 drop-shadow-main h-fit w-auto "
-                            : " "
-                        }
-                      >
-                        <FormCard
-                          key={form.id}
-                          form={form}
-                          noMetaData={true}
-                          onClick={() => setSelected(form.id)}
-                        />
-                      </div>
-                    );
-                  })}
+                allForms.content
+                  .filter((item: any) => !item?.isTemplate)
+                  .map((form: any, index: number) => (
+                    <div
+                      key={`assign-form-${form?.id ?? "row"}-${index}`}
+                      className={
+                        selected === form.id
+                          ? "h-fit w-auto rounded-lg border-2 border-green-400 drop-shadow-main"
+                          : ""
+                      }
+                    >
+                      <FormCard
+                        form={form}
+                        noMetaData={true}
+                        onClick={() => setSelected(form.id)}
+                      />
+                    </div>
+                  ))}
             </div>
           </>
         )}

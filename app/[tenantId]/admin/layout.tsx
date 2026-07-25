@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 // components
 import SideNav from "@/components/SideNav/SideNav";
 import TopNav from "@/components/TopNav/CompanyTopNav";
+import { MobileNavProvider } from "@/contexts/MobileNavContext";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -204,27 +205,34 @@ export default function CompanyLayout(props: any) {
       ) : (
         // TWO LAYOUTS: NORMAL VIEW AND BUILDER VIEW
 
-        <div className="w-full min-h-screen">
-          <TopNav />
-          <div className="flex mt-[3.5rem]   flex-row h-screen">
-            <div className="hidden  md:flex h-full absolute  overflow-y-scroll no-scrollbar">
+        <MobileNavProvider hasSideNav={!pathname.includes("settings")}>
+          <div className="w-full min-h-screen bg-surface-muted">
+            <TopNav />
+            <div className="mt-[3.5rem] flex min-h-[calc(100vh-3.5rem)] flex-row">
               {!pathname.includes("settings") && (
                 <SideNav
                   thirdPartyApps={thirdPartyApps}
                   navigation={navigation}
+                  homeHref={
+                    company?.company_identifier
+                      ? `/${company.company_identifier}/admin`
+                      : "/"
+                  }
+                  brandTitle={company?.name ?? "MeshSuite"}
+                  brandSubtitle="Company Admin"
                 />
-              )}{" "}
-            </div>
+              )}
 
-            <div
-              className={`${
-                pathname.includes("settings") ? "ml-0" : "md:ml-[20rem]"
-              } w-full`}
-            >
-              {children}
+              <div
+                className={`${
+                  pathname.includes("settings") ? "ml-0" : "md:ml-[17.5rem]"
+                } w-full min-w-0`}
+              >
+                {children}
+              </div>
             </div>
           </div>
-        </div>
+        </MobileNavProvider>
       )}
     </Suspense>
   );

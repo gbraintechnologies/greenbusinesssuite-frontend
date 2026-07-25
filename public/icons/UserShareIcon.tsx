@@ -32,14 +32,14 @@ const UserShareIcon = () => (
       stroke="#1E293B"
       strokeWidth="1.2"
       strokeLinecap="round"
-      stroke-linejoin="round"
+      strokeLinejoin="round"
     />
     <path
       d="M11.1108 10.6667L12.8886 10.6667"
       stroke="#1E293B"
       strokeWidth="1.2"
       strokeLinecap="round"
-      stroke-linejoin="round"
+      strokeLinejoin="round"
     />
   </svg>
 );

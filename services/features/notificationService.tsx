@@ -94,3 +94,11 @@ export const sendFormEmailNotification = async (
     })
     .then((res) => res.data);
 };
+
+export const deleteNotification = (id: number | string) => {
+  return authApi.delete(`/notifications/delete/${id}`);
+};
+
+export const deleteNotificationsBatch = (ids: number[]) => {
+  return authApi.delete(`/notifications/delete/batch`, { data: ids });
+};

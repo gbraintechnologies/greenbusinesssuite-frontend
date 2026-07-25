@@ -28,6 +28,8 @@ import { toast } from "sonner";
 import Link from "next/link";
 import Pagination from "@/components/Pagination/Pagination";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
+import Modal from "@/components/Modal/Modal";
+import DeleteUser from "@/app/(admin)/(pages)/usermanagement/actions/DeleteUser";
 
 function UserManagement(props: any) {
   const params: any = use(props.params);
@@ -58,6 +60,8 @@ function UserManagement(props: any) {
   const [page, setPage] = useState(0);
 
   const [limit, setLimit] = useState(20);
+
+  const [userToDelete, setUserToDelete] = useState<any>(null);
 
   const {
     data: users,
@@ -95,27 +99,15 @@ function UserManagement(props: any) {
       toast.error("Failed to blacklist user");
     }
   };
-  const editUserStatus = async (userData: any, status: any) => {
-    let userDataInfo = { ...userData, user_status: status };
-
-    const keyToDelete = "custom_profile_values";
-
-    let customFields = userDataInfo[keyToDelete];
-
-    delete userDataInfo[keyToDelete];
-
+  const editUserStatus = async (userData: any, status: string) => {
     try {
-      await services.editUserWithCustomFields(
-        userDataInfo,
-        customFields,
-        userData.id
-      );
+      await services.updateUserStatus(userData.id, status);
       toast.success("User status updated successfully");
       await queryClient.invalidateQueries({
         queryKey: ["all users", page, limit],
       });
     } catch (error) {
-      toast.error("User to update company status");
+      toast.error("Failed to update user status");
     }
   };
 
@@ -340,6 +332,28 @@ function UserManagement(props: any) {
                 Blacklist User
               </button>
             </DropdownItem>
+            <DropdownItem
+              key="delete"
+              className="items-center w-full rounded-md p-3 text-sm text-red-600 hover:bg-red-50"
+            >
+              <button
+                type="button"
+                className="w-full text-left text-red-600"
+                onClick={() =>
+                  setUserToDelete({
+                    id: params.row.data.id,
+                    name:
+                      `${params.row.data.first_name ?? ""} ${
+                        params.row.data.last_name ?? ""
+                      }`.trim() ||
+                      params.row.data.email ||
+                      "this user",
+                  })
+                }
+              >
+                Delete User
+              </button>
+            </DropdownItem>
           </DropdownMenu>
         </Dropdown>,
       ],
@@ -371,8 +385,6 @@ function UserManagement(props: any) {
         rows={rows}
         columns={columns}
       />
-      {/* Pagination */}
-      {/* Pagination */}
       <div className="w-full flex justify-between">
         <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
@@ -382,6 +394,29 @@ function UserManagement(props: any) {
           setPage={setPage}
         />
       </div>
+
+      <Modal
+        isOpen={Boolean(userToDelete)}
+        setIsOpen={(open) => {
+          if (!open) setUserToDelete(null);
+        }}
+        title={`Delete "${userToDelete?.name ?? "user"}"?`}
+      >
+        {userToDelete && (
+          <DeleteUser
+            userId={userToDelete.id}
+            userName={userToDelete.name}
+            setShow={(open) => {
+              if (!open) setUserToDelete(null);
+            }}
+            invalidateKeys={[
+              ["all users", page, limit],
+              ["all users"],
+              ["search data", searchTerm],
+            ]}
+          />
+        )}
+      </Modal>
     </div>
   );
 }
