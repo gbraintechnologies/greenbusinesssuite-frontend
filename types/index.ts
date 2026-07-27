@@ -86,7 +86,7 @@ export interface IFilter {
 
 export interface IModal {
   isOpen: boolean;
-  setIsOpen: any;
+  setIsOpen: (open: boolean) => void;
   title?: string;
   children: any;
   showTitle?: boolean;

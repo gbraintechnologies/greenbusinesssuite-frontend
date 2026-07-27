@@ -1,0 +1,30 @@
+# Green Business Suite — Next.js frontend
+# Joins external network `greenbusinesssuite` (created by gbscaddy/setup-networks.sh).
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.greenbusinesssuite.com}
+    image: gbs-frontend:latest
+    container_name: gbs_frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.greenbusinesssuite.com}
+    networks:
+      - greenbusinesssuite
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 5
+
+networks:
+  greenbusinesssuite:
+    external: true
+    name: greenbusinesssuite

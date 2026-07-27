@@ -1,12 +1,12 @@
 .next
 node_modules
-.env
 notes
-package-lock.json
+notes.md
 
 # local env files
 .env
 .env*.local
+!.env.example
 
 # vercel
 .vercel
@@ -15,11 +15,11 @@ package-lock.json
 *.tsbuildinfo
 next-env.d.ts
 
-# 
-notes.md
-
-
 .venv/
 .git/
 venv/
 *.pyc
+Jenkinsfile
+README.md
+nginx.conf
+package-lock.json

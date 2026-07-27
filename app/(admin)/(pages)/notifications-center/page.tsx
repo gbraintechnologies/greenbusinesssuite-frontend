@@ -465,7 +465,7 @@ function page() {
 
       <ConfirmModal
         isOpen={Boolean(notificationToDelete)}
-        setIsOpen={(open) => {
+        setIsOpen={(open: boolean) => {
           if (!open) setNotificationToDelete(null);
         }}
         title={`Delete "${notificationToDelete?.subject ?? "notification"}"?`}
@@ -476,7 +476,7 @@ function page() {
               notificationToDelete.id ?? notificationToDelete.__originalId
             }
             subject={notificationToDelete.subject}
-            setShow={(open) => {
+            setShow={(open: boolean) => {
               if (!open) setNotificationToDelete(null);
             }}
           />

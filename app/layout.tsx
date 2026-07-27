@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
 
-import { Plus_Jakarta_Sans } from "next/font/google";
-
 // global css
 import "./globals.css";
 
-const sans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Mesh Suite",
-  description: "Mesh Suite",
+  title: "Green Business Suite",
+  description: "Green Business Suite",
   icons: {
     icon: "/favicon.ico",
   },
@@ -37,10 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning lang="en" className={sans.variable}>
+    <html suppressHydrationWarning lang="en">
       <link rel="manifest" href="/favicon/site.webmanifest" />
       <meta name="theme-color" content="#ffffff"></meta>
-      <body className={`${sans.className} font-sans antialiased`}>
+      <body className="font-sans antialiased">
         <ReactQueryProvider>
           <AuthContextProvider>
             <AdminContextProvider>

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import clsx from "clsx";
+import MeshSuiteMark from "@/public/icons/MeshSuiteMark";
 
 const sizeMap = {
   xs: "h-8 w-8 text-[10px] rounded-lg",
@@ -9,6 +10,14 @@ const sizeMap = {
   md: "h-14 w-14 text-sm rounded-2xl",
   lg: "h-24 w-24 text-2xl rounded-2xl",
   xl: "h-36 w-36 text-4xl rounded-3xl",
+};
+
+const markSizeMap = {
+  xs: "h-4 w-4",
+  sm: "h-5 w-5",
+  md: "h-7 w-7",
+  lg: "h-12 w-12",
+  xl: "h-16 w-16",
 };
 
 type Props = {
@@ -26,16 +35,7 @@ function hasValidLogo(logoUrl?: string | null) {
 }
 
 export function MeshSuiteLogoMark({ className }: { className?: string }) {
-  return (
-    <span
-      className={clsx(
-        "select-none font-bold leading-none tracking-tight text-white",
-        className
-      )}
-    >
-      MS
-    </span>
-  );
+  return <MeshSuiteMark className={clsx("h-5 w-5", className)} color="#FFFFFF" />;
 }
 
 export default function CompanyBrandAvatar({
@@ -81,7 +81,7 @@ export default function CompanyBrandAvatar({
       title="MeshSuite"
       aria-label="MeshSuite logo placeholder"
     >
-      <MeshSuiteLogoMark />
+      <MeshSuiteLogoMark className={markSizeMap[size]} />
     </div>
   );
 }

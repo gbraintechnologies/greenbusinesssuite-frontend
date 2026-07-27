@@ -4,7 +4,10 @@ type Props = {
   color?: string;
 };
 
-/** MeshSuite geometric mark (cube/mesh icon only). */
+/**
+ * MeshSuite letter-M mark — interlocking mesh diagonals.
+ * Monochrome; pass `color` for light/dark surfaces.
+ */
 export default function MeshSuiteMark({
   className = "h-5 w-5",
   color = "currentColor",
@@ -12,17 +15,17 @@ export default function MeshSuiteMark({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 26"
+      viewBox="0 0 48 48"
       fill="none"
       className={className}
       aria-hidden
     >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M3.721 6.81C3.498 6.682 3.385 6.43 3.385 6.173c0-.98.153-2.175 1.001-2.665L9.306.668c1.543-.89 3.443-.89 4.986 0l5.589 3.227c.572.33.764 1.052.764 1.713 0 .368-.148.741-.468.926l-5.259 3.036c-.891.514-2.017.336-3.046.336-1.122 0-2.366.244-3.338-.317L3.721 6.81ZM0 8.919c0-.058.055-.1.113-.088.18.037.366.057.557.057.995 0 2.081-.157 2.943.341l5.389 3.111c.099.057.156.166.156.281 0 1.877 1.563 3.658 1.563 5.535v5.909c0 .782-.737 1.365-1.415.974L2.493 21.104C.95 20.214 0 18.568 0 16.787V8.919Zm14.587 3.702c0 1.926-1.657 3.752-1.657 5.679v5.807c0 .751.711 1.307 1.362.931l6.813-3.934c1.543-.89 2.493-2.536 2.493-4.317V8.919c0-.135-.005-.27-.016-.403-.009-.113-.109-.194-.222-.194-.879 0-1.825-.092-2.586.348l-5.479 3.403c-.192.111-.293.326-.293.548Z"
-        fill={color}
-      />
+      <path d="M4 6h8v36H4V6Z" fill={color} />
+      <path d="M36 6h8v36h-8V6Z" fill={color} />
+      <path d="M14.5 6h8l6.5 14h-8L14.5 6Z" fill={color} />
+      <path d="M25.5 6h8L27 20h-8L25.5 6Z" fill={color} />
+      <path d="M19 24h8l-4.5 12h-8L19 24Z" fill={color} />
+      <path d="M21 24h8l4.5 12h-8L21 24Z" fill={color} />
     </svg>
   );
 }

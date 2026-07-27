@@ -133,7 +133,7 @@ function ViewRoles() {
 
       <Modal
         isOpen={Boolean(roleToDelete)}
-        setIsOpen={(open) => {
+        setIsOpen={(open: boolean) => {
           if (!open) setRoleToDelete(null);
         }}
         title={`Delete "${roleToDelete?.name ?? "role"}"?`}

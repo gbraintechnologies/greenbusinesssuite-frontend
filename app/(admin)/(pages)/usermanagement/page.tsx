@@ -169,7 +169,7 @@ function UserManagement() {
 
       <Modal
         isOpen={Boolean(userToDelete)}
-        setIsOpen={(open) => {
+        setIsOpen={(open: boolean) => {
           if (!open) setUserToDelete(null);
         }}
         title={`Delete "${userToDelete?.name ?? "user"}"?`}
