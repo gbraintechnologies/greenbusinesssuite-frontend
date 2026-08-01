@@ -75,10 +75,10 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
 
     return (
       <>
-        <div className="relative flex flex-col gap-4 px-3 pb-[12rem] pt-4 sm:px-5 md:flex-row md:gap-10 md:px-10 md:pb-[20rem] md:pt-10">
+        <div className="relative flex flex-col gap-4 bg-surface-muted px-3 pb-[12rem] pt-4 sm:px-5 md:flex-row md:gap-10 md:px-10 md:pb-[20rem] md:pt-10">
           <div className="w-full md:w-1/6">
             <button
-              className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-sm sm:px-4 sm:text-sm"
+              className="flex items-center gap-2 rounded-lg border border-brand-100 bg-white px-3 py-2 text-xs text-slate-700 shadow-sm transition-colors hover:border-brand-200 hover:text-brand-700 sm:px-4 sm:text-sm"
               onClick={() => {
                 router.push("/forms");
               }}
@@ -89,7 +89,7 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
           </div>
           <div className="min-w-0 w-full md:w-5/6">
             {/* HEADER: TITLE, DESCRIPTION & LAST UPDATED */}
-            <div className="mb-5 flex w-full flex-col gap-4 rounded-xl border border-gray-300 bg-white p-4 sm:p-5 md:mb-10 md:flex-row md:justify-between md:gap-10">
+            <div className="mb-5 flex w-full flex-col gap-4 rounded-xl border border-brand-100 bg-white p-4 shadow-sm sm:p-5 md:mb-10 md:flex-row md:justify-between md:gap-10">
               <div className="min-w-0 flex-1">
                 <h5 className="w-full break-words text-lg font-semibold sm:text-xl">
                   {form?.name?.replace(/"/g, " ")}
@@ -102,10 +102,10 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
                 </div>
 
                 <div className="mt-4 sm:mt-10">
-                  <p className="flex items-start gap-2 text-xs text-primary-green sm:items-center sm:text-sm">
+                  <p className="flex items-start gap-2 text-xs text-brand-700 sm:items-center sm:text-sm">
                     <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-green opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-green"></span>
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-600 opacity-75"></span>
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-600"></span>
                     </span>
                     <span>
                       {" "}
@@ -117,7 +117,7 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
               </div>
               <button
                 onClick={onOpen}
-                className="flex h-fit w-fit items-center gap-2 rounded-lg border px-3 py-2 text-xs hover:bg-black hover:text-white sm:mt-2 sm:text-sm"
+                className="flex h-fit w-fit items-center gap-2 rounded-lg border border-brand-100 px-3 py-2 text-xs text-slate-700 transition-colors hover:bg-brand-600 hover:text-white sm:mt-2 sm:text-sm"
               >
                 <MdOutlineModeEditOutline /> Update
               </button>
@@ -234,7 +234,7 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
 
                 {/* RAW SECTION ADDITION */}
                 <Button
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-90 sm:w-40"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-brand-100 bg-white px-3 py-2 text-sm shadow-sm transition-colors hover:border-brand-200 hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-90 sm:w-40"
                   isDisabled={loadingSection}
                   onClick={() => {
                     let template = {

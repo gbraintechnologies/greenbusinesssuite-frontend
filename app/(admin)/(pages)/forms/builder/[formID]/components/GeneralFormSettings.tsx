@@ -42,21 +42,21 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
   }, [form?.redirectUrl]);
 
   return (
-    <div className="bg-white min-h-[100vh]   p-3">
-      <div className="bg-gray-100 p-1 text-sm rounded-lg flex gap-3 items-center justify-center">
+    <div className="min-h-[100vh] bg-surface-muted p-3">
+      <div className="flex items-center justify-center gap-3 rounded-lg bg-brand-50 p-1 text-sm ring-1 ring-brand-100">
         <button
           onClick={() => setActiveTab("general")}
           className={`${
-            activeTab === "general" && "bg-white"
-          }  text-center font-medium p-1 flex-1 rounded-lg`}
+            activeTab === "general" && "bg-white text-brand-700 shadow-sm"
+          }  text-center font-medium p-1 flex-1 rounded-lg text-slate-500`}
         >
           Form Settings
         </button>
         <button
           onClick={() => setActiveTab("field")}
           className={`${
-            activeTab === "field" && "bg-white"
-          }  text-center font-medium p-1 flex-1 rounded-lg`}
+            activeTab === "field" && "bg-white text-brand-700 shadow-sm"
+          }  text-center font-medium p-1 flex-1 rounded-lg text-slate-500`}
         >
           Field Options
         </button>
@@ -66,8 +66,8 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
         <>
           {" "}
           <div className="mt-5 px-3">
-            <h4 className="font-semibold text-gray-700">Form Layout</h4>
-            <p className="text-xs font-light text-gray-500">
+            <h4 className="font-semibold text-slate-700">Form Layout</h4>
+            <p className="text-xs font-light text-slate-500">
               Display of the form to the clients
             </p>
           </div>
@@ -76,9 +76,9 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
               onClick={() => setFormLayout("GENERAL")}
               className={`${
                 formLayout?.toLowerCase() === "general"
-                  ? "border-2 border-primary-green bg-primary-green bg-opacity-10 font-semibold "
+                  ? "border-2 border-brand-600 bg-brand-50 font-semibold text-brand-700"
                   : " "
-              } flex flex-col h-[10rem] items-center justify-between gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
+              } flex flex-col h-[10rem] items-center justify-between gap-1 rounded-xl border border-slate-200 bg-white p-4 w-1/2`}
             >
               <FormPreviewIcon />
               <FormPreviewIcon />
@@ -89,9 +89,9 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
               onClick={() => setFormLayout("CARD")}
               className={`${
                 formLayout?.toLowerCase() === "card"
-                  ? "border-2 border-primary-green bg-primary-green bg-opacity-10 font-semibold"
+                  ? "border-2 border-brand-600 bg-brand-50 font-semibold text-brand-700"
                   : " "
-              } flex flex-col h-[10rem] items-center justify-center relative gap-1 p-4 bg-[#F1F5F9] rounded-xl w-1/2`}
+              } flex flex-col h-[10rem] items-center justify-center relative gap-1 rounded-xl border border-slate-200 bg-white p-4 w-1/2`}
             >
               <FormPreviewIcon />
 
@@ -100,42 +100,42 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
           </div>
           {/* FORM DEADLINE */}
           <div className="mt-5 px-3">
-            <h4 className="font-semibold text-gray-700">Deadline</h4>
-            <p className="text-xs font-light text-gray-500">
+            <h4 className="font-semibold text-slate-700">Deadline</h4>
+            <p className="text-xs font-light text-slate-500">
               Specify a date after which form would be inaccessible to new
               clients
             </p>
             <input
               value={form?.deadline ? form.deadline.split("T")[0] : ""}
               onChange={(e) => updateDeadline(e.target.value)}
-              className="block mt-2 w-full border-gray-400 text-gray-500 border px-3 py-2 rounded-lg"
+              className="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-600"
               type="date"
             />
           </div>
           {/* use as template */}
-          <div className="bg-[#F8FAFC] py-3 mt-10 px-5  rounded-lg flex gap-3 items-center justify-between">
+          <div className="mt-10 flex items-center justify-between gap-3 rounded-lg border border-brand-100 bg-white px-5 py-3">
             <div>
               <p className="font-medium text-base">Use form as template</p>{" "}
-              <p className="text-xs font-light text-gray-500">
+              <p className="text-xs font-light text-slate-500">
                 The form will be used by the assigned company, and a similar
                 template will be created for reuse with other forms.
               </p>
             </div>
             <Switch
-              checked={form?.isTemplate}
+              checked={Boolean(form?.isTemplate)}
               onChange={() => {
                 //  set form as template
-                updateIsTemplate(!form?.isTemplate);
+                updateIsTemplate(!Boolean(form?.isTemplate));
               }}
               className={`${
-                form?.isTemplate ? "bg-primary-green" : "bg-gray-500"
+                Boolean(form?.isTemplate) ? "bg-brand-600" : "bg-slate-400"
               }
           relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
             >
               <span
                 aria-hidden="true"
                 className={`${
-                  form?.isTemplate ? "translate-x-6" : "translate-x-0"
+                  Boolean(form?.isTemplate) ? "translate-x-6" : "translate-x-0"
                 }
             pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
               />
@@ -143,57 +143,57 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
           </div>
           {/*  */}
           {/* Form Access */}
-          <div className="bg-[#F8FAFC] py-3 mt-5 px-5  rounded-lg flex gap-3 items-center justify-between">
+          <div className="mt-5 flex items-center justify-between gap-3 rounded-lg border border-brand-100 bg-white px-5 py-3">
             <div>
               <p className="font-medium text-base">Form Public / Open</p>{" "}
-              <p className="text-xs font-light text-gray-500">
+              <p className="text-xs font-light text-slate-500">
                 A public form is accessible to anyone with the link, whereas a
                 private form is restricted to the company's clients only.
               </p>
             </div>
             <Switch
-              checked={form?.isAnonymous}
+              checked={Boolean(form?.isAnonymous)}
               onChange={() => {
                 //  set form as template
-                updateIsAnonymous(!form?.isAnonymous);
+                updateIsAnonymous(!Boolean(form?.isAnonymous));
               }}
               className={`${
-                form?.isAnonymous ? "bg-primary-green" : "bg-gray-500"
+                Boolean(form?.isAnonymous) ? "bg-brand-600" : "bg-slate-400"
               }
           relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
             >
               <span
                 aria-hidden="true"
                 className={`${
-                  form?.isAnonymous ? "translate-x-6" : "translate-x-0"
+                  Boolean(form?.isAnonymous) ? "translate-x-6" : "translate-x-0"
                 }
             pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
               />
             </Switch>
           </div>
           {/* multiple responses: for private forms */}
-          <div className="bg-[#F8FAFC] py-3 mt-5 px-5  rounded-lg flex gap-3 items-center justify-between">
+          <div className="mt-5 flex items-center justify-between gap-3 rounded-lg border border-brand-100 bg-white px-5 py-3">
             <div>
               <p className="font-medium text-base">Allow Multiple Responses</p>{" "}
-              <p className="text-xs font-light text-gray-500">
+              <p className="text-xs font-light text-slate-500">
                 Allow a single client to submit multple responses to the form
               </p>
             </div>
             <Switch
-              checked={form?.multipleForms}
+              checked={Boolean(form?.multipleForms)}
               onChange={() => {
                 //  set form as template
-                updateAllowMultipleResponses(!form?.multipleForms);
+                updateAllowMultipleResponses(!Boolean(form?.multipleForms));
               }}
               className={`${
-                form?.multipleForms ? "bg-primary-green" : "bg-gray-500"
+                Boolean(form?.multipleForms) ? "bg-brand-600" : "bg-slate-400"
               }
           relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
             >
               <span
                 aria-hidden="true"
                 className={`${
-                  form?.multipleForms ? "translate-x-6" : "translate-x-0"
+                  Boolean(form?.multipleForms) ? "translate-x-6" : "translate-x-0"
                 }
             pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
               />
@@ -201,16 +201,16 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
           </div>
           {/* Redirect URL */}
           {form.isAnonymous && (
-            <div className="bg-[#F8FAFC] py-3 mt-5 px-5  rounded-lg flex gap-3 items-center justify-between">
+            <div className="mt-5 flex items-center justify-between gap-3 rounded-lg border border-brand-100 bg-white px-5 py-3">
               <div>
                 <p className="font-medium text-base">Redirect URL</p>{" "}
-                <p className="text-xs font-light text-gray-500">
+                <p className="text-xs font-light text-slate-500">
                   The website / URL the user should be redirected to after
                   successfully filling a form
                 </p>
                 <input
                   value={redirectUrl ?? ""}
-                  className="w-full mt-4 rounded-xl"
+                  className="mt-4 w-full rounded-xl border border-slate-300 px-3 py-2"
                   placeholder="Redirect URL"
                   onChange={(e) => setRedirectUrl(e.target.value)}
                 />
@@ -219,7 +219,7 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
                     toast.info("Please wait...");
                     updateRedirectUrl(redirectUrl);
                   }}
-                  className="mt-3 bg-black text-white px-4 py-2 text-sm  w-full rounded-xl"
+                  className="mt-3 w-full rounded-xl bg-brand-600 px-4 py-2 text-sm text-white"
                 >
                   Apply
                 </button>
@@ -234,10 +234,10 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
           {activeField ? (
             <FieldOptions refetch={refetch} />
           ) : (
-            <div className="min-h-[30vh] flex text-center items-center justify-center text-gray-500">
+            <div className="flex min-h-[30vh] items-center justify-center text-center text-slate-500">
               <div className="flex flex-col gap-2 items-center justify-center">
                 <HiOutlineDocument size={40} />
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-slate-400">
                   [ No form field selected ]
                 </p>
               </div>

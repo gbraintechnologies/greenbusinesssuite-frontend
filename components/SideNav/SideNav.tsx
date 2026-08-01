@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { Disclosure } from "@headlessui/react";
 import clsx from "clsx";
 import { FiChevronDown, FiX } from "react-icons/fi";
-import MeshSuiteMark from "@/public/icons/MeshSuiteMark";
 import { useMobileNav } from "@/contexts/MobileNavContext";
 
 export type NavItem = {
@@ -171,15 +170,10 @@ function SideNav({
   navigation,
   type = "normal",
   thirdPartyApps = [],
-  homeHref = "/",
-  brandTitle = "MeshSuite",
-  brandSubtitle,
 }: SideNavProps) {
   const pathname = usePathname();
   const { isOpen, close } = useMobileNav();
   const sectionLabel = type === "client" ? "Menu" : "Organization";
-  const subtitle =
-    brandSubtitle ?? (type === "client" ? "Client Portal" : "Admin Console");
 
   return (
     <>
@@ -200,22 +194,7 @@ function SideNav({
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Brand */}
-        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
-          <Link href={homeHref} className="flex min-w-0 items-center gap-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white shadow-sm shadow-brand-600/25">
-              <MeshSuiteMark className="h-5 w-5" color="#FFFFFF" />
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-bold text-slate-900">
-                {brandTitle}
-              </p>
-              <p className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-400">
-                {subtitle}
-              </p>
-            </div>
-          </Link>
-
+        <div className="flex shrink-0 items-center justify-end gap-2 border-b border-slate-100 px-4 py-3">
           <button
             type="button"
             onClick={close}

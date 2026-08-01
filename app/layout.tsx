@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import { Montserrat } from "next/font/google";
 
 // global css
 import "./globals.css";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+});
 
 export const metadata: Metadata = {
   title: "Green Business Suite",
@@ -29,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning lang="en">
+    <html suppressHydrationWarning lang="en" className={montserrat.variable}>
       <link rel="manifest" href="/favicon/site.webmanifest" />
       <meta name="theme-color" content="#ffffff"></meta>
       <body className="font-sans antialiased">
