@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,6 +10,7 @@
   --brand-primary-dark: #5b21b6;
   --surface-muted: #f8fafc;
   --border-subtle: #e2e8f0;
+  --font-montserrat: 'Montserrat', sans-serif;
 }
 
 html {
@@ -158,7 +161,7 @@ button {
 }
 
 .input-holder
-  input:not([type="checkbox"]):not([type="radio"]):not([data-slot="input"]),
+input:not([type="checkbox"]):not([type="radio"]):not([data-slot="input"]),
 textarea:not([data-slot="input"]) {
   @apply border w-full py-2 px-5 border-[#E2E8F0] bg-[#fcfdff]  rounded-lg my-1 shadow-sm;
 }

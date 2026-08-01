@@ -68,11 +68,9 @@ export default function TopNavProfileMenu({
             <span className="block text-xs font-semibold leading-tight text-white">
               {displayName}
             </span>
-            {email && (
-              <span className="block truncate text-[10px] leading-tight text-white/70">
-                {email}
-              </span>
-            )}
+            <span className="block truncate text-[10px] leading-tight text-white/70">
+              {email ?? ''}
+            </span>
           </span>
           <FiChevronDown size={14} className="shrink-0 text-white/80" />
         </Menu.Button>

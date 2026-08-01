@@ -89,20 +89,20 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
           </div>
           <div className="min-w-0 w-full md:w-5/6">
             {/* HEADER: TITLE, DESCRIPTION & LAST UPDATED */}
-            <div className="mb-5 flex w-full flex-col gap-4 rounded-xl border border-brand-100 bg-white p-4 shadow-sm sm:p-5 md:mb-10 md:flex-row md:justify-between md:gap-10">
+            <div className="mb-5 flex w-full flex-col gap-4 rounded-xl bg-gradient-to-r from-brand-700 via-brand-600 to-brand-700 p-4 shadow-sm sm:p-5 md:mb-10 md:flex-row md:justify-between md:gap-10">
               <div className="min-w-0 flex-1">
-                <h5 className="w-full break-words text-lg font-semibold sm:text-xl">
+                <h5 className="w-full break-words text-lg font-semibold text-white sm:text-xl">
                   {form?.name?.replace(/"/g, " ")}
                 </h5>
 
                 <div className="flex items-center justify-between gap-5">
-                  <p className="min-w-0 flex-1 break-words text-sm font-light">
+                  <p className="min-w-0 flex-1 break-words text-sm font-light text-white">
                     {form?.description}
                   </p>
                 </div>
 
                 <div className="mt-4 sm:mt-10">
-                  <p className="flex items-start gap-2 text-xs text-brand-700 sm:items-center sm:text-sm">
+                  <p className="flex items-start gap-2 text-xs text-white/80 sm:items-center sm:text-sm">
                     <span className="relative flex h-2 w-2">
                       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-600 opacity-75"></span>
                       <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-600"></span>
@@ -117,7 +117,7 @@ function Builder({ data, refetch, activeTab, setActiveTab }: any) {
               </div>
               <button
                 onClick={onOpen}
-                className="flex h-fit w-fit items-center gap-2 rounded-lg border border-brand-100 px-3 py-2 text-xs text-slate-700 transition-colors hover:bg-brand-600 hover:text-white sm:mt-2 sm:text-sm"
+                className="flex h-fit w-fit items-center gap-2 rounded-lg border border-white/20 bg-white/20 px-3 py-2 text-xs text-white transition-colors hover:bg-white/30 hover:text-white sm:mt-2 sm:text-sm"
               >
                 <MdOutlineModeEditOutline /> Update
               </button>

@@ -1177,7 +1177,7 @@ const Notifications: React.FC<Props> = ({
                     All
                   </DropdownItem> */}
                       <DropdownItem
-                        key="view"
+                        key="company-admin"
                         className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                         onClick={() =>
                           setSelectedRecipient({
@@ -1189,7 +1189,7 @@ const Notifications: React.FC<Props> = ({
                         Company Admin
                       </DropdownItem>
                       <DropdownItem
-                        key="view"
+                        key="contact-person"
                         className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                         onClick={() =>
                           setSelectedRecipient({
@@ -1293,7 +1293,7 @@ const Notifications: React.FC<Props> = ({
                 >
                   {recurringTypes?.map((recurType: any) => (
                     <DropdownItem
-                      key="view"
+                      key={recurType.value}
                       className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                       onPress={() => setRecurringType(recurType)}
                     >
