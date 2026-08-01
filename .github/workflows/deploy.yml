@@ -13,6 +13,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Validate deploy secrets
+        run: |
+          if [ -z "${{ secrets.DEPLOY_HOST }}" ] || [ -z "${{ secrets.DEPLOY_USER }}" ] || [ -z "${{ secrets.DEPLOY_SSH_KEY }}" ]; then
+            echo "::error::Missing one or more DEPLOY_* secrets. Please ensure DEPLOY_HOST, DEPLOY_USER and DEPLOY_SSH_KEY are set in repository Settings → Secrets → Actions."
+            exit 1
+          fi
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
