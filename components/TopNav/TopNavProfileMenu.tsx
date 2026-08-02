@@ -139,40 +139,40 @@ export default function TopNavProfileMenu({
             </Menu.Item>
           </Menu.Items>
         </Transition>
-
-        <Modal
-          isOpen={showLogOutModal}
-          setIsOpen={setShowLogOutModal}
-          title="Log out of your account"
-        >
-          <div>
-            <p className="mt-5 px-5 text-sm text-slate-600">
-              This will end your current session. You&apos;ll need to sign in again
-              to access your account.
-            </p>
-
-            <div className="mt-5 flex justify-between border-t border-slate-200 bg-slate-50 p-5">
-              <button
-                type="button"
-                onClick={() => setShowLogOutModal(false)}
-                className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700"
-                onClick={() => {
-                  setShowLogOutModal(false);
-                  onLogout();
-                }}
-              >
-                Yes, log out
-              </button>
-            </div>
-          </div>
-        </Modal>
       </Menu>
+
+      <Modal
+        isOpen={showLogOutModal}
+        setIsOpen={setShowLogOutModal}
+        title="Log out of your account"
+      >
+        <div>
+          <p className="mt-5 px-5 text-sm text-slate-600">
+            This will end your current session. You&apos;ll need to sign in again
+            to access your account.
+          </p>
+
+          <div className="mt-5 flex justify-between border-t border-slate-200 bg-slate-50 p-5">
+            <button
+              type="button"
+              onClick={() => setShowLogOutModal(false)}
+              className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700"
+              onClick={() => {
+                setShowLogOutModal(false);
+                onLogout();
+              }}
+            >
+              Yes, log out
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

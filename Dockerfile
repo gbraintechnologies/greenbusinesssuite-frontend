@@ -1,11 +1,13 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
+RUN corepack enable
 COPY package.json yarn.lock ./
 RUN yarn config set network-timeout 600000 \
   && yarn install --frozen-lockfile
 
 FROM node:20-alpine AS builder
 WORKDIR /app
+RUN corepack enable
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ARG NEXT_PUBLIC_API_URL
