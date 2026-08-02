@@ -91,11 +91,11 @@ export default function TopNavProfileMenu({
             </div>
 
             <MenuItem>
-              {({ selected }) => (
+              {({ active }) => (
                 <Link
                   href={settingsHref}
                   className={`flex items-center gap-3 px-4 py-2.5 text-sm ${
-                    selected
+                    active
                       ? "bg-brand-50 text-brand-700"
                       : "text-slate-700"
                   }`}
@@ -107,11 +107,11 @@ export default function TopNavProfileMenu({
             </MenuItem>
 
             <MenuItem>
-              {({ selected }) => (
+              {({ active }) => (
                 <Link
                   href={settingsHref}
                   className={`flex items-center gap-3 px-4 py-2.5 text-sm ${
-                    selected
+                    active
                       ? "bg-brand-50 text-brand-700"
                       : "text-slate-700"
                   }`}
@@ -125,12 +125,12 @@ export default function TopNavProfileMenu({
             <div className="my-1 border-t border-slate-100" />
 
             <MenuItem>
-              {({ selected }) => (
+              {({ active }) => (
                 <button
                   type="button"
                   onClick={() => setShowLogOutModal(true)}
                   className={`flex w-full items-center gap-3 px-4 py-2.5 text-sm ${
-                    selected ? "bg-red-50 text-red-600" : "text-red-600"
+                    active ? "bg-red-50 text-red-600" : "text-red-600"
                   }`}
                 >
                   <FiLogOut size={16} />
