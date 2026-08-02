@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Fragment, useState } from "react";
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItems, MenuItem, Transition } from "@headlessui/react";
 import { FiChevronDown, FiLogOut, FiSettings, FiUser } from "react-icons/fi";
 import Modal from "../Modal/Modal";
 
@@ -44,7 +44,7 @@ export default function TopNavProfileMenu({
   return (
     <>
       <Menu as="div" className="relative">
-        <Menu.Button className="group flex items-center gap-2 rounded-full border border-white/20 bg-white/10 py-1 pl-1 pr-2.5 transition-all hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
+        <MenuButton className="group flex items-center gap-2 rounded-full border border-white/20 bg-white/10 py-1 pl-1 pr-2.5 transition-all hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-xs font-semibold text-brand-700 shadow-sm">
             {hasAvatar(avatarUrl) ? (
               <Image
@@ -64,11 +64,12 @@ export default function TopNavProfileMenu({
               {displayName}
             </span>
             <span className="block truncate text-[10px] leading-tight text-white/70">
-              {email ?? ""}
+              {/* Prevent hydration mismatch - render empty string during SSR if email not available */}
+              {email !== undefined && email !== null ? email : ""}
             </span>
           </span>
           <FiChevronDown size={14} className="shrink-0 text-white/80" />
-        </Menu.Button>
+        </MenuButton>
 
         <Transition
           as={Fragment}
@@ -79,22 +80,22 @@ export default function TopNavProfileMenu({
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 z-50 mt-2 w-56 origin-top-right overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-xl ring-1 ring-black/5 focus:outline-none">
+          <MenuItems className="absolute right-0 z-50 mt-2 w-56 origin-top-right overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-xl ring-1 ring-black/5 focus:outline-none">
             <div className="border-b border-slate-100 px-4 py-3 sm:hidden">
               <p className="truncate text-sm font-semibold text-slate-900">
                 {displayName}
               </p>
               <p className="truncate text-xs text-slate-500">
-                {email ?? ""}
+                {email !== undefined && email !== null ? email : ""}
               </p>
             </div>
 
-            <Menu.Item>
-              {({ active }) => (
+            <MenuItem>
+              {({ selected }) => (
                 <Link
                   href={settingsHref}
                   className={`flex items-center gap-3 px-4 py-2.5 text-sm ${
-                    active
+                    selected
                       ? "bg-brand-50 text-brand-700"
                       : "text-slate-700"
                   }`}
@@ -103,14 +104,14 @@ export default function TopNavProfileMenu({
                   Profile
                 </Link>
               )}
-            </Menu.Item>
+            </MenuItem>
 
-            <Menu.Item>
-              {({ active }) => (
+            <MenuItem>
+              {({ selected }) => (
                 <Link
                   href={settingsHref}
                   className={`flex items-center gap-3 px-4 py-2.5 text-sm ${
-                    active
+                    selected
                       ? "bg-brand-50 text-brand-700"
                       : "text-slate-700"
                   }`}
@@ -119,25 +120,25 @@ export default function TopNavProfileMenu({
                   Settings
                 </Link>
               )}
-            </Menu.Item>
+            </MenuItem>
 
             <div className="my-1 border-t border-slate-100" />
 
-            <Menu.Item>
-              {({ active }) => (
+            <MenuItem>
+              {({ selected }) => (
                 <button
                   type="button"
                   onClick={() => setShowLogOutModal(true)}
                   className={`flex w-full items-center gap-3 px-4 py-2.5 text-sm ${
-                    active ? "bg-red-50 text-red-600" : "text-red-600"
+                    selected ? "bg-red-50 text-red-600" : "text-red-600"
                   }`}
                 >
                   <FiLogOut size={16} />
                   Log out
                 </button>
               )}
-            </Menu.Item>
-          </Menu.Items>
+            </MenuItem>
+          </MenuItems>
         </Transition>
 
         <Modal
