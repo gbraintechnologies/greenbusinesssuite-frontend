@@ -1,11 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import useAdmin from "@/hooks/useAdmin";
 import useAuth from "@/hooks/useAuth";
-import MeshSuiteMark from "@/public/icons/MeshSuiteMark";
 import TopNavProfileMenu from "./TopNavProfileMenu";
 import MobileNavToggle from "./MobileNavToggle";
 
@@ -28,13 +28,20 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
         <MobileNavToggle />
         <Link
           href="/"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/35 bg-white/10 shadow-sm backdrop-blur-sm transition-transform hover:scale-[1.03] hover:bg-white/15"
+          className="flex shrink-0 items-center rounded-xl bg-white px-2.5 py-1.5 shadow-sm transition-transform hover:scale-[1.03]"
           aria-label="MeshSuite home"
         >
-          <MeshSuiteMark className="h-5 w-5" color="#FFFFFF" />
+          <Image
+            src="/svg/mesh_logo.svg"
+            alt="MeshSuite"
+            width={120}
+            height={40}
+            className="h-7 w-auto"
+            unoptimized
+            priority
+          />
         </Link>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-white">MeshSuite</p>
           <p className="hidden truncate text-[11px] text-white/70 sm:block">
             Platform Administrator
           </p>

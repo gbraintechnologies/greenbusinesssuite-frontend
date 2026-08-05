@@ -4,31 +4,36 @@ import React, { createContext, useEffect, useState } from "react";
 export const AdminContext = createContext();
 
 // @ts-ignore
-const UserFromLS =
-  typeof window !== "undefined"
-    ? JSON.parse(localStorage.getItem("admin") || null)
-    : null;
-
 export const AdminProvider = ({ children }) => {
-  const [admin, setAdmin] = useState(UserFromLS);
+  // Always start null so SSR and the first client render match.
+  // localStorage is read after mount to avoid hydration mismatches.
+  const [admin, setAdmin] = useState(null);
+  const [permissions, setPermissions] = useState(null);
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   const addAdminData = (data) => {
     setAdmin((prev) => ({ ...prev, ...data }));
   };
 
   useEffect(() => {
-    // get user permissions
+    try {
+      const stored = localStorage.getItem("admin");
+      if (stored && stored !== "null") {
+        const parsed = JSON.parse(stored);
+        setAdmin(parsed);
+        setPermissions(parsed?.permissions ?? null);
+      }
+    } catch {
+      // Ignore invalid stored admin payloads.
+    }
+    setHasHydrated(true);
   }, []);
-
-  const [permissions, setPermissions] = useState(
-    UserFromLS ? UserFromLS?.permissions : null
-  );
 
   useEffect(() => {
     if (permissions == null && admin) {
       setPermissions(admin?.permissions);
     }
-  }, [admin]);
+  }, [admin, permissions]);
 
   const checkPermission = (name) => {
     // use name to check if permissions belongs to user
@@ -40,9 +45,9 @@ export const AdminProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    //
+    if (!hasHydrated) return;
     localStorage.setItem("admin", JSON.stringify(admin));
-  }, [admin]);
+  }, [admin, hasHydrated]);
 
   return (
     <AdminContext.Provider

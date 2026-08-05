@@ -64,8 +64,7 @@ export default function TopNavProfileMenu({
               {displayName}
             </span>
             <span className="block truncate text-[10px] leading-tight text-white/70">
-              {/* Prevent hydration mismatch - render empty string during SSR if email not available */}
-              {email !== undefined && email !== null ? email : ""}
+              {email ?? ""}
             </span>
           </span>
           <FiChevronDown size={14} className="shrink-0 text-white/80" />
@@ -85,9 +84,7 @@ export default function TopNavProfileMenu({
               <p className="truncate text-sm font-semibold text-slate-900">
                 {displayName}
               </p>
-              <p className="truncate text-xs text-slate-500">
-                {email !== undefined && email !== null ? email : ""}
-              </p>
+              <p className="truncate text-xs text-slate-500">{email ?? ""}</p>
             </div>
 
             <MenuItem>
