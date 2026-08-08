@@ -1,38 +1,28 @@
 "use client";
 
-import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
-
-// icons
-import { GoPlusCircle } from "react-icons/go";
-import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
 import { Button } from "@heroui/react";
-import useAdmin from "@/hooks/useAdmin";
-import { PermissionTypes } from "@/types/permissionTypes";
 
 function Nav() {
-  const { checkPermission } = useAdmin();
-
   return (
-    <div className="w-full text-[#0F172A] px-5 flex justify-between mb-4">
-      <div>
-        <h3 className="font-semibold text-2xl">User Management</h3>
-      </div>
+    <div className="mb-4 flex w-full flex-col gap-3 text-[#0F172A] sm:flex-row sm:items-center sm:justify-between">
+      <h3 className="shrink-0 text-xl font-semibold sm:text-2xl">
+        User Management
+      </h3>
 
-      <div className="flex items-center gap-2">
+      <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
         <Button
           as={Link}
           color="primary"
           href="/usermanagement/new-user"
-          className="text-white"
+          className="w-full text-white sm:w-auto"
         >
           New User
         </Button>
         <Button
           as={Link}
           href="/usermanagement/view-roles"
-          className="bg-white border border-gray-200 py-3 text-black text-sm px-4 flex items-center justify-center gap-2 text-center rounded-xl"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-center text-sm text-black sm:w-auto"
         >
           View all roles
         </Button>

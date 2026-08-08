@@ -127,7 +127,7 @@ function UserManagement() {
   const tableData = (aggregatedUsers?.length ? aggregatedUsers : data) ?? [];
 
   return (
-    <div className="w-full pb-20">
+    <div className="w-full px-1 pb-20 sm:px-5">
       <Nav />
 
       <Table
@@ -157,7 +157,7 @@ function UserManagement() {
         actionsComponent={ActionsComponent}
       />
 
-      <div className="flex w-full justify-between">
+      <div className="mt-2 flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
           currentData={data}

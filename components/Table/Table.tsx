@@ -156,6 +156,8 @@ function Table({
   const classNames = React.useMemo(
     () => ({
       base: "pb-20 overflow-x-auto no-scrollbar rounded-none",
+      wrapper: "overflow-x-auto",
+      table: "min-w-[960px] table-auto",
       th: [
         "bg-gray-50",
         "text-black",
@@ -163,6 +165,7 @@ function Table({
         "rounded-none",
         "py-4",
         "uppercase",
+        "whitespace-nowrap",
       ],
       tr: ["!rounded-none", "!shadow-none"],
       td: [
@@ -176,13 +179,15 @@ function Table({
         "group-data-[last=true]/tr:first:before:rounded-none",
         "group-data-[last=true]/tr:last:before:rounded-none",
         "py-5",
+        "align-middle",
+        "overflow-hidden",
       ],
     }),
     []
   );
 
   return (
-    <div className="px-5">
+    <div className="w-full overflow-x-auto">
       <NextUITable
         radius="none"
         layout="auto"
@@ -209,6 +214,19 @@ function Table({
               key={column.uid}
               align={column.uid === "actions" ? "center" : "start"}
               allowsSorting={column.sortable}
+              className={
+                column.uid === "email"
+                  ? "min-w-[220px]"
+                  : column.uid === "phone"
+                    ? "min-w-[140px]"
+                    : column.uid === "name"
+                      ? "min-w-[160px]"
+                      : column.uid === "status"
+                        ? "min-w-[110px]"
+                        : column.uid === "actions"
+                          ? "w-[72px]"
+                          : undefined
+              }
             >
               {column.name}
             </TableColumn>
@@ -224,20 +242,20 @@ function Table({
           {(item: any) => (
             <TableRow key={item.key}>
               {(columnKey) => (
-                <TableCell
-                  className={
-                    columnKey === "status"
-                      ? "flex justify-start mr-1 text-left"
-                      : "mr-1 text-left"
-                  }
-                >
+                <TableCell className="text-left align-middle">
                   {columnKey === "actions" && actionsComponent?.(item)}
                   {columnKey === "status" && statusComponent?.(item)}
                   {columnKey === "download" && downloadComponent?.(item)}
                   {columnKey !== "actions" &&
                     columnKey !== "status" &&
-                    columnKey !== "download" &&
-                    getCellValue(item, columnKey)}
+                    columnKey !== "download" && (
+                      <span
+                        className="block max-w-full truncate"
+                        title={String(getCellValue(item, columnKey) ?? "")}
+                      >
+                        {getCellValue(item, columnKey)}
+                      </span>
+                    )}
                 </TableCell>
               )}
             </TableRow>
