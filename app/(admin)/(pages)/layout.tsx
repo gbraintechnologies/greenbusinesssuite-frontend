@@ -1,9 +1,9 @@
 "use client";
 
 // Next & React imports
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 // components
 import SideNav from "@/components/SideNav/SideNav";
@@ -38,41 +38,24 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  const { admin, removeAdmin } = useAdmin();
-  const { auth, removeAuth } = useAuth();
+  const { admin, hasHydrated: adminHydrated } = useAdmin();
+  const { auth, hasHydrated: authHydrated } = useAuth();
 
-  const [loading, setLoading] = useState(false);
+  const sessionReady = Boolean(adminHydrated && authHydrated);
+  const accessToken = auth?.accessToken ?? auth?.access_token;
+  const isAuthenticated = Boolean(admin) && Boolean(accessToken);
 
-  // Redirect to login if not authenticated1
+  // Wait for localStorage hydration, then redirect if unauthenticated.
+  // Auth is client-only (no middleware), so we must not paint the dashboard
+  // shell until we know whether a session exists.
   useEffect(() => {
-    if (admin === null || !Boolean(auth?.accessToken)) {
-      router.push("/auth");
-    } else {
-      // let role = admin?.profiles[0]?.role_id;
-      // CHECK ROLES AND ROUTE TO RIGHT DESTINATIONS
-      // LOGICIEL ADMIN ROLE ID: 1
-      // TODO: Enable
-      // if (role == 1) {
-      //   setLoading(false);
-      //   return;
-      // }
-      // // COMPANY ADMIN ROLE ID: 6
-      // if (role == 6) {
-      //   setLoading(false);
-      //   if (pathname.includes("/settings")) {
-      //     return;
-      //   }
-      //   setLoading(true);
-      //   redirect("/company");
-      // }
-      // setLoading(true);
-      // // else
-      // removeAdmin();
-      // removeAuth();
-      // //
-      // router.push("/login");
+    if (!sessionReady) return;
+    if (!isAuthenticated) {
+      router.replace("/auth");
     }
-  }, [admin, pathname]);
+  }, [sessionReady, isAuthenticated, router]);
+
+  const loading = !sessionReady || !isAuthenticated;
 
   // ADMIN NAVIGATION
   const navigation = [

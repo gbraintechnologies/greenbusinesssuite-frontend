@@ -58,7 +58,7 @@ export const AdminProvider = ({ children }) => {
         checkPermission,
         addAdminData,
         removeAdmin,
-        permissions,
+        hasHydrated,
       }}
     >
       {children}

@@ -4,13 +4,10 @@ import React, { createContext, useEffect, useState } from "react";
 export const AuthContext = createContext();
 
 // @ts-ignore
-const UserFromLS =
-  typeof window !== "undefined"
-    ? JSON.parse(localStorage.getItem("auth") || null)
-    : null;
-
 export const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState(UserFromLS);
+  // Always start null so SSR and the first client render match.
+  const [auth, setAuth] = useState(null);
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   const addAuthData = (data) => {
     setAuth((prev) => ({ ...prev, ...data }));
@@ -21,9 +18,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    //
+    try {
+      const stored = localStorage.getItem("auth");
+      if (stored && stored !== "null") {
+        setAuth(JSON.parse(stored));
+      }
+    } catch {
+      // Ignore invalid stored auth payloads.
+    }
+    setHasHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydrated) return;
     localStorage.setItem("auth", JSON.stringify(auth));
-  }, [auth]);
+  }, [auth, hasHydrated]);
 
   return (
     <AuthContext.Provider
@@ -32,6 +41,7 @@ export const AuthProvider = ({ children }) => {
         setAuth,
         addAuthData,
         removeAuth,
+        hasHydrated,
       }}
     >
       {children}
