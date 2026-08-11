@@ -12,7 +12,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
     remotePatterns: [
-	 {
+      {
+        protocol: "https",
+        hostname: "usc1.contabostorage.com",
+        pathname: "/**",
+      },
+      {
         protocol: "https",
         hostname: "eu2.contabostorage.com",
         pathname: "/**",
@@ -45,12 +50,6 @@ const nextConfig = {
         protocol: "https",
         hostname: "*.s3.amazonaws.com",
         port: "",
-        pathname: "/**",
-      },
-	   {
-        protocol: "http",
-        hostname: "localhost",
-        port: "3000",
         pathname: "/**",
       },
     ],
