@@ -155,9 +155,8 @@ function Table({
 
   const classNames = React.useMemo(
     () => ({
-      base: "pb-20 overflow-x-auto no-scrollbar rounded-none",
-      wrapper: "overflow-x-auto",
-      table: "min-w-[960px] table-auto",
+      base: "pb-6 rounded-none",
+      table: "min-w-[680px] w-max md:w-full table-fixed",
       th: [
         "bg-gray-50",
         "text-black",
@@ -169,28 +168,42 @@ function Table({
       ],
       tr: ["!rounded-none", "!shadow-none"],
       td: [
-        // changing the rows border radius
-        // first
         "group-data-[first=true]/tr:first:before:rounded-none",
         "group-data-[first=true]/tr:last:before:rounded-none",
-        // middle
         "group-data-[middle=true]/tr:before:rounded-none",
-        // last
         "group-data-[last=true]/tr:first:before:rounded-none",
         "group-data-[last=true]/tr:last:before:rounded-none",
         "py-5",
         "align-middle",
-        "overflow-hidden",
       ],
     }),
     []
   );
 
+  const columnWidthClass = (uid: string) => {
+    switch (uid) {
+      case "id":
+        return "w-[56px]";
+      case "name":
+        return "w-[22%]";
+      case "email":
+        return "w-[30%]";
+      case "phone":
+        return "w-[16%]";
+      case "status":
+        return "w-[110px]";
+      case "actions":
+        return "w-[72px] sticky right-0 z-20";
+      default:
+        return undefined;
+    }
+  };
+
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full max-w-full overflow-x-auto">
       <NextUITable
         radius="none"
-        layout="auto"
+        layout="fixed"
         isHeaderSticky
         fullWidth
         removeWrapper
@@ -214,19 +227,7 @@ function Table({
               key={column.uid}
               align={column.uid === "actions" ? "center" : "start"}
               allowsSorting={column.sortable}
-              className={
-                column.uid === "email"
-                  ? "min-w-[220px]"
-                  : column.uid === "phone"
-                    ? "min-w-[140px]"
-                    : column.uid === "name"
-                      ? "min-w-[160px]"
-                      : column.uid === "status"
-                        ? "min-w-[110px]"
-                        : column.uid === "actions"
-                          ? "w-[72px]"
-                          : undefined
-              }
+              className={columnWidthClass(column.uid)}
             >
               {column.name}
             </TableColumn>
@@ -242,7 +243,13 @@ function Table({
           {(item: any) => (
             <TableRow key={item.key}>
               {(columnKey) => (
-                <TableCell className="text-left align-middle">
+                <TableCell
+                  className={
+                    columnKey === "actions"
+                      ? "sticky right-0 z-10 bg-transparent text-center align-middle"
+                      : "overflow-hidden text-left align-middle"
+                  }
+                >
                   {columnKey === "actions" && actionsComponent?.(item)}
                   {columnKey === "status" && statusComponent?.(item)}
                   {columnKey === "download" && downloadComponent?.(item)}
