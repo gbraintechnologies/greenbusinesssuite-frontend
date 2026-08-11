@@ -136,17 +136,35 @@ function DataTable({
         <TableBody items={items} emptyContent="No data to display">
           {(item: any) => (
             <TableRow key={item.key}>
-              {columns.map((column: any, colIndex: number) => (
-                <TableCell key={`${item.key}-${column.field ?? colIndex}`}>
-                  {column.getActions
-                    ? column.getActions({ row: item })
-                    : column.renderCell
-                    ? column.renderCell({ row: item })
-                    : column.field === "id" && item.__originalId != null
-                    ? item.__originalId
-                    : item[column.field]}
-                </TableCell>
-              ))}
+              {columns.map((column: any, colIndex: number) => {
+                const cellKey = `${item.key}-${column.field ?? colIndex}`;
+                let content: React.ReactNode;
+
+                if (column.getActions) {
+                  const actions = column.getActions({ row: item });
+                  content = Array.isArray(actions)
+                    ? actions.map((action: React.ReactNode, actionIndex: number) => {
+                        const actionKey = `${cellKey}-action-${actionIndex}`;
+                        if (React.isValidElement(action)) {
+                          return React.cloneElement(action, {
+                            key: action.key ?? actionKey,
+                          });
+                        }
+                        return (
+                          <React.Fragment key={actionKey}>{action}</React.Fragment>
+                        );
+                      })
+                    : actions;
+                } else if (column.renderCell) {
+                  content = column.renderCell({ row: item });
+                } else if (column.field === "id" && item.__originalId != null) {
+                  content = item.__originalId;
+                } else {
+                  content = item[column.field];
+                }
+
+                return <TableCell key={cellKey}>{content}</TableCell>;
+              })}
             </TableRow>
           )}
         </TableBody>

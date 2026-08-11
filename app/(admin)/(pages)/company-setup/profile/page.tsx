@@ -87,15 +87,6 @@ const Page = () => {
     setColor(newColor.hex);
   };
 
-  useEffect(() => {
-    if (companySmallLogo) {
-      const smallUrl = URL.createObjectURL(companySmallLogo);
-      setSmallLogoUrl(smallUrl);
-
-      return () => URL.revokeObjectURL(smallUrl);
-    }
-  }, [companySmallLogo]);
-
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
@@ -340,6 +331,7 @@ const Page = () => {
                 setCompanySmallLogo={setCompanySmallLogo}
                 companySmallLogo={companySmallLogo}
                 smallLogoUrl={smallLogoUrl}
+                setSmallLogoUrl={setSmallLogoUrl}
                 showColorPicker={showColorPicker}
                 setShowColorPicker={setShowColorPicker}
                 handleChangeComplete={handleChangeComplete}

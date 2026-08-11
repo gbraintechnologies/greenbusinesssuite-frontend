@@ -2,10 +2,8 @@ import { meshBaseURL } from "@/lib/api";
 import { CompanyInfo, CustomField } from "@/types";
 import axios from "axios";
 import authApi from "../axiosAuthClient";
-import defaultMeshApi from "../defaultMeshClient";
 import noAuthApi from "../axiosNoAuthClient";
 import { getToken, getUserUUID } from "../localService";
-import meshApi from "../meshAuthClient";
 
 export const getAllCompanies = (offset: number = 0, limit: number = 50) => {
   return () =>
@@ -105,59 +103,12 @@ export const getSupportStaffAssignedCompanies = (userId: any) => {
   return authApi.get(`/company/get_support_staff_assigned_companies/${userId}`);
 };
 
-// Company Branding
-// create company branding
-export const createCompanyBranding = (
-  companyId: string | number,
-  tenantId: string,
-  logo: string,
-  color: string,
-  companyName: string,
-  moduleIds: string[],
-  categorySpecificModuleIds: string[],
-) => {
-  return meshApi.post("/company-branding/create", {
-    tenancyId: tenantId,
-    companyId: companyId,
-    logo: logo,
-    color: color,
-    companyName: companyName,
-    moduleIds: moduleIds,
-    categorySpecificModuleIds: categorySpecificModuleIds,
-  });
-};
-
-//edit company branding by id
-export const editCompanyBranding = (
-  id: string | number,
-  companyId: string | number,
-  tenantId: string,
-  logo: string,
-  color: string,
-  companyName: string,
-  coreModuleIds: string[],
-  categorySpecificModuleIds: string[],
-) => {
-  return defaultMeshApi.put(`/company-branding/update`, {
-    // id: id,
-    tenancyId: tenantId,
-    companyId: companyId,
-    logo: logo,
-    color: color,
-    companyName: companyName,
-    moduleIds: coreModuleIds,
-    categorySpecificModuleIds: categorySpecificModuleIds,
-  });
-};
-
-//get company branding by tenant id
-export const getCompanyBranding = (tenantId: string) => {
-  return () =>
-    defaultMeshApi
-      .get(`/company-branding/find-by-tenancy-id/${tenantId}`)
-      .then((res) => res.data);
-  // return () => meshApi.get(`/company-branding/find-by-tenancy-id/${tenantId}`).then((res) => res.data);
-};
+// Company Branding — re-exported from brandingService for backwards compatibility
+export {
+  createCompanyBranding,
+  editCompanyBranding,
+  getCompanyBranding,
+} from "./brandingService";
 
 export const updateCompanyStatus = (data: { id: number; status: string }) => {
   return authApi.put("/companies/status", data);

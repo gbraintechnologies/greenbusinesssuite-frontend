@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import type { CSSProperties } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import useCompany from "@/hooks/useCompany";
@@ -27,20 +26,12 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
   const { removeAuth } = useAuth();
   const router = useRouter();
 
-  const brandColor = company?.color || "#7C3AED";
   const homeHref = `/${company?.company_identifier}/admin`;
   const settingsHref =
     settingsLink ?? `/${company?.company_identifier}/admin/settings`;
 
   return (
-    <nav
-      style={
-        {
-          background: `linear-gradient(90deg, ${brandColor} 0%, ${brandColor}ee 55%, ${brandColor} 100%)`,
-        } as CSSProperties
-      }
-      className="fixed top-0 z-40 flex h-14 w-full items-center justify-between border-b border-black/10 px-4 shadow-[0_4px_20px_-8px_rgba(15,23,42,0.35)] sm:px-5"
-    >
+    <nav className="fixed top-0 z-40 flex h-14 w-full items-center justify-between border-b border-brand-800/30 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-700 px-4 shadow-[0_4px_20px_-8px_rgba(91,33,182,0.45)] sm:px-5">
       <div className="flex min-w-0 items-center gap-3">
         <MobileNavToggle />
         <Link

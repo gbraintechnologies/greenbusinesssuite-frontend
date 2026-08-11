@@ -10,7 +10,7 @@ import { ShowError, getStyles } from "@/utils/FormHelpers/FormHelpers";
 import Link from "next/link";
 import { toast } from "sonner";
 import services from "@/services";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { IoArrowBackSharp } from "react-icons/io5";
 import ThumbnailUpload from "../component/ThumbnailUpload";
 import { MdOutlineInsertLink } from "react-icons/md";
@@ -24,8 +24,9 @@ const UploadAdScheme = Yup.object().shape({
   Url: Yup.string().url("Invalid URL").optional(),
 });
 
-function EditAd({ params }: any) {
-  const tenantId = params.tenantId;
+function EditAd() {
+  const params = useParams();
+  const tenantId = params.tenantId as string;
   const router = useRouter();
   const searchParams = useSearchParams(); // Access the search params
   const AdId = searchParams.get("id");

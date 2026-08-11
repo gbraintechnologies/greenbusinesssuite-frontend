@@ -5,25 +5,38 @@ import { LuFilter } from "react-icons/lu";
 import { CiSquareCheck } from "react-icons/ci";
 import { FaRegSquareCheck } from "react-icons/fa6";
 
+function asRoleList(roles: unknown) {
+  if (Array.isArray(roles)) return roles;
+  if (Array.isArray((roles as any)?.content)) return (roles as any).content;
+  return [];
+}
+
+function asSelectedList(selected: unknown) {
+  return Array.isArray(selected) ? selected : [];
+}
+
 export default function RoleFilter({ selected, setSelected, roles }: any) {
+  const roleList = asRoleList(roles);
+  const selectedList = asSelectedList(selected);
+
   const addToSelectedRoles = (role: any) => {
     if (
-      Boolean(selected.find((item: any) => item.role_name === role.role_name))
+      Boolean(
+        selectedList.find((item: any) => item.role_name === role.role_name)
+      )
     ) {
-      // already in so remove
       setSelected(
-        selected.filter((item: any) => item.role_name !== role.role_name)
+        selectedList.filter((item: any) => item.role_name !== role.role_name)
       );
     } else {
-      // add
-      setSelected((prev: any) => [...prev, role]);
+      setSelected((prev: any) => [...asSelectedList(prev), role]);
     }
   };
 
   return (
     <>
-      <Menu as="div" className="z-10 relative inline-block text-left">
-        <Menu.Button className="flex items-center gap-2 text-sm text-gray-500 border border-gray-200 rounded-xl px-3 py-2 ">
+      <Menu as="div" className="relative z-10 inline-block text-left">
+        <Menu.Button className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-500">
           <LuFilter size={16} /> Filter
         </Menu.Button>
 
@@ -39,33 +52,35 @@ export default function RoleFilter({ selected, setSelected, roles }: any) {
           >
             <Menu.Items
               static
-              className=" absolute bg-white shadow-lg border-gray-200 px-4 border top-12 right-0 rounded-xl p-2 w-56 z-[400]"
+              className="absolute right-0 top-12 z-[400] w-56 rounded-xl border border-gray-200 bg-white p-2 px-4 shadow-lg"
             >
-              {roles &&
-                roles?.map((role: any, idx: any) => {
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => addToSelectedRoles(role)}
-                      className="w-full flex items-center gap-2 py-2 text-sm"
-                    >
-                      {Boolean(
-                        selected.find(
-                          (item: any) => item.role_name === role.role_name
-                        )
-                      ) ? (
-                        <FaRegSquareCheck
-                          className="text-primary-green"
-                          size={18}
-                        />
-                      ) : (
-                        <CiSquareCheck className="text-gray-400" size={20} />
-                      )}
+              {roleList.length === 0 ? (
+                <p className="px-1 py-2 text-sm text-gray-400">No roles found</p>
+              ) : (
+                roleList.map((role: any, idx: number) => (
+                  <button
+                    key={role?.id ?? idx}
+                    type="button"
+                    onClick={() => addToSelectedRoles(role)}
+                    className="flex w-full items-center gap-2 py-2 text-sm"
+                  >
+                    {Boolean(
+                      selectedList.find(
+                        (item: any) => item.role_name === role.role_name
+                      )
+                    ) ? (
+                      <FaRegSquareCheck
+                        className="text-primary-green"
+                        size={18}
+                      />
+                    ) : (
+                      <CiSquareCheck className="text-gray-400" size={20} />
+                    )}
 
-                      {role.role_name}
-                    </button>
-                  );
-                })}
+                    {role.role_name || role.roleName}
+                  </button>
+                ))
+              )}
             </Menu.Items>
           </Transition>
         </div>

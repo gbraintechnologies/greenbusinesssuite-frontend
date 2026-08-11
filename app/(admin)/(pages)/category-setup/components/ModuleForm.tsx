@@ -182,9 +182,9 @@ const ModuleForm: React.FC<Props> = ({
                       className="shadow-md bg-white border border-[#F1F5F9] w-[42rem] rounded-lg flex flex-col gap-3"
                       aria-label="Static Actions"
                     >
-                      {modules?.map((mod: any) => (
+                      {modules?.map((mod: any, index: number) => (
                         <DropdownItem
-                          key="view"
+                          key={`${mod}-${index}`}
                           className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                           onClick={() => setModuleName(mod)}
                         >

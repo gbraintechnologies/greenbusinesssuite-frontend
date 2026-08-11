@@ -3,12 +3,24 @@ import KpiCard from "@/components/Dashboard/KpiCard";
 
 interface IStat {
   label: string;
-  value: string | number;
+  value: string | number | null | undefined;
+  isLoading?: boolean;
 }
 
 type Props = {
   stats: IStat[];
 };
+
+function displayValue(value: IStat["value"]) {
+  if (value == null || value === "") return "0";
+  return value;
+}
+
+function iconGlyph(value: IStat["value"]) {
+  const text = String(displayValue(value));
+  if (text === "undefined" || text === "null" || text === "NaN") return "0";
+  return text.slice(0, 1) || "0";
+}
 
 const StatsBlock: React.FC<Props> = ({ stats }) => {
   return (
@@ -17,10 +29,11 @@ const StatsBlock: React.FC<Props> = ({ stats }) => {
         <KpiCard
           key={`${stat.label}-${index}`}
           label={stat.label}
-          value={stat.value}
+          value={displayValue(stat.value)}
+          isLoading={stat.isLoading}
           icon={
             <span className="text-sm font-semibold text-brand-600">
-              {String(stat.value).slice(0, 1) || "—"}
+              {iconGlyph(stat.value)}
             </span>
           }
         />

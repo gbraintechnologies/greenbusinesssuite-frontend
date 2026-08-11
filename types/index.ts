@@ -170,3 +170,27 @@ export interface Bill {
   formId: number;
   status: string;
 }
+
+export interface CompanyBranding {
+  id: number;
+  tenancyId: string;
+  companyId: number;
+  companyName: string;
+  logo: string;
+  color: string;
+  modules?: any[];
+  categorySpecificModules?: any[];
+  moduleIds?: (string | number)[];
+  categorySpecificModuleIds?: (string | number)[];
+}
+
+export interface CompanyBrandingPayload {
+  id?: string | number;
+  tenancyId: string;
+  companyId: string | number;
+  logo: string;
+  color: string;
+  companyName: string;
+  moduleIds?: (string | number)[];
+  categorySpecificModuleIds?: (string | number)[];
+}

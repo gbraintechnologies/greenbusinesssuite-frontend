@@ -1,7 +1,30 @@
 import authApi from "../axiosAuthClient";
 
+function normalizeRolesPayload(data: unknown) {
+  const list = Array.isArray(data)
+    ? data
+    : Array.isArray((data as any)?.content)
+      ? (data as any).content
+      : Array.isArray((data as any)?.data)
+        ? (data as any).data
+        : Array.isArray((data as any)?.roles)
+          ? (data as any).roles
+          : [];
+
+  return list.map((role: any) => ({
+    ...role,
+    id: role?.id,
+    role_name: role?.role_name ?? role?.roleName ?? role?.name ?? "",
+    roleName: role?.roleName ?? role?.role_name ?? role?.name ?? "",
+    description: role?.description ?? "",
+  }));
+}
+
 export const getMeshBusinessSuiteRoles = () => {
-  return () => authApi.get(`/roles/permission/all`).then((res) => res.data);
+  return () =>
+    authApi
+      .get(`/roles/permission/all`)
+      .then((res) => normalizeRolesPayload(res.data));
 };
 
 export const getLoggedInUserPermissions = () => {

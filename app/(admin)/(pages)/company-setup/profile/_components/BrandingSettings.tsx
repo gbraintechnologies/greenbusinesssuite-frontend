@@ -1,9 +1,12 @@
+"use client";
+
 import Loader from "@/components/Loader/Loader";
-import useFileUpload from "@/hooks/useFileUpload";
+import useFileUpload, { extractFileUrl, isPersistableLogoUrl } from "@/hooks/useFileUpload";
 import CompanyBrandAvatar from "@/components/CompanyBrand/CompanyBrandAvatar";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import services from "@/services";
 import { Button } from "@heroui/react";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useRef, useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import { toast } from "sonner";
@@ -13,6 +16,7 @@ const BrandingSettings = ({
   companySmallLogo,
   setCompanySmallLogo,
   smallLogoUrl,
+  setSmallLogoUrl,
   color,
   showColorPicker,
   setShowColorPicker,
@@ -24,6 +28,7 @@ const BrandingSettings = ({
   companySmallLogo: any;
   smallLogoUrl: string;
   setCompanySmallLogo: any;
+  setSmallLogoUrl?: any;
   color: string;
   showColorPicker: boolean;
   setShowColorPicker: any;
@@ -33,8 +38,8 @@ const BrandingSettings = ({
 }) => {
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const { handleFileUpload } = useFileUpload();
+  const queryClient = useQueryClient();
 
-  // Close color picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -56,252 +61,237 @@ const BrandingSettings = ({
 
   const [loading, setLoading] = useState(false);
 
-  const createBranding = async () => {
-    if (!smallLogoUrl) {
-      toast.error("Logo is required");
-      return;
-    }
+  const tenancyId =
+    companyData?.companyIdentifier ?? companyData?.company_identifier;
+  const companyId = companyData?.id;
+  const companyName =
+    companyData?.companyName ?? companyData?.company_name ?? "";
 
+  const invalidateBranding = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["branding"] }),
+      queryClient.invalidateQueries({
+        queryKey: ["get company branding info", tenancyId],
+      }),
+      queryClient.invalidateQueries({ queryKey: ["branding", tenancyId] }),
+    ]);
+  };
+
+  const resolveLogoUrl = async () => {
+    if (companySmallLogo) {
+      const uploaded = await handleFileUpload(companySmallLogo as File);
+      const url = extractFileUrl(uploaded);
+      if (!url) throw new Error("Logo upload failed");
+      setSmallLogoUrl?.(url);
+      setCompanySmallLogo(null);
+      return url;
+    }
+    if (isPersistableLogoUrl(smallLogoUrl)) return smallLogoUrl.trim();
+    if (isPersistableLogoUrl(companyBranding?.logo)) {
+      return companyBranding.logo.trim();
+    }
+    return "";
+  };
+
+  const createBranding = async () => {
     try {
       setLoading(true);
-      const companySmallLogoURL =
-        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+      const logoUrl = await resolveLogoUrl();
+      if (!logoUrl) {
+        toast.error("Logo is required");
+        return;
+      }
 
-      await services
-        .createCompanyBranding(
-          companyData?.id!,
-          companyData?.companyIdentifier!,
-          companySmallLogoURL,
-          color,
-          companyData?.companyName!,
-          [],
-          []
-        )
-        .then((res) => {
-          setLoading(false);
-          toast.success("Branding saved successfully");
-        });
+      await services.createCompanyBranding(
+        companyId!,
+        tenancyId!,
+        logoUrl,
+        color,
+        companyName,
+        [],
+        []
+      );
+      await invalidateBranding();
+      toast.success("Branding saved successfully");
     } catch (e) {
+      toast.error("An error occurred");
+    } finally {
       setLoading(false);
-      toast.error("An error occured");
     }
   };
 
   const editCompanyBranding = async () => {
-    if (!smallLogoUrl) {
-      toast.error("Logo is required");
-      return;
-    }
     try {
       setLoading(true);
-      const companySmallLogoURL =
-        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+      const logoUrl = await resolveLogoUrl();
+      if (!logoUrl) {
+        toast.error("Logo is required");
+        return;
+      }
 
       await services.editCompanyBranding(
         companyBranding?.id,
-        companyData?.id,
-        companyData?.companyIdentifier,
-        companySmallLogo ? companySmallLogoURL : companyBranding?.logo,
+        companyId,
+        tenancyId,
+        logoUrl,
         color,
-        companyData?.companyName!,
-        companyBranding?.modules?.map((module: any) => module?.id),
+        companyName,
+        companyBranding?.modules?.map((module: any) => module?.id) ?? [],
         companyBranding?.categorySpecificModules?.map(
           (module: any) => module?.id
-        )
+        ) ?? []
       );
-      setLoading(false);
+      await invalidateBranding();
       toast.success("Company branding updated successfully");
     } catch (error) {
       toast.error("Failed to update company branding");
+    } finally {
       setLoading(false);
     }
   };
 
+  const previewUrl = companySmallLogo
+    ? URL.createObjectURL(companySmallLogo)
+    : smallLogoUrl;
+
   return (
     <div>
-      <>
-        {brandingLoading ? (
-          <Loader text="Fetching company branding information" />
-        ) : (
-          <div className="pt-6">
-            <header className="pb-3 flex justify-between items-center w-full">
-              <div>
-                <h3 className="text-lg text-primary-dark font-semibold">
-                  Branding Settings
-                </h3>
-                <p className="text-sm text-[#667085]">
-                  Set your default branding elements to control the appearance
-                  of the company dashboard to users.
-                </p>
-              </div>
-              <Button
-                color="primary"
-                className="px-10"
-                isLoading={loading}
-                isDisabled={loading}
-                onPress={() => {
-                  if (companyBranding == undefined) {
-                    // create
-                    createBranding();
-                  } else {
-                    // edit
-                    editCompanyBranding();
-                  }
-                }}
-              >
-                Save
-              </Button>
-            </header>
+      {brandingLoading ? (
+        <Loader text="Fetching company branding information" />
+      ) : (
+        <div className="pt-6">
+          <header className="flex w-full items-center justify-between pb-3">
+            <div>
+              <h3 className="text-lg font-semibold text-primary-dark">
+                Branding Settings
+              </h3>
+              <p className="text-sm text-[#667085]">
+                Set your default branding elements to control the appearance of
+                the company dashboard to users.
+              </p>
+            </div>
+            <Button
+              color="primary"
+              className="bg-brand-600 px-10"
+              isLoading={loading}
+              isDisabled={loading}
+              onPress={() => {
+                if (companyBranding == undefined || companyBranding == null) {
+                  createBranding();
+                } else {
+                  editCompanyBranding();
+                }
+              }}
+            >
+              Save
+            </Button>
+          </header>
 
-            <div className="max-w-2xl">
-              {/* COMPANY SMALL LOGO */}
-              <div className="mt-2 mb-4">
-                <h2 className="text-base text-primary-dark font-medium">
-                  Upload small icon
-                </h2>
-                <p className="text-sm text-[#667085]">
-                  A smaller representation of your logo to be used as a favicon.
-                  It must be squared and at least 128px by 128px with a max size
-                  of 512KB. Supported formats are JPG and PNG only.
-                </p>
+          <div className="max-w-2xl">
+            <div className="mb-4 mt-2">
+              <h2 className="text-base font-medium text-primary-dark">
+                Upload small icon
+              </h2>
+              <p className="text-sm text-[#667085]">
+                A smaller representation of your logo to be used as a favicon.
+                It must be squared and at least 128px by 128px with a max size
+                of 512KB. Supported formats are JPG and PNG only.
+              </p>
 
-                <div className="my-3 flex items-end gap-4">
-                  {!smallLogoUrl && !companySmallLogo && (
-                    <CompanyBrandAvatar
-                      logoUrl={null}
-                      name={companyData?.companyName}
-                      size="md"
-                    />
-                  )}
+              <div className="my-3 flex items-end gap-4">
+                {!previewUrl && (
+                  <CompanyBrandAvatar
+                    logoUrl={null}
+                    name={companyName}
+                    size="md"
+                  />
+                )}
 
-                  {!companySmallLogo && !smallLogoUrl && (
-                    <label className="mt-2 flex h-fit w-fit cursor-pointer items-center gap-2 rounded-md border border-[#E2E8F0] bg-white p-2 text-sm font-medium text-[#334155]">
-                    <input
-                      type="file"
-                      className="hidden"
-                      onChange={(e) => {
-                        setCompanySmallLogo(
-                          e.target.files && e.target.files[0]
-                        );
-                      }}
-                      accept=".jpg, .png, .avif"
-                    />
-                    <CloudUploadIcon />
-                    <p>Upload</p>
-                  </label>
-                  )}
-                </div>
-
-                {smallLogoUrl && (
-                  <div
-                    className="w-32 h-32 rounded-md my-3"
-                    style={{
-                      backgroundImage: `url(${smallLogoUrl})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      border: "1px solid #E2E8F0",
-                      position: "relative",
+                <label className="mt-2 flex h-fit w-fit cursor-pointer items-center gap-2 rounded-md border border-[#E2E8F0] bg-white p-2 text-sm font-medium text-[#334155]">
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] ?? null;
+                      setCompanySmallLogo(file);
                     }}
-                  >
-                    {/* <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
-                          <div
-                            className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
-                            onClick={() => {
-                              setCompanySmallLogo(null);
-                              setSmallLogoUrl("");
-                            }}
-                          >
-                            <RiDeleteBin6Line color="#0E121B" />
-                          </div>
-                          <label className="flex justify-center items-center w-8 py-2 relative cursor-pointer">
-                            <input
-                              type="file"
-                              className="hidden"
-                              onChange={(e) => {
-                                setCompanySmallLogo(
-                                  e.target.files && e.target.files[0]
-                                );
-                              }}
-                              accept=".jpg, .png"
-                            />
-                            <WriteIcon />
-                          </label>
-                        </div> */}{" "}
-                  </div>
-                )}
+                    accept=".jpg, .png, .avif, .jpeg, .webp"
+                  />
+                  <CloudUploadIcon />
+                  <p>{previewUrl ? "Replace" : "Upload"}</p>
+                </label>
               </div>
 
-              {/* COMPANY COLOR */}
-              <div className="input-holder">
-                <h2 className="text-base text-primary-dark font-medium">
-                  Company Color
-                </h2>
-                <p className="text-sm text-[#667085]">
-                  Add a splash of color to your pages
-                </p>
+              {previewUrl && (
+                <div
+                  className="my-3 flex h-32 w-32 items-center justify-center overflow-hidden rounded-md border border-[#E2E8F0] bg-white"
+                  style={{
+                    backgroundImage: `url(${previewUrl})`,
+                    backgroundSize: "contain",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                  }}
+                />
+              )}
+            </div>
 
-                {!color && (
-                  <button
-                    className="mt-2 flex gap-2 items-center my-2 bg-white w-fit h-fit border py-2 px-4 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer"
-                    type="button"
-                    onClick={() => setShowColorPicker(!showColorPicker)}
+            <div className="input-holder">
+              <h2 className="text-base font-medium text-primary-dark">
+                Company Color
+              </h2>
+              <p className="text-sm text-[#667085]">
+                Add a splash of color to your pages
+              </p>
+
+              <button
+                className="my-2 mt-2 flex h-8 w-fit cursor-pointer items-center rounded-md border border-[#E2E8F0] bg-white text-sm font-medium text-[#334155]"
+                type="button"
+                onClick={() => setShowColorPicker(!showColorPicker)}
+              >
+                <div
+                  className="h-8 w-5 rounded-bl-md rounded-tl-md"
+                  style={{ backgroundColor: color || "#7C3AED" }}
+                />
+                <p className="p-2">{color || "Select"}</p>
+              </button>
+
+              {showColorPicker && (
+                <div className="relative mt-4">
+                  <div
+                    ref={colorPickerRef}
+                    className="absolute z-10 rounded-lg border border-[#E2E8F0] bg-white p-4 shadow-lg"
                   >
-                    Select
-                  </button>
-                )}
-
-                {color && (
-                  <button
-                    className="mt-2 flex items-center my-2 bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer"
-                    type="button"
-                    onClick={() => setShowColorPicker(!showColorPicker)}
-                  >
-                    <div
-                      className="w-5 h-8 rounded-tl-md rounded-bl-md"
-                      style={{ backgroundColor: color }}
-                    ></div>
-                    <p className="p-2">{color}</p>
-                  </button>
-                )}
-
-                {showColorPicker && (
-                  <div className="relative mt-4">
-                    <div
-                      ref={colorPickerRef}
-                      className="absolute z-10 bg-white p-4 rounded-lg shadow-lg border border-[#E2E8F0]"
-                    >
-                      <HexColorPicker
-                        color={color || "#1d1d1d"}
-                        onChange={(newColor) =>
-                          handleChangeComplete({ hex: newColor })
+                    <HexColorPicker
+                      color={color || "#7C3AED"}
+                      onChange={(newColor) =>
+                        handleChangeComplete({ hex: newColor })
+                      }
+                    />
+                    <div className="mt-3 flex items-center justify-between gap-3">
+                      <input
+                        type="text"
+                        value={color ?? ""}
+                        onChange={(e) =>
+                          handleChangeComplete({ hex: e.target.value })
                         }
+                        className="w-32 rounded-md border border-[#E2E8F0] px-3 py-2 text-sm"
+                        placeholder="#7C3AED"
                       />
-                      <div className="mt-3 flex items-center justify-between gap-3">
-                        <input
-                          type="text"
-                          value={color ?? ""}
-                          onChange={(e) =>
-                            handleChangeComplete({ hex: e.target.value })
-                          }
-                          className="px-3 py-2 border border-[#E2E8F0] rounded-md text-sm w-32"
-                          placeholder="#000000"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowColorPicker(false)}
-                          className="px-4 py-2 bg-primary-green text-white text-sm rounded-md hover:opacity-90"
-                        >
-                          Done
-                        </button>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowColorPicker(false)}
+                        className="rounded-md bg-brand-600 px-4 py-2 text-sm text-white hover:bg-brand-700"
+                      >
+                        Done
+                      </button>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
-        )}
-      </>
+        </div>
+      )}
     </div>
   );
 };

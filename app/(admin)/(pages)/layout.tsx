@@ -88,6 +88,11 @@ export default function AdminLayout({
           icon: null,
           link: "/category-setup",
         },
+        {
+          name: "Branding",
+          icon: null,
+          link: ["/branding", "/branding/create"],
+        },
       ],
     },
     {

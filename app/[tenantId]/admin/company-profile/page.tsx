@@ -20,7 +20,10 @@ import WriteIcon from "@/public/icons/WriteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 
-import useFileUpload from "@/hooks/useFileUpload";
+import useFileUpload, {
+  extractFileUrl,
+  isPersistableLogoUrl,
+} from "@/hooks/useFileUpload";
 import { VscLink } from "react-icons/vsc";
 import useCompany from "@/hooks/useCompany";
 import useAdmin from "@/hooks/useAdmin";
@@ -106,14 +109,21 @@ const Page = (props: any) => {
     setColor(newColor.hex);
   };
 
-  useEffect(() => {
-    if (companySmallLogo) {
-      const smallUrl = URL.createObjectURL(companySmallLogo);
-      setSmallLogoUrl(smallUrl);
+  const [logoPreviewBlob, setLogoPreviewBlob] = useState<string>("");
 
-      return () => URL.revokeObjectURL(smallUrl);
+  useEffect(() => {
+    if (!companySmallLogo) {
+      setLogoPreviewBlob("");
+      return;
     }
+    const smallUrl = URL.createObjectURL(companySmallLogo);
+    setLogoPreviewBlob(smallUrl);
+    return () => URL.revokeObjectURL(smallUrl);
   }, [companySmallLogo]);
+
+  const brandingPreviewUrl =
+    logoPreviewBlob ||
+    (isPersistableLogoUrl(smallLogoUrl) ? smallLogoUrl : "");
 
   const { data: companyData, isLoading } = useQuery({
     queryKey: ["company", parseInt(companyBranding?.companyId)],
@@ -199,7 +209,7 @@ const Page = (props: any) => {
   }, [companyData, companyBranding]);
 
   const editCompanyBranding = async () => {
-    if (!smallLogoUrl) {
+    if (!companySmallLogo && !isPersistableLogoUrl(smallLogoUrl) && !isPersistableLogoUrl(companyBranding?.logo)) {
       toast.error("Logo is required");
       return;
     }
@@ -207,13 +217,28 @@ const Page = (props: any) => {
       const companySmallLogoURL =
         companySmallLogo && (await handleFileUpload(companySmallLogo as File));
 
+      const uploadedLogo = companySmallLogo
+        ? extractFileUrl(companySmallLogoURL)
+        : null;
+      const logoToSave =
+        uploadedLogo ||
+        (isPersistableLogoUrl(smallLogoUrl)
+          ? smallLogoUrl.trim()
+          : null) ||
+        (isPersistableLogoUrl(companyBranding?.logo)
+          ? companyBranding.logo.trim()
+          : "");
+
+      if (!logoToSave) {
+        toast.error("Logo upload failed. Please try again.");
+        return;
+      }
+
       await services.editCompanyBranding(
         companyBranding?.id,
         companyData?.id,
         companyData?.company_identifier,
-        companySmallLogo
-          ? companySmallLogoURL?.file_url
-          : companyBranding?.logo,
+        logoToSave,
         color,
         companyData?.company_name,
         companyBranding?.modules?.map((module: any) => module?.id),
@@ -221,6 +246,9 @@ const Page = (props: any) => {
           (module: any) => module?.id
         )
       );
+
+      setSmallLogoUrl(logoToSave);
+      setCompanySmallLogo(null);
       toast.success("Company branding updated successfully");
     } catch (error) {
       toast.error("Failed to update company branding");
@@ -410,7 +438,7 @@ const Page = (props: any) => {
                       with a max size of 512KB. Supported formats are JPG and
                       PNG only.
                     </p>
-                    {!(companySmallLogo || smallLogoUrl) && (
+                    {!(companySmallLogo || brandingPreviewUrl) && (
                       <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
                         <input
                           type="file"
@@ -425,14 +453,13 @@ const Page = (props: any) => {
                         <CloudUploadIcon /> <p>Upload</p>
                       </label>
                     )}
-                    {smallLogoUrl && (
+                    {brandingPreviewUrl && (
                       <div
-                        className="w-32 h-32 rounded-md my-3"
+                        className="my-3 flex h-32 w-32 items-center justify-center overflow-hidden rounded-md bg-white"
                         style={{
-                          backgroundImage: Boolean(smallLogoUrl)
-                            ? `url(${smallLogoUrl})`
-                            : "",
-                          backgroundSize: "cover",
+                          backgroundImage: `url(${brandingPreviewUrl})`,
+                          backgroundSize: "contain",
+                          backgroundRepeat: "no-repeat",
                           backgroundPosition: "center",
                           border: "1px solid #E2E8F0",
                           position: "relative",

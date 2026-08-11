@@ -122,7 +122,7 @@ function ViewRoles() {
             { name: "Description", uid: "description" },
             { name: "Actions", uid: "actions" },
           ]}
-          data={roles ? roles?.content?.map((role: any) => ({ ...role })) : []}
+          data={Array.isArray(roles) ? roles.map((role: any) => ({ ...role })) : []}
           hasSearch={false}
           isLoading={isLoading}
           title="Roles & Permissions"

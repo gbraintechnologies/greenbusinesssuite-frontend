@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import clsx from "clsx";
+import { useState } from "react";
 import MeshSuiteMark from "@/public/icons/MeshSuiteMark";
+import { isDisplayableLogoUrl } from "@/hooks/useFileUpload";
 
 const sizeMap = {
   xs: "h-8 w-8 text-[10px] rounded-lg",
@@ -10,14 +12,6 @@ const sizeMap = {
   md: "h-14 w-14 text-sm rounded-2xl",
   lg: "h-24 w-24 text-2xl rounded-2xl",
   xl: "h-36 w-36 text-4xl rounded-3xl",
-};
-
-const markSizeMap = {
-  xs: "h-4 w-4",
-  sm: "h-5 w-5",
-  md: "h-7 w-7",
-  lg: "h-12 w-12",
-  xl: "h-16 w-16",
 };
 
 type Props = {
@@ -28,10 +22,15 @@ type Props = {
   shape?: "squircle" | "circle";
 };
 
-function hasValidLogo(logoUrl?: string | null) {
-  if (!logoUrl) return false;
-  const trimmed = logoUrl.trim();
-  return trimmed.length > 1 && trimmed !== "null" && trimmed !== "undefined";
+function getInitials(name?: string) {
+  return (
+    name
+      ?.split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "—"
+  );
 }
 
 export function MeshSuiteLogoMark({ className }: { className?: string }) {
@@ -45,10 +44,12 @@ export default function CompanyBrandAvatar({
   className,
   shape = "squircle",
 }: Props) {
+  const [imgFailed, setImgFailed] = useState(false);
   const sizeClass = sizeMap[size];
   const shapeClass = shape === "circle" ? "!rounded-full" : "";
+  const showImage = isDisplayableLogoUrl(logoUrl) && !imgFailed;
 
-  if (hasValidLogo(logoUrl)) {
+  if (showImage) {
     return (
       <div
         className={clsx(
@@ -62,9 +63,10 @@ export default function CompanyBrandAvatar({
           src={logoUrl!}
           alt={name ? `${name} logo` : "Company logo"}
           fill
-          className="object-cover"
+          className="object-contain p-1"
           sizes="144px"
           unoptimized
+          onError={() => setImgFailed(true)}
         />
       </div>
     );
@@ -73,15 +75,15 @@ export default function CompanyBrandAvatar({
   return (
     <div
       className={clsx(
-        "flex shrink-0 items-center justify-center bg-brand-600 shadow-sm ring-1 ring-brand-700/20",
+        "flex shrink-0 items-center justify-center bg-brand-600 font-semibold text-white shadow-sm ring-1 ring-brand-700/20",
         sizeClass,
         shapeClass,
         className
       )}
-      title="MeshSuite"
-      aria-label="MeshSuite logo placeholder"
+      title={name || "Company"}
+      aria-label={name ? `${name} logo placeholder` : "Company logo placeholder"}
     >
-      <MeshSuiteLogoMark className={markSizeMap[size]} />
+      {getInitials(name)}
     </div>
   );
 }

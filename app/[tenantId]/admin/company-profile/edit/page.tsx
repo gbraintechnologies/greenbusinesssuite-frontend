@@ -9,7 +9,10 @@ import { CompanyInfo, CustomField } from "@/types";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { FormikHelpers } from "formik";
 import { toast } from "sonner";
-import useFileUpload from "@/hooks/useFileUpload";
+import useFileUpload, {
+  extractFileUrl,
+  isPersistableLogoUrl,
+} from "@/hooks/useFileUpload";
 import { editCompanyWithCustomFields } from "@/services/features/companyService";
 
 import CompanyForm, { ICompany } from "./../components/CompanyForm";
@@ -246,6 +249,9 @@ const Page = () => {
 
     const companyLogoURL =
       companyLogo && (await handleFileUpload(companyLogo as File));
+    const uploadedCompanyLogo = companyLogo
+      ? extractFileUrl(companyLogoURL)
+      : null;
 
     const data: CompanyInfo = {
       company_name: values.companyName as string,
@@ -253,9 +259,7 @@ const Page = () => {
       primary_contact_name: `${values.contactFirstName} ${values.contactLastName}`,
       primary_contact_email: values.contactEmail as string,
       primary_contact_phone_number: phone,
-      company_logo: companyLogo
-        ? companyLogoURL?.file_url
-        : companyData?.company_logo,
+      company_logo: uploadedCompanyLogo || companyData?.company_logo,
       industry: selectedIndustry?.value as string,
       company_address: selectedCountry?.value as string,
       primary_currency: companyData?.primary_currency,
@@ -372,14 +376,26 @@ const Page = () => {
 
       const companySmallLogoURL =
         companySmallLogo && (await handleFileUpload(companySmallLogo as File));
+      const uploadedSmallLogo = companySmallLogo
+        ? extractFileUrl(companySmallLogoURL)
+        : null;
+      const brandingLogo =
+        uploadedSmallLogo ||
+        (isPersistableLogoUrl(companyBranding?.logo)
+          ? companyBranding.logo.trim()
+          : "");
+
+      if (!brandingLogo) {
+        toast.error("Logo upload failed. Please try again.");
+        setSubmitting(false);
+        return;
+      }
 
       await services.editCompanyBranding(
         companyBranding?.id,
         companyData?.id,
         companyData?.company_identifier,
-        companySmallLogo
-          ? companySmallLogoURL?.file_url
-          : companyBranding?.logo,
+        brandingLogo,
         color,
         values.companyName as string,
         companyBranding?.modules?.map((module: any) => module?.id),

@@ -3,75 +3,116 @@
 import React from "react";
 import Nav from "../forms/components/Nav";
 
-//
 import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
 import useCompany from "@/hooks/useCompany";
+import { formatNumber } from "@/utils/dashboard/formatters";
+
+function toStatNumber(value: unknown) {
+  if (value == null) return 0;
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+  if (typeof value === "string" && value.trim() !== "") {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const candidate =
+      record.count ??
+      record.total ??
+      record.value ??
+      record.data ??
+      record.openedLinks ??
+      record.ignoredLinks;
+    if (typeof candidate === "number" || typeof candidate === "string") {
+      return toStatNumber(candidate);
+    }
+  }
+  return 0;
+}
 
 function CompanyFormReports() {
   const { companyBranding: company } = useCompany();
+  const companyId = company?.id;
 
-  // published forms ids
-  const { data: publishedFormsIds } = useQuery({
-    queryKey: ["published forms ids", company?.id],
-    queryFn: services.publishedFomsOfCompany(company?.id),
+  const { data: publishedFormsIds, isLoading: publishedIdsLoading } = useQuery({
+    queryKey: ["published forms ids", companyId],
+    queryFn: services.publishedFomsOfCompany(companyId),
+    enabled: !!companyId,
   });
 
-  // reports
-  const { data: uniqueUsersCount, isLoading } = useQuery({
-    queryKey: ["unique users count", company?.id],
-    queryFn: services.uniqueUsersCount(company?.id),
+  const publishedIdsKey = Array.isArray(publishedFormsIds)
+    ? publishedFormsIds.join(",")
+    : "";
+  const hasPublishedForms = publishedIdsKey.length > 0;
+
+  const { data: uniqueUsersCount, isLoading: usersLoading } = useQuery({
+    queryKey: ["unique users count", companyId],
+    queryFn: services.uniqueUsersCount(companyId),
+    enabled: !!companyId,
   });
 
-  const { data: totalEntries } = useQuery({
-    queryKey: ["total entries per company", company?.id],
-    queryFn: services.totalEntries(company?.id),
+  const { data: totalEntries, isLoading: entriesLoading } = useQuery({
+    queryKey: ["total entries per company", companyId],
+    queryFn: services.totalEntries(companyId),
+    enabled: !!companyId,
   });
 
-  const { data: linksOpened } = useQuery({
-    queryKey: [
-      "links opened per company",
-      company?.id,
-      publishedFormsIds?.join(","),
-    ],
-    queryFn: services.linksOpened(company?.id, publishedFormsIds?.join(",")),
-    enabled: !!publishedFormsIds,
+  const { data: linksOpened, isLoading: linksOpenedLoading } = useQuery({
+    queryKey: ["links opened per company", companyId, publishedIdsKey],
+    queryFn: services.linksOpened(companyId, publishedIdsKey),
+    enabled: !!companyId && hasPublishedForms,
   });
 
-  const { data: linksIgnored } = useQuery({
-    queryKey: [
-      "ignored links per company",
-      company?.id,
-      publishedFormsIds?.join(","),
-    ],
-    queryFn: services.ignoredLinks(company?.id, publishedFormsIds?.join(",")),
-    enabled: !!publishedFormsIds,
+  const { data: linksIgnored, isLoading: linksIgnoredLoading } = useQuery({
+    queryKey: ["ignored links per company", companyId, publishedIdsKey],
+    queryFn: services.ignoredLinks(companyId, publishedIdsKey),
+    enabled: !!companyId && hasPublishedForms,
   });
 
-  const { data: formStats } = useQuery({
-    queryKey: ["form stats completed/incomplete", company?.id],
-    queryFn: services.companyFormStats(company?.id),
+  const { data: formStats, isLoading: formStatsLoading } = useQuery({
+    queryKey: ["form stats completed/incomplete", companyId],
+    queryFn: services.companyFormStats(companyId),
+    enabled: !!companyId,
   });
+
+  const linksOpenedReady = !publishedIdsLoading && (!hasPublishedForms || !linksOpenedLoading);
+  const linksIgnoredReady = !publishedIdsLoading && (!hasPublishedForms || !linksIgnoredLoading);
+
+  const linksOpenedValue = linksOpenedReady
+    ? hasPublishedForms
+      ? toStatNumber(linksOpened)
+      : 0
+    : undefined;
+
+  const linksIgnoredValue = linksIgnoredReady
+    ? hasPublishedForms
+      ? toStatNumber(linksIgnored)
+      : 0
+    : undefined;
 
   return (
-    <div className="px-5 pb-20 mt-4 py-2 min-h-screen">
+    <div className="mt-4 min-h-screen px-5 py-2 pb-20">
       <Nav headerLeftTitle="Form Reports" />
       <div className="mt-4">
         <StatsBlock
           stats={[
             {
               label: "Links Opened",
-              value: linksOpened !== null ? linksOpened : "-",
+              value: formatNumber(linksOpenedValue ?? 0),
+              isLoading: !linksOpenedReady,
             },
             {
               label: "Ignored Forms",
-              value: linksIgnored !== null ? linksIgnored : "-",
+              value: formatNumber(linksIgnoredValue ?? 0),
+              isLoading: !linksIgnoredReady,
             },
             {
               label: "Total Customers",
-              value: uniqueUsersCount !== null ? uniqueUsersCount : "-",
+              value: formatNumber(uniqueUsersCount),
+              isLoading: usersLoading,
             },
           ]}
         />
@@ -81,15 +122,18 @@ function CompanyFormReports() {
           stats={[
             {
               label: "Total Number Of Entries",
-              value: totalEntries !== null ? totalEntries : "-",
+              value: formatNumber(totalEntries),
+              isLoading: entriesLoading,
             },
             {
               label: "Completed Submissions",
-              value: formStats?.completedForms,
+              value: formatNumber(formStats?.completedForms),
+              isLoading: formStatsLoading,
             },
             {
               label: "Incomplete Submissions",
-              value: formStats?.uncompletedForms,
+              value: formatNumber(formStats?.uncompletedForms),
+              isLoading: formStatsLoading,
             },
           ]}
         />

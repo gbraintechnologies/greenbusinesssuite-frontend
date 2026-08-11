@@ -183,7 +183,8 @@ function CompanyDashboard() {
           stats={[
             {
               label: "Total Registrations",
-              value: totalEntries ?? "—",
+              value: formatNumber(totalEntries),
+              isLoading: entriesLoading,
             },
             {
               label: "Average Payment",
@@ -191,11 +192,13 @@ function CompanyDashboard() {
             },
             {
               label: "Incomplete Submissions",
-              value: formStats?.uncompletedForms ?? "—",
+              value: formatNumber(formStats?.uncompletedForms),
+              isLoading: formStatsLoading,
             },
             {
               label: "Links Opened",
-              value: linksOpened ?? "—",
+              value: formatNumber(linksOpened),
+              isLoading: linksOpenedLoading,
             },
           ]}
         />

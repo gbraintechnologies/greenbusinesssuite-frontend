@@ -116,10 +116,17 @@ function UserManagement(props: any) {
     if (activeFilter.value === "all") {
       setAggregatedUsers(users);
     } else {
-      const filteredUsers = users?.filter(
-        (user: any) =>
-          user.user_status.toLowerCase() === activeFilter.value.toLowerCase()
-      );
+      const filteredUsers = users?.filter((user: any) => {
+        const status = (
+          user.user_status ??
+          user.status ??
+          user.userStatus ??
+          ""
+        )
+          .toString()
+          .toLowerCase();
+        return status === activeFilter.value.toLowerCase();
+      });
       setAggregatedUsers(filteredUsers);
     }
   }, [activeFilter, users]);
@@ -182,18 +189,18 @@ function UserManagement(props: any) {
   useEffect(() => {
     let temp: any = [];
 
-    if (aggregatedUsers && roles) {
+    if (aggregatedUsers && Array.isArray(roles)) {
       for (let i = 0; i < aggregatedUsers.length; i++) {
         let user = aggregatedUsers[i];
         let userRole = "Unassigned";
         // APP ID ===1 == MESH SUITE APP
         // @ts-ignore
-        const meshRole = user?.profiles.find((item: any) => item.app_id === 1);
+        const meshRole = user?.profiles?.find((item: any) => item.app_id === 1);
 
         if (meshRole) {
-          for (let i = 0; i < roles?.length; i++) {
+          for (let i = 0; i < roles.length; i++) {
             if (roles[i].id === meshRole?.role_id) {
-              userRole = roles[i].role_name;
+              userRole = roles[i].role_name || roles[i].roleName;
             }
           }
         }
@@ -251,7 +258,13 @@ function UserManagement(props: any) {
       type: "actions",
       getActions: (params: any) => [
         <div key={params.row.id} className="w-2/12">
-          <StatusPill status={params.row.data?.user_status} />
+          <StatusPill
+            status={
+              params.row.data?.user_status ??
+              params.row.data?.status ??
+              params.row.data?.userStatus
+            }
+          />
         </div>,
       ],
     },
@@ -261,7 +274,7 @@ function UserManagement(props: any) {
       flex: 1,
       type: "actions",
       getActions: (params: any) => [
-        <Dropdown>
+        <Dropdown key={`actions-${params.row.data?.id ?? params.row.id}`}>
           <DropdownTrigger>
             <Button variant="bordered">
               {" "}

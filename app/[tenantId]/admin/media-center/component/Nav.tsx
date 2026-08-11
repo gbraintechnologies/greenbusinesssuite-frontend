@@ -20,15 +20,14 @@ function Nav({ tenantId }: NavProps) {
 
       <div className="flex items-center gap-2">
         <Menu as="div" className="relative inline-block text-left">
-          <div>
-            <Menu.Button as={Fragment}>
-              <CompanyThemedButton className="flex items-center gap-2">
-                <GoPlusCircle /> Add New
-                <div className="border-r-[0.3px] border-opacity-50 border-white h-10"></div>
-                <IoIosArrowDown />
-              </CompanyThemedButton>
-            </Menu.Button>
-          </div>
+          <Menu.Button
+            as={CompanyThemedButton}
+            className="flex items-center gap-2"
+          >
+            <GoPlusCircle /> Add New
+            <div className="border-r-[0.3px] border-opacity-50 border-white h-10"></div>
+            <IoIosArrowDown />
+          </Menu.Button>
           <Transition
             as={Fragment}
             enter="transition ease-out duration-100"

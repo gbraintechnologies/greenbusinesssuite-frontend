@@ -10,8 +10,10 @@ import { getToken } from "@/services/localService";
  */
 export function extractFileUrl(payload: any): string | null {
   if (!payload) return null;
-  if (typeof payload === "string") return payload;
-  return (
+  if (typeof payload === "string") {
+    return isPersistableLogoUrl(payload) ? payload : null;
+  }
+  const candidate =
     payload.file_url ??
     payload.fileUrl ??
     payload.url ??
@@ -20,8 +22,41 @@ export function extractFileUrl(payload: any): string | null {
     payload?.data?.file_url ??
     payload?.data?.fileUrl ??
     payload?.data?.url ??
-    null
+    null;
+  if (typeof candidate !== "string") return null;
+  return isPersistableLogoUrl(candidate) ? candidate.trim() : null;
+}
+
+function isJunkLogoString(url: string) {
+  const trimmed = url.trim();
+  return (
+    !trimmed ||
+    trimmed === "null" ||
+    trimmed === "undefined" ||
+    trimmed === "[object Object]"
   );
+}
+
+/** Safe to show in the UI (includes temporary blob/data previews). */
+export function isDisplayableLogoUrl(url?: string | null): boolean {
+  if (!url || typeof url !== "string" || isJunkLogoString(url)) return false;
+  const trimmed = url.trim();
+  return (
+    trimmed.startsWith("blob:") ||
+    trimmed.startsWith("data:") ||
+    /^https?:\/\//i.test(trimmed) ||
+    trimmed.startsWith("/")
+  );
+}
+
+/** Safe to persist to the API (never blob/data or object junk). */
+export function isPersistableLogoUrl(url?: string | null): boolean {
+  if (!url || typeof url !== "string" || isJunkLogoString(url)) return false;
+  const trimmed = url.trim();
+  if (trimmed.startsWith("blob:") || trimmed.startsWith("data:")) {
+    return false;
+  }
+  return /^https?:\/\//i.test(trimmed) || trimmed.startsWith("/");
 }
 
 const useFileUpload = () => {

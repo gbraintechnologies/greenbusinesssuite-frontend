@@ -5,37 +5,50 @@ function StatusPill({
   success,
   textTransform = "capitalize",
 }: {
-  status: string;
+  status?: string | null;
   success?: boolean;
   textTransform?: string;
 }) {
-  if (status.toLowerCase().includes("process")) {
+  const normalized = (status ?? "").toString().trim();
+
+  if (!normalized) {
     return (
-      <span className="text-[#D97706] font-bold  capitalize text-xs  rounded-full ">
-        {status.toLowerCase().replaceAll("_", " ")}
+      <span className="rounded-full text-xs font-bold capitalize text-[#344054]">
+        —
       </span>
     );
   }
 
-  if (status.toLowerCase().includes("pending")) {
+  const lower = normalized.toLowerCase();
+  const label = lower.replaceAll("_", " ");
+
+  if (lower.includes("process")) {
     return (
-      <span className="text-[#0E7490] font-bold  capitalize text-xs  rounded-full ">
-        {status.toLowerCase().replaceAll("_", " ")}
+      <span className="rounded-full text-xs font-bold capitalize text-[#D97706]">
+        {label}
+      </span>
+    );
+  }
+
+  if (lower.includes("pending")) {
+    return (
+      <span className="rounded-full text-xs font-bold capitalize text-[#0E7490]">
+        {label}
       </span>
     );
   }
 
   if (
-    status.toLowerCase().includes("success") ||
-    status.toLowerCase().includes("active") ||
-    status.toLowerCase().includes("complete") ||
+    lower.includes("success") ||
+    lower.includes("active") ||
+    lower.includes("complete") ||
     success === true
   ) {
     return (
       <span
-        className={`text-[#16A34A] font-bold  ${textTransform} text-xs  rounded-full `}
+        className={`rounded-full text-xs font-bold text-[#16A34A] ${textTransform}`}
       >
-        {status.toLowerCase().replaceAll("_", " ")}
+        {label}
       </span>
     );
   }
@@ -43,17 +56,16 @@ function StatusPill({
   if (success === false) {
     return (
       <span
-        className={`text-red-700 bg-red-50 font-bold ${textTransform} text-xs  rounded-full `}
+        className={`rounded-full bg-red-50 text-xs font-bold text-red-700 ${textTransform}`}
       >
-        {status.toLowerCase().replaceAll("_", " ")}
+        {label}
       </span>
     );
   }
 
-  // DEFAULT FILTER
   return (
-    <span className="  text-[#344054] font-bold  capitalize text-xs  rounded-full ">
-      {status.toLowerCase().replaceAll("_", " ")}
+    <span className="rounded-full text-xs font-bold capitalize text-[#344054]">
+      {label}
     </span>
   );
 }

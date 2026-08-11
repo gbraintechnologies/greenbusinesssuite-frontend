@@ -1,77 +1,78 @@
 import React from "react";
-import { StringSchema } from "yup";
 
 function StatusPill({
   status,
   success,
   textTransform = "capitalize",
 }: {
-  status: string;
+  status?: string | null;
   success?: boolean;
   textTransform?: string;
 }) {
+  const normalized = (status ?? "").toString().trim();
+
+  if (!normalized) {
+    return (
+      <span className="rounded-full bg-[#F1F5F9] px-5 py-1 text-xs capitalize text-[#344054]">
+        —
+      </span>
+    );
+  }
+
+  const lower = normalized.toLowerCase();
+  const label = lower.replaceAll("_", " ");
+
   if (
-    status.toLowerCase().includes("inactive") ||
-    status.toLowerCase().includes("temp") ||
-    status.toLowerCase().includes("incomplete") ||
-    status.toLowerCase().includes("process")
+    lower.includes("inactive") ||
+    lower.includes("temp") ||
+    lower.includes("incomplete") ||
+    lower.includes("process")
   ) {
     return (
-      <span className="text-[#D97706] bg-[#FFFBEB] capitalize text-xs px-5 rounded-full py-1">
-        {status.toLowerCase().replaceAll("_", " ")}
+      <span className="rounded-full bg-[#FFFBEB] px-5 py-1 text-xs capitalize text-[#D97706]">
+        {label}
       </span>
     );
   }
 
   if (
-    status.toLowerCase().includes("success") ||
-    status.toLowerCase().includes("active") ||
-    status.toLowerCase().includes("complete") ||
+    lower.includes("success") ||
+    lower.includes("active") ||
+    lower.includes("complete") ||
     success === true
   ) {
     return (
       <span
-        className={`text-[#16A34A] bg-[#F0FDF4]  ${textTransform} text-xs px-5 rounded-full py-1`}
+        className={`rounded-full bg-[#F0FDF4] px-5 py-1 text-xs text-[#16A34A] ${textTransform}`}
       >
-        {status.toLowerCase().replaceAll("_", " ")}
+        {label}
       </span>
     );
   }
 
-  if (status.toLowerCase().includes("pend")) {
+  if (lower.includes("pend")) {
     return (
       <span
-        className={`text-blue-700 bg-blue-100  ${textTransform} text-xs px-5 rounded-full py-1`}
+        className={`rounded-full bg-blue-100 px-5 py-1 text-xs text-blue-700 ${textTransform}`}
       >
-        {status.toLowerCase().replaceAll("_", " ")}
+        {label}
       </span>
     );
   }
 
-  if (success === false) {
+  if (success === false || lower.includes("fail")) {
     return (
       <span
-        className={`text-red-700 bg-red-50 ${textTransform} text-xs px-5 rounded-full py-1`}
+        className={`rounded-full bg-red-50 px-5 py-1 text-xs text-red-700 ${textTransform}`}
       >
-        {status.toLowerCase().replaceAll("_", " ")}
+        {label}
       </span>
     );
   }
 
-  if (status.toLowerCase().includes("fail")) {
-    return (
-      <span
-        className={`text-red-700 bg-red-50 ${textTransform} text-xs px-5 rounded-full py-1`}
-      >
-        {status.toLowerCase().replaceAll("_", " ")}
-      </span>
-    );
-  }
-
-  // DEFAULT FILTER
   return (
-    <span className="  text-[#344054] bg-[#F1F5F9]  capitalize text-xs px-5 rounded-full py-1">
-      {status.toLowerCase().replaceAll("_", " ")}
+    <span className="rounded-full bg-[#F1F5F9] px-5 py-1 text-xs capitalize text-[#344054]">
+      {label}
     </span>
   );
 }
