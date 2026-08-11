@@ -21,11 +21,17 @@ export function extractFileUrl(payload: any): string | null {
     payload.file_url ??
     payload.fileUrl ??
     payload.url ??
+    payload.logo ??
+    payload.logoUrl ??
+    payload.logo_url ??
+    payload.company_logo ??
     payload.location ??
     payload.Location ??
     payload?.data?.file_url ??
     payload?.data?.fileUrl ??
     payload?.data?.url ??
+    payload?.data?.logo ??
+    payload?.data?.logoUrl ??
     null;
   if (typeof candidate !== "string") return null;
   return isPersistableLogoUrl(candidate) ? candidate.trim() : null;

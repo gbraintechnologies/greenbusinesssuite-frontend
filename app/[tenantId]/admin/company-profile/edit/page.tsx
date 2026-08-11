@@ -374,18 +374,20 @@ const Page = () => {
 
       // }
 
-      const companySmallLogoURL =
-        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
-      const uploadedSmallLogo = companySmallLogo
-        ? extractFileUrl(companySmallLogoURL)
-        : null;
-      const brandingLogo =
-        uploadedSmallLogo ||
-        (isPersistableLogoUrl(companyBranding?.logo)
-          ? companyBranding.logo.trim()
-          : "");
+      let brandingLogo = isPersistableLogoUrl(companyBranding?.logo)
+        ? companyBranding.logo.trim()
+        : "";
 
-      if (!brandingLogo) {
+      if (companySmallLogo) {
+        const uploaded = await services.uploadBrandingLogo({
+          companyId: companyData?.id,
+          tenancyId: companyData?.company_identifier,
+          file: companySmallLogo as File,
+        });
+        brandingLogo = extractFileUrl(uploaded) || brandingLogo;
+      }
+
+      if (!brandingLogo && !companySmallLogo) {
         toast.error("Logo upload failed. Please try again.");
         setSubmitting(false);
         return;
@@ -395,7 +397,7 @@ const Page = () => {
         companyBranding?.id,
         companyData?.id,
         companyData?.company_identifier,
-        brandingLogo,
+        brandingLogo || companyBranding?.logo || "",
         color,
         values.companyName as string,
         companyBranding?.modules?.map((module: any) => module?.id),

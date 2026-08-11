@@ -10,12 +10,43 @@ import {
   Pagination,
 } from "@heroui/react";
 
+function renderCellContent(column: any, item: any) {
+  if (!column) return null;
+
+  if (column.getActions) {
+    const actions = column.getActions({ row: item });
+    if (Array.isArray(actions)) {
+      if (actions.length === 1) return actions[0];
+      return (
+        <div className="flex min-w-0 items-center gap-2">
+          {actions.map((action: React.ReactNode, actionIndex: number) => (
+            <React.Fragment
+              key={`${item.key}-${column.uid}-action-${actionIndex}`}
+            >
+              {action}
+            </React.Fragment>
+          ))}
+        </div>
+      );
+    }
+    return actions;
+  }
+
+  if (column.renderCell) {
+    return column.renderCell({ row: item });
+  }
+
+  if (column.field === "id" && item.__originalId != null) {
+    return item.__originalId;
+  }
+
+  return item[column.field];
+}
+
 function DataTable({
   rows,
   columns,
   pagination = 100,
-  sortField = "orderDate",
-  sort = "desc",
   checkboxes = false,
   rowsPerView,
   isLoading,
@@ -31,20 +62,31 @@ function DataTable({
     setLocalRows(rows);
   }, [rows]);
 
-  const pages = Math.ceil(localRows.length / rowsPerPage);
+  const tableColumns = useMemo(
+    () =>
+      (columns || []).map((column: any, index: number) => ({
+        ...column,
+        uid: String(column.field ?? `col-${index}`),
+      })),
+    [columns]
+  );
+
+  const pages = Math.ceil((localRows?.length || 0) / rowsPerPage) || 1;
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
+    const source = Array.isArray(localRows) ? localRows : [];
 
-    return localRows.slice(start, end).map((row: any, index: number) => {
-      const rowKey = `row-${start + index}-${row?.id ?? "unknown"}`;
+    return source.slice(start, end).map((row: any, index: number) => {
+      const originalId = row?.__originalId ?? row?.id ?? row?.data?.id;
+      const rowKey = `row-${start + index}-${originalId ?? "unknown"}`;
 
       return {
         ...row,
         key: rowKey,
         id: rowKey,
-        __originalId: row?.id,
+        __originalId: originalId,
       };
     });
   }, [page, localRows, rowsPerPage]);
@@ -60,32 +102,27 @@ function DataTable({
     return (
       <div className="min-h-[60vh] w-full">
         <div className="mb-4 hidden items-center justify-between gap-5 rounded-t-lg bg-gray-100 px-5 py-5 text-left font-medium sm:flex">
-          {columns.map((column: any, index: number) => {
-            return (
-              <div className="text-left text-xs uppercase w-full" key={index}>
-                <h4>
-                  {column.headerName ||
-                    column.renderHeader?.()?.props?.children ||
-                    column.field}
-                </h4>
-              </div>
-            );
-          })}
+          {tableColumns.map((column: any) => (
+            <div className="w-full text-left text-xs uppercase" key={column.uid}>
+              <h4>
+                {column.headerName ||
+                  column.renderHeader?.()?.props?.children ||
+                  column.field}
+              </h4>
+            </div>
+          ))}
         </div>
-        {/* @ts-ignore */}
-        {Array.apply(null, { length: 7 }).map((e, i) => (
+        {Array.from({ length: 7 }).map((_, i) => (
           <div
-            className="flex items-center mb-4 justify-between p-3 gap-4 mx-5 border border-gray-200 bg-white rounded-lg"
+            className="mx-5 mb-4 flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white p-3"
             key={i}
           >
-            {columns.map((_: any, index: number) => {
-              return (
-                <div
-                  className="h-6 w-full bg-gray-200 rounded-lg animate-pulse"
-                  key={index}
-                />
-              );
-            })}
+            {tableColumns.map((column: any) => (
+              <div
+                className="h-6 w-full animate-pulse rounded-lg bg-gray-200"
+                key={column.uid}
+              />
+            ))}
           </div>
         ))}
       </div>
@@ -109,7 +146,7 @@ function DataTable({
                 color="primary"
                 page={page}
                 total={pages}
-                onChange={(page) => setPage(page)}
+                onChange={(nextPage) => setPage(nextPage)}
               />
             </div>
           ) : null
@@ -119,10 +156,10 @@ function DataTable({
           wrapper: "min-h-[400px]",
         }}
       >
-        <TableHeader>
-          {columns.map((column: any, index: number) => (
+        <TableHeader columns={tableColumns}>
+          {(column: any) => (
             <TableColumn
-              key={column.field || index}
+              key={column.uid}
               align={column.align || column.headerAlign || "start"}
             >
               {column.renderHeader
@@ -131,40 +168,19 @@ function DataTable({
                   : column.renderHeader
                 : column.headerName || column.field}
             </TableColumn>
-          ))}
+          )}
         </TableHeader>
         <TableBody items={items} emptyContent="No data to display">
           {(item: any) => (
             <TableRow key={item.key}>
-              {columns.map((column: any, colIndex: number) => {
-                const cellKey = `${item.key}-${column.field ?? colIndex}`;
-                let content: React.ReactNode;
-
-                if (column.getActions) {
-                  const actions = column.getActions({ row: item });
-                  content = Array.isArray(actions)
-                    ? actions.map((action: React.ReactNode, actionIndex: number) => {
-                        const actionKey = `${cellKey}-action-${actionIndex}`;
-                        if (React.isValidElement(action)) {
-                          return React.cloneElement(action, {
-                            key: action.key ?? actionKey,
-                          });
-                        }
-                        return (
-                          <React.Fragment key={actionKey}>{action}</React.Fragment>
-                        );
-                      })
-                    : actions;
-                } else if (column.renderCell) {
-                  content = column.renderCell({ row: item });
-                } else if (column.field === "id" && item.__originalId != null) {
-                  content = item.__originalId;
-                } else {
-                  content = item[column.field];
-                }
-
-                return <TableCell key={cellKey}>{content}</TableCell>;
-              })}
+              {(columnKey) => {
+                const column = tableColumns.find(
+                  (col: any) => col.uid === String(columnKey)
+                );
+                return (
+                  <TableCell>{renderCellContent(column, item)}</TableCell>
+                );
+              }}
             </TableRow>
           )}
         </TableBody>

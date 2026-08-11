@@ -7,14 +7,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import CompanyBrandAvatar from "@/components/CompanyBrand/CompanyBrandAvatar";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
-import useFileUpload, { extractFileUrl, isPersistableLogoUrl } from "@/hooks/useFileUpload";
+import { extractFileUrl, isPersistableLogoUrl } from "@/hooks/useFileUpload";
 import services from "@/services";
 import type { CompanyBranding } from "@/types";
 
 type Props = {
   mode: "create" | "edit";
   initial?: CompanyBranding | null;
-  /** Required for create — company id from companies API */
   companyId?: string | number;
   tenancyId?: string;
   companyName?: string;
@@ -31,18 +30,13 @@ export default function BrandingForm({
 }: Props) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { handleFileUpload } = useFileUpload();
   const colorPickerRef = useRef<HTMLDivElement>(null);
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoUrl, setLogoUrl] = useState(initial?.logo ?? "");
   const [color, setColor] = useState(initial?.color || "#7C3AED");
-  const [name, setName] = useState(
-    initial?.companyName || companyName || ""
-  );
-  const [tenant, setTenant] = useState(
-    initial?.tenancyId || tenancyId || ""
-  );
+  const [name, setName] = useState(initial?.companyName || companyName || "");
+  const [tenant, setTenant] = useState(initial?.tenancyId || tenancyId || "");
   const [company, setCompany] = useState<string>(
     String(initial?.companyId ?? companyId ?? "")
   );
@@ -78,15 +72,42 @@ export default function BrandingForm({
 
   const resolveLogo = async () => {
     if (logoFile) {
-      const uploaded = await handleFileUpload(logoFile);
+      const uploaded = await services.uploadBrandingLogo({
+        companyId: company || null,
+        tenancyId: tenant.trim() || null,
+        file: logoFile,
+      });
       const url = extractFileUrl(uploaded);
-      if (!url) throw new Error("Logo upload failed");
-      setLogoUrl(url);
+      if (url) {
+        setLogoUrl(url);
+        setLogoFile(null);
+        return url;
+      }
+      // Dedicated upload may update branding server-side without returning a URL.
       setLogoFile(null);
-      return url;
+      return isPersistableLogoUrl(logoUrl) ? logoUrl.trim() : "";
     }
     if (isPersistableLogoUrl(logoUrl)) return logoUrl.trim();
     return "";
+  };
+
+  const handleRemoveLogo = async () => {
+    try {
+      setLoading(true);
+      if (isPersistableLogoUrl(logoUrl) || initial?.logo) {
+        await services.deleteBrandingLogo({
+          companyId: company || null,
+          tenancyId: tenant.trim() || null,
+        });
+      }
+      setLogoFile(null);
+      setLogoUrl("");
+      toast.success("Logo removed");
+    } catch {
+      toast.error("Failed to remove logo");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -98,38 +119,49 @@ export default function BrandingForm({
 
     try {
       setLoading(true);
-      const logo = await resolveLogo();
-      if (!logo) {
-        toast.error("Logo is required");
-        return;
-      }
 
       if (mode === "create") {
+        // Create record first, then upload logo via dedicated endpoint when needed.
+        const existingLogo = isPersistableLogoUrl(logoUrl)
+          ? logoUrl.trim()
+          : "";
         await services.createCompanyBranding(
           company,
           tenant.trim(),
-          logo,
+          existingLogo,
           color,
           name.trim(),
           [],
           []
         );
+
+        if (logoFile) {
+          const uploaded = await services.uploadBrandingLogo({
+            companyId: company,
+            tenancyId: tenant.trim(),
+            file: logoFile,
+          });
+          const url = extractFileUrl(uploaded);
+          if (url) setLogoUrl(url);
+          setLogoFile(null);
+        }
+
         toast.success("Branding created");
       } else {
         if (!initial?.id) {
           toast.error("Missing branding id");
           return;
         }
+
+        const logo = await resolveLogo();
         await services.editCompanyBranding(
           initial.id,
           company,
           tenant.trim(),
-          logo,
+          logo || initial.logo || "",
           color,
           name.trim(),
-          initial.modules?.map((m: any) => m?.id) ??
-            initial.moduleIds ??
-            [],
+          initial.modules?.map((m: any) => m?.id) ?? initial.moduleIds ?? [],
           initial.categorySpecificModules?.map((m: any) => m?.id) ??
             initial.categorySpecificModuleIds ??
             []
@@ -214,19 +246,31 @@ export default function BrandingForm({
             name={name || "Company"}
             size="md"
           />
-          <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700">
-            <input
-              type="file"
-              className="hidden"
-              accept=".jpg,.jpeg,.png,.webp,.avif"
-              onChange={(e) => {
-                const file = e.target.files?.[0] ?? null;
-                setLogoFile(file);
-              }}
-            />
-            <CloudUploadIcon />
-            {previewUrl ? "Replace logo" : "Upload logo"}
-          </label>
+          <div className="flex flex-wrap gap-2">
+            <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700">
+              <input
+                type="file"
+                className="hidden"
+                accept=".jpg,.jpeg,.png,.webp,.avif"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  setLogoFile(file);
+                }}
+              />
+              <CloudUploadIcon />
+              {previewUrl ? "Replace logo" : "Upload logo"}
+            </label>
+            {previewUrl && (
+              <button
+                type="button"
+                disabled={loading}
+                onClick={handleRemoveLogo}
+                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-60"
+              >
+                Remove
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -239,10 +283,7 @@ export default function BrandingForm({
           onClick={() => setShowColorPicker((v) => !v)}
           className="flex h-9 items-center overflow-hidden rounded-xl border border-slate-200 bg-white text-sm"
         >
-          <span
-            className="h-full w-8"
-            style={{ backgroundColor: color }}
-          />
+          <span className="h-full w-8" style={{ backgroundColor: color }} />
           <span className="px-3 font-medium text-slate-700">{color}</span>
         </button>
         {showColorPicker && (

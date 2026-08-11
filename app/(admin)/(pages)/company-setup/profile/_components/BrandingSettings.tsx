@@ -1,7 +1,7 @@
 "use client";
 
 import Loader from "@/components/Loader/Loader";
-import useFileUpload, { extractFileUrl, isPersistableLogoUrl } from "@/hooks/useFileUpload";
+import { extractFileUrl, isPersistableLogoUrl } from "@/hooks/useFileUpload";
 import CompanyBrandAvatar from "@/components/CompanyBrand/CompanyBrandAvatar";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 import services from "@/services";
@@ -37,7 +37,6 @@ const BrandingSettings = ({
   companyData: any;
 }) => {
   const colorPickerRef = useRef<HTMLDivElement>(null);
-  const { handleFileUpload } = useFileUpload();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -74,16 +73,30 @@ const BrandingSettings = ({
         queryKey: ["get company branding info", tenancyId],
       }),
       queryClient.invalidateQueries({ queryKey: ["branding", tenancyId] }),
+      queryClient.invalidateQueries({
+        queryKey: ["branding-by-company", companyId],
+      }),
     ]);
   };
 
-  const resolveLogoUrl = async () => {
-    if (companySmallLogo) {
-      const uploaded = await handleFileUpload(companySmallLogo as File);
-      const url = extractFileUrl(uploaded);
-      if (!url) throw new Error("Logo upload failed");
+  const uploadLogoIfNeeded = async () => {
+    if (!companySmallLogo) {
+      if (isPersistableLogoUrl(smallLogoUrl)) return smallLogoUrl.trim();
+      if (isPersistableLogoUrl(companyBranding?.logo)) {
+        return companyBranding.logo.trim();
+      }
+      return "";
+    }
+
+    const uploaded = await services.uploadBrandingLogo({
+      companyId,
+      tenancyId,
+      file: companySmallLogo as File,
+    });
+    const url = extractFileUrl(uploaded);
+    setCompanySmallLogo(null);
+    if (url) {
       setSmallLogoUrl?.(url);
-      setCompanySmallLogo(null);
       return url;
     }
     if (isPersistableLogoUrl(smallLogoUrl)) return smallLogoUrl.trim();
@@ -96,24 +109,34 @@ const BrandingSettings = ({
   const createBranding = async () => {
     try {
       setLoading(true);
-      const logoUrl = await resolveLogoUrl();
-      if (!logoUrl) {
-        toast.error("Logo is required");
+      if (!companyId || !tenancyId) {
+        toast.error("Company details are required");
         return;
       }
 
+      const existingLogo = isPersistableLogoUrl(smallLogoUrl)
+        ? smallLogoUrl.trim()
+        : isPersistableLogoUrl(companyBranding?.logo)
+          ? companyBranding.logo.trim()
+          : "";
+
       await services.createCompanyBranding(
-        companyId!,
-        tenancyId!,
-        logoUrl,
+        companyId,
+        tenancyId,
+        existingLogo,
         color,
         companyName,
         [],
         []
       );
+
+      if (companySmallLogo) {
+        await uploadLogoIfNeeded();
+      }
+
       await invalidateBranding();
       toast.success("Branding saved successfully");
-    } catch (e) {
+    } catch {
       toast.error("An error occurred");
     } finally {
       setLoading(false);
@@ -123,17 +146,13 @@ const BrandingSettings = ({
   const editCompanyBranding = async () => {
     try {
       setLoading(true);
-      const logoUrl = await resolveLogoUrl();
-      if (!logoUrl) {
-        toast.error("Logo is required");
-        return;
-      }
+      const logoUrl = await uploadLogoIfNeeded();
 
       await services.editCompanyBranding(
         companyBranding?.id,
         companyId,
         tenancyId,
-        logoUrl,
+        logoUrl || companyBranding?.logo || "",
         color,
         companyName,
         companyBranding?.modules?.map((module: any) => module?.id) ?? [],
@@ -143,8 +162,23 @@ const BrandingSettings = ({
       );
       await invalidateBranding();
       toast.success("Company branding updated successfully");
-    } catch (error) {
+    } catch {
       toast.error("Failed to update company branding");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    try {
+      setLoading(true);
+      await services.deleteBrandingLogo({ companyId, tenancyId });
+      setCompanySmallLogo(null);
+      setSmallLogoUrl?.("");
+      await invalidateBranding();
+      toast.success("Logo removed");
+    } catch {
+      toast.error("Failed to remove logo");
     } finally {
       setLoading(false);
     }
@@ -198,7 +232,7 @@ const BrandingSettings = ({
                 of 512KB. Supported formats are JPG and PNG only.
               </p>
 
-              <div className="my-3 flex items-end gap-4">
+              <div className="my-3 flex flex-wrap items-end gap-4">
                 {!previewUrl && (
                   <CompanyBrandAvatar
                     logoUrl={null}
@@ -220,6 +254,17 @@ const BrandingSettings = ({
                   <CloudUploadIcon />
                   <p>{previewUrl ? "Replace" : "Upload"}</p>
                 </label>
+
+                {previewUrl && (
+                  <button
+                    type="button"
+                    disabled={loading}
+                    onClick={handleRemoveLogo}
+                    className="rounded-md border border-[#E2E8F0] bg-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-60"
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
 
               {previewUrl && (

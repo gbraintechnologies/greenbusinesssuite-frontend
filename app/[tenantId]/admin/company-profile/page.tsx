@@ -20,7 +20,7 @@ import WriteIcon from "@/public/icons/WriteIcon";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
 
-import useFileUpload, {
+import {
   extractFileUrl,
   isPersistableLogoUrl,
 } from "@/hooks/useFileUpload";
@@ -186,8 +186,6 @@ const Page = (props: any) => {
   //     isConvertibleToNumber(companyData?.industry),
   // });
 
-  const { handleFileUpload } = useFileUpload();
-
   useEffect(() => {
     if (!companyData) return;
     const status = statuses.find(
@@ -209,27 +207,31 @@ const Page = (props: any) => {
   }, [companyData, companyBranding]);
 
   const editCompanyBranding = async () => {
-    if (!companySmallLogo && !isPersistableLogoUrl(smallLogoUrl) && !isPersistableLogoUrl(companyBranding?.logo)) {
+    if (
+      !companySmallLogo &&
+      !isPersistableLogoUrl(smallLogoUrl) &&
+      !isPersistableLogoUrl(companyBranding?.logo)
+    ) {
       toast.error("Logo is required");
       return;
     }
     try {
-      const companySmallLogoURL =
-        companySmallLogo && (await handleFileUpload(companySmallLogo as File));
-
-      const uploadedLogo = companySmallLogo
-        ? extractFileUrl(companySmallLogoURL)
-        : null;
-      const logoToSave =
-        uploadedLogo ||
-        (isPersistableLogoUrl(smallLogoUrl)
-          ? smallLogoUrl.trim()
-          : null) ||
+      let logoToSave =
+        (isPersistableLogoUrl(smallLogoUrl) ? smallLogoUrl.trim() : null) ||
         (isPersistableLogoUrl(companyBranding?.logo)
           ? companyBranding.logo.trim()
           : "");
 
-      if (!logoToSave) {
+      if (companySmallLogo) {
+        const uploaded = await services.uploadBrandingLogo({
+          companyId: companyData?.id,
+          tenancyId: companyData?.company_identifier,
+          file: companySmallLogo as File,
+        });
+        logoToSave = extractFileUrl(uploaded) || logoToSave;
+      }
+
+      if (!logoToSave && !companySmallLogo) {
         toast.error("Logo upload failed. Please try again.");
         return;
       }
@@ -238,7 +240,7 @@ const Page = (props: any) => {
         companyBranding?.id,
         companyData?.id,
         companyData?.company_identifier,
-        logoToSave,
+        logoToSave || companyBranding?.logo || "",
         color,
         companyData?.company_name,
         companyBranding?.modules?.map((module: any) => module?.id),
@@ -247,7 +249,7 @@ const Page = (props: any) => {
         )
       );
 
-      setSmallLogoUrl(logoToSave);
+      if (logoToSave) setSmallLogoUrl(logoToSave);
       setCompanySmallLogo(null);
       toast.success("Company branding updated successfully");
     } catch (error) {

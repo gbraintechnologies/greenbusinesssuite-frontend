@@ -219,8 +219,8 @@ function UserManagement(props: any) {
       align: "left",
       headerAlign: "left",
       flex: 3,
-      getActions: (params: any) => [
-        <div className="flex py-3 gap-4 my-3" key={params.row.data.id}>
+      renderCell: (params: any) => (
+        <div className="my-3 flex gap-4 py-3">
           {params.row.data.custom_profile_values &&
           params.row.data.custom_profile_values.find(
             (item: any) => item.custom_profile_item_id === 1
@@ -234,10 +234,10 @@ function UserManagement(props: any) {
               }
               width={100}
               height={100}
-              className="rounded-full w-10 h-10 object-cover"
+              className="h-10 w-10 rounded-full object-cover"
             />
           ) : (
-            <div className="bg-gray-100 w-10 h-10 flex items-center justify-center font-light text-sm rounded-full">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-sm font-light">
               <UserIcon />
             </div>
           )}
@@ -245,36 +245,32 @@ function UserManagement(props: any) {
             <p className="font-medium">
               {params.row.data.first_name} {params.row.data.last_name}
             </p>
-            <p className="opacity-80 text-sm">{params.row.data.email}</p>
+            <p className="text-sm opacity-80">{params.row.data.email}</p>
           </div>
-        </div>,
-      ],
+        </div>
+      ),
     },
     { field: "role", headerName: "Role", flex: 1 },
     {
       field: "status",
       headerName: "Status",
       flex: 1,
-      type: "actions",
-      getActions: (params: any) => [
-        <div key={params.row.id} className="w-2/12">
-          <StatusPill
-            status={
-              params.row.data?.user_status ??
-              params.row.data?.status ??
-              params.row.data?.userStatus
-            }
-          />
-        </div>,
-      ],
+      renderCell: (params: any) => (
+        <StatusPill
+          status={
+            params.row.data?.user_status ??
+            params.row.data?.status ??
+            params.row.data?.userStatus
+          }
+        />
+      ),
     },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
-      type: "actions",
-      getActions: (params: any) => [
-        <Dropdown key={`actions-${params.row.data?.id ?? params.row.id}`}>
+      renderCell: (params: any) => (
+        <Dropdown>
           <DropdownTrigger>
             <Button variant="bordered">
               {" "}
@@ -316,7 +312,7 @@ function UserManagement(props: any) {
             {params.row.data?.user_status?.toLowerCase() === "inactive" ||
             params.row.data?.user_status?.toLowerCase() === "blacklisted" ? (
               <DropdownItem
-                key={"activate"}
+                key="activate"
                 className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
               >
                 <button
@@ -327,7 +323,7 @@ function UserManagement(props: any) {
               </DropdownItem>
             ) : (
               <DropdownItem
-                key={"deactivate"}
+                key="deactivate"
                 className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
               >
                 <button
@@ -338,7 +334,7 @@ function UserManagement(props: any) {
               </DropdownItem>
             )}
             <DropdownItem
-              key={"blacklist"}
+              key="blacklist"
               className="items-center w-full p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
             >
               <button onClick={() => blacklistUser(params.row.data.id)}>
@@ -368,8 +364,8 @@ function UserManagement(props: any) {
               </button>
             </DropdownItem>
           </DropdownMenu>
-        </Dropdown>,
-      ],
+        </Dropdown>
+      ),
     },
   ];
 
