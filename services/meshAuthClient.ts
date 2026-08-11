@@ -17,8 +17,12 @@ const authApi = axios.create({
 authApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
+    const isFormData =
+      typeof FormData !== "undefined" && config.data instanceof FormData;
+
     const headers: headerT = {
-      "Content-Type": "application/json",
+      // FormData must not force application/json (breaks multipart boundary)
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
       tenantid: getSessionTenantID(),

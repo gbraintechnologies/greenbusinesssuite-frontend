@@ -20,7 +20,5 @@ export const meshApi = axios.create({
 
 export const multipartMeshApi = axios.create({
   baseURL: meshBaseURL,
-  headers: {
-    "Content-Type": "multipart/form-data",
-  },
+  // Do not set Content-Type — FormData needs the browser-generated boundary
 });

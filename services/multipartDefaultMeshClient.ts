@@ -12,8 +12,8 @@ const multipartDefaultMeshApi = axios.create({
 multipartDefaultMeshApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
+    // Omit Content-Type so the runtime sets multipart/form-data; boundary=...
     const headers: headerT = {
-      "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${getToken()}`,
     };
 

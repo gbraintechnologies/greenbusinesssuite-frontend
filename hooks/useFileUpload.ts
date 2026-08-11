@@ -2,7 +2,11 @@ import axios from "axios";
 import { useState } from "react";
 
 import { meshBaseURL } from "@/lib/api";
-import { getToken } from "@/services/localService";
+import {
+  getSessionTenantID,
+  getToken,
+  getUserUUID,
+} from "@/services/localService";
 
 /**
  * Normalizes the many shapes the S3 upload endpoint can return into a URL string.
@@ -42,9 +46,13 @@ const useFileUpload = () => {
         url: `/s3/resource/upload/${safeName}`,
         method: "POST",
         data: formData,
+        // Do not set Content-Type — browser must attach multipart boundary
         headers: {
           Authorization: `Bearer ${getToken()}`,
+          "user-uuid": getUserUUID(),
+          tenantid: getSessionTenantID(),
         },
+        timeout: 120_000,
       });
 
       return response.data;

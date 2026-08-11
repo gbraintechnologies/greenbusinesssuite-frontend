@@ -1,4 +1,5 @@
 import authApi from "../meshAuthClient";
+import multipartMeshApi from "../multipartMeshClient";
 
 export const getAllBranding = () => {
   return () =>
@@ -21,9 +22,11 @@ export const uploadBrandingLogoByCompanyId = (
 ) => {
   const formData = new FormData();
   formData.append("file", file);
-  return authApi.post(`/company-branding/company/${companyId}/logo`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  // Do not set Content-Type — axios/browser must add the multipart boundary
+  return multipartMeshApi.post(
+    `/company-branding/company/${companyId}/logo`,
+    formData,
+  );
 };
 
 export const uploadBrandingLogoByTenancyId = (
@@ -32,9 +35,10 @@ export const uploadBrandingLogoByTenancyId = (
 ) => {
   const formData = new FormData();
   formData.append("file", file);
-  return authApi.post(`/company-branding/tenancy/${tenancyId}/logo`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  return multipartMeshApi.post(
+    `/company-branding/tenancy/${tenancyId}/logo`,
+    formData,
+  );
 };
 
 export const deleteBrandingLogoByCompanyId = (companyId: string | number) => {

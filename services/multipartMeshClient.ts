@@ -1,6 +1,5 @@
 import axios from "axios";
 import {
-  getCompanyID,
   getTenantID,
   getToken,
   getUserUUID,
@@ -17,15 +16,12 @@ const multipartMeshApi = axios.create({
 multipartMeshApi.interceptors.request.use(
   // @ts-ignore
   (config) => {
-    let headers: headerT = {
-      "Content-Type": "multipart/form-data",
+    // Omit Content-Type so the runtime sets multipart/form-data; boundary=...
+    const headers: headerT = {
       "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
+      tenantid: getTenantID(),
     };
-
-    if (getCompanyID() !== 0) {
-      headers = { ...headers, tenantid: getTenantID() };
-    }
 
     return { ...config, headers };
   },
