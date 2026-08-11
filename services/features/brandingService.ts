@@ -1,5 +1,6 @@
 import defaultMeshApi from "../defaultMeshClient";
-import meshApi from "../meshAuthClient";
+import authApi from "../meshAuthClient";
+import multipartMeshApi from "../multipartMeshClient";
 import type { CompanyBrandingPayload } from "@/types";
 
 /** Create a new company branding record */
@@ -12,7 +13,7 @@ export const createCompanyBranding = (
   moduleIds: string[] = [],
   categorySpecificModuleIds: string[] = []
 ) => {
-  return meshApi.post("/company-branding/create", {
+  return authApi.post("/company-branding/create", {
     tenancyId: tenantId,
     companyId,
     logo,
@@ -82,14 +83,14 @@ export const getCompanyBranding = getCompanyBrandingByTenancyId;
 /** Paginated list of all company brandings */
 export const getAllBranding = (page: number = 0, size: number = 20) => {
   return () =>
-    meshApi
+    authApi
       .get(`/company-branding/all/${page}/${size}`)
       .then((res) => res.data);
 };
 
 /** DELETE branding by record ID */
 export const deleteBrandingById = (id: string | number) => {
-  return meshApi.delete(`/company-branding/delete/${id}`);
+  return authApi.delete(`/company-branding/delete/${id}`);
 };
 
 /** Backwards-compatible alias */
@@ -97,5 +98,44 @@ export const deleteBranding = deleteBrandingById;
 
 /** DELETE branding by tenant / tenancy ID */
 export const deleteBrandingByTenantId = (tenantId: string) => {
-  return meshApi.delete(`/company-branding/tenant/${tenantId}`);
+  return authApi.delete(`/company-branding/tenant/${tenantId}`);
+};
+
+export const getBrandingByCompanyId = (companyId: string | number) => {
+  return authApi
+    .get(`/company-branding/find-by-company-id/${companyId}`)
+    .then((res) => res.data);
+};
+
+export const uploadBrandingLogoByCompanyId = (
+  companyId: string | number,
+  file: File,
+) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  // Do not set Content-Type — axios/browser must add the multipart boundary
+  return multipartMeshApi.post(
+    `/company-branding/company/${companyId}/logo`,
+    formData,
+  );
+};
+
+export const uploadBrandingLogoByTenancyId = (
+  tenancyId: string,
+  file: File,
+) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return multipartMeshApi.post(
+    `/company-branding/tenancy/${tenancyId}/logo`,
+    formData,
+  );
+};
+
+export const deleteBrandingLogoByCompanyId = (companyId: string | number) => {
+  return authApi.delete(`/company-branding/company/${companyId}/logo`);
+};
+
+export const deleteBrandingLogoByTenancyId = (tenancyId: string) => {
+  return authApi.delete(`/company-branding/tenancy/${tenancyId}/logo`);
 };
