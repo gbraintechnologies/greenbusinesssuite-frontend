@@ -267,8 +267,7 @@ function NewUser() {
                     setSelectedRole(e);
                   }}
                 >
-                  {Array.isArray(roles) &&
-                    roles.map((role: any) => (
+                  {(Array.isArray(roles) ? roles : []).map((role: any) => (
                     <AutocompleteItem key={role?.id}>
                       {role?.roleName || role?.role_name}
                     </AutocompleteItem>
