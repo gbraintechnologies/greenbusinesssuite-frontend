@@ -4,6 +4,7 @@ export const ClientPublicFormContext = createContext();
 
 // services and query
 import services from "@/services";
+import { getPublicTenantID } from "@/services/localService";
 
 //toast
 import { toast } from "sonner";
@@ -109,7 +110,10 @@ export const ClientPublicFormProvider = ({ children }) => {
 
     setSavingResponses(false);
 
-    return services.submitPublicFormResponse(response);
+    return services.submitPublicFormResponse(
+      response,
+      getPublicTenantID()
+    );
   };
 
   const saveSingleResponse = (sectionId, fieldId, value) => {

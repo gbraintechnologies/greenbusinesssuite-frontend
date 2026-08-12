@@ -121,30 +121,16 @@ export default function BrandingForm({
       setLoading(true);
 
       if (mode === "create") {
-        // Create record first, then upload logo via dedicated endpoint when needed.
-        const existingLogo = isPersistableLogoUrl(logoUrl)
-          ? logoUrl.trim()
-          : "";
+        const logo = await resolveLogo();
         await services.createCompanyBranding(
           company,
           tenant.trim(),
-          existingLogo,
+          logo,
           color,
           name.trim(),
           [],
           []
         );
-
-        if (logoFile) {
-          const uploaded = await services.uploadBrandingLogo({
-            companyId: company,
-            tenancyId: tenant.trim(),
-            file: logoFile,
-          });
-          const url = extractFileUrl(uploaded);
-          if (url) setLogoUrl(url);
-          setLogoFile(null);
-        }
 
         toast.success("Branding created");
       } else {
@@ -181,11 +167,12 @@ export default function BrandingForm({
 
       onSuccess?.();
       router.push("/branding");
-    } catch {
+    } catch (error: any) {
       toast.error(
-        mode === "create"
-          ? "Failed to create branding"
-          : "Failed to update branding"
+        error?.message ||
+          (mode === "create"
+            ? "Failed to create branding"
+            : "Failed to update branding")
       );
     } finally {
       setLoading(false);

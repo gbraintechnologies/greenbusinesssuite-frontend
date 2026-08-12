@@ -9,6 +9,8 @@ import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
 
 export type CompanyRow = {
   id?: string | number;
+  companyId?: string | number;
+  company_id?: string | number;
   companyName?: string;
   company_name?: string;
   companyLogo?: string;
@@ -60,6 +62,10 @@ function companyPhone(company: CompanyRow) {
 
 function companyCreatedOn(company: CompanyRow) {
   return company.createdOn ?? company.created_on;
+}
+
+function companyRowId(company: CompanyRow) {
+  return company.companyId ?? company.company_id ?? company.id;
 }
 
 function StatusBadge({ status }: { status?: string }) {
@@ -115,8 +121,8 @@ export default function CompaniesTable({
       <div className="space-y-2.5 md:hidden">
         {companies.map((company, index) => (
           <Link
-            key={`company-card-${company.id ?? "row"}-${index}`}
-            href={`${profileBasePath}?id=${company.id}`}
+            key={`company-card-${companyRowId(company) ?? "row"}-${index}`}
+            href={`${profileBasePath}?id=${companyRowId(company)}`}
             className="block rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition-colors active:bg-brand-50/50"
           >
             <div className="flex items-start gap-3">
@@ -132,7 +138,7 @@ export default function CompaniesTable({
                       {companyDisplayName(company) ?? "—"}
                     </p>
                     <p className="mt-0.5 text-[10px] text-slate-400">
-                      ID #{company.id ?? "—"}
+                      ID #{companyRowId(company) ?? "—"}
                     </p>
                   </div>
                   <StatusBadge status={company.status} />
@@ -193,7 +199,7 @@ export default function CompaniesTable({
           <tbody className="divide-y divide-slate-50">
             {companies.map((company, index) => (
               <tr
-                key={`company-${company.id ?? "row"}-${index}`}
+                key={`company-${companyRowId(company) ?? "row"}-${index}`}
                 className="group transition-colors hover:bg-brand-50/40"
               >
                 <td className="py-4 pr-3">
@@ -208,7 +214,7 @@ export default function CompaniesTable({
                         {companyDisplayName(company) ?? "—"}
                       </p>
                       <p className="truncate text-xs text-slate-400">
-                        ID #{company.id ?? "—"}
+                        ID #{companyRowId(company) ?? "—"}
                       </p>
                     </div>
                   </div>
@@ -247,7 +253,7 @@ export default function CompaniesTable({
                 </td>
                 <td className="py-4 text-right">
                   <Link
-                    href={`${profileBasePath}?id=${company.id}`}
+                    href={`${profileBasePath}?id=${companyRowId(company)}`}
                     className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-all hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
                   >
                     View

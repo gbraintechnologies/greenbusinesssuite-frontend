@@ -62,7 +62,8 @@ const BrandingSettings = ({
 
   const tenancyId =
     companyData?.companyIdentifier ?? companyData?.company_identifier;
-  const companyId = companyData?.id;
+  const companyId =
+    companyData?.companyId ?? companyData?.company_id ?? companyData?.id;
   const companyName =
     companyData?.companyName ?? companyData?.company_name ?? "";
 
@@ -99,6 +100,7 @@ const BrandingSettings = ({
       setSmallLogoUrl?.(url);
       return url;
     }
+    // Dedicated logo endpoint stored the file; don't overwrite with a blank URL.
     if (isPersistableLogoUrl(smallLogoUrl)) return smallLogoUrl.trim();
     if (isPersistableLogoUrl(companyBranding?.logo)) {
       return companyBranding.logo.trim();
@@ -114,30 +116,27 @@ const BrandingSettings = ({
         return;
       }
 
-      const existingLogo = isPersistableLogoUrl(smallLogoUrl)
-        ? smallLogoUrl.trim()
-        : isPersistableLogoUrl(companyBranding?.logo)
-          ? companyBranding.logo.trim()
-          : "";
+      const logoUrl = await uploadLogoIfNeeded();
 
       await services.createCompanyBranding(
         companyId,
         tenancyId,
-        existingLogo,
+        logoUrl || "",
         color,
         companyName,
         [],
         []
       );
 
-      if (companySmallLogo) {
-        await uploadLogoIfNeeded();
-      }
-
       await invalidateBranding();
       toast.success("Branding saved successfully");
-    } catch {
-      toast.error("An error occurred");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.detail ||
+          error?.response?.data?.message ||
+          error?.message ||
+          "An error occurred"
+      );
     } finally {
       setLoading(false);
     }
@@ -149,7 +148,7 @@ const BrandingSettings = ({
       const logoUrl = await uploadLogoIfNeeded();
 
       await services.editCompanyBranding(
-        companyBranding?.id,
+        companyBranding?.id ?? companyBranding?.companyId ?? companyId,
         companyId,
         tenancyId,
         logoUrl || companyBranding?.logo || "",
@@ -162,8 +161,13 @@ const BrandingSettings = ({
       );
       await invalidateBranding();
       toast.success("Company branding updated successfully");
-    } catch {
-      toast.error("Failed to update company branding");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.detail ||
+          error?.response?.data?.message ||
+          error?.message ||
+          "Failed to update company branding"
+      );
     } finally {
       setLoading(false);
     }

@@ -12,29 +12,49 @@ import {
  * Normalizes the many shapes the S3 upload endpoint can return into a URL string.
  * Handles: plain string, { file_url }, { fileUrl }, { url }, { data: {...} }.
  */
+function pickUrlCandidate(value: unknown): string | null {
+  if (typeof value === "string") {
+    return isPersistableLogoUrl(value) ? value.trim() : null;
+  }
+  return null;
+}
+
 export function extractFileUrl(payload: any): string | null {
   if (!payload) return null;
-  if (typeof payload === "string") {
-    return isPersistableLogoUrl(payload) ? payload : null;
+  const direct = pickUrlCandidate(payload);
+  if (direct) return direct;
+  if (typeof payload !== "object") return null;
+
+  const keys = [
+    "file_url",
+    "fileUrl",
+    "url",
+    "logo",
+    "logoUrl",
+    "logo_url",
+    "company_logo",
+    "companyLogo",
+    "location",
+    "Location",
+    "path",
+    "filePath",
+  ];
+
+  for (const key of keys) {
+    const found = pickUrlCandidate(payload[key]);
+    if (found) return found;
   }
-  const candidate =
-    payload.file_url ??
-    payload.fileUrl ??
-    payload.url ??
-    payload.logo ??
-    payload.logoUrl ??
-    payload.logo_url ??
-    payload.company_logo ??
-    payload.location ??
-    payload.Location ??
-    payload?.data?.file_url ??
-    payload?.data?.fileUrl ??
-    payload?.data?.url ??
-    payload?.data?.logo ??
-    payload?.data?.logoUrl ??
-    null;
-  if (typeof candidate !== "string") return null;
-  return isPersistableLogoUrl(candidate) ? candidate.trim() : null;
+
+  if (payload.data) {
+    const nested = extractFileUrl(payload.data);
+    if (nested) return nested;
+  }
+  if (payload.result) {
+    const nested = extractFileUrl(payload.result);
+    if (nested) return nested;
+  }
+
+  return null;
 }
 
 function isJunkLogoString(url: string) {

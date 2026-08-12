@@ -2,6 +2,24 @@ import defaultMeshApi from "../defaultMeshClient";
 import authApi from "../meshAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
 import type { CompanyBrandingPayload } from "@/types";
+import { extractFileUrl } from "@/hooks/useFileUpload";
+import { compressImage } from "@/lib/imageCompression";
+
+const MAX_BRANDING_LOGO_BYTES = 512 * 1024;
+
+async function prepareBrandingLogo(file: File) {
+  const prepared = await compressImage(file, {
+    maxSize: 512,
+    quality: 0.82,
+    compressAboveBytes: 80 * 1024,
+  });
+  if (prepared.size > MAX_BRANDING_LOGO_BYTES) {
+    throw new Error(
+      "Logo is too large. Please use a JPG or PNG under 512KB."
+    );
+  }
+  return prepared;
+}
 
 /** Create a new company branding record — POST /company-branding/create */
 export const createCompanyBranding = (
@@ -61,10 +79,20 @@ export const updateCompanyBranding = (payload: CompanyBrandingPayload) => {
   });
 };
 
+function isNotFound(error: any) {
+  return error?.response?.status === 404 || error?.response?.status === 405;
+}
+
 /** GET /company-branding/{id} */
 export const getCompanyBrandingById = (id: string | number) => {
   return () =>
-    defaultMeshApi.get(`/company-branding/${id}`).then((res) => res.data);
+    defaultMeshApi
+      .get(`/company-branding/${id}`)
+      .then((res) => res.data)
+      .catch((error) => {
+        if (isNotFound(error)) return null;
+        throw error;
+      });
 };
 
 /** GET /company-branding/find-by-tenancy-id/{tenancyId} */
@@ -72,7 +100,11 @@ export const getCompanyBrandingByTenancyId = (tenancyId: string) => {
   return () =>
     defaultMeshApi
       .get(`/company-branding/find-by-tenancy-id/${tenancyId}`)
-      .then((res) => res.data);
+      .then((res) => res.data)
+      .catch((error) => {
+        if (isNotFound(error)) return null;
+        throw error;
+      });
 };
 
 /** Backwards-compatible alias used across the app */
@@ -83,7 +115,11 @@ export const getBrandingByCompanyId = (companyId: string | number) => {
   return () =>
     authApi
       .get(`/company-branding/find-by-company-id/${companyId}`)
-      .then((res) => res.data);
+      .then((res) => res.data)
+      .catch((error) => {
+        if (isNotFound(error)) return null;
+        throw error;
+      });
 };
 
 /** GET /company-branding/all/{page}/{size} */
@@ -110,12 +146,15 @@ export const deleteBrandingByTenantId = (tenantId: string) => {
 /** POST /company-branding/company/{companyId}/logo */
 export const uploadBrandingLogoByCompanyId = (
   companyId: string | number,
-  file: File
+  file: File,
+  tenancyId?: string | null
 ) => {
   const formData = new FormData();
   formData.append("file", file);
   return multipartMeshApi
-    .post(`/company-branding/company/${companyId}/logo`, formData)
+    .post(`/company-branding/company/${companyId}/logo`, formData, {
+      headers: tenancyId ? { tenantid: tenancyId } : undefined,
+    })
     .then((res) => res.data);
 };
 
@@ -127,7 +166,9 @@ export const uploadBrandingLogoByTenancyId = (
   const formData = new FormData();
   formData.append("file", file);
   return multipartMeshApi
-    .post(`/company-branding/tenancy/${tenancyId}/logo`, formData)
+    .post(`/company-branding/tenancy/${tenancyId}/logo`, formData, {
+      headers: { tenantid: tenancyId },
+    })
     .then((res) => res.data);
 };
 
@@ -141,27 +182,32 @@ export const deleteBrandingLogoByTenancyId = (tenancyId: string) => {
   return authApi.delete(`/company-branding/tenancy/${tenancyId}/logo`);
 };
 
-/**
- * Upload a branding logo via company id when available, otherwise tenancy id.
- * Returns the normalized logo URL from the API response when present.
- */
+async function uploadViaS3(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+  const safeName = encodeURIComponent(file?.name ?? "logo.png");
+  const data = await multipartMeshApi
+    .post(`/s3/resource/upload/${safeName}`, formData)
+    .then((res) => res.data);
+  const url = extractFileUrl(data);
+  if (!url) {
+    throw new Error("Logo uploaded but no file URL was returned");
+  }
+  return url;
+}
+
 export const uploadBrandingLogo = async ({
-  companyId,
-  tenancyId,
   file,
 }: {
   companyId?: string | number | null;
   tenancyId?: string | null;
   file: File;
 }) => {
-  if (companyId != null && companyId !== "") {
-    return uploadBrandingLogoByCompanyId(companyId, file);
-  }
-  if (tenancyId) {
-    return uploadBrandingLogoByTenancyId(tenancyId, file);
-  }
-  throw new Error("Company ID or tenancy ID is required to upload a logo");
-};
+  // Production currently 404s on /company-branding/.../logo.
+  // Upload the file to S3, then branding create/update stores the URL.
+  const prepared = await prepareBrandingLogo(file);
+  return uploadViaS3(prepared);
+}
 
 /** Delete branding logo via company id when available, otherwise tenancy id. */
 export const deleteBrandingLogo = async ({
@@ -171,11 +217,16 @@ export const deleteBrandingLogo = async ({
   companyId?: string | number | null;
   tenancyId?: string | null;
 }) => {
-  if (companyId != null && companyId !== "") {
-    return deleteBrandingLogoByCompanyId(companyId);
-  }
-  if (tenancyId) {
-    return deleteBrandingLogoByTenancyId(tenancyId);
+  try {
+    if (companyId != null && companyId !== "") {
+      return await deleteBrandingLogoByCompanyId(companyId);
+    }
+    if (tenancyId) {
+      return await deleteBrandingLogoByTenancyId(tenancyId);
+    }
+  } catch (error) {
+    if (!isNotFound(error)) throw error;
+    return null;
   }
   throw new Error("Company ID or tenancy ID is required to delete a logo");
 };

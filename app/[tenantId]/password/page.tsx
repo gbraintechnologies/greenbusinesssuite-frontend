@@ -49,16 +49,12 @@ const page = (props: any) => {
   const handleSubmit = async (values: any) => {
     try {
       setLoading(true);
-      const response = await services.verifyResetAttempt(token as string);
-      const userData = JSON.parse(response?.user);
+      if (!token) {
+        toast.error("Reset link is invalid or expired.");
+        return;
+      }
 
-      const user = await services.resetPassword(
-        userData?.user_id,
-        token as string,
-        userData?.user_email,
-        values.password
-      );
-
+      await services.resetPassword(token, values.password);
       setStatus("complete");
     } catch (error) {
       toast.error("An error occurred. Please try again later.");

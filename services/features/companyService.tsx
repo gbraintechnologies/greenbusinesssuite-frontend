@@ -17,14 +17,41 @@ export const searchCompany = (searchTerm: string) => {
 };
 
 export const getCompanyById = (id: number) => {
-  return () => authApi.get(`/companies/${id}`).then((res) => res.data);
+  return () =>
+    authApi
+      .get(`/companies/${id}`)
+      .then((res) => res.data)
+      .catch(async (error) => {
+        if (error?.response?.status !== 404) throw error;
+        const list = await authApi
+          .get(`/companies?page=0&size=1000`)
+          .then((res) => res.data);
+        const rows = Array.isArray(list) ? list : list?.content ?? [];
+        const match = rows.find(
+          (company: any) =>
+            Number(company?.id) === Number(id) ||
+            Number(company?.companyId) === Number(id) ||
+            Number(company?.company_id) === Number(id)
+        );
+        if (match) return match;
+        throw error;
+      });
 };
 
 export const getCompanyAssignedForms = (id: number) => {
   return () =>
     authApi
       .get(`/forms/builder/search-assign-forms/${id}/0/2000/ALL`)
-      .then((res) => res.data);
+      .then((res) => res.data)
+      .catch((error) => {
+        if (
+          error?.response?.status === 404 ||
+          error?.response?.status === 500
+        ) {
+          return { content: [] };
+        }
+        throw error;
+      });
 };
 
 export const createCompany = ({ data }: { data: any }) => {

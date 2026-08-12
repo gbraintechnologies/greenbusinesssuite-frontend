@@ -255,16 +255,17 @@ function NewUser() {
                 <PhoneSelector phone={phone} setPhone={setPhone} />
               </div>
 
-              <div>
+              <div className="input-holder">
+                <label>Role</label>
                 <Autocomplete
                   isLoading={isLoading}
                   className="w-full"
                   variant="bordered"
-                  placeholder="Role"
-                  labelPlacement="outside"
-                  label="Select a Role"
-                  onSelectionChange={(e) => {
-                    setSelectedRole(e);
+                  placeholder="Select a role"
+                  aria-label="Role"
+                  selectedKey={selectedRole ?? undefined}
+                  onSelectionChange={(key) => {
+                    setSelectedRole(key);
                   }}
                 >
                   {(Array.isArray(roles) ? roles : []).map((role: any) => (

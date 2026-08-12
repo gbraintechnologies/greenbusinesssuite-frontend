@@ -1,34 +1,40 @@
 import axios from "axios";
 import {
+  getSessionTenantID,
   getTenantID,
   getToken,
   getUserUUID,
 } from "./localService";
 import { meshBaseURL } from "@/lib/api";
-import { headerT } from "@/types/headerType";
 import { attachRefreshInterceptor } from "./tokenRefresh";
 
 const multipartMeshApi = axios.create({
   baseURL: meshBaseURL,
 });
 
-// REQUEST INTERCEPTOR
 multipartMeshApi.interceptors.request.use(
-  // @ts-ignore
   (config) => {
-    // Omit Content-Type so the runtime sets multipart/form-data; boundary=...
-    const headers: headerT = {
-      "user-uuid": getUserUUID(),
-      Authorization: `Bearer ${getToken()}`,
-      tenantid: getTenantID(),
-    };
+    config.headers = config.headers || {};
+    config.headers["Authorization"] = `Bearer ${getToken()}`;
+    config.headers["user-uuid"] = getUserUUID();
 
-    return { ...config, headers };
+    const existingTenant = config.headers["tenantid"] || config.headers["Tenantid"];
+    const tenant = existingTenant || getTenantID() || getSessionTenantID();
+    if (tenant) {
+      config.headers["tenantid"] = tenant;
+    }
+
+    // FormData must keep the browser-generated multipart boundary.
+    if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
+      delete config.headers["content-type"];
+    }
+
+    return config;
   },
-  (error) => Promise.reject(error),
+  (error) => Promise.reject(error)
 );
 
-// RESPONSE INTERCEPTOR: handles 401 token refresh and retry
 attachRefreshInterceptor(multipartMeshApi);
 
 export default multipartMeshApi;

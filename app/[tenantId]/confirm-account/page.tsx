@@ -12,14 +12,15 @@ function ConfirmAccount(props: any) {
   const searchParams = useSearchParams();
 
   const token = searchParams.get("token");
+  const email = searchParams.get("email") || token;
   const tenantId = params.tenantId;
 
   const router = useRouter();
 
   useEffect(() => {
-    if (token) {
+    if (email) {
       services
-        .confirmAccount(token)
+        .confirmAccount(email)
         .then((res) => {
           toast.dismiss();
           toast.success("Account confirmed", {
@@ -35,7 +36,7 @@ function ConfirmAccount(props: any) {
           router.push(`/${tenantId}/auth`);
         });
     }
-  }, [token]);
+  }, [email]);
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">

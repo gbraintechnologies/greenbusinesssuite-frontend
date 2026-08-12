@@ -58,10 +58,13 @@ function CompanySetup() {
     queryFn: services.filterCompaniesByStatus("INACTIVE"),
   });
 
-  const companyRows = useMemo(
-    () => (Array.isArray(companies) ? companies : companies?.content ?? []),
-    [companies]
-  );
+  const companyRows = useMemo(() => {
+    const rows = Array.isArray(companies) ? companies : companies?.content ?? [];
+    return rows.map((company: any) => ({
+      ...company,
+      id: company?.companyId ?? company?.company_id ?? company?.id,
+    }));
+  }, [companies]);
 
   const totalCount = Array.isArray(companies)
     ? companies.length

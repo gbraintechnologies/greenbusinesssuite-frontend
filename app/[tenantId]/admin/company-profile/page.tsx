@@ -228,7 +228,7 @@ const Page = (props: any) => {
           tenancyId: companyData?.company_identifier,
           file: companySmallLogo as File,
         });
-        logoToSave = extractFileUrl(uploaded) || logoToSave;
+        logoToSave = extractFileUrl(uploaded) || logoToSave || "";
       }
 
       if (!logoToSave && !companySmallLogo) {

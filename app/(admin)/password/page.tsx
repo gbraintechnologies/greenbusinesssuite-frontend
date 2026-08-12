@@ -18,8 +18,6 @@ const page = () => {
 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [roleId, setRoleId] = useState("");
-
   const [status, setStatus] = useState<"inProgress" | "complete">("inProgress");
 
   const searchParams = useSearchParams();
@@ -47,18 +45,12 @@ const page = () => {
   const handleSubmit = async (values: any) => {
     try {
       setLoading(true);
-      const response = await services.verifyResetAttempt(token as string);
-      const userData = JSON.parse(response?.user);
+      if (!token) {
+        toast.error("Reset link is invalid or expired.");
+        return;
+      }
 
-      const user = await services.resetPassword(
-        userData?.user_id,
-        token as string,
-        userData?.user_email,
-        values.password
-      );
-
-      setRoleId(user?.profiles[0]?.role_id);
-
+      await services.resetPassword(token, values.password);
       setStatus("complete");
     } catch (error) {
       toast.error("An error occurred. Please try again later.");
@@ -68,10 +60,7 @@ const page = () => {
   };
 
   const handleLoginRoute = () => {
-    if (roleId == "1") {
-      router.push("/auth");
-      return;
-    }
+    router.push("/auth");
   };
 
   return (

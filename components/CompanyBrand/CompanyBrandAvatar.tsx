@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MeshSuiteMark from "@/public/icons/MeshSuiteMark";
 import { isDisplayableLogoUrl } from "@/hooks/useFileUpload";
 
@@ -48,6 +48,13 @@ export default function CompanyBrandAvatar({
   const sizeClass = sizeMap[size];
   const shapeClass = shape === "circle" ? "!rounded-full" : "";
   const showImage = isDisplayableLogoUrl(logoUrl) && !imgFailed;
+  const isLocalPreview =
+    !!logoUrl &&
+    (logoUrl.startsWith("blob:") || logoUrl.startsWith("data:"));
+
+  useEffect(() => {
+    setImgFailed(false);
+  }, [logoUrl]);
 
   if (showImage) {
     return (
@@ -59,15 +66,25 @@ export default function CompanyBrandAvatar({
           className
         )}
       >
-        <Image
-          src={logoUrl!}
-          alt={name ? `${name} logo` : "Company logo"}
-          fill
-          className="object-contain p-1"
-          sizes="144px"
-          unoptimized
-          onError={() => setImgFailed(true)}
-        />
+        {isLocalPreview ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={logoUrl!}
+            alt={name ? `${name} logo` : "Company logo"}
+            className="h-full w-full object-contain p-1"
+            onError={() => setImgFailed(true)}
+          />
+        ) : (
+          <Image
+            src={logoUrl!}
+            alt={name ? `${name} logo` : "Company logo"}
+            fill
+            className="object-contain p-1"
+            sizes="144px"
+            unoptimized
+            onError={() => setImgFailed(true)}
+          />
+        )}
       </div>
     );
   }

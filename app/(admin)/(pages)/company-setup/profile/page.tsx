@@ -94,19 +94,26 @@ const Page = () => {
   const { data: companyData, isLoading } = useQuery<CompanyType>({
     queryKey: ["company", parseInt(id as string)],
     queryFn: services.getCompanyById(Number(id)),
+    enabled: Boolean(id) && !Number.isNaN(Number(id)),
+    retry: false,
   });
 
   const { data: assignedForms, isLoading: assignedFormsLoading } =
     useQuery<CompanyType>({
       queryKey: ["company assigned forms", parseInt(id as string)],
       queryFn: services.getCompanyAssignedForms(Number(id)),
+      enabled: Boolean(id) && !Number.isNaN(Number(id)),
+      retry: false,
     });
 
+  const tenancyId =
+    companyData?.companyIdentifier ?? companyData?.company_identifier;
+
   const { data: companyBranding, isLoading: brandingLoading } = useQuery({
-    queryKey: ["get company branding info", companyData?.companyIdentifier],
-    queryFn: services.getCompanyBranding(companyData?.companyIdentifier!),
-    enabled: !!companyData?.companyIdentifier,
-    retry: 1,
+    queryKey: ["get company branding info", tenancyId],
+    queryFn: services.getCompanyBranding(tenancyId!),
+    enabled: !!tenancyId,
+    retry: false,
   });
 
   const [formsLoading, setFormsLoading] = useState<boolean>(false);
