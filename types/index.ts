@@ -134,6 +134,10 @@ export interface CompanyType {
   dbUrl: string;
   companyIdentifier: string;
   assignedFormIds: any[];
+  companyId?: number | string;
+  company_id?: number | string;
+  company_identifier?: string;
+  company_name?: string;
 }
 
 export interface Payment {

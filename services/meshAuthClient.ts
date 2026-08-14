@@ -6,7 +6,6 @@ import {
 } from "./localService";
 import { meshBaseURL } from "@/lib/api";
 import { headerT } from "@/types/headerType";
-import { toast } from "sonner";
 import { attachRefreshInterceptor } from "./tokenRefresh";
 
 const authApi = axios.create({
@@ -30,7 +29,7 @@ authApi.interceptors.request.use(
 
     return { ...config, headers };
   },
-  (error) => Promise.reject(error),
+  (error: unknown) => Promise.reject(error),
 );
 
 // RESPONSE INTERCEPTOR: handles 401 token refresh and retry

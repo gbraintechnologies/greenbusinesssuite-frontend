@@ -14,20 +14,20 @@ const multipartMeshApi = axios.create({
 
 multipartMeshApi.interceptors.request.use(
   (config) => {
-    config.headers = config.headers || {};
-    config.headers["Authorization"] = `Bearer ${getToken()}`;
-    config.headers["user-uuid"] = getUserUUID();
+    config.headers.set("Authorization", `Bearer ${getToken()}`);
+    config.headers.set("user-uuid", getUserUUID());
 
-    const existingTenant = config.headers["tenantid"] || config.headers["Tenantid"];
+    const existingTenant =
+      config.headers.get("tenantid") || config.headers.get("Tenantid");
     const tenant = existingTenant || getTenantID() || getSessionTenantID();
     if (tenant) {
-      config.headers["tenantid"] = tenant;
+      config.headers.set("tenantid", String(tenant));
     }
 
     // FormData must keep the browser-generated multipart boundary.
     if (typeof FormData !== "undefined" && config.data instanceof FormData) {
-      delete config.headers["Content-Type"];
-      delete config.headers["content-type"];
+      config.headers.delete("Content-Type");
+      config.headers.delete("content-type");
     }
 
     return config;
