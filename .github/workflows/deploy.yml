@@ -51,10 +51,12 @@ jobs:
             echo "configured=false" >> "$GITHUB_OUTPUT"
             echo "Deploy secrets are not set. Skipping remote deploy."
             echo "Add DEPLOY_HOST, DEPLOY_USER, and DEPLOY_SSH_KEY in Settings → Secrets → Actions."
+            echo "Use the same private key that can SSH into the GBS VPS (the backend deploy uses these names)."
           else
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
+      # Same SSH action + 60m timeout as autobus-web. Next.js docker builds exceed the 10m default.
       - name: Deploy over SSH
         if: steps.secrets.outputs.configured == 'true'
         uses: appleboy/ssh-action@v1.2.0
@@ -63,21 +65,12 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: 22
+          command_timeout: 60m
           script_stop: true
           script: |
             set -euo pipefail
             cd /var/www/greenbusinesssuite-frontend
             git fetch origin main
             git reset --hard origin/main
-            docker compose up --build -d
-            echo "Waiting for frontend health..."
-            for i in $(seq 1 24); do
-              if docker exec gbs_frontend curl -fsS http://localhost:3000 >/dev/null 2>&1; then
-                echo "Frontend healthy"
-                exit 0
-              fi
-              sleep 5
-            done
-            echo "Frontend failed health check"
-            docker compose logs --tail=100 frontend
-            exit 1
+            chmod +x scripts/deploy.sh
+            BUILD_NO_CACHE=true bash scripts/deploy.sh
