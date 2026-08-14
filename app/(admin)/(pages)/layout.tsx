@@ -27,6 +27,7 @@ import {
 } from "react-icons/fi";
 import { PiBuildingsBold } from "react-icons/pi";
 import { BiTargetLock } from "react-icons/bi";
+import { TbBrandGoogleAnalytics } from "react-icons/tb";
 import FormsNavIcon from "@/public/icons/FormsNavIcon";
 import SessionExpiredModal from "@/components/GlobalModal/GlobalModal";
 
@@ -126,6 +127,33 @@ export default function AdminLayout({
       name: "User management",
       icon: <FiUsers size={18} />,
       link: "/usermanagement",
+    },
+    {
+      name: "Analytics",
+      icon: <TbBrandGoogleAnalytics size={20} />,
+      link: null,
+      subNavigation: [
+        {
+          name: "General Business",
+          icon: null,
+          link: "/analytics/general-business",
+        },
+        {
+          name: "Loans & Grants",
+          icon: null,
+          link: "/analytics/loans-grants",
+        },
+        {
+          name: "Training",
+          icon: null,
+          link: "/analytics/training",
+        },
+        {
+          name: "Clients",
+          icon: null,
+          link: "/analytics/clients",
+        },
+      ],
     },
   ];
 
