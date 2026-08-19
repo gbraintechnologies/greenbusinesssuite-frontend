@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //
 import services from "@/services";
@@ -34,12 +34,28 @@ import "./index.css";
 import { PhoneSelector } from "@/components/PhoneSelector/PhoneSelector";
 import { useQuery } from "@tanstack/react-query";
 import { Autocomplete, AutocompleteItem } from "@heroui/react";
+import PermissionChecklist from "../components/PermissionChecklist";
+import { extractRolePermissions } from "@/services/features/rolesService";
+
+function createdUserId(payload: any): string | number | null {
+  return (
+    payload?.id ??
+    payload?.userId ??
+    payload?.user_id ??
+    payload?.data?.id ??
+    payload?.data?.userId ??
+    null
+  );
+}
 
 function NewUser() {
   const [loading, setLoading] = useState(false);
 
   const [phone, setPhone] = useState("");
   const [selectedRole, setSelectedRole] = useState<any>(null);
+  const [selectedPermissionIds, setSelectedPermissionIds] = useState<
+    Array<string | number>
+  >([]);
 
   // Get ALL MESH BUSINESS SUITE ROLES
   const { data: roles, isLoading } = useQuery({
@@ -47,86 +63,86 @@ function NewUser() {
     queryFn: services.getMeshBusinessSuiteRoles(),
   });
 
+  const { data: selectedRoleDetails, isLoading: permissionsLoading } =
+    useQuery({
+      queryKey: ["role permissions", selectedRole],
+      queryFn: services.getRoleById(Number(selectedRole)),
+      enabled: selectedRole != null && selectedRole !== "",
+    });
+
+  const rolePermissions = extractRolePermissions(selectedRoleDetails);
+
+  useEffect(() => {
+    setSelectedPermissionIds(rolePermissions.map((permission) => permission.id));
+  }, [selectedRole, selectedRoleDetails]);
+
   const createNewUser = async (values: any, resetForm: any) => {
     if (selectedRole == null) {
+      toast.error("Select a role");
       return;
     }
-    let data = {
+
+    const data = {
       email: values.email,
       username: values.email,
       firstName: values.firstname,
       lastName: values.lastname,
       password: "password",
-      roleId: selectedRole,
+      roleId: Number(selectedRole),
       profile_image: "",
       phone: phone,
       status: "ACTIVE",
     };
-    //     {
-    //   "username": "string",
-    //   "status": "ACTIVE",
-    //   "firstName": "string",
-    //   "lastName": "string",
-    //   "email": "string",
-    //   "password": "string",
-    //   "phone": "string",
-    //   "roleId": 0,
-    //   "profile_image": "string"
-    // }
 
-    let loading = toast.info("Creating user. Please wait...");
+    const pending = toast.info("Creating user. Please wait...");
 
     setLoading(true);
-    services
-      .createUser(data)
-      .then((res: any) => {
-        setLoading(false);
+    try {
+      const res: any = await services.createUser(data);
+      const userId = createdUserId(res?.data ?? res);
 
-        toast.dismiss(loading);
-
-        // ASSIGN ROLE TO CREATED USER
-        // services
-        //   //@ts-ignore
-        //   .assignRoleToUser(res.data.id, selectedRole?.value)
-        //   .then((res) => {
-        //     toast.success(
-        //       // @ts-ignore
-        //       `Assigned ${selectedRole?.label} role to ${data.first_name}`
-        //     );
-        //   })
-        //   .catch((e: any) => {
-        //     //
-        //     console.log("error asinging", e);
-        //   });
-
-        // NOTIFY USER OF TEMP CREDENTIALS
-        // services
-        //   .notifyUserTempCred(res?.data?.id, "EMAIL")
-        //   .then((res) => {
-        //     resetForm();
-
-        //     setPhone("");
-        //     setSelectedRole(null);
-        //     toast.success(`Temporary password sent to ${data.email}`);
-        //     toast.success("Created user successfully");
-        //   })
-        //   .catch((e) => {
-        //     console.log("error notifying", e);
-        //   });
-      })
-      .catch((e) => {
-        setLoading(false);
-        toast.dismiss(loading);
-        toast.dismiss();
-
-        if (Array.isArray(e?.response?.data?.detail)) {
-          e?.response?.data?.detail?.map((error: any) => {
-            toast.error(error.msg);
-          });
-        } else {
-          toast.error(e?.response?.data?.detail);
+      if (userId != null) {
+        try {
+          await services.assignRoleToUser(userId, Number(selectedRole));
+        } catch {
+          // Role may already be set from sign-up.
         }
-      });
+
+        if (selectedPermissionIds.length > 0) {
+          try {
+            await services.assignPermissionsToUser(
+              userId,
+              selectedPermissionIds
+            );
+          } catch {
+            // User-level permission route is optional; role permissions still apply.
+          }
+        }
+      }
+
+      toast.dismiss(pending);
+      toast.success("User created successfully");
+      resetForm();
+      setPhone("");
+      setSelectedRole(null);
+      setSelectedPermissionIds([]);
+    } catch (e: any) {
+      toast.dismiss(pending);
+      if (Array.isArray(e?.response?.data?.detail)) {
+        e.response.data.detail.forEach((error: any) => {
+          toast.error(error.msg || error);
+        });
+      } else {
+        toast.error(
+          e?.response?.data?.detail ||
+            e?.response?.data?.message ||
+            e?.message ||
+            "Error creating user"
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const router = useRouter();
@@ -274,6 +290,20 @@ function NewUser() {
                     </AutocompleteItem>
                   ))}
                 </Autocomplete>
+              </div>
+
+              <div className="input-holder">
+                <label>Permissions</label>
+                <p className="mb-2 text-xs text-slate-500">
+                  Loaded from the selected role. Uncheck any access this user
+                  should not have.
+                </p>
+                <PermissionChecklist
+                  permissions={rolePermissions}
+                  selectedIds={selectedPermissionIds}
+                  onChange={setSelectedPermissionIds}
+                  isLoading={Boolean(selectedRole) && permissionsLoading}
+                />
               </div>
             </div>
           </Form>

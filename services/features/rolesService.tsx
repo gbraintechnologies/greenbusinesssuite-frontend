@@ -85,3 +85,46 @@ export const getRoleById = (id: number) => {
   return () =>
     authApi.get(`/roles/permission-by-id/${id}`).then((res) => res.data);
 };
+
+export function normalizePermission(permission: any) {
+  if (!permission || typeof permission !== "object") return null;
+  const id = permission.id ?? permission.permissionId ?? permission.permission_id;
+  if (id == null) return null;
+  return {
+    ...permission,
+    id,
+    name:
+      permission.name ??
+      permission.permission_name ??
+      permission.permissionName ??
+      "",
+    module: permission.module ?? permission.moduleName ?? permission.subModule ?? "",
+    action: permission.action ?? "",
+    description: permission.description ?? "",
+  };
+}
+
+export function extractRolePermissions(role: unknown) {
+  const source = (role as any)?.permissions
+    ?? (role as any)?.permissionList
+    ?? (role as any)?.authorities
+    ?? [];
+  const list = Array.isArray(source) ? source : [];
+  return list
+    .map(normalizePermission)
+    .filter(Boolean) as Array<{
+      id: number | string;
+      name: string;
+      module: string;
+      action: string;
+      description: string;
+    }>;
+}
+
+/** PUT /users/{userId}/permissions — user-level permission override after create */
+export const assignPermissionsToUser = (
+  userId: string | number,
+  permissionIds: Array<string | number>
+) => {
+  return authApi.put(`/users/${userId}/permissions`, { permissionIds });
+};
