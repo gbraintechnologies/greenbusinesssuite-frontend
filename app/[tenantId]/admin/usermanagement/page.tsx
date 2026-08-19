@@ -49,11 +49,11 @@ function UserManagement(props: any) {
 
   const queryClient = useQueryClient();
 
-  const [activeRoleFilter, setActiveRoleFilter] = useState([]);
+  const [activeRoleFilter, setActiveRoleFilter] = useState<any[]>([]);
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [aggregatedUsers, setAggregatedUsers] = useState([]);
+  const [aggregatedUsers, setAggregatedUsers] = useState<any[]>([]);
 
   const [rows, setRows] = useState<{ id: number | undefined; data: any }[]>([]);
 
@@ -115,7 +115,7 @@ function UserManagement(props: any) {
   //Status Filter
   useEffect(() => {
     if (activeFilter.value === "all") {
-      setAggregatedUsers(users);
+      setAggregatedUsers(users ?? []);
     } else {
       const filteredUsers = users?.filter((user: any) => {
         const status = (
@@ -128,19 +128,19 @@ function UserManagement(props: any) {
           .toLowerCase();
         return status === activeFilter.value.toLowerCase();
       });
-      setAggregatedUsers(filteredUsers);
+      setAggregatedUsers(filteredUsers ?? []);
     }
   }, [activeFilter, users]);
 
   //Search Filter
   useEffect(() => {
     if (searchTerm.length > 1 && searchData) {
-      setAggregatedUsers(searchData);
+      setAggregatedUsers(searchData ?? []);
     }
 
     if (users && searchTerm.length < 1) {
       setActiveRoleFilter([]);
-      setAggregatedUsers(users);
+      setAggregatedUsers(users ?? []);
     }
   }, [searchTerm, users, searchData]);
 
@@ -183,7 +183,7 @@ function UserManagement(props: any) {
 
       setAggregatedUsers(temp);
     } else {
-      setAggregatedUsers(users);
+      setAggregatedUsers(users ?? []);
     }
   }, [activeRoleFilter]);
 
