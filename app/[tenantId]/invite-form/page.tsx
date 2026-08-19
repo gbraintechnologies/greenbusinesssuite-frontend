@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import ProcessInvite from "./components/ProcessInvite";
 
 export const metadata: Metadata = {
-  title: "Mesh Suite | Form Invite",
+  title: "Green Business Suite | Form Invite",
   description: "Invitation to participate in form",
 };
 

@@ -218,7 +218,7 @@ export default function CompanyLayout(props: any) {
                       ? `/${company.company_identifier}/admin`
                       : "/"
                   }
-                  brandTitle={company?.name ?? "MeshSuite"}
+                  brandTitle={company?.name ?? "Green Business Suite"}
                   brandSubtitle="Company Admin"
                 />
               )}

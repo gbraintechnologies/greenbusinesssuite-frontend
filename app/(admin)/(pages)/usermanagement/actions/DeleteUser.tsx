@@ -74,7 +74,7 @@ function DeleteUser({
         <span className="font-semibold">
           {userName || "this user"}
         </span>{" "}
-        will permanently remove their account from Mesh Suite. This action
+        will permanently remove their account from Green Business Suite. This action
         cannot be undone.
       </p>
 

@@ -133,6 +133,7 @@ function TenantLayoutInner(props: layoutProps) {
     const needsFallback =
       !brandingMatchesTenant ||
       !companyBranding?.name ||
+      companyBranding.name === "Green Business Suite" ||
       companyBranding.name === "MeshSuite" ||
       companyBranding.name === tenantId ||
       (realName &&

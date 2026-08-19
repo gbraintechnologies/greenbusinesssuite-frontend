@@ -1,4 +1,4 @@
-/** MeshSuite alt lockup: letter-M mark + Mesh Suite wordmark. */
+/** Green Business Suite alt lockup: letter-M mark + wordmark. */
 const MeshSuiteAltLogo = () => {
   return (
     <svg
@@ -7,7 +7,7 @@ const MeshSuiteAltLogo = () => {
       viewBox="0 0 100 26"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="MeshSuite"
+      aria-label="Green Business Suite"
     >
       {/* Letter-M mark */}
       <g transform="translate(0,0.5) scale(0.52)">

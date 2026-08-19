@@ -145,7 +145,7 @@ export default function ClientLayout({
                                 ? `/${company.company_identifier}/client/home`
                                 : "/"
                             }
-                            brandTitle={company?.name ?? "MeshSuite"}
+                            brandTitle={company?.name ?? "Green Business Suite"}
                             brandSubtitle="Client Portal"
                           />
                         )}

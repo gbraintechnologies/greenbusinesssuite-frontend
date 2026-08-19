@@ -29,11 +29,11 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
         <Link
           href="/"
           className="flex shrink-0 items-center rounded-xl bg-white px-2.5 py-1.5 shadow-sm transition-transform hover:scale-[1.03]"
-          aria-label="MeshSuite home"
+          aria-label="Green Business Suite home"
         >
           <Image
             src="/svg/mesh_logo.svg"
-            alt="MeshSuite"
+            alt="Green Business Suite"
             width={120}
             height={40}
             className="h-7 w-auto"

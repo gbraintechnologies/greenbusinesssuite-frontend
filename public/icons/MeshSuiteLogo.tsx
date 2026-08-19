@@ -1,4 +1,4 @@
-/** MeshSuite lockup: letter-M mark + original wordmark (dark). */
+/** Green Business Suite lockup. */
 const MeshSuiteLogo = () => {
   return (
     <svg
@@ -7,7 +7,7 @@ const MeshSuiteLogo = () => {
       viewBox="0 0 90 27"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="MeshSuite"
+      aria-label="Green Business Suite"
     >
       {/* Letter-M mark */}
       <g transform="translate(0,1.5) scale(0.5)">
