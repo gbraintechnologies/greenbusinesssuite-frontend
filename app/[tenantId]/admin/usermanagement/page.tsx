@@ -398,7 +398,7 @@ function UserManagement(props: any) {
       <div className="w-full flex justify-between">
         <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
         <Pagination
-          currentData={users}
+          currentData={users ?? []}
           limit={limit}
           page={page}
           setPage={setPage}
