@@ -68,14 +68,15 @@ function UserManagement(props: any) {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["all users", page, limit],
-    queryFn: services.allUsers(page * limit, limit),
+    queryKey: ["company users", tenantId, page, limit],
+    queryFn: services.getCompanyUsers(tenantId),
+    enabled: Boolean(tenantId),
   });
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
-    queryKey: ["search data", searchTerm],
-    queryFn: services.searchUsers(searchTerm),
-    enabled: Boolean(searchTerm),
+    queryKey: ["search data", searchTerm, tenantId],
+    queryFn: services.searchUsers(searchTerm, tenantId),
+    enabled: Boolean(searchTerm) && Boolean(tenantId),
   });
 
   const { data: roles, isLoading: rolesLoading } = useQuery({
@@ -92,7 +93,7 @@ function UserManagement(props: any) {
     try {
       await services.blacklistUser(userId);
       await queryClient.invalidateQueries({
-        queryKey: ["all users", page, limit],
+        queryKey: ["company users", tenantId, page, limit],
       });
       toast.success("User blacklisted successfully");
     } catch (error) {
@@ -104,7 +105,7 @@ function UserManagement(props: any) {
       await services.updateUserStatus(userData.id, status);
       toast.success("User status updated successfully");
       await queryClient.invalidateQueries({
-        queryKey: ["all users", page, limit],
+        queryKey: ["company users", tenantId, page, limit],
       });
     } catch (error) {
       toast.error("Failed to update user status");
@@ -419,9 +420,9 @@ function UserManagement(props: any) {
               if (!open) setUserToDelete(null);
             }}
             invalidateKeys={[
-              ["all users", page, limit],
-              ["all users"],
-              ["search data", searchTerm],
+              ["company users", tenantId, page, limit],
+              ["company users"],
+              ["search data", searchTerm, tenantId],
             ]}
           />
         )}

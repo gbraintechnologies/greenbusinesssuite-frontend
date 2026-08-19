@@ -13,7 +13,7 @@ function Nav() {
       <div>
         <h3 className="font-semibold text-xl">User Management</h3>
         <p className="text-[rgba(71, 85, 105, 1)] font-normal text-base">
-          Manage All Users
+          Manage Users
         </p>
       </div>
 

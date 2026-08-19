@@ -15,11 +15,17 @@ const multipartMeshApi = axios.create({
 multipartMeshApi.interceptors.request.use(
   (config) => {
     config.headers.set("Authorization", `Bearer ${getToken()}`);
-    config.headers.set("user-uuid", getUserUUID());
+
+    const userUuid = getUserUUID();
+    if (userUuid) {
+      config.headers.set("user-uuid", String(userUuid));
+    } else {
+      config.headers.delete("user-uuid");
+    }
 
     const existingTenant =
       config.headers.get("tenantid") || config.headers.get("Tenantid");
-    const tenant = existingTenant || getTenantID() || getSessionTenantID();
+    const tenant = existingTenant || getSessionTenantID() || getTenantID();
     if (tenant) {
       config.headers.set("tenantid", String(tenant));
     }

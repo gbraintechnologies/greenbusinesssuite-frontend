@@ -58,9 +58,15 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
           });
           return;
         }
-        navigator.clipboard.writeText(url ?? "").then(() => {
-          toast.success("Link copied!");
-        });
+        navigator.clipboard
+          .writeText(
+            `${window.location.origin}/${company?.company_identifier}/${
+              isAnonymous ? "survey" : "invite-form"
+            }?f=${id}&c=${form?.companyId ?? ""}`
+          )
+          .then(() => {
+            toast.success("Link copied!");
+          });
       },
     },
   ];

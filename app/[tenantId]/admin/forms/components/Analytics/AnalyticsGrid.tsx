@@ -8,25 +8,34 @@ import Barchart from "../../../../../../components/BarChart/BarChart";
 import Single from "../../../../../../components/Single/Single";
 import Donutchart from "../../../../../../components/DonutChart/DonutChart";
 
-const AnalyticsGrid = ({ analytics }: any) => {
-  if (analytics?.length === 0) {
+const AnalyticsGrid = ({
+  analytics,
+  emptyTitle = "No analytics enabled for form fields",
+  emptyMessage,
+}: any) => {
+  if (!Array.isArray(analytics) || analytics.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[20rem] w-full">
-        <div className="flex flex-col gap-3 items-center justify-center">
+      <div className="flex items-center justify-center h-[20rem] w-full px-6">
+        <div className="flex max-w-lg flex-col items-center justify-center gap-3 text-center">
           <LuChartLine className="text-gray-500" size={50} />
-          <p className="text-gray-500 text-sm font-light">
-            [ No analytics enabled for form fields ]
-          </p>
+          <p className="text-sm font-medium text-gray-700">{emptyTitle}</p>
+          {emptyMessage && (
+            <p className="text-sm font-light text-gray-500">{emptyMessage}</p>
+          )}
         </div>
       </div>
     );
   }
 
-  // analytics
   return (
     <div className="grid grid-cols-4">
-      {analytics.map((item: any) => {
-        return <DataVisualization key={item.fieldName} item={item} />;
+      {analytics.map((item: any, index: number) => {
+        return (
+          <DataVisualization
+            key={item.fieldName ?? item.function ?? index}
+            item={item}
+          />
+        );
       })}
     </div>
   );
@@ -40,9 +49,11 @@ const DataVisualization = ({ item }: any) => {
       return <Donutchart item={item} />;
 
     case "bar-chart":
-      return <div className="col-span-2">
-        <Barchart item={item} categories={["value"]} />;
+      return (
+        <div className="col-span-2">
+          <Barchart item={item} categories={["value"]} />
         </div>
+      );
 
     // DEFAULT CASE WHEN
     default:

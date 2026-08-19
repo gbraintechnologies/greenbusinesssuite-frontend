@@ -7,6 +7,30 @@ import { toast } from "sonner";
 
 import Modal from "@/components/Modal/Modal";
 
+function submitErrorMessage(error: any) {
+  const status = error?.response?.status;
+  const data = error?.response?.data;
+  const fromApi =
+    (typeof data === "string" && data.trim()) ||
+    data?.message ||
+    data?.detail ||
+    data?.error ||
+    data?.title;
+
+  if (fromApi) return String(fromApi);
+
+  if (status === 403) {
+    return "The server refused this public submit. Confirm the form is published with anonymous access, then try again.";
+  }
+  if (status === 401) {
+    return "This form requires sign-in. Open the invite link instead of the public survey link.";
+  }
+  if (status === 500) {
+    return "The server failed while saving this response. Ask backend to check POST /forms/response/create.";
+  }
+  return "Error submitting form";
+}
+
 function FormSubmitBtn() {
   const { savingResponses, submitAndCompletePublicForm, clientForm } =
     useClientPublicForm();
@@ -34,7 +58,7 @@ function FormSubmitBtn() {
       })
       .catch((e: any) => {
         setLoading(false);
-        toast.error("Error submitting form");
+        toast.error(submitErrorMessage(e));
       });
   };
 

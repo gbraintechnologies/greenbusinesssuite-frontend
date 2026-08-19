@@ -28,7 +28,7 @@ function ProcessForm({ form: data }: { form: any }) {
     if (!!data) {
       setLoading(true);
       // CHECK PUBLISH STATUS: PUBLISH | UNPUBLISHED
-      if (data?.publishStatus.toLowerCase() == "unpublished") {
+      if (data?.publishStatus?.toLowerCase() == "unpublished") {
         setLoading(false);
         setMessage(data?.name + " form is no longer accepting responses");
         return;

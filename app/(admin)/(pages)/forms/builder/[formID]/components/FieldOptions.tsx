@@ -65,10 +65,10 @@ function FieldOptions({ refetch }: any) {
   const labelStyle = "font-light";
 
   const insightTypes = [
-    { name: "None", displayType: null },
-    { name: "Sum", displayType: "single" },
-    { name: "Average", displayType: "single" },
-    { name: "Count", displayType: "bar-chart" },
+    { id: "none", name: "None", displayType: null },
+    { id: "sum", name: "Sum", displayType: "single" },
+    { id: "average", name: "Average", displayType: "single" },
+    { id: "count", name: "Count", displayType: "bar-chart" },
   ];
 
   const addressTypes = [
@@ -76,8 +76,8 @@ function FieldOptions({ refetch }: any) {
     { name: "Parent & Sub Level", value: "parent-and-sub-level" },
   ];
   const displayTypes = [
-    { name: "Bar chart", value: "bar-chart" },
-    { name: "Pie chart", value: "pie-chart" },
+    { id: "bar-chart", name: "Bar chart", value: "bar-chart" },
+    { id: "pie-chart", name: "Pie chart", value: "pie-chart" },
   ];
 
   // Updating  main form data
@@ -570,10 +570,9 @@ function FieldOptions({ refetch }: any) {
                     <DropdownItem
                       key={type.id}
                       onClick={() => {
-                        setLocalField((prev: any) => ({
-                          ...prev,
-                          isStatisticalField:
-                            type?.name === "None" ? false : true,
+                        const nextField = {
+                          ...localField,
+                          isStatisticalField: type?.name !== "None",
                           displayType: type?.displayType
                             ? type?.displayType
                             : "",
@@ -581,7 +580,9 @@ function FieldOptions({ refetch }: any) {
                             type?.name === "None"
                               ? null
                               : type?.name.toLowerCase(),
-                        }));
+                        };
+                        setLocalField(nextField);
+                        updateActiveField(activeField.section, nextField);
                       }}
                       className="items-center w-72 p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                     >
@@ -659,10 +660,12 @@ function FieldOptions({ refetch }: any) {
                     <DropdownItem
                       key={type.id}
                       onClick={() => {
-                        setLocalField((prev: any) => ({
-                          ...prev,
+                        const nextField = {
+                          ...localField,
                           displayType: type?.value,
-                        }));
+                        };
+                        setLocalField(nextField);
+                        updateActiveField(activeField.section, nextField);
                       }}
                       className="items-center w-72 p-3 rounded-md text-sm text-[#334155] hover:bg-[#F1F5F9]"
                     >

@@ -91,7 +91,7 @@ const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
             type="file"
             className="hidden"
             onChange={handleImageChange}
-            accept="*/*"
+            accept="image/*"
           />
         </label>
 

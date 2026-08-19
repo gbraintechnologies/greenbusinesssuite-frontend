@@ -210,9 +210,12 @@ function FormField({ field, section, activeTab, setActiveTab }: any) {
 
           <div className=" text-gray-400 px-3 py-2 grid grid-cols-2 gap-x-4 gap-y-1">
             {field?.choiceValue &&
-              field?.choiceValue?.map((value: any) => {
+              field?.choiceValue?.map((value: any, index: number) => {
                 return (
-                  <div className="flex flex-row gap-2">
+                  <div
+                    key={`${field?.id ?? "field"}-${value}-${index}`}
+                    className="flex flex-row gap-2"
+                  >
                     <div>
                       <MdOutlineCheckBoxOutlineBlank size={20} />
                     </div>{" "}

@@ -5,13 +5,32 @@ import services from "@/services";
 import useCompany from "@/hooks/useCompany";
 import AnalyticsGrid from "../../components/Analytics/AnalyticsGrid";
 
-function Analytics({ formID }: { formID: number }) {
-  const { companyBranding: company } = useCompany();
+function statisticalFields(form: any) {
+  return (form?.formSections ?? []).flatMap((section: any) =>
+    (section?.formFields ?? []).filter(
+      (field: any) =>
+        !field?.isDeleted &&
+        (field?.isStatisticalField || field?.statisticalFunction)
+    )
+  );
+}
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["form analytics", formID, company?.name],
-    queryFn: services.formResponseAnalytics(Number(formID), company?.id),
-    enabled: Boolean(Boolean(formID) && Boolean(company?.name)),
+function toAnalyticsList(payload: any) {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.content)) return payload.content;
+  return [];
+}
+
+function Analytics({ formID, form }: { formID: number; form?: any }) {
+  const { companyBranding: company } = useCompany();
+  const companyId = form?.companyId ?? company?.id ?? company?.companyId;
+  const insightFields = statisticalFields(form);
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["form analytics", formID, companyId],
+    queryFn: services.formResponseAnalytics(Number(formID), companyId),
+    enabled: Boolean(formID) && companyId != null && companyId !== "",
   });
 
   return (
@@ -21,7 +40,15 @@ function Analytics({ formID }: { formID: number }) {
           <div className="font-semibold ">Response Insights</div>
         </div>
 
-        {isLoading && (
+        {!companyId && (
+          <AnalyticsGrid
+            analytics={[]}
+            emptyTitle="Missing company on this form"
+            emptyMessage="Assign this form to a company, then reopen Insights. Analytics is loaded from /forms/response/analytics/{formId}/{companyId}."
+          />
+        )}
+
+        {Boolean(companyId) && isLoading && (
           <div className="grid grid-cols-2 gap-10 p-10">
             <div>
               <div className=" h-4 w-[25%] bg-gray-200 animate-pulse mb-2 rounded-lg"></div>
@@ -46,7 +73,33 @@ function Analytics({ formID }: { formID: number }) {
           </div>
         )}
 
-        {data && <AnalyticsGrid analytics={data} />}
+        {!isLoading && isError && (
+          <AnalyticsGrid
+            analytics={[]}
+            emptyTitle="Could not load insights"
+            emptyMessage={
+              (error as any)?.response?.data?.message ||
+              (error as any)?.message ||
+              "The analytics request failed. Check GET /forms/response/analytics/{formId}/{companyId}."
+            }
+          />
+        )}
+
+        {!isLoading && !isError && data && (
+          <AnalyticsGrid
+            analytics={toAnalyticsList(data)}
+            emptyTitle={
+              insightFields.length === 0
+                ? "No analytics enabled for form fields"
+                : "No insight data yet"
+            }
+            emptyMessage={
+              insightFields.length === 0
+                ? "In the form builder, select a Number, Dropdown, or Checkboxes field, set Insight Type to Count, Sum, or Average, then save. Insights also need at least one successful submission."
+                : "This form has insight fields, but the API returned no stats. Submit the form successfully, then refresh. Older responses collected before Insight Type was set may not count."
+            }
+          />
+        )}
       </div>
     </div>
   );

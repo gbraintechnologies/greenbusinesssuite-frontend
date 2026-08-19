@@ -19,10 +19,11 @@ noAuthApi.interceptors.request.use(
     }
 
     // Public pages (e.g. survey links) have no stored auth, so fall back to the
-    // tenant from session branding. Callers may also pass `tenantid` explicitly.
-    if (!config.headers.get("tenantid")) {
+    // tenant from the link. Never let a leftover admin session tenant override
+    // an explicit tenantid header on the request.
+    if (!config.headers.get("tenantid") && !config.headers.get("Tenantid")) {
       const tenantId =
-        getTenantID() ?? getSessionTenantID() ?? getPublicTenantID();
+        getPublicTenantID() ?? getSessionTenantID() ?? getTenantID();
       if (tenantId) {
         config.headers.set("tenantid", tenantId);
       }

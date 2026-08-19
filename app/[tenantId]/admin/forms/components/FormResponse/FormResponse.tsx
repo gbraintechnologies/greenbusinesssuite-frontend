@@ -57,7 +57,7 @@ const renderFormResponse = (formField: any) => {
           />
           <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
             {formField &&
-              formField?.choiceValue?.map((value: any) => {
+              formField?.choiceValue?.map((value: any, index: number) => {
                 // values user selected
                 let selected =
                   formField.response == null || formField.response == ""
@@ -65,12 +65,14 @@ const renderFormResponse = (formField: any) => {
                     : [...formField?.response?.split(",")];
 
                 return (
-                  <div className="flex  items-center flex-row gap-2">
+                  <div
+                    key={`${formField?.id ?? "field"}-${value}-${index}`}
+                    className="flex  items-center flex-row gap-2"
+                  >
                     <input
                       className="form-check-input"
                       disabled
                       checked={selected.includes(value)}
-                      key={value}
                       value={value}
                       type="checkbox"
                     />

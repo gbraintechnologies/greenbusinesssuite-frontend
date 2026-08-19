@@ -151,7 +151,13 @@ function SingleFormCompany(props: any) {
               <button
                 onClick={() => {
                   if (form?.publishStatus.toLowerCase() === "published") {
-                    navigator.clipboard.writeText(form?.url).then(() => {
+                    navigator.clipboard
+                      .writeText(
+                        `${window.location.origin}/${params.tenantId}/${
+                          form?.isAnonymous ? "survey" : "invite-form"
+                        }?f=${form?.id}&c=${form?.companyId ?? ""}`
+                      )
+                      .then(() => {
                       toast.dismiss();
                       toast.success("Form link copied!");
                     });
@@ -229,7 +235,7 @@ function SingleFormCompany(props: any) {
             />
           </div>
         )}
-        {activeFilter.id == 0 && <Analytics formID={formID} />}
+        {activeFilter.id == 0 && <Analytics formID={formID} form={form} />}
         {activeFilter.id == 1 && (
           <div className="mt-4">
             <ResponseDataTable

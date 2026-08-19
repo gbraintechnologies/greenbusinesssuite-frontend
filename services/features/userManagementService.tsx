@@ -1,5 +1,40 @@
 import { CustomField } from "@/types";
 import authApi from "../axiosAuthClient";
+import meshAuthApi from "../meshAuthClient";
+
+export function asUserList(data: unknown): any[] {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray((data as any)?.content)) return (data as any).content;
+  if (Array.isArray((data as any)?.users)) return (data as any).users;
+  if (Array.isArray((data as any)?.data)) return (data as any).data;
+  return [];
+}
+
+export function userCompanyIdentifier(user: any): string {
+  return String(
+    user?.companyIdentifier ??
+      user?.company_identifier ??
+      user?.tenantId ??
+      user?.tenantid ??
+      user?.tenant_id ??
+      ""
+  )
+    .trim()
+    .toLowerCase();
+}
+
+export function filterUsersByCompany(
+  users: unknown,
+  companyIdentifier: string
+) {
+  const target = String(companyIdentifier ?? "")
+    .trim()
+    .toLowerCase();
+  if (!target) return [];
+  return asUserList(users).filter(
+    (user) => userCompanyIdentifier(user) === target
+  );
+}
 
 export const allUsers = (offset: number = 0, limit: number = 20) => {
   return () => authApi.get(`/users`).then((res) => res.data);
@@ -7,6 +42,14 @@ export const allUsers = (offset: number = 0, limit: number = 20) => {
 
 export const allUsersRaw = (offset: number = 0, limit: number = 20) => {
   return authApi.get(`/users`).then((res) => res.data);
+};
+
+/** Company-admin list: GET /users then keep only this tenant's users */
+export const getCompanyUsers = (companyIdentifier: string) => {
+  return () =>
+    meshAuthApi
+      .get(`/users`)
+      .then((res) => filterUsersByCompany(res.data, companyIdentifier));
 };
 
 export const userByID = (id: any) => {
@@ -17,9 +60,12 @@ export const userByIDRaw = (id: any) => {
   return authApi.get(`/users/${id}`).then((res) => res.data);
 };
 
-export const searchUsers = (filter_word: any) => {
+export const searchUsers = (filter_word: any, companyIdentifier?: string) => {
   return () =>
-    authApi.get(`/users/search_users/${filter_word}`).then((res) => res.data);
+    authApi.get(`/users/search_users/${filter_word}`).then((res) => {
+      if (!companyIdentifier) return res.data;
+      return filterUsersByCompany(res.data, companyIdentifier);
+    });
 };
 
 export const searchUsersByEmailFull = (email: string) => {

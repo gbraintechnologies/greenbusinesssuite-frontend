@@ -50,25 +50,34 @@ function UploadAds() {
     const loading = toast.info("Saving AD. Please wait...");
 
     try {
+      if (!thumbnail) {
+        toast.dismiss(loading);
+        toast.error("Please upload a thumbnail image first.");
+        setSubmitting(false);
+        return;
+      }
+
       const formData = new FormData();
       formData.append("mediaType", adType || "ADS");
       formData.append("altText", altText || "");
       formData.append("heading", adDescription || "");
       formData.append("url", Url || "");
       formData.append("isActive", String(isActive));
-
-      if (thumbnail) {
-        formData.append("thumbnail", thumbnail);
-      }
+      formData.append("thumbnail", thumbnail);
 
       await services.mediaUpload(formData);
       toast.success("AD uploaded successfully!");
       resetForm();
       setThumbnail(null);
       router.push(`/${tenantId}/admin/media-center`);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error uploading AD:", error);
-      toast.error("An error occurred while uploading the AD.");
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.detail ||
+        error?.message ||
+        "An error occurred while uploading the AD.";
+      toast.error(message);
     } finally {
       setSubmitting(false);
       toast.dismiss(loading);
@@ -153,20 +162,20 @@ function UploadAds() {
 
               <div className="input-holder">
                 <label
-                  htmlFor="altext"
+                  htmlFor="altText"
                   className="flex justify-between items-center"
                 >
                   Alt Text
                   <span className="text-sm text-gray-500 ml-2">Optional</span>
                 </label>
                 <Field
-                  id="altext"
-                  name="altext"
+                  id="altText"
+                  name="altText"
                   placeholder="Type alternate here"
-                  style={getStyles(errors, "altext")}
+                  style={getStyles(errors, "altText")}
                   className="w-full border border-gray-200 px-4 py-2 rounded-md"
                 />
-                <ShowError name="altext" />
+                <ShowError name="altText" />
               </div>
 
               <div className="input-holder relative">

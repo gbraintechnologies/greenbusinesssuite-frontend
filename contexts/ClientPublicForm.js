@@ -4,7 +4,11 @@ export const ClientPublicFormContext = createContext();
 
 // services and query
 import services from "@/services";
-import { getPublicTenantID } from "@/services/localService";
+import {
+  getPublicTenantID,
+  getToken,
+  getUserId,
+} from "@/services/localService";
 
 //toast
 import { toast } from "sonner";
@@ -27,93 +31,72 @@ export const ClientPublicFormProvider = ({ children }) => {
   const submitAndCompletePublicForm = async (userId) => {
     setSavingResponses(true);
 
-    let data = clientForm;
+    try {
+      let data = clientForm;
+      let formSections = [];
 
-    let formSections = [];
+      for (let i = 0; i < data?.formSections?.length; i++) {
+        let section = data?.formSections[i];
 
-    for (let i = 0; i < data?.formSections?.length; i++) {
-      let section = data?.formSections[i];
+        if (section?.isDeleted) {
+          continue;
+        }
 
-      if (section?.isDeleted) {
-        // skip deleted form sections
-        continue;
+        let formFields = [];
+        for (let j = 0; j < section?.formFields?.length; j++) {
+          let field = section?.formFields[j];
+          const formFieldId = field?.formFieldId ?? field?.id;
+          if (Boolean(formFieldId)) {
+            formFields.push({
+              response: field?.response ? field?.response : "",
+              formFieldId: formFieldId,
+              fieldName: field?.name,
+              isStatisticalField: field?.isStatisticalField
+                ? field?.isStatisticalField
+                : false,
+              statisticalFunction: field?.statisticalFunction
+                ? field?.statisticalFunction
+                : "",
+              displayType: field?.displayType ? field?.displayType : "",
+            });
+          }
+        }
+        formSections.push({
+          formSectionId: section?.formSectionId ?? section?.id,
+          formDataFields: formFields,
+        });
       }
 
-      let formFields = [];
-      for (let j = 0; j < section?.formFields?.length; j++) {
-        let field = section?.formFields[j];
-        if (Boolean(field?.formFieldId)) {
-          formFields.push({
-            response: field?.response ? field?.response : "",
-            formFieldId: field?.formFieldId,
-            fieldName: field?.name,
-            isStatisticalField: field?.isStatisticalField
-              ? field?.isStatisticalField
-              : false,
-            statisticalFunction: field?.statisticalFunction
-              ? field?.statisticalFunction
-              : "",
-            displayType: field?.displayType ? field?.displayType : "",
-          });
+      const formId = Number(clientForm?.id ?? clientForm?.formId);
+      const companyId = Number(clientForm?.companyId);
+      const resolvedUserId = userId ?? (getToken() ? getUserId() : null);
+
+      const response = {
+        formId,
+        isCompleted: true,
+        status: "PENDING",
+        inputData: {
+          formSections: formSections,
+        },
+      };
+
+      if (Number.isFinite(companyId)) {
+        response.companyId = companyId;
+      }
+      if (resolvedUserId != null && resolvedUserId !== "") {
+        const parsedUserId = Number(resolvedUserId);
+        if (Number.isFinite(parsedUserId)) {
+          response.userId = parsedUserId;
         }
       }
-      formSections.push({
-        formSectionId: section?.formSectionId,
-        formDataFields: formFields,
-      });
+
+      return await services.submitPublicFormResponse(
+        response,
+        getPublicTenantID()
+      );
+    } finally {
+      setSavingResponses(false);
     }
-
-    // submit responses
-    let response = {
-      formId: clientForm?.id,
-      isCompleted: true,
-      companyId: parseInt(clientForm?.companyId),
-      status: "PENDING",
-      inputData: {
-        formSections: formSections,
-      },
-      updatedOn: new Date(),
-      createdOn: new Date(),
-    };
-
-    //     {
-    //   "id": 0,
-    //   "formId": 0,
-    //   "isCompleted": true,
-    //   "companyId": 0,
-    //   "userId": 0,
-    //   "status": "PENDING",
-    //   "inputData": {
-    //     "id": 0,
-    //     "formSections": [
-    //       {
-    //         "id": 0,
-    //         "formSectionId": 0,
-    //         "formDataFields": [
-    //           {
-    //             "id": 0,
-    //             "formFieldId": 0,
-    //             "fieldName": "string",
-    //             "response": "string",
-    //             "isStatisticalField": true,
-    //             "statisticalFunction": "string",
-    //             "displayType": "string",
-    //             "statisticalField": true
-    //           }
-    //         ]
-    //       }
-    //     ]
-    //   },
-    //   "createdOn": "2025-02-10T15:06:37.485Z",
-    //   "updatedOn": "2025-02-10T15:06:37.485Z"
-    // }
-
-    setSavingResponses(false);
-
-    return services.submitPublicFormResponse(
-      response,
-      getPublicTenantID()
-    );
   };
 
   const saveSingleResponse = (sectionId, fieldId, value) => {

@@ -504,7 +504,7 @@ function FormFieldValue({ field, section, viewOnly }: any) {
 
           <div className=" text-black px-3 py-2 grid grid-cols-3 gap-x-4 gap-y-1">
             {field?.choiceValue &&
-              field?.choiceValue?.map((value: any) => {
+              field?.choiceValue?.map((value: any, index: number) => {
                 // values user selected
                 let selected =
                   field.response == null || field.response == ""
@@ -512,7 +512,10 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                     : [...field?.response?.split(",")];
 
                 return (
-                  <div className="flex  items-center flex-row gap-2">
+                  <div
+                    key={`${field?.id ?? "field"}-${value}-${index}`}
+                    className="flex  items-center flex-row gap-2"
+                  >
                     <input
                       className="form-check-input"
                       disabled={viewOnly}
@@ -536,7 +539,6 @@ function FormFieldValue({ field, section, viewOnly }: any) {
                           update.join(",")
                         );
                       }}
-                      key={value}
                       value={value}
                       type="checkbox"
                     />

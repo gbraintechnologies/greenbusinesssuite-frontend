@@ -14,10 +14,10 @@ function FormSection({ section, viewOnly = false }: any) {
       </div>
 
       <div className="bg-white min-h-[10rem] p-5 rounded-lg">
-        {formFields?.map((field: any) => {
+        {formFields?.map((field: any, index: number) => {
           return (
             <FormFieldValue
-              key={field.id}
+              key={field?.id ?? field?.name ?? `field-${index}`}
               viewOnly={viewOnly}
               section={section}
               field={field}

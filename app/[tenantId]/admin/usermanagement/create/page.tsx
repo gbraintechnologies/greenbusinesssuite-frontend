@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 
 //
 import { MdOutlineEdit } from "react-icons/md";
@@ -47,7 +47,9 @@ import { useQuery } from "@tanstack/react-query";
 // button
 import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 
-function NewUser() {
+function NewUser(props: any) {
+  const params: any = use(props.params);
+  const tenantId = params?.tenantId;
   const [loading, setLoading] = useState(false);
 
   const [phone, setPhone] = useState("");
@@ -96,9 +98,14 @@ function NewUser() {
       username: values.email,
       first_name: values.firstname,
       last_name: values.lastname,
+      firstName: values.firstname,
+      lastName: values.lastname,
       phone_number: phone,
+      phone: phone,
       mobile_phone_number: phone,
       user_status: "ACTIVE",
+      status: "ACTIVE",
+      companyIdentifier: tenantId,
     };
 
     let loading = toast.info("Creating user. Please wait...");
@@ -117,25 +124,35 @@ function NewUser() {
     setLoading(true);
     services
       .createUserWithCustomProfiles(data, custom_profiles)
-      .then((res: any) => {
+      .then(async (res: any) => {
         setLoading(false);
 
         toast.dismiss(loading);
 
+        const userId = res?.data?.id ?? res?.data?.userId ?? res?.id;
+        if (userId != null && tenantId) {
+          try {
+            await services.updateUserCompanyIdentifier(userId, tenantId);
+          } catch {
+            // Identifier may already be set on create.
+          }
+        }
+
         // ASSIGN ROLE TO CREATED USER
-        services
-          //@ts-ignore
-          .assignRoleToUser(res.data.id, selectedRole?.value)
-          .then((res) => {
-            toast.success(
-              // @ts-ignore
-              `Assigned ${selectedRole?.label} role to ${data.first_name}`
-            );
-          })
-          .catch((e: any) => {
-            //
-            console.log("error asinging", e);
-          });
+        if (userId != null && selectedRole) {
+          services
+            //@ts-ignore
+            .assignRoleToUser(userId, selectedRole?.value)
+            .then((res) => {
+              toast.success(
+                // @ts-ignore
+                `Assigned ${selectedRole?.label} role to ${data.first_name}`
+              );
+            })
+            .catch((e: any) => {
+              console.log("error asinging", e);
+            });
+        }
 
         // NOTIFY USER OF TEMP CREDENTIALS
         services
