@@ -1,6 +1,7 @@
 import axios from "axios";
 import {
   getSessionTenantID,
+  getTenantID,
   getToken,
   getUserUUID,
 } from "./localService";
@@ -24,7 +25,7 @@ authApi.interceptors.request.use(
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       "user-uuid": getUserUUID(),
       Authorization: `Bearer ${getToken()}`,
-      tenantid: getSessionTenantID(),
+      tenantid: getSessionTenantID() || getTenantID(),
     };
 
     return { ...config, headers };

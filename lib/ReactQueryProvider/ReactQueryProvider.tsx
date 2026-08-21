@@ -5,9 +5,14 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { refetchOnWindowFocus: true, retry: 5 },
-
-    // queries: { staleTime: 20000 },
+    queries: {
+      refetchOnWindowFocus: true,
+      retry: (failureCount, error: any) => {
+        const status = error?.response?.status;
+        if (status === 401 || status === 403) return false;
+        return failureCount < 2;
+      },
+    },
   },
 });
 

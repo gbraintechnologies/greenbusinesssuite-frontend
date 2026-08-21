@@ -29,8 +29,31 @@ export const AuthProvider = ({ children }) => {
     setHasHydrated(true);
   }, []);
 
+  // Interceptor refresh updates localStorage + fires this event. Sync React
+  // state so the persist effect below cannot clobber fresh tokens.
+  useEffect(() => {
+    const onTokensUpdated = (event) => {
+      const { accessToken, refreshToken } = event.detail || {};
+      if (!accessToken) return;
+      setAuth((prev) =>
+        prev
+          ? { ...prev, accessToken, refreshToken }
+          : { accessToken, refreshToken }
+      );
+    };
+
+    window.addEventListener("authTokensUpdated", onTokensUpdated);
+    return () => {
+      window.removeEventListener("authTokensUpdated", onTokensUpdated);
+    };
+  }, []);
+
   useEffect(() => {
     if (!hasHydrated) return;
+    if (auth == null) {
+      localStorage.removeItem("auth");
+      return;
+    }
     localStorage.setItem("auth", JSON.stringify(auth));
   }, [auth, hasHydrated]);
 

@@ -74,12 +74,17 @@ export const getRefreshToken = () => {
 export const setAuth = (accessToken: string, refreshToken: string) => {
   if (typeof window !== "undefined") {
     const existing = JSON.parse(window.localStorage.getItem("auth") || "{}");
-    window.localStorage.setItem(
-      "auth",
-      JSON.stringify({
-        ...existing,
-        accessToken,
-        refreshToken,
+    const next = {
+      ...existing,
+      accessToken,
+      refreshToken,
+    };
+    window.localStorage.setItem("auth", JSON.stringify(next));
+    // Keep React AuthContext in sync so later addAuthData() does not
+    // overwrite refreshed tokens with stale ones from memory.
+    window.dispatchEvent(
+      new CustomEvent("authTokensUpdated", {
+        detail: { accessToken, refreshToken },
       })
     );
   }

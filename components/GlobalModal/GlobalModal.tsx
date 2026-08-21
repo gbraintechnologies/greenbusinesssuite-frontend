@@ -1,13 +1,32 @@
 "use client";
+import { queryClient } from "@/lib/ReactQueryProvider/ReactQueryProvider";
 import { getSessionTenantID, getTenantID } from "@/services/localService";
 import { useEffect, useState } from "react";
 import { PiSignOutBold } from "react-icons/pi";
 
+function clearClientSession() {
+  try {
+    localStorage.clear();
+    sessionStorage.clear();
+  } catch {
+    // Ignore storage errors during logout.
+  }
+  try {
+    queryClient.clear();
+  } catch {
+    // Query client may be unavailable during teardown.
+  }
+}
+
 const SessionExpiredModal = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [loginTenantId, setLoginTenantId] = useState<string | null>(null);
 
   useEffect(() => {
     const handleSessionExpired = () => {
+      const tenantId = getSessionTenantID() || getTenantID() || null;
+      setLoginTenantId(tenantId);
+      clearClientSession();
       setIsOpen(true);
     };
     window.addEventListener("sessionExpired", handleSessionExpired);
@@ -17,14 +36,11 @@ const SessionExpiredModal = () => {
   }, []);
 
   const logOutAndReset = () => {
-    if (Boolean(getSessionTenantID())) {
-      window.location.replace(`/${getSessionTenantID()}/auth/login`);
-      localStorage.clear();
-      sessionStorage.clear();
+    clearClientSession();
+    if (loginTenantId) {
+      window.location.replace(`/${loginTenantId}/auth/login`);
     } else {
       window.location.replace("/");
-      localStorage.clear();
-      sessionStorage.clear();
     }
   };
 

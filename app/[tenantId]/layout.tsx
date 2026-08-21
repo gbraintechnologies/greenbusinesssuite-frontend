@@ -166,7 +166,7 @@ function TenantLayoutInner(props: layoutProps) {
 
   useEffect(() => {
     addAuthData({ tenantId: tenantId });
-  }, [tenantId, companyBranding]);
+  }, [tenantId]);
 
   // Wait until branding for THIS tenant is ready with a real name when possible
   const waitingForCompanyName =
