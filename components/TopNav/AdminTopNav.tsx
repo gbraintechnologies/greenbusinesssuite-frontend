@@ -28,15 +28,15 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
         <MobileNavToggle />
         <Link
           href="/"
-          className="flex shrink-0 items-center rounded-xl bg-white px-2.5 py-1.5 shadow-sm transition-transform hover:scale-[1.03]"
+          className="flex shrink-0 items-center transition-opacity hover:opacity-90"
           aria-label="Green Business Suite home"
         >
           <Image
-            src="/svg/mesh_logo.svg"
+            src="/brand/greensuite_logo_white.png"
             alt="Green Business Suite"
-            width={120}
-            height={40}
-            className="h-7 w-auto"
+            width={180}
+            height={60}
+            className="h-9 w-auto"
             unoptimized
             priority
           />

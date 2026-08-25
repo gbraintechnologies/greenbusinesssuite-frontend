@@ -84,7 +84,7 @@ const page = () => {
                         Create a new password
                       </h1>
                       <p className="text-[#475569] text-sm mb-2">
-                        Create a new password for your Mesh account to secure
+                        Create a new password for your Green Business Suite account to secure
                         your account.
                       </p>
                       <p></p>
@@ -160,7 +160,7 @@ const page = () => {
                   Password creation success
                 </h1>
                 <p className="text-[#475569] text-sm mb-4">
-                  Create a new password for your Mesh account to secure your
+                  Create a new password for your Green Business Suite account to secure your
                   account.
                 </p>
                 <button

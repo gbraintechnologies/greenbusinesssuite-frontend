@@ -12,7 +12,7 @@ export default function Logo({ src, width, height, className }: Logo) {
     <Image
       width={width ?? 100}
       height={height ?? 100}
-      alt="mesh_icon"
+      alt="Green Business Suite"
       src={src}
       className={className}
     />

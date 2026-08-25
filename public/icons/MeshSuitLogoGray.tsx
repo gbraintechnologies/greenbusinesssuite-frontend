@@ -1,15 +1,14 @@
-import Image from "next/image";
+import GreenSuiteLogo from "@/public/icons/GreenSuiteLogo";
 
-/** Green Business Suite lockup for "Powered by" footers. */
+/** Compact lockup for “Powered by” footers on light backgrounds. */
 const MeshSuiteLogo = () => {
   return (
-    <Image
-      src="/svg/mesh_logo.svg"
-      alt="Green Business Suite"
-      width={72}
-      height={24}
-      className="h-5 w-auto"
-      unoptimized
+    <GreenSuiteLogo
+      variant="dark"
+      layout="horizontal"
+      width={150}
+      height={50}
+      className="h-7 w-auto"
     />
   );
 };

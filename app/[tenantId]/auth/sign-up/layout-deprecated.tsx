@@ -44,7 +44,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <CompanyLogo />
         </div>
         <div className="absolute bottom-0 left-0  w-full flex justify-center items-center gap-4 pb-4 text-[#64748B] text-xs">
-          <p className="font-xs">Powered by &copy;&nbsp;Mesh Business Suite</p>
+          <p className="font-xs">Powered by &copy;&nbsp;Green Business Suite</p>
           {/* <p>&bull;&nbsp;Contact</p>
           <p>&bull;&nbsp;Privacy policy</p>{" "} */}
         </div>

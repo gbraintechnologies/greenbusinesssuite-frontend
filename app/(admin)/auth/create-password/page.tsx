@@ -92,7 +92,7 @@ function CreatePassword() {
         <div className="mb-10">
           <div className="flex items-left justify-left mb-10">
             <Link href="/">
-              <Logo src={"/svg/mesh_logo.svg"} width={100} />
+          <Logo src={"/brand/greensuite_logo_on_light.png"} width={160} height={54} className="h-9 w-auto" />
             </Link>
           </div>
           {status === "main" && (
@@ -162,7 +162,7 @@ function CreatePassword() {
                 Password creation Successful
               </h1>
               <p className="opacity-50 font-light text-sm mt-2 mb-5">
-                Create new password for your Mesh account to secure your account
+                Create new password for your Green Business Suite account to secure your account
               </p>
               <div
                 style={{
@@ -188,7 +188,7 @@ function CreatePassword() {
       </div>
       <div className="flex flex-col mt-20 items-center ">
         <div className="flex items-center gap-x-4 text-xs text-opacity-30 text-black font-medium">
-          <p className="font-xs">&copy;&nbsp;Mesh Business Suite</p>
+          <p className="font-xs">&copy;&nbsp;Green Business Suite</p>
           <p>&bull;&nbsp;Contact</p>
           <p>&bull;&nbsp;Privacy policy</p>
         </div>

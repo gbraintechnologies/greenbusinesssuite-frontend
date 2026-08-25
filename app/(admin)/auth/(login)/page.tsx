@@ -204,10 +204,9 @@ function LogIn() {
         <div className="hidden md:flex flex-[2] relative z-20  pb-6 flex-col justify-between pt-[14px] w-full h-full bgImgCenter circle">
           <div className="">
             <div className={"mt-10 pl-[81px]"}>
-              <Logo src={"/svg/login_logo.svg"} width={150} height={45} />
+              <Logo src={"/brand/greensuite_logo_white.png"} width={220} height={74} className="h-12 w-auto" />
             </div>
             <div className={"mt-10 pl-[81px]"}>
-              <p className="text-white mb-10">Mesh Business Suite</p>
               <p className="text-white font-medium text-2xl">
                 Build Collabrative forms quickly and easily
               </p>
@@ -218,7 +217,7 @@ function LogIn() {
           </div>
           <div className="flex flex-col  pl-[81px]">
             <div className="flex items-center gap-x-4 text-xs text-opacity-30 text-white font-medium">
-              <p className="font-xs">&copy;&nbsp;Mesh Agent</p>
+              <p className="font-xs">&copy;&nbsp;Green Business Suite</p>
               <p>&bull;&nbsp;Contact</p>
               <p>&bull;&nbsp;Privacy policy</p>
             </div>

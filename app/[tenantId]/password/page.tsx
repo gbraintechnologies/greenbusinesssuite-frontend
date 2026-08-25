@@ -1,5 +1,4 @@
 "use client";
-import MeshSuiteAltLogo from "@/public/icons/MeshSuiteAltLogo";
 import PasswordResetSuccess from "@/public/icons/PasswordResetSuccess";
 import services from "@/services";
 import { getStyles, ShowError } from "@/utils/FormHelpers/FormHelpers";
@@ -88,7 +87,7 @@ const page = (props: any) => {
                         Create a new password
                       </h1>
                       <p className="text-[#475569] text-sm mb-2">
-                        Create a new password for your Mesh account to secure
+                        Create a new password for your Green Business Suite account to secure
                         your account.
                       </p>
                       <p></p>
@@ -164,7 +163,7 @@ const page = (props: any) => {
                   Password creation success
                 </h1>
                 <p className="text-[#475569] text-sm mb-4">
-                  Create a new password for your Mesh account to secure your
+                  Create a new password for your Green Business Suite account to secure your
                   account.
                 </p>
                 <CompanyThemedButton

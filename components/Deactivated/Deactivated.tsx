@@ -36,10 +36,10 @@ function Deactivated({
       <div className="flex flex-col items-center mb-8">
         <div className="flex items-center text-xs text-opacity-30 text-black font-medium mb-4">
           <p>Powered By&nbsp;&nbsp;&nbsp;</p>
-          <Logo src={"/svg/mesh_logo.svg"} width={100} />
+          <Logo src={"/brand/greensuite_logo_on_light.png"} width={140} height={47} className="h-7 w-auto" />
         </div>
         <div className="flex items-center gap-x-2 text-xs text-opacity-30 text-black font-medium">
-          <p className="font-xs">&copy;&nbsp;Mesh Business</p>
+          <p className="font-xs">&copy;&nbsp;Green Business Suite</p>
           <p>&bull;&nbsp;Contact</p>
           <p>&bull;&nbsp;Privacy policy</p>
         </div>
