@@ -4,25 +4,23 @@ import { RiSettingsLine } from "react-icons/ri";
 
 function Nav() {
   return (
-    <div className="w-full text-[#0F172A] px-5 flex items-center justify-between">
-      <div>
-        <h3 className="font-semibold text-2xl">Category Setup</h3>
-      </div>
-      <div className="flex items-center gap-2">
-        <Link
-          href="/category-setup/add-category"
-          className="bg-primary-green flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-        >
-          <IoIosAddCircleOutline /> Create new Category
-          <div className="border-opacity-50 border-white h-10"></div>
-        </Link>
-        <div>
+    <div className="w-full px-4 text-[#0F172A] sm:px-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h3 className="text-xl font-semibold sm:text-2xl">Category Setup</h3>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+          <Link
+            href="/category-setup/add-category"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary-green px-4 py-2.5 text-sm text-white hover:opacity-95 sm:w-auto"
+          >
+            <IoIosAddCircleOutline size={18} />
+            Create new Category
+          </Link>
           <Link
             href="/category-setup/core-modules"
-            className="bg-white border border-gray-200 flex text-black text-sm px-4 hover:bg-gray-100 hover:opacity-95 items-center gap-2 rounded-xl"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-black hover:bg-gray-100 hover:opacity-95 sm:w-auto"
           >
-            <RiSettingsLine /> Core Modules
-            <div className="border-opacity-50 border-white h-10"></div>
+            <RiSettingsLine size={16} />
+            Core Modules
           </Link>
         </div>
       </div>

@@ -68,12 +68,11 @@ export default function RecurringTypeFilter({
   return (
     <>
       <Menu as="div" className="z-10 relative inline-block text-left">
-        <Menu.Button className="flex items-center gap-2 text-sm text-[#334155] border border-gray-200 rounded-lg font-medium px-3 py-2 ">
-          <LuFilter size={16} color="#334155" />{" "}
-          <>
-            Filter{" "}
-            {filteredRecurringTypes?.find((type: any) => type.value == selected)?.label || "All"}
-          </>
+        <Menu.Button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50">
+          <LuFilter size={16} />
+          Filter{" "}
+          {filteredRecurringTypes?.find((type: any) => type.value == selected)
+            ?.label || "All"}
         </Menu.Button>
 
         <div className="relative">

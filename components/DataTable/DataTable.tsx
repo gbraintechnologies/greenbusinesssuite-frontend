@@ -9,6 +9,7 @@ import {
   TableCell,
   Pagination,
 } from "@heroui/react";
+import { PiEmpty } from "react-icons/pi";
 
 function renderCellContent(column: any, item: any) {
   if (!column) return null;
@@ -100,91 +101,96 @@ function DataTable({
 
   if (isLoading) {
     return (
-      <div className="min-h-[60vh] w-full">
-        <div className="mb-4 hidden items-center justify-between gap-5 rounded-t-lg bg-gray-100 px-5 py-5 text-left font-medium sm:flex">
+      <div className="w-full overflow-hidden rounded-xl border border-slate-200 bg-white">
+        <div className="hidden items-center gap-4 border-b border-slate-100 bg-slate-50 px-4 py-3 sm:flex">
           {tableColumns.map((column: any) => (
-            <div className="w-full text-left text-xs uppercase" key={column.uid}>
-              <h4>
-                {column.headerName ||
-                  column.renderHeader?.()?.props?.children ||
-                  column.field}
-              </h4>
-            </div>
+            <div className="h-3 w-full max-w-[8rem] animate-pulse rounded bg-slate-200" key={column.uid} />
           ))}
         </div>
-        {Array.from({ length: 7 }).map((_, i) => (
-          <div
-            className="mx-5 mb-4 flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white p-3"
-            key={i}
-          >
-            {tableColumns.map((column: any) => (
-              <div
-                className="h-6 w-full animate-pulse rounded-lg bg-gray-200"
-                key={column.uid}
-              />
-            ))}
-          </div>
-        ))}
+        <div className="space-y-3 p-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              className="h-12 w-full animate-pulse rounded-lg bg-slate-100"
+              key={i}
+            />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <Table
-        aria-label="Data table with dynamic content"
-        selectionMode={checkboxes ? "multiple" : "none"}
-        selectedKeys={selectedKeys}
-        onSelectionChange={handleSelectionChange}
-        bottomContent={
-          pages > 1 ? (
-            <div className="flex w-full justify-center">
-              <Pagination
-                isCompact
-                showControls
-                showShadow
-                color="primary"
-                page={page}
-                total={pages}
-                onChange={(nextPage) => setPage(nextPage)}
-              />
-            </div>
-          ) : null
-        }
-        classNames={{
-          base: "overflow-x-auto",
-          wrapper: "min-h-[400px]",
-        }}
-      >
-        <TableHeader columns={tableColumns}>
-          {(column: any) => (
-            <TableColumn
-              key={column.uid}
-              align={column.align || column.headerAlign || "start"}
-            >
-              {column.renderHeader
-                ? typeof column.renderHeader === "function"
-                  ? column.renderHeader()
-                  : column.renderHeader
-                : column.headerName || column.field}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={items} emptyContent="No data to display">
-          {(item: any) => (
-            <TableRow key={item.key}>
-              {(columnKey) => {
-                const column = tableColumns.find(
-                  (col: any) => col.uid === String(columnKey)
-                );
-                return (
-                  <TableCell>{renderCellContent(column, item)}</TableCell>
-                );
-              }}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+    <div className="w-full max-w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="w-full overflow-x-auto">
+        <Table
+          aria-label="Data table with dynamic content"
+          selectionMode={checkboxes ? "multiple" : "none"}
+          selectedKeys={selectedKeys}
+          onSelectionChange={handleSelectionChange}
+          removeWrapper
+          bottomContent={
+            pages > 1 ? (
+              <div className="flex w-full justify-center border-t border-slate-100 py-3">
+                <Pagination
+                  isCompact
+                  showControls
+                  showShadow
+                  color="primary"
+                  page={page}
+                  total={pages}
+                  onChange={(nextPage) => setPage(nextPage)}
+                />
+              </div>
+            ) : null
+          }
+          classNames={{
+            base: "w-full min-w-[720px]",
+            table: "min-w-[720px]",
+            thead: "[&>tr]:first:shadow-none",
+            th: "bg-slate-50 text-[11px] font-semibold uppercase tracking-wide text-slate-500 whitespace-nowrap first:rounded-none last:rounded-none",
+            td: "whitespace-nowrap py-3.5 text-sm text-slate-700",
+            tr: "border-b border-slate-100 last:border-b-0",
+            emptyWrapper: "min-h-[220px] text-slate-400",
+          }}
+        >
+          <TableHeader columns={tableColumns}>
+            {(column: any) => (
+              <TableColumn
+                key={column.uid}
+                align={column.align || column.headerAlign || "start"}
+              >
+                {column.renderHeader
+                  ? typeof column.renderHeader === "function"
+                    ? column.renderHeader()
+                    : column.renderHeader
+                  : column.headerName || column.field}
+              </TableColumn>
+            )}
+          </TableHeader>
+          <TableBody
+            items={items}
+            emptyContent={
+              <div className="flex flex-col items-center justify-center gap-3 py-10 text-slate-400">
+                <PiEmpty size={40} />
+                <p className="text-sm">No data to display</p>
+              </div>
+            }
+          >
+            {(item: any) => (
+              <TableRow key={item.key}>
+                {(columnKey) => {
+                  const column = tableColumns.find(
+                    (col: any) => col.uid === String(columnKey)
+                  );
+                  return (
+                    <TableCell>{renderCellContent(column, item)}</TableCell>
+                  );
+                }}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

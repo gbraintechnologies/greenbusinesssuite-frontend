@@ -17,21 +17,24 @@ function ItemsPerPageSelector({ limit = 10, setLimit }: any) {
 
   //
   return (
-    <div className="flex text-gray-500 text-sm px-2 items-center gap-2">
+    <div className="flex text-sm items-center gap-2 text-slate-500">
       Items per page{" "}
       <Dropdown
         showArrow
         classNames={{
           base: "before:bg-default-200",
-          content: "w-20 py-1 px-1 border border-default-200 ",
+          content: "w-20 border border-default-200 px-1 py-1",
         }}
         size="sm"
         className="w-20"
         shouldBlockScroll={false}
       >
         <DropdownTrigger>
-          <button className="flex justify-between outline-none items-center px-3 py-1 gap-2">
-            <div className="text-sm">{limit}</div>
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 outline-none"
+          >
+            <span>{limit}</span>
             <BsChevronDown color="#94A3B8" />
           </button>
         </DropdownTrigger>

@@ -375,66 +375,73 @@ function page() {
   ];
 
   return (
-    <div className="px-5 pb-10">
-      <h3 className="font-semibold mb-8 text-xl">Notifications Center</h3>
-
-      <div>
-        <div className="flex justify-between items-center my-2 mb-8">
-          <Tabs
-            activeFilter={activeFilter}
-            setActiveFilter={setActiveFilter}
-            filters={filters}
-          />
-          <div className={"flex gap-1 items-center"}>
-            <SendMessage type="super-admin" />
-            <RecurringTypeFilter
-              selected={recurringType}
-              setSelected={setRecurringType}
-              setPage={setRecurringMessagesPage}
-              handleSelectAll={handleSelectAll}
-              activeFilterId={activeFilter.id}
-            />
-          </div>
+    <div className="px-3 pb-10 sm:px-5">
+      <div className="mb-5 flex flex-col gap-4 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h3 className="text-xl font-semibold text-slate-900">
+            Notifications Center
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Review message history and manage recurring notifications.
+          </p>
         </div>
-        <DataTable
-          isLoading={
-            isLoading ||
-            recurringMessagesLoading ||
-            recurringMessagesByTypeLoading
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <SendMessage type="super-admin" />
+          <RecurringTypeFilter
+            selected={recurringType}
+            setSelected={setRecurringType}
+            setPage={setRecurringMessagesPage}
+            handleSelectAll={handleSelectAll}
+            activeFilterId={activeFilter.id}
+          />
+        </div>
+      </div>
+
+      <div className="mb-4 overflow-x-auto">
+        <Tabs
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          filters={filters}
+        />
+      </div>
+
+      <DataTable
+        isLoading={
+          isLoading ||
+          recurringMessagesLoading ||
+          recurringMessagesByTypeLoading
+        }
+        rows={activeFilter.id == 0 ? messageHistoryRows : recurringRows}
+        columns={
+          activeFilter.id == 0 ? messageHistoryColumns : recurringColumns
+        }
+      />
+
+      <div className="mt-4 flex w-full flex-col gap-3 rounded-xl border border-slate-200 bg-white px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+        <ItemsPerPageSelector
+          limit={
+            activeFilter?.id == 0 ? allMessagesLimit : recurringMessagesLimit
           }
-          rows={activeFilter.id == 0 ? messageHistoryRows : recurringRows}
-          columns={
-            activeFilter.id == 0 ? messageHistoryColumns : recurringColumns
+          setLimit={
+            activeFilter?.id == 0
+              ? setAllMessagesLimit
+              : setRecurringMessagesLimit
           }
         />
-
-        {/*PAGINATION */}
-        <div className="w-full flex justify-between">
-          <ItemsPerPageSelector
-            limit={
-              activeFilter?.id == 0 ? allMessagesLimit : recurringMessagesLimit
-            }
-            setLimit={
-              activeFilter?.id == 0
-                ? setAllMessagesLimit
-                : setRecurringMessagesLimit
-            }
-          />
-          <Pagination
-            currentData={activeFilter?.id == 0 ? messages : recurringMessages}
-            limit={
-              activeFilter?.id == 0 ? allMessagesLimit : recurringMessagesLimit
-            }
-            page={
-              activeFilter?.id == 0 ? allMessagesPage : recurringMessagesPage
-            }
-            setPage={
-              activeFilter?.id == 0
-                ? setAllMessagesPage
-                : setRecurringMessagesPage
-            }
-          />
-        </div>
+        <Pagination
+          currentData={activeFilter?.id == 0 ? messages : recurringMessages}
+          limit={
+            activeFilter?.id == 0 ? allMessagesLimit : recurringMessagesLimit
+          }
+          page={
+            activeFilter?.id == 0 ? allMessagesPage : recurringMessagesPage
+          }
+          setPage={
+            activeFilter?.id == 0
+              ? setAllMessagesPage
+              : setRecurringMessagesPage
+          }
+        />
       </div>
 
       {/* MODAL */}

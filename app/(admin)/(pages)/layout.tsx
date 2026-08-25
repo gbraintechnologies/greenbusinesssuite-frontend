@@ -205,7 +205,7 @@ export default function AdminLayout({
                           pathname.includes("settings")
                             ? "ml-0"
                             : "md:ml-[17.5rem]"
-                        } w-full min-w-0 px-4 pt-4 sm:px-5`}
+                        } w-full min-w-0 px-2 pt-4 sm:px-5`}
                       >
                         {children}
                       </div>

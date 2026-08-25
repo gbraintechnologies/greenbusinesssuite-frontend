@@ -32,16 +32,16 @@ function CategorySetup() {
   return (
     <div className="w-full pb-20">
       <Nav />
-      <div className="flex items-center px-5 justify-between my-4">
-        <h3 className="font-semibold text-xl">Categories</h3>
+      <div className="my-4 flex flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+        <h3 className="text-lg font-semibold sm:text-xl">Categories</h3>
 
-        <div className="flex items-center gap-3 mt-2">
-          <div className="border border-gray-200 rounded-xl px-3 py-2 text-sm flex gap-2 items-center">
+        <div className="flex w-full items-center gap-3 sm:mt-0 sm:w-auto">
+          <div className="flex w-full items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm sm:w-auto">
             <SearchIcon />
             <input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="outline-none text-sm focus:outline-none bg-white custom-input input-custom w-[18vw]"
+              className="custom-input input-custom w-full min-w-0 bg-transparent text-sm outline-none focus:outline-none sm:w-56 md:w-64"
               placeholder="Search by category name ..."
             />
           </div>
@@ -49,14 +49,14 @@ function CategorySetup() {
       </div>
       <div className="w-full">
         {isLoadingAllCategories || isLoadingSearch ? (
-          <div className="flex items-center justify-center text-center w-full  min-h-[40vh]">
-            <div className="flex flex-col items-center gap-3 justify-center">
+          <div className="flex min-h-[40vh] w-full items-center justify-center text-center">
+            <div className="flex flex-col items-center justify-center gap-3">
               <LoadingIcon />
               <p>Searching for categories</p>
             </div>
           </div>
         ) : categoriesToDisplay?.length > 0 ? (
-          <div className="p-6 grid grid-cols-3 gap-[22px]">
+          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 sm:gap-[22px] sm:p-6 lg:grid-cols-3">
             {categoriesToDisplay.map((item: any) => (
               <Link
                 key={item.id}
@@ -70,12 +70,12 @@ function CategorySetup() {
             ))}
           </div>
         ) : (
-          <div className="flex items-center min-h-[40vh] flex-col justify-center gap-10">
+          <div className="flex min-h-[40vh] flex-col items-center justify-center gap-6 px-4 sm:gap-10">
             <PiEmpty size={60} />
-            <p className="font-light text-lg max-w-xs text-center">
+            <p className="max-w-xs text-center text-base font-light sm:text-lg">
               No categories found matching{" "}
               <span className="font-semibold underline underline-offset-4">
-                {searchTerm}
+                {searchTerm || "your search"}
               </span>
             </p>
           </div>

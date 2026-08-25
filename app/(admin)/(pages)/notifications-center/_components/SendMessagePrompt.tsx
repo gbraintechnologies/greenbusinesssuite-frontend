@@ -1,16 +1,8 @@
 "use client";
 
 import Notifications from "@/app/(admin)/(pages)/notifications-center/_components/Notifications";
-import { useRouter } from "next/navigation";
 import React from "react";
-
-// icons
-import { IoIosArrowBack } from "react-icons/io";
-
 import { Modal, ModalContent, useDisclosure } from "@heroui/modal";
-
-//
-import Link from "next/link";
 import { TbMessage } from "react-icons/tb";
 
 function SendMessage({
@@ -19,25 +11,22 @@ function SendMessage({
   type?: "super-admin" | "company-admin";
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const router = useRouter();
 
-  //
   return (
     <>
-      <div className="flex items-center gap-3 px-5">
-        <button
-          onClick={() => onOpen()}
-          className=" bg-white text-[#334155] border border-[rgba(226, 232, 240, 1)] w-auto flex text-sm px-2 font-medium py-2 hover:opacity-95 items-center justify-center gap-2 rounded-lg "
-        >
-          <TbMessage color={"#334155"} size={20} />
-          Send Message
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={() => onOpen()}
+        className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+      >
+        <TbMessage size={18} />
+        Send Message
+      </button>
 
       <Modal
         backdrop="opaque"
         scrollBehavior="inside"
-        className="bg-white rounded-xl"
+        className="rounded-xl bg-white"
         classNames={{
           backdrop: "bg-black bg-opacity-30",
         }}
@@ -46,11 +35,7 @@ function SendMessage({
         onOpenChange={onOpenChange}
       >
         <ModalContent className="bg-white">
-          {(onClose) => (
-            <>
-              <Notifications type={type} onClose={onClose} />
-            </>
-          )}
+          {(onClose) => <Notifications type={type} onClose={onClose} />}
         </ModalContent>
       </Modal>
     </>
