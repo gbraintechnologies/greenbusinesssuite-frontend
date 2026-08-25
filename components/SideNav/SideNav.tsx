@@ -89,7 +89,7 @@ function isGroupActive(
   pathname: string,
   items: NavItem[] = [],
   bestMatch: string | null
-) {
+): boolean {
   return items.some((item) => {
     if (item.subNavigation?.length) {
       return isGroupActive(pathname, item.subNavigation, bestMatch);
