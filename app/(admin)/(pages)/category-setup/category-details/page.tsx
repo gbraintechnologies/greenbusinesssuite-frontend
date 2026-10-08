@@ -13,7 +13,6 @@ import { toast } from "sonner";
 import services from "@/services";
 import { deleteSpecificCategoryByID } from "@/services/features/categoryService";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import { refreshToken } from "@/services/features/appService";
 
 interface Category {
   categoryName: string;

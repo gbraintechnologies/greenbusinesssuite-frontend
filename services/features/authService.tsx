@@ -9,8 +9,9 @@ export const login = ({ username, password, tenantid }: any) => {
   });
 };
 
-export const currentLoggedIn = (token: any) => {
-  return authApi.post(`/users/current_logged_in/?token=${token}`);
+/** GET /users/me replaces POST /users/current_logged_in. */
+export const currentLoggedIn = (_token?: string) => {
+  return authApi.get(`/users/me`);
 };
 
 export const changePassword = (data: any) => {
@@ -19,18 +20,6 @@ export const changePassword = (data: any) => {
 
 export const updateUser = (user_id: any, userData: any) => {
   return authApi.put(`/users/update/${user_id}`, userData);
-};
-
-export const setPassword = ({
-  user_id,
-  current_password,
-  new_password,
-}: any) => {
-  return authApi.post("/users/set_password", {
-    user_id,
-    current_password,
-    new_password,
-  });
 };
 
 /** POST /auth/forgot-password */

@@ -76,11 +76,6 @@ export const updateUserRole = (userID: any, roleID: any) => {
   return authApi.put(`/users/${userID}/role/${roleID}`);
 };
 
-export const allUserRoles = (limit: number = 100) => {
-  return () =>
-    authApi.get(`/apps/all_roles/?limit=${limit}`).then((res) => res.data);
-};
-
 export const getRoleById = (id: number) => {
   return () =>
     authApi.get(`/roles/permission-by-id/${id}`).then((res) => res.data);

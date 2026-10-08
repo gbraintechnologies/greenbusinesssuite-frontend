@@ -1,18 +1,22 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { FiBookOpen } from "react-icons/fi";
+import services from "@/services";
 import AnalyticsPageShell from "../_components/AnalyticsPageShell";
 import AnalyticsKpiGrid from "../_components/AnalyticsKpiGrid";
 import AnalyticsDonut from "../_components/AnalyticsDonut";
 import AnalyticsBar from "../_components/AnalyticsBar";
 import AnalyticsFilter from "../_components/AnalyticsFilter";
 import RegionBreakdown from "../_components/RegionBreakdown";
-import { TRAINING_PROGRAMS, trainingMock } from "../_data/mockAnalytics";
 
 export default function TrainingAnalyticsPage() {
   const [programId, setProgramId] = useState("all");
-  const data = useMemo(() => trainingMock(programId), [programId]);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["analytics", "training", programId],
+    queryFn: () => services.getTrainingAnalytics(programId),
+  });
 
   return (
     <AnalyticsPageShell
@@ -21,31 +25,39 @@ export default function TrainingAnalyticsPage() {
       action={
         <AnalyticsFilter
           label="Training program"
-          options={TRAINING_PROGRAMS}
+          options={data?.programs ?? [{ id: "all", label: "All programs" }]}
           value={programId}
           onChange={setProgramId}
         />
       }
     >
-      <AnalyticsKpiGrid
-        items={[
-          {
-            label: data.kpis[0].label,
-            value: data.kpis[0].value,
-            icon: <FiBookOpen size={18} />,
-          },
-        ]}
-      />
+      {isLoading && <p className="text-sm text-slate-500">Loading analytics…</p>}
+      {isError && (
+        <p className="text-sm text-red-600">Could not load training analytics.</p>
+      )}
+      {data && (
+        <>
+          <AnalyticsKpiGrid
+            items={[
+              {
+                label: data.kpis[0]?.label ?? "Total trainees",
+                value: data.kpis[0]?.value ?? 0,
+                icon: <FiBookOpen size={18} />,
+              },
+            ]}
+          />
 
-      <div className="mb-5 grid gap-4 lg:grid-cols-2">
-        <AnalyticsDonut title="Gender" data={data.gender} />
-        <AnalyticsBar title="Age breakdown" data={data.age} />
-      </div>
+          <div className="mb-5 grid gap-4 lg:grid-cols-2">
+            <AnalyticsDonut title="Gender" data={data.gender ?? []} />
+            <AnalyticsBar title="Age breakdown" data={data.age ?? []} />
+          </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <RegionBreakdown data={data.regions} />
-        <AnalyticsBar title="Sector breakdown" data={data.sectors} color="teal" />
-      </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <RegionBreakdown data={data.regions ?? []} />
+            <AnalyticsBar title="Sector breakdown" data={data.sectors ?? []} color="teal" />
+          </div>
+        </>
+      )}
     </AnalyticsPageShell>
   );
 }

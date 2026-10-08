@@ -84,20 +84,6 @@ export const editCompanySMSSenderIDWithCustomFields = async (
   });
 };
 
-export const getCustomFields = () => {
-  return authApi.get("/companies/get_custom_fields").then((res) => res.data);
-};
-
-export const getCustomFieldsForCompany = (companyId: number) => {
-  return () =>
-    authApi
-      .post(`/companies/fetch_company_custom_field/`, {
-        company_id: companyId,
-        custom_profile_item_id: 0,
-      })
-      .then((res) => res.data);
-};
-
 // company Administration
 export const assignAdminToCompany = (adminID: number, companyID: number) => {
   return authApi.put("/companies/admin", {
@@ -124,10 +110,6 @@ export const assignAndCreateAdminWithTenantId = ({
   });
 
   return customAxios.put("/companies/admin", data);
-};
-
-export const getSupportStaffAssignedCompanies = (userId: any) => {
-  return authApi.get(`/company/get_support_staff_assigned_companies/${userId}`);
 };
 
 // Company Branding — re-exported from brandingService for backwards compatibility

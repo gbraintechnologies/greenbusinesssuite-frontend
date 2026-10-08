@@ -1,10 +1,6 @@
 import authApi from "../meshAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
 
-export const allSectors = () => {
-  return () => authApi.get("/sectors").then((res) => res.data);
-};
-
 export const allParentSectors = (pageNumber: number, pageSize: number) => {
   return () =>
     authApi

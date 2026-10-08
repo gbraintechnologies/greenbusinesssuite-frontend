@@ -40,6 +40,8 @@ import * as branding from "./features/brandingService";
 
 import * as payments from "./features/paymentService";
 
+import * as analytics from "./features/analyticsService";
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   ...localService,
@@ -63,4 +65,5 @@ export default {
   ...external,
   ...branding,
   ...payments,
+  ...analytics,
 };
