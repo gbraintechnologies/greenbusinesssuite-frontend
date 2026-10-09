@@ -14,6 +14,7 @@ type Props = {
   avatarUrl?: string | null;
   settingsHref: string;
   onLogout: () => void;
+  tone?: "onDark" | "onLight";
 };
 
 function getInitials(firstName?: string, lastName?: string) {
@@ -35,8 +36,10 @@ export default function TopNavProfileMenu({
   avatarUrl,
   settingsHref,
   onLogout,
+  tone = "onDark",
 }: Props) {
   const [showLogOutModal, setShowLogOutModal] = useState(false);
+  const onLight = tone === "onLight";
 
   const displayName =
     [firstName, lastName].filter(Boolean).join(" ") || "Account";
@@ -44,8 +47,20 @@ export default function TopNavProfileMenu({
   return (
     <>
       <Menu as="div" className="relative">
-        <MenuButton className="group flex items-center gap-2 rounded-full border border-white/20 bg-white/10 py-1 pl-1 pr-2.5 transition-all hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-xs font-semibold text-brand-700 shadow-sm">
+        <MenuButton
+          className={`group flex items-center gap-2 rounded-full py-1 pl-1 pr-2.5 transition-all focus:outline-none focus-visible:ring-2 ${
+            onLight
+              ? "border border-[#e3e3e3] bg-white hover:bg-[#f8fafd] focus-visible:ring-[#0b57d0]/30"
+              : "border border-white/20 bg-white/10 hover:bg-white/20 focus-visible:ring-white/50"
+          }`}
+        >
+          <span
+            className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold shadow-sm ${
+              onLight
+                ? "bg-[#0b57d0] text-white"
+                : "bg-white text-brand-700"
+            }`}
+          >
             {hasAvatar(avatarUrl) ? (
               <Image
                 alt={displayName}
@@ -60,14 +75,25 @@ export default function TopNavProfileMenu({
             )}
           </span>
           <span className="hidden max-w-[140px] truncate text-left sm:block">
-            <span className="block text-xs font-semibold leading-tight text-white">
+            <span
+              className={`block text-xs font-semibold leading-tight ${
+                onLight ? "text-[#1f1f1f]" : "text-white"
+              }`}
+            >
               {displayName}
             </span>
-            <span className="block truncate text-[10px] leading-tight text-white/70">
+            <span
+              className={`block truncate text-[10px] leading-tight ${
+                onLight ? "text-[#444746]" : "text-white/70"
+              }`}
+            >
               {email ?? ""}
             </span>
           </span>
-          <FiChevronDown size={14} className="shrink-0 text-white/80" />
+          <FiChevronDown
+            size={14}
+            className={`shrink-0 ${onLight ? "text-[#444746]" : "text-white/80"}`}
+          />
         </MenuButton>
 
         <Transition

@@ -32,26 +32,27 @@ export default function ClientPortalLayout({
 
   if (!hasHydrated || !accessToken) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-surface-muted">
-        <AiOutlineLoading3Quarters size={24} className="animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-[#f0f4f9]">
+        <AiOutlineLoading3Quarters size={24} className="animate-spin text-[#0b57d0]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface-muted">
-      <nav className="fixed top-0 z-[100] flex h-14 w-full items-center justify-between border-b border-brand-800/30 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-700 px-4 shadow-[0_4px_20px_-8px_rgba(91,33,182,0.45)] sm:px-5">
-        <Link href="/client" className="flex items-center" aria-label="Client portal">
+    <div className="min-h-screen bg-[#f0f4f9] text-[#1f1f1f]">
+      <header className="sticky top-0 z-[100] flex h-16 items-center justify-between border-b border-[#e3e3e3] bg-white px-4 sm:px-6">
+        <Link href="/client" className="flex items-center" aria-label="Green Business Suite">
           <Image
-            src="/brand/greensuite_logo_white.png"
+            src="/brand/greensuite_logo_on_light.png"
             alt="Green Business Suite"
             width={180}
             height={60}
-            className="h-9 w-auto"
+            className="h-8 w-auto"
             unoptimized
           />
         </Link>
         <TopNavProfileMenu
+          tone="onLight"
           firstName={person?.firstName ?? person?.first_name}
           lastName={person?.lastName ?? person?.last_name}
           email={person?.email}
@@ -64,8 +65,8 @@ export default function ClientPortalLayout({
             router.push("/auth");
           }}
         />
-      </nav>
-      <div className="pt-14">{children}</div>
+      </header>
+      <main>{children}</main>
     </div>
   );
 }
