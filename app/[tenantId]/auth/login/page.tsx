@@ -31,17 +31,13 @@ import { Button } from "@heroui/react";
 import Image from "next/image";
 import CompanyLogo from "@/components/ThemeLogo/CompanyLogo";
 import { getSessionTenantID } from "@/services/localService";
+import { isPlatformAdmin } from "@/lib/platformRole";
 
 //
 
 function CompanyAdminAuth(props: any) {
   const params: any = use(props.params);
-  const {
-    addCompanyAdminData,
-    companyAdmin,
-    companyBranding,
-    removeCompanyAdmin,
-  } = useCompany();
+  const { companyBranding } = useCompany();
 
   const search = useSearchParams();
 
@@ -51,9 +47,9 @@ function CompanyAdminAuth(props: any) {
   const companyName = search.get("c");
 
   //
-  const { addUserData, removeUser } = useUser();
-  const { auth, addAuthData, removeAuth } = useAuth();
-  const { removeAdmin } = useAdmin();
+  const { addUserData } = useUser();
+  const { addAuthData } = useAuth();
+  const { addAdminData } = useAdmin();
 
   const router = useRouter();
 
@@ -132,45 +128,20 @@ function CompanyAdminAuth(props: any) {
       if (loginData?.status === 200) {
         addAuthData(loginData.data);
 
-        // CHECK FOR USER ROLE
-        let userRole = loginData?.data?.roleName.toUpperCase() ?? "CLIENT";
+        toast.success("Logged in");
 
-        // TODO: CHECK FOR ADMIN TEMP PASSWORD
-        // all newly created accounts have to verify
-        // if (userStatus === "NEWLY_CREATED") {
-        //   toast("Verify your account");
-        //   router.push(`/${tenantId}/auth/verify-account`);
-        //   return;
-        // }
-
-        // // all temp credentials have to create a password
-        // if (userStatus === "TEMP_CREDENTIALS") {
-        //   toast("Create your password");
-        //   router.push(
-        //     `/${tenantId}/auth/create-password?temp=${data.password}`
-        //   );
-        //   return;
-        // }
-
-        // check role and navigate to right dashboard
-        if (userRole == "ADMIN") {
-          addCompanyAdminData(loginData?.data);
-          toast.success("Logged in");
-          router.push(`/${tenantId}/admin`);
-        } else {
-          addUserData(loginData?.data);
-          toast.success("Logged in");
-
-          // send to form processing if redirect exists
-          if (Boolean(redirectTo)) {
-            router.push(
-              `/${tenantId}/invite-form?f=${formId}&c=${companyName}`
-            );
-            return;
-          }
-
-          router.push(`/${tenantId}/client/home`);
+        if (isPlatformAdmin(loginData.data)) {
+          addAdminData(loginData.data);
+          router.push("/");
+          return;
         }
+
+        addUserData(loginData.data);
+        if (Boolean(redirectTo)) {
+          router.push(`/${tenantId}/invite-form?f=${formId}&c=${companyName}`);
+          return;
+        }
+        router.push("/client");
       }
     } catch (error) {
       // @ts-ignore

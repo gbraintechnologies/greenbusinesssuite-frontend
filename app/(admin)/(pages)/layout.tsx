@@ -14,6 +14,7 @@ import BuilderNav from "./forms/builder/FormTopNav";
 // hooks
 import useAdmin from "@/hooks/useAdmin";
 import useAuth from "@/hooks/useAuth";
+import { isPlatformAdmin } from "@/lib/platformRole";
 
 //
 import { FormProvider } from "../../../contexts/FormContext";
@@ -44,7 +45,8 @@ export default function AdminLayout({
 
   const sessionReady = Boolean(adminHydrated && authHydrated);
   const accessToken = auth?.accessToken ?? auth?.access_token;
-  const isAuthenticated = Boolean(admin) && Boolean(accessToken);
+  const isAuthenticated = Boolean(accessToken);
+  const platformAdmin = isPlatformAdmin(admin ?? auth);
 
   // Wait for localStorage hydration, then redirect if unauthenticated.
   // Auth is client-only (no middleware), so we must not paint the dashboard
@@ -53,10 +55,14 @@ export default function AdminLayout({
     if (!sessionReady) return;
     if (!isAuthenticated) {
       router.replace("/auth");
+      return;
     }
-  }, [sessionReady, isAuthenticated, router]);
+    if (!platformAdmin) {
+      router.replace("/client");
+    }
+  }, [sessionReady, isAuthenticated, platformAdmin, router]);
 
-  const loading = !sessionReady || !isAuthenticated;
+  const loading = !sessionReady || !isAuthenticated || !platformAdmin;
 
   // ADMIN NAVIGATION
   const navigation = [

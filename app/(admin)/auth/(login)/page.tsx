@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
 import Logo from "./components/Logo";
-import { login, currentLoggedIn } from "@/services/features/authService";
+import { login } from "@/services/features/authService";
 
 // icons
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -20,8 +20,8 @@ import useAdmin from "@/hooks/useAdmin";
 import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
 import useUser from "@/hooks/useUser";
-import useCompany from "@/hooks/useCompany";
 import { Button } from "@heroui/react";
+import { isPlatformAdmin } from "@/lib/platformRole";
 
 const schema = yup.object({
   username: yup.string().required("Email is required"),
@@ -34,34 +34,16 @@ const schema = yup.object({
 function LogIn() {
   const router = useRouter();
 
-  const { admin, removeAdmin, addAdminData } = useAdmin();
-  const { auth, removeAuth, addAuthData } = useAuth();
-  const { removeUser } = useUser();
-  const { removeCompanyAdmin } = useCompany();
+  const { admin, removeAdmin, addAdminData, hasHydrated: adminHydrated } = useAdmin();
+  const { auth, removeAuth, addAuthData, hasHydrated: authHydrated } = useAuth();
+  const { removeUser, addUserData } = useUser();
 
-  // clear all other users if necessary
   useEffect(() => {
-    if (admin !== null && Boolean(auth?.access_token)) {
-      // go to dashboard without logging if data & auth is present
-      // take care of edge case of new user
-      if (
-        admin?.user_status !== "NEWLY_CREATED" ||
-        admin?.user_status !== "TEMP_CREDENTIALS"
-      ) {
-        toast.success("Logged in");
-        router.push("/");
-      }
-    } else {
-      removeAdmin();
-      removeAuth();
-      removeCompanyAdmin();
-      removeUser();
-    }
-
-    // Clear session storage always
-    sessionStorage.clear();
-    localStorage.clear();
-  }, []);
+    if (!authHydrated || !adminHydrated) return;
+    const accessToken = auth?.accessToken ?? auth?.access_token;
+    if (!accessToken) return;
+    router.replace(isPlatformAdmin(admin ?? auth) ? "/" : "/client");
+  }, [authHydrated, adminHydrated, admin, auth, router]);
 
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -97,10 +79,16 @@ function LogIn() {
 
       if (token?.status === 200) {
         addAuthData(token?.data);
-        addAdminData(token?.data);
-
         toast.success("Logged in");
-        router.push("/");
+        if (isPlatformAdmin(token?.data)) {
+          addAdminData(token?.data);
+          removeUser();
+          router.push("/");
+        } else {
+          removeAdmin();
+          addUserData(token?.data);
+          router.push("/client");
+        }
 
         // TODO: Refactoring
         // const user = await fetchCurrentUser(token.data?.access_token);

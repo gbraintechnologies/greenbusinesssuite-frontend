@@ -94,7 +94,6 @@ function Page(props: any) {
       firstName: values.firstName,
       lastName: values.lastName,
       password: values?.password,
-      roleId: 2,
       profile_image: "",
       phone: phone,
       status: "ACTIVE",
