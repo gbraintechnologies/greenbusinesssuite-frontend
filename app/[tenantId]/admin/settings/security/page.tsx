@@ -16,10 +16,10 @@ import CompanyThemedButton from "@/components/Buttons/CompanyThemedButton";
 const schema = yup.object({
   user_id: yup.number(),
   current_password: yup.string(),
-  new_password: yup.string().min(6, "Password must be at least 6 characters"),
+  new_password: yup.string().min(4, "Password must be at least 4 characters"),
   confirm_password: yup
     .string()
-    .min(6, "Password must be at least 6 characters"),
+    .min(4, "Password must be at least 4 characters"),
 });
 
 function Security() {

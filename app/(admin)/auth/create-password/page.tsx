@@ -19,11 +19,11 @@ import services from "@/services";
 
 const schema = yup.object({
   user_id: yup.number(),
-  new_password: yup.string().min(6, "Password must be at least 6 characters"),
+  new_password: yup.string().min(4, "Password must be at least 4 characters"),
   current_password: yup.string(),
   confirm_password: yup
     .string()
-    .min(6, "Password must be at least 6 characters"),
+    .min(4, "Password must be at least 4 characters"),
 });
 
 function CreatePassword() {
