@@ -1,5 +1,5 @@
 import React from "react";
-import { IFilter } from "../@managecompanies/page";
+import { IFilter } from "@/types";
 import TabItem from "./TabItem";
 
 type Props = {
