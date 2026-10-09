@@ -62,7 +62,7 @@ function BrandingPage() {
   return (
     <div className="min-h-screen bg-surface-muted px-3 pb-20 pt-4 sm:px-5 sm:pt-5">
       <DashboardHeader
-        title="Company Branding"
+        title="Branding"
         subtitle="Logo and color for Green Business Suite"
         action={
           <Link

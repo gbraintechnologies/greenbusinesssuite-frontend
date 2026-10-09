@@ -7,7 +7,7 @@ function Nav() {
   return (
     <div className="mb-4 flex w-full flex-col gap-3 text-[#0F172A] sm:flex-row sm:items-center sm:justify-between">
       <h3 className="shrink-0 text-xl font-semibold sm:text-2xl">
-        User Management
+        Clients
       </h3>
 
       <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
@@ -17,7 +17,7 @@ function Nav() {
           href="/usermanagement/new-user"
           className="w-full text-white sm:w-auto"
         >
-          New User
+          New client
         </Button>
         <Button
           as={Link}

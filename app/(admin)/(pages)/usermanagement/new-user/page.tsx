@@ -193,7 +193,7 @@ function NewUser() {
                   <IoIosArrowBack size={20} />
                 </div>
                 <h3 className="font-semibold text-xl">
-                  Create new user account
+                  Create new client
                 </h3>
               </div>
               <div className="flex gap-3">
