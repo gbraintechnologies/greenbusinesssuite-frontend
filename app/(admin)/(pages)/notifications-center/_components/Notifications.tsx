@@ -162,19 +162,14 @@ const Notifications: React.FC<Props> = ({
   const groupFilters: IFilter[] = [
     {
       id: 0,
-      name: "Users",
+      name: "Clients",
       value: "Users",
-    },
-    {
-      id: 1,
-      name: "Companies",
-      value: "companies",
     },
   ];
 
   const [activeGroupFilter, setActiveGroupFilter] = useState<IFilter>({
     id: 0,
-    name: "Users",
+    name: "Clients",
     value: "Users",
   });
 

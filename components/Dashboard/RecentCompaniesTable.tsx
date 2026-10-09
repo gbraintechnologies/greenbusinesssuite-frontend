@@ -17,6 +17,9 @@ type Props = {
   companies: CompanyRow[];
   isLoading?: boolean;
   viewAllHref?: string;
+  title?: string;
+  emptyLabel?: string;
+  nameLabel?: string;
 };
 
 const statusStyles: Record<string, string> = {
@@ -29,10 +32,13 @@ export default function RecentCompaniesTable({
   companies,
   isLoading,
   viewAllHref,
+  title = "Recent Companies",
+  emptyLabel = "No companies found.",
+  nameLabel = "Company",
 }: Props) {
   return (
     <DashboardPanel
-      title="Recent Companies"
+      title={title}
       action={
         viewAllHref ? (
           <Link
@@ -50,14 +56,14 @@ export default function RecentCompaniesTable({
         </div>
       ) : companies.length === 0 ? (
         <p className="py-8 text-center text-sm text-slate-500">
-          No companies found.
+          {emptyLabel}
         </p>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-500">
-                <th className="pb-3 pr-4 font-medium">Company</th>
+                <th className="pb-3 pr-4 font-medium">{nameLabel}</th>
                 <th className="pb-3 pr-4 font-medium">Email</th>
                 <th className="pb-3 pr-4 font-medium">Status</th>
                 <th className="pb-3 font-medium">Created</th>

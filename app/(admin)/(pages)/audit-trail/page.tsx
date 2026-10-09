@@ -26,10 +26,6 @@ function AuditTrail() {
     dropdownOptions[0]
   );
 
-  const [selectedCompany, setSelectedCompany] = React.useState({
-    company_name: "All Companies",
-  });
-
   const [selectedTimeline, setSelectedTimeline] = React.useState<any>()
 
   const [rows, setRows] = React.useState([]);
@@ -37,11 +33,6 @@ function AuditTrail() {
   const { data, isLoading: usersLoading } = useQuery({
     queryKey: ["all users"],
     queryFn: services.allUsers(),
-  });
-
-  const { data: companies, isLoading: companyDataLoading } = useQuery({
-    queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(),
   });
 
   useEffect(() => {
@@ -168,7 +159,7 @@ function AuditTrail() {
     },
   ];
 
-  if (usersLoading || companyDataLoading) {
+  if (usersLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
         <div>
@@ -192,14 +183,6 @@ function AuditTrail() {
               selected={selectedOption}
               setSelected={setSelectedOption}
               labelName={"label"}
-            />
-
-            <Dropdown
-              options={[{ company_name: "All Companies" }, ...companies]}
-              selected={selectedCompany}
-              setSelected={setSelectedCompany}
-              width="w-64"
-              labelName={"company_name"}
             />
 
             <DatePicker selectedTimeline={selectedTimeline} setSelectedTimeline={setSelectedTimeline} />

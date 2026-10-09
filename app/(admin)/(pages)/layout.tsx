@@ -71,18 +71,14 @@ export default function AdminLayout({
       link: "/forms",
     },
     {
-      name: "Companies",
+      name: "Suite",
       icon: <PiBuildingsBold size={18} />,
       link: null,
       subNavigation: [
         {
-          name: "All Companies",
+          name: "Green Business Suite",
           icon: null,
-          link: [
-            "/company-setup",
-            "/company-setup/create",
-            "/company-setup/configuration/create",
-          ],
+          link: ["/company-setup"],
         },
         {
           name: "Category setup",
@@ -124,7 +120,7 @@ export default function AdminLayout({
       ],
     },
     {
-      name: "User management",
+      name: "Clients",
       icon: <FiUsers size={18} />,
       link: "/usermanagement",
     },

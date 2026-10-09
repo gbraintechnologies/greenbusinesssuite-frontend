@@ -65,7 +65,7 @@ export default function BrandingDetailPage() {
     <div className="min-h-screen bg-surface-muted px-3 pb-20 pt-4 sm:px-5 sm:pt-5">
       <DashboardHeader
         title={data.companyName || "Branding detail"}
-        subtitle={`Tenancy ${data.tenancyId} · Record #${data.id}`}
+        subtitle={`Green Business Suite · Record #${data.id}`}
         action={
           <div className="flex flex-wrap gap-2">
             <Link

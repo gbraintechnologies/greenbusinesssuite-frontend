@@ -11,7 +11,7 @@ export default function CreateBrandingPage() {
     <div className="min-h-screen bg-surface-muted px-3 pb-20 pt-4 sm:px-5 sm:pt-5">
       <DashboardHeader
         title="Create branding"
-        subtitle="Set logo and color for a company tenant"
+        subtitle="Set the logo and color for Green Business Suite"
         action={
           <Link
             href="/branding"

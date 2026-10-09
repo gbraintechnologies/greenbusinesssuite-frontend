@@ -3,52 +3,35 @@
 import React, { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 
-import { VscEmptyWindow } from "react-icons/vsc";
-
 // icons
 import { FiEdit2 } from "react-icons/fi";
 import { VscLink } from "react-icons/vsc";
 
-//components
-import Modal from "@/components/Modal/Modal";
-
 // services
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import services from "@/services";
 
 // COMPONENTS
-import AssignForm from "./components/AssignForm";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import PublishFormButton from "../builder/PublishFormButton";
-import CompanyBrandAvatar from "@/components/CompanyBrand/CompanyBrandAvatar";
 
 // toast
 import { toast } from "sonner";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
-import { CompanyType } from "@/types";
 
 function FormDetail(props: any) {
   const params: any = use(props.params);
   let formID = params.formId;
 
   const [showUnpublishModal, setShowUnpublishModal] = useState(false);
-  const [showAssignModal, setShowAssignModal] = useState(false);
 
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const { data: form, isLoading } = useQuery({
     queryKey: ["form", parseInt(formID)],
     queryFn: services.getFormById(formID),
     enabled: Boolean(formID),
   });
-
-  const { data: companyData, isLoading: isLoadingCompanyInfo } =
-    useQuery<CompanyType>({
-      queryKey: ["company", parseInt(form?.companyId as string)],
-      queryFn: services.getCompanyById(Number(form?.companyId)),
-      enabled: Boolean(form?.companyId),
-    });
 
   const { data: formStatusCount } = useQuery({
     queryKey: ["Get forms status count"],
@@ -108,16 +91,6 @@ function FormDetail(props: any) {
               </button>
             )}
 
-            {!Boolean(form?.companyId) && (
-              <button
-                type="button"
-                onClick={() => setShowAssignModal(true)}
-                className="btn-outline shrink-0 whitespace-nowrap text-xs sm:text-sm"
-              >
-                <VscLink /> Assign Form
-              </button>
-            )}
-
             <button
               type="button"
               onClick={() => {
@@ -130,7 +103,7 @@ function FormDetail(props: any) {
             </button>
 
             <PublishFormButton
-              tenantId={companyData?.companyIdentifier!}
+              tenantId="mesh_suite_db"
               showUnpublishModal={showUnpublishModal}
               setShowUnpublishModal={setShowUnpublishModal}
               formID={form?.id}
@@ -140,64 +113,14 @@ function FormDetail(props: any) {
       </div>
 
       <div className="mt-5 sm:mt-8 sm:px-5">
-        {/* company assigned */}
-        {companyData && (
-          <p className="mb-3 text-sm font-semibold text-slate-900 sm:mb-5 sm:text-base">
-            Company Assigned
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <p className="text-sm font-semibold text-slate-900">
+            Green Business Suite
           </p>
-        )}
-        {isLoadingCompanyInfo ? (
-          <div className="h-24 animate-pulse rounded-xl bg-gray-200 sm:h-28 sm:rounded-lg sm:p-5" />
-        ) : (
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:rounded-lg sm:border-0 sm:bg-gray-50 sm:p-5 sm:shadow-none">
-            {companyData === null ||
-            form?.companyId === null ||
-            form?.companyId === 0 ? (
-              <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gray-100 sm:h-24 sm:w-24 sm:p-4">
-                  <VscEmptyWindow size={32} className="sm:hidden" />
-                  <VscEmptyWindow size={40} className="hidden sm:block" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-base font-semibold sm:text-lg">
-                    Unassigned Form
-                  </p>
-                  <p className="mb-3 text-sm text-slate-500 sm:mb-4">
-                    Assign a company to form
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setShowAssignModal(true)}
-                    className="btn-outline"
-                  >
-                    <VscLink /> Assign Company
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 sm:gap-5">
-                <CompanyBrandAvatar
-                  logoUrl={companyData?.companyLogo}
-                  name={companyData?.companyName}
-                  size="md"
-                  shape="circle"
-                />
-                {companyData?.companyName && (
-                  <div className="min-w-0">
-                    <p className="truncate text-base font-bold text-slate-900 sm:text-xl">
-                      {companyData.companyName}
-                    </p>
-                    {companyData?.companyIdentifier && (
-                      <p className="mt-0.5 truncate text-xs text-slate-400">
-                        {companyData.companyIdentifier}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+          <p className="mt-1 text-sm text-slate-500">
+            This form is a product of the suite. Clients use it from this account.
+          </p>
+        </div>
 
         {/* statistics */}
         <div className="mt-6 sm:mt-10">
@@ -223,17 +146,6 @@ function FormDetail(props: any) {
         </div>
       </div>
 
-      <Modal
-        isOpen={showAssignModal}
-        setIsOpen={setShowAssignModal}
-        title={`Assign company to form `}
-      >
-        <AssignForm
-          id={formID}
-          setShow={setShowAssignModal}
-          queryClient={queryClient}
-        />
-      </Modal>
     </div>
   );
 }

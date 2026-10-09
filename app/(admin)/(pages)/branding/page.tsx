@@ -63,7 +63,7 @@ function BrandingPage() {
     <div className="min-h-screen bg-surface-muted px-3 pb-20 pt-4 sm:px-5 sm:pt-5">
       <DashboardHeader
         title="Company Branding"
-        subtitle="Manage logos, colors, and branding for all tenants"
+        subtitle="Logo and color for Green Business Suite"
         action={
           <Link
             href="/branding/create"
@@ -75,7 +75,7 @@ function BrandingPage() {
         }
       />
 
-      <DashboardPanel title="All Brandings">
+      <DashboardPanel title="Suite branding">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
           <Pagination
@@ -99,10 +99,10 @@ function BrandingPage() {
               <thead>
                 <tr className="border-b border-slate-100">
                   <th className="w-[28%] pb-3 pr-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Company
+                    Name
                   </th>
                   <th className="w-[22%] pb-3 pr-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Tenancy
+                    Account
                   </th>
                   <th className="w-[14%] pb-3 pr-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
                     Color
@@ -189,20 +189,6 @@ function BrandingPage() {
                         >
                           <FiTrash2 size={12} /> Delete
                         </button>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setDeleteTarget({
-                              type: "tenant",
-                              tenancyId: item.tenancyId,
-                              name: item.companyName,
-                            })
-                          }
-                          className="inline-flex items-center gap-1 rounded-lg border border-red-100 bg-white px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
-                          title="Delete by tenant ID"
-                        >
-                          Del tenant
-                        </button>
                       </div>
                     </td>
                   </tr>
@@ -221,7 +207,7 @@ function BrandingPage() {
         title={
           deleteTarget?.type === "tenant"
             ? `Delete branding for tenant "${deleteTarget.tenancyId}"?`
-            : `Delete branding for "${deleteTarget?.name ?? "company"}"?`
+            : `Delete branding for "${deleteTarget?.name ?? "Green Business Suite"}"?`
         }
       >
         <div className="p-5">

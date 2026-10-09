@@ -151,7 +151,7 @@ function UserManagement() {
         }
         hasSearch={false}
         isLoading={isLoading}
-        title="Users"
+        title="Clients"
         page={1}
         statusComponent={StatusComponent}
         actionsComponent={ActionsComponent}

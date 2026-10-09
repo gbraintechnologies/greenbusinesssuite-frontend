@@ -9,19 +9,9 @@ import DashboardHeader from "@/components/Dashboard/DashboardHeader";
 import KpiCard from "@/components/Dashboard/KpiCard";
 import RecentCompaniesTable from "@/components/Dashboard/RecentCompaniesTable";
 import { formatNumber } from "@/utils/dashboard/formatters";
-import {
-  FiBriefcase,
-  FiFileText,
-  FiLayers,
-  FiUsers,
-} from "react-icons/fi";
+import { FiBriefcase, FiFileText, FiUsers } from "react-icons/fi";
 
 function Dashboard() {
-  const { data: companies, isLoading: companiesLoading } = useQuery({
-    queryKey: ["all companies"],
-    queryFn: services.getAllCompanies(0, 1),
-  });
-
   const { data: users, isLoading: usersLoading } = useQuery({
     queryKey: ["all users"],
     queryFn: services.allUsers(),
@@ -38,37 +28,30 @@ function Dashboard() {
       queryFn: services.unpublishedFormsCount(),
     });
 
-  const { data: companiesPage, isLoading: companiesListLoading } = useQuery({
-    queryKey: ["dashboard recent companies"],
-    queryFn: services.getAllCompanies(0, 5),
-  });
-
-  const recentCompanies = (companiesPage?.content ?? []).map((company: any) => ({
-    id: company.id,
-    serviceName: company.companyName,
-    customerName: company.primaryContactEmail,
-    amountPaid: company.status,
-    datePaid: company.createdOn,
-    paymentMethod: company.primaryContactPhoneNumber,
-  }));
+  const clientList = Array.isArray(users) ? users : users?.content ?? [];
+  const recentClients = clientList
+    .slice(0, 5)
+    .map((user: any) => ({
+      id: user.id,
+      companyName: `${user.firstName ?? user.first_name ?? ""} ${
+        user.lastName ?? user.last_name ?? ""
+      }`.trim() || user.username || user.email,
+      primaryContactEmail: user.email,
+      status: user.status,
+      createdOn: user.createdOn ?? user.created_on,
+    }));
 
   return (
     <div className="min-h-screen bg-surface-muted px-3 pb-20 pt-4 sm:px-5 sm:pt-5">
       <DashboardHeader
-        title="Dashboard"
-        subtitle="Platform overview across all organizations"
+        title="Green Business Suite"
+        subtitle="One company. Clients and products live on this account."
       />
 
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-3">
         <KpiCard
-          label="All Companies"
-          value={formatNumber(companies?.totalElements)}
-          isLoading={companiesLoading}
-          icon={<FiLayers size={18} />}
-        />
-        <KpiCard
-          label="All Users"
-          value={formatNumber(users?.length)}
+          label="Clients"
+          value={formatNumber(clientList.length)}
           isLoading={usersLoading}
           icon={<FiUsers size={18} />}
         />
@@ -88,9 +71,12 @@ function Dashboard() {
 
       <div className="mt-4 sm:mt-6">
         <RecentCompaniesTable
-          companies={companiesPage?.content ?? []}
-          isLoading={companiesListLoading}
-          viewAllHref="/company-setup"
+          companies={recentClients}
+          isLoading={usersLoading}
+          viewAllHref="/usermanagement"
+          title="Recent clients"
+          emptyLabel="No clients yet."
+          nameLabel="Client"
         />
       </div>
     </div>
