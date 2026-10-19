@@ -25,7 +25,7 @@ function TopNav() {
     removeCompanyAdmin,
     companyBranding: company,
   } = useCompany();
-  const { removeAuth } = useAuth();
+  const { logout } = useAuth();
   const router = useRouter();
 
   const brandColor = company?.color || "#7C3AED";
@@ -72,7 +72,7 @@ function TopNav() {
         settingsHref={settingsHref}
         onLogout={() => {
           removeCompanyAdmin();
-          removeAuth();
+          logout();
           toast.success("Logged out");
           router.push(`/${company?.company_identifier}/auth`);
         }}

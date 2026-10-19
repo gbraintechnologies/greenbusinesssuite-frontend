@@ -7,7 +7,13 @@ import { BsThreeDots } from "react-icons/bs";
 import SearchIcon from "@/public/icons/SearchIcon";
 import DataTable from "@/components/DataTable/DataTable";
 import { useRouter } from "next/navigation";
-import { deleteCurrencyByID } from "@/services/features/currencyService";
+import {
+  deleteCurrencyByID,
+  softDeleteCurrencyByID,
+  updateCurrency,
+} from "@/services/features/currencyService";
+import { toast } from "sonner";
+import StatusPill from "@/components/StatusPill/StatusPill";
 import "../index.css";
 import Nav from "../components/Nav";
 import { Countrieses } from "../components/Countries";
@@ -27,6 +33,10 @@ interface Currency {
   currency: string;
   symbol: string;
   countryName: string;
+  denominations?: any;
+  createdOn?: string;
+  updatedOn?: string;
+  isDeleted?: boolean;
 }
 
 interface ActionMenuProps {
@@ -52,14 +62,57 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
     router.push(`/currency-setup/edit-currency?id=${row.id}`);
   };
 
-  const handleDelete = async () => {
+  const runAction = async (
+    action: () => Promise<unknown>,
+    success: string,
+    failure: string
+  ) => {
     handleClose();
     try {
-      await deleteCurrencyByID(row.id);
+      await action();
+      toast.success(success);
       onDeleteSuccess();
     } catch (error) {
-      console.error("Error deleting row:", error);
+      console.error(failure, error);
+      toast.error(failure);
     }
+  };
+
+  const handleArchive = () =>
+    runAction(
+      () => softDeleteCurrencyByID(row.id),
+      "Currency archived",
+      "Could not archive currency"
+    );
+
+  const handleRestore = () =>
+    runAction(
+      () =>
+        updateCurrency({
+          id: row.id,
+          currency: row.currency,
+          symbol: row.symbol,
+          countryName: row.countryName,
+          denominations: row.denominations,
+          isDeleted: false,
+          deletedOn: null,
+        }),
+      "Currency restored",
+      "Could not restore currency"
+    );
+
+  const handleHardDelete = () => {
+    if (
+      !window.confirm(
+        `Permanently delete ${row.currency}? This cannot be undone.`
+      )
+    )
+      return;
+    runAction(
+      () => deleteCurrencyByID(row.id),
+      "Currency deleted",
+      "Could not delete currency"
+    );
   };
 
   return (
@@ -69,14 +122,36 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row, onDeleteSuccess }) => {
         <DropdownTrigger>
           <BsThreeDots size={20} />
         </DropdownTrigger>
-        <DropdownMenu aria-label="Static Actions">
-          <DropdownItem onPress={handleEdit} key="new">
-            Edit
-          </DropdownItem>
-          <DropdownItem onPress={handleDelete} key="copy" color="danger">
-            Delete
-          </DropdownItem>
-        </DropdownMenu>
+        {row.isDeleted ? (
+          <DropdownMenu aria-label="Archived currency actions">
+            <DropdownItem onPress={handleRestore} key="restore">
+              Restore
+            </DropdownItem>
+            <DropdownItem
+              onPress={handleHardDelete}
+              key="hard-delete"
+              color="danger"
+            >
+              Delete permanently
+            </DropdownItem>
+          </DropdownMenu>
+        ) : (
+          <DropdownMenu aria-label="Currency actions">
+            <DropdownItem onPress={handleEdit} key="edit">
+              Edit
+            </DropdownItem>
+            <DropdownItem onPress={handleArchive} key="archive">
+              Archive
+            </DropdownItem>
+            <DropdownItem
+              onPress={handleHardDelete}
+              key="hard-delete"
+              color="danger"
+            >
+              Delete permanently
+            </DropdownItem>
+          </DropdownMenu>
+        )}
       </Dropdown>
       {/* )} */}
     </>
@@ -88,14 +163,17 @@ function CurrencySetup() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
+  const [showArchived, setShowArchived] = useState(false);
 
   const {
     data: currencies,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["all currencies", page, limit],
-    queryFn: services.allCurrencies(page, limit),
+    queryKey: ["all currencies", page, limit, showArchived],
+    queryFn: showArchived
+      ? services.allCurrenciesIncludingDeleted(page, limit)
+      : services.allCurrencies(page, limit),
   });
 
   const { data: searchData } = useQuery({
@@ -131,6 +209,8 @@ function CurrencySetup() {
         isDeleted: currency.isDeleted,
       }));
       setRows(mappedRows); // Maintain original data structure for rows
+    } else {
+      setRows([]);
     }
   }, [searchData, currencies, searchTerm]);
 
@@ -167,8 +247,9 @@ function CurrencySetup() {
               />
             </span>
           </div>
-          <div>
+          <div className="flex items-center gap-2">
             <p className="font-medium">{params.row.currency}</p>
+            {params.row.isDeleted && <StatusPill status="Archived" />}
           </div>
         </div>,
       ],
@@ -212,6 +293,17 @@ function CurrencySetup() {
             />
           </div>
         </div>
+        <label className="flex items-center gap-2 text-sm text-slate-600">
+          <input
+            type="checkbox"
+            checked={showArchived}
+            onChange={(e) => {
+              setShowArchived(e.target.checked);
+              setPage(1);
+            }}
+          />
+          Show archived
+        </label>
       </div>
       <DataTable isLoading={isLoading} rows={rows} columns={columns} />
       <div className="w-full flex justify-between">

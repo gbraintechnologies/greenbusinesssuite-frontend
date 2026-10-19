@@ -2,10 +2,14 @@ import DatePicker from "@/components/DatePicker/DatePicker";
 import EmptyList from "@/components/Form/EmptyList";
 import FormCard from "@/components/Form/FormCard";
 import Loader from "@/components/Loader/Loader";
+import ConfirmAction from "@/components/Modal/ConfirmAction";
 import Pagination from "@/components/Pagination/Pagination";
+import services from "@/services";
 import { CompanyType } from "@/types";
-import React from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import React, { useState } from "react";
 import { GoPlusCircle } from "react-icons/go";
+import { IoClose } from "react-icons/io5";
 
 const AssignedForms = ({
   assignedForms,
@@ -28,6 +32,31 @@ const AssignedForms = ({
   setSelectedTimeline: any;
   formsLoading: boolean;
 }) => {
+  const queryClient = useQueryClient();
+  const [formToUnassign, setFormToUnassign] = useState<any>(null);
+
+  const unassignForm = async () => {
+    if (!companyData?.id || !formToUnassign) return;
+    const currentIds: number[] = (
+      (companyData as any)?.assignedFormIds ??
+      (assignedForms?.content ?? []).map((form: any) => form.id)
+    ).map(Number);
+    await services.updateCompanyAssignedForms({
+      id: Number(companyData.id),
+      assignedFormIds: currentIds.filter(
+        (formId) => formId !== Number(formToUnassign.id)
+      ),
+    });
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: ["company assigned forms", Number(companyData.id)],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["company", Number(companyData.id)],
+      }),
+    ]);
+  };
+
   return (
     <div>
       <div className="min-h-[40vh]">
@@ -75,15 +104,40 @@ const AssignedForms = ({
         {assignedForms && assignedForms?.content?.length > 0 && (
           <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 xl:grid-cols-4 xl:gap-6">
             {assignedForms.content.map((form: any, index: number) => (
-              <FormCard
-                key={`${form.id}-${index}`}
-                form={form}
-                noMetaData={true}
-              />
+              <div key={`${form.id}-${index}`} className="relative">
+                <FormCard form={form} noMetaData={true} />
+                <button
+                  type="button"
+                  title="Unassign form"
+                  aria-label={`Unassign ${form.name ?? "form"}`}
+                  onClick={() => setFormToUnassign(form)}
+                  className="absolute right-2 top-2 z-10 rounded-full border border-slate-200 bg-white p-1 text-slate-500 shadow-sm hover:border-red-200 hover:text-red-600"
+                >
+                  <IoClose size={14} />
+                </button>
+              </div>
             ))}
           </div>
         )}
       </div>
+
+      <ConfirmAction
+        isOpen={Boolean(formToUnassign)}
+        onClose={() => setFormToUnassign(null)}
+        title="Unassign form"
+        message={
+          <>
+            Remove <b>{formToUnassign?.name ?? "this form"}</b> from{" "}
+            {companyData?.companyName ?? "this company"}? You can assign it
+            again later.
+          </>
+        }
+        confirmLabel="Unassign"
+        pendingLabel="Unassigning..."
+        successMessage="Form unassigned"
+        errorMessage="Could not unassign form"
+        onConfirm={unassignForm}
+      />
     </div>
   );
 };

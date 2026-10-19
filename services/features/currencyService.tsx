@@ -32,3 +32,19 @@ export const getCurrencyByCountryName = (countryName: string) => {
   return authApi.get(`/forms/currency-setup/by-country/${countryName}`).then((res) => res.data);
 };
 
+/** GET /forms/currency-setup/all/{page}/{size} — includes deleted */
+export const allCurrenciesIncludingDeleted = (
+  pageNumber: number,
+  pageSize: number
+) => {
+  return () =>
+    authApi
+      .get(`/forms/currency-setup/all/${pageNumber}/${pageSize}`)
+      .then((res) => res.data);
+};
+
+/** DELETE /forms/currency-setup/soft-delete/{id} */
+export const softDeleteCurrencyByID = (id: string | number) => {
+  return authApi.delete(`/forms/currency-setup/soft-delete/${id}`);
+};
+

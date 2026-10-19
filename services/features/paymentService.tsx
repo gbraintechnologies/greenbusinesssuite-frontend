@@ -107,7 +107,9 @@ export const getInvoiceById = (id: string | number) => {
 
 export const getInvoiceByNumber = (invoiceNumber: string) => {
   return () =>
-    authApi.get(`/invoices/number/${invoiceNumber}`).then((res) => res.data);
+    authApi
+      .get(`/invoices/number/${encodeURIComponent(invoiceNumber)}`)
+      .then((res) => res.data);
 };
 
 export const getBillById = (id: string | number) => {
@@ -116,7 +118,9 @@ export const getBillById = (id: string | number) => {
 
 export const getPaymentsByService = (serviceName: string) => {
   return () =>
-    authApi.get(`/payments/service/${serviceName}`).then((res) => res.data);
+    authApi
+      .get(`/payments/service/${encodeURIComponent(serviceName)}`)
+      .then((res) => res.data);
 };
 
 export const getPaymentsByMethod = (paymentMethod: string) => {
@@ -128,5 +132,73 @@ export const getPaymentsByMethod = (paymentMethod: string) => {
 
 export const getPaymentsByCustomer = (customerName: string) => {
   return () =>
-    authApi.get(`/payments/customer/${customerName}`).then((res) => res.data);
+    authApi
+      .get(`/payments/customer/${encodeURIComponent(customerName)}`)
+      .then((res) => res.data);
+};
+
+/** POST /payments/trigger/callback */
+export const triggerPaymentCallback = (data: any = {}) => {
+  return authApi.post("/payments/trigger/callback", data);
+};
+
+/** GET /bills/by-status/{status} */
+export const getBillsByStatus = (status: string) => {
+  return () =>
+    authApi.get(`/bills/by-status/${status}`).then((res) => res.data);
+};
+
+/** GET /bills/find-by/{serviceName} */
+export const getBillsByServiceName = (serviceName: string) => {
+  return () =>
+    authApi
+      .get(`/bills/find-by/${encodeURIComponent(serviceName)}`)
+      .then((res) => res.data);
+};
+
+/** DELETE /bills/delete-by-form_id/{formId} */
+export const deleteBillByFormId = (formId: string | number) => {
+  return authApi.delete(`/bills/delete-by-form_id/${formId}`);
+};
+
+/** GET /discounts/{id} */
+export const getDiscountById = (id: string | number) => {
+  return () => authApi.get(`/discounts/${id}`).then((res) => res.data);
+};
+
+/** GET /discounts/service-data/by-id/{id} */
+export const getDiscountedServiceById = (id: string | number) => {
+  return () =>
+    authApi.get(`/discounts/service-data/by-id/${id}`).then((res) => res.data);
+};
+
+/** GET /discounts/by-status/{isActive} */
+export const getDiscountsByStatus = (isActive: boolean) => {
+  return () =>
+    authApi.get(`/discounts/by-status/${isActive}`).then((res) => res.data);
+};
+
+/** GET /discounts/all/{page}/{size}/{timeline} */
+export const getAllDiscountRecords = (
+  pageNumber: number,
+  pageSize: number,
+  timeLine: TimelineType = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(`/discounts/all/${pageNumber}/${pageSize}/${timeLine}`)
+      .then((res) => res.data);
+};
+
+/** PUT /discounts/deactivate/{id} */
+export const deactivateDiscount = (id: string | number) => {
+  return authApi.put(`/discounts/deactivate/${id}`);
+};
+
+/**
+ * GET /discounts/create — Swagger lists this as GET (unusual).
+ * Prefer backend confirming POST; wrapper matches current OpenAPI.
+ */
+export const createDiscount = (params?: Record<string, any>) => {
+  return authApi.get("/discounts/create", { params }).then((res) => res.data);
 };

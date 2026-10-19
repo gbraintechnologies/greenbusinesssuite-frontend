@@ -4,6 +4,7 @@ import multipartMeshApi from "../multipartMeshClient";
 import type { CompanyBrandingPayload } from "@/types";
 import { extractFileUrl } from "@/hooks/useFileUpload";
 import { compressImage } from "@/lib/imageCompression";
+import { sanitizeS3UploadName } from "@/lib/s3UploadName";
 
 const MAX_BRANDING_LOGO_BYTES = 512 * 1024;
 
@@ -149,11 +150,13 @@ export const uploadBrandingLogoByCompanyId = (
   file: File,
   tenancyId?: string | null
 ) => {
+  const safeName = sanitizeS3UploadName(file, "branding-logo");
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("file", file, safeName);
   return multipartMeshApi
     .post(`/company-branding/company/${companyId}/logo`, formData, {
       headers: tenancyId ? { tenantid: tenancyId } : undefined,
+      timeout: 120_000,
     })
     .then((res) => res.data);
 };
@@ -163,11 +166,13 @@ export const uploadBrandingLogoByTenancyId = (
   tenancyId: string,
   file: File
 ) => {
+  const safeName = sanitizeS3UploadName(file, "branding-logo");
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("file", file, safeName);
   return multipartMeshApi
     .post(`/company-branding/tenancy/${tenancyId}/logo`, formData, {
       headers: { tenantid: tenancyId },
+      timeout: 120_000,
     })
     .then((res) => res.data);
 };
@@ -183,11 +188,12 @@ export const deleteBrandingLogoByTenancyId = (tenancyId: string) => {
 };
 
 async function uploadViaS3(file: File) {
+  const safeName = sanitizeS3UploadName(file, "branding-logo");
   const formData = new FormData();
-  formData.append("file", file);
-  const safeName = encodeURIComponent(file?.name ?? "logo.png");
+  // Rename the multipart file so the backend doesn't use the WhatsApp name.
+  formData.append("file", file, safeName);
   const data = await multipartMeshApi
-    .post(`/s3/resource/upload/${safeName}`, formData)
+    .post(`/s3/resource/upload/${safeName}`, formData, { timeout: 120_000 })
     .then((res) => res.data);
   const url = extractFileUrl(data);
   if (!url) {
@@ -196,37 +202,171 @@ async function uploadViaS3(file: File) {
   return url;
 }
 
+function brandingLogoFromResponse(payload: any): string | null {
+  return extractFileUrl(payload) || extractFileUrl(payload?.logo) || null;
+}
+
+/**
+ * Prefer dedicated branding logo endpoints (they persist logo on the branding
+ * record). Fall back to S3 + return a URL for create/update to store.
+ * Always returns `{ logo: string, persistedOnServer?: boolean }` so callers
+ * can extract a URL consistently.
+ */
 export const uploadBrandingLogo = async ({
+  companyId,
+  tenancyId,
   file,
 }: {
   companyId?: string | number | null;
   tenancyId?: string | null;
   file: File;
 }) => {
-  // Production currently 404s on /company-branding/.../logo.
-  // Upload the file to S3, then branding create/update stores the URL.
   const prepared = await prepareBrandingLogo(file);
-  return uploadViaS3(prepared);
+
+  // 1) Dedicated upload by company id
+  if (companyId != null && companyId !== "") {
+    try {
+      const data = await uploadBrandingLogoByCompanyId(
+        companyId,
+        prepared,
+        tenancyId
+      );
+      const logo = brandingLogoFromResponse(data);
+      if (logo) {
+        return { logo, persistedOnServer: true, branding: data };
+      }
+      // Server may have stored the file without returning a URL — treat as applied.
+      return { logo: "", persistedOnServer: true, branding: data };
+    } catch (error: any) {
+      // 404/405/500 on dedicated logo routes → try next strategy
+      const status = error?.response?.status;
+      if (status && ![404, 405, 500, 501].includes(status)) {
+        throw error;
+      }
+    }
+  }
+
+  // 2) Dedicated upload by tenancy id
+  if (tenancyId) {
+    try {
+      const data = await uploadBrandingLogoByTenancyId(tenancyId, prepared);
+      const logo = brandingLogoFromResponse(data);
+      if (logo) {
+        return { logo, persistedOnServer: true, branding: data };
+      }
+      return { logo: "", persistedOnServer: true, branding: data };
+    } catch (error: any) {
+      const status = error?.response?.status;
+      if (status && ![404, 405, 500, 501].includes(status)) {
+        throw error;
+      }
+    }
+  }
+
+  // 3) S3 fallback — caller must persist URL via branding create/update
+  try {
+    const logo = await uploadViaS3(prepared);
+    return { logo, persistedOnServer: false };
+  } catch (error: any) {
+    const detail =
+      error?.response?.data?.detail ||
+      error?.response?.data?.message ||
+      error?.message ||
+      "Logo upload failed";
+    throw new Error(
+      typeof detail === "string"
+        ? detail
+        : "Logo upload failed. Please try a smaller JPG or PNG."
+    );
+  }
+};
+
+function isRetryableLogoDeleteError(error: any) {
+  const status = error?.response?.status;
+  // Dedicated logo DELETE is flaky in production (500/404/405).
+  return status === 404 || status === 405 || status === 500 || status === 501;
 }
 
-/** Delete branding logo via company id when available, otherwise tenancy id. */
+/** Clear logo by updating branding record (works when DELETE /logo is broken). */
+async function clearLogoViaBrandingUpdate({
+  companyId,
+  tenancyId,
+  branding,
+  color,
+  companyName,
+}: {
+  companyId: string | number;
+  tenancyId: string;
+  branding?: any | null;
+  color?: string;
+  companyName?: string;
+}) {
+  const id = branding?.id ?? branding?.companyId ?? companyId;
+  return editCompanyBranding(
+    id,
+    companyId,
+    tenancyId,
+    "",
+    color || branding?.color || "",
+    companyName || branding?.companyName || "",
+    branding?.modules?.map((module: any) => module?.id) ??
+      branding?.moduleIds ??
+      [],
+    branding?.categorySpecificModules?.map((module: any) => module?.id) ??
+      branding?.categorySpecificModuleIds ??
+      []
+  );
+}
+
+/**
+ * Delete branding logo.
+ * Tries dedicated DELETE endpoints first; on backend 500/404 falls back to
+ * clearing `logo` via PUT /company-branding/update.
+ */
 export const deleteBrandingLogo = async ({
   companyId,
   tenancyId,
+  branding,
+  color,
+  companyName,
 }: {
   companyId?: string | number | null;
   tenancyId?: string | null;
+  branding?: any | null;
+  color?: string;
+  companyName?: string;
 }) => {
-  try {
-    if (companyId != null && companyId !== "") {
+  let lastError: any = null;
+
+  if (companyId != null && companyId !== "") {
+    try {
       return await deleteBrandingLogoByCompanyId(companyId);
+    } catch (error) {
+      lastError = error;
+      if (!isRetryableLogoDeleteError(error)) throw error;
     }
-    if (tenancyId) {
-      return await deleteBrandingLogoByTenancyId(tenancyId);
-    }
-  } catch (error) {
-    if (!isNotFound(error)) throw error;
-    return null;
   }
+
+  if (tenancyId) {
+    try {
+      return await deleteBrandingLogoByTenancyId(tenancyId);
+    } catch (error) {
+      lastError = error;
+      if (!isRetryableLogoDeleteError(error)) throw error;
+    }
+  }
+
+  // Backend DELETE /logo currently 500s — clear logo field instead.
+  if (companyId != null && companyId !== "" && tenancyId) {
+    return clearLogoViaBrandingUpdate({
+      companyId,
+      tenancyId,
+      branding,
+      color,
+      companyName,
+    });
+  }
+
+  if (lastError) throw lastError;
   throw new Error("Company ID or tenancy ID is required to delete a logo");
 };

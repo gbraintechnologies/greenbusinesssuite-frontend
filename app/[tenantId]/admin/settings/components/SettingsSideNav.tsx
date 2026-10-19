@@ -18,7 +18,7 @@ import useCompany from "@/hooks/useCompany";
 
 function SettingsSideNav({ tenantId }: any) {
   const { companyAdmin, removeCompanyAdmin } = useCompany();
-  const { removeAuth } = useAuth();
+  const { logout } = useAuth();
 
   const router = useRouter();
 
@@ -127,7 +127,7 @@ function SettingsSideNav({ tenantId }: any) {
                 setShowLogOutModal(false);
 
                 removeCompanyAdmin();
-                removeAuth();
+                logout();
                 toast.success("Logged out");
                 router.push(`/${tenantId}/auth`);
               }}

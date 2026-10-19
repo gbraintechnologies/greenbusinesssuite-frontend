@@ -1,6 +1,8 @@
+import axios from "axios";
 import authApi from "../axiosAuthClient";
 import noAuthApi from "../axiosNoAuthClient";
-import { getSessionTenantID } from "../localService";
+import { getRefreshToken, getSessionTenantID, getToken } from "../localService";
+import { meshBaseURL } from "@/lib/api";
 
 export const login = ({ username, password, tenantid }: any) => {
   return noAuthApi.post("/auth/sign-in", {
@@ -86,7 +88,28 @@ export const confirmAccount = (email: string) => {
   });
 };
 
-/** POST /auth/sign-out */
-export const signOut = () => {
-  return authApi.post("/auth/sign-out");
+/**
+ * POST /auth/sign-out — revokes the refresh token server-side.
+ * Uses plain axios so a 401 here never triggers the refresh / session-expired flow.
+ */
+export const signOut = async () => {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return null;
+  const accessToken = getToken();
+  return axios.post(
+    `${meshBaseURL}/auth/sign-out`,
+    { refreshToken },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
+      timeout: 10_000,
+    }
+  );
+};
+
+/** POST /auth/apex-sign-up — platform / apex tenant registration */
+export const apexSignUp = (data: any) => {
+  return noAuthApi.post("/auth/apex-sign-up", data);
 };

@@ -9,8 +9,8 @@ export const allcountries = (Page: number, Size: number) => {
             .then((res) => res.data);
 };
 
-export const countryUpload = (formData: FormData, file: string) => {
-    return multipartMeshApi.post(`countries/csv-import/${file}`, formData);
+export const countryUpload = (formData: FormData, _file?: string) => {
+    return multipartMeshApi.post(`/countries/csv-import`, formData);
 };
 
 export const createCountry = (data: any) => {

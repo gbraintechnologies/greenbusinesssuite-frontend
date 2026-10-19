@@ -228,7 +228,12 @@ const Page = (props: any) => {
           tenancyId: companyData?.company_identifier,
           file: companySmallLogo as File,
         });
-        logoToSave = extractFileUrl(uploaded) || logoToSave || "";
+        logoToSave =
+          extractFileUrl(uploaded) ||
+          logoToSave ||
+          (uploaded?.persistedOnServer
+            ? companyBranding?.logo?.trim?.() || logoToSave
+            : "");
       }
 
       if (!logoToSave && !companySmallLogo) {
@@ -251,6 +256,25 @@ const Page = (props: any) => {
 
       if (logoToSave) setSmallLogoUrl(logoToSave);
       setCompanySmallLogo(null);
+
+      // Refresh branding used by header / context
+      try {
+        const refreshed = await services.getCompanyBranding(
+          companyData?.company_identifier
+        )();
+        if (refreshed) {
+          setCompanyBranding(refreshed);
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem(
+              "company-branding",
+              JSON.stringify(refreshed)
+            );
+          }
+        }
+      } catch {
+        // local preview URL is already set
+      }
+
       toast.success("Company branding updated successfully");
     } catch (error) {
       toast.error("Failed to update company branding");

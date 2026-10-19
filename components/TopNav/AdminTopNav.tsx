@@ -19,7 +19,7 @@ function getProfileAvatar(admin: any) {
 
 function TopNav({ settingsLink }: { settingsLink?: string }) {
   const { admin } = useAdmin();
-  const { removeAuth } = useAuth();
+  const { logout } = useAuth();
   const router = useRouter();
 
   return (
@@ -55,7 +55,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
         avatarUrl={getProfileAvatar(admin)}
         settingsHref={settingsLink ?? "/settings"}
         onLogout={() => {
-          removeAuth();
+          logout();
           toast.success("Logged out");
           router.push("/");
         }}

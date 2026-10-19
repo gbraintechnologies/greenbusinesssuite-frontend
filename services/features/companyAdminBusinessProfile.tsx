@@ -32,3 +32,8 @@ export const getBusinessProfileByUserId = (userId: string | number) => {
   return () =>
     authApi.get(`/business-profiles/user/${userId}`).then((res) => res.data);
 };
+
+/** DELETE /business-profiles/{id} */
+export const deleteBusinessProfileById = (id: string | number) => {
+  return authApi.delete(`/business-profiles/${id}`);
+};

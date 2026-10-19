@@ -2,6 +2,7 @@ import authApi from "../meshAuthClient";
 import multipartMeshApi from "../multipartMeshClient";
 import { extractFileUrl } from "@/hooks/useFileUpload";
 import { compressImage } from "@/lib/imageCompression";
+import { sanitizeS3UploadName } from "@/lib/s3UploadName";
 
 export const getMediaByType = (
   type: "BLOGS" | "VIDEOS" | "ADS",
@@ -18,19 +19,13 @@ export const getFilteredMedia = (search: string) => {
   return () => authApi.get(`/media/search/${search}`).then((res) => res.data);
 };
 
-function sanitizeUploadName(file: File) {
-  const rawExt = (file.name.split(".").pop() || "jpg").toLowerCase();
-  const ext = /^[a-z0-9]+$/.test(rawExt) ? rawExt : "jpg";
-  return `media-${Date.now()}.${ext}`;
-}
-
 async function uploadThumbnailToS3(file: File) {
   const prepared = await compressImage(file, {
     maxSize: 1280,
     quality: 0.82,
     compressAboveBytes: 150 * 1024,
   });
-  const safeName = sanitizeUploadName(prepared);
+  const safeName = sanitizeS3UploadName(prepared, "media");
   const formData = new FormData();
   formData.append("file", prepared, safeName);
 
@@ -102,7 +97,7 @@ export const S3BucketFileUpload = async (formData: FormData, file: string) => {
       quality: 0.82,
       compressAboveBytes: 150 * 1024,
     });
-    const safeName = sanitizeUploadName(prepared);
+    const safeName = sanitizeS3UploadName(prepared, "media");
     const next = new FormData();
     next.append("file", prepared, safeName);
     return multipartMeshApi.post(`/s3/resource/upload/${safeName}`, next, {
@@ -110,8 +105,9 @@ export const S3BucketFileUpload = async (formData: FormData, file: string) => {
     });
   }
 
-  const safeName = sanitizeUploadName(
-    new File([""], file || "upload.jpg", { type: "image/jpeg" })
+  const safeName = sanitizeS3UploadName(
+    { name: file || "upload.jpg", type: "image/jpeg" },
+    "media"
   );
   return multipartMeshApi.post(`/s3/resource/upload/${safeName}`, formData, {
     timeout: 120_000,
@@ -153,5 +149,23 @@ export const filterMediaByTimeline = (
   return () =>
     authApi
       .get(`/media/findBy-range/${mediaType}/${timeline}/${page}/${size}`)
+      .then((res) => res.data);
+};
+
+/** GET /media/all/{page}/{size} */
+export const getAllMedia = (page: number, size: number) => {
+  return () =>
+    authApi.get(`/media/all/${page}/${size}`).then((res) => res.data);
+};
+
+/** GET /media/by-status/{isActive}/{page}/{size} */
+export const getMediaByStatus = (
+  isActive: boolean,
+  page: number,
+  size: number
+) => {
+  return () =>
+    authApi
+      .get(`/media/by-status/${isActive}/${page}/${size}`)
       .then((res) => res.data);
 };

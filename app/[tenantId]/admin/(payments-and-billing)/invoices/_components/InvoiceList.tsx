@@ -6,7 +6,7 @@ import { TimelineType } from "@/types";
 import { FormatDateShort } from "@/utils/FormatDate/FormatDate";
 import { useQuery } from "@tanstack/react-query";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { VscEye } from "react-icons/vsc";
 
@@ -26,6 +26,31 @@ function InvoiceList({
     queryKey: ["all invoices", page, limit, timeline],
     queryFn: services.getAllInvoices(page, limit, timeline),
   });
+
+  const [searchInput, setSearchInput] = useState("");
+  const [invoiceNumber, setInvoiceNumber] = useState("");
+
+  useEffect(() => {
+    const handle = setTimeout(() => setInvoiceNumber(searchInput.trim()), 400);
+    return () => clearTimeout(handle);
+  }, [searchInput]);
+
+  const {
+    data: invoiceByNumber,
+    isLoading: isSearching,
+    isError: searchFailed,
+  } = useQuery({
+    queryKey: ["invoice by number", invoiceNumber],
+    queryFn: services.getInvoiceByNumber(invoiceNumber),
+    enabled: invoiceNumber.length > 0,
+    retry: false,
+  });
+
+  const rows = invoiceNumber
+    ? invoiceByNumber && !searchFailed
+      ? [invoiceByNumber]
+      : []
+    : invoices?.content ?? [];
 
   const columns = [
     {
@@ -84,9 +109,18 @@ function InvoiceList({
 
   return (
     <div>
+      <div className="mb-3 px-5">
+        <input
+          type="search"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="Find by invoice number"
+          className="h-9 w-64 rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-brand-600"
+        />
+      </div>
       <DataTable
-        isLoading={isLoading}
-        rows={invoices ? invoices?.content : []}
+        isLoading={isLoading || (Boolean(invoiceNumber) && isSearching)}
+        rows={rows}
         columns={columns}
       />
     </div>

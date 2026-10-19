@@ -160,10 +160,46 @@ export const FormProvider = ({ children }) => {
 
   const updateFormSectionsOrdering = (sections) => {
     setIsFormUpdating(true);
-    updateRemoteForm({
-      ...form,
-      formSections: [...sections],
-    });
+    setForm((prev) => ({ ...prev, formSections: [...sections] }));
+    services
+      .updateFormSectionOrdering(
+        sections.map((section) => ({
+          id: section.id,
+          ordering: section.ordering,
+        }))
+      )
+      .then(() => {
+        setIsFormUpdating(false);
+        queryClient.invalidateQueries({ queryKey: ["form"] });
+      })
+      .catch(() => {
+        updateRemoteForm({ ...form, formSections: [...sections] });
+      });
+  };
+
+  const updateFormFieldsOrdering = (sectionId, fields) => {
+    setIsFormUpdating(true);
+    setForm((prev) => ({
+      ...prev,
+      formSections: prev.formSections.map((section) =>
+        section.id === sectionId
+          ? { ...section, formFields: [...fields] }
+          : section
+      ),
+    }));
+    services
+      .updateFormFieldOrdering(
+        fields.map((field) => ({ id: field.id, ordering: field.ordering }))
+      )
+      .then(() => {
+        setIsFormUpdating(false);
+        queryClient.invalidateQueries({ queryKey: ["form"] });
+      })
+      .catch((e) => {
+        setIsFormUpdating(false);
+        toast.error("Could not reorder fields");
+        console.log("error updating field ordering:", e);
+      });
   };
 
   const updateSection = (data) => {
@@ -290,6 +326,7 @@ export const FormProvider = ({ children }) => {
         setView,
         updateRedirectUrl,
         updateFormSectionsOrdering,
+        updateFormFieldsOrdering,
         selectForm,
         addFormSection,
         updateIsAnonymous,

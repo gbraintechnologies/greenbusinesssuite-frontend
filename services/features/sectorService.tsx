@@ -64,3 +64,17 @@ export const getSubSectorByIdRaw = (sectorSetupId: number, sectorId: number) => 
 export const csvUpload = (formData: FormData, fileName: string) => {
   return multipartMeshApi.post(`/csv/sector/upload/${fileName}`, formData);
 };
+
+/** GET /sectors/sectors/{page}/{size} */
+export const getSectorSetupsPaged = (pageNumber: number, pageSize: number) => {
+  return () =>
+    authApi
+      .get(`/sectors/sectors/${pageNumber}/${pageSize}`)
+      .then((res) => res.data);
+};
+
+/** GET /sectors/{subSectorId} */
+export const getSubSectorEntityById = (subSectorId: string | number) => {
+  return () =>
+    authApi.get(`/sectors/${subSectorId}`).then((res) => res.data);
+};

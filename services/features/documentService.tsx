@@ -62,3 +62,11 @@ export const issueFileToUserWithFormId = (
     formData
   );
 };
+
+/** GET /s3/resource/company/issued-docs/{companyId} */
+export const getCompanyIssuedDocs = (companyId: string | number) => {
+  return () =>
+    authApi
+      .get(`/s3/resource/company/issued-docs/${companyId}`)
+      .then((res) => res.data);
+};

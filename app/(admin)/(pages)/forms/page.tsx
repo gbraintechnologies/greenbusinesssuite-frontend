@@ -96,11 +96,14 @@ function Forms() {
   // pagination
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
+  const [listMode, setListMode] = useState<"all" | "recent">("all");
 
-  // fetch all forms
   const { data: forms, isLoading } = useQuery({
-    queryKey: ["all forms", page, limit, selectedTimeline?.value],
-    queryFn: services.allForms(page, limit, selectedTimeline?.value),
+    queryKey: ["all forms", listMode, page, limit, selectedTimeline?.value],
+    queryFn:
+      listMode === "recent"
+        ? services.getRecentForms(page, limit, selectedTimeline?.value)
+        : services.allForms(page, limit, selectedTimeline?.value),
   });
 
   // unselecting any previous form
@@ -139,7 +142,30 @@ function Forms() {
 
       {/* recent forms  */}
       <div className="mb-4 mt-6 flex flex-col gap-3 sm:mb-6 sm:mt-10 sm:flex-row sm:items-center sm:justify-between">
-        <h3 className="text-base font-semibold sm:text-lg">Recent Forms</h3>
+        <div className="flex items-center gap-3">
+          <h3 className="text-base font-semibold sm:text-lg">
+            {listMode === "recent" ? "Recent Forms" : "All Forms"}
+          </h3>
+          <div className="flex rounded-lg border border-slate-200 p-0.5 text-xs">
+            {(["all", "recent"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => {
+                  setListMode(mode);
+                  setPage(1);
+                }}
+                className={`rounded-md px-2.5 py-1 capitalize ${
+                  listMode === mode
+                    ? "bg-brand-600 text-white"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                {mode}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <ItemsPerPageSelector limit={limit} setLimit={setLimit} />
           <DatePicker

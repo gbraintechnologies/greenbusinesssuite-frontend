@@ -145,7 +145,38 @@ export const getCompanyByIdentifier = (identifier: string) => {
     const extractList = (payload: any) =>
       Array.isArray(payload) ? payload : payload?.content ?? [];
 
-    // Public/no-auth first — login pages often have no session token
+    // Dedicated Swagger endpoint first
+    try {
+      const res = await noAuthApi.get(
+        `/companies/user/${encodeURIComponent(identifier)}`
+      );
+      const payload = res.data;
+      if (Array.isArray(payload)) {
+        const found = payload.find(matchIdentifier) ?? payload[0];
+        if (found) return found;
+      } else if (payload && typeof payload === "object") {
+        return payload;
+      }
+    } catch {
+      // fall through to list scan
+    }
+
+    try {
+      const res = await authApi.get(
+        `/companies/user/${encodeURIComponent(identifier)}`
+      );
+      const payload = res.data;
+      if (Array.isArray(payload)) {
+        const found = payload.find(matchIdentifier) ?? payload[0];
+        if (found) return found;
+      } else if (payload && typeof payload === "object") {
+        return payload;
+      }
+    } catch {
+      // fall through
+    }
+
+    // Public/no-auth list scan — login pages often have no session token
     try {
       const res = await noAuthApi.get(`/companies?page=0&size=1000`);
       const found = extractList(res.data).find(matchIdentifier);
@@ -165,6 +196,20 @@ export const getCompanyByIdentifier = (identifier: string) => {
 
     return null;
   };
+};
+
+/** GET /companies/user/{companyIdentifier} */
+export const getCompaniesByUserIdentifier = (companyIdentifier: string) => {
+  return () =>
+    authApi
+      .get(`/companies/user/${encodeURIComponent(companyIdentifier)}`)
+      .then((res) => res.data);
+};
+
+/** GET /companies/user/company/{userId} */
+export const getCompaniesByUserId = (userId: string | number) => {
+  return () =>
+    authApi.get(`/companies/user/company/${userId}`).then((res) => res.data);
 };
 
 export const updateCompanyAssignedForms = (data: {

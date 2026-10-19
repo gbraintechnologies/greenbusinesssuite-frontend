@@ -98,13 +98,21 @@ export default function BrandingForm({
         await services.deleteBrandingLogo({
           companyId: company || null,
           tenancyId: tenant.trim() || null,
+          branding: initial,
+          color,
+          companyName: name,
         });
       }
       setLogoFile(null);
       setLogoUrl("");
       toast.success("Logo removed");
-    } catch {
-      toast.error("Failed to remove logo");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.detail ||
+          error?.response?.data?.message ||
+          error?.message ||
+          "Failed to remove logo"
+      );
     } finally {
       setLoading(false);
     }

@@ -80,13 +80,21 @@ const BrandingSettings = ({
     ]);
   };
 
-  const uploadLogoIfNeeded = async () => {
+  const uploadLogoIfNeeded = async (): Promise<{
+    logoUrl: string;
+    persistedOnServer: boolean;
+  }> => {
     if (!companySmallLogo) {
-      if (isPersistableLogoUrl(smallLogoUrl)) return smallLogoUrl.trim();
-      if (isPersistableLogoUrl(companyBranding?.logo)) {
-        return companyBranding.logo.trim();
+      if (isPersistableLogoUrl(smallLogoUrl)) {
+        return { logoUrl: smallLogoUrl.trim(), persistedOnServer: false };
       }
-      return "";
+      if (isPersistableLogoUrl(companyBranding?.logo)) {
+        return {
+          logoUrl: companyBranding.logo.trim(),
+          persistedOnServer: false,
+        };
+      }
+      return { logoUrl: "", persistedOnServer: false };
     }
 
     const uploaded = await services.uploadBrandingLogo({
@@ -96,16 +104,57 @@ const BrandingSettings = ({
     });
     const url = extractFileUrl(uploaded);
     setCompanySmallLogo(null);
+
     if (url) {
       setSmallLogoUrl?.(url);
-      return url;
+      return {
+        logoUrl: url,
+        persistedOnServer: Boolean(uploaded?.persistedOnServer),
+      };
     }
-    // Dedicated logo endpoint stored the file; don't overwrite with a blank URL.
-    if (isPersistableLogoUrl(smallLogoUrl)) return smallLogoUrl.trim();
+
+    // Dedicated logo endpoint may have stored the file without returning a URL.
+    if (uploaded?.persistedOnServer) {
+      await invalidateBranding();
+      let refreshedLogo = "";
+      try {
+        if (tenancyId) {
+          const refreshed = await services.getCompanyBranding(tenancyId)();
+          refreshedLogo = isPersistableLogoUrl(refreshed?.logo)
+            ? refreshed.logo.trim()
+            : "";
+        }
+        if (!refreshedLogo && companyId != null) {
+          const refreshed = await services.getBrandingByCompanyId(companyId)();
+          refreshedLogo = isPersistableLogoUrl(refreshed?.logo)
+            ? refreshed.logo.trim()
+            : "";
+        }
+      } catch {
+        // fall through
+      }
+      if (refreshedLogo) {
+        setSmallLogoUrl?.(refreshedLogo);
+        return { logoUrl: refreshedLogo, persistedOnServer: true };
+      }
+      const existing =
+        (isPersistableLogoUrl(smallLogoUrl) && smallLogoUrl.trim()) ||
+        (isPersistableLogoUrl(companyBranding?.logo) &&
+          companyBranding.logo.trim()) ||
+        "";
+      return { logoUrl: existing, persistedOnServer: true };
+    }
+
+    if (isPersistableLogoUrl(smallLogoUrl)) {
+      return { logoUrl: smallLogoUrl.trim(), persistedOnServer: false };
+    }
     if (isPersistableLogoUrl(companyBranding?.logo)) {
-      return companyBranding.logo.trim();
+      return {
+        logoUrl: companyBranding.logo.trim(),
+        persistedOnServer: false,
+      };
     }
-    return "";
+    return { logoUrl: "", persistedOnServer: false };
   };
 
   const createBranding = async () => {
@@ -116,7 +165,7 @@ const BrandingSettings = ({
         return;
       }
 
-      const logoUrl = await uploadLogoIfNeeded();
+      const { logoUrl } = await uploadLogoIfNeeded();
 
       await services.createCompanyBranding(
         companyId,
@@ -145,13 +194,19 @@ const BrandingSettings = ({
   const editCompanyBranding = async () => {
     try {
       setLoading(true);
-      const logoUrl = await uploadLogoIfNeeded();
+      const { logoUrl, persistedOnServer } = await uploadLogoIfNeeded();
+      const logoToSave =
+        logoUrl ||
+        (isPersistableLogoUrl(companyBranding?.logo)
+          ? companyBranding.logo.trim()
+          : "");
 
+      // Always push color/name; never wipe logo after a dedicated upload.
       await services.editCompanyBranding(
         companyBranding?.id ?? companyBranding?.companyId ?? companyId,
         companyId,
         tenancyId,
-        logoUrl || companyBranding?.logo || "",
+        logoToSave || (persistedOnServer ? companyBranding?.logo || "" : ""),
         color,
         companyName,
         companyBranding?.modules?.map((module: any) => module?.id) ?? [],
@@ -159,6 +214,7 @@ const BrandingSettings = ({
           (module: any) => module?.id
         ) ?? []
       );
+      if (logoToSave) setSmallLogoUrl?.(logoToSave);
       await invalidateBranding();
       toast.success("Company branding updated successfully");
     } catch (error: any) {
@@ -174,15 +230,37 @@ const BrandingSettings = ({
   };
 
   const handleRemoveLogo = async () => {
+    // Local unsaved file only — no API call needed
+    if (
+      companySmallLogo &&
+      !isPersistableLogoUrl(smallLogoUrl) &&
+      !isPersistableLogoUrl(companyBranding?.logo)
+    ) {
+      setCompanySmallLogo(null);
+      setSmallLogoUrl?.("");
+      return;
+    }
+
     try {
       setLoading(true);
-      await services.deleteBrandingLogo({ companyId, tenancyId });
+      await services.deleteBrandingLogo({
+        companyId,
+        tenancyId,
+        branding: companyBranding,
+        color,
+        companyName,
+      });
       setCompanySmallLogo(null);
       setSmallLogoUrl?.("");
       await invalidateBranding();
       toast.success("Logo removed");
-    } catch {
-      toast.error("Failed to remove logo");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.detail ||
+          error?.response?.data?.message ||
+          error?.message ||
+          "Failed to remove logo"
+      );
     } finally {
       setLoading(false);
     }

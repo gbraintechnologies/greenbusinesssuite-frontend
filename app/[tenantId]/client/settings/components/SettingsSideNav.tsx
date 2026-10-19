@@ -23,7 +23,7 @@ import { BsArrowLeft } from "react-icons/bs";
 
 function SettingsSideNav() {
   const { user, setUser, removeUser } = useUser();
-  const { removeAuth } = useAuth();
+  const { logout } = useAuth();
 
   const { companyBranding: company } = useCompany();
 
@@ -143,7 +143,7 @@ function SettingsSideNav() {
                 setShowLogOutModal(false);
                 router.push(`/${company?.company_identifier}/auth`);
                 removeUser();
-                removeAuth();
+                logout();
                 setUser(null);
                 toast.success("Logged out");
               }}

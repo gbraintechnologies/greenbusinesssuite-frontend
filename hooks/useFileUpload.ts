@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 
 import { meshBaseURL } from "@/lib/api";
+import { sanitizeS3UploadName } from "@/lib/s3UploadName";
 import {
   getSessionTenantID,
   getToken,
@@ -45,6 +46,11 @@ export function extractFileUrl(payload: any): string | null {
     if (found) return found;
   }
 
+  // Dedicated branding logo upload returns the full branding object
+  if (payload.branding) {
+    const nested = extractFileUrl(payload.branding);
+    if (nested) return nested;
+  }
   if (payload.data) {
     const nested = extractFileUrl(payload.data);
     if (nested) return nested;
@@ -96,11 +102,9 @@ const useFileUpload = () => {
     try {
       setLoadingFile(true);
 
+      const safeName = sanitizeS3UploadName(file, "file");
       const formData = new FormData();
-      formData.append("file", file);
-
-      // Encode the filename so spaces/special chars don't break the URL
-      const safeName = encodeURIComponent(file?.name ?? "upload");
+      formData.append("file", file, safeName);
 
       const response = await axios({
         baseURL: meshBaseURL,

@@ -307,7 +307,7 @@ export const updateResponseStatus = (
 };
 
 export const deleteResponse = (formResponseId: number) => {
-  return authApi.delete(`forms/response/${formResponseId}`);
+  return authApi.delete(`/forms/response/${formResponseId}`);
 };
 
 export const saveResponse = ({
@@ -347,4 +347,125 @@ export const retrieveAnonymousFormResponse = (responseId: number | string) => {
     authApi
       .get(`/forms/response/user-data/${responseId}`)
       .then((res) => res.data);
+};
+
+/** PUT /forms/builder/form-field-ordering */
+export const updateFormFieldOrdering = (data: any) => {
+  return authApi.put(`/forms/builder/form-field-ordering`, data);
+};
+
+/** PUT /forms/builder/form-section-ordering */
+export const updateFormSectionOrdering = (data: any) => {
+  return authApi.put(`/forms/builder/form-section-ordering`, data);
+};
+
+/** PUT /forms/builder/undelete/{id} */
+export const undeleteForm = (id: string | number) => {
+  return authApi.put(`/forms/builder/undelete/${id}`);
+};
+
+/** PUT /forms/builder/unpublish/by-name/{formName} */
+export const unpublishFormByName = (formName: string) => {
+  return authApi.put(
+    `/forms/builder/unpublish/by-name/${encodeURIComponent(formName)}`
+  );
+};
+
+/** GET /forms/builder/recent/{page}/{size}/{timeline} */
+export const getRecentForms = (
+  page: number,
+  size: number,
+  timeline: string = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(`/forms/builder/recent/${page}/${size}/${timeline}`)
+      .then((res) => res.data);
+};
+
+/** GET /forms/builder/company/{companyId}/{page}/{size}/{timeline} */
+export const getFormsByCompanyIdPaged = (
+  companyId: string | number,
+  page: number,
+  size: number,
+  timeline: string = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(`/forms/builder/company/${companyId}/${page}/${size}/${timeline}`)
+      .then((res) => res.data);
+};
+
+/** GET /forms/builder/user/completed-forms/{page}/{size}/{timeline}/{completedFormIds} */
+export const getCompletedFormsByIds = (
+  page: number,
+  size: number,
+  timeline: string,
+  completedFormIds: string
+) => {
+  return () =>
+    authApi
+      .get(
+        `/forms/builder/user/completed-forms/${page}/${size}/${timeline}/${completedFormIds}`
+      )
+      .then((res) => res.data);
+};
+
+/** GET /forms/response/all/{page}/{size}/{timeline} */
+export const getAllFormResponses = (
+  page: number,
+  size: number,
+  timeline: string = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(`/forms/response/all/${page}/${size}/${timeline}`)
+      .then((res) => res.data);
+};
+
+/** GET /forms/response/company-data/{companyId}/{page}/{size}/{timeline} */
+export const getCompanyFormResponseData = (
+  companyId: string | number,
+  page: number,
+  size: number,
+  timeline: string = "ALL"
+) => {
+  return () =>
+    authApi
+      .get(
+        `/forms/response/company-data/${companyId}/${page}/${size}/${timeline}`
+      )
+      .then((res) => res.data);
+};
+
+/** GET /forms/response/data/user-company/{userId}/{companyId} */
+export const getFormResponsesByUserAndCompany = (
+  userId: string | number,
+  companyId: string | number
+) => {
+  return () =>
+    authApi
+      .get(`/forms/response/data/user-company/${userId}/${companyId}`)
+      .then((res) => res.data);
+};
+
+/** GET /forms/response/form-processing-status/{companyId}/{status}/{page}/{size} */
+export const getFormProcessingStatus = (
+  companyId: string | number,
+  status: string,
+  page: number,
+  size: number
+) => {
+  return () =>
+    authApi
+      .get(
+        `/forms/response/form-processing-status/${companyId}/${status}/${page}/${size}`
+      )
+      .then((res) => res.data);
+};
+
+/** GET /forms/response/forms-status/stats */
+export const getFormsStatusStats = () => {
+  return () =>
+    authApi.get(`/forms/response/forms-status/stats`).then((res) => res.data);
 };

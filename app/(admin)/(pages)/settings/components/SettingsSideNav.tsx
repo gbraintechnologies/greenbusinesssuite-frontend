@@ -32,7 +32,7 @@ function getInitials(admin: any) {
 
 function SettingsSideNav() {
   const { admin, setAdmin } = useAdmin();
-  const { removeAuth } = useAuth();
+  const { logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [showLogOutModal, setShowLogOutModal] = useState(false);
@@ -174,7 +174,7 @@ function SettingsSideNav() {
               onClick={() => {
                 setShowLogOutModal(false);
                 setAdmin(null);
-                removeAuth();
+                logout();
                 toast.success("Logged out");
                 router.push("/");
               }}

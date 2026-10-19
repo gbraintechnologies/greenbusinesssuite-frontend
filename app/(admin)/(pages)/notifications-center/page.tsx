@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import DataTable from "@/components/DataTable/DataTable";
 import { IFilter, TimelineType, TimelineValues } from "@/types";
 import SendMessage from "./_components/SendMessagePrompt";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import ConfirmAction from "@/components/Modal/ConfirmAction";
 import services from "@/services";
 import ItemsPerPageSelector from "@/components/Pagination/ItemsPerPageSelector";
 import Pagination from "@/components/Pagination/Pagination";
@@ -40,6 +41,19 @@ function page() {
 
   const [activeNotification, setActiveNotification] = useState<any>();
   const [notificationToDelete, setNotificationToDelete] = useState<any>(null);
+
+  const queryClient = useQueryClient();
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [confirmBatchDelete, setConfirmBatchDelete] = useState(false);
+  // Remounts the table so its internal selection clears after a batch delete.
+  const [tableVersion, setTableVersion] = useState(0);
+
+  const { data: activeNotificationDetails } = useQuery({
+    queryKey: ["notification", activeNotification?.id],
+    queryFn: services.getNotificationById(Number(activeNotification?.id)),
+    enabled: Boolean(activeNotification?.id),
+    retry: false,
+  });
 
   const [recurringType, setRecurringType] = useState<any>();
 
@@ -153,7 +167,39 @@ function page() {
   //reset filter when tab changes
   useEffect(() => {
     setRecurringType(null);
+    setSelectedIds([]);
+    setTableVersion((v) => v + 1);
   }, [activeFilter]);
+
+  const visibleRows = activeFilter.id == 0 ? messageHistoryRows : recurringRows;
+
+  const handleTableSelection = (keys: any) => {
+    if (keys === "all") {
+      setSelectedIds(
+        visibleRows
+          .map((row) => Number(row?.data?.id ?? row?.id))
+          .filter((id) => Number.isFinite(id))
+      );
+      return;
+    }
+    const ids = Array.from(keys as Set<string>)
+      .map((key) => Number(String(key).split("-").pop()))
+      .filter((id) => Number.isFinite(id));
+    setSelectedIds(ids);
+  };
+
+  const deleteSelected = async () => {
+    await services.deleteNotificationsBatch(selectedIds);
+    setSelectedIds([]);
+    setTableVersion((v) => v + 1);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["all messages"] }),
+      queryClient.invalidateQueries({ queryKey: ["all recurring messages"] }),
+      queryClient.invalidateQueries({
+        queryKey: ["all recurring messages by type"],
+      }),
+    ]);
+  };
 
   const handleSelectAll: any = () => {
     if (activeFilter.id == 0) {
@@ -397,15 +443,27 @@ function page() {
         </div>
       </div>
 
-      <div className="mb-4 overflow-x-auto">
+      <div className="mb-4 flex flex-col gap-3 overflow-x-auto sm:flex-row sm:items-center sm:justify-between">
         <Tabs
           activeFilter={activeFilter}
           setActiveFilter={setActiveFilter}
           filters={filters}
         />
+        {selectedIds.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setConfirmBatchDelete(true)}
+            className="flex shrink-0 items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
+          >
+            <BsTrash /> Delete selected ({selectedIds.length})
+          </button>
+        )}
       </div>
 
       <DataTable
+        key={`notifications-${activeFilter.id}-${tableVersion}`}
+        checkboxes
+        onSelectionChange={handleTableSelection}
         isLoading={
           isLoading ||
           recurringMessagesLoading ||
@@ -462,7 +520,11 @@ function page() {
               <Notifications
                 onClose={onClose}
                 isDisplayMode={true}
-                notification={activeNotification}
+                notification={
+                  activeNotificationDetails
+                    ? { ...activeNotification, ...activeNotificationDetails }
+                    : activeNotification
+                }
                 // invalidateQueries={invalidateQueries}
               />
             </>
@@ -489,6 +551,18 @@ function page() {
           />
         )}
       </ConfirmModal>
+
+      <ConfirmAction
+        isOpen={confirmBatchDelete}
+        onClose={() => setConfirmBatchDelete(false)}
+        title={`Delete ${selectedIds.length} notification${
+          selectedIds.length === 1 ? "" : "s"
+        }?`}
+        message="The selected notifications will be permanently removed from message history. This action cannot be undone."
+        successMessage="Notifications deleted"
+        errorMessage="Failed to delete notifications"
+        onConfirm={deleteSelected}
+      />
     </div>
   );
 }

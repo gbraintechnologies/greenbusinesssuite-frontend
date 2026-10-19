@@ -66,6 +66,10 @@ function MediaCenter({ params }: any) {
     value: "BLOGS" | "VIDEOS" | "ADS";
   }>(filters[0]);
 
+  const [statusFilter, setStatusFilter] = useState<"ALL" | "ACTIVE" | "INACTIVE">(
+    "ALL"
+  );
+
   const { data, isLoading, refetch } = useQuery<MediaData>({
     queryKey: [
       "SpecificMediaType",
@@ -74,8 +78,24 @@ function MediaCenter({ params }: any) {
       size,
       selectedTimeline?.value,
       searchTerm,
+      statusFilter,
     ],
     queryFn: async () => {
+      if (!searchTerm && statusFilter !== "ALL") {
+        const byStatus = await services.getMediaByStatus(
+          statusFilter === "ACTIVE",
+          page,
+          size
+        )();
+        const typePrefix = activeFilter.value.replace(/S$/, "");
+        return {
+          ...byStatus,
+          content: (byStatus?.content ?? []).filter((item: MediaItem) =>
+            item.mediaType?.toUpperCase().startsWith(typePrefix)
+          ),
+        };
+      }
+
       const rawData = searchTerm
         ? await searchMedia(searchTerm, activeFilter.value) // Fetch filtered data
         : await services.filterMediaByTimeline(
@@ -101,7 +121,15 @@ function MediaCenter({ params }: any) {
 
   useEffect(() => {
     refetch();
-  }, [page, size, activeFilter.value, selectedTimeline, searchTerm, refetch]);
+  }, [
+    page,
+    size,
+    activeFilter.value,
+    selectedTimeline,
+    searchTerm,
+    statusFilter,
+    refetch,
+  ]);
 
   const handleFilterChange = (filter: any) => {
     setActiveFilter({
@@ -131,6 +159,19 @@ function MediaCenter({ params }: any) {
               placeholder="Search"
             />
           </div>
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value as typeof statusFilter);
+              setPage(0);
+            }}
+            className="h-9 rounded-xl border border-gray-200 bg-white px-2 text-sm text-slate-700 outline-none"
+            aria-label="Filter by status"
+          >
+            <option value="ALL">All statuses</option>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+          </select>
           <DatePicker
             selectedTimeline={selectedTimeline}
             setSelectedTimeline={setSelectedTimeline}

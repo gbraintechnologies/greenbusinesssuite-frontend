@@ -17,11 +17,11 @@ import EditIconSetup from "@/public/icons/EditIconSetup";
 import SelectCountryEdit from "../components/selectCountryEdit";
 import TextInput from "../components/TextInput";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import {
   updateSector,
   deleteBySubSectorID,
-  deleteBySectorID,
+  deleteAllSectors,
+  editSubsectorByID,
 } from "@/services/features/sectorService";
 import { Button } from "@heroui/react";
 import { GoPlusCircle } from "react-icons/go";
@@ -64,7 +64,6 @@ interface UpdatedRow {
 }
 
 function EditSector() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const Id = searchParams.get("id");
   const { data, isLoading, refetch } = useQuery({
@@ -178,13 +177,24 @@ function EditSector() {
   const handleParentChildrenUpdate = async (data: UpdatedRow) => {
     let loadingToast = toast.info("Please wait...");
     try {
-      const payload = mapRowsToPayload(data);
+      const original = getValues().sectors.find(
+        (sector: any) => sector.id === data.id
+      ) as any;
+      const nameUnchanged =
+        original && String(original.parentSector).trim() === data.sector.trim();
 
-      // Log the payload to check if it's correct
-      console.log("Payload to be sent:", JSON.stringify(payload));
-
-      // Update sector using the API function
-      await updateSector(payload);
+      if (nameUnchanged) {
+        // PUT /sectors/edit/{id} only replaces the sub-sector list.
+        await editSubsectorByID(
+          data.id,
+          data.subSector
+            .split(",")
+            .map((sub: string) => sub.trim())
+            .filter(Boolean)
+        );
+      } else {
+        await updateSector(mapRowsToPayload(data));
+      }
 
       toast.dismiss(loadingToast);
       toast.success("updated sucessfully");
@@ -222,11 +232,14 @@ function EditSector() {
         return;
       }
 
-      await deleteBySectorID(Id);
+      await deleteAllSectors(Id);
       setDeleteAllModalOpen(false);
-      router.push("/sector-setup");
+      setInputValue("");
+      toast.success("All sectors deleted");
+      await refetch();
     } catch (error) {
-      console.error("Error deleting parent address and associates:", error);
+      console.error("Error deleting all sectors:", error);
+      toast.error("Failed to delete sectors. Please try again");
     }
   };
 

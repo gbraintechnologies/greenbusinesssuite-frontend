@@ -18,7 +18,21 @@ function DeleteForm({ setShow, id }: any) {
         toast.dismiss();
         setShow(false);
         console.log("deleting", res);
-        toast.success("Form deleted");
+        toast.success("Form deleted", {
+          duration: 8000,
+          action: {
+            label: "Undo",
+            onClick: () => {
+              services
+                .undeleteForm(id)
+                .then(() => {
+                  toast.success("Form restored");
+                  queryClient.invalidateQueries({ queryKey: ["all forms"] });
+                })
+                .catch(() => toast.error("Could not restore form"));
+            },
+          },
+        });
         queryClient.invalidateQueries({
           queryKey: ["all forms"],
         });
@@ -36,8 +50,8 @@ function DeleteForm({ setShow, id }: any) {
       {" "}
       <div>
         <p className="px-5 mt-5 text-[#334155]">
-          Deleting this form would completely remove it from your form list and
-          cannot be recovered
+          Deleting this form would remove it from your form list. You can undo
+          this right after deleting.
         </p>
 
         <div className=" p-5 border-t-[1px] border-t-gray-200 flex bg-[#F1F5F9] justify-between mt-5">

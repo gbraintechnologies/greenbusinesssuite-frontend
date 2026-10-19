@@ -32,7 +32,7 @@ type FormValues = yup.InferType<typeof schema>;
 
 function Security() {
   const { admin } = useAdmin();
-  const { removeAuth } = useAuth();
+  const { logout } = useAuth();
 
   const {
     register,
@@ -80,7 +80,7 @@ function Security() {
 
       toast.success("Password changed successfully. Please sign in again.");
       reset();
-      removeAuth();
+      logout();
       // Soft redirect after token clear
       window.location.href = "/";
     } catch (error: any) {

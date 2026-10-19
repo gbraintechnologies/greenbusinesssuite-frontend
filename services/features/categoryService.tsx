@@ -8,6 +8,11 @@ export const updateSpecificCategory = (data: any) => {
   return authApi.put(`/specific-category-module/update`, data);
 };
 
+/** PUT /specific-category-module/modify */
+export const modifySpecificCategoryModule = (data: any) => {
+  return authApi.put(`/specific-category-module/modify`, data);
+};
+
 export const createSpecificCategory = (data: any) => {
   return authApi.post("/specific-category-module/create", data);
 };

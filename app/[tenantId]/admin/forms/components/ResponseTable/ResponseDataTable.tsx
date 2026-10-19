@@ -19,6 +19,9 @@ import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
 import html2pdf from "html2pdf.js";
 import { getSessionTenantID } from "@/services/localService";
+import { useQueryClient } from "@tanstack/react-query";
+import { BsTrash } from "react-icons/bs";
+import ConfirmAction from "@/components/Modal/ConfirmAction";
 
 export interface IResponse {
   email: string;
@@ -51,6 +54,32 @@ const ResponseDataTable: React.FC<Props> = ({
 
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const hiddenRef = React.useRef(null);
+
+  const queryClient = useQueryClient();
+  const [rowToDelete, setRowToDelete] = useState<any>(null);
+  const [wipeUserData, setWipeUserData] = useState(false);
+
+  const closeDelete = () => {
+    setRowToDelete(null);
+    setWipeUserData(false);
+  };
+
+  const deleteRowResponse = async () => {
+    const responseId = rowToDelete?.data?.id;
+    const userId = rowToDelete?.userData?.id ?? rowToDelete?.data?.userId;
+    if (wipeUserData && userId && form?.id) {
+      await services.hardDeleteUserForm(userId, form.id);
+    } else {
+      await services.deleteResponse(responseId);
+    }
+    setRows((prev: any[]) =>
+      prev.filter((row) => row?.data?.id !== responseId)
+    );
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["get form response by "] }),
+      queryClient.invalidateQueries({ queryKey: ["Get forms status count"] }),
+    ]);
+  };
 
   const captureAndGeneratePDF = (userData: any, responseId: string) => {
     const input = hiddenRef?.current;
@@ -373,10 +402,22 @@ const ResponseDataTable: React.FC<Props> = ({
               <EyeIcon />
             </Link>
           )}
+
+          <button
+            type="button"
+            aria-label="Delete response"
+            className="text-red-600 hover:text-red-700"
+            onClick={() => setRowToDelete(params.row)}
+          >
+            <BsTrash size={16} />
+          </button>
         </div>,
       ],
     },
   ];
+
+  const deleteUserId =
+    rowToDelete?.userData?.id ?? rowToDelete?.data?.userId ?? null;
 
   return (
     <div>
@@ -384,6 +425,34 @@ const ResponseDataTable: React.FC<Props> = ({
         isLoading={isResponseLoading || fetchingUserData}
         rows={rows}
         columns={columns}
+      />
+
+      <ConfirmAction
+        isOpen={Boolean(rowToDelete)}
+        onClose={closeDelete}
+        title={`Delete response #${rowToDelete?.data?.id ?? ""}?`}
+        successMessage="Response deleted"
+        errorMessage="Failed to delete response"
+        onConfirm={deleteRowResponse}
+        message={
+          <>
+            This permanently removes this submission. This action cannot be
+            undone.
+            {deleteUserId && !form?.isAnonymous && (
+              <label className="mt-4 flex items-start gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={wipeUserData}
+                  onChange={(e) => setWipeUserData(e.target.checked)}
+                />
+                <span>
+                  Also delete all of this user&apos;s data for this form
+                </span>
+              </label>
+            )}
+          </>
+        }
       />
     </div>
   );

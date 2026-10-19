@@ -23,7 +23,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
     removeCompanyAdmin,
     companyBranding: company,
   } = useCompany();
-  const { removeAuth } = useAuth();
+  const { logout } = useAuth();
   const router = useRouter();
 
   const homeHref = `/${company?.company_identifier}/admin`;
@@ -63,7 +63,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
         settingsHref={settingsHref}
         onLogout={() => {
           removeCompanyAdmin();
-          removeAuth();
+          logout();
           toast.success("Logged out");
           router.push(`/${company?.company_identifier}/auth`);
         }}

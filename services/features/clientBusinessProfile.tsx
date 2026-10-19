@@ -23,3 +23,8 @@ export const createBusinessProfile = (data: any) => {
 export const updateBusinessProfile = (data: any) => {
   return authApi.put(`/business-profiles`, data);
 };
+
+/** DELETE /business-profiles/{id} */
+export const deleteBusinessProfile = (id: string | number) => {
+  return authApi.delete(`/business-profiles/${id}`);
+};

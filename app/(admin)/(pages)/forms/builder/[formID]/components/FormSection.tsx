@@ -22,7 +22,12 @@ import { Button, Input, Textarea, useDisclosure } from "@heroui/react";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 
 function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
-  const { form, addFormSection, updateFormSectionsOrdering } = useForm();
+  const {
+    form,
+    addFormSection,
+    updateFormSectionsOrdering,
+    updateFormFieldsOrdering,
+  } = useForm();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const { data: formStatusCount } = useQuery({
@@ -106,6 +111,38 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
     }
 
     updateFormSectionsOrdering(sections);
+  };
+
+  const visibleFields: any[] = (localSection?.formFields ?? [])
+    .filter((item: any) => !item.isDeleted)
+    .map((field: any, index: number) => ({ field, index }))
+    .sort(
+      (a: any, b: any) =>
+        (a.field?.ordering ?? a.index) - (b.field?.ordering ?? b.index) ||
+        a.index - b.index
+    )
+    .map(({ field }: any) => field);
+
+  const moveField = (fieldIndex: number, direction: -1 | 1) => {
+    const target = fieldIndex + direction;
+    if (target < 0 || target >= visibleFields.length) return;
+    const reordered = [...visibleFields];
+    [reordered[fieldIndex], reordered[target]] = [
+      reordered[target],
+      reordered[fieldIndex],
+    ];
+    const withOrdering = reordered.map((field, ordering) => ({
+      ...field,
+      ordering,
+    }));
+    const deletedFields = (localSection?.formFields ?? []).filter(
+      (item: any) => item.isDeleted
+    );
+    setLocalSection((prev: any) => ({
+      ...prev,
+      formFields: [...withOrdering, ...deletedFields],
+    }));
+    updateFormFieldsOrdering(section?.id, [...withOrdering, ...deletedFields]);
   };
 
   return (
@@ -204,19 +241,45 @@ function FormSection({ section, activeTab, setActiveTab, refetch }: any) {
           </div>
         ) : (
           <div className="builder-fields-grid grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
-            {localSection?.formFields
-              ?.filter((item: any) => !item.isDeleted)
-              .map((field: any, idx: any) => {
-                return (
+            {visibleFields.map((field: any, idx: number) => {
+              return (
+                <div
+                  key={field?.id ?? idx}
+                  className={`group/field relative ${
+                    field?.horizontalAlign ? "col-span-1" : "col-span-2"
+                  }`}
+                >
                   <FormField
-                    key={idx}
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                     section={section}
                     field={field}
                   />
-                );
-              })}
+                  {visibleFields.length > 1 && (
+                    <div className="absolute right-1 top-1 z-10 hidden flex-col rounded-lg border border-slate-200 bg-white shadow-sm group-hover/field:flex">
+                      <button
+                        type="button"
+                        title="Move field up"
+                        disabled={idx === 0}
+                        onClick={() => moveField(idx, -1)}
+                        className="p-1 hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <PiCaretUp size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        title="Move field down"
+                        disabled={idx === visibleFields.length - 1}
+                        onClick={() => moveField(idx, 1)}
+                        className="p-1 hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <PiCaretDown size={14} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
 

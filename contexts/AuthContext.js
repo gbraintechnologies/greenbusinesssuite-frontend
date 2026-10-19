@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import { signOut } from "@/services/features/authService";
 
 // @ts-ignore
 export const AuthContext = createContext();
@@ -15,6 +16,12 @@ export const AuthProvider = ({ children }) => {
 
   const removeAuth = () => {
     setAuth(null);
+  };
+
+  // User-initiated logout: revoke on the server (best effort), then clear locally.
+  const logout = () => {
+    signOut().catch(() => {});
+    removeAuth();
   };
 
   useEffect(() => {
@@ -64,6 +71,7 @@ export const AuthProvider = ({ children }) => {
         setAuth,
         addAuthData,
         removeAuth,
+        logout,
         hasHydrated,
       }}
     >
