@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { Spinner } from "@heroui/react";
@@ -76,7 +76,16 @@ export default function RecentCompaniesTable({
                   className="border-b border-slate-50 last:border-0"
                 >
                   <td className="py-3 pr-4 font-medium text-slate-900">
-                    {company.companyName ?? "—"}
+                    {company.id != null ? (
+                      <Link
+                        href={`/company-setup/profile?id=${company.id}`}
+                        className="text-brand-700 hover:underline"
+                      >
+                        {company.companyName ?? "—"}
+                      </Link>
+                    ) : (
+                      company.companyName ?? "—"
+                    )}
                   </td>
                   <td className="py-3 pr-4 text-slate-600">
                     {company.primaryContactEmail ?? "—"}
