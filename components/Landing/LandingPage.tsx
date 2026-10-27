@@ -124,10 +124,22 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    // App scrolls on `body` (html is overflow:hidden), not window
+    const scrollRoot = document.body;
+    const onScroll = () => {
+      const y =
+        scrollRoot.scrollTop ||
+        document.documentElement.scrollTop ||
+        window.scrollY;
+      setScrolled(y > 24);
+    };
     onScroll();
+    scrollRoot.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      scrollRoot.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   useEffect(() => {
