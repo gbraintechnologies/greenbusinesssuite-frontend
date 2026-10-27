@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { FiBriefcase, FiUsers } from "react-icons/fi";
+import { FiBriefcase } from "react-icons/fi";
 import services from "@/services";
 import AnalyticsPageShell from "../_components/AnalyticsPageShell";
 import AnalyticsKpiGrid from "../_components/AnalyticsKpiGrid";
@@ -34,11 +34,6 @@ export default function GeneralBusinessAnalyticsPage() {
                 label: data.kpis[0]?.label ?? "Total businesses",
                 value: data.kpis[0]?.value ?? 0,
                 icon: <FiBriefcase size={18} />,
-              },
-              {
-                label: data.kpis[1]?.label ?? "Total employees",
-                value: data.kpis[1]?.value ?? 0,
-                icon: <FiUsers size={18} />,
               },
             ]}
           />

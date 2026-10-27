@@ -37,7 +37,7 @@ import { isPlatformAdmin } from "@/lib/platformRole";
 
 function CompanyAdminAuth(props: any) {
   const params: any = use(props.params);
-  const { companyBranding } = useCompany();
+  const { companyBranding, addCompanyAdminData } = useCompany();
 
   const search = useSearchParams();
 
@@ -136,7 +136,29 @@ function CompanyAdminAuth(props: any) {
           return;
         }
 
-        addUserData(loginData.data);
+        const roleName = String(
+          loginData.data?.roleName ?? ""
+        ).toUpperCase();
+        const sessionUser = {
+          ...loginData.data,
+          first_name: loginData.data?.firstName,
+          last_name: loginData.data?.lastName,
+          role_name: loginData.data?.roleName,
+        };
+
+        if (roleName === "ADMIN") {
+          addCompanyAdminData(sessionUser);
+          if (Boolean(redirectTo)) {
+            router.push(
+              `/${tenantId}/invite-form?f=${formId}&c=${companyName}`
+            );
+            return;
+          }
+          router.push(`/${tenantId}/admin`);
+          return;
+        }
+
+        addUserData(sessionUser);
         if (Boolean(redirectTo)) {
           router.push(`/${tenantId}/invite-form?f=${formId}&c=${companyName}`);
           return;
