@@ -1,21 +1,16 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import TextInput from "./components/TextInput";
 import PasswordInput from "./components/PasswordInput";
-
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
-import Logo from "./components/Logo";
 import { login } from "@/services/features/authService";
-
-// icons
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
-// hooks
 import useAdmin from "@/hooks/useAdmin";
 import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
@@ -34,15 +29,16 @@ const schema = yup.object({
 function LogIn() {
   const router = useRouter();
 
-  const { admin, removeAdmin, addAdminData, hasHydrated: adminHydrated } = useAdmin();
-  const { auth, removeAuth, addAuthData, hasHydrated: authHydrated } = useAuth();
+  const { admin, removeAdmin, addAdminData, hasHydrated: adminHydrated } =
+    useAdmin();
+  const { auth, addAuthData, hasHydrated: authHydrated } = useAuth();
   const { removeUser, addUserData } = useUser();
 
   useEffect(() => {
     if (!authHydrated || !adminHydrated) return;
     const accessToken = auth?.accessToken ?? auth?.access_token;
     if (!accessToken) return;
-    router.replace(isPlatformAdmin(admin ?? auth) ? "/" : "/client");
+    router.replace(isPlatformAdmin(admin ?? auth) ? "/dashboard" : "/client");
   }, [authHydrated, adminHydrated, admin, auth, router]);
 
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -52,7 +48,7 @@ function LogIn() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors, isValid },
+    formState: { isSubmitting, errors },
   } = useForm<typeOfSchema>({
     resolver: yupResolver(schema),
     mode: "onChange",
@@ -62,16 +58,9 @@ function LogIn() {
     },
   });
 
-  // const fetchCurrentUser = async (token: string) => {
-  //   try {
-  //     return await currentLoggedIn(token);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
-
   const onSubmit = async (data: typeOfSchema) => {
     try {
+      setLoginError(null);
       const token: any = await login({
         username: data.username,
         password: data.password,
@@ -83,131 +72,161 @@ function LogIn() {
         if (isPlatformAdmin(token?.data)) {
           addAdminData(token?.data);
           removeUser();
-          router.push("/");
+          router.push("/dashboard");
         } else {
           removeAdmin();
           addUserData(token?.data);
           router.push("/client");
         }
-
-        // TODO: Refactoring
-        // const user = await fetchCurrentUser(token.data?.access_token);
-
-        // if (
-        //   user?.data?.user_status === "NEWLY_CREATED" ||
-        //   user?.data?.user_status === "TEMP_CREDENTIALS"
-        // ) {
-        //   addAdminData(user?.data);
-        //   toast("Create your password");
-        //   router.push(`/auth/create-password?temp=${data.password}`);
-        //   return;
-        //   // route to admin / company dashboard
-        // } else if (user?.data?.profiles[0]?.role_id === 1) {
-        //   addAdminData(user?.data);
-        //   toast.success("Logged in");
-        //   router.push("/");
-        //   return;
-        // } else {
-        //   removeAuth();
-        //   toast.error("Access denied. Contact your administrator");
-        // }
       }
     } catch (error) {
       setLoginError("Incorrect email address or password");
     }
   };
 
-  // if admin is already authenticated, re route
-  // useEffect(() => {
-  //   if (Boolean(admin) && Boolean(auth)) {
-  //     if (admin?.profiles[0].role_id === 1) {
-  //       // main admin
-  //       toast.success("Logged in");
-  //       router.push("/");
-  //       return;
-  //     }
-  //     // company admin
-  //     if (admin?.profiles[0].role_id === 6) {
-  //       toast.success("Logged in");
-  //       router.push("/company");
-  //       return;
-  //     }
-  //   }
-  // }, [admin, auth]);
-
   return (
-    <div>
-      <div className="max-h-screen h-screen flex overflow-hidden">
-        <div className=" flex px-4 md:flex flex-[2] items-center justify-center bg-white p-6 rounded-[20px] shadow-2xl py-20">
+    <div className="flex min-h-screen bg-[#f4faf6] text-[#10261c]">
+      {/* Form panel */}
+      <div className="flex w-full flex-col justify-between px-5 py-6 sm:px-8 lg:w-[46%] lg:px-12 xl:px-16">
+        <Link href="/" className="inline-flex items-center gap-2.5 self-start">
+          <Image
+            src="/brand/gbs-mark.png"
+            alt="Green Business Suite"
+            width={40}
+            height={40}
+            className="h-10 w-10"
+            priority
+            unoptimized
+          />
+          <span className="font-[family-name:var(--font-landing-display)] text-sm font-semibold tracking-tight text-[#0B3D2E] sm:text-[15px]">
+            Green Business Suite
+          </span>
+        </Link>
+
+        <div className="mx-auto w-full max-w-md py-10 sm:py-14">
+          <h1 className="font-[family-name:var(--font-landing-display)] text-3xl font-semibold tracking-tight text-[#0B3D2E] sm:text-4xl">
+            Welcome back
+          </h1>
+          <p className="mt-2 text-sm text-[#4a6658] sm:text-base">
+            Sign in to continue to your workspace.
+          </p>
+
           <form
-            className="flex flex-col  w-full md:max-w-lg gap-y-6  border bg-white py-20 p-6 rounded-[20px]"
+            className="mt-8 flex flex-col gap-5"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <h6 className="font-bold text-3xl">Welcome Back! Sign in</h6>
-            <p className="text-gray-500 text-sm -mt-4">
-              Enter your credentials to log into your account
-            </p>
+            <TextInput
+              label="Email address"
+              type="text"
+              placeholder="Enter your email address"
+              autoComplete="username"
+              {...register("username")}
+              error={errors.username?.message}
+              extraClasses={
+                errors.username
+                  ? "border-red-500"
+                  : "border-[#0B3D2E]/15 focus:border-[#1fa35c]"
+              }
+            />
+
             <div>
-              <TextInput
-                label="Email address"
-                type="text"
-                placeholder="Enter your email address"
-                autoComplete="off"
-                {...register("username")}
-                error={errors.username?.message}
-                extraClasses={errors.username ? "border-red-500" : ""}
-              />
-            </div>
-            <div className="mb-4">
               <PasswordInput
                 label="Password"
                 placeholder="Enter your password"
-                autoComplete="off"
+                autoComplete="current-password"
                 {...register("password")}
                 error={errors.password?.message}
-                extraClasses={errors.password ? "border-red-500" : ""}
+                extraClasses={
+                  errors.password
+                    ? "border-red-500"
+                    : "border-[#0B3D2E]/15 focus:border-[#1fa35c]"
+                }
               />
               {loginError && (
-                <div className="flex items-center justify-start py-2">
-                  <FiAlertCircle fontSize={"small"} color={"red"} />
-                  <p className="ml-2 text-sm text-red-600 font-normal">
-                    {loginError}
-                  </p>
+                <div className="mt-2 flex items-center gap-2">
+                  <FiAlertCircle className="shrink-0 text-red-500" size={16} />
+                  <p className="text-sm text-red-600">{loginError}</p>
                 </div>
               )}
             </div>
-            <p className="text-green-500 font-bold text-sm underline">
-              <Link href="/auth/forgot-password"> Forgot Password? </Link>
-            </p>
+
+            <div className="flex justify-end">
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm font-semibold text-[#0B7A43] transition hover:text-[#096637]"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
             <Button
-              className="bg-primary-green text-white rounded-lg"
+              className="h-12 rounded-xl bg-[#1fa35c] text-sm font-semibold text-white shadow-[0_12px_28px_-14px_rgba(31,163,92,0.9)] transition hover:bg-[#189650]"
               type="submit"
               isLoading={isSubmitting}
               disabled={isSubmitting}
             >
-              Sign In
+              Sign in
             </Button>
           </form>
+
+          <p className="mt-8 text-sm text-[#4a6658]">
+            Looking for the public site?{" "}
+            <Link
+              href="/"
+              className="font-semibold text-[#0B7A43] hover:text-[#096637]"
+            >
+              Back to home
+            </Link>
+          </p>
         </div>
-        <div className="hidden md:flex flex-[2] relative z-20  pb-6 flex-col justify-between pt-[14px] w-full h-full bgImgCenter circle">
-          <div className="">
-            <div className={"mt-10 pl-[81px]"}>
-              <Logo src={"/brand/greensuite_logo_white.png"} width={220} height={74} className="h-12 w-auto" />
-            </div>
-            <div className={"mt-10 pl-[81px]"}>
-              <p className="text-white font-medium text-2xl">
-                Build Collabrative forms quickly and easily
-              </p>
-            </div>
-            <div className="mt-10">
-              <img src={"/svg/login_icon.svg"} className="login_icon" />
-            </div>
-          </div>
-          <div className="flex flex-col  pl-[81px]">
-            <div className="flex items-center gap-x-4 text-xs text-opacity-30 text-white font-medium">
-              <p className="font-xs">&copy;&nbsp;Green Business Suite</p>
-              <p>&bull;&nbsp;Contact</p>
-              <p>&bull;&nbsp;Privacy policy</p>
+
+        <p className="text-xs text-[#6b8576]">
+          © {new Date().getFullYear()} Green Business Suite
+        </p>
+      </div>
+
+      {/* Brand panel */}
+      <div className="relative hidden overflow-hidden lg:block lg:w-[54%]">
+        <Image
+          src="/landing/hero.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover"
+          sizes="54vw"
+        />
+        <div className="absolute inset-0 bg-[#0B3D2E]/78" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D2E] via-[#0B3D2E]/45 to-transparent" />
+
+        <div className="relative z-10 flex h-full flex-col justify-between p-10 xl:p-14">
+          <Image
+            src="/brand/gbs-mark.png"
+            alt=""
+            width={56}
+            height={56}
+            className="h-14 w-14"
+            unoptimized
+          />
+
+          <div className="max-w-lg text-white">
+            <p className="font-[family-name:var(--font-landing-display)] text-3xl font-semibold leading-tight tracking-tight xl:text-4xl">
+              Operate green business programs from one suite
+            </p>
+            <p className="mt-4 text-base leading-relaxed text-white/80">
+              Forms, company portals, clients, documents, and billing—connected
+              for platform admins, company teams, and clients.
+            </p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {["Platform admin", "Company portal", "Client workspace"].map(
+                (item) => (
+                  <div
+                    key={item}
+                    className="rounded-xl border border-white/15 bg-white/10 px-3 py-3 text-sm font-medium backdrop-blur-sm"
+                  >
+                    {item}
+                  </div>
+                )
+              )}
             </div>
           </div>
         </div>

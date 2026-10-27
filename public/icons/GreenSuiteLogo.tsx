@@ -3,8 +3,8 @@ import Image from "next/image";
 type GreenSuiteLogoProps = {
   /** dark = for light backgrounds; light/white = for dark backgrounds */
   variant?: "dark" | "light" | "white";
-  /** horizontal lockup vs stacked vertical */
-  layout?: "horizontal" | "vertical";
+  /** horizontal lockup vs stacked vertical vs mark-only */
+  layout?: "horizontal" | "vertical" | "mark";
   width?: number;
   height?: number;
   className?: string;
@@ -12,6 +12,7 @@ type GreenSuiteLogoProps = {
 };
 
 const SRC = {
+  mark: "/brand/gbs-mark.png",
   horizontal: {
     dark: "/brand/greensuite_logo_on_light.png",
     light: "/brand/greensuite_logo_light.png",
@@ -33,6 +34,20 @@ export default function GreenSuiteLogo({
   className,
   priority = false,
 }: GreenSuiteLogoProps) {
+  if (layout === "mark") {
+    return (
+      <Image
+        src={SRC.mark}
+        alt="Green Business Suite"
+        width={width ?? 40}
+        height={height ?? 40}
+        className={className ?? "h-10 w-10"}
+        unoptimized
+        priority={priority}
+      />
+    );
+  }
+
   const src =
     layout === "vertical" ? SRC.vertical[variant] : SRC.horizontal[variant];
 

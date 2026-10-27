@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, Syne } from "next/font/google";
 
 // global css
 import "./globals.css";
@@ -9,11 +9,22 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
 });
 
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-landing-display",
+  weight: ["500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "Green Business Suite",
-  description: "Green Business Suite",
+  description:
+    "The platform for programs, clients, and green growth—built for teams that deliver impact at scale.",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon/favicon-64.png", sizes: "64x64", type: "image/png" },
+    ],
+    apple: [{ url: "/favicon/apple-touch-icon.png", sizes: "180x180" }],
   },
 };
 
@@ -35,9 +46,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning lang="en" className={montserrat.variable}>
+    <html
+      suppressHydrationWarning
+      lang="en"
+      className={`${montserrat.variable} ${syne.variable}`}
+    >
       <link rel="manifest" href="/favicon/site.webmanifest" />
-      <meta name="theme-color" content="#ffffff"></meta>
+      <meta name="theme-color" content="#0B3D2E" />
       <body className="font-sans antialiased">
         <ReactQueryProvider>
           <AuthContextProvider>

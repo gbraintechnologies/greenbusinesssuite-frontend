@@ -27,7 +27,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
       <div className="flex min-w-0 items-center gap-3">
         <MobileNavToggle />
         <Link
-          href="/"
+          href="/dashboard"
           className="flex shrink-0 items-center transition-opacity hover:opacity-90"
           aria-label="Green Business Suite home"
         >

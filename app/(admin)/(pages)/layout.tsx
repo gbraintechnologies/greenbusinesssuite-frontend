@@ -69,7 +69,7 @@ export default function AdminLayout({
     {
       name: "Dashboard",
       icon: <FiGrid size={18} />,
-      link: "/",
+      link: "/dashboard",
     },
     {
       name: "Forms",
