@@ -217,16 +217,6 @@ export default function LandingPage() {
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/auth"
-              className={`hidden px-3 py-2 text-sm font-medium transition sm:inline-flex ${
-                headerSolid
-                  ? "text-[#2f4a3d] hover:text-[#0B3D2E]"
-                  : "text-white/90 hover:text-white"
-              }`}
-            >
-              Log in
-            </Link>
-            <Link
-              href="/auth"
               className="rounded-xl bg-[#1fa35c] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_28px_-12px_rgba(31,163,92,0.9)] transition hover:bg-[#189650]"
             >
               Sign in
@@ -718,12 +708,7 @@ export default function LandingPage() {
               <ul className="mt-4 space-y-3 text-sm text-white/70">
                 <li>
                   <Link href="/auth" className="hover:text-white">
-                    Log in
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/auth" className="hover:text-white">
-                    Sign in to platform
+                    Sign in
                   </Link>
                 </li>
                 <li>

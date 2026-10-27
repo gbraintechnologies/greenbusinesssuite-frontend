@@ -79,6 +79,16 @@ export const userSelfSignUp = (data: any) => {
   });
 };
 
+/** POST /auth/apex-sign-up — platform self-registration */
+export const apexSignUp = (data: {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}) => {
+  return noAuthApi.post("/auth/apex-sign-up", data);
+};
+
 /** GET /auth/verify-account?email= */
 export const confirmAccount = (email: string) => {
   return noAuthApi.get("/auth/verify-account", {

@@ -170,6 +170,15 @@ function LogIn() {
           </form>
 
           <p className="mt-8 text-sm text-[#4a6658]">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/auth/sign-up"
+              className="font-semibold text-[#0B7A43] hover:text-[#096637]"
+            >
+              Create account
+            </Link>
+          </p>
+          <p className="mt-3 text-sm text-[#4a6658]">
             Looking for the public site?{" "}
             <Link
               href="/"
