@@ -43,7 +43,7 @@ function RenameForm({ setShow, form }: any) {
 
   return (
     <div>
-      <div className="flex mx-40 my-5 bg-gradient-to-r from-indigo-200 to-pink-400 items-center justify-center  h-[12rem] rounded-lg">
+      <div className="flex mx-40 my-5 bg-gradient-to-r from-emerald-200 to-brand-400 items-center justify-center  h-[12rem] rounded-lg">
         <FormPreviewIcon />
       </div>
 

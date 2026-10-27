@@ -6,7 +6,7 @@ import type { NamedValue } from "../_data/mockAnalytics";
 import { formatNumber } from "@/utils/dashboard/formatters";
 
 const COLORS = [
-  "#7C3AED",
+  "#1FA35C",
   "#16C8C7",
   "#3B82F6",
   "#F59E0B",

@@ -5,9 +5,9 @@
 @tailwind utilities;
 
 :root {
-  --brand-primary: #7c3aed;
-  --brand-primary-light: #ede9fe;
-  --brand-primary-dark: #5b21b6;
+  --brand-primary: #1fa35c;
+  --brand-primary-light: #dcfce7;
+  --brand-primary-dark: #0b3d2e;
   --surface-muted: #f8fafc;
   --border-subtle: #e2e8f0;
   --font-montserrat: 'Montserrat', sans-serif;

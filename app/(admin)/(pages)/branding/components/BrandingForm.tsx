@@ -34,7 +34,7 @@ export default function BrandingForm({
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoUrl, setLogoUrl] = useState(initial?.logo ?? "");
-  const [color, setColor] = useState(initial?.color || "#7C3AED");
+  const [color, setColor] = useState(initial?.color || "#1FA35C");
   const [name, setName] = useState(initial?.companyName || companyName || "");
   const [tenant, setTenant] = useState(initial?.tenancyId || tenancyId || "");
   const [company, setCompany] = useState<string>(
@@ -46,7 +46,7 @@ export default function BrandingForm({
   useEffect(() => {
     if (initial) {
       setLogoUrl(initial.logo ?? "");
-      setColor(initial.color || "#7C3AED");
+      setColor(initial.color || "#1FA35C");
       setName(initial.companyName || "");
       setTenant(initial.tenancyId || "");
       setCompany(String(initial.companyId ?? ""));

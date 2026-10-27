@@ -28,7 +28,7 @@ function TopNav() {
   const { removeAuth } = useAuth();
   const router = useRouter();
 
-  const brandColor = company?.color || "#7C3AED";
+  const brandColor = company?.color || "#1FA35C";
   const homeHref = `/${company?.company_identifier}/client/home`;
   const settingsHref = `/${company?.company_identifier}/client/settings`;
 

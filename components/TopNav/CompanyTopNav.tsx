@@ -31,7 +31,7 @@ function TopNav({ settingsLink }: { settingsLink?: string }) {
     settingsLink ?? `/${company?.company_identifier}/admin/settings`;
 
   return (
-    <nav className="fixed top-0 z-40 flex h-14 w-full items-center justify-between border-b border-brand-800/30 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-700 px-4 shadow-[0_4px_20px_-8px_rgba(91,33,182,0.45)] sm:px-5">
+    <nav className="fixed top-0 z-40 flex h-14 w-full items-center justify-between border-b border-brand-800/30 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-700 px-4 shadow-[0_4px_20px_-8px_rgba(11,61,46,0.45)] sm:px-5">
       <div className="flex min-w-0 items-center gap-3">
         <MobileNavToggle />
         <Link

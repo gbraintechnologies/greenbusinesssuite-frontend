@@ -5,7 +5,7 @@ const baseColors = [
   "#16C8C7", // teal
   "#3B82F6", // blue
   "#FFCE56", // yellow
-  "#9966FF", // purple
+  "#1FA35C", // brand green
   "#FF9F40", // orange
   "#9CA3AF", // gray
   "#F472B6", // pink
@@ -14,7 +14,7 @@ const baseColors = [
   "#EF4444", // red
   "#22D3EE", // cyan
   "#A3E635", // lime
-  "#C084FC", // purple
+  "#86EFAC", // light green
 ];
 
 type Props = {

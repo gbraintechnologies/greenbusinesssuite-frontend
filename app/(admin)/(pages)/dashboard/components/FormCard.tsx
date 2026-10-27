@@ -138,7 +138,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
               // background: `linear-gradient(45deg, ${color?.a} 0%, ${color?.b} 100%)`,
             }
           }
-          className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+          className={`flex items-center bg-gradient-to-br from-emerald-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
         >
           <FormPreviewIcon />
         </button>

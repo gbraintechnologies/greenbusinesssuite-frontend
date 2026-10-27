@@ -16,7 +16,7 @@ const Barchart = ({ item, categories }: Props) => {
         data={item?.data}
         index="name"
         categories={categories ?? ["value"]}
-        colors={["violet"]}
+        colors={["emerald"]}
         yAxisWidth={48}
       />
     </div>

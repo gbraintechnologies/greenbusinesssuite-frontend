@@ -25,7 +25,7 @@ export default function FormPipelineChart({ data, isLoading }: Props) {
         <BarList
           data={data}
           className="mt-2"
-          color="violet"
+          color="emerald"
           valueFormatter={(value: number) => value.toLocaleString()}
         />
       )}

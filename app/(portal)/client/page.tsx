@@ -116,8 +116,8 @@ export default function ClientPortal() {
         category: "Form",
         published: true,
         mark: String(form.name || "F").trim().charAt(0).toUpperCase() || "F",
-        accent: "bg-[#5b21b6]",
-        wash: "bg-[#f5f3ff]",
+        accent: "bg-[#0b3d2e]",
+        wash: "bg-[#f4faf6]",
       }));
     return [...catalog, ...extras];
   }, [catalog, data]);

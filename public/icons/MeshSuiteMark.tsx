@@ -1,6 +1,6 @@
 type Props = {
   className?: string;
-  /** Fill for the icon paths — use white on purple bars */
+  /** Fill for the icon paths — use white on green bars */
   color?: string;
 };
 

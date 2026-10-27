@@ -155,7 +155,7 @@ function UsingTemplate({ setShowTemplateModal }: any) {
                       return (
                         <div className="w-full  rounded-lg  bg-gray-50 border border-gray-200">
                           <div
-                            className={`flex relative items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+                            className={`flex relative items-center bg-gradient-to-br from-emerald-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
                           >
                             <div className="absolute top-3 left-3 rounded-full px-3 py-1 bg-blue-100 font-semibold text-[9px] text-blue-900">
                               Form Template

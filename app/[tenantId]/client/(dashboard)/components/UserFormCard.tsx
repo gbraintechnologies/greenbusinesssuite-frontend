@@ -199,7 +199,7 @@ function FormCard({ form: formResponse, type = "uncompleted" }: Props) {
       <>
         <div className="w-full rounded-lg shadow-md bg-[#F8FAFC]">
           <button
-            className={`flex relative items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+            className={`flex relative items-center bg-gradient-to-br from-emerald-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
           >
             <FormPreviewIcon />
           </button>

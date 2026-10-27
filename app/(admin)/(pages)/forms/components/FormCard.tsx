@@ -105,7 +105,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                   router.push(`/forms/${id}`);
                 }
           }
-          className="relative flex h-24 w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-indigo-950 to-gray-900 sm:h-[10rem] sm:rounded-t-lg"
+          className="relative flex h-24 w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-emerald-950 to-gray-900 sm:h-[10rem] sm:rounded-t-lg"
         >
           <div className="pointer-events-none absolute left-1/2 top-[35%] -translate-x-1/2 scale-100 opacity-10 sm:scale-150">
             <FormPreviewIcon />
@@ -126,7 +126,7 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                 Public
               </span>
             ) : (
-              <span className="inline-flex max-w-full min-w-0 items-center gap-0.5 truncate rounded-full bg-indigo-600 px-1.5 py-0.5 text-[9px] font-medium text-white sm:gap-1 sm:px-3 sm:py-1 sm:text-[11px]">
+              <span className="inline-flex max-w-full min-w-0 items-center gap-0.5 truncate rounded-full bg-brand-600 px-1.5 py-0.5 text-[9px] font-medium text-white sm:gap-1 sm:px-3 sm:py-1 sm:text-[11px]">
                 <IoLockClosedOutline className="shrink-0 text-[10px] sm:text-sm" />{" "}
                 Protected
               </span>

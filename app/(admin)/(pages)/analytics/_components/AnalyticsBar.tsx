@@ -14,7 +14,7 @@ type Props = {
 export default function AnalyticsBar({
   title,
   data,
-  color = "violet",
+  color = "emerald",
 }: Props) {
   return (
     <DashboardPanel title={title}>

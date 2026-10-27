@@ -226,7 +226,7 @@ const page = (props: any) => {
                 <IoLockOpenOutline /> Public
               </span>
             ) : (
-              <span className="rounded-full text-indigo-600 bg-indigo-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
+              <span className="rounded-full text-brand-600 bg-brand-600 font-medium bg-opacity-10  py-1 px-4 flex items-center gap-1 w-fit">
                 <IoLockClosedOutline /> Protected
               </span>
             )}

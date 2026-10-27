@@ -325,7 +325,7 @@ function SideNav({
 
           {/* Footer stays with the menu — no separate scroll */}
           <div className="mt-auto pt-3">
-            <div className="rounded-xl bg-gradient-to-br from-brand-50 to-violet-50 px-3 py-2.5 ring-1 ring-brand-100">
+            <div className="rounded-xl bg-gradient-to-br from-brand-50 to-emerald-50 px-3 py-2.5 ring-1 ring-brand-100">
               <p className="text-xs font-semibold text-brand-800">Need help?</p>
               <p className="mt-0.5 text-[11px] leading-snug text-slate-500">
                 Contact support for setup assistance.

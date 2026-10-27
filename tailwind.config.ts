@@ -31,18 +31,18 @@ const config: Config = {
       },
       colors: {
         brand: {
-          50: "#F5F3FF",
-          100: "#EDE9FE",
-          200: "#DDD6FE",
-          300: "#C4B5FD",
-          400: "#A78BFA",
-          500: "#8B5CF6",
-          600: "#7C3AED",
-          700: "#6D28D9",
-          800: "#5B21B6",
-          900: "#4C1D95",
+          50: "#F4FAF6",
+          100: "#DCFCE7",
+          200: "#BBF7D0",
+          300: "#86EFAC",
+          400: "#4ADE80",
+          500: "#22C55E",
+          600: "#1FA35C",
+          700: "#15803D",
+          800: "#0B3D2E",
+          900: "#0A3326",
         },
-        "primary-green": "#7C3AED",
+        "primary-green": "#1FA35C",
         "primary-dark": "#0F172A",
         "primary-red": "#DC2626",
         surface: {
@@ -50,11 +50,11 @@ const config: Config = {
         },
         tremor: {
           brand: {
-            faint: colors.violet[50],
-            muted: colors.violet[200],
-            subtle: colors.violet[400],
-            DEFAULT: colors.violet[500],
-            emphasis: colors.violet[700],
+            faint: colors.emerald[50],
+            muted: colors.emerald[200],
+            subtle: colors.emerald[400],
+            DEFAULT: colors.emerald[500],
+            emphasis: colors.emerald[700],
             inverted: colors.white,
           },
           background: {
@@ -143,7 +143,7 @@ const config: Config = {
       "[#3B82F6]",
       "[#16C8C7]",
       "[#FFCE56]",
-      "[#9966FF]",
+      "[#1FA35C]",
       "[#FF9F40]",
       "#9CA3AF", // gray
       "[#F472B6]",
@@ -152,7 +152,7 @@ const config: Config = {
       "[#EF4444]",
       "[#22D3EE]",
       "[#A3E635]",
-      "[#C084FC]",
+      "[#86EFAC]",
     ].flatMap((customColor) => [
       `bg-${customColor}`,
       `border-${customColor}`,
@@ -177,7 +177,7 @@ const config: Config = {
       themes: {
         light: {
           colors: {
-            primary: "#7C3AED",
+            primary: "#1FA35C",
             secondary: "#0F172A",
           },
         },

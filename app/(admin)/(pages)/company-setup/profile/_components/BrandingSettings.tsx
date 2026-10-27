@@ -299,7 +299,7 @@ const BrandingSettings = ({
               >
                 <div
                   className="h-8 w-5 rounded-bl-md rounded-tl-md"
-                  style={{ backgroundColor: color || "#7C3AED" }}
+                  style={{ backgroundColor: color || "#1FA35C" }}
                 />
                 <p className="p-2">{color || "Select"}</p>
               </button>
@@ -311,7 +311,7 @@ const BrandingSettings = ({
                     className="absolute z-10 rounded-lg border border-[#E2E8F0] bg-white p-4 shadow-lg"
                   >
                     <HexColorPicker
-                      color={color || "#7C3AED"}
+                      color={color || "#1FA35C"}
                       onChange={(newColor) =>
                         handleChangeComplete({ hex: newColor })
                       }
@@ -324,7 +324,7 @@ const BrandingSettings = ({
                           handleChangeComplete({ hex: e.target.value })
                         }
                         className="w-32 rounded-md border border-[#E2E8F0] px-3 py-2 text-sm"
-                        placeholder="#7C3AED"
+                        placeholder="#1FA35C"
                       />
                       <button
                         type="button"

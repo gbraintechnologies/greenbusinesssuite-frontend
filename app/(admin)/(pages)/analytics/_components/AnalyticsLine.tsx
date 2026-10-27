@@ -17,7 +17,7 @@ export default function AnalyticsLine({ title, data }: Props) {
         data={data}
         index="month"
         categories={["clients"]}
-        colors={["violet"]}
+        colors={["emerald"]}
         showAnimation
         curveType="natural"
         valueFormatter={(v) => formatNumber(v)}

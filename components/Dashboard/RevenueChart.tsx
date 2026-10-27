@@ -22,7 +22,7 @@ export default function RevenueChart({ data, isLoading }: Props) {
           data={data}
           index="month"
           categories={["revenue"]}
-          colors={["violet"]}
+          colors={["emerald"]}
           valueFormatter={(value: number) => `Ghs ${value.toLocaleString()}`}
           showAnimation
           curveType="natural"

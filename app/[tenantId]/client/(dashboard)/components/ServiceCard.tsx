@@ -124,7 +124,7 @@ function ServiceCard({ form }: Props) {
       <div className="w-full flex flex-col justify-between rounded-lg shadow-md bg-[#F8FAFC]">
         <div>
           <div
-            className={`flex items-center bg-gradient-to-br from-indigo-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
+            className={`flex items-center bg-gradient-to-br from-emerald-950 to bg-gray-900 justify-center w-full h-[10rem] rounded-tl-lg rounded-tr-lg`}
           >
             <FormPreviewIcon />
           </div>
