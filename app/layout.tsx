@@ -12,7 +12,7 @@ const montserrat = Montserrat({
 const syne = Syne({
   subsets: ["latin"],
   variable: "--font-landing-display",
-  weight: ["500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
