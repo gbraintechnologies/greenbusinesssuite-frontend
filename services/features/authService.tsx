@@ -1,6 +1,7 @@
 import authApi from "../axiosAuthClient";
 import noAuthApi from "../axiosNoAuthClient";
 import { getSessionTenantID } from "../localService";
+import { BUSINESS_SUITE_IDENTIFIER } from "@/lib/businessSuite";
 
 export const login = ({ username, password, tenantid }: any) => {
   return noAuthApi.post("/auth/sign-in", {
@@ -73,21 +74,20 @@ export const notifyUserTempCred = (id: any, channel: string) => {
 };
 
 export const userSelfSignUp = (data: any) => {
+  // Single-company product: every Green Account client belongs to BusinessSuite.
   const tenant =
     data?.companyIdentifier ||
     data?.tenantId ||
     getSessionTenantID() ||
-    undefined;
+    BUSINESS_SUITE_IDENTIFIER;
   return noAuthApi.post(
     "/auth/sign-up",
     {
       ...data,
       username: data?.username || data?.email,
-      companyIdentifier: data?.companyIdentifier || tenant,
+      companyIdentifier: tenant,
     },
-    tenant
-      ? { headers: { tenantid: String(tenant) } }
-      : undefined
+    { headers: { tenantid: String(tenant) } }
   );
 };
 

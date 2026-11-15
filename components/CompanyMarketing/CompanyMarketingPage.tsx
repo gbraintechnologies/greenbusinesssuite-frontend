@@ -303,7 +303,16 @@ export default function CompanyMarketingPage({
                       .charAt(0)
                       .toUpperCase()}
                   </div>
-                  <p className="mt-4 font-[family-name:var(--font-landing-display)] text-lg font-semibold text-[#0B3D2E]">
+                  {form.serviceCategory && (
+                    <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-[#6b7f74]">
+                      {form.serviceCategory}
+                    </p>
+                  )}
+                  <p
+                    className={`font-[family-name:var(--font-landing-display)] text-lg font-semibold text-[#0B3D2E] ${
+                      form.serviceCategory ? "mt-1" : "mt-4"
+                    }`}
+                  >
                     {form.name || "Untitled service"}
                   </p>
                   <p className="mt-1 line-clamp-2 text-sm leading-6 text-[#54695e]">

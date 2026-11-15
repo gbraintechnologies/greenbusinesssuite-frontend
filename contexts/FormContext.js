@@ -158,6 +158,11 @@ export const FormProvider = ({ children }) => {
     });
   };
 
+  const updateServiceCategory = (serviceCategory) => {
+    setForm((prev) => ({ ...prev, serviceCategory }));
+    updateRemoteForm({ ...form, serviceCategory });
+  };
+
   const updateFormSectionsOrdering = (sections) => {
     setIsFormUpdating(true);
     updateRemoteForm({
@@ -299,6 +304,7 @@ export const FormProvider = ({ children }) => {
         setFormLayout,
         updateIsTemplate,
         updateDeadline,
+        updateServiceCategory,
       }}
     >
       {children}

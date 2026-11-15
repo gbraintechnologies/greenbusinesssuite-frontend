@@ -57,6 +57,7 @@ function UsingTemplate({ setShowTemplateModal }: any) {
         name: "(New)" + form?.name,
         url: "",
         description: "",
+        serviceCategory: form?.serviceCategory || "General",
         formInstruction: "",
         formSections: removeIds(form?.formSections),
         userMandatory: false,

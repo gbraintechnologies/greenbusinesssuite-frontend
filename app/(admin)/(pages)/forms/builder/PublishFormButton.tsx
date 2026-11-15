@@ -41,12 +41,15 @@ function PublishFormButton({
     toast.info(`Publishing ${form?.name}`);
     setLoading(true);
 
-    // checking for company assignment
-    if (!Boolean(form?.companyId)) {
+    // Single-company product: forms are auto-assigned to BusinessSuite on create.
+    // Treat 0 as unassigned for older drafts.
+    if (!form?.companyId || Number(form.companyId) === 0) {
       toast.dismiss();
       toast.error("Form Unassigned.", {
-        description: "Assign company to form before publishing",
+        description:
+          "Save the form once so it can be attached to BusinessSuite, then publish again.",
       });
+      setLoading(false);
       return;
     }
 

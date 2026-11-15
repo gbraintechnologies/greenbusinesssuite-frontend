@@ -23,7 +23,8 @@ type Props = {
 };
 
 function FormCard({ form, onClick, addFormResponses = false }: Props) {
-  const { id, name, updatedOn, url, publishStatus, isAnonymous } = form;
+  const { id, name, updatedOn, url, publishStatus, isAnonymous, serviceCategory } =
+    form;
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -138,6 +139,12 @@ function FormCard({ form, onClick, addFormResponses = false }: Props) {
                 title="Allows Multiple Responses"
               >
                 <PiNotePencilBold className="shrink-0" /> Multiple responses
+              </span>
+            )}
+
+            {serviceCategory && (
+              <span className="inline-flex max-w-full min-w-0 truncate rounded-full bg-slate-700/90 px-1.5 py-0.5 text-[9px] font-medium text-white sm:px-3 sm:py-1 sm:text-[11px]">
+                {serviceCategory}
               </span>
             )}
           </div>

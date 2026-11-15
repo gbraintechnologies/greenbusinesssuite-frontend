@@ -28,7 +28,9 @@ import useCompany from "@/hooks/useCompany";
 // components
 import Deactivated from "@/components/Deactivated/Deactivated";
 import { LuSend } from "react-icons/lu";
+import { HiOutlineCube } from "react-icons/hi2";
 import { AvailableModules } from "@/config/modules";
+import { BUSINESS_SUITE_IDENTIFIER } from "@/lib/businessSuite";
 
 export default function CompanyLayout(props: any) {
   const params: any = use(props.params);
@@ -85,6 +87,12 @@ export default function CompanyLayout(props: any) {
       linkedModule: AvailableModules.FormBuilder,
       icon: <FormsNavIcon />,
       link: `/${company?.company_identifier}/admin/forms`,
+    },
+    {
+      name: "Apps",
+      linkedModule: AvailableModules.Dashboard,
+      icon: <HiOutlineCube size={20} />,
+      link: `/${company?.company_identifier}/admin/apps`,
     },
     {
       name: "Service Requests",
@@ -172,7 +180,7 @@ export default function CompanyLayout(props: any) {
 
   //
   useEffect(() => {
-    let enabled_modules = company.companyModules;
+    let enabled_modules = company.companyModules || [];
     let temp: any = [];
 
     all_navigation.forEach((item) => {
@@ -180,6 +188,21 @@ export default function CompanyLayout(props: any) {
         temp.push(item);
       }
     });
+
+    // BusinessSuite always surfaces Apps (published suite apps from platform).
+    const isBusinessSuite =
+      company?.company_identifier === BUSINESS_SUITE_IDENTIFIER;
+    if (
+      isBusinessSuite &&
+      !temp.some((item: any) => item.name === "Apps")
+    ) {
+      temp.splice(Math.min(2, temp.length), 0, {
+        name: "Apps",
+        linkedModule: AvailableModules.Dashboard,
+        icon: <HiOutlineCube size={20} />,
+        link: `/${company?.company_identifier}/admin/apps`,
+      });
+    }
 
     // assign
     setNavigation(temp);

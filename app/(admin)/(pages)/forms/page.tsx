@@ -59,6 +59,7 @@ function Forms() {
             name: "Untitled",
             url: "",
             description: "",
+            serviceCategory: "General",
             formInstruction: "",
             formSections: [],
             userMandatory: false,

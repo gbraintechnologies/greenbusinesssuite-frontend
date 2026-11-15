@@ -12,6 +12,7 @@ import { HiOutlineDocument } from "react-icons/hi";
 import FormPreviewIcon from "@/public/icons/FormPreviewIcon";
 import FieldOptions from "./FieldOptions";
 import { toast } from "sonner";
+import { SERVICE_CATEGORIES } from "@/lib/businessSuite";
 
 function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
   const {
@@ -25,6 +26,7 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
     updateDeadline,
     updateIsAnonymous,
     updateAllowMultipleResponses,
+    updateServiceCategory,
   } = useForm();
 
   useEffect(() => {
@@ -97,6 +99,25 @@ function GeneralFormSettings({ refetch, activeTab, setActiveTab }: any) {
 
               <p className="absolute bottom-4">Card layout</p>
             </button>
+          </div>
+          {/* Service category */}
+          <div className="mt-5 px-3">
+            <h4 className="font-semibold text-slate-700">Service category</h4>
+            <p className="text-xs font-light text-slate-500">
+              How this service is grouped for BusinessSuite clients (e.g.
+              Financial, Non-government).
+            </p>
+            <select
+              value={form?.serviceCategory || "General"}
+              onChange={(e) => updateServiceCategory(e.target.value)}
+              className="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-600"
+            >
+              {SERVICE_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
           </div>
           {/* FORM DEADLINE */}
           <div className="mt-5 px-3">
