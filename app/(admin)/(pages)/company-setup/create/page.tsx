@@ -62,7 +62,13 @@ const CreateCompany = () => {
         data: { ...values, status: "ACTIVE" },
       })
       .then((res) => {
-        toast.message(res?.data?.message ?? "Company created successfully");
+        const identifier =
+          res?.data?.companyIdentifier ?? res?.data?.company_identifier;
+        toast.success(
+          identifier
+            ? `Company created. ID: ${identifier}. Registration email sent to the primary contact.`
+            : (res?.data?.message ?? "Company created successfully")
+        );
         reset();
         setSubmitting(false);
         router.push(`/company-setup/profile?id=${res?.data?.id}`);

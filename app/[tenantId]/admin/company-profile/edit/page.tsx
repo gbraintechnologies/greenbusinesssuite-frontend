@@ -23,14 +23,34 @@ import useAdmin from "@/hooks/useAdmin";
 const Page = () => {
   const { companyBranding } = useCompany();
 
+  const resolvedCompanyId =
+    companyBranding?.companyId ??
+    companyBranding?.company_id ??
+    null;
+
+  const tenantId = companyBranding?.company_identifier;
+
+  const { data: companyByTenant } = useQuery({
+    queryKey: ["company-by-identifier", tenantId],
+    queryFn: services.getCompanyByIdentifier(tenantId!),
+    enabled: !!tenantId && !resolvedCompanyId,
+  });
+
+  const companyId =
+    resolvedCompanyId ??
+    companyByTenant?.id ??
+    companyByTenant?.companyId ??
+    companyByTenant?.company_id ??
+    null;
+
   const {
     data: companyData,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["company ", companyBranding?.id],
-    queryFn: services.getCompanyById(Number(companyBranding?.id)),
-    enabled: !!companyBranding?.id,
+    queryKey: ["company", Number(companyId)],
+    queryFn: services.getCompanyById(Number(companyId)),
+    enabled: !!companyId,
   });
 
   const companyDescription =
@@ -393,20 +413,45 @@ const Page = () => {
         return;
       }
 
-      await services.editCompanyBranding(
-        companyBranding?.id,
-        companyData?.id,
-        companyData?.company_identifier,
-        brandingLogo || companyBranding?.logo || "",
-        color,
-        values.companyName as string,
-        companyBranding?.modules?.map((module: any) => module?.id),
+      const brandingRecordId =
+        companyBranding?.brandingId ?? companyBranding?.id;
+      const tenancyId =
+        companyData?.company_identifier ??
+        companyData?.companyIdentifier;
+      const logoValue = brandingLogo || companyBranding?.logo || "";
+      const moduleIds =
+        companyBranding?.modules?.map((module: any) => module?.id) ?? [];
+      const categoryModuleIds =
         companyBranding?.categorySpecificModules?.map(
           (module: any) => module?.id
-        )
-      );
+        ) ?? [];
 
-      toast.success(`Company ${companyData?.company_name} edited successfully`);
+      if (brandingRecordId) {
+        await services.editCompanyBranding(
+          brandingRecordId,
+          companyData?.id,
+          tenancyId,
+          logoValue,
+          color,
+          values.companyName as string,
+          moduleIds,
+          categoryModuleIds
+        );
+      } else {
+        await services.createCompanyBranding(
+          companyData?.id,
+          tenancyId,
+          logoValue,
+          color,
+          values.companyName as string,
+          moduleIds,
+          categoryModuleIds
+        );
+      }
+
+      toast.success(
+        `Company ${companyData?.company_name ?? companyData?.companyName} edited successfully`
+      );
       // router.back();
     } catch (error) {
       toast.error("An error occurred");

@@ -168,10 +168,10 @@ function CompanyAdmins({ companyId }: any) {
           {/* NEW WAY OF ASSIGNING */}
           <h2 className="header-3">Add New Company Administrator</h2>
           <p className="text-gray-500 max-w-2xl md:w-full text-sm">
-            A user account would be created with the details provided and the
-            person would be an administrator. You can add as many administrators
-            as required. A temporary password would be sent to the
-            administrator's email.
+            A user account will be created with the details provided and the
+            person will be an administrator. You can add as many administrators
+            as required. An email with the Company ID and initial password will
+            be sent to the administrator.
           </p>
           <Formik
             initialValues={initialValues}

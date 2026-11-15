@@ -19,14 +19,22 @@ interface layoutProps {
   params: Promise<{ tenantId: string }>;
 }
 
-function buildFallbackBranding(tenantId: string, companyName: string) {
+function buildFallbackBranding(
+  tenantId: string,
+  companyName: string,
+  companyId: number | string | null = null
+) {
   return {
     modules: [],
     categorySpecificModules: [],
     companyModules: CoreModules,
     color: "#1FA35C",
     company_identifier: tenantId,
+    // branding record id (unknown until branding is created)
     id: null,
+    brandingId: null,
+    // numeric company PK used by company profile APIs
+    companyId,
     logo: "",
     name: companyName || "Company",
   };
@@ -58,9 +66,11 @@ function TenantLayoutInner(props: layoutProps) {
     retry: 1,
   });
 
-  // When branding is missing, resolve the real company name by identifier
+  // Resolve company record when branding is missing or lacks a companyId
   const shouldLookupCompany =
-    !!tenantId && isFetched && !data && !companyNameFromLink;
+    !!tenantId &&
+    isFetched &&
+    (!data || !data?.companyId);
 
   const { data: companyByIdentifier, isFetched: companyLookupFetched } =
     useQuery({
@@ -82,6 +92,7 @@ function TenantLayoutInner(props: layoutProps) {
     if (!data) return;
 
     const {
+      id: brandingId,
       companyName,
       color,
       companyId,
@@ -98,13 +109,20 @@ function TenantLayoutInner(props: layoutProps) {
       ) || []),
     ];
 
+    // Branding with no modules assigned should still expose core portal features
+    const companyModules =
+      allModules.length > 0 ? allModules : CoreModules;
+
     const newBranding = {
       modules,
       categorySpecificModules,
-      companyModules: allModules,
+      companyModules,
       color: color || "#1FA35C",
       company_identifier: tenancyId || tenantId,
-      id: companyId,
+      // Keep branding PK and company PK distinct (profile pages need companyId)
+      id: brandingId ?? null,
+      brandingId: brandingId ?? null,
+      companyId: companyId ?? null,
       logo: logo || "",
       name:
         companyName ||
@@ -130,18 +148,27 @@ function TenantLayoutInner(props: layoutProps) {
     if (shouldLookupCompany && !companyLookupFetched) return;
 
     const realName = resolvedCompanyName || "Company";
+    const resolvedCompanyId =
+      companyByIdentifier?.id ??
+      companyByIdentifier?.companyId ??
+      companyByIdentifier?.company_id ??
+      null;
+
     const needsFallback =
       !brandingMatchesTenant ||
       !companyBranding?.name ||
       companyBranding.name === "Green Business Suite" ||
       companyBranding.name === "MeshSuite" ||
       companyBranding.name === tenantId ||
+      !companyBranding?.companyId ||
       (realName &&
         companyBranding.name !== realName &&
         companyBranding.name.toLowerCase() === tenantId.toLowerCase());
 
     if (needsFallback) {
-      setCompanyBranding(buildFallbackBranding(tenantId, realName));
+      setCompanyBranding(
+        buildFallbackBranding(tenantId, realName, resolvedCompanyId)
+      );
     }
   }, [
     error,
@@ -150,10 +177,12 @@ function TenantLayoutInner(props: layoutProps) {
     isLoading,
     brandingMatchesTenant,
     companyBranding?.name,
+    companyBranding?.companyId,
     tenantId,
     resolvedCompanyName,
     shouldLookupCompany,
     companyLookupFetched,
+    companyByIdentifier,
   ]);
 
   // CHECK IF THERE'S A USER OR COMPANY ADMIN AND REDIRECT TO DASHBOARD

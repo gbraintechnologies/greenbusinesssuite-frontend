@@ -58,6 +58,10 @@ export const createCompany = ({ data }: { data: any }) => {
   return authApi.post("/companies/create", data);
 };
 
+export const deleteCompany = (id: number | string) => {
+  return authApi.delete(`/companies/${id}`);
+};
+
 export const editCompany = ({ data }: { data: any }) => {
   return authApi.put("/companies", data);
 };
@@ -138,6 +142,25 @@ export const getCompanyByName = (name: string) => {
 /** Resolve a company record by its public identifier (tenancy slug). */
 export const getCompanyByIdentifier = (identifier: string) => {
   return async () => {
+    // Prefer dedicated endpoint when available
+    try {
+      const res = await authApi.get(
+        `/companies/identifier/${encodeURIComponent(identifier)}`
+      );
+      if (res?.data) return res.data;
+    } catch {
+      // fall through for older backends / unauthenticated pages
+    }
+
+    try {
+      const res = await noAuthApi.get(
+        `/companies/identifier/${encodeURIComponent(identifier)}`
+      );
+      if (res?.data) return res.data;
+    } catch {
+      // continue
+    }
+
     const matchIdentifier = (company: any) =>
       String(company?.companyIdentifier || company?.company_identifier || "")
         .toLowerCase() === identifier.toLowerCase();

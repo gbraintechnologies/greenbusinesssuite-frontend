@@ -10,6 +10,7 @@ import { Menu, Transition } from "@headlessui/react";
 
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 
@@ -43,6 +44,8 @@ const Page = () => {
     { id: 4, name: "Suspended", value: "SUSPENDED" },
   ]);
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -136,6 +139,29 @@ const Page = () => {
     }
   }, [companyData, companyBranding, statuses]);
 
+  const deleteCompany = async () => {
+    if (!companyData?.id || deleting) return;
+    setDeleting(true);
+    toast.info("Deleting company...");
+    try {
+      await services.deleteCompany(Number(companyData.id));
+      toast.dismiss();
+      toast.success("Company deleted successfully");
+      await queryClient.invalidateQueries({ queryKey: ["companies"] });
+      setShowDeleteModal(false);
+      router.push("/company-setup");
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(
+        error?.response?.data?.message ??
+          error?.response?.data ??
+          "Failed to delete company"
+      );
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const updateCompanyStatus = async (status: {
     id: number;
     name: string;
@@ -210,6 +236,16 @@ const Page = () => {
               Company Profile
             </h3>
           </div>
+          {companyData?.id && (
+            <button
+              type="button"
+              onClick={() => setShowDeleteModal(true)}
+              className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 shadow-sm transition-colors hover:bg-red-50"
+            >
+              <RiDeleteBin6Line size={16} />
+              Delete
+            </button>
+          )}
         </div>
 
         {/* COMPANY HERO */}
@@ -381,6 +417,41 @@ const Page = () => {
           setShow={setShowAssignModal}
           queryClient={queryClient}
         />
+      </Modal>
+
+      <Modal
+        isOpen={showDeleteModal}
+        setIsOpen={setShowDeleteModal}
+        title="Delete company"
+      >
+        <div className="space-y-4 p-1">
+          <p className="text-sm text-slate-600">
+            Are you sure you want to delete{" "}
+            <span className="font-semibold text-slate-900">
+              {companyData?.companyName}
+            </span>
+            ? This will deactivate the company and remove it from the companies
+            list.
+          </p>
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+              onClick={() => setShowDeleteModal(false)}
+              disabled={deleting}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
+              onClick={deleteCompany}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "Delete company"}
+            </button>
+          </div>
+        </div>
       </Modal>
     </>
   );

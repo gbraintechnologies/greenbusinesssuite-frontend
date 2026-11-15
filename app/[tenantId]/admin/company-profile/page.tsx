@@ -26,8 +26,6 @@ import {
 } from "@/hooks/useFileUpload";
 import { VscLink } from "react-icons/vsc";
 import useCompany from "@/hooks/useCompany";
-import useAdmin from "@/hooks/useAdmin";
-import { PermissionTypes } from "@/types/permissionTypes";
 import Configuration from "./components/Configuration";
 import SMSSenderID from "@/app/(admin)/(pages)/company-setup/profile/_components/SMSSenderID";
 
@@ -94,8 +92,6 @@ const Page = (props: any) => {
     };
   }, [showColorPicker]);
 
-  const { checkPermission } = useAdmin();
-
   //pagination
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(12);
@@ -125,11 +121,31 @@ const Page = (props: any) => {
     logoPreviewBlob ||
     (isPersistableLogoUrl(smallLogoUrl) ? smallLogoUrl : "");
 
-  const { data: companyData, isLoading } = useQuery({
-    queryKey: ["company", parseInt(companyBranding?.companyId)],
-    queryFn: services.getCompanyById(Number(companyBranding?.id)),
-    enabled: !!companyBranding?.id,
+  const resolvedCompanyId =
+    companyBranding?.companyId ??
+    companyBranding?.company_id ??
+    null;
+
+  const { data: companyByTenant, isLoading: loadingByTenant } = useQuery({
+    queryKey: ["company-by-identifier", tenant_id],
+    queryFn: services.getCompanyByIdentifier(tenant_id),
+    enabled: !!tenant_id && !resolvedCompanyId,
   });
+
+  const companyId =
+    resolvedCompanyId ??
+    companyByTenant?.id ??
+    companyByTenant?.companyId ??
+    companyByTenant?.company_id ??
+    null;
+
+  const { data: companyData, isLoading: loadingById } = useQuery({
+    queryKey: ["company", Number(companyId)],
+    queryFn: services.getCompanyById(Number(companyId)),
+    enabled: !!companyId,
+  });
+
+  const isLoading = loadingById || (!resolvedCompanyId && loadingByTenant);
 
   const companyDescription =
     companyData?.company_custom_values?.find(
@@ -236,18 +252,54 @@ const Page = (props: any) => {
         return;
       }
 
-      await services.editCompanyBranding(
-        companyBranding?.id,
-        companyData?.id,
-        companyData?.company_identifier,
-        logoToSave || companyBranding?.logo || "",
-        color,
-        companyData?.company_name,
-        companyBranding?.modules?.map((module: any) => module?.id),
+      const brandingRecordId =
+        companyBranding?.brandingId ?? companyBranding?.id;
+      const tenancyId =
+        companyData?.company_identifier ??
+        companyData?.companyIdentifier ??
+        tenant_id;
+      const displayName =
+        companyData?.company_name ?? companyData?.companyName;
+      const moduleIds =
+        companyBranding?.modules?.map((module: any) => module?.id) ?? [];
+      const categoryModuleIds =
         companyBranding?.categorySpecificModules?.map(
           (module: any) => module?.id
-        )
-      );
+        ) ?? [];
+      const logoValue = logoToSave || companyBranding?.logo || "";
+
+      if (brandingRecordId) {
+        await services.editCompanyBranding(
+          brandingRecordId,
+          companyData?.id,
+          tenancyId,
+          logoValue,
+          color,
+          displayName,
+          moduleIds,
+          categoryModuleIds
+        );
+      } else {
+        await services.createCompanyBranding(
+          companyData?.id,
+          tenancyId,
+          logoValue,
+          color,
+          displayName,
+          moduleIds,
+          categoryModuleIds
+        );
+      }
+
+      setCompanyBranding({
+        ...companyBranding,
+        color,
+        logo: logoValue,
+        companyId: companyData?.id,
+        brandingId: brandingRecordId,
+        company_identifier: tenancyId,
+        name: displayName || companyBranding?.name,
+      });
 
       if (logoToSave) setSmallLogoUrl(logoToSave);
       setCompanySmallLogo(null);
@@ -267,6 +319,21 @@ const Page = (props: any) => {
       </div>
     );
   }
+
+  if (!companyData) {
+    return (
+      <div className="px-5 py-16 text-center">
+        <h3 className="text-lg font-semibold text-slate-900">
+          Company profile unavailable
+        </h3>
+        <p className="mt-2 text-sm text-slate-500">
+          We could not load this company. Try refreshing the page or contact
+          support if the problem continues.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="px-5 py-5 pb-5">
@@ -274,25 +341,23 @@ const Page = (props: any) => {
         <div className="w-full text-primary-dark  flex justify-between items-center">
           <h3 className="font-semibold text-xl">Company Profile</h3>
 
-          {checkPermission(PermissionTypes.EDIT_COMPANY) && (
-            <div className="flex gap-3">
-              <Link
-                href={`/${tenant_id}/admin/company-profile/edit`}
-                style={{ backgroundColor: companyBranding?.color }}
-                className="disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-              >
-                <Image src={UpdateInfo} alt="Update Info" />
-                Update Information
-              </Link>
-            </div>
-          )}
+          <div className="flex gap-3">
+            <Link
+              href={`/${tenant_id}/admin/company-profile/edit`}
+              style={{ backgroundColor: companyBranding?.color || "#0F766E" }}
+              className="disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+            >
+              <Image src={UpdateInfo} alt="Update Info" />
+              Update Information
+            </Link>
+          </div>
         </div>
 
         <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
           <div className="flex gap-5 items-center justify-center">
-            {companyData?.company_logo ? (
+            {(companyData?.company_logo || companyData?.companyLogo) ? (
               <Image
-                src={companyData?.company_logo}
+                src={companyData?.company_logo || companyData?.companyLogo}
                 width={144}
                 height={144}
                 className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
@@ -303,15 +368,18 @@ const Page = (props: any) => {
                 <UserIcon width="50" height="50" />
               </div>
             )}
-            {companyData?.company_name && (
+            {(companyData?.company_name || companyData?.companyName) && (
               <div className="flex flex-col gap-3">
                 <div className="label">Company Name</div>
-                <div className="header">{companyData?.company_name}</div>
+                <div className="header">
+                  {companyData?.company_name || companyData?.companyName}
+                </div>
               </div>
             )}
           </div>
           <div className="flex gap-6 items-center">
-            {companyData?.company_identifier && (
+            {(companyData?.company_identifier ||
+              companyData?.companyIdentifier) && (
               <div className="flex flex-col gap-3">
                 <div className="label">Company Dashboard</div>
 
@@ -324,9 +392,12 @@ const Page = (props: any) => {
                         companyData?.companyName ||
                         ""
                     );
+                    const identifier =
+                      companyData?.company_identifier ||
+                      companyData?.companyIdentifier;
                     const url =
                       currentHost +
-                      `/${companyData?.company_identifier}/auth/login?c=${companyName}`;
+                      `/${identifier}/auth?c=${companyName}`;
 
                     navigator.clipboard.writeText(url).then(() => {
                       toast.dismiss();
@@ -346,8 +417,6 @@ const Page = (props: any) => {
                 <div className={"z-20 relative inline-block"}>
                   <button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
                     {activeStatus?.name}
-                    {/* <div className="border-r-[0.3px] border-opacity-50 border-[rgba(226, 232, 240, 1)] h-10"></div>
-                    <IoIosArrowDown /> */}
                   </button>
                 </div>
               </div>
@@ -370,36 +439,44 @@ const Page = (props: any) => {
             {activeFilter.value === "description" && (
               <>
                 <div className="flex-1 py-5 pb-3">
-                  {companyDescription && (
+                  {(companyDescription || companyData?.description) && (
                     <div className="group-item">
                       <div className="label">Company description</div>
-                      <div className="value">{companyDescription}</div>
+                      <div className="value">
+                        {companyDescription || companyData?.description}
+                      </div>
                     </div>
                   )}
 
-                  {companyData?.primary_contact_name && (
+                  {(companyData?.primary_contact_name ||
+                    companyData?.primaryContactName) && (
                     <div className="group-item">
                       <div className="label">Contact person</div>
                       <div className="value">
-                        {companyData?.primary_contact_name}
+                        {companyData?.primary_contact_name ||
+                          companyData?.primaryContactName}
                       </div>
                     </div>
                   )}
 
                   <div className="flex justify-between">
-                    {companyData?.primary_contact_phone_number && (
+                    {(companyData?.primary_contact_phone_number ||
+                      companyData?.primaryContactPhoneNumber) && (
                       <div className="group-item">
                         <div className="label">Phone Number</div>
                         <div className="value">
-                          {companyData?.primary_contact_phone_number}
+                          {companyData?.primary_contact_phone_number ||
+                            companyData?.primaryContactPhoneNumber}
                         </div>
                       </div>
                     )}
-                    {companyData?.primary_contact_email && (
+                    {(companyData?.primary_contact_email ||
+                      companyData?.primaryContactEmail) && (
                       <div className="group-item">
                         <div className="label">Email</div>
                         <div className="value">
-                          {companyData?.primary_contact_email}
+                          {companyData?.primary_contact_email ||
+                            companyData?.primaryContactEmail}
                         </div>
                       </div>
                     )}
@@ -565,7 +642,7 @@ const Page = (props: any) => {
             {activeFilter?.value === "sms_sender_id" && (
               <SMSSenderID
                 company={companyData}
-                companyId={companyBranding?.id}
+                companyId={companyId}
               />
             )}
 
