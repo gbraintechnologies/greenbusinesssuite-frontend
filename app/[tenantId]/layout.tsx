@@ -2,7 +2,7 @@
 
 import useAuth from "@/hooks/useAuth";
 import useCompany from "@/hooks/useCompany";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 // Next & React imports
 import React, { Suspense, useEffect, use } from "react";
@@ -49,12 +49,8 @@ function TenantLayoutInner(props: layoutProps) {
   const searchParams = useSearchParams();
   const companyNameFromLink = searchParams.get("c")?.trim() || "";
 
-  const { auth, addAuthData } = useAuth();
+  const { addAuthData } = useAuth();
   const { companyBranding, setCompanyBranding, storageReady } = useCompany();
-
-  const router = useRouter();
-
-  let pathname = usePathname();
 
   const brandingMatchesTenant =
     companyBranding?.company_identifier === tenantId;
@@ -185,13 +181,8 @@ function TenantLayoutInner(props: layoutProps) {
     companyByIdentifier,
   ]);
 
-  // CHECK IF THERE'S A USER OR COMPANY ADMIN AND REDIRECT TO DASHBOARD
-  // ELSE REDIRECT TO AUTH PAGE
-  useEffect(() => {
-    if (!Boolean(auth?.access_token) && pathname === `/${tenantId}`) {
-      router.push(`/${tenantId}/auth`);
-    }
-  }, [auth, tenantId, companyBranding]);
+  // Marketing page at /{tenantId} is public (App Store–style marketing URL).
+  // Auth redirects are handled by client/admin layouts and login flows.
 
   useEffect(() => {
     addAuthData({ tenantId: tenantId });

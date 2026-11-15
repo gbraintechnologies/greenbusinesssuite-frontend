@@ -19,6 +19,9 @@ import useCompany from "@/hooks/useCompany";
 import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
 import { PiNotePencilBold } from "react-icons/pi";
 import { capitalize } from "@/utils/Capitalize/capitalize";
+import { useQueryClient } from "@tanstack/react-query";
+import Modal from "@/components/Modal/Modal";
+import UnpublishForm from "@/app/(admin)/(pages)/forms/[formId]/components/UnpublishForm";
 
 type Props = {
   form: any;
@@ -26,13 +29,70 @@ type Props = {
   onClick?: () => void;
 };
 function FormCard({ form, onClick, addFormResponses = true }: Props) {
-  let { id, name, url, publishStatus, isAnonymous } = form;
+  let { id, name, publishStatus, isAnonymous } = form;
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { companyBranding: company } = useCompany();
 
   const [formResponsesCount, setFormResponsesCount] = useState(0);
+  const [publishing, setPublishing] = useState(false);
+  const [showUnpublishModal, setShowUnpublishModal] = useState(false);
+
+  const sharePath = isAnonymous ? "survey" : "invite-form";
+
+  const buildApplyLink = () =>
+    `${window.location.origin}/${company?.company_identifier}/${sharePath}?f=${id}&c=${form?.companyId ?? company?.id ?? ""}`;
+
+  const publishForm = () => {
+    if (!form?.companyId && !company?.id) {
+      toast.error("Form Unassigned.", {
+        description: "Assign company to form before publishing",
+      });
+      return;
+    }
+
+    setPublishing(true);
+    toast.info(`Publishing ${name}`);
+
+    const url = buildApplyLink();
+
+    services
+      .updateForm({
+        ...form,
+        updatedOn: new Date(),
+        url,
+        publishStatus: "UNPUBLISHED",
+      })
+      .then(() => {
+        services
+          .publishForm(id)
+          .then(() => {
+            toast.dismiss();
+            toast.success("Form published! Clients can now apply.");
+            queryClient.invalidateQueries({
+              queryKey: ["get company forms for ", Number(company?.id)],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["form", parseInt(id)],
+            });
+            setPublishing(false);
+          })
+          .catch(() => {
+            setPublishing(false);
+            toast.dismiss();
+            toast.error("Error publishing form");
+          });
+      })
+      .catch(() => {
+        setPublishing(false);
+        toast.dismiss();
+        toast.error("Error occured");
+      });
+  };
+
+  const isPublished = publishStatus === "PUBLISHED";
 
   const options = [
     {
@@ -50,43 +110,31 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
       },
     },
     {
-      title: "Copy link",
+      title: isPublished ? "Unpublish" : "Publish for clients",
       func: () => {
-        if (publishStatus !== "PUBLISHED") {
+        if (publishing) return;
+        if (isPublished) {
+          setShowUnpublishModal(true);
+          return;
+        }
+        publishForm();
+      },
+    },
+    {
+      title: "Copy apply link",
+      func: () => {
+        if (!isPublished) {
           toast.error("Error. Form Unpublished", {
-            description: "Publish the form to generate a link",
+            description: "Publish the form so clients can apply",
           });
           return;
         }
-        navigator.clipboard
-          .writeText(
-            `${window.location.origin}/${company?.company_identifier}/${
-              isAnonymous ? "survey" : "invite-form"
-            }?f=${id}&c=${form?.companyId ?? ""}`
-          )
-          .then(() => {
-            toast.success("Link copied!");
-          });
+        navigator.clipboard.writeText(buildApplyLink()).then(() => {
+          toast.success("Apply link copied!");
+        });
       },
     },
   ];
-
-  //  7 colors to pick at random from
-  const colors = [
-    { a: "#392F5A", b: "#584B81" },
-    { a: "#FFA245", b: "#FF8811" },
-    { a: "#FFCAD4", b: "#FEA7B7" },
-    { a: "#E2E8F0", b: "#E2E8F0" },
-    { a: "#F4D06F", b: "#F7CC5A" },
-  ];
-
-  function getRandomInt(min: any, max: any) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  let color = colors[getRandomInt(0, 4)];
 
   const getFormResponses = async () => {
     const responses = await services.getFormResponsesById(id);
@@ -114,7 +162,7 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
           <div className="absolute inset-x-2 top-1.5 z-10 flex max-w-[calc(100%-1rem)] flex-wrap gap-1 sm:inset-x-3 sm:top-2 sm:gap-1.5">
             <span
               className={`inline-flex max-w-full min-w-0 items-center gap-0.5 truncate rounded-full px-1.5 py-0.5 text-[9px] font-medium text-white sm:gap-1 sm:px-3 sm:py-1 sm:text-[11px] sm:font-normal ${
-                publishStatus == "PUBLISHED" ? "bg-green-700" : "bg-slate-500"
+                isPublished ? "bg-green-700" : "bg-slate-500"
               }`}
             >
               <PiNotePencilBold className="shrink-0 text-[10px] sm:text-sm" />{" "}
@@ -169,17 +217,20 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-1 -top-1 z-[999999] flex w-40 flex-col rounded-lg bg-white text-left shadow-md">
-                  {options.map((option: any, idx: any) => {
+                <Menu.Items className="absolute right-1 -top-1 z-[999999] flex w-48 flex-col rounded-lg bg-white text-left shadow-md">
+                  {options.map((option: any) => {
                     return (
                       <Menu.Item key={option.title}>
                         <div>
                           <button
+                            disabled={publishing}
                             className={`${
-                              option.title.toLowerCase() === "delete"
+                              option.title.toLowerCase() === "unpublish"
                                 ? "text-red-600"
-                                : " text-gray-500"
-                            } w-full px-4 py-3 text-left font-light hover:bg-gray-50`}
+                                : option.title.toLowerCase().includes("publish")
+                                  ? "text-emerald-700"
+                                  : " text-gray-500"
+                            } w-full px-4 py-3 text-left font-light hover:bg-gray-50 disabled:opacity-60`}
                             onClick={() => option.func()}
                           >
                             {option.title}
@@ -194,6 +245,27 @@ function FormCard({ form, onClick, addFormResponses = true }: Props) {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={showUnpublishModal}
+        setIsOpen={setShowUnpublishModal}
+        title="Unpublish this form"
+      >
+        <UnpublishForm
+          form={form}
+          loading={publishing}
+          setLoading={setPublishing}
+          id={form?.id}
+          setShow={(open: boolean) => {
+            setShowUnpublishModal(open);
+            if (!open) {
+              queryClient.invalidateQueries({
+                queryKey: ["get company forms for ", Number(company?.id)],
+              });
+            }
+          }}
+        />
+      </Modal>
     </>
   );
 }

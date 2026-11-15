@@ -222,6 +222,9 @@ function SideNav({
   navigation,
   type = "normal",
   thirdPartyApps = [],
+  homeHref,
+  brandTitle,
+  brandSubtitle,
 }: SideNavProps) {
   const pathname = usePathname();
   const { isOpen, close } = useMobileNav();
@@ -252,12 +255,28 @@ function SideNav({
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex shrink-0 items-center justify-end gap-2 border-b border-slate-100 px-4 py-3">
+        <div className="flex shrink-0 items-start gap-2 border-b border-slate-100 px-3 py-3">
+          {(brandTitle || homeHref) && (
+            <Link
+              href={homeHref || "#"}
+              onClick={close}
+              className="min-w-0 flex-1 rounded-xl px-1.5 py-1 transition hover:bg-slate-50"
+            >
+              <p className="truncate text-sm font-semibold text-slate-900">
+                {brandTitle || "Green Business Suite"}
+              </p>
+              {brandSubtitle && (
+                <p className="mt-0.5 truncate text-[11px] text-slate-500">
+                  {brandSubtitle}
+                </p>
+              )}
+            </Link>
+          )}
           <button
             type="button"
             onClick={close}
             aria-label="Close navigation menu"
-            className="-mr-1 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 md:hidden"
+            className="-mr-0.5 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 md:hidden"
           >
             <FiX size={18} />
           </button>

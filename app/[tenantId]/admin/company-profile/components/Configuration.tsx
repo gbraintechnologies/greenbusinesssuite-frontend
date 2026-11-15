@@ -14,15 +14,15 @@ const Configuration = ({ tenantId }: { tenantId: string }) => {
     enabled: Boolean(tenantId),
   });
 
+  const firstCategoryModuleId =
+    companyBranding?.categorySpecificModules?.[0]?.id;
+
   const { data: category, isLoading: categoryLoading } = useQuery({
-    queryKey: [
-      "category_by_module_id",
-      companyBranding?.categorySpecificModules[0]?.id,
-    ],
+    queryKey: ["category_by_module_id", firstCategoryModuleId],
     queryFn: services.getCategoryByCategorySpecificModuleId(
-      companyBranding?.categorySpecificModules[0]?.id
+      firstCategoryModuleId
     ),
-    enabled: Boolean(companyBranding?.categorySpecificModules[0]?.id),
+    enabled: Boolean(firstCategoryModuleId),
   });
 
   if (isLoading) {

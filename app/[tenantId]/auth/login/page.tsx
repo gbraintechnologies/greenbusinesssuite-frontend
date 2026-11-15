@@ -163,7 +163,7 @@ function CompanyAdminAuth(props: any) {
           router.push(`/${tenantId}/invite-form?f=${formId}&c=${companyName}`);
           return;
         }
-        router.push("/client");
+        router.push(`/${tenantId}/client/dashboard`);
       }
     } catch (error) {
       // @ts-ignore

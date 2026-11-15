@@ -9,25 +9,26 @@ import Tabs from "@/components/Tabs/Tabs";
 import services from "@/services";
 
 import Link from "next/link";
-import { useEffect, useState, use, useRef } from "react";
+import { useEffect, useState, use } from "react";
 import { toast } from "sonner";
-import { HexColorPicker } from "react-colorful";
 import UserIcon from "@/public/icons/UserIcon";
 import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
-import { IFilter, TimelineType, TimelineValues } from "@/types";
+import { IFilter } from "@/types";
 
-import WriteIcon from "@/public/icons/WriteIcon";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import CloudUploadIcon from "@/public/icons/CloudUploadIcon";
-
-import {
-  extractFileUrl,
-  isPersistableLogoUrl,
-} from "@/hooks/useFileUpload";
 import { VscLink } from "react-icons/vsc";
 import useCompany from "@/hooks/useCompany";
 import Configuration from "./components/Configuration";
 import SMSSenderID from "@/app/(admin)/(pages)/company-setup/profile/_components/SMSSenderID";
+import BrandingSettings from "@/app/(admin)/(pages)/company-setup/profile/_components/BrandingSettings";
+
+function pickCustomValue(company: any, itemId: number) {
+  const values =
+    company?.company_custom_values ?? company?.companyCustomValues ?? [];
+  return (
+    values.find((field: any) => field.custom_profile_item_id == itemId)
+      ?.value ?? ""
+  );
+}
 
 const Page = (props: any) => {
   const params: any = use(props.params);
@@ -35,96 +36,23 @@ const Page = (props: any) => {
 
   const { companyBranding, setCompanyBranding } = useCompany();
 
-  const statuses = [
-    { id: 2, name: "Active", value: "ACTIVE" },
-    { id: 3, name: "Inactive", value: "INACTIVE" },
-  ];
-
-  const [filters, setFilters] = useState<IFilter[]>([
+  const [filters] = useState<IFilter[]>([
     { id: 1, name: "Description", value: "description" },
     { id: 2, name: "Branding Settings", value: "branding_settings" },
     { id: 3, name: "SMS Sender ID", value: "sms_sender_id" },
-    // { id: 3, name: "Configuration", value: "configuration" },
+    { id: 4, name: "Configuration", value: "configuration" },
   ]);
 
-  const [activeFilter, setActiveFilter] = useState<IFilter>({
-    id: 1,
-    name: "Description",
-    value: "description",
-  });
-
+  const [activeFilter, setActiveFilter] = useState<IFilter>(filters[0]);
   const [activeStatus, setActiveStatus] = useState({} as any);
 
-  const [showAssignModal, setShowAssignModal] = useState<boolean>(false);
-
-  const [parentAddressScheme, setParentAddressScheme] = useState<any>();
-
-  const [companyLogo, setCompanyLogo] = useState<File | null>();
-
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
-
   const [companySmallLogo, setCompanySmallLogo] = useState<File | null>();
-
   const [smallLogoUrl, setSmallLogoUrl] = useState<string>("");
-
-  const [color, setColor] = useState<string>("");
-
+  const [color, setColor] = useState<string>("#1FA35C");
   const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
-  const colorPickerRef = useRef<HTMLDivElement>(null);
-
-  // Close color picker when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        colorPickerRef.current &&
-        !colorPickerRef.current.contains(event.target as Node)
-      ) {
-        setShowColorPicker(false);
-      }
-    };
-
-    if (showColorPicker) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showColorPicker]);
-
-  //pagination
-  const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(12);
-
-  //timeline
-  const [selectedTimeline, setSelectedTimeline] = useState<
-    { label: TimelineValues; value: TimelineType } | undefined
-  >();
-
-  const handleChangeComplete = (newColor: any) => {
-    setColor(newColor.hex);
-  };
-
-  const [logoPreviewBlob, setLogoPreviewBlob] = useState<string>("");
-
-  useEffect(() => {
-    if (!companySmallLogo) {
-      setLogoPreviewBlob("");
-      return;
-    }
-    const smallUrl = URL.createObjectURL(companySmallLogo);
-    setLogoPreviewBlob(smallUrl);
-    return () => URL.revokeObjectURL(smallUrl);
-  }, [companySmallLogo]);
-
-  const brandingPreviewUrl =
-    logoPreviewBlob ||
-    (isPersistableLogoUrl(smallLogoUrl) ? smallLogoUrl : "");
 
   const resolvedCompanyId =
-    companyBranding?.companyId ??
-    companyBranding?.company_id ??
-    null;
+    companyBranding?.companyId ?? companyBranding?.company_id ?? null;
 
   const { data: companyByTenant, isLoading: loadingByTenant } = useQuery({
     queryKey: ["company-by-identifier", tenant_id],
@@ -145,171 +73,101 @@ const Page = (props: any) => {
     enabled: !!companyId,
   });
 
+  const tenancyId =
+    companyData?.company_identifier ??
+    companyData?.companyIdentifier ??
+    companyBranding?.company_identifier ??
+    tenant_id;
+
+  const { data: brandingFromApi, isLoading: brandingLoading } = useQuery({
+    queryKey: ["get company branding info", tenancyId],
+    queryFn: services.getCompanyBranding(tenancyId),
+    enabled: !!tenancyId,
+    retry: false,
+  });
+
   const isLoading = loadingById || (!resolvedCompanyId && loadingByTenant);
 
+  const companyName =
+    companyData?.company_name ?? companyData?.companyName ?? "";
+  const companyLogo =
+    companyData?.company_logo ?? companyData?.companyLogo ?? "";
+  const companyIdentifier =
+    companyData?.company_identifier ?? companyData?.companyIdentifier ?? "";
   const companyDescription =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 1
-    )?.value ?? "";
-
-  const companyAdminName =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 2
-    )?.value ?? "";
-
-  const companyAdminEmail =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 3
-    )?.value ?? "";
-
-  const companySubSector =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 4
-    )?.value ?? "";
-
-  const companyParentAddressId =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 5
-    )?.value ?? "";
-
-  const companyChildAddressId =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 6
-    )?.value ?? "";
-
-  const companySectorId =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 7
-    )?.value ?? "";
-
-  // const { data: country, isLoading: isCountryLoading } = useQuery({
-  //   queryKey: ["country", companyData?.company_address],
-  //   queryFn: services.getJurisdictionEntriesById(companyData?.company_address),
-  //   enabled:
-  //     !!companyData?.company_address &&
-  //     isConvertibleToNumber(companyData?.company_address),
-  // });
-
-  // const { data: industry, isLoading: isIndustryLoading } = useQuery({
-  //   queryKey: ["industry", companyData?.industry],
-  //   queryFn: services.getSubSectorByID(
-  //     Number(companySectorId),
-  //     Number(companyData?.industry)
-  //   ),
-  //   enabled:
-  //     !!companyData?.industry &&
-  //     !!companySectorId &&
-  //     isConvertibleToNumber(companyData?.industry),
-  // });
+    pickCustomValue(companyData, 1) || companyData?.description || "";
+  const contactName =
+    companyData?.primary_contact_name ??
+    companyData?.primaryContactName ??
+    "";
+  const contactPhone =
+    companyData?.primary_contact_phone_number ??
+    companyData?.primaryContactPhoneNumber ??
+    "";
+  const contactEmail =
+    companyData?.primary_contact_email ??
+    companyData?.primaryContactEmail ??
+    "";
 
   useEffect(() => {
     if (!companyData) return;
+    const statuses = [
+      { id: 2, name: "Active", value: "ACTIVE" },
+      { id: 3, name: "Inactive", value: "INACTIVE" },
+    ];
     const status = statuses.find(
-      (status) =>
-        status.value.toLowerCase() === companyData?.status?.toLowerCase()
+      (item) =>
+        item.value.toLowerCase() === companyData?.status?.toLowerCase()
     );
-    setActiveStatus(status);
-    // setParentAddressScheme(
-    //   country?.parentAddressScheme?.entries?.find(
-    //     (entry: any) => entry?.id == companyParentAddressId
-    //   )
-    // );
-    setBackgroundImageUrl(companyData?.company_logo);
+    setActiveStatus(status ?? statuses[0]);
+  }, [companyData]);
 
-    if (companyBranding) {
-      setColor(companyBranding?.color);
-      setSmallLogoUrl(companyBranding?.logo);
+  useEffect(() => {
+    const branding = brandingFromApi || companyBranding;
+    if (!branding) return;
+    setColor(branding?.color || "#1FA35C");
+    setSmallLogoUrl(branding?.logo || "");
+  }, [brandingFromApi, companyBranding]);
+
+  // Keep local company branding in sync after BrandingSettings saves
+  useEffect(() => {
+    if (!brandingFromApi) return;
+    const {
+      id: brandingId,
+      companyName: brandingName,
+      color: brandingColor,
+      companyId: brandingCompanyId,
+      logo,
+      tenancyId: brandingTenancy,
+      modules,
+      categorySpecificModules,
+    } = brandingFromApi;
+
+    const nextBranding = {
+      ...companyBranding,
+      modules,
+      categorySpecificModules,
+      companyModules:
+        companyBranding?.companyModules ??
+        [
+          ...(modules?.map((m: any) => m.moduleName) || []),
+          ...(categorySpecificModules?.map((m: any) => m.moduleName) || []),
+        ],
+      color: brandingColor || companyBranding?.color || "#1FA35C",
+      company_identifier: brandingTenancy || tenancyId,
+      id: brandingId ?? companyBranding?.id ?? null,
+      brandingId: brandingId ?? companyBranding?.brandingId ?? null,
+      companyId: brandingCompanyId ?? companyId ?? companyBranding?.companyId,
+      logo: logo || companyBranding?.logo || "",
+      name: brandingName || companyName || companyBranding?.name,
+    };
+
+    if (JSON.stringify(companyBranding) !== JSON.stringify(nextBranding)) {
+      setCompanyBranding(nextBranding);
     }
-  }, [companyData, companyBranding]);
+  }, [brandingFromApi]);
 
-  const editCompanyBranding = async () => {
-    if (
-      !companySmallLogo &&
-      !isPersistableLogoUrl(smallLogoUrl) &&
-      !isPersistableLogoUrl(companyBranding?.logo)
-    ) {
-      toast.error("Logo is required");
-      return;
-    }
-    try {
-      let logoToSave =
-        (isPersistableLogoUrl(smallLogoUrl) ? smallLogoUrl.trim() : null) ||
-        (isPersistableLogoUrl(companyBranding?.logo)
-          ? companyBranding.logo.trim()
-          : "");
-
-      if (companySmallLogo) {
-        const uploaded = await services.uploadBrandingLogo({
-          companyId: companyData?.id,
-          tenancyId: companyData?.company_identifier,
-          file: companySmallLogo as File,
-        });
-        logoToSave = extractFileUrl(uploaded) || logoToSave || "";
-      }
-
-      if (!logoToSave && !companySmallLogo) {
-        toast.error("Logo upload failed. Please try again.");
-        return;
-      }
-
-      const brandingRecordId =
-        companyBranding?.brandingId ?? companyBranding?.id;
-      const tenancyId =
-        companyData?.company_identifier ??
-        companyData?.companyIdentifier ??
-        tenant_id;
-      const displayName =
-        companyData?.company_name ?? companyData?.companyName;
-      const moduleIds =
-        companyBranding?.modules?.map((module: any) => module?.id) ?? [];
-      const categoryModuleIds =
-        companyBranding?.categorySpecificModules?.map(
-          (module: any) => module?.id
-        ) ?? [];
-      const logoValue = logoToSave || companyBranding?.logo || "";
-
-      if (brandingRecordId) {
-        await services.editCompanyBranding(
-          brandingRecordId,
-          companyData?.id,
-          tenancyId,
-          logoValue,
-          color,
-          displayName,
-          moduleIds,
-          categoryModuleIds
-        );
-      } else {
-        await services.createCompanyBranding(
-          companyData?.id,
-          tenancyId,
-          logoValue,
-          color,
-          displayName,
-          moduleIds,
-          categoryModuleIds
-        );
-      }
-
-      setCompanyBranding({
-        ...companyBranding,
-        color,
-        logo: logoValue,
-        companyId: companyData?.id,
-        brandingId: brandingRecordId,
-        company_identifier: tenancyId,
-        name: displayName || companyBranding?.name,
-      });
-
-      if (logoToSave) setSmallLogoUrl(logoToSave);
-      setCompanySmallLogo(null);
-      toast.success("Company branding updated successfully");
-    } catch (error) {
-      toast.error("Failed to update company branding");
-    }
-  };
   if (isLoading) {
-    // if (isLoading || areFormsLoading || isCountryLoading) {
     return (
       <div className="h-[20rem] flex items-center justify-center">
         <div>
@@ -335,324 +193,136 @@ const Page = (props: any) => {
   }
 
   return (
-    <>
-      <div className="px-5 py-5 pb-5">
-        {/* HEADER */}
-        <div className="w-full text-primary-dark  flex justify-between items-center">
-          <h3 className="font-semibold text-xl">Company Profile</h3>
+    <div className="px-5 py-5 pb-5">
+      <div className="w-full text-primary-dark flex justify-between items-center">
+        <h3 className="font-semibold text-xl">Company Profile</h3>
 
-          <div className="flex gap-3">
-            <Link
-              href={`/${tenant_id}/admin/company-profile/edit`}
-              style={{ backgroundColor: companyBranding?.color || "#0F766E" }}
-              className="disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-            >
-              <Image src={UpdateInfo} alt="Update Info" />
-              Update Information
-            </Link>
-          </div>
-        </div>
-
-        <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
-          <div className="flex gap-5 items-center justify-center">
-            {(companyData?.company_logo || companyData?.companyLogo) ? (
-              <Image
-                src={companyData?.company_logo || companyData?.companyLogo}
-                width={144}
-                height={144}
-                className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
-                alt="Company Logo"
-              />
-            ) : (
-              <div className="rounded-full w-36 h-36 border bg-[rgba(226, 232, 240, 1)] flex items-center justify-center ">
-                <UserIcon width="50" height="50" />
-              </div>
-            )}
-            {(companyData?.company_name || companyData?.companyName) && (
-              <div className="flex flex-col gap-3">
-                <div className="label">Company Name</div>
-                <div className="header">
-                  {companyData?.company_name || companyData?.companyName}
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="flex gap-6 items-center">
-            {(companyData?.company_identifier ||
-              companyData?.companyIdentifier) && (
-              <div className="flex flex-col gap-3">
-                <div className="label">Company Dashboard</div>
-
-                <button
-                  className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center justify-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2"
-                  onClick={() => {
-                    const currentHost = window.location.origin;
-                    const companyName = encodeURIComponent(
-                      companyData?.company_name ||
-                        companyData?.companyName ||
-                        ""
-                    );
-                    const identifier =
-                      companyData?.company_identifier ||
-                      companyData?.companyIdentifier;
-                    const url =
-                      currentHost +
-                      `/${identifier}/auth?c=${companyName}`;
-
-                    navigator.clipboard.writeText(url).then(() => {
-                      toast.dismiss();
-                      toast.success(
-                        `${companyData?.company_name || companyData?.companyName} dashboard link copied!`
-                      );
-                    });
-                  }}
-                >
-                  <VscLink /> Copy Link{" "}
-                </button>
-              </div>
-            )}
-            {companyData?.status && (
-              <div className="flex flex-col gap-3">
-                <div className="label">Status</div>
-                <div className={"z-20 relative inline-block"}>
-                  <button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
-                    {activeStatus?.name}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* TABS FOR DESCRIPTION  / ASSIGNED FORMS */}
-        <div className="mt-10">
-          <div className="flex justify-center items-center">
-            <Tabs
-              filters={filters}
-              setActiveFilter={setActiveFilter}
-              activeFilter={activeFilter}
-            />
-          </div>
-
-          {/* RENDERING BASED ON FITER */}
-          <div>
-            {activeFilter.value === "description" && (
-              <>
-                <div className="flex-1 py-5 pb-3">
-                  {(companyDescription || companyData?.description) && (
-                    <div className="group-item">
-                      <div className="label">Company description</div>
-                      <div className="value">
-                        {companyDescription || companyData?.description}
-                      </div>
-                    </div>
-                  )}
-
-                  {(companyData?.primary_contact_name ||
-                    companyData?.primaryContactName) && (
-                    <div className="group-item">
-                      <div className="label">Contact person</div>
-                      <div className="value">
-                        {companyData?.primary_contact_name ||
-                          companyData?.primaryContactName}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex justify-between">
-                    {(companyData?.primary_contact_phone_number ||
-                      companyData?.primaryContactPhoneNumber) && (
-                      <div className="group-item">
-                        <div className="label">Phone Number</div>
-                        <div className="value">
-                          {companyData?.primary_contact_phone_number ||
-                            companyData?.primaryContactPhoneNumber}
-                        </div>
-                      </div>
-                    )}
-                    {(companyData?.primary_contact_email ||
-                      companyData?.primaryContactEmail) && (
-                      <div className="group-item">
-                        <div className="label">Email</div>
-                        <div className="value">
-                          {companyData?.primary_contact_email ||
-                            companyData?.primaryContactEmail}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {activeFilter?.value == "branding_settings" && (
-              <div className=" pt-6">
-                <header className="pb-3 flex justify-between items-center w-full">
-                  <div>
-                    <h3 className="text-lg text-primary-dark font-semibold">
-                      Branding Settings
-                    </h3>
-                    <p className="text-sm text-[#667085]">
-                      Set your default branding elements to determine how the
-                      interface appears to customers.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="bg-white disabled:bg-gray-400 py-3 text-black border w-24 flex items-center justify-center border-[rgba(226, 232, 240, 1)] text-sm hover:opacity-95 items-center gap-2 rounded-xl"
-                    onClick={editCompanyBranding}
-                  >
-                    Save
-                  </button>
-                </header>
-                <div className="max-w-2xl">
-                  {/* COMPANY SMALL LOGO */}
-                  <div className="mt-2 mb-4">
-                    <h2 className="text-base text-primary-dark font-medium">
-                      Upload small icon
-                    </h2>
-                    <p className="text-sm text-[#667085]">
-                      A smaller representation of your logo to be used as
-                      favicon. It must be squared and at at least 128px by 128px
-                      with a max size of 512KB. Supported formats are JPG and
-                      PNG only.
-                    </p>
-                    {!(companySmallLogo || brandingPreviewUrl) && (
-                      <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
-                        <input
-                          type="file"
-                          className="hidden"
-                          onChange={(e) => {
-                            setCompanySmallLogo(
-                              e.target.files && e.target.files[0]
-                            );
-                          }}
-                          accept=".jpg, .png"
-                        />
-                        <CloudUploadIcon /> <p>Upload</p>
-                      </label>
-                    )}
-                    {brandingPreviewUrl && (
-                      <div
-                        className="my-3 flex h-32 w-32 items-center justify-center overflow-hidden rounded-md bg-white"
-                        style={{
-                          backgroundImage: `url(${brandingPreviewUrl})`,
-                          backgroundSize: "contain",
-                          backgroundRepeat: "no-repeat",
-                          backgroundPosition: "center",
-                          border: "1px solid #E2E8F0",
-                          position: "relative",
-                        }}
-                      >
-                        <div className="absolute bottom-3 right-[-2.1rem] border border-[#E2E8F0] rounded-md bg-white flex items-center">
-                          <div
-                            className="border-r border-[#E2E8F0] flex justify-center items-center w-8 py-2 cursor-pointer"
-                            onClick={() => {
-                              setCompanySmallLogo(null);
-                              setSmallLogoUrl("");
-                            }}
-                          >
-                            <RiDeleteBin6Line color="#0E121B" />
-                          </div>
-                          <label className="flex justify-center items-center w-8 py-2 relative cursor-pointer">
-                            <input
-                              type="file"
-                              className="hidden"
-                              onChange={(e) => {
-                                setCompanySmallLogo(
-                                  e.target.files && e.target.files[0]
-                                );
-                              }}
-                              accept=".jpg, .png"
-                            />
-                            <WriteIcon />
-                          </label>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  {/* COMPANY COLOR */}
-                  <div className="input-holder">
-                    <h2 className="text-base text-primary-dark font-medium">
-                      Company Color
-                    </h2>
-                    <p className="text-sm text-[#667085]">
-                      Add a splash of colour to your pages
-                    </p>
-                    {!color && (
-                      <button
-                        className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border py-2 px-4 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
-                        type="button"
-                        onClick={() => setShowColorPicker(!showColorPicker)}
-                      >
-                        Select
-                      </button>
-                    )}
-                    {color && (
-                      <button
-                        className=" mt-2 flex items-center my-2  bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
-                        type="button"
-                        onClick={() => setShowColorPicker(!showColorPicker)}
-                      >
-                        <div
-                          className={`w-5 h-8 rounded-tl-md rounded-bl-md`}
-                          style={{ backgroundColor: color }}
-                        ></div>
-                        <p className="p-2">{color}</p>
-                      </button>
-                    )}
-                    {showColorPicker && (
-                      <div className="relative mt-4">
-                        <div
-                          ref={colorPickerRef}
-                          className="absolute z-10 bg-white p-4 rounded-lg shadow-lg border border-[#E2E8F0]"
-                        >
-                          <HexColorPicker
-                            color={color}
-                            onChange={(newColor) =>
-                              handleChangeComplete({ hex: newColor })
-                            }
-                          />
-                          <div className="mt-3 flex items-center justify-between gap-3">
-                            <input
-                              type="text"
-                              value={color}
-                              onChange={(e) =>
-                                handleChangeComplete({ hex: e.target.value })
-                              }
-                              className="px-3 py-2 border border-[#E2E8F0] rounded-md text-sm w-32"
-                              placeholder="#000000"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setShowColorPicker(false)}
-                              className="px-4 py-2 bg-primary-green text-white text-sm rounded-md hover:opacity-90"
-                            >
-                              Done
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeFilter?.value === "sms_sender_id" && (
-              <SMSSenderID
-                company={companyData}
-                companyId={companyId}
-              />
-            )}
-
-            {/* {activeFilter?.value === "configuration" && (
-              <Configuration tenantId={companyData?.company_identifier} />
-            )} */}
-          </div>
+        <div className="flex gap-3">
+          <Link
+            href={`/${tenant_id}/admin/company-profile/edit`}
+            style={{ backgroundColor: color || "#0F766E" }}
+            className="disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
+          >
+            <Image src={UpdateInfo} alt="Update Info" />
+            Update Information
+          </Link>
         </div>
       </div>
-    </>
+
+      <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
+        <div className="flex gap-5 items-center justify-center">
+          {companyLogo ? (
+            <Image
+              src={companyLogo}
+              width={144}
+              height={144}
+              className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
+              alt="Company Logo"
+            />
+          ) : (
+            <div className="rounded-full w-36 h-36 border bg-[rgba(226, 232, 240, 1)] flex items-center justify-center ">
+              <UserIcon width="50" height="50" />
+            </div>
+          )}
+          <div className="flex flex-col gap-3">
+            <div className="label">Company Name</div>
+            <div className="header">{companyName || "—"}</div>
+          </div>
+        </div>
+        <div className="flex gap-6 items-center">
+          {companyIdentifier && (
+            <div className="flex flex-col gap-3">
+              <div className="label">Marketing page URL</div>
+              <button
+                className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center justify-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3"
+                onClick={() => {
+                  const url = `${window.location.origin}/${companyIdentifier}`;
+                  navigator.clipboard.writeText(url).then(() => {
+                    toast.dismiss();
+                    toast.success(`${companyName} marketing page link copied!`);
+                  });
+                }}
+              >
+                <VscLink /> Copy Link
+              </button>
+            </div>
+          )}
+          {companyData?.status && (
+            <div className="flex flex-col gap-3">
+              <div className="label">Status</div>
+              <div className="z-20 relative inline-block">
+                <button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
+                  {activeStatus?.name || companyData.status}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <div className="flex justify-center items-center">
+          <Tabs
+            filters={filters}
+            setActiveFilter={setActiveFilter}
+            activeFilter={activeFilter}
+          />
+        </div>
+
+        <div>
+          {activeFilter.value === "description" && (
+            <div className="flex-1 py-5 pb-3">
+              <div className="group-item">
+                <div className="label">Company description</div>
+                <div className="value">
+                  {companyDescription || "No description set"}
+                </div>
+              </div>
+
+              <div className="group-item">
+                <div className="label">Contact person</div>
+                <div className="value">{contactName || "—"}</div>
+              </div>
+
+              <div className="flex justify-between gap-6">
+                <div className="group-item">
+                  <div className="label">Phone Number</div>
+                  <div className="value">{contactPhone || "—"}</div>
+                </div>
+                <div className="group-item">
+                  <div className="label">Email</div>
+                  <div className="value">{contactEmail || "—"}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeFilter?.value === "branding_settings" && (
+            <BrandingSettings
+              brandingLoading={brandingLoading}
+              companySmallLogo={companySmallLogo}
+              setCompanySmallLogo={setCompanySmallLogo}
+              smallLogoUrl={smallLogoUrl}
+              setSmallLogoUrl={setSmallLogoUrl}
+              color={color}
+              showColorPicker={showColorPicker}
+              setShowColorPicker={setShowColorPicker}
+              handleChangeComplete={(newColor: any) => setColor(newColor.hex)}
+              companyBranding={brandingFromApi || companyBranding}
+              companyData={companyData}
+            />
+          )}
+
+          {activeFilter?.value === "sms_sender_id" && (
+            <SMSSenderID company={companyData} companyId={companyId} />
+          )}
+
+          {activeFilter?.value === "configuration" && (
+            <Configuration tenantId={tenancyId} />
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -164,11 +164,11 @@ function SingleFormCompany(props: any) {
                     return;
                   }
                   toast.dismiss();
-                  toast.error("Publish form first to access a shareable link");
+                  toast.error("Publish form first so clients can apply");
                 }}
                 className="btn-outline"
               >
-                <VscLink /> Share
+                <VscLink /> Share apply link
               </button>
             )}
 

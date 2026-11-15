@@ -148,7 +148,10 @@ const BrandingSettings = ({
       const logoUrl = await uploadLogoIfNeeded();
 
       await services.editCompanyBranding(
-        companyBranding?.id ?? companyBranding?.companyId ?? companyId,
+        companyBranding?.brandingId ??
+          companyBranding?.id ??
+          companyBranding?.companyId ??
+          companyId,
         companyId,
         tenancyId,
         logoUrl || companyBranding?.logo || "",

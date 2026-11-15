@@ -8,15 +8,20 @@ import { toast } from "sonner";
 import Loader from "@/components/Loader/Loader";
 
 function SMSSenderID({ company, companyId }: any) {
-  const [senderId, setSenderId] = useState(company?.company_sms_sender_id ?? "");
+  const currentSenderId =
+    company?.company_sms_sender_id ?? company?.companySmsSenderId ?? "";
+
+  const [senderId, setSenderId] = useState(currentSenderId);
 
   const queryClient = useQueryClient();
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setSenderId(company?.company_sms_sender_id ?? "");
-  }, [company?.company_sms_sender_id]);
+    setSenderId(
+      company?.company_sms_sender_id ?? company?.companySmsSenderId ?? ""
+    );
+  }, [company?.company_sms_sender_id, company?.companySmsSenderId]);
 
   const updateSenderID = () => {
     if (!company || !companyId) {
@@ -30,20 +35,24 @@ function SMSSenderID({ company, companyId }: any) {
     }
     setIsLoading(true);
 
+    const customValues =
+      company?.company_custom_values ?? company?.companyCustomValues ?? [];
+
     services
       .editCompanySMSSenderIDWithCustomFields(
         companyId,
         {
           ...company,
           company_sms_sender_id: senderId,
+          companySmsSenderId: senderId,
         },
-        company?.company_custom_values ?? []
+        customValues
       )
       .then(() => {
         toast.success("Updated SMS Sender ID Successfully");
         setIsLoading(false);
         queryClient.invalidateQueries({
-          queryKey: ["company", parseInt(companyId as string)],
+          queryKey: ["company", Number(companyId)],
         });
       })
       .catch(() => {
@@ -87,14 +96,12 @@ function SMSSenderID({ company, companyId }: any) {
 
         <p
           className={`${
-            company?.company_sms_sender_id
+            currentSenderId
               ? "bg-primary-green text-primary-green border-primary-green text-xl"
               : "bg-red-500 text-red-600 border-red-600 text-base"
           }   border  bg-opacity-10  px-4 py-3 rounded-xl`}
         >
-          {company?.company_sms_sender_id
-            ? company?.company_sms_sender_id
-            : "No Sender ID Set up"}
+          {currentSenderId || "No Sender ID Set up"}
         </p>
       </div>
 

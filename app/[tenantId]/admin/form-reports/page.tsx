@@ -110,7 +110,7 @@ function CompanyFormReports() {
               isLoading: !linksIgnoredReady,
             },
             {
-              label: "Total Customers",
+              label: "Total Applicants",
               value: formatNumber(uniqueUsersCount),
               isLoading: usersLoading,
             },

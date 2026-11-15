@@ -18,8 +18,6 @@ import { editCompanyWithCustomFields } from "@/services/features/companyService"
 import CompanyForm, { ICompany } from "./../components/CompanyForm";
 import useCompany from "@/hooks/useCompany";
 
-import useAdmin from "@/hooks/useAdmin";
-
 const Page = () => {
   const { companyBranding } = useCompany();
 
@@ -53,40 +51,31 @@ const Page = () => {
     enabled: !!companyId,
   });
 
+  const customValues =
+    companyData?.company_custom_values ??
+    companyData?.companyCustomValues ??
+    [];
+
+  const pickCustom = (itemId: number) =>
+    customValues.find((field: any) => field.custom_profile_item_id == itemId)
+      ?.value ?? "";
+
   const companyDescription =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 1
-    )?.value ?? "";
+    pickCustom(1) || companyData?.description || "";
 
-  const companyAdminName =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 2
-    )?.value ?? "";
+  const companyAdminName = pickCustom(2);
+  const companyAdminEmail = pickCustom(3);
+  const companySubSector = pickCustom(4);
+  const companyParentAddressId = pickCustom(5);
+  const companyChildAddressId = pickCustom(6);
+  const companySectorId = pickCustom(7);
 
-  const companyAdminEmail =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 3
-    )?.value ?? "";
-
-  const companySubSector =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 4
-    )?.value ?? "";
-
-  const companyParentAddressId =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 5
-    )?.value ?? "";
-
-  const companyChildAddressId =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 6
-    )?.value ?? "";
-
-  const companySectorId =
-    companyData?.company_custom_values?.find(
-      (field: any) => field.custom_profile_item_id == 7
-    )?.value ?? "";
+  const contactFullName =
+    companyData?.primary_contact_name ??
+    companyData?.primaryContactName ??
+    "";
+  const contactNameParts = contactFullName.trim().split(/\s+/);
+  const adminNameParts = companyAdminName.trim().split(/\s+/);
 
   // const { data: country, isLoading: isCountryLoading } = useQuery({
   //   queryKey: ["country", companyData?.company_address],
@@ -154,12 +143,16 @@ const Page = () => {
 
   const [sectorId, setSectorId] = useState<number | string>("");
 
-  const [phone, setPhone] = useState(companyData?.primary_contact_phone_number);
+  const [phone, setPhone] = useState(
+    companyData?.primary_contact_phone_number ??
+      companyData?.primaryContactPhoneNumber ??
+      ""
+  );
 
   const [companyLogo, setCompanyLogo] = useState<File | null>(null);
 
   const [backgroundImageUrl, setBackgroundImageUrl] = useState(
-    companyData?.company_logo
+    companyData?.company_logo ?? companyData?.companyLogo ?? ""
   );
 
   const [companySmallLogo, setCompanySmallLogo] = useState<File | null>(null);
@@ -177,14 +170,18 @@ const Page = () => {
   const router = useRouter();
 
   const initialValues: Partial<ICompany> = {
-    companyName: companyData?.company_name,
+    companyName:
+      companyData?.company_name ?? companyData?.companyName ?? "",
     companyDescription: companyDescription,
-    adminFirstName: companyAdminName.split(" ")[0],
-    adminLastName: companyAdminName.split(" ")[1],
+    adminFirstName: adminNameParts[0] || "",
+    adminLastName: adminNameParts.slice(1).join(" ") || "",
     adminEmail: companyAdminEmail,
-    contactFirstName: companyData?.primary_contact_name.split(" ")[0],
-    contactLastName: companyData?.primary_contact_name.split(" ")[1],
-    contactEmail: companyData?.primary_contact_email,
+    contactFirstName: contactNameParts[0] || "",
+    contactLastName: contactNameParts.slice(1).join(" ") || "",
+    contactEmail:
+      companyData?.primary_contact_email ??
+      companyData?.primaryContactEmail ??
+      "",
   };
 
   const hasValueChanged = (initialValue: any, newValue: any) =>
@@ -207,8 +204,6 @@ const Page = () => {
 
   const { handleFileUpload } = useFileUpload();
 
-  const { checkPermission } = useAdmin();
-
   const editCompany = async (
     values: Partial<ICompany>,
     { resetForm, setSubmitting }: FormikHelpers<Partial<ICompany>>
@@ -219,49 +214,28 @@ const Page = () => {
       return;
     }
 
-    // if (!selectedCountry?.value) {
-    //   toast.error("Jurisdiction is required");
-    //   setSubmitting(false);
-    //   return;
-    // }
+    const brandingColor = color || companyBranding?.color || "#1FA35C";
+    const existingSmallLogo =
+      (isPersistableLogoUrl(smallLogoUrl) ? smallLogoUrl : "") ||
+      (isPersistableLogoUrl(companyBranding?.logo)
+        ? companyBranding.logo
+        : "");
+    const existingFullLogo =
+      companyData?.company_logo ?? companyData?.companyLogo ?? "";
 
-    // if (!selectedParentLevel?.value) {
-    //   toast.error("Sub Jurisdiction is required");
-    //   setSubmitting(false);
-    //   return;
-    // }
-
-    // if (!selectedChildLevel?.value) {
-    //   toast.error("Sub Level is required");
-    //   setSubmitting(false);
-    //   return;
-    // }
-
-    // if (!selectedIndustry?.value) {
-    //   toast.error("Industry is required");
-    //   setSubmitting(false);
-    //   return;
-    // }
-
-    // if (!selectedSubSector?.value) {
-    //   toast.error("Sub Sector is required");
-    //   setSubmitting(false);
-    //   return;
-    // }
-
-    if (!color) {
+    if (!brandingColor) {
       toast.error("Color is required");
       setSubmitting(false);
       return;
     }
 
-    if (!smallLogoUrl) {
-      toast.error("Small Logo is required");
+    if (!existingSmallLogo && !companySmallLogo) {
+      toast.error("Small logo is required");
       setSubmitting(false);
       return;
     }
 
-    if (!backgroundImageUrl) {
+    if (!existingFullLogo && !companyLogo && !backgroundImageUrl) {
       toast.error("Logo is required");
       setSubmitting(false);
       return;
@@ -279,57 +253,41 @@ const Page = () => {
       primary_contact_name: `${values.contactFirstName} ${values.contactLastName}`,
       primary_contact_email: values.contactEmail as string,
       primary_contact_phone_number: phone,
-      company_logo: uploadedCompanyLogo || companyData?.company_logo,
-      industry: selectedIndustry?.value as string,
-      company_address: selectedCountry?.value as string,
-      primary_currency: companyData?.primary_currency,
-      company_code: String(Math.floor(Math.random() * 10000)).padStart(4, "0"),
+      company_logo:
+        uploadedCompanyLogo ||
+        (isPersistableLogoUrl(backgroundImageUrl)
+          ? backgroundImageUrl
+          : existingFullLogo),
+      industry:
+        (selectedIndustry?.value as string) ||
+        companyData?.industry ||
+        "",
+      company_address:
+        (selectedCountry?.value as string) ||
+        companyData?.company_address ||
+        companyData?.companyAddress ||
+        "",
+      primary_currency:
+        companyData?.primary_currency ?? companyData?.primaryCurrency,
+      company_code:
+        companyData?.company_code ??
+        companyData?.companyCode ??
+        String(Math.floor(Math.random() * 10000)).padStart(4, "0"),
     };
 
     const custom_fields: CustomField[] = [
       {
-        //Company Description
         custom_profile_item_id: 1,
         value: values.companyDescription as string,
       },
-      // {
-      //   //Admin Name
-      //   custom_profile_item_id: 2,
-      //   value: `${values.adminFirstName} ${values.adminLastName}`,
-      // }
-      // {
-      //   //Admin Email
-      //   custom_profile_item_id: 3,
-      //   value: values.adminEmail as string,
-      // },
-      // {
-      //   // Sub Sector ID
-      //   custom_profile_item_id: 4,
-      //   value: selectedSubSector?.value as string,
-      // },
-      // {
-      //   // Parent Address Scheme ID
-      //   custom_profile_item_id: 5,
-      //   value: selectedParentLevel?.value as string,
-      // },
-      // {
-      //   //Child Address Scheme ID
-      //   custom_profile_item_id: 6,
-      //   value: selectedChildLevel?.value as string,
-      // },
-      // {
-      //   // Sector ID
-      //   custom_profile_item_id: 7,
-      //   value: sectorId as string,
-      // },
     ];
 
     try {
-      const custom_values_field = "company_custom_values";
-
-      let allCustomFields = companyData[custom_values_field];
-
-      delete companyData[custom_values_field];
+      const allCustomFields = [
+        ...(companyData?.company_custom_values ??
+          companyData?.companyCustomValues ??
+          []),
+      ];
 
       const updatedCustomFields = allCustomFields.map((field: any) =>
         field.custom_profile_item_id === 1
@@ -341,16 +299,22 @@ const Page = () => {
       );
 
       if (
-        !allCustomFields.some(
+        !updatedCustomFields.some(
           (field: any) => field.custom_profile_item_id === 1
         )
       ) {
         updatedCustomFields.push(...custom_fields);
       }
 
+      const {
+        company_custom_values,
+        companyCustomValues,
+        ...companyWithoutCustom
+      } = companyData || {};
+
       await editCompanyWithCustomFields(
         companyData?.id,
-        { ...companyData, ...data },
+        { ...companyWithoutCustom, ...data },
         updatedCustomFields
       );
 
@@ -394,20 +358,20 @@ const Page = () => {
 
       // }
 
-      let brandingLogo = isPersistableLogoUrl(companyBranding?.logo)
-        ? companyBranding.logo.trim()
-        : "";
+      let brandingLogo = existingSmallLogo;
 
       if (companySmallLogo) {
         const uploaded = await services.uploadBrandingLogo({
           companyId: companyData?.id,
-          tenancyId: companyData?.company_identifier,
+          tenancyId:
+            companyData?.company_identifier ??
+            companyData?.companyIdentifier,
           file: companySmallLogo as File,
         });
         brandingLogo = extractFileUrl(uploaded) || brandingLogo;
       }
 
-      if (!brandingLogo && !companySmallLogo) {
+      if (!brandingLogo && companySmallLogo) {
         toast.error("Logo upload failed. Please try again.");
         setSubmitting(false);
         return;
@@ -417,7 +381,8 @@ const Page = () => {
         companyBranding?.brandingId ?? companyBranding?.id;
       const tenancyId =
         companyData?.company_identifier ??
-        companyData?.companyIdentifier;
+        companyData?.companyIdentifier ??
+        companyBranding?.company_identifier;
       const logoValue = brandingLogo || companyBranding?.logo || "";
       const moduleIds =
         companyBranding?.modules?.map((module: any) => module?.id) ?? [];
@@ -432,17 +397,17 @@ const Page = () => {
           companyData?.id,
           tenancyId,
           logoValue,
-          color,
+          brandingColor,
           values.companyName as string,
           moduleIds,
           categoryModuleIds
         );
-      } else {
+      } else if (companyData?.id && tenancyId) {
         await services.createCompanyBranding(
           companyData?.id,
           tenancyId,
           logoValue,
-          color,
+          brandingColor,
           values.companyName as string,
           moduleIds,
           categoryModuleIds
@@ -452,7 +417,8 @@ const Page = () => {
       toast.success(
         `Company ${companyData?.company_name ?? companyData?.companyName} edited successfully`
       );
-      // router.back();
+      await refetch();
+      router.push(`/${tenancyId}/admin/company-profile`);
     } catch (error) {
       toast.error("An error occurred");
     } finally {
@@ -471,69 +437,33 @@ const Page = () => {
 
   useEffect(() => {
     if (companyData) {
-      {
-        /* SETTING INITIAL VALUES*/
-      }
-      const phoneNumber = companyData?.primary_contact_phone_number;
-      setPhone(phoneNumber);
-
-      // setSelectedIndustry({
-      //   label: isConvertibleToNumber(companyData?.industry)
-      //     ? industry?.sector?.parentSector
-      //     : companyData?.industry,
-      //   value: companyData?.industry,
-      // });
-      // if (companySubSector) {
-      //   setSelectedSubSector({
-      //     label: companySubSector,
-      //     value: companySubSector,
-      //   });
-      // }
-
-      // if (companyParentAddressId) {
-      //   setSelectedCountry({
-      //     label: country?.name,
-      //     value: companyData?.company_address,
-      //   });
-      // }
-
-      // if (companyParentAddressId) {
-      //   setSelectedParentLevel({
-      //     label: country?.parentAddressScheme?.entries?.find(
-      //       (entry: any) => entry?.id == companyParentAddressId
-      //     )?.name,
-      //     value: companyParentAddressId,
-      //   });
-      // }
-
-      // if (companyChildAddressId) {
-      //   setSelectedChildLevel({
-      //     label: country?.parentAddressScheme?.entries
-      //       ?.find((entry: any) => entry?.id == companyParentAddressId)
-      //       ?.childEntries?.find(
-      //         (entry: any) => entry?.id == companyChildAddressId
-      //       )?.name,
-      //     value: companyChildAddressId,
-      //   });
-      // }
-
-      // if (companySectorId) {
-      //   setSectorId(companySectorId);
-      // }
+      setPhone(
+        companyData?.primary_contact_phone_number ??
+          companyData?.primaryContactPhoneNumber ??
+          ""
+      );
 
       if (companyBranding) {
-        setColor(companyBranding?.color);
-        setSmallLogoUrl(companyBranding?.logo);
+        setColor(companyBranding?.color || "#1FA35C");
+        setSmallLogoUrl(companyBranding?.logo || "");
       }
 
-      setBackgroundImageUrl(companyData?.company_logo);
+      setBackgroundImageUrl(
+        companyData?.company_logo ?? companyData?.companyLogo ?? ""
+      );
     }
   }, [companyData, companyBranding]);
+
+  useEffect(() => {
+    if (!companyData && !isLoading && companyId) {
+      refetch();
+    }
+  }, [companyData, isLoading, companyId, refetch]);
 
   return (
     <div className="px-5 pb-20 pt-5">
       <div>
-        {isLoading ? (
+        {isLoading || (!companyId && !companyData) ? (
           <div className="h-[20rem] flex items-center justify-center">
             <div>
               <LoadingIcon />
@@ -542,10 +472,28 @@ const Page = () => {
               </p>
             </div>
           </div>
+        ) : !companyData ? (
+          <div className="py-16 text-center">
+            <h3 className="text-lg font-semibold text-slate-900">
+              Company profile unavailable
+            </h3>
+            <p className="mt-2 text-sm text-slate-500">
+              We could not load this company for editing. Go back and try again.
+            </p>
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm"
+            >
+              Go back
+            </button>
+          </div>
         ) : (
           <CompanyForm
-            headerText={`Edit ${companyData?.company_name}`}
-            logoPresentOnLoad={companyData?.company_logo ? true : false}
+            headerText={`Edit ${companyData?.company_name ?? companyData?.companyName ?? "Company"}`}
+            logoPresentOnLoad={Boolean(
+              companyData?.company_logo || companyData?.companyLogo
+            )}
             submitFn={editCompany}
             initialValues={initialValues}
             setShowCancelModal={setShowCancelModal}

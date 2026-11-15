@@ -36,6 +36,8 @@ import {
 } from "@heroui/react";
 import { Countrie } from "@/app/(admin)/(pages)/country-setup/components/Countries";
 import useCompany from "@/hooks/useCompany";
+import { HexColorPicker } from "react-colorful";
+import { isPersistableLogoUrl } from "@/hooks/useFileUpload";
 
 export interface ICompany {
   companyName: string;
@@ -213,6 +215,8 @@ const CompanyForm: React.FC<Props> = ({
     useState<boolean>(false);
 
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [logoPreviewBlob, setLogoPreviewBlob] = useState("");
+  const colorPickerRef = useRef<HTMLDivElement>(null);
 
   const {
     data: jurisdictions,
@@ -222,6 +226,25 @@ const CompanyForm: React.FC<Props> = ({
     queryKey: ["all jurisdictions"],
     queryFn: services.allJurisdictions(),
   });
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        colorPickerRef.current &&
+        !colorPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowColorPicker(false);
+      }
+    };
+
+    if (showColorPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showColorPicker]);
 
   const fetchIndustries = async (jurisdiction: string) => {
     try {
@@ -304,13 +327,19 @@ const CompanyForm: React.FC<Props> = ({
   }, [companyLogo]);
 
   useEffect(() => {
-    if (companySmallLogo) {
-      const smallUrl = URL.createObjectURL(companySmallLogo);
-      setSmallLogoUrl(smallUrl);
-
-      return () => URL.revokeObjectURL(smallUrl);
+    if (!companySmallLogo) {
+      setLogoPreviewBlob("");
+      return;
     }
+    const smallUrl = URL.createObjectURL(companySmallLogo);
+    setLogoPreviewBlob(smallUrl);
+    return () => URL.revokeObjectURL(smallUrl);
   }, [companySmallLogo]);
+
+  const brandingPreviewUrl =
+    logoPreviewBlob ||
+    (isPersistableLogoUrl(smallLogoUrl) ? smallLogoUrl : "") ||
+    "";
 
   useLayoutEffect(() => {
     if (selectedCountry?.label) {
@@ -331,10 +360,6 @@ const CompanyForm: React.FC<Props> = ({
     }
   }, [selectedIndustry]);
 
-  useEffect(() => {
-    console.log("selecte ", selectedIndustry);
-  }, [selectedIndustry]);
-
   // useLayoutEffect(() => {
   //   if (selectedIndustry?.value && sectorId) {
   //     fetchSubSectors(sectorId, selectedIndustry?.value);
@@ -344,6 +369,7 @@ const CompanyForm: React.FC<Props> = ({
   return (
     <div className="">
       <Formik
+        enableReinitialize
         initialValues={initialValues}
         validationSchema={companySchema}
         onSubmit={submitFn}
@@ -738,7 +764,7 @@ const CompanyForm: React.FC<Props> = ({
                     It must be squared and at at least 128px by 128px with a max
                     size of 512KB. Supported formats are JPG and PNG only.
                   </p>
-                  {!smallLogoUrl && (
+                  {!brandingPreviewUrl && (
                     <label className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border p-2 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer ">
                       <input
                         type="file"
@@ -753,16 +779,13 @@ const CompanyForm: React.FC<Props> = ({
                       <CloudUploadIcon /> <p>Upload</p>
                     </label>
                   )}
-                  {Boolean(smallLogoUrl) && (
+                  {Boolean(brandingPreviewUrl) && (
                     <div
                       className="w-32 h-32 rounded-md my-3"
                       style={{
-                        backgroundImage: logoPresentOnLoad
-                          ? `url(${smallLogoUrl})`
-                          : companySmallLogo
-                          ? `url(${smallLogoUrl})`
-                          : "",
-                        backgroundSize: "cover",
+                        backgroundImage: `url(${brandingPreviewUrl})`,
+                        backgroundSize: "contain",
+                        backgroundRepeat: "no-repeat",
                         backgroundPosition: "center",
                         border: "1px solid #E2E8F0",
                         position: "relative",
@@ -774,6 +797,7 @@ const CompanyForm: React.FC<Props> = ({
                           onClick={() => {
                             setCompanySmallLogo(null);
                             setSmallLogoUrl("");
+                            setLogoPreviewBlob("");
                           }}
                         >
                           <RiDeleteBin6Line color="#0E121B" />
@@ -875,29 +899,50 @@ const CompanyForm: React.FC<Props> = ({
                   <p className="text-sm text-[#667085]">
                     Add a splash of colour to your pages
                   </p>
-                  {!color && (
-                    <button
-                      className=" mt-2 flex gap-2 items-center my-2  bg-white w-fit h-fit border py-2 px-4 rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
-                      type="button"
-                      onClick={() => setShowColorPicker(!showColorPicker)}
-                    >
-                      Select
-                    </button>
-                  )}
-                  {color && (
-                    <button
-                      className=" mt-2 flex items-center my-2  bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
-                      type="button"
-                      onClick={() => setShowColorPicker(!showColorPicker)}
-                    >
+                  <button
+                    className=" mt-2 flex items-center my-2  bg-white w-fit h-8 border rounded-md text-[#334155] font-medium border-[#E2E8F0] text-sm cursor-pointer "
+                    type="button"
+                    onClick={() => setShowColorPicker(!showColorPicker)}
+                  >
+                    <div
+                      className={`w-5 h-8 rounded-tl-md rounded-bl-md`}
+                      style={{ backgroundColor: color || "#1FA35C" }}
+                    ></div>
+                    <p className="p-2">{color || "Select"}</p>
+                  </button>
+                  {showColorPicker && (
+                    <div className="relative mt-4">
                       <div
-                        className={`w-5 h-8 rounded-tl-md rounded-bl-md`}
-                        style={{ backgroundColor: color }}
-                      ></div>
-                      <p className="p-2">{color}</p>
-                    </button>
+                        ref={colorPickerRef}
+                        className="absolute z-10 bg-white p-4 rounded-lg shadow-lg border border-[#E2E8F0]"
+                      >
+                        <HexColorPicker
+                          color={color || "#1FA35C"}
+                          onChange={(newColor) =>
+                            handleChangeComplete({ hex: newColor })
+                          }
+                        />
+                        <div className="mt-3 flex items-center justify-between gap-3">
+                          <input
+                            type="text"
+                            value={color || ""}
+                            onChange={(e) =>
+                              handleChangeComplete({ hex: e.target.value })
+                            }
+                            className="px-3 py-2 border border-[#E2E8F0] rounded-md text-sm w-32"
+                            placeholder="#1FA35C"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowColorPicker(false)}
+                            className="px-4 py-2 bg-primary-green text-white text-sm rounded-md hover:opacity-90"
+                          >
+                            Done
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   )}
-                  {showColorPicker && <></>}
                 </div>
               </div>
             </Form>

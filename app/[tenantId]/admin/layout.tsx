@@ -87,10 +87,10 @@ export default function CompanyLayout(props: any) {
       link: `/${company?.company_identifier}/admin/forms`,
     },
     {
-      name: "Customers",
+      name: "Service Requests",
       linkedModule: AvailableModules.FormBuilder,
       icon: <MdOutlineSupervisedUserCircle size={20} />,
-      link: `/${company?.company_identifier}/admin/customers`,
+      link: `/${company?.company_identifier}/admin/service-requests`,
     },
     {
       name: "Payments & Billing",

@@ -3,7 +3,7 @@
 // Next & React imports
 import React, { useEffect, useState, Suspense } from "react";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 // components
 import SideNav from "@/components/SideNav/SideNav";
@@ -13,7 +13,14 @@ import { MobileNavProvider } from "@/contexts/MobileNavContext";
 // icons
 import ClientDashboardIcon from "@/public/icons/ClientDashboardIcon";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { TbCurrentLocation, TbDeviceLaptop } from "react-icons/tb";
+import {
+  TbChartBar,
+  TbCurrentLocation,
+  TbDeviceLaptop,
+  TbApps,
+  TbSchool,
+  TbCurrencyDollar,
+} from "react-icons/tb";
 import { HiOutlineDocumentText } from "react-icons/hi";
 
 // hooks
@@ -31,74 +38,103 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
 
   const { user } = useUser();
 
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const { companyBranding: company, company: companyInfo } = useCompany();
 
-  useEffect(() => {
-    // Redirect to login if not authenticated
-    // if on a an authenticated page and isn't logged in
-    // if (!Boolean(user) && !pathname.includes("auth")) {
-    //   router.push(`/${company?.company_identifier}/auth`);
-    //   toast.error("Please login to continue");
-    // } else {
-    //   setLoading(false);
-    // }
-  }, [user]);
-
   const [navigation, setNavigation] = useState([]);
 
-  // COMPANY ADMIN NAVIGATION
+  const tenant = company?.company_identifier;
+
   const all_navigation = [
+    {
+      name: "Dashboard",
+      linkedModule: AvailableModules.Dashboard,
+      icon: <ClientDashboardIcon />,
+      link: `/${tenant}/client/dashboard`,
+    },
+    {
+      name: "Services",
+      linkedModule: AvailableModules.FormBuilder,
+      icon: <TbDeviceLaptop size={20} />,
+      link: `/${tenant}/client/services`,
+    },
+    {
+      name: "Financial",
+      linkedModule: AvailableModules.Dashboard,
+      icon: <TbCurrencyDollar size={20} />,
+      link: `/${tenant}/client/financial`,
+    },
+    {
+      name: "Apps",
+      linkedModule: AvailableModules.Dashboard,
+      icon: <TbApps size={20} />,
+      link: `/${tenant}/client/apps`,
+    },
+    {
+      name: "Training",
+      linkedModule: AvailableModules.MediaCenter,
+      icon: <TbSchool size={20} />,
+      link: `/${tenant}/client/training`,
+      // Also show when Media Center is off — treated as core below
+      alwaysShow: true,
+    },
+    {
+      name: "Analytics",
+      linkedModule: AvailableModules.Dashboard,
+      icon: <TbChartBar size={20} />,
+      link: `/${tenant}/client/analytics`,
+    },
     {
       name: "Home",
       linkedModule: AvailableModules.MediaCenter,
       icon: <ClientDashboardIcon />,
-      link: `/${company?.company_identifier}/client/home`,
-    },
-    {
-      name: "Services",
-      linkedModule: AvailableModules.Dashboard,
-      icon: <TbDeviceLaptop size={20} />,
-      link: `/${company?.company_identifier}/client`,
+      link: `/${tenant}/client/home`,
     },
     {
       name: "Documents",
       linkedModule: AvailableModules.FormBuilder,
       icon: <HiOutlineDocumentText />,
-      link: `/${company?.company_identifier}/client/documents`,
+      link: `/${tenant}/client/documents`,
     },
   ];
 
   useEffect(() => {
-    let enabled_modules = [
-      ...company.companyModules,
-      // ...company.modules,
-      // ...company.categorySpecificModules,
-    ];
+    const enabled_modules = [...(company?.companyModules || [])];
 
-    let temp: any = [];
+    const temp: any = [];
 
-    all_navigation.forEach((item) => {
-      if (enabled_modules.includes(item.linkedModule)) {
+    all_navigation.forEach((item: any) => {
+      if (
+        item.alwaysShow ||
+        enabled_modules.includes(item.linkedModule) ||
+        // Core customer areas stay visible even if modules list is thin
+        ["Dashboard", "Services", "Financial", "Apps", "Analytics"].includes(
+          item.name
+        )
+      ) {
+        // Avoid duplicate Home if Media Center already covers it via Training-style always
+        if (
+          item.name === "Home" &&
+          !enabled_modules.includes(AvailableModules.MediaCenter)
+        ) {
+          return;
+        }
         temp.push(item);
       }
     });
 
-    // constants
     temp.push({
       name: "Settings",
       icon: <TbCurrentLocation size={20} />,
-      link: `/${company?.company_identifier}/client/settings`,
+      link: `/${tenant}/client/settings`,
     });
 
-    // assign
     setNavigation(temp);
-  }, [company, user]);
+  }, [company, user, tenant]);
 
   if (companyInfo && companyInfo?.status?.toLowerCase() === "inactive") {
     return (
@@ -141,9 +177,7 @@ export default function ClientLayout({
                             type="client"
                             navigation={navigation}
                             homeHref={
-                              company?.company_identifier
-                                ? `/${company.company_identifier}/client/home`
-                                : "/"
+                              tenant ? `/${tenant}/client/dashboard` : "/"
                             }
                             brandTitle={company?.name ?? "Green Business Suite"}
                             brandSubtitle="Client Portal"

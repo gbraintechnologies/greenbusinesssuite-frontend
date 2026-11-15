@@ -276,10 +276,10 @@ const page = (props: any) => {
                 {userData?.email}
               </p>
               <Link
-                href={`/${auth?.tenantId}/admin/customers/profile?id=${userId}`}
+                href={`/${auth?.tenantId}/admin/service-requests/profile?id=${userId}`}
                 className="text-[#15803D] text-sm underline cursor-pointer w-auto"
               >
-                Go to user profile
+                Go to service requests
               </Link>
             </div>
           </div>

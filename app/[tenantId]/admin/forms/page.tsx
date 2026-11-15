@@ -49,7 +49,16 @@ function CompanyForms() {
 
   return (
     <div className="mt-4 min-h-screen px-3 py-2 pb-20 sm:px-5">
-      <Nav headerLeftTitle="Assigned Forms" />
+      <Nav
+        headerLeft={
+          <div>
+            <div className="text-xl font-semibold">Forms</div>
+            <p className="mt-1 text-sm font-normal text-slate-500">
+              Publish forms so clients can fill them out and apply
+            </p>
+          </div>
+        }
+      />
 
       <div className="mt-5">
         {isFormsLoading ? (
@@ -57,7 +66,7 @@ function CompanyForms() {
             <div>
               <LoadingIcon />
               <p className="mt-2 text-xs text-gray-500">
-                Fetching assigned forms
+                Fetching forms
               </p>
             </div>
           </div>

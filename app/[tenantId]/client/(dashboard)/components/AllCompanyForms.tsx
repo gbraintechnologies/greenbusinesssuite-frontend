@@ -30,6 +30,9 @@ function AllCompanyForms() {
     { label: TimelineValues; value: TimelineType } | undefined
   >();
 
+  const companyId =
+    companyData?.companyId ?? companyData?.company_id ?? companyData?.id;
+
   const {
     data: forms,
     isLoading: isFormsLoading,
@@ -37,17 +40,18 @@ function AllCompanyForms() {
   } = useQuery({
     queryKey: [
       "get company forms for",
-      Number(companyData?.id),
+      Number(companyId),
       page,
       limit,
       selectedTimeline?.value,
     ],
     queryFn: services.getFormsByCompanyId(
-      companyData?.id,
+      companyId,
       page,
       limit,
       selectedTimeline?.value
     ),
+    enabled: Boolean(companyId),
   });
 
   const {

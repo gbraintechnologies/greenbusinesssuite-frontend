@@ -29,7 +29,7 @@ function TopNav() {
   const router = useRouter();
 
   const brandColor = company?.color || "#1FA35C";
-  const homeHref = `/${company?.company_identifier}/client/home`;
+  const homeHref = `/${company?.company_identifier}/client/dashboard`;
   const settingsHref = `/${company?.company_identifier}/client/settings`;
 
   return (
@@ -74,7 +74,7 @@ function TopNav() {
           removeCompanyAdmin();
           removeAuth();
           toast.success("Logged out");
-          router.push(`/${company?.company_identifier}/auth`);
+          router.push(`/${company?.company_identifier}`);
         }}
       />
     </nav>
