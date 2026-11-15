@@ -73,10 +73,22 @@ export const notifyUserTempCred = (id: any, channel: string) => {
 };
 
 export const userSelfSignUp = (data: any) => {
-  return noAuthApi.post("/auth/sign-up", {
-    ...data,
-    tenantId: getSessionTenantID(),
-  });
+  const tenant =
+    data?.companyIdentifier ||
+    data?.tenantId ||
+    getSessionTenantID() ||
+    undefined;
+  return noAuthApi.post(
+    "/auth/sign-up",
+    {
+      ...data,
+      username: data?.username || data?.email,
+      companyIdentifier: data?.companyIdentifier || tenant,
+    },
+    tenant
+      ? { headers: { tenantid: String(tenant) } }
+      : undefined
+  );
 };
 
 /** POST /auth/apex-sign-up — platform self-registration */

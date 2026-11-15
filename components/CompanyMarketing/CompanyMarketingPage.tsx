@@ -10,7 +10,7 @@ import useCompany from "@/hooks/useCompany";
 import useAuth from "@/hooks/useAuth";
 import useUser from "@/hooks/useUser";
 import CompanyBrandAvatar from "@/components/CompanyBrand/CompanyBrandAvatar";
-import { publishedSuiteProducts } from "@/lib/suiteProducts";
+import type { SuiteProduct } from "@/lib/suiteProducts";
 
 function formList(payload: any) {
   if (Array.isArray(payload)) return payload;
@@ -46,8 +46,6 @@ export default function CompanyMarketingPage({
   const { user } = useUser();
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [apps, setApps] = useState(() => publishedSuiteProducts());
-
   const brand = company?.color || "#1FA35C";
   const name = company?.name || tenantId || "Company";
   const loggedIn = Boolean(auth?.access_token && user);
@@ -62,6 +60,12 @@ export default function CompanyMarketingPage({
     retry: 0,
   });
 
+  const { data: apps = [] as SuiteProduct[] } = useQuery({
+    queryKey: ["published suite apps marketing"],
+    queryFn: services.listPublishedSuiteApps,
+    staleTime: 60_000,
+  });
+
   const servicesList = useMemo(() => {
     return formList(formsPayload)
       .filter(
@@ -70,17 +74,6 @@ export default function CompanyMarketingPage({
       )
       .slice(0, 8);
   }, [formsPayload]);
-
-  useEffect(() => {
-    const refresh = () => setApps(publishedSuiteProducts());
-    refresh();
-    window.addEventListener("gbs-suite-products-updated", refresh);
-    window.addEventListener("storage", refresh);
-    return () => {
-      window.removeEventListener("gbs-suite-products-updated", refresh);
-      window.removeEventListener("storage", refresh);
-    };
-  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -392,11 +385,23 @@ export default function CompanyMarketingPage({
                         className="group flex min-h-[200px] flex-col justify-between rounded-2xl border border-[#e3e8e5] bg-[#f7faf8] p-6 transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-28px_rgba(16,38,28,0.4)]"
                       >
                         <div>
-                          <div
-                            className={`flex h-12 w-12 items-center justify-center rounded-xl text-lg font-semibold text-white ${app.accent}`}
-                          >
-                            {app.mark}
-                          </div>
+                          {app.logoUrl ? (
+                            <div className="relative h-12 w-12 overflow-hidden rounded-xl border border-[#e3e8e5] bg-white">
+                              <Image
+                                src={app.logoUrl}
+                                alt=""
+                                fill
+                                className="object-contain p-1.5"
+                                unoptimized
+                              />
+                            </div>
+                          ) : (
+                            <div
+                              className={`flex h-12 w-12 items-center justify-center rounded-xl text-lg font-semibold text-white ${app.accent}`}
+                            >
+                              {app.mark}
+                            </div>
+                          )}
                           <p className="mt-4 font-[family-name:var(--font-landing-display)] text-xl font-semibold text-[#0B3D2E]">
                             {app.name}
                           </p>

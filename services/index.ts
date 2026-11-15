@@ -41,6 +41,7 @@ import * as branding from "./features/brandingService";
 import * as payments from "./features/paymentService";
 
 import * as analytics from "./features/analyticsService";
+import * as suiteApps from "./features/suiteAppsService";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -66,4 +67,5 @@ export default {
   ...branding,
   ...payments,
   ...analytics,
+  ...suiteApps,
 };

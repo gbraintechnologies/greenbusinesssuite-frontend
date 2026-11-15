@@ -158,7 +158,7 @@ export default function CompanyLayout(props: any) {
       link: `/${company?.company_identifier}/admin/company-profile`,
     },
     {
-      name: "User management",
+      name: "Clients",
       linkedModule: AvailableModules.UserManagement,
       icon: <FaUsers size={20} />,
       link: `/${company?.company_identifier}/admin/usermanagement`,

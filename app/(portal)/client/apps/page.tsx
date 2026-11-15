@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { FiArrowUpRight, FiSearch } from "react-icons/fi";
 import services from "@/services";
-import { publishedSuiteProducts, type SuiteProduct } from "@/lib/suiteProducts";
+import type { SuiteProduct } from "@/lib/suiteProducts";
 
 function formList(payload: any) {
   if (Array.isArray(payload)) return payload;
@@ -45,11 +46,23 @@ function ProductCard({ product }: { product: SuiteProduct }) {
       className="group flex min-h-[220px] flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-sm"
     >
       <div>
-        <div
-          className={`flex h-12 w-12 items-center justify-center rounded-xl text-lg font-semibold text-white ${product.accent}`}
-        >
-          {product.mark}
-        </div>
+        {product.logoUrl ? (
+          <div className="relative h-12 w-12 overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <Image
+              src={product.logoUrl}
+              alt=""
+              fill
+              className="object-contain p-1.5"
+              unoptimized
+            />
+          </div>
+        ) : (
+          <div
+            className={`flex h-12 w-12 items-center justify-center rounded-xl text-lg font-semibold text-white ${product.accent}`}
+          >
+            {product.mark}
+          </div>
+        )}
         <p className="mt-4 text-lg font-semibold text-slate-900">
           {product.name}
         </p>
@@ -77,18 +90,12 @@ function ProductCard({ product }: { product: SuiteProduct }) {
 
 export default function ClientAppsPage() {
   const [query, setQuery] = useState("");
-  const [catalog, setCatalog] = useState(() => publishedSuiteProducts());
 
-  useEffect(() => {
-    const refresh = () => setCatalog(publishedSuiteProducts());
-    refresh();
-    window.addEventListener("gbs-suite-products-updated", refresh);
-    window.addEventListener("storage", refresh);
-    return () => {
-      window.removeEventListener("gbs-suite-products-updated", refresh);
-      window.removeEventListener("storage", refresh);
-    };
-  }, []);
+  const { data: catalog = [] } = useQuery({
+    queryKey: ["published suite apps client"],
+    queryFn: services.listPublishedSuiteApps,
+    staleTime: 60_000,
+  });
 
   const { data } = useQuery({
     queryKey: ["client portal apps forms"],

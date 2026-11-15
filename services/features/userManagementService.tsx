@@ -36,6 +36,44 @@ export function filterUsersByCompany(
   );
 }
 
+const STAFF_ROLES = new Set([
+  "admin",
+  "superadmin",
+  "apex",
+  "super",
+  "role_admin",
+  "role_superadmin",
+  "role_apex",
+]);
+
+export function userRoleName(user: any): string {
+  return String(
+    user?.roleName ??
+      user?.role_name ??
+      user?.role?.roleName ??
+      user?.role?.role_name ??
+      ""
+  )
+    .trim()
+    .toLowerCase();
+}
+
+/** Green Account clients/businesses — excludes company admins and platform staff. */
+export function isGreenAccountClient(user: any): boolean {
+  const role = userRoleName(user);
+  if (!role) {
+    // Profiles-based users without roleName: treat as client unless a staff profile is present
+    const profiles = Array.isArray(user?.profiles) ? user.profiles : [];
+    if (profiles.length === 0) return true;
+    return true;
+  }
+  return !STAFF_ROLES.has(role);
+}
+
+export function filterGreenAccountClients(users: unknown) {
+  return asUserList(users).filter(isGreenAccountClient);
+}
+
 export const allUsers = (offset: number = 0, limit: number = 20) => {
   return () => authApi.get(`/users`).then((res) => res.data);
 };
@@ -44,12 +82,26 @@ export const allUsersRaw = (offset: number = 0, limit: number = 20) => {
   return authApi.get(`/users`).then((res) => res.data);
 };
 
-/** Company-admin list: GET /users then keep only this tenant's users */
+/** Company-admin list: GET /users then keep this tenant's Green Account clients */
 export const getCompanyUsers = (companyIdentifier: string) => {
   return () =>
     meshAuthApi
       .get(`/users`)
-      .then((res) => filterUsersByCompany(res.data, companyIdentifier));
+      .then((res) =>
+        filterGreenAccountClients(
+          filterUsersByCompany(res.data, companyIdentifier)
+        )
+      );
+};
+
+/** Company staff (admins) for this tenant — excludes Green Account clients */
+export const getCompanyStaffUsers = (companyIdentifier: string) => {
+  return () =>
+    meshAuthApi.get(`/users`).then((res) =>
+      filterUsersByCompany(res.data, companyIdentifier).filter(
+        (user) => !isGreenAccountClient(user)
+      )
+    );
 };
 
 export const userByID = (id: any) => {
@@ -63,8 +115,12 @@ export const userByIDRaw = (id: any) => {
 export const searchUsers = (filter_word: any, companyIdentifier?: string) => {
   return () =>
     authApi.get(`/users/search_users/${filter_word}`).then((res) => {
-      if (!companyIdentifier) return res.data;
-      return filterUsersByCompany(res.data, companyIdentifier);
+      const scoped = companyIdentifier
+        ? filterUsersByCompany(res.data, companyIdentifier)
+        : asUserList(res.data);
+      return companyIdentifier
+        ? filterGreenAccountClients(scoped)
+        : scoped;
     });
 };
 

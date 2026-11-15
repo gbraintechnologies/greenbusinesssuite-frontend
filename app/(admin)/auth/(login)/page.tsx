@@ -36,6 +36,14 @@ function LogIn() {
   const router = useRouter();
   const search = useSearchParams();
   const redirectTo = safeRedirect(search.get("redirect"));
+  const fromTenant = search.get("from");
+  const signUpHref = (() => {
+    const params = new URLSearchParams();
+    if (redirectTo) params.set("redirect", redirectTo);
+    if (fromTenant) params.set("from", fromTenant);
+    const qs = params.toString();
+    return qs ? `/auth/sign-up?${qs}` : "/auth/sign-up";
+  })();
 
   const { admin, removeAdmin, addAdminData, hasHydrated: adminHydrated } =
     useAdmin();
@@ -182,16 +190,12 @@ function LogIn() {
           </form>
 
           <p className="mt-8 text-sm text-[#4a6658]">
-            Don&apos;t have an account?{" "}
+            Don&apos;t have a Green Account?{" "}
             <Link
-              href={
-                redirectTo
-                  ? `/auth/sign-up?redirect=${encodeURIComponent(redirectTo)}`
-                  : "/auth/sign-up"
-              }
+              href={signUpHref}
               className="font-semibold text-[#0B7A43] hover:text-[#096637]"
             >
-              Create account
+              Create Green Account
             </Link>
           </p>
           <p className="mt-3 text-sm text-[#4a6658]">

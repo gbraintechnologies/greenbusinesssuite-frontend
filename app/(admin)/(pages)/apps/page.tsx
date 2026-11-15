@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { toast } from "sonner";
-import { FiExternalLink, FiPlus, FiTrash2 } from "react-icons/fi";
-import {
-  createEmptySuiteProduct,
-  defaultSuiteProducts,
-  getSuiteProducts,
-  saveSuiteProducts,
-  type SuiteProduct,
-} from "@/lib/suiteProducts";
+import { FiExternalLink, FiImage, FiPlus, FiTrash2 } from "react-icons/fi";
+import { createEmptySuiteProduct, type SuiteProduct } from "@/lib/suiteProducts";
+import services from "@/services";
 
 function Field({
   label,
@@ -31,13 +27,31 @@ function Field({
 const inputClass =
   "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
 
+function isDraftId(id: string) {
+  return String(id).startsWith("draft-");
+}
+
 export default function AppsAdminPage() {
   const [products, setProducts] = useState<SuiteProduct[]>([]);
   const [ready, setReady] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  const load = async () => {
+    try {
+      const apps = await services.listAllSuiteApps();
+      setProducts(apps);
+    } catch {
+      toast.error("Could not load apps from the server.");
+      setProducts([]);
+    } finally {
+      setReady(true);
+    }
+  };
 
   useEffect(() => {
-    setProducts(getSuiteProducts());
-    setReady(true);
+    load();
   }, []);
 
   const publishedCount = useMemo(
@@ -71,11 +85,21 @@ export default function AppsAdminPage() {
     ]);
   };
 
-  const removeApp = (id: string) => {
-    setProducts((prev) => prev.filter((item) => item.id !== id));
+  const removeApp = async (id: string) => {
+    if (isDraftId(id)) {
+      setProducts((prev) => prev.filter((item) => item.id !== id));
+      return;
+    }
+    try {
+      await services.deleteSuiteApp(id);
+      setProducts((prev) => prev.filter((item) => item.id !== id));
+      toast.success("App deleted.");
+    } catch {
+      toast.error("Could not delete app.");
+    }
   };
 
-  const persist = () => {
+  const persist = async () => {
     const invalid = products.find(
       (item) => !item.name.trim() || !item.href.trim()
     );
@@ -83,14 +107,38 @@ export default function AppsAdminPage() {
       toast.error("Each app needs a name and website link.");
       return;
     }
-    saveSuiteProducts(products);
-    toast.success("Apps saved. Published apps show on marketing and portals.");
+
+    setSaving(true);
+    try {
+      const saved: SuiteProduct[] = [];
+      for (const product of products) {
+        if (isDraftId(product.id)) {
+          saved.push(await services.createSuiteApp(product));
+        } else {
+          saved.push(await services.updateSuiteApp(product.id, product));
+        }
+      }
+      setProducts(saved);
+      toast.success("Apps saved. Published apps show on marketing and signup.");
+    } catch {
+      toast.error("Could not save apps.");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const resetDefaults = () => {
-    setProducts(defaultSuiteProducts);
-    saveSuiteProducts(defaultSuiteProducts);
-    toast.success("Restored default apps.");
+  const onLogoPick = async (id: string, file?: File | null) => {
+    if (!file) return;
+    setUploadingId(id);
+    try {
+      const url = await services.uploadSuiteAppLogo(file);
+      updateProduct(id, { logoUrl: url });
+      toast.success("Logo uploaded. Save changes to keep it.");
+    } catch (error: any) {
+      toast.error(error?.message || "Logo upload failed.");
+    } finally {
+      setUploadingId(null);
+    }
   };
 
   if (!ready) {
@@ -105,19 +153,12 @@ export default function AppsAdminPage() {
         <div>
           <h1 className="text-xl font-semibold text-slate-900">Apps</h1>
           <p className="mt-1 max-w-2xl text-sm text-slate-500">
-            Add suite apps, set their website links, and publish them for
-            company marketing pages and customer portals. {publishedCount}{" "}
-            published.
+            Publish suite apps with website links and logos for Green Account
+            signup, company marketing pages, and customer portals.{" "}
+            {publishedCount} published.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={resetDefaults}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
-            Reset defaults
-          </button>
           <button
             type="button"
             onClick={addApp}
@@ -129,9 +170,10 @@ export default function AppsAdminPage() {
           <button
             type="button"
             onClick={persist}
-            className="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+            disabled={saving}
+            className="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
           >
-            Save changes
+            {saving ? "Saving…" : "Save changes"}
           </button>
         </div>
       </div>
@@ -144,17 +186,30 @@ export default function AppsAdminPage() {
           >
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div
-                  className={`flex h-11 w-11 items-center justify-center rounded-xl text-sm font-semibold text-white ${product.accent}`}
-                >
-                  {product.mark || "A"}
-                </div>
+                {product.logoUrl ? (
+                  <div className="relative h-11 w-11 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                    <Image
+                      src={product.logoUrl}
+                      alt=""
+                      fill
+                      className="object-contain p-1"
+                      unoptimized
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl text-sm font-semibold text-white ${product.accent}`}
+                  >
+                    {product.mark || "A"}
+                  </div>
+                )}
                 <div>
                   <p className="font-semibold text-slate-900">
                     {product.name || "Untitled app"}
                   </p>
                   <p className="text-xs text-slate-500">
                     {product.published ? "Published" : "Draft"}
+                    {isDraftId(product.id) ? " · unsaved" : ""}
                   </p>
                 </div>
               </div>
@@ -248,6 +303,48 @@ export default function AppsAdminPage() {
                   />
                 </Field>
               </div>
+              <div className="md:col-span-2">
+                <span className="mb-1.5 block text-xs font-medium text-slate-500">
+                  App logo
+                </span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <input
+                    ref={(el) => {
+                      fileRefs.current[product.id] = el;
+                    }}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) =>
+                      onLogoPick(product.id, e.target.files?.[0])
+                    }
+                  />
+                  <button
+                    type="button"
+                    disabled={uploadingId === product.id}
+                    onClick={() => fileRefs.current[product.id]?.click()}
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                  >
+                    <FiImage size={16} />
+                    {uploadingId === product.id
+                      ? "Uploading…"
+                      : product.logoUrl
+                        ? "Replace logo"
+                        : "Upload logo"}
+                  </button>
+                  {product.logoUrl && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateProduct(product.id, { logoUrl: undefined })
+                      }
+                      className="text-sm font-medium text-slate-500 hover:text-red-600"
+                    >
+                      Remove logo
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         ))}
@@ -256,7 +353,7 @@ export default function AppsAdminPage() {
           <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
             <p className="font-semibold text-slate-900">No apps yet</p>
             <p className="mt-1 text-sm text-slate-500">
-              Add an app with a website link, then publish it.
+              Add an app with a website link and logo, then publish it.
             </p>
             <button
               type="button"

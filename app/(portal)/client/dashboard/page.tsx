@@ -13,7 +13,6 @@ import services from "@/services";
 import useUser from "@/hooks/useUser";
 import useAuth from "@/hooks/useAuth";
 import StatsBlock from "@/components/StatsBlock/StatsBlock";
-import { publishedSuiteProducts } from "@/lib/suiteProducts";
 
 function greetingFor(date: Date) {
   const hour = date.getHours();
@@ -68,7 +67,13 @@ export default function ClientDashboardPage() {
     enabled: Boolean(userId),
   });
 
-  const appsCount = publishedSuiteProducts().length;
+  const { data: publishedApps = [] } = useQuery({
+    queryKey: ["published suite apps dashboard"],
+    queryFn: services.listPublishedSuiteApps,
+    staleTime: 60_000,
+  });
+
+  const appsCount = publishedApps.length;
 
   return (
     <div className="px-5 py-6 pb-16 sm:px-8">
