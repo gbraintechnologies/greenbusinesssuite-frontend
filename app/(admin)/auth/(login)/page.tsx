@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import TextInput from "./components/TextInput";
 import PasswordInput from "./components/PasswordInput";
 import * as yup from "yup";
@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FiAlertCircle } from "react-icons/fi";
 import { login } from "@/services/features/authService";
 import useAdmin from "@/hooks/useAdmin";
@@ -17,6 +17,12 @@ import useAuth from "@/hooks/useAuth";
 import useUser from "@/hooks/useUser";
 import { Button } from "@heroui/react";
 import { isPlatformAdmin } from "@/lib/platformRole";
+
+function safeRedirect(value: string | null) {
+  if (!value) return null;
+  if (!value.startsWith("/") || value.startsWith("//")) return null;
+  return value;
+}
 
 const schema = yup.object({
   username: yup.string().required("Email is required"),
@@ -28,6 +34,8 @@ const schema = yup.object({
 
 function LogIn() {
   const router = useRouter();
+  const search = useSearchParams();
+  const redirectTo = safeRedirect(search.get("redirect"));
 
   const { admin, removeAdmin, addAdminData, hasHydrated: adminHydrated } =
     useAdmin();
@@ -38,8 +46,12 @@ function LogIn() {
     if (!authHydrated || !adminHydrated) return;
     const accessToken = auth?.accessToken ?? auth?.access_token;
     if (!accessToken) return;
-    router.replace(isPlatformAdmin(admin ?? auth) ? "/dashboard" : "/client");
-  }, [authHydrated, adminHydrated, admin, auth, router]);
+    if (isPlatformAdmin(admin ?? auth)) {
+      router.replace("/dashboard");
+      return;
+    }
+    router.replace(redirectTo || "/client");
+  }, [authHydrated, adminHydrated, admin, auth, router, redirectTo]);
 
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -76,7 +88,7 @@ function LogIn() {
         } else {
           removeAdmin();
           addUserData(token?.data);
-          router.push("/client");
+          router.push(redirectTo || "/client");
         }
       }
     } catch (error) {
@@ -172,7 +184,11 @@ function LogIn() {
           <p className="mt-8 text-sm text-[#4a6658]">
             Don&apos;t have an account?{" "}
             <Link
-              href="/auth/sign-up"
+              href={
+                redirectTo
+                  ? `/auth/sign-up?redirect=${encodeURIComponent(redirectTo)}`
+                  : "/auth/sign-up"
+              }
               className="font-semibold text-[#0B7A43] hover:text-[#096637]"
             >
               Create account
@@ -244,4 +260,10 @@ function LogIn() {
   );
 }
 
-export default LogIn;
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LogIn />
+    </Suspense>
+  );
+}

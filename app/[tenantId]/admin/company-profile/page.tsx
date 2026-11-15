@@ -222,34 +222,32 @@ const Page = (props: any) => {
   }
 
   return (
-    <div className="px-5 py-5 pb-5">
-      <div className="w-full text-primary-dark flex justify-between items-center">
-        <h3 className="font-semibold text-xl">Company Profile</h3>
+    <div className="px-5 py-5 pb-8">
+      <div className="mb-5 flex w-full items-center justify-between text-primary-dark">
+        <h3 className="text-xl font-semibold">Company Profile</h3>
 
-        <div className="flex gap-3">
-          <Link
-            href={`/${tenant_id}/admin/company-profile/edit`}
-            style={{ backgroundColor: color || "#0F766E" }}
-            className="disabled:bg-gray-400 py-3 flex text-white text-sm px-4 hover:opacity-95 items-center gap-2 rounded-xl"
-          >
-            <Image src={UpdateInfo} alt="Update Info" />
-            Update Information
-          </Link>
-        </div>
+        <Link
+          href={`/${tenant_id}/admin/company-profile/edit`}
+          style={{ backgroundColor: color || "#0F766E" }}
+          className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm text-white hover:opacity-95"
+        >
+          <Image src={UpdateInfo} alt="Update Info" />
+          Update Information
+        </Link>
       </div>
 
-      <div className="w-full mt-4 px-9 py-4 flex justify-between items-center bg-[#F8FAFC] h-48 rounded-xl">
-        <div className="flex gap-5 items-center justify-center">
+      <div className="flex h-auto min-h-48 w-full flex-col justify-between gap-6 rounded-2xl border border-slate-200 bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:px-9">
+        <div className="flex items-center gap-5">
           {companyLogo ? (
             <Image
               src={companyLogo}
               width={144}
               height={144}
-              className="rounded-full w-36 h-36 object-cover border border-[rgba(226, 232, 240, 1)]"
+              className="h-28 w-28 rounded-full border border-slate-200 object-cover sm:h-36 sm:w-36"
               alt="Company Logo"
             />
           ) : (
-            <div className="rounded-full w-36 h-36 border bg-[rgba(226, 232, 240, 1)] flex items-center justify-center ">
+            <div className="flex h-28 w-28 items-center justify-center rounded-full border bg-slate-100 sm:h-36 sm:w-36">
               <UserIcon width="50" height="50" />
             </div>
           )}
@@ -258,12 +256,12 @@ const Page = (props: any) => {
             <div className="header">{companyName || "—"}</div>
           </div>
         </div>
-        <div className="flex gap-6 items-center">
+        <div className="flex flex-wrap items-center gap-6">
           {companyIdentifier && (
             <div className="flex flex-col gap-3">
               <div className="label">Marketing page URL</div>
               <button
-                className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center justify-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3"
+                className="flex h-9 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm shadow-sm"
                 onClick={() => {
                   const url = `${window.location.origin}/${companyIdentifier}`;
                   navigator.clipboard.writeText(url).then(() => {
@@ -279,18 +277,16 @@ const Page = (props: any) => {
           {companyData?.status && (
             <div className="flex flex-col gap-3">
               <div className="label">Status</div>
-              <div className="z-20 relative inline-block">
-                <button className=" border border-[rgba(226, 232, 240, 1)] text-sm bg-white flex items-center h-9 rounded-lg shadow-[0px_2px_8px_0px_rgba(100, 116, 139, 0.1)] gap-2 px-3">
-                  {activeStatus?.name || companyData.status}
-                </button>
-              </div>
+              <button className="flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm shadow-sm">
+                {activeStatus?.name || companyData.status}
+              </button>
             </div>
           )}
         </div>
       </div>
 
-      <div className="mt-10">
-        <div className="flex justify-center items-center">
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex items-center justify-center">
           <Tabs
             filters={filters}
             setActiveFilter={setActiveFilter}
@@ -298,7 +294,7 @@ const Page = (props: any) => {
           />
         </div>
 
-        <div>
+        <div className="mt-2">
           {activeFilter.value === "description" && (
             <div className="flex-1 py-5 pb-3">
               <div className="group-item">
@@ -327,27 +323,33 @@ const Page = (props: any) => {
           )}
 
           {activeFilter?.value === "branding_settings" && (
-            <BrandingSettings
-              brandingLoading={brandingLoading}
-              companySmallLogo={companySmallLogo}
-              setCompanySmallLogo={setCompanySmallLogo}
-              smallLogoUrl={smallLogoUrl}
-              setSmallLogoUrl={setSmallLogoUrl}
-              color={color}
-              showColorPicker={showColorPicker}
-              setShowColorPicker={setShowColorPicker}
-              handleChangeComplete={(newColor: any) => setColor(newColor.hex)}
-              companyBranding={brandingFromApi || companyBranding}
-              companyData={companyData}
-            />
+            <div className="py-4">
+              <BrandingSettings
+                brandingLoading={brandingLoading}
+                companySmallLogo={companySmallLogo}
+                setCompanySmallLogo={setCompanySmallLogo}
+                smallLogoUrl={smallLogoUrl}
+                setSmallLogoUrl={setSmallLogoUrl}
+                color={color}
+                showColorPicker={showColorPicker}
+                setShowColorPicker={setShowColorPicker}
+                handleChangeComplete={(newColor: any) => setColor(newColor.hex)}
+                companyBranding={brandingFromApi || companyBranding}
+                companyData={companyData}
+              />
+            </div>
           )}
 
           {activeFilter?.value === "sms_sender_id" && (
-            <SMSSenderID company={companyData} companyId={companyId} />
+            <div className="py-4">
+              <SMSSenderID company={companyData} companyId={companyId} />
+            </div>
           )}
 
           {activeFilter?.value === "configuration" && (
-            <Configuration tenantId={tenancyId} />
+            <div className="py-4">
+              <Configuration tenantId={tenancyId} />
+            </div>
           )}
         </div>
       </div>

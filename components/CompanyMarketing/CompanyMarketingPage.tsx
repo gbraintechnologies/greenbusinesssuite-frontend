@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { FiArrowUpRight } from "react-icons/fi";
@@ -17,6 +18,24 @@ function formList(payload: any) {
   return [];
 }
 
+const gallery = [
+  {
+    src: "/landing/hero.jpg",
+    title: "Programs that move",
+    copy: "Publish services and collect applications in one place.",
+  },
+  {
+    src: "/landing/team.jpg",
+    title: "Built for your customers",
+    copy: "A branded portal for apply, track, and follow-through.",
+  },
+  {
+    src: "/landing/desk.jpg",
+    title: "Documents on record",
+    copy: "Keep uploads and issued files attached to every application.",
+  },
+] as const;
+
 export default function CompanyMarketingPage({
   tenantId,
 }: {
@@ -27,9 +46,10 @@ export default function CompanyMarketingPage({
   const { user } = useUser();
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [apps, setApps] = useState(() => publishedSuiteProducts());
 
   const brand = company?.color || "#1FA35C";
-  const name = company?.name || "Company";
+  const name = company?.name || tenantId || "Company";
   const loggedIn = Boolean(auth?.access_token && user);
 
   const companyId =
@@ -51,7 +71,16 @@ export default function CompanyMarketingPage({
       .slice(0, 8);
   }, [formsPayload]);
 
-  const apps = useMemo(() => publishedSuiteProducts(), []);
+  useEffect(() => {
+    const refresh = () => setApps(publishedSuiteProducts());
+    refresh();
+    window.addEventListener("gbs-suite-products-updated", refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener("gbs-suite-products-updated", refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -65,9 +94,11 @@ export default function CompanyMarketingPage({
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const loginHref = `/${tenantId}/auth/login`;
-  const signUpHref = `/${tenantId}/auth/sign-up`;
-  const portalHref = `/${tenantId}/client/dashboard`;
+  const returnTo = `/${tenantId}/client/dashboard`;
+  // Green account (platform) login — not company admin auth
+  const loginHref = `/auth?redirect=${encodeURIComponent(returnTo)}&from=${encodeURIComponent(tenantId)}`;
+  const signUpHref = `/auth/sign-up?redirect=${encodeURIComponent(returnTo)}&from=${encodeURIComponent(tenantId)}`;
+  const portalHref = returnTo;
 
   return (
     <div className="min-h-screen bg-[#f7faf8] text-[#10261c]">
@@ -98,6 +129,7 @@ export default function CompanyMarketingPage({
           >
             <a href="#services">Services</a>
             <a href="#apps">Apps</a>
+            <a href="#gallery">About</a>
             <a href="#get-started">Get started</a>
           </nav>
 
@@ -135,26 +167,21 @@ export default function CompanyMarketingPage({
 
       <main>
         <section className="relative min-h-[100svh] overflow-hidden">
+          <Image
+            src="/landing/growth.jpg"
+            alt=""
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+          />
           <div
             className="absolute inset-0"
             style={{
-              background: `linear-gradient(145deg, ${brand} 0%, #0a3326 48%, #061f18 100%)`,
+              background: `linear-gradient(145deg, ${brand}cc 0%, #0a3326e6 55%, #061f18f2 100%)`,
             }}
           />
-          <div
-            className="absolute inset-0 opacity-40"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 18% 22%, rgba(255,255,255,0.22), transparent 42%), radial-gradient(circle at 82% 18%, rgba(255,255,255,0.12), transparent 36%), linear-gradient(to top, rgba(0,0,0,0.45), transparent 55%)",
-            }}
-          />
-          <div
-            className="pointer-events-none absolute inset-0 opacity-[0.12]"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-            }}
-          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
 
           <div
             className={`relative z-10 mx-auto flex min-h-[100svh] max-w-4xl flex-col items-center justify-center px-4 pb-16 pt-28 text-center text-white transition-all duration-700 sm:px-6 ${
@@ -194,7 +221,7 @@ export default function CompanyMarketingPage({
                     href={loginHref}
                     className="rounded-xl border border-white/35 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
                   >
-                    Log in
+                    Log in with Green Account
                   </Link>
                 </>
               )}
@@ -202,19 +229,63 @@ export default function CompanyMarketingPage({
           </div>
         </section>
 
-        <section id="services" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-          <div
-            className={`transition-all delay-100 duration-700 ${
-              visible ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-            }`}
-          >
-            <h2 className="font-[family-name:var(--font-landing-display)] text-3xl font-semibold tracking-tight text-[#0B3D2E] sm:text-4xl">
-              Services
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm text-[#4d6358] sm:text-base">
-              Programs and forms published by {name} that customers can apply
-              for.
-            </p>
+        <section id="gallery" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            {gallery.map((item, index) => (
+              <div
+                key={item.src}
+                className={`group relative min-h-[220px] overflow-hidden rounded-2xl transition duration-500 ${
+                  visible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-4 opacity-0"
+                }`}
+                style={{ transitionDelay: `${120 + index * 80}ms` }}
+              >
+                <Image
+                  src={item.src}
+                  alt=""
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                  <p className="font-[family-name:var(--font-landing-display)] text-lg font-semibold">
+                    {item.title}
+                  </p>
+                  <p className="mt-1 text-sm text-white/80">{item.copy}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="services" className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+          <div className="grid items-end gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+            <div>
+              <h2 className="font-[family-name:var(--font-landing-display)] text-3xl font-semibold tracking-tight text-[#0B3D2E] sm:text-4xl">
+                Services
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm text-[#4d6358] sm:text-base">
+                Programs and forms published by {name} that customers can apply
+                for.
+              </p>
+            </div>
+            <div className="relative hidden h-36 overflow-hidden rounded-2xl lg:block">
+              <Image
+                src="/landing/desk.jpg"
+                alt=""
+                fill
+                className="object-cover"
+                sizes="40vw"
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `linear-gradient(90deg, #f7faf8 0%, ${brand}66 100%)`,
+                }}
+              />
+            </div>
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -225,7 +296,7 @@ export default function CompanyMarketingPage({
                   href={
                     loggedIn
                       ? `/${tenantId}/client/services`
-                      : `${loginHref}?redirect=1&f=${form.id}&c=${companyId ?? ""}`
+                      : loginHref
                   }
                   className="group rounded-2xl border border-[#d7e4dc] bg-white p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#b9d0c3] hover:shadow-[0_16px_40px_-28px_rgba(16,38,28,0.45)]"
                   style={{ transitionDelay: `${Math.min(index, 5) * 40}ms` }}
@@ -261,61 +332,98 @@ export default function CompanyMarketingPage({
                   Services will appear here when published
                 </p>
                 <p className="mt-2 text-sm text-[#54695e]">
-                  Sign up to browse available programs and submit applications.
+                  Sign up with your Green Account to browse programs and submit
+                  applications.
                 </p>
               </div>
             )}
           </div>
         </section>
 
-        <section
-          id="apps"
-          className="border-y border-[#d7e4dc] bg-white"
-        >
+        <section id="apps" className="border-y border-[#d7e4dc] bg-white">
           <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-            <h2 className="font-[family-name:var(--font-landing-display)] text-3xl font-semibold tracking-tight text-[#0B3D2E] sm:text-4xl">
-              Apps
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm text-[#4d6358] sm:text-base">
-              Tools available through {name}&apos;s customer workspace.
-            </p>
+            <div className="grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="relative min-h-[260px] overflow-hidden rounded-2xl">
+                <Image
+                  src="/landing/team.jpg"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(160deg, ${brand}99, #0B3D2Edd)`,
+                  }}
+                />
+                <div className="absolute inset-0 flex items-end p-6 text-white">
+                  <div>
+                    <p className="font-[family-name:var(--font-landing-display)] text-2xl font-semibold">
+                      Apps for your workspace
+                    </p>
+                    <p className="mt-1 text-sm text-white/85">
+                      Tools published for customers of {name}.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              {apps.map((app) => {
-                const external =
-                  app.href.startsWith("http://") ||
-                  app.href.startsWith("https://");
-                return (
-                  <a
-                    key={app.id}
-                    href={app.href}
-                    target={external ? "_blank" : undefined}
-                    rel={external ? "noreferrer" : undefined}
-                    className="group flex min-h-[200px] flex-col justify-between rounded-2xl border border-[#e3e8e5] bg-[#f7faf8] p-6 transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-28px_rgba(16,38,28,0.4)]"
-                  >
-                    <div>
-                      <div
-                        className={`flex h-12 w-12 items-center justify-center rounded-xl text-lg font-semibold text-white ${app.accent}`}
+              <div>
+                <h2 className="font-[family-name:var(--font-landing-display)] text-3xl font-semibold tracking-tight text-[#0B3D2E] sm:text-4xl">
+                  Apps
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm text-[#4d6358] sm:text-base">
+                  Open the tools available through this company&apos;s customer
+                  portal.
+                </p>
+
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                  {apps.map((app) => {
+                    const external =
+                      app.href.startsWith("http://") ||
+                      app.href.startsWith("https://");
+                    return (
+                      <a
+                        key={app.id}
+                        href={app.href}
+                        target={external ? "_blank" : undefined}
+                        rel={external ? "noreferrer" : undefined}
+                        className="group flex min-h-[200px] flex-col justify-between rounded-2xl border border-[#e3e8e5] bg-[#f7faf8] p-6 transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-28px_rgba(16,38,28,0.4)]"
                       >
-                        {app.mark}
-                      </div>
-                      <p className="mt-4 font-[family-name:var(--font-landing-display)] text-xl font-semibold text-[#0B3D2E]">
-                        {app.name}
-                      </p>
-                      <p className="mt-1 text-sm font-medium" style={{ color: brand }}>
-                        {app.tagline}
-                      </p>
-                      <p className="mt-2 text-sm leading-6 text-[#54695e]">
-                        {app.description}
-                      </p>
+                        <div>
+                          <div
+                            className={`flex h-12 w-12 items-center justify-center rounded-xl text-lg font-semibold text-white ${app.accent}`}
+                          >
+                            {app.mark}
+                          </div>
+                          <p className="mt-4 font-[family-name:var(--font-landing-display)] text-xl font-semibold text-[#0B3D2E]">
+                            {app.name}
+                          </p>
+                          <p
+                            className="mt-1 text-sm font-medium"
+                            style={{ color: brand }}
+                          >
+                            {app.tagline}
+                          </p>
+                          <p className="mt-2 text-sm leading-6 text-[#54695e]">
+                            {app.description}
+                          </p>
+                        </div>
+                        <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[#0B3D2E]">
+                          Open
+                          <FiArrowUpRight className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </span>
+                      </a>
+                    );
+                  })}
+                  {apps.length === 0 && (
+                    <div className="sm:col-span-2 rounded-2xl border border-dashed border-[#c9d8cf] px-6 py-10 text-center text-sm text-[#54695e]">
+                      No published apps yet.
                     </div>
-                    <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[#0B3D2E]">
-                      Open
-                      <FiArrowUpRight className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </span>
-                  </a>
-                );
-              })}
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -327,14 +435,23 @@ export default function CompanyMarketingPage({
             background: `linear-gradient(120deg, ${brand}, #0B3D2E)`,
           }}
         >
-          <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 px-4 py-16 text-white sm:flex-row sm:items-center sm:px-6">
+          <div className="absolute inset-0 opacity-20">
+            <Image
+              src="/landing/hero.jpg"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="100vw"
+            />
+          </div>
+          <div className="relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 px-4 py-16 text-white sm:flex-row sm:items-center sm:px-6">
             <div>
               <h2 className="font-[family-name:var(--font-landing-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 Ready to get started?
               </h2>
               <p className="mt-2 max-w-xl text-sm text-white/85 sm:text-base">
-                Create a customer account to apply for services, track
-                applications, and access apps from {name}.
+                Use your Green Account to sign in as a customer, apply for
+                services, and access apps from {name}.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FiArrowUpRight, FiSearch } from "react-icons/fi";
 import services from "@/services";
@@ -95,7 +95,18 @@ export default function ClientPortal() {
   const person = user ?? auth;
   const firstName = person?.firstName ?? person?.first_name;
   const [query, setQuery] = useState("");
-  const catalog = useMemo(() => publishedSuiteProducts(), []);
+  const [catalog, setCatalog] = useState(() => publishedSuiteProducts());
+
+  useEffect(() => {
+    const refresh = () => setCatalog(publishedSuiteProducts());
+    refresh();
+    window.addEventListener("gbs-suite-products-updated", refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener("gbs-suite-products-updated", refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
 
   const { data } = useQuery({
     queryKey: ["client products"],

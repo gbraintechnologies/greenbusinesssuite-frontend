@@ -2,7 +2,7 @@
 
 import useAuth from "@/hooks/useAuth";
 import useCompany from "@/hooks/useCompany";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 // Next & React imports
 import React, { Suspense, useEffect, use } from "react";
@@ -46,6 +46,7 @@ function TenantLayoutInner(props: layoutProps) {
   const { children } = props;
 
   const tenantId = params.tenantId;
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const companyNameFromLink = searchParams.get("c")?.trim() || "";
 
@@ -54,6 +55,10 @@ function TenantLayoutInner(props: layoutProps) {
 
   const brandingMatchesTenant =
     companyBranding?.company_identifier === tenantId;
+
+  // Public marketing URL — never block with "Setting up your organization"
+  const isMarketingRoot =
+    pathname === `/${tenantId}` || pathname === `/${tenantId}/`;
 
   const { data, isLoading, error, isFetched } = useQuery({
     queryKey: ["get company branding info", tenantId],
@@ -182,7 +187,18 @@ function TenantLayoutInner(props: layoutProps) {
   ]);
 
   // Marketing page at /{tenantId} is public (App Store–style marketing URL).
-  // Auth redirects are handled by client/admin layouts and login flows.
+  // Seed a lightweight fallback so the page can render immediately.
+  useEffect(() => {
+    if (!isMarketingRoot) return;
+    if (brandingMatchesTenant && companyBranding?.name) return;
+    setCompanyBranding(
+      buildFallbackBranding(
+        tenantId,
+        companyNameFromLink || companyBranding?.name || tenantId,
+        companyBranding?.companyId ?? null
+      )
+    );
+  }, [isMarketingRoot, tenantId, companyNameFromLink]);
 
   useEffect(() => {
     addAuthData({ tenantId: tenantId });
@@ -193,7 +209,11 @@ function TenantLayoutInner(props: layoutProps) {
     shouldLookupCompany && !companyLookupFetched && !brandingMatchesTenant;
 
   // storageReady is false on server + first client paint → same loader HTML (no mismatch)
-  if (!storageReady || !brandingMatchesTenant || waitingForCompanyName) {
+  // Marketing root skips the setup splash so visitors see the landing immediately.
+  if (
+    !isMarketingRoot &&
+    (!storageReady || !brandingMatchesTenant || waitingForCompanyName)
+  ) {
     return (
       <div className="w-screen h-screen bg-gradient-to-r from-[#64748B1A] via-[#fff] to-[#F8FAFC] background-animate flex items-center justify-center">
         <SetupLoader />
@@ -211,13 +231,7 @@ function TenantLayoutInner(props: layoutProps) {
 
 export default function Layout(props: layoutProps) {
   return (
-    <Suspense
-      fallback={
-        <div className="w-screen h-screen bg-gradient-to-r from-[#64748B1A] via-[#fff] to-[#F8FAFC] background-animate flex items-center justify-center">
-          <SetupLoader />
-        </div>
-      }
-    >
+    <Suspense fallback={null}>
       <TenantLayoutInner {...props} />
     </Suspense>
   );
