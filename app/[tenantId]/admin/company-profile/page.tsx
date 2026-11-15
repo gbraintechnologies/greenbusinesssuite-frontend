@@ -51,26 +51,43 @@ const Page = (props: any) => {
   const [color, setColor] = useState<string>("#1FA35C");
   const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
 
-  const resolvedCompanyId =
+  const brandingCompanyId =
     companyBranding?.companyId ?? companyBranding?.company_id ?? null;
 
+  const validBrandingCompanyId =
+    brandingCompanyId != null &&
+    String(brandingCompanyId).trim() !== "" &&
+    String(brandingCompanyId).toLowerCase() !== "null" &&
+    !Number.isNaN(Number(brandingCompanyId))
+      ? Number(brandingCompanyId)
+      : null;
+
+  // Always resolve by tenant slug so missing branding.companyId still works
   const { data: companyByTenant, isLoading: loadingByTenant } = useQuery({
     queryKey: ["company-by-identifier", tenant_id],
     queryFn: services.getCompanyByIdentifier(tenant_id),
-    enabled: !!tenant_id && !resolvedCompanyId,
+    enabled: !!tenant_id,
   });
 
   const companyId =
-    resolvedCompanyId ??
-    companyByTenant?.id ??
-    companyByTenant?.companyId ??
-    companyByTenant?.company_id ??
-    null;
+    validBrandingCompanyId ??
+    (companyByTenant?.id != null ? Number(companyByTenant.id) : null) ??
+    (companyByTenant?.companyId != null
+      ? Number(companyByTenant.companyId)
+      : null) ??
+    (companyByTenant?.company_id != null
+      ? Number(companyByTenant.company_id)
+      : null);
 
-  const { data: companyData, isLoading: loadingById } = useQuery({
-    queryKey: ["company", Number(companyId)],
+  const {
+    data: companyData,
+    isLoading: loadingById,
+    isError: companyLoadError,
+    error: companyError,
+  } = useQuery({
+    queryKey: ["company", companyId],
     queryFn: services.getCompanyById(Number(companyId)),
-    enabled: !!companyId,
+    enabled: Number.isFinite(companyId as number) && (companyId as number) > 0,
   });
 
   const tenancyId =
@@ -86,7 +103,8 @@ const Page = (props: any) => {
     retry: false,
   });
 
-  const isLoading = loadingById || (!resolvedCompanyId && loadingByTenant);
+  const isLoading =
+    loadingByTenant || (Number.isFinite(companyId as number) && loadingById);
 
   const companyName =
     companyData?.company_name ?? companyData?.companyName ?? "";
@@ -179,15 +197,26 @@ const Page = (props: any) => {
   }
 
   if (!companyData) {
+    const detail =
+      (companyError as any)?.response?.data?.detail ||
+      (companyError as any)?.message ||
+      null;
+
     return (
       <div className="px-5 py-16 text-center">
         <h3 className="text-lg font-semibold text-slate-900">
           Company profile unavailable
         </h3>
         <p className="mt-2 text-sm text-slate-500">
-          We could not load this company. Try refreshing the page or contact
-          support if the problem continues.
+          {companyLoadError
+            ? "The company API request failed. Try signing out and back in, then refresh."
+            : !companyId
+              ? `No company record was found for “${tenant_id}”.`
+              : "We could not load this company. Try refreshing the page or contact support if the problem continues."}
         </p>
+        {detail && (
+          <p className="mt-2 text-xs text-slate-400">{String(detail)}</p>
+        )}
       </div>
     );
   }
