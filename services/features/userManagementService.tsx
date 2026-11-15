@@ -82,26 +82,38 @@ export const allUsersRaw = (offset: number = 0, limit: number = 20) => {
   return authApi.get(`/users`).then((res) => res.data);
 };
 
-/** Company-admin list: GET /users then keep this tenant's Green Account clients */
+/** Company-admin Clients list — uses company clients endpoint (bypasses tenant filter gaps) */
 export const getCompanyUsers = (companyIdentifier: string) => {
   return () =>
     meshAuthApi
-      .get(`/users`)
-      .then((res) =>
-        filterGreenAccountClients(
-          filterUsersByCompany(res.data, companyIdentifier)
+      .get(
+        `/companies/identifier/${encodeURIComponent(companyIdentifier)}/clients`
+      )
+      .then((res) => filterGreenAccountClients(res.data))
+      .catch(() =>
+        meshAuthApi.get(`/users`).then((res) =>
+          filterGreenAccountClients(
+            filterUsersByCompany(res.data, companyIdentifier)
+          )
         )
       );
 };
 
-/** Company staff (admins) for this tenant — excludes Green Account clients */
+/** Company staff (admins) for this tenant */
 export const getCompanyStaffUsers = (companyIdentifier: string) => {
   return () =>
-    meshAuthApi.get(`/users`).then((res) =>
-      filterUsersByCompany(res.data, companyIdentifier).filter(
-        (user) => !isGreenAccountClient(user)
+    meshAuthApi
+      .get(
+        `/companies/identifier/${encodeURIComponent(companyIdentifier)}/admins`
       )
-    );
+      .then((res) => asUserList(res.data))
+      .catch(() =>
+        meshAuthApi.get(`/users`).then((res) =>
+          filterUsersByCompany(res.data, companyIdentifier).filter(
+            (user) => !isGreenAccountClient(user)
+          )
+        )
+      );
 };
 
 export const userByID = (id: any) => {

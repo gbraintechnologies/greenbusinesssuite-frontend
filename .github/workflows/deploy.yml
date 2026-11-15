@@ -74,4 +74,6 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             chmod +x scripts/deploy.sh
-            BUILD_NO_CACHE=true bash scripts/deploy.sh
+            # Cached builds are faster and less likely to OOM the VPS when
+            # concurrent deploys land. scripts/deploy.sh also takes a flock.
+            BUILD_NO_CACHE=false bash scripts/deploy.sh

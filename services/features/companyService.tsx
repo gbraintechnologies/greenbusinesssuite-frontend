@@ -116,6 +116,60 @@ export const assignAndCreateAdminWithTenantId = ({
   return customAxios.put("/companies/admin", data);
 };
 
+/** Cross-tenant safe: lists ADMIN users for a company identifier */
+export const listCompanyAdmins = (companyIdentifier: string) => {
+  return () =>
+    authApi
+      .get(
+        `/companies/identifier/${encodeURIComponent(companyIdentifier)}/admins`
+      )
+      .then((res) => res.data);
+};
+
+/** Cross-tenant safe: lists Green Account clients for a company identifier */
+export const listCompanyClients = (companyIdentifier: string) => {
+  return () =>
+    authApi
+      .get(
+        `/companies/identifier/${encodeURIComponent(companyIdentifier)}/clients`
+      )
+      .then((res) => res.data);
+};
+
+function companyTenantAxios(tenantId: string) {
+  return axios.create({
+    baseURL: meshBaseURL,
+    headers: {
+      "Content-Type": "application/json",
+      "user-uuid": getUserUUID(),
+      Authorization: `Bearer ${getToken()}`,
+      tenantid: tenantId,
+    },
+  });
+}
+
+export const updateCompanyAdminUser = ({
+  userId,
+  tenantId,
+  data,
+}: {
+  userId: string | number;
+  tenantId: string;
+  data: Record<string, unknown>;
+}) => {
+  return companyTenantAxios(tenantId).put(`/users/update/${userId}`, data);
+};
+
+export const deleteCompanyAdminUser = ({
+  userId,
+  tenantId,
+}: {
+  userId: string | number;
+  tenantId: string;
+}) => {
+  return companyTenantAxios(tenantId).delete(`/users/${userId}`);
+};
+
 // Company Branding — re-exported from brandingService for backwards compatibility
 export {
   createCompanyBranding,
