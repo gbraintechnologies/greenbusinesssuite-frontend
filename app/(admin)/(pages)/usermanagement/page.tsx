@@ -45,7 +45,7 @@ function UserManagement() {
     enabled: Boolean(searchTerm),
   });
 
-  const [aggregatedUsers, setAggregatedUsers] = useState([]);
+  const [aggregatedUsers, setAggregatedUsers] = useState<any[]>([]);
 
   useEffect(() => {
     if (searchTerm.length > 1 && searchData) {
